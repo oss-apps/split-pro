@@ -8,16 +8,19 @@ import { UserAvatar } from '../ui/avatar';
 import { type Group, type GroupUser } from '@prisma/client';
 import { CheckIcon, UserPlus } from 'lucide-react';
 import { Input } from '../ui/input';
+import { z } from 'zod';
 
 const AddMembers: React.FC<{
   group: Group & { groupUsers: Array<GroupUser> };
   children: React.ReactNode;
 }> = ({ group, children }) => {
+  const [open, setOpen] = useState(false);
   const [userIds, setUserIds] = useState<Record<number, boolean>>({});
   const [inputValue, setInputValue] = useState('');
 
   const friendsQuery = api.user.getFriends.useQuery();
   const addMembersMutation = api.group.addMembers.useMutation();
+  const addFriendMutation = api.user.inviteFriend.useMutation();
 
   const utils = api.useUtils();
 
@@ -38,13 +41,19 @@ const AddMembers: React.FC<{
     setUserIds((prev) => ({ ...prev, [userId]: !prev[userId] }));
   }
 
-  function onSave() {
+  function onSave(userIds: Record<number, boolean>) {
     const users = [];
 
     for (const userId of Object.keys(userIds)) {
       if (userIds[parseInt(userId)]) {
         users.push(parseInt(userId));
       }
+    }
+
+    setInputValue('');
+
+    if (users.length === 0) {
+      return;
     }
 
     addMembersMutation.mutate(
@@ -58,13 +67,34 @@ const AddMembers: React.FC<{
         },
       },
     );
-
+    setOpen(false);
     setUserIds({});
   }
 
+  const isEmail = z.string().email().safeParse(inputValue);
+
+  function onAddEmailClick() {
+    if (isEmail.success) {
+      addFriendMutation.mutate(
+        { email: inputValue.toLowerCase() },
+        {
+          onSuccess: (user) => {
+            onSave({ ...userIds, [user.id]: true });
+          },
+        },
+      );
+    }
+  }
+
   return (
-    <Drawer>
-      <DrawerTrigger className="flex items-center gap-1">{children}</DrawerTrigger>
+    <Drawer
+      open={open}
+      onClose={() => setOpen(false)}
+      onOpenChange={(state) => state !== open && setOpen(state)}
+    >
+      <DrawerTrigger onClick={() => setOpen(true)} className="flex items-center gap-1">
+        {children}
+      </DrawerTrigger>
       <DrawerContent className="h-[85vh]">
         <div className="p-6">
           <div className="flex items-center justify-between">
@@ -72,16 +102,25 @@ const AddMembers: React.FC<{
               <DrawerClose>Cancel</DrawerClose>
             </Button>
             <p className="text-center">Add members</p>
-            <Button variant="link" className="px-0" onClick={onSave}>
+            <Button variant="link" className="px-0" onClick={() => onSave(userIds)}>
               <DrawerClose>Save</DrawerClose>
             </Button>
           </div>
           <Input
             className="mt-8 w-full text-lg"
-            placeholder="Enter name"
+            placeholder="Enter name or email"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
           />
+          <Button
+            className="mt-4 w-full text-cyan-500"
+            variant="ghost"
+            disabled={!isEmail.success}
+            onClick={() => onAddEmailClick()}
+          >
+            <UserPlusIcon className="mr-2 h-6 w-6" />
+            {isEmail.success ? 'Add email to Split Pro' : 'Enter valid email'}
+          </Button>
           <div className="mt-4 flex flex-col gap-4">
             {filteredUsers?.map((friend) => (
               <Button

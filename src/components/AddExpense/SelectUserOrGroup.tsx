@@ -133,8 +133,8 @@ export const SelectUserOrGroup: React.FC = () => {
 
         {filteredFriends?.length === 0 && filteredGroups?.length === 0 ? (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             className="mt-[30%] flex flex-col items-center justify-center gap-20"
           >
             <Image alt="empty user image" src="/empty_img.svg" width={250} height={250} />

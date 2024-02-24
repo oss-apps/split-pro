@@ -64,7 +64,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
           s.paidBy,
         );
 
-        return { amount, participants };
+        return { amount, participants, canSplitScreenClosed };
       }),
     setSplitType: (splitType) =>
       set((state) => {

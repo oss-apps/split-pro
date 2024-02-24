@@ -4,11 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
+    "build": "pnpm prisma:prod && next build",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:dev": "prisma migrate dev",
     "db:seed": "prisma db seed",
+    "prisma:prod": "prisma migrate deploy",
     "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",

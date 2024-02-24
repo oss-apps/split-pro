@@ -65,8 +65,6 @@ export const groupRouter = createTRPCRouter({
       },
     });
 
-    console.log('Query Time:', Date.now() - time);
-
     const groupsWithBalances = groups.map((g) => {
       const balances: Record<string, number> = {};
 
@@ -83,7 +81,6 @@ export const groupRouter = createTRPCRouter({
         balances,
       };
     });
-    console.log('Query Time 2:', Date.now() - time);
 
     return groupsWithBalances;
   }),

@@ -100,7 +100,6 @@ export const userRouter = createTRPCRouter({
       const friend = await db.user.findUnique({
         where: {
           email: input.email,
-          name: input.email.split('@')[0],
         },
       });
 
@@ -112,6 +111,7 @@ export const userRouter = createTRPCRouter({
       const user = await db.user.create({
         data: {
           email: input.email,
+          name: input.email.split('@')[0],
         },
       });
 

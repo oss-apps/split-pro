@@ -43,7 +43,7 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
         .share({
           title: `Join to ${groupDetailQuery.data.name} in Splitpro`,
           text: 'Join to the group and you can add, manage expenses, and track your balances',
-          url: 'https://splitpro.app',
+          url: inviteLink,
         })
         .then(() => console.log('Successful share'))
         .catch((error) => console.log('Error sharing', error));

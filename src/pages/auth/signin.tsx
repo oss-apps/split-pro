@@ -7,9 +7,10 @@ import { getServerAuthSession } from '~/server/auth';
 import { useState } from 'react';
 import { Input } from '~/components/ui/input';
 import { Separator } from '~/components/ui/separator';
+import { env } from '~/env';
 
 export default function Home() {
-  const callbackUrl = 'http://10.0.0.5:3000/';
+  const callbackUrl = env.NEXT_PUBLIC_URL;
 
   const [email, setEmail] = useState('');
   const [magicCode, setMagicCode] = useState('');

@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import AppInstallBanner from '../AppInstallBanner';
 import { type User } from '@prisma/client';
+import Image from 'next/image';
 
 interface MainLayoutProps {
   title?: React.ReactNode;
@@ -37,26 +38,63 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   const currentPath = router.pathname;
 
   return (
-    <div className="h-full bg-background">
-      <div vaul-drawer-wrapper="" className={clsx(' bg-background', hideAppBar ? '' : '')}>
-        {/* {hideAppBar ? null : (
-          <AppInstallBanner
-            user={user}
-            header={header}
-            actions={actions ?? <div className="h-10 w-10" />}
-          />
-        )} */}
-
-        {title ? (
-          <div className="mb-2 flex items-center justify-between px-4 py-4">
-            <div className="text-3xl font-bold text-gray-200">{title}</div>
-            {actions}
+    <div className=" h-full w-full bg-background">
+      <div
+        vaul-drawer-wrapper=""
+        className={clsx(
+          'mx-auto flex h-full w-full flex-col bg-background lg:max-w-3xl lg:flex-row',
+          hideAppBar ? '' : '',
+        )}
+      >
+        <nav className="item-center -ml-[170px]  hidden w-[170px] px-4 py-4  lg:flex lg:flex-col lg:gap-2 ">
+          <div className="mb-8 flex items-center gap-2">
+            <Image src="/logo.svg" width={35} height={35} alt="logo"></Image>
+            <span className="text-xl font-medium text-gray-300">SplitPro</span>
           </div>
-        ) : null}
-        {children}
-        <div className="h-28"></div>
+          <NavItemDesktop
+            title="Balances"
+            Icon={SolidScaleIcon}
+            link="/balances"
+            currentPath={currentPath}
+          />
+          <NavItemDesktop
+            title="Groups"
+            Icon={SolidUserGroupIcon}
+            link="/groups"
+            currentPath={currentPath}
+          />
+          <NavItemDesktop
+            title="Add Expense"
+            Icon={SolidPlusCircleIcon}
+            link="/add"
+            currentPath={currentPath}
+          />
+          <NavItemDesktop
+            title="Activity"
+            Icon={SolidListBulletIcon}
+            link="/activity"
+            currentPath={currentPath}
+          />
+          <NavItemDesktop
+            title="Account"
+            Icon={SolidUserCircleIcon}
+            link="/account"
+            currentPath={currentPath}
+          />
+        </nav>
+        <div className="w-full overflow-auto lg:border-x lg:border-gray-900 lg:px-6">
+          {title ? (
+            <div className="mb-2 flex items-center justify-between px-4 py-4">
+              <div className="text-3xl font-bold text-gray-200">{title}</div>
+              {actions}
+            </div>
+          ) : null}
+          {children}
+          <div className="h-28 lg:h-0"></div>
+        </div>
       </div>
-      <nav className="fixed bottom-0 flex w-full justify-between  border-t bg-opacity-80 px-2 pb-4 shadow-sm backdrop-blur-lg">
+
+      <nav className="fixed bottom-0 flex w-full justify-between border-t  bg-opacity-80 px-2 pb-4 shadow-sm backdrop-blur-lg lg:hidden">
         <NavItem
           title="Balances"
           Icon={SolidScaleIcon}
@@ -110,4 +148,16 @@ const NavItem: React.FC<NavItemProps> = ({ title, Icon, link, currentPath }) => 
   );
 };
 
+const NavItemDesktop: React.FC<NavItemProps> = ({ title, Icon, link, currentPath }) => {
+  const isActive = currentPath?.startsWith(link);
+
+  return (
+    <Link href={link} className={clsx(' flex w-[150px]  items-center gap-2 py-4')}>
+      <Icon className={clsx('h-7 w-7', isActive ? 'text-cyan-500' : 'text-gray-600')} />
+      <span className={clsx('', isActive ? 'font-medium text-cyan-500' : 'text-gray-500')}>
+        {title}
+      </span>
+    </Link>
+  );
+};
 export default MainLayout;

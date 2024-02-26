@@ -74,7 +74,7 @@ const AccountPage: NextPage<{ user: User }> = ({ user }) => {
                     { name },
                     {
                       onSuccess: () => {
-                        toast.success('Updated details');
+                        toast.success('Updated details', { duration: 1500 });
                         setFeedback('');
                       },
                       onError: () => {

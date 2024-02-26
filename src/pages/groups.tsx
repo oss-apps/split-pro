@@ -34,7 +34,7 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
           </CreateGroup>
         }
       >
-        <div className="mt-2 h-full">
+        <div className="mt-2">
           <div className="mt-5 flex flex-col gap-8 px-4 pb-36">
             {groupQuery.isLoading ? (
               <p></p>

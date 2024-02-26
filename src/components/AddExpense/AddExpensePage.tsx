@@ -4,7 +4,7 @@ import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { UserInput } from './UserInput';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
-import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from '../ui/drawer';
+import { AppDrawer, Drawer, DrawerClose, DrawerContent, DrawerTrigger } from '../ui/drawer';
 import { Button } from '../ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../ui/command';
 import { Banknote, CalendarIcon, Check } from 'lucide-react';
@@ -244,48 +244,50 @@ export const AddExpensePage: React.FC = () => {
         ) : (
           <>
             <div className="mt-10 flex gap-2">
-              <Drawer>
-                <DrawerTrigger className="flex w-[70px] items-center gap-2 border-gray-200 text-xl focus:ring-0">
+              <AppDrawer
+                trigger={
                   <div className="flex w-[70px] justify-center rounded-lg border py-2">
                     <CategoryIcon size={20} />
                   </div>
-                </DrawerTrigger>
-                <DrawerContent className="h-[80vh] ">
-                  <div className=" overflow-auto px-4 py-4">
-                    {Object.entries(categories).map(([categoryName, categoryDetails]) => {
-                      return (
-                        <div key={categoryName} className="mb-8">
-                          <h3 className="mb-4 text-lg font-semibold">{categoryDetails.name}</h3>
-                          <div className="flex flex-wrap justify-between gap-2">
-                            {categoryDetails.items.map((item, index) =>
-                              Object.entries(item).map(([key, value]) => {
-                                const Icon =
-                                  CategoryIcons[key] ?? CategoryIcons[categoryName] ?? Banknote;
-                                return (
-                                  <DrawerClose key={key}>
-                                    <Button
-                                      variant="ghost"
-                                      className="flex w-[75px] flex-col gap-1 py-8 text-center"
-                                      onClick={() => {
-                                        setCategory(key === 'other' ? categoryName : key);
-                                      }}
-                                    >
-                                      <span className="block text-2xl">
-                                        <Icon />
-                                      </span>
-                                      <span className="block text-xs capitalize">{value}</span>
-                                    </Button>
-                                  </DrawerClose>
-                                );
-                              }),
-                            )}
-                          </div>
+                }
+                title="Categories"
+                className="h-[70vh]"
+                shouldCloseOnAction
+              >
+                <div className=" overflow-auto px-4 py-4">
+                  {Object.entries(categories).map(([categoryName, categoryDetails]) => {
+                    return (
+                      <div key={categoryName} className="mb-8">
+                        <h3 className="mb-4 text-lg font-semibold">{categoryDetails.name}</h3>
+                        <div className="flex flex-wrap justify-between gap-2">
+                          {categoryDetails.items.map((item, index) =>
+                            Object.entries(item).map(([key, value]) => {
+                              const Icon =
+                                CategoryIcons[key] ?? CategoryIcons[categoryName] ?? Banknote;
+                              return (
+                                <DrawerClose key={key}>
+                                  <Button
+                                    variant="ghost"
+                                    className="flex w-[75px] flex-col gap-1 py-8 text-center"
+                                    onClick={() => {
+                                      setCategory(key === 'other' ? categoryName : key);
+                                    }}
+                                  >
+                                    <span className="block text-2xl">
+                                      <Icon />
+                                    </span>
+                                    <span className="block text-xs capitalize">{value}</span>
+                                  </Button>
+                                </DrawerClose>
+                              );
+                            }),
+                          )}
                         </div>
-                      );
-                    })}
-                  </div>
-                </DrawerContent>
-              </Drawer>
+                      </div>
+                    );
+                  })}
+                </div>
+              </AppDrawer>
               <Input
                 placeholder="Description"
                 value={description}
@@ -294,59 +296,58 @@ export const AddExpensePage: React.FC = () => {
               />
             </div>
             <div className="flex gap-2">
-              <Drawer
+              <AppDrawer
+                trigger={
+                  <div className="flex w-[70px] justify-center rounded-lg border py-2  text-center">
+                    {currency ?? 'USD'}
+                  </div>
+                }
+                onTriggerClick={() => setOpen(true)}
+                title="Select currency"
+                className="h-[70vh]"
+                shouldCloseOnAction
                 open={open}
                 onOpenChange={(openVal) => {
                   if (openVal !== open) setOpen(openVal);
                 }}
               >
-                <DrawerTrigger
-                  className="flex items-center justify-center gap-2 text-center text-sm focus:outline-none focus:ring-0"
-                  onClick={() => {
-                    setOpen(true);
-                  }}
-                >
-                  <div className="w-[70px] rounded-lg border  py-2">{currency ?? 'USD'}</div>
-                </DrawerTrigger>
-                <DrawerContent className="h-[80vh]">
-                  <div className=" px-4 py-4">
-                    <p className="my-3 text-center">Select currency</p>
-                    <Command className="h-[65vh]">
-                      <CommandInput className="text-lg" placeholder="Search currency" />
-                      <CommandEmpty>No currency found.</CommandEmpty>
-                      <CommandGroup className="h-full overflow-auto">
-                        {currencies.map((framework) => (
-                          // <DrawerClose key={`${framework.code}-${framework.name}`} className="w-full">
-                          <CommandItem
-                            key={`${framework.code}-${framework.name}`}
-                            value={`${framework.code}-${framework.name}`}
-                            onSelect={(currentValue) => {
-                              setCurrency(currentValue.split('-')[0]?.toUpperCase() ?? 'USD');
-                              setOpen(false);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                'mr-2 h-4 w-4',
-                                `${framework.code}-${framework.name.toLowerCase()}`.startsWith(
-                                  currency,
-                                )
-                                  ? 'opacity-100'
-                                  : 'opacity-0',
-                              )}
-                            />
-                            <div className="flex gap-2">
-                              <p>{framework.name}</p>
-                              <p className=" text-muted-foreground">{framework.code}</p>
-                            </div>
-                          </CommandItem>
-                          // </DrawerClose>
-                        ))}
-                      </CommandGroup>
-                    </Command>
-                  </div>
-                </DrawerContent>
-              </Drawer>
+                <div className="">
+                  <Command className="h-[60vh]">
+                    <CommandInput className="text-lg" placeholder="Search currency" />
+                    <CommandEmpty>No currency found.</CommandEmpty>
+                    <CommandGroup className="h-full overflow-auto">
+                      {currencies.map((framework) => (
+                        // <DrawerClose key={`${framework.code}-${framework.name}`} className="w-full">
+                        <CommandItem
+                          key={`${framework.code}-${framework.name}`}
+                          value={`${framework.code}-${framework.name}`}
+                          onSelect={(currentValue) => {
+                            setCurrency(currentValue.split('-')[0]?.toUpperCase() ?? 'USD');
+                            setOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              'mr-2 h-4 w-4',
+                              `${framework.code}-${framework.name.toLowerCase()}`.startsWith(
+                                currency,
+                              )
+                                ? 'opacity-100'
+                                : 'opacity-0',
+                            )}
+                          />
+                          <div className="flex gap-2">
+                            <p>{framework.name}</p>
+                            <p className=" text-muted-foreground">{framework.code}</p>
+                          </div>
+                        </CommandItem>
+                        // </DrawerClose>
+                      ))}
+                    </CommandGroup>
+                  </Command>
+                </div>
+              </AppDrawer>
+
               <Input
                 placeholder="Amount"
                 className="text-lg"

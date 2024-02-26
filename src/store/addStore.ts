@@ -83,16 +83,19 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         if (userIndex !== -1) {
           participants[userIndex] = user;
         } else {
-          participants.push(user);
+          participants.push({ ...user, splitShare: 1 });
         }
         return {
-          ...calculateParticipantSplit(state.amount, participants, state.splitType, state.paidBy),
+          splitType: SplitType.EQUAL,
+          ...calculateParticipantSplit(state.amount, participants, SplitType.EQUAL, state.paidBy),
         };
       }),
-    setParticipants: (participants) =>
+    setParticipants: (_participants) =>
       set((state) => {
+        const participants = _participants.map((p) => ({ ...p, splitShare: 1 }));
         return {
-          ...calculateParticipantSplit(state.amount, participants, state.splitType, state.paidBy),
+          splitType: SplitType.EQUAL,
+          ...calculateParticipantSplit(state.amount, participants, SplitType.EQUAL, state.paidBy),
         };
       }),
     removeLastParticipant: () => {

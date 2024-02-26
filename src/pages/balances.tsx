@@ -109,14 +109,14 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
               />
             ))}
             {!balanceQuery.isLoading && !balanceQuery.data?.balances.length ? (
-              <div className="mt-[50%] flex flex-col items-center justify-center gap-6">
+              <div className="mt-[50vh] flex -translate-y-[130%] flex-col items-center justify-center gap-6">
                 <Link href="/add">
                   <Button className="w-[250px]">
                     <PlusIcon className="mr-2 h-5 w-5 text-black" />
                     Add Expense
                   </Button>
                 </Link>
-                <p className="text-gray-400">or</p>
+                <p className="text-gray-300">or</p>
                 <Button className="w-[250px]">
                   <Download className="mr-2 h-5 w-5 text-black" />
                   Import from splitwise

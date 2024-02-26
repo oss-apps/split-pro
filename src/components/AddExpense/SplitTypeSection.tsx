@@ -1,6 +1,6 @@
 import { type Participant, useAddExpenseStore } from '~/store/addStore';
 import { Button } from '../ui/button';
-import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from '../ui/drawer';
+import { AppDrawer, Drawer, DrawerClose, DrawerContent, DrawerTrigger } from '../ui/drawer';
 import { UserAvatar } from '../ui/avatar';
 import { BarChart2, Check, Diff, DollarSign, Equal, Percent } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
@@ -19,49 +19,51 @@ export const SplitTypeSection: React.FC = () => {
   return (
     <div className="mt-4 flex items-center justify-center text-gray-400">
       <p>Paid by</p>
-      <Drawer>
-        <DrawerTrigger className="max-w-28 overflow-hidden text-ellipsis px-1.5 text-cyan-500">
-          {currentUser?.id === paidBy?.id ? 'you' : paidBy?.name ?? paidBy?.email}
-        </DrawerTrigger>
-        <DrawerContent className="h-[70vh]">
-          <div className="flex flex-col gap-6 overflow-auto px-4  py-8">
-            {participants.map((participant) => (
-              <DrawerClose
-                key={participant.id}
-                className="flex items-center justify-between px-2"
-                onClick={() => setPaidBy(participant)}
-              >
-                <div className="flex items-center gap-1">
-                  <UserAvatar user={participant} size={30} />
-                  <p className="ml-4">{participant.name ?? participant.email ?? ''}</p>
-                </div>
-                {participant.id === paidBy?.id ? <Check className="h-6 w-6 text-cyan-500" /> : null}
-              </DrawerClose>
-            ))}
+      <AppDrawer
+        trigger={
+          <div className="max-w-28 overflow-hidden text-ellipsis px-1.5 text-[16px] text-cyan-500">
+            {currentUser?.id === paidBy?.id ? 'you' : paidBy?.name ?? paidBy?.email}
           </div>
-        </DrawerContent>
-      </Drawer>
-      <p>and </p>
-      <Drawer dismissible={false}>
-        <DrawerTrigger className="px-1.5 text-cyan-500">split equally</DrawerTrigger>
-        <DrawerContent className="h-[95vh]">
-          <div className="overflow-auto px-4 py-4">
-            <div className="flex justify-between">
-              <div className="w-[30px]"></div>
-              <p className="text-center font-light">Split Expense</p>
-              <div>
-                <DrawerClose
-                  disabled={!canSplitScreenClosed}
-                  className="py-0 text-primary disabled:text-cyan-900"
-                >
-                  Save
-                </DrawerClose>
+        }
+        title="Paid by"
+        className="h-[70vh]"
+        shouldCloseOnAction
+      >
+        <div className="flex flex-col gap-6 overflow-auto">
+          {participants.map((participant) => (
+            <DrawerClose
+              key={participant.id}
+              className="flex items-center justify-between px-2"
+              onClick={() => setPaidBy(participant)}
+            >
+              <div className="flex items-center gap-1">
+                <UserAvatar user={participant} size={30} />
+                <p className="ml-4">{participant.name ?? participant.email ?? ''}</p>
               </div>
-            </div>
+              {participant.id === paidBy?.id ? <Check className="h-6 w-6 text-cyan-500" /> : null}
+            </DrawerClose>
+          ))}
+        </div>
+      </AppDrawer>
 
-            <SplitExpenseForm />
+      <p>and </p>
+      <AppDrawer
+        trigger={
+          <div className="max-w-28 overflow-hidden text-ellipsis px-1.5 text-[16px] text-cyan-500">
+            split equally
           </div>
-        </DrawerContent>
+        }
+        title="Paid by"
+        className="h-[98vh] lg:h-[70vh]"
+        shouldCloseOnAction
+        dismissible={false}
+        actionTitle="Save"
+        actionDisabled={!canSplitScreenClosed}
+      >
+        <SplitExpenseForm />
+      </AppDrawer>
+      <Drawer dismissible={false}>
+        <DrawerContent className="h-[98vh]"></DrawerContent>
       </Drawer>
     </div>
   );
@@ -129,7 +131,7 @@ const SplitEqualSection: React.FC = () => {
       {participants.map((p) => (
         <button
           key={p.id}
-          className="flex justify-between"
+          className=" mt-2.5 flex justify-between"
           onClick={() => addOrUpdateParticipant({ ...p, splitShare: p.splitShare === 0 ? 1 : 0 })}
         >
           <div className="flex items-center gap-2">

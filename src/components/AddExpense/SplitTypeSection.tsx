@@ -62,9 +62,6 @@ export const SplitTypeSection: React.FC = () => {
       >
         <SplitExpenseForm />
       </AppDrawer>
-      <Drawer dismissible={false}>
-        <DrawerContent className="h-[98vh]"></DrawerContent>
-      </Drawer>
     </div>
   );
 };

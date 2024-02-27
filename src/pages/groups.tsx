@@ -101,7 +101,7 @@ const GroupBalance: React.FC<{
                   isPositive ? 'text-emerald-500' : 'text-red-500',
                 )}
               >
-                {isPositive ? 'you owe' : 'owes you'}
+                {isPositive ? 'you lent' : 'you owe'}
               </div>
               <div className={`${isPositive ? 'text-emerald-500' : 'text-red-500'} text-right`}>
                 {currency} {toUIString(amount)}

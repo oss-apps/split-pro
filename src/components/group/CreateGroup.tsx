@@ -1,6 +1,12 @@
 import Avatar from 'boring-avatars';
 import React, { useState } from 'react';
-import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from '~/components/ui/drawer';
+import {
+  AppDrawer,
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger,
+} from '~/components/ui/drawer';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 import { api } from '~/utils/api';
@@ -32,29 +38,24 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   return (
-    <Drawer
-      open={drawerOpen}
-      onOpenChange={(openVal) => {
-        if (openVal !== drawerOpen) setDrawerOpen(openVal);
-      }}
-    >
-      <DrawerTrigger
-        className="flex items-center gap-2 text-sm focus:ring-0"
-        onClick={() => setDrawerOpen(true)}
+    <>
+      <AppDrawer
+        open={drawerOpen}
+        onOpenChange={(openVal) => {
+          if (openVal !== drawerOpen) setDrawerOpen(openVal);
+        }}
+        trigger={children}
+        leftAction="Cancel"
+        leftActionOnClick={() => setDrawerOpen(false)}
+        title="Create a group"
+        className="h-[70vh]"
+        actionTitle="Submit"
+        shouldCloseOnAction
+        actionOnClick={async () => {
+          await handleSubmit();
+        }}
       >
-        {children}
-      </DrawerTrigger>
-      <DrawerContent className="h-[70vh]">
-        <div className=" flex flex-col gap-6 px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Button variant="ghost" onClick={() => setDrawerOpen(false)} className="text-cyan-500">
-              Cancel
-            </Button>
-            <p className=" text-center">Create a group</p>
-            <Button onClick={handleSubmit} variant="ghost" className="text-cyan-500">
-              Submit
-            </Button>
-          </div>
+        <div className="">
           <div className="mt-4 flex items-center gap-4">
             <Avatar
               size={50}
@@ -80,7 +81,7 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
             </div>
           </div> */}
         </div>
-      </DrawerContent>
-    </Drawer>
+      </AppDrawer>
+    </>
   );
 };

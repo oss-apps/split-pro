@@ -112,6 +112,7 @@ export {
 type AppDrawerProps = {
   children: React.ReactNode;
   trigger: React.ReactNode;
+  disableTrigger?: boolean;
   onTriggerClick?: React.MouseEventHandler<HTMLButtonElement>;
   className: string;
   open?: boolean;
@@ -125,6 +126,7 @@ type AppDrawerProps = {
   shouldCloseOnLeftAction?: boolean;
   dismissible?: boolean;
   actionDisabled?: boolean;
+  onClose?: () => void;
 };
 
 export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
@@ -144,6 +146,8 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
     className,
     dismissible,
     actionDisabled,
+    disableTrigger,
+    onClose,
   } = props;
 
   const isClient = useIsClient();
@@ -156,68 +160,80 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
 
   if (!isClient) return null;
 
+  console.log('isDesktop', isDesktop, open, disableTrigger);
+
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={localOnOpenChange}>
-        <DialogTrigger className="cursor-pointer focus:ring-0" onClick={onTriggerClick} asChild>
+        <DialogTrigger
+          className="cursor-pointer focus:ring-0"
+          onClick={(e) => {
+            console.log('button clicked');
+            onTriggerClick?.(e);
+          }}
+          disabled={disableTrigger}
+          asChild
+        >
           {trigger}
         </DialogTrigger>
         <DialogContent
-          className="max-h-[70vh]"
+          className="max-h-[70vh] "
           onInteractOutside={(e) => {
             if (dismissible === false) {
               e.preventDefault();
             }
           }}
         >
-          <DialogHeader className="mb-8">
+          <DialogHeader className="mb-4">
             <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
-          {children}
-          <DialogFooter className="mt-8 flex items-center gap-2 ">
-            {leftAction ? (
-              <Button
-                variant="secondary"
-                size="sm"
-                className="w-[100px]"
-                onClick={leftActionOnClick}
-              >
-                {shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined ? (
-                  <DialogClose>{leftAction}</DialogClose>
-                ) : (
-                  leftAction
-                )}
-              </Button>
-            ) : null}
-            {actionTitle ? (
-              !shouldCloseOnAction ? (
+          <div className=" max-h-[60vh] overflow-auto px-1 py-1">
+            {children}
+            <DialogFooter className="mt-8 flex items-center gap-2 ">
+              {leftAction ? (
                 <Button
-                  className=" w-[100px]"
-                  onClick={actionOnClick}
-                  disabled={actionDisabled}
+                  variant="secondary"
                   size="sm"
+                  className="w-[100px]"
+                  onClick={leftActionOnClick}
                 >
-                  {actionTitle}
+                  {shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined ? (
+                    <DialogClose>{leftAction}</DialogClose>
+                  ) : (
+                    leftAction
+                  )}
                 </Button>
+              ) : null}
+              {actionTitle ? (
+                !shouldCloseOnAction ? (
+                  <Button
+                    className=" w-[100px]"
+                    onClick={actionOnClick}
+                    disabled={actionDisabled}
+                    size="sm"
+                  >
+                    {actionTitle}
+                  </Button>
+                ) : (
+                  <DialogClose
+                    onClick={actionOnClick}
+                    className="w-[100px] rounded-md bg-primary py-2 text-sm text-black disabled:opacity-50"
+                    disabled={actionDisabled}
+                  >
+                    {actionTitle}
+                  </DialogClose>
+                )
               ) : (
-                <DialogClose
-                  onClick={actionOnClick}
-                  className="w-[100px] rounded-md bg-primary py-2 text-sm text-black disabled:opacity-50"
-                  disabled={actionDisabled}
-                >
-                  {actionTitle}
-                </DialogClose>
-              )
-            ) : (
-              <div className="w-10"> </div>
-            )}
-          </DialogFooter>
+                <div className="w-10"> </div>
+              )}
+            </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     );
   }
   return (
-    <Drawer open={open} onOpenChange={onOpenChange} dismissible={dismissible}>
+    <Drawer open={open} onOpenChange={onOpenChange} dismissible={dismissible} onClose={onClose}>
       <DrawerTrigger
         className="flex items-center justify-center gap-2 text-center text-sm focus:outline-none focus:ring-0"
         onClick={onTriggerClick}

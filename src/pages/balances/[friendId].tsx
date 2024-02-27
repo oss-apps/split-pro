@@ -85,7 +85,7 @@ const FriendPage: NextPage<{ user: User; friend: User }> = ({ user, friend }) =>
               )}
             </div>
           </div>
-          <div className="mb-4 mt-6 flex justify-center gap-2 px-2">
+          <div className="mb-4 mt-6 flex justify-center gap-2 px-2 ">
             {balances.data ? (
               <SettleUp
                 balances={balances.data}
@@ -94,17 +94,17 @@ const FriendPage: NextPage<{ user: User; friend: User }> = ({ user, friend }) =>
                 currentUser={user}
               />
             ) : (
-              <Button size="sm" variant="outline" className="gap-1 text-sm" disabled>
+              <Button size="sm" variant="outline" className="gap-1 text-sm lg:w-[180px]" disabled>
                 Settle up
               </Button>
             )}
 
             <Link href={`/add?friendId=${friend.id}`}>
-              <Button size="sm" variant="secondary" className="gap-1 text-sm">
+              <Button size="sm" variant="secondary" className="gap-1 text-sm lg:w-[180px]">
                 <PlusIcon className="h-4 w-4 text-gray-400" /> Add Expense
               </Button>
             </Link>
-            <Button size="sm" className="gap-1 text-sm" variant="secondary">
+            <Button size="sm" className="gap-1 text-sm lg:w-[180px]" variant="secondary">
               <Bell className="h-4 w-4 text-gray-400" />
               Remind
             </Button>

@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { InformationCircleIcon, UserPlusIcon } from '@heroicons/react/24/solid';
 import { api } from '~/utils/api';
-import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from '~/components/ui/drawer';
+import {
+  AppDrawer,
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger,
+} from '~/components/ui/drawer';
 import clsx from 'clsx';
 import { UserAvatar } from '../ui/avatar';
 import { type Group, type GroupUser } from '@prisma/client';
@@ -87,61 +93,57 @@ const AddMembers: React.FC<{
   }
 
   return (
-    <Drawer
+    <AppDrawer
+      trigger={
+        <div className="flex items-center justify-center gap-2 lg:w-[180px]">{children}</div>
+      }
+      onTriggerClick={() => setOpen(true)}
+      title="Add members"
+      leftAction="Cancel"
+      actionOnClick={() => onSave(userIds)}
+      className="h-[85vh]"
+      shouldCloseOnAction
+      actionTitle="Save"
       open={open}
       onClose={() => setOpen(false)}
       onOpenChange={(state) => state !== open && setOpen(state)}
     >
-      <DrawerTrigger onClick={() => setOpen(true)} className="flex items-center gap-1">
-        {children}
-      </DrawerTrigger>
-      <DrawerContent className="h-[85vh]">
-        <div className="p-6">
-          <div className="flex items-center justify-between">
-            <Button variant="link" className="px-0">
-              <DrawerClose>Cancel</DrawerClose>
+      <div className="">
+        <Input
+          className="mt-8 w-full text-lg"
+          placeholder="Enter name or email"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+        <Button
+          className="mt-4 w-full text-cyan-500"
+          variant="ghost"
+          disabled={!isEmail.success}
+          onClick={() => onAddEmailClick()}
+        >
+          <UserPlusIcon className="mr-2 h-6 w-6" />
+          {isEmail.success ? 'Add email to Split Pro' : 'Enter valid email'}
+        </Button>
+        <div className="mt-4 flex flex-col gap-4">
+          {filteredUsers?.map((friend) => (
+            <Button
+              variant="ghost"
+              key={friend.id}
+              className="flex items-center justify-between px-0"
+              onClick={() => onUserSelect(friend.id)}
+            >
+              <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
+                <UserAvatar user={friend} />
+                <p>{friend.name ?? friend.email}</p>
+              </div>
+              <div>
+                {userIds[friend.id] ? <CheckIcon className="h-4 w-4 text-primary" /> : null}
+              </div>
             </Button>
-            <p className="text-center">Add members</p>
-            <Button variant="link" className="px-0" onClick={() => onSave(userIds)}>
-              <DrawerClose>Save</DrawerClose>
-            </Button>
-          </div>
-          <Input
-            className="mt-8 w-full text-lg"
-            placeholder="Enter name or email"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-          />
-          <Button
-            className="mt-4 w-full text-cyan-500"
-            variant="ghost"
-            disabled={!isEmail.success}
-            onClick={() => onAddEmailClick()}
-          >
-            <UserPlusIcon className="mr-2 h-6 w-6" />
-            {isEmail.success ? 'Add email to Split Pro' : 'Enter valid email'}
-          </Button>
-          <div className="mt-4 flex flex-col gap-4">
-            {filteredUsers?.map((friend) => (
-              <Button
-                variant="ghost"
-                key={friend.id}
-                className="flex items-center justify-between px-0"
-                onClick={() => onUserSelect(friend.id)}
-              >
-                <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
-                  <UserAvatar user={friend} />
-                  <p>{friend.name ?? friend.email}</p>
-                </div>
-                <div>
-                  {userIds[friend.id] ? <CheckIcon className="h-4 w-4 text-primary" /> : null}
-                </div>
-              </Button>
-            ))}
-          </div>
+          ))}
         </div>
-      </DrawerContent>
-    </Drawer>
+      </div>
+    </AppDrawer>
   );
 };
 

@@ -1,4 +1,3 @@
-import { signIn, signOut, useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { Button } from '~/components/ui/button';
@@ -9,23 +8,14 @@ import {
   FileUp,
   GitFork,
   Globe,
-  Group,
-  Server,
   Sigma,
   Split,
-  Upload,
   Users,
 } from 'lucide-react';
-import Avatar from 'boring-avatars';
-
-import { api } from '~/utils/api';
 import Image from 'next/image';
 import { type GetServerSideProps } from 'next';
 import { getServerAuthSession } from '~/server/auth';
-import { useState } from 'react';
-import { Input } from '~/components/ui/input';
-import { Separator } from '~/components/ui/separator';
-import { motion } from 'framer-motion';
+import { BackgroundGradient } from '~/components/ui/background-gradient';
 
 export default function Home() {
   return (
@@ -36,39 +26,38 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="min-h-screen">
-        <nav className="sticky flex items-center justify-between px-4 py-4 lg:px-10 lg:py-5">
+        <nav className="sticky mx-auto flex max-w-5xl items-center justify-between  py-4  lg:py-5">
           <div className="flex items-center gap-4">
             <Image src="./logo.svg" alt="logo" className="rounded-full" width={40} height={40} />
             <p className="text-2xl font-bold">SplitPro</p>
           </div>
         </nav>
-        <div className="mx-auto mt-20 flex  max-w-5xl items-start gap-8">
+        <div className="mx-auto mt-20 flex max-w-5xl  items-start gap-8 ">
           <div>
             <div className="h-[70vh]">
               <h1 className="max-w-3xl text-2xl font-semibold leading-loose text-gray-100  lg:text-5xl lg:leading-[4rem]">
                 Split Expenses with your friends for{' '}
                 <span className="font-bold text-primary">free</span>.
               </h1>
-              <h2 className="mt-5  text-gray-300 lg:mt-5 lg:text-lg">
-                SplitPro is an{' '}
+              <h2 className="mt-5  text-gray-300  lg:mt-8 lg:text-lg">
                 <a
-                  className="text-primary underline"
+                  className="text-primary hover:underline"
                   href="https://github.com/oss-apps/split-pro"
                   target="_blank"
                 >
-                  open source
+                  Open source
                 </a>{' '}
-                alternative of SplitWise
+                and <span className="text-primary">PWA</span> alternative of SplitWise
               </h2>
               <div className="mt-10 flex flex-col">
                 <Link href="/auth/signin">
-                  <Button className="flex items-center gap-2">
+                  <Button className="flex w-[200px] items-center gap-2 rounded-full">
                     Add Expense <ArrowRight size={15} />{' '}
                   </Button>
                 </Link>
               </div>
             </div>
-            <div className="flex flex-col gap-12">
+            <div className=" flex flex-col gap-12">
               <p className="text-2xl">Features</p>
 
               <div className="flex gap-8">
@@ -152,7 +141,17 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="sticky top-40 h-[550px] w-[300px] shrink-0 rounded-2xl border"></div>
+          <div className="sticky top-40 shrink-0">
+            <BackgroundGradient>
+              <Image
+                src="/hero.png"
+                className=" rounded-[22px] border"
+                width={300}
+                height={550}
+                alt="hero"
+              />
+            </BackgroundGradient>
+          </div>
         </div>
       </main>
     </>

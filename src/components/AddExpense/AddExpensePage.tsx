@@ -254,7 +254,7 @@ export const AddExpensePage: React.FC = () => {
                 className="h-[70vh]"
                 shouldCloseOnAction
               >
-                <div className=" overflow-auto px-4 py-4">
+                <div className="">
                   {Object.entries(categories).map(([categoryName, categoryDetails]) => {
                     return (
                       <div key={categoryName} className="mb-8">

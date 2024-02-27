@@ -10,7 +10,7 @@ import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
 import { Check, ChevronLeft, Share, UserPlus } from 'lucide-react';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
-import { Drawer, DrawerContent, DrawerTrigger } from '~/components/ui/drawer';
+import { AppDrawer, Drawer, DrawerContent, DrawerTrigger } from '~/components/ui/drawer';
 import { UserAvatar } from '~/components/ui/avatar';
 import NoMembers from '~/components/group/NoMembers';
 import { format } from 'date-fns';
@@ -77,27 +77,25 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
           </div>
         }
         actions={
-          <Drawer>
-            <DrawerTrigger className="flex items-center gap-2 text-sm focus:ring-0">
-              <InformationCircleIcon className="h-6 w-6" />
-            </DrawerTrigger>
-            <DrawerContent className="h-[85vh]">
-              <div className="p-6">
-                <p className="text-sm">Members</p>
-                <div className="mt-4 flex flex-col gap-2">
-                  {groupDetailQuery.data?.groupUsers.map((groupUser) => (
-                    <div
-                      key={groupUser.userId}
-                      className={clsx('flex items-center gap-2 rounded-md py-1.5')}
-                    >
-                      <UserAvatar user={groupUser.user} />
-                      <p>{groupUser.user.name ?? groupUser.user.email}</p>
-                    </div>
-                  ))}
-                </div>
+          <AppDrawer
+            title="Members"
+            trigger={<InformationCircleIcon className="h-6 w-6" />}
+            className="h-[85vh]"
+          >
+            <div className="">
+              <div className="flex flex-col gap-2">
+                {groupDetailQuery.data?.groupUsers.map((groupUser) => (
+                  <div
+                    key={groupUser.userId}
+                    className={clsx('flex items-center gap-2 rounded-md py-1.5')}
+                  >
+                    <UserAvatar user={groupUser.user} />
+                    <p>{groupUser.user.name ?? groupUser.user.email}</p>
+                  </div>
+                ))}
               </div>
-            </DrawerContent>
-          </Drawer>
+            </div>
+          </AppDrawer>
         }
         header={
           <div className="flex items-center gap-2">
@@ -123,9 +121,9 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
         {groupDetailQuery.isLoading ? null : groupDetailQuery.data?.groupUsers.length === 1 ? (
           <NoMembers group={groupDetailQuery.data} />
         ) : (
-          <div className=" mb-4 flex  w-[100vw] justify-center gap-2 overflow-y-auto border-b px-2 pb-4">
+          <div className=" mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4">
             <Link href={`/add?groupId=${groupId}`}>
-              <Button size="sm" className="gap-1 text-sm">
+              <Button size="sm" className="gap-1 text-sm lg:w-[180px]">
                 Add Expense
               </Button>
             </Link>
@@ -136,7 +134,12 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
                 </AddMembers>
               ) : null}
             </Button>
-            <Button size="sm" className="gap-1 text-sm" variant="secondary" onClick={inviteMembers}>
+            <Button
+              size="sm"
+              className="gap-1 text-sm lg:w-[180px]"
+              variant="secondary"
+              onClick={inviteMembers}
+            >
               {isInviteCopied ? (
                 <>
                   <Check className="h-4 w-4 text-gray-400" /> Copied

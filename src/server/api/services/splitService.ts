@@ -173,6 +173,11 @@ export async function createGroupExpense(
 
   // Execute all operations in a transaction
   const result = await db.$transaction(operations);
+  await updateGroupExpenseForIfBalanceIsZero(
+    paidBy,
+    participants.map((p) => p.userId),
+    currency,
+  );
   return result[0];
 }
 
@@ -268,7 +273,60 @@ export async function addUserExpense(
 
   // Execute all operations in a transaction
   const result = await db.$transaction(operations);
+  await updateGroupExpenseForIfBalanceIsZero(
+    paidBy,
+    participants.map((p) => p.userId),
+    currency,
+  );
   return result[0];
+}
+
+async function updateGroupExpenseForIfBalanceIsZero(
+  userId: number,
+  friendIds: Array<number>,
+  currency: string,
+) {
+  console.log('Checking for users with 0 balance to reflect in group');
+  const balances = await db.balance.findMany({
+    where: {
+      userId,
+      currency,
+      friendId: {
+        in: friendIds,
+      },
+      amount: 0,
+    },
+  });
+
+  console.log('Total balances needs to be updated:', balances.length);
+
+  if (balances.length) {
+    await db.groupBalance.updateMany({
+      where: {
+        userId,
+        firendId: {
+          in: friendIds,
+        },
+        currency,
+      },
+      data: {
+        amount: 0,
+      },
+    });
+
+    await db.groupBalance.updateMany({
+      where: {
+        userId: {
+          in: friendIds,
+        },
+        firendId: userId,
+        currency,
+      },
+      data: {
+        amount: 0,
+      },
+    });
+  }
 }
 
 export async function deleteExpense(expenseId: string) {

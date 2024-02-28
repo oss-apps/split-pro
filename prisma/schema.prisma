@@ -61,6 +61,7 @@ model User {
     groupFriendBalances GroupBalance[]       @relation("GroupFriendBalance")
     paidExpenses        Expense[]            @relation("PaidByUser")
     addedExpenses       Expense[]            @relation("AddedByUser")
+    deletedExpenses     Expense[]            @relation("DeletedByUser")
 }
 
 model VerificationToken {
@@ -144,9 +145,12 @@ model Expense {
     currency            String
     fileKey             String?
     groupId             Int?
+    deletedAt           DateTime?
+    deletedBy           Int?
     group               Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
     paidByUser          User                 @relation(name: "PaidByUser", fields: [paidBy], references: [id], onDelete: Cascade)
     addedByUser         User                 @relation(name: "AddedByUser", fields: [addedBy], references: [id], onDelete: Cascade)
+    deletedByUser       User?                @relation(name: "DeletedByUser", fields: [deletedBy], references: [id], onDelete: Cascade)
     expenseParticipants ExpenseParticipant[]
     expenseNotes        ExpenseNote[]
 

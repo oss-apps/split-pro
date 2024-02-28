@@ -329,7 +329,7 @@ async function updateGroupExpenseForIfBalanceIsZero(
   }
 }
 
-export async function deleteExpense(expenseId: string) {
+export async function deleteExpense(expenseId: string, deletedBy: number) {
   const expense = await db.expense.findUnique({
     where: {
       id: expenseId,
@@ -425,7 +425,15 @@ export async function deleteExpense(expenseId: string) {
     }
   }
 
-  operations.push(db.expense.delete({ where: { id: expenseId } }));
+  operations.push(
+    db.expense.update({
+      where: { id: expenseId },
+      data: {
+        deletedBy,
+        deletedAt: new Date(),
+      },
+    }),
+  );
 
   await db.$transaction(operations);
 }

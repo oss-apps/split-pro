@@ -16,8 +16,11 @@ function getPaymentString(
   expenseUserAmt: number,
   isSettlement: boolean,
   currency: string,
+  isDeleted?: boolean,
 ) {
-  if (isSettlement) {
+  if (isDeleted) {
+    return null;
+  } else if (isSettlement) {
     return (
       <div className={`${user.id === paidBy ? ' text-emerald-500' : 'text-orange-500'} text-sm`}>
         {user.id === paidBy ? 'You paid ' : 'You received '} {currency} {toUIString(amount)}
@@ -53,15 +56,28 @@ const ActivityPage: NextPage<{ user: User }> = ({ user }) => {
                   <UserAvatar user={e.expense.paidByUser} size={30} />
                 </div>
                 <div>
-                  <p className="text-gray-300">
-                    <span className="  font-semibold text-gray-300">
-                      {e.expense.paidBy === user.id
-                        ? 'You'
-                        : e.expense.paidByUser.name ?? e.expense.paidByUser.email}
-                    </span>
-                    {' paid for '}
-                    <span className=" font-semibold text-gray-300">{e.expense.name}</span>
-                  </p>
+                  {e.expense.deletedByUser ? (
+                    <p className="text-red-500 opacity-70">
+                      <span className="  font-semibold ">
+                        {e.expense.deletedBy === user.id
+                          ? 'You'
+                          : e.expense.deletedByUser.name ?? e.expense.deletedByUser.email}
+                      </span>
+                      {' deleted the expense '}
+                      <span className=" font-semibold ">{e.expense.name}</span>
+                    </p>
+                  ) : (
+                    <p className="text-gray-300">
+                      <span className="  font-semibold text-gray-300">
+                        {e.expense.paidBy === user.id
+                          ? 'You'
+                          : e.expense.paidByUser.name ?? e.expense.paidByUser.email}
+                      </span>
+                      {' paid for '}
+                      <span className=" font-semibold text-gray-300">{e.expense.name}</span>
+                    </p>
+                  )}
+
                   <div>
                     {getPaymentString(
                       user,
@@ -70,6 +86,7 @@ const ActivityPage: NextPage<{ user: User }> = ({ user }) => {
                       e.amount,
                       e.expense.splitType === SplitType.SETTLEMENT,
                       e.expense.currency,
+                      !!e.expense.deletedBy,
                     )}
                   </div>
                   <p className="text-xs text-gray-500">{format(e.expense.expenseDate, 'dd MMM')}</p>

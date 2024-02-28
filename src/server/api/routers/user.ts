@@ -182,6 +182,11 @@ export const userRouter = createTRPCRouter({
               },
             },
           ],
+          AND: [
+            {
+              deletedBy: null,
+            },
+          ],
         },
         orderBy: {
           createdAt: 'desc',
@@ -237,6 +242,7 @@ export const userRouter = createTRPCRouter({
           expenseNotes: true,
           addedByUser: true,
           paidByUser: true,
+          deletedByUser: true,
         },
       });
 
@@ -272,6 +278,14 @@ export const userRouter = createTRPCRouter({
         expense: {
           include: {
             paidByUser: {
+              select: {
+                name: true,
+                email: true,
+                image: true,
+                id: true,
+              },
+            },
+            deletedByUser: {
               select: {
                 name: true,
                 email: true,
@@ -343,7 +357,7 @@ export const userRouter = createTRPCRouter({
 
       console.log('Deleting expense', input.expenseId);
 
-      await deleteExpense(input.expenseId);
+      await deleteExpense(input.expenseId, ctx.session.user.id);
     }),
 
   submitFeedback: protectedProcedure

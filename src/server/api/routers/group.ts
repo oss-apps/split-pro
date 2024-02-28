@@ -156,6 +156,7 @@ export const groupRouter = createTRPCRouter({
       const expenses = await ctx.db.expense.findMany({
         where: {
           groupId: input.groupId,
+          deletedBy: null,
         },
         orderBy: {
           createdAt: 'desc',
@@ -163,6 +164,7 @@ export const groupRouter = createTRPCRouter({
         include: {
           expenseParticipants: true,
           paidByUser: true,
+          deletedByUser: true,
         },
       });
 

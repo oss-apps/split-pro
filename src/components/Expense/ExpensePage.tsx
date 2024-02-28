@@ -15,6 +15,7 @@ type ExpenseDetailsProps = {
     expenseParticipants: Array<ExpenseParticipant & { user: User }>;
     addedByUser: User;
     paidByUser: User;
+    deletedByUser: User | null;
   };
 };
 
@@ -35,10 +36,17 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
             <p className="text-2xl font-semibold">
               {expense.currency} {toUIString(expense.amount ?? 0)}
             </p>
-            <p className=" text-sm text-gray-500">
-              Added by {expense.addedByUser.name ?? expense.addedByUser.email} on{' '}
-              {format(expense.expenseDate, 'dd MMM yyyy')}
-            </p>
+            {expense.deletedByUser ? (
+              <p className=" text-sm text-orange-600">
+                Deleted by {expense.deletedByUser.name ?? expense.addedByUser.email} on{' '}
+                {format(expense.deletedAt ?? expense.expenseDate, 'dd MMM yyyy')}
+              </p>
+            ) : (
+              <p className=" text-sm text-gray-500">
+                Added by {expense.addedByUser.name ?? expense.addedByUser.email} on{' '}
+                {format(expense.expenseDate, 'dd MMM yyyy')}
+              </p>
+            )}
           </div>
         </div>
         <div>

@@ -47,8 +47,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({
         )}
       >
         <nav className="item-center -ml-[170px]  hidden w-[170px] px-4 py-4  lg:flex lg:flex-col lg:gap-2 ">
-          <div className="mb-8 flex items-center gap-2">
-            <Image src="/logo.svg" width={35} height={35} alt="logo"></Image>
+          <div className="mb-8 flex items-center gap-2 ">
+            <Image src="/logo.svg" width={35} height={35} alt="logo" className="rounded-lg"></Image>
+
             <span className="text-xl font-medium text-gray-300">SplitPro</span>
           </div>
           <NavItemDesktop

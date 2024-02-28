@@ -160,8 +160,6 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
 
   if (!isClient) return null;
 
-  console.log('isDesktop', isDesktop, open, disableTrigger);
-
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={localOnOpenChange}>

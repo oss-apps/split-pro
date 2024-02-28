@@ -1,32 +1,37 @@
 import Avatar from 'boring-avatars';
 import React, { useState } from 'react';
-import {
-  AppDrawer,
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerTrigger,
-} from '~/components/ui/drawer';
+import { AppDrawer } from '~/components/ui/drawer';
 import { Input } from '~/components/ui/input';
-import { Button } from '~/components/ui/button';
 import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
+import { Button } from '../ui/button';
+
+const groupSchema = z.object({
+  name: z.string({ required_error: 'Name is required' }).min(1, { message: 'Name is required' }),
+});
 
 export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [groupName, setGroupName] = useState('');
 
   const createGroup = api.group.create.useMutation(undefined);
   const utils = api.useUtils();
 
+  const groupForm = useForm<z.infer<typeof groupSchema>>({
+    resolver: zodResolver(groupSchema),
+  });
+
   const router = useRouter();
 
-  const handleSubmit = async () => {
+  async function onGroupSubmit(values: z.infer<typeof groupSchema>) {
+    console.log('hello');
     await createGroup.mutateAsync(
-      { name: groupName },
+      { name: values.name },
       {
         onSuccess: (data) => {
-          setGroupName('');
           utils.group.getAllGroupsWithBalances.refetch().catch(console.error);
           router
             .push(`/groups/${data.id}`)
@@ -35,7 +40,7 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
         },
       },
     );
-  };
+  }
 
   return (
     <>
@@ -50,36 +55,36 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
         title="Create a group"
         className="h-[70vh]"
         actionTitle="Submit"
-        shouldCloseOnAction
         actionOnClick={async () => {
-          await handleSubmit();
+          await groupForm.handleSubmit(onGroupSubmit)();
         }}
       >
-        <div className="">
-          <div className="mt-4 flex items-center gap-4">
-            <Avatar
-              size={50}
-              name={groupName}
-              variant="bauhaus"
-              // colors={['#ADDFD3', '#EAE3D0', '#DBC4B6', '#FFA5AA', '#EFD5C4']}
-              // colors={['#565175', '#538A95', '#67B79E', '#FFB727', '#E4491C']}
-              colors={['#80C7B7', '#D9C27E', '#F4B088', '#FFA5AA', '#9D9DD3']}
-            />
-            <Input
-              placeholder="Group name"
-              className="py-2 text-lg"
-              value={groupName}
-              onChange={(e) => setGroupName(e.target.value)}
-            />
-          </div>
-          {/* <div className="mx-auto mt-2 flex justify-center gap-4">
-            <div className="flex gap-6">
-              <Button onClick={handleSubmit}>Submit</Button>
-              <Button variant="secondary" onClick={() => setDrawerOpen(false)}>
-                Cancel
-              </Button>
-            </div>
-          </div> */}
+        <div className="w-full">
+          <Form {...groupForm}>
+            <form
+              onSubmit={groupForm.handleSubmit(onGroupSubmit)}
+              className="mt-4 flex w-full items-start gap-4"
+            >
+              <Avatar
+                size={50}
+                name={groupForm.watch('name')}
+                variant="bauhaus"
+                colors={['#80C7B7', '#D9C27E', '#F4B088', '#FFA5AA', '#9D9DD3']}
+              />
+              <FormField
+                control={groupForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl>
+                      <Input placeholder="Group name" className="w-full py-2 text-lg" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
         </div>
       </AppDrawer>
     </>

@@ -8,24 +8,53 @@ import { useState } from 'react';
 import { Input } from '~/components/ui/input';
 import { Separator } from '~/components/ui/separator';
 import { env } from '~/env';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '~/components/ui/form';
+
+const emailSchema = z.object({
+  email: z.string({ required_error: 'Email is required' }).email({ message: 'Invalid email' }),
+});
+
+const otpSchema = z.object({
+  otp: z.string({ required_error: 'OTP is required' }).length(5, { message: 'Invalid OTP' }),
+});
 
 export default function Home() {
   const callbackUrl = env.NEXT_PUBLIC_URL;
 
-  const [email, setEmail] = useState('');
-  const [magicCode, setMagicCode] = useState('');
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
 
-  async function sendMagicLink() {
+  const emailForm = useForm<z.infer<typeof emailSchema>>({
+    resolver: zodResolver(emailSchema),
+  });
+
+  const otpForm = useForm<z.infer<typeof otpSchema>>({
+    resolver: zodResolver(otpSchema),
+  });
+
+  async function onEmailSubmit(values: z.infer<typeof emailSchema>) {
     setEmailStatus('sending');
-    const res = await signIn('email', { email: email.toLowerCase(), redirect: false });
+    await signIn('email', { email: values.email.toLowerCase(), redirect: false });
     setEmailStatus('success');
   }
 
-  async function submitMagicCode() {
+  async function onOTPSubmit(values: z.infer<typeof otpSchema>) {
+    const email = emailForm.getValues().email;
+    console.log('email', email);
+
     window.location.href = `/api/auth/callback/email?email=${encodeURIComponent(
       email,
-    )}&token=${magicCode}${callbackUrl ? `&callbackUrl=${callbackUrl}` : ''}`;
+    )}&token=${values.otp}${callbackUrl ? `&callbackUrl=${callbackUrl}` : ''}`;
   }
 
   return (
@@ -64,36 +93,62 @@ export default function Home() {
               <p className="mt-6 w-[300px] text-center text-sm">
                 We have sent an email with the OTP. Please check your inbox
               </p>
-              <Input
-                placeholder="Enter magic code"
-                className="mt-6 w-[300px] text-lg"
-                value={magicCode}
-                onChange={(e) => setMagicCode(e.target.value)}
-              />
-              <Button
-                className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
-                onClick={submitMagicCode}
-                disabled={magicCode.length !== 5}
-              >
-                Submit
-              </Button>
+              <Form {...otpForm}>
+                <form onSubmit={otpForm.handleSubmit(onOTPSubmit)} className="mt-6 space-y-8">
+                  <FormField
+                    control={otpForm.control}
+                    name="otp"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your OTP"
+                            className=" w-[300px] text-lg"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100">
+                    Submit
+                  </Button>
+                </form>
+              </Form>
             </>
           ) : (
             <>
-              <Input
-                placeholder="Enter your email"
-                className="mt-6 w-[300px] text-lg"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <Button
-                className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
-                onClick={sendMagicLink}
-                disabled={emailStatus === 'sending'}
-              >
-                {emailStatus === 'sending' ? 'Sending...' : 'Send magic link'}
-              </Button>
+              <Form {...emailForm}>
+                <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="mt-6 space-y-8">
+                  <FormField
+                    control={emailForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your email"
+                            className=" w-[300px] text-lg"
+                            type="email"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
+                    type="submit"
+                    disabled={emailStatus === 'sending'}
+                  >
+                    {emailStatus === 'sending' ? 'Sending...' : 'Send magic link'}
+                  </Button>
+                </form>
+              </Form>
             </>
           )}
         </div>

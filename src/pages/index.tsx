@@ -26,16 +26,16 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="min-h-screen">
-        <nav className="sticky mx-auto flex max-w-5xl items-center justify-between  py-4  lg:py-5">
-          <div className="flex items-center gap-4">
-            <Image src="./logo.svg" alt="logo" className="rounded-full" width={40} height={40} />
+        <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4   py-4 lg:px-0 lg:py-5">
+          <div className="flex items-center gap-2">
+            <Image src="/logo.svg" alt="logo" className="rounded-lg" width={35} height={35} />
             <p className="text-2xl font-bold">SplitPro</p>
           </div>
         </nav>
-        <div className="mx-auto mt-20 flex max-w-5xl  items-start gap-8 ">
+        <div className="mx-auto mt-20 flex w-full items-start  gap-8 px-4 lg:max-w-5xl lg:px-0 ">
           <div>
-            <div className="h-[70vh]">
-              <h1 className="max-w-3xl text-2xl font-semibold leading-loose text-gray-100  lg:text-5xl lg:leading-[4rem]">
+            <div className=" mb-32 text-center lg:mb-0 lg:h-[70vh] lg:text-left">
+              <h1 className="max-w-3xl text-center text-2xl font-semibold leading-loose text-gray-100 lg:text-left lg:text-5xl lg:leading-[4rem]">
                 Split Expenses with your friends for{' '}
                 <span className="font-bold text-primary">free</span>.
               </h1>
@@ -50,113 +50,142 @@ export default function Home() {
                 and <span className="text-primary">PWA</span> alternative of SplitWise
               </h2>
               <div className="mt-10 flex flex-col">
-                <Link href="/auth/signin">
+                <Link href="/auth/signin" className="mx-auto lg:mx-0">
                   <Button className="flex w-[200px] items-center gap-2 rounded-full">
                     Add Expense <ArrowRight size={15} />{' '}
                   </Button>
                 </Link>
               </div>
             </div>
-            <div className=" flex flex-col gap-12">
+            <div className="mb-20 mt-8 flex justify-center lg:hidden">
+              <MobileScreenShot />
+            </div>
+            <div className=" flex flex-col gap-20 text-center lg:text-left">
               <p className="text-2xl">Features</p>
 
-              <div className="flex gap-8">
-                <div className="flex w-1/2 flex-col gap-1">
-                  <Users className="h-6 w-6 text-primary" />
-                  <p className="text-lg font-medium">Groups and Friends</p>
-                  <p className="text-gray-400">
+              <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
+                <div className="flex flex-col gap-1 lg:w-1/2">
+                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
+                    <Users className="h-6 w-6 text-primary" />
+                    <p className="text-lg font-medium">Groups and Friends</p>
+                  </div>
+                  <p className="px-4 text-gray-400 lg:px-0">
                     Can create multiple users or add balance directly everything will be synced
                   </p>
                 </div>
 
-                <div className="flex w-1/2 flex-col gap-1">
-                  <Banknote className="h-6 w-6 text-primary" />
-                  <p className="text-lg font-medium">Multiple currencies</p>
-                  <p className="text-gray-400">
+                <div className="flex flex-col gap-1 lg:w-1/2">
+                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
+                    <Banknote className="h-6 w-6 text-primary" />
+                    <p className="text-lg font-medium">Multiple currencies</p>
+                  </div>
+                  <p className="px-4 text-gray-400 lg:px-0">
                     Can create multiple users or add balance directly everything will be synced
                   </p>
                 </div>
               </div>
 
-              <div className="flex gap-10">
-                <div className="flex w-1/2 flex-col gap-1">
-                  <Split className="h-6 w-6 text-primary" />
-                  <p className="text-lg font-medium">Unequal Split</p>
-                  <p className="text-gray-400">
+              <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
+                <div className="flex flex-col gap-1 lg:w-1/2">
+                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
+                    <Split className="h-6 w-6 text-primary" />
+                    <p className="text-lg font-medium">Unequal Split</p>
+                  </div>
+                  <p className="px-4 text-gray-400 lg:px-0">
                     Split equally or by shares, percentage or exact amounts.
                   </p>
                 </div>
 
-                <div className="flex w-1/2 flex-col gap-1">
-                  <Globe className="h-6 w-6 text-primary" />
-                  <p className="text-lg font-medium">PWA support</p>
-                  <p className="text-gray-400">Add to home screen and use it as an app</p>
-                </div>
-              </div>
-
-              <div className="flex gap-10">
-                <div className="flex w-1/2 flex-col gap-1">
-                  <FileUp className="h-6 w-6 text-primary" />
-                  <p className="text-lg font-medium">Upload Receipts</p>
-                  <p className="text-gray-400">Upload receipts along with the expense</p>
-                </div>
-
-                <div className="flex w-1/2 flex-col gap-1">
-                  <Sigma className="h-6 w-6 text-primary" />
-                  <p className="text-lg font-medium">Total balance</p>
-                  <p className="text-gray-400">
-                    Consolidated across groups and individual expenses
+                <div className="flex flex-col gap-1 lg:w-1/2">
+                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
+                    <Globe className="h-6 w-6 text-primary" />
+                    <p className="text-lg font-medium">PWA support</p>
+                  </div>
+                  <p className="px-4 text-gray-400 lg:px-0">
+                    Add to home screen and use it as an app
                   </p>
                 </div>
               </div>
 
-              <div className="flex gap-10">
-                <div className="flex w-1/2 flex-col gap-1">
-                  <Ban className="h-6 w-6 text-primary" />
-                  <p className="text-lg font-medium">No ads</p>
+              <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
+                <div className="flex flex-col gap-1 lg:w-1/2">
+                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
+                    <FileUp className="h-6 w-6 text-primary" />
+                    <p className="text-lg font-medium">Upload Receipts</p>
+                  </div>
+                  <p className="px-4 text-gray-400 lg:px-0">
+                    Upload receipts along with the expense
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-1 lg:w-1/2">
+                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
+                    <Sigma className="h-6 w-6 text-primary" />
+                    <p className="text-lg font-medium">Total balance</p>
+                  </div>
+                  <p className="px-4 text-gray-400 lg:px-0">
+                    Consolidated across groups and individual expenses
+                  </p>{' '}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
+                <div className="flex flex-col gap-1 lg:w-1/2">
+                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
+                    <Ban className="h-6 w-6 text-primary" />
+                    <p className="text-lg font-medium">No ads</p>
+                  </div>
                   <p className="text-gray-400">Upload receipts along with the expense</p>
                 </div>
 
-                <div className="flex w-1/2 flex-col gap-1">
-                  <GitFork className="h-6 w-6 text-primary" />
-                  <p className="text-lg font-medium">Open source</p>
-                  <p className="text-gray-400">
+                <div className="flex flex-col gap-1 lg:w-1/2">
+                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
+                    <GitFork className="h-6 w-6 text-primary" />
+                    <p className="text-lg font-medium">Open source</p>
+                  </div>
+                  <p className="px-4 text-gray-400 lg:px-0">
                     Which makes it hard to become evil. Easy to self host
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="mb-20 mt-24 flex flex-col gap-8">
+            <div className="mb-20 mt-24 flex flex-col gap-8 text-center lg:text-left">
               <div>
                 Built by <a className=" text-primary">KM Koushik</a>
                 <p className="text-gray-400">
                   A product of <a className="underline underline-offset-2">ossapps.dev</a>
                 </p>
               </div>
-              <div className="flex gap-4">
+              <div className="flex justify-center gap-4 lg:justify-start">
                 <a className="text-primary">x</a>
                 <a className="text-primary">Github</a>
                 <a className="text-primary">ProductHunt</a>
               </div>
             </div>
           </div>
-          <div className="sticky top-40 shrink-0">
-            <BackgroundGradient>
-              <Image
-                src="/hero.png"
-                className=" rounded-[22px] border"
-                width={300}
-                height={550}
-                alt="hero"
-              />
-            </BackgroundGradient>
+          <div className="sticky top-40 hidden shrink-0 lg:flex">
+            <MobileScreenShot />
           </div>
         </div>
       </main>
     </>
   );
 }
+
+const MobileScreenShot = () => {
+  return (
+    <BackgroundGradient>
+      <Image
+        src="/hero.png"
+        className=" rounded-[22px] border"
+        width={300}
+        height={550}
+        alt="hero"
+      />
+    </BackgroundGradient>
+  );
+};
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);

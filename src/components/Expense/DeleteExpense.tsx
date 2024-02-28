@@ -30,7 +30,12 @@ export const DeleteExpense: React.FC<{
       await router.replace(`/groups/${groupId}`);
       return;
     }
-    await router.replace(`/balances/${friendId}`);
+    if (friendId) {
+      await router.replace(`/balances/${friendId}`);
+      return;
+    }
+
+    await router.replace(`/balances`);
   };
 
   return (

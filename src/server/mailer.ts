@@ -6,7 +6,11 @@ const resend = new Resend(env.RESEND_API_KEY);
 
 export async function sendSignUpEmail(email: string, token: string, url: string) {
   const { host } = new URL(url);
-  console.log('Sending sign in email', email);
+
+  if (env.NODE_ENV === 'development') {
+    console.log('Sending sign in email', email, url, token);
+    return;
+  }
 
   const response = await resend.emails.send({
     from: env.FROM_EMAIL,

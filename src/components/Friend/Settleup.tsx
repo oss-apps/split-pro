@@ -33,7 +33,7 @@ export const SettleUp: React.FC<{ balances: Array<Balance>; friend: User; curren
   const utils = api.useUtils();
 
   function saveExpense() {
-    if (!balanceToSettle) {
+    if (!balanceToSettle || !amount || !parseFloat(amount)) {
       return;
     }
 
@@ -67,7 +67,7 @@ export const SettleUp: React.FC<{ balances: Array<Balance>; friend: User; curren
         trigger={
           <Button
             size="sm"
-            className="flex items-center gap-2 rounded-md border bg-cyan-500 px-3 text-sm  font-normal text-black focus:bg-cyan-600 focus:ring-0 focus-visible:outline-none lg:w-[180px] "
+            className="flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500 px-3  text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 focus-visible:outline-none lg:w-[180px] "
           >
             Settle up
           </Button>

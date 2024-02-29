@@ -7,6 +7,8 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import Image from 'next/image';
 import { type SplitwiseUser } from '~/types';
+import { api } from '~/utils/api';
+import { Button } from '~/components/ui/button';
 
 const ImportSpliwisePage: NextPage<{ user: User }> = ({ user }) => {
   const [usersWithBalance, setUsersWithBalance] = useState<Array<SplitwiseUser>>([]);
@@ -23,7 +25,7 @@ const ImportSpliwisePage: NextPage<{ user: User }> = ({ user }) => {
       const friendsWithOutStandingBalance: Array<SplitwiseUser> = [];
       for (const friend of json.friends as Array<Record<string, unknown>>) {
         const balance = friend.balance as Array<{ currency_code: string; amount: string }>;
-        if (balance.length) {
+        if (balance.length && friend.registration_status === 'confirmed') {
           friendsWithOutStandingBalance.push(friend as SplitwiseUser);
         }
       }
@@ -35,6 +37,12 @@ const ImportSpliwisePage: NextPage<{ user: User }> = ({ user }) => {
       toast.error('Error importing file');
     }
   };
+
+  const importMutation = api.user.importUsersFromSplitWise.useMutation();
+
+  function onImport() {
+    importMutation.mutate(usersWithBalance);
+  }
 
   return (
     <>
@@ -73,6 +81,8 @@ const ImportSpliwisePage: NextPage<{ user: User }> = ({ user }) => {
             ))}
           </div>
         ) : null}
+
+        <Button onClick={onImport}>Import</Button>
       </div>
     </>
   );

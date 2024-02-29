@@ -20,6 +20,7 @@ import {
   ArrowRightIcon,
   Bug,
   ChevronRight,
+  Download,
   Edit,
   Github,
   Heart,
@@ -152,6 +153,12 @@ const AccountPage: NextPage<{ user: User }> = ({ user }) => {
                 ></Textarea>
               </div>
             </AppDrawer>
+          </div>
+          <div>
+            <Link className="mt-8 flex gap-2 " href="/import-splitwise">
+              <Download />
+              Import from Splitwise
+            </Link>
           </div>
           <div className="mt-20 flex justify-center">
             <Button variant="ghost" className="text-orange-600" onClick={() => signOut()}>

@@ -1,4 +1,4 @@
-import { type SplitType } from '@prisma/client';
+import { type User, type SplitType } from '@prisma/client';
 import { db } from '~/server/db';
 import { type SplitwiseUser } from '~/types';
 import { toInteger } from '~/utils/numbers';
@@ -439,34 +439,125 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
   await db.$transaction(operations);
 }
 
-// export async function importUserBalanceFromSplitWise(
-//   currentUserId: number,
-//   users: SplitwiseUser[],
-// ) {
-//   const operations = [];
+export async function importUserBalanceFromSplitWise(
+  currentUserId: number,
+  splitWiseUsers: SplitwiseUser[],
+) {
+  const operations = [];
 
-//   for (const user of users) {
-//     operations.push(
-//       db.balance.upsert({
-//         where: {
-//           userId_currency_friendId: {
-//             userId: user.id,
-//             currency: user.balance[0].currency_code,
-//             friendId: 0,
-//           },
-//         },
-//         update: {
-//           amount: toInteger(user.balance[0].amount),
-//         },
-//         create: {
-//           userId: user.id,
-//           currency: user.balance[0].currency_code,
-//           friendId: 0,
-//           amount: toInteger(user.balance[0].amount),
-//         },
-//       }),
-//     );
-//   }
+  const users = await createUsersFromSplitwise(splitWiseUsers);
 
-//   await db.$transaction(operations);
-// }
+  const userMap = users.reduce(
+    (acc, user) => {
+      if (user.email) {
+        acc[user.email] = user;
+      }
+
+      return acc;
+    },
+    {} as Record<string, User>,
+  );
+
+  for (const user of splitWiseUsers) {
+    const dbUser = userMap[user.email];
+    if (!dbUser) {
+      continue;
+    }
+
+    for (const balance of user.balance) {
+      const amount = toInteger(parseFloat(balance.amount));
+      const currency = balance.currency_code;
+
+      operations.push(
+        db.balance.upsert({
+          where: {
+            userId_currency_friendId: {
+              userId: currentUserId,
+              currency,
+              friendId: dbUser.id,
+            },
+            importedFromSplitWise: false,
+          },
+          update: {
+            amount: {
+              increment: amount,
+            },
+            importedFromSplitWise: true,
+          },
+          create: {
+            userId: currentUserId,
+            currency,
+            friendId: dbUser.id,
+            amount,
+            importedFromSplitWise: true,
+          },
+        }),
+      );
+
+      operations.push(
+        db.balance.upsert({
+          where: {
+            userId_currency_friendId: {
+              userId: dbUser.id,
+              currency,
+              friendId: currentUserId,
+            },
+            importedFromSplitWise: false,
+          },
+          update: {
+            amount: {
+              increment: -amount,
+            },
+            importedFromSplitWise: true,
+          },
+          create: {
+            userId: dbUser.id,
+            currency,
+            friendId: currentUserId,
+            amount: -amount,
+            importedFromSplitWise: true,
+          },
+        }),
+      );
+    }
+  }
+
+  await db.$transaction(operations);
+}
+
+async function createUsersFromSplitwise(users: Array<SplitwiseUser>) {
+  const userEmails = users.map((u) => u.email);
+
+  const existingUsers = await db.user.findMany({
+    where: {
+      email: {
+        in: userEmails,
+      },
+    },
+  });
+
+  const existingUserMap: Record<string, boolean> = {};
+
+  for (const user of existingUsers) {
+    if (user.email) {
+      existingUserMap[user.email] = true;
+    }
+  }
+
+  const newUsers = users.filter((u) => !existingUserMap[u.email]);
+
+  await db.user.createMany({
+    data: newUsers.map((u) => ({
+      email: u.email,
+      name: `${u.first_name} ${u.last_name}`,
+    })),
+  });
+
+  return db.user.findMany({
+    where: {
+      email: {
+        in: userEmails,
+      },
+    },
+  });
+}

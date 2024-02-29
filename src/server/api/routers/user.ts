@@ -2,7 +2,11 @@ import { SplitType } from '@prisma/client';
 import { boolean, z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
-import { addUserExpense, deleteExpense } from '../services/splitService';
+import {
+  addUserExpense,
+  deleteExpense,
+  importUserBalanceFromSplitWise,
+} from '../services/splitService';
 import { TRPCError } from '@trpc/server';
 import { randomUUID } from 'crypto';
 import { getDocumentUploadUrl } from '~/server/storage';
@@ -368,14 +372,8 @@ export const userRouter = createTRPCRouter({
     }),
 
   importUsersFromSplitWise: protectedProcedure
-    .input(z.object({ usersWithBalance: z.array(SplitwiseUserSchema) }))
+    .input(z.array(SplitwiseUserSchema))
     .mutation(async ({ input, ctx }) => {
-      const users = input.usersWithBalance.map((u) => {
-        return {
-          email: u.email,
-          name: u.first_name,
-          image: u.picture.medium,
-        };
-      });
+      await importUserBalanceFromSplitWise(ctx.session.user.id, input);
     }),
 });

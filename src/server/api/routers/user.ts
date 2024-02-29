@@ -8,6 +8,7 @@ import { randomUUID } from 'crypto';
 import { getDocumentUploadUrl } from '~/server/storage';
 import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { sendFeedbackEmail } from '~/server/mailer';
+import { SplitwiseUserSchema } from '~/types';
 
 export const userRouter = createTRPCRouter({
   getBalances: protectedProcedure.query(async ({ ctx }) => {
@@ -364,5 +365,17 @@ export const userRouter = createTRPCRouter({
     .input(z.object({ feedback: z.string().min(10) }))
     .mutation(async ({ input, ctx }) => {
       await sendFeedbackEmail(input.feedback, ctx.session.user);
+    }),
+
+  importUsersFromSplitWise: protectedProcedure
+    .input(z.object({ usersWithBalance: z.array(SplitwiseUserSchema) }))
+    .mutation(async ({ input, ctx }) => {
+      const users = input.usersWithBalance.map((u) => {
+        return {
+          email: u.email,
+          name: u.first_name,
+          image: u.picture.medium,
+        };
+      });
     }),
 });

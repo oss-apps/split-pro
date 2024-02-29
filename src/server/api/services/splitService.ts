@@ -1,5 +1,6 @@
 import { type SplitType } from '@prisma/client';
 import { db } from '~/server/db';
+import { type SplitwiseUser } from '~/types';
 import { toInteger } from '~/utils/numbers';
 
 export async function joinGroup(userId: number, publicGroupId: string) {
@@ -437,3 +438,35 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
 
   await db.$transaction(operations);
 }
+
+// export async function importUserBalanceFromSplitWise(
+//   currentUserId: number,
+//   users: SplitwiseUser[],
+// ) {
+//   const operations = [];
+
+//   for (const user of users) {
+//     operations.push(
+//       db.balance.upsert({
+//         where: {
+//           userId_currency_friendId: {
+//             userId: user.id,
+//             currency: user.balance[0].currency_code,
+//             friendId: 0,
+//           },
+//         },
+//         update: {
+//           amount: toInteger(user.balance[0].amount),
+//         },
+//         create: {
+//           userId: user.id,
+//           currency: user.balance[0].currency_code,
+//           friendId: 0,
+//           amount: toInteger(user.balance[0].amount),
+//         },
+//       }),
+//     );
+//   }
+
+//   await db.$transaction(operations);
+// }

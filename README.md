@@ -27,7 +27,7 @@ It currently has most of the important features.
 - Overall balances across the groups
 - Multiple currency support
 - Upload expense bills
-- PWA support (Sorry EU iOS users 🙏)
+- PWA support
 - Split expense unequally (share, percentage, exact amounts)
 
 **More features coming every day**

@@ -1,28 +1,50 @@
-# Create T3 App
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+<p align="center" style="margin-top: 12px">
+  <a href="https://splitpro.app">
+   <img width="250px" src="https://avatars.githubusercontent.com/u/135225712?s=400&u=72ad315d63b0326e5bb34377c3f59389373edc9a&v=4" alt="UnInbox Logo">
+  </a>
 
-## What's next? How do I make an app with this?
+  <h1 align="center">SplitPro</h1>
+  <h2 align="center">An open source alternative to Splitwise</h2>
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+<p align="center">
+    <a href="https://splitpro.app"><strong>To our Website & App »</strong></a>
+    <br />
+    <br />
+  </p>
+</p>
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
 
-## Learn More
+## About
+SplitPro aims to provide an open-source way to share expenses with your friends.
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+It's meant to be a complete replacement for Splitwise.
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+It currently has most of the important features.
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+- Add expenses with an individual or groups
+- Overall balances across the groups
+- Multiple currency support
+- Upload expense bills
+- PWA support (Sorry EU iOS users 🙏)
+- Split expense unequally (share, percentage, exact amounts)
 
-## How do I deploy this?
+**More features coming every day**
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+
+---
+
+## Why
+
+Splitwise is one of the best apps to add expenses and bills.
+
+I totally get it that every app needs to make money, After all, lots of effort has been put into Spliwise. My main problem is how they implemented this.
+
+Making pro features or asking money to remove ads is fine, But asking money for adding Expenses (Core feature) is frustrating.
+
+I was searching for other open-source alternatives (Let's be honest, any closed-source product might do the same and I don't have any reason to believe otherwise).
+
+I managed to find a good app [spliit.app](https://spliit.app/) by [Sebastien Castiel](https://scastiel.dev/) but it's not a complete replacement and didn't suit my workflow sadly. You should check it out.
+
+_That's when I decided to work on this_

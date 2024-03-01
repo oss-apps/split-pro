@@ -6,7 +6,6 @@ import { type GetServerSideProps } from 'next';
 import { getServerAuthSession } from '~/server/auth';
 import { useState } from 'react';
 import { Input } from '~/components/ui/input';
-import { Separator } from '~/components/ui/separator';
 import { env } from '~/env';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -17,7 +16,6 @@ import {
   FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '~/components/ui/form';
 

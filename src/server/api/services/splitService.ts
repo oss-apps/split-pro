@@ -33,6 +33,7 @@ export async function createGroupExpense(
   currency: string,
   participants: { userId: number; amount: number }[],
   currentUserId: number,
+  expenseDate: Date,
   fileKey?: string,
 ) {
   const operations = [];
@@ -58,6 +59,7 @@ export async function createGroupExpense(
         },
         fileKey,
         addedBy: currentUserId,
+        expenseDate,
       },
     }),
   );
@@ -190,6 +192,7 @@ export async function addUserExpense(
   currency: string,
   participants: { userId: number; amount: number }[],
   currentUserId: number,
+  expenseDate: Date,
   fileKey?: string,
 ) {
   const operations = [];
@@ -212,6 +215,7 @@ export async function addUserExpense(
         },
         fileKey,
         addedBy: currentUserId,
+        expenseDate,
       },
     }),
   );

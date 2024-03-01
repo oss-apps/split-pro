@@ -8,7 +8,7 @@ import { type User } from '@prisma/client';
 import { api } from '~/utils/api';
 import Link from 'next/link';
 import { UserAvatar } from '~/components/ui/avatar';
-import { ChevronRight, Github, Heart, MessageSquare, Pencil } from 'lucide-react';
+import { ChevronRight, Download, Github, Heart, MessageSquare, Pencil } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { AppDrawer } from '~/components/ui/drawer';
 import { Input } from '~/components/ui/input';
@@ -163,7 +163,49 @@ const AccountPage: NextPage<{ user: User }> = ({ user }) => {
                 ></Textarea>
               </div>
             </AppDrawer>
+            <AppDrawer
+              trigger={
+                <div className="flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300 hover:text-foreground/80">
+                  <div className="flex items-center gap-2">
+                    <Download className="h-5 w-5 text-blue-500" />
+                    Download App
+                  </div>
+                  <ChevronRight className="h-6x w-6 text-gray-500" />
+                </div>
+              }
+              leftAction="Close"
+              title="Download App"
+              className="h-[70vh]"
+              shouldCloseOnAction
+            >
+              <div className="flex flex-col gap-8">
+                <p>You can download SplitPro as a PWA to your home screen</p>
+
+                <p>
+                  If you are using iOS, checkout this{' '}
+                  <a
+                    className="text-cyan-500 underline"
+                    href="https://www.youtube.com/watch?v=Tta2h1HdxTk"
+                    target="_blank"
+                  >
+                    video
+                  </a>
+                </p>
+
+                <p>
+                  If you are using Android, checkout this{' '}
+                  <a
+                    className="text-cyan-500 underline"
+                    href="https://web.dev/learn/pwa/installation#android_installation"
+                    target="_blank"
+                  >
+                    Article
+                  </a>
+                </p>
+              </div>
+            </AppDrawer>
           </div>
+
           <div className="mt-20 flex justify-center">
             <Button
               variant="ghost"

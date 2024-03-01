@@ -157,6 +157,7 @@ export const AddExpensePage: React.FC = () => {
   const currency = useAddExpenseStore((s) => s.currency);
   const category = useAddExpenseStore((s) => s.category);
   const description = useAddExpenseStore((s) => s.description);
+  const isFileUploading = useAddExpenseStore((s) => s.isFileUploading);
 
   const { setCurrency, setCategory, setDescription, setAmount, resetState } = useAddExpenseStore(
     (s) => s.actions,
@@ -193,6 +194,7 @@ export const AddExpensePage: React.FC = () => {
           paidBy: paidBy.id,
           category,
           fileKey,
+          expenseDate: date,
         },
         {
           onSuccess: (d) => {
@@ -204,6 +206,7 @@ export const AddExpensePage: React.FC = () => {
         },
       );
     } else {
+      console.log('Dateeee', date?.toString());
       addExpenseMutation.mutate(
         {
           name: description,
@@ -217,6 +220,7 @@ export const AddExpensePage: React.FC = () => {
           paidBy: paidBy.id,
           category,
           fileKey,
+          expenseDate: date,
         },
         {
           onSuccess: (d) => {
@@ -357,56 +361,64 @@ export const AddExpensePage: React.FC = () => {
                 onChange={(e) => onUpdateAmount(e.target.value)}
               />
             </div>
-            <SplitTypeSection />
+            {!amount || description === '' ? null : (
+              <>
+                <SplitTypeSection />
 
-            <div className="mt-4 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <Popover>
-                  <PopoverTrigger asChild>
+                <div className="mt-4 flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className={cn(
+                            ' justify-start px-0 text-left font-normal',
+                            !date && 'text-muted-foreground',
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-6 w-6 text-cyan-500" />
+                          {date ? (
+                            format(date, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? (
+                              'Today'
+                            ) : (
+                              format(date, 'MMM dd')
+                            )
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <UploadFile />
+
                     <Button
-                      variant="ghost"
-                      className={cn(
-                        ' justify-start px-0 text-left font-normal',
-                        !date && 'text-muted-foreground',
-                      )}
+                      className=" min-w-[100px]"
+                      size="sm"
+                      loading={
+                        addExpenseMutation.isLoading ||
+                        addGroupExpenseMutation.isLoading ||
+                        isFileUploading
+                      }
+                      disabled={
+                        addExpenseMutation.isLoading ||
+                        addGroupExpenseMutation.isLoading ||
+                        !amount ||
+                        description === '' ||
+                        isFileUploading
+                      }
+                      onClick={() => addExpense()}
                     >
-                      <CalendarIcon className="mr-2 h-6 w-6 text-cyan-500" />
-                      {date ? (
-                        format(date, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? (
-                          'Today'
-                        ) : (
-                          format(date, 'MMM dd')
-                        )
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
+                      Submit
                     </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <div className="flex items-center gap-4">
-                <UploadFile />
-
-                <Button
-                  className=" min-w-[100px] bg-cyan-500 text-black"
-                  variant="outline"
-                  size="sm"
-                  loading={addExpenseMutation.isLoading || addGroupExpenseMutation.isLoading}
-                  disabled={
-                    addExpenseMutation.isLoading ||
-                    addGroupExpenseMutation.isLoading ||
-                    !amount ||
-                    description === ''
-                  }
-                  onClick={() => addExpense()}
-                >
-                  Submit
-                </Button>
-              </div>
-            </div>
+                  </div>
+                </div>
+              </>
+            )}
           </>
         )}
       </div>

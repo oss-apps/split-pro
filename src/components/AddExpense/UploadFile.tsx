@@ -63,6 +63,7 @@ export const UploadFile: React.FC = () => {
       }
 
       setFileKey(key);
+      console.log('Setting file key', key);
     } catch (error) {
       console.error('Error getting upload url:', error);
       toast.error(`Error uploading file`);
@@ -70,34 +71,6 @@ export const UploadFile: React.FC = () => {
 
     setFileUploading(false);
   };
-
-  // const uploadFile = async () => {
-  //   if (!file) return;
-
-  //   setUploading(true);
-  //   const fileType = file.type;
-  //   const key = `uploads/${file.name}`;
-  //   try {
-  //     const uploadUrl = await getDocumentUploadUrl(key, fileType);
-  //     const response = await fetch(uploadUrl, {
-  //       method: 'PUT',
-  //       headers: {
-  //         'Content-Type': fileType,
-  //       },
-  //       body: file,
-  //     });
-  //     if (response.ok) {
-  //       alert('File uploaded successfully');
-  //     } else {
-  //       alert('Failed to upload file');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error uploading file:', error);
-  //     alert('Error uploading file');
-  //   } finally {
-  //     setUploading(false);
-  //   }
-  // };
 
   return (
     <div>

@@ -126,6 +126,7 @@ export const groupRouter = createTRPCRouter({
         currency: z.string(),
         participants: z.array(z.object({ userId: z.number(), amount: z.number() })),
         fileKey: z.string().optional(),
+        expenseDate: z.date().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -140,6 +141,7 @@ export const groupRouter = createTRPCRouter({
           input.currency,
           input.participants,
           ctx.session.user.id,
+          input.expenseDate ?? new Date(),
           input.fileKey,
         );
 

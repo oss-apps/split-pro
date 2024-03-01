@@ -67,8 +67,7 @@ export default function Home() {
       <main className="flex h-full flex-col justify-center">
         <div className="flex -translate-y-1/2 flex-col items-center">
           <div className="mb-10 flex items-center gap-4">
-            <Image src="../logo.svg" alt="logo" className="rounded-full" width={40} height={40} />
-            <p className="text-2xl font-bold">SplitPro</p>
+            <p className="text-3xl text-primary">SplitPro</p>
           </div>
           <Button
             className="mx-auto flex w-[300px] items-center gap-2 bg-white hover:bg-gray-100 focus:bg-gray-100"

@@ -28,7 +28,6 @@ export default function Home() {
       <main className="min-h-screen">
         <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4   py-4 lg:px-0 lg:py-5">
           <div className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="logo" className="rounded-lg" width={35} height={35} />
             <p className="text-2xl font-bold">SplitPro</p>
           </div>
         </nav>
@@ -177,29 +176,12 @@ const MobileScreenShot = () => {
   return (
     <BackgroundGradient>
       <Image
-        src="/hero.png"
-        className=" rounded-[22px] border"
+        src="/hero.webp"
+        className=" rounded-[22px] border bg-background"
         width={300}
         height={550}
         alt="hero"
       />
     </BackgroundGradient>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getServerAuthSession(context);
-
-  if (session) {
-    return {
-      redirect: {
-        destination: '/balances',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
 };

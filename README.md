@@ -1,7 +1,7 @@
 
 <p align="center" style="margin-top: 12px">
   <a href="https://splitpro.app">
-   <img width="250px" src="https://avatars.githubusercontent.com/u/135225712?s=400&u=72ad315d63b0326e5bb34377c3f59389373edc9a&v=4" alt="UnInbox Logo">
+  <img width="100px"  style="border-radius: 50%;" src="https://split-pro-dev.up.railway.app/logo_circle.png" alt="SplitPro Logo">
   </a>
 
   <h1 align="center">SplitPro</h1>

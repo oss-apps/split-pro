@@ -48,7 +48,6 @@ export const api = createTRPCNext<AppRouter>({
         defaultOptions: {
           queries: {
             staleTime: Infinity,
-            networkMode: 'offlineFirst',
           },
         },
       },

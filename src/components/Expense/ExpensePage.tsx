@@ -8,6 +8,7 @@ import { AppDrawer, Drawer, DrawerContent, DrawerTrigger } from '../ui/drawer';
 import { Separator } from '../ui/separator';
 import { CategoryIcons } from '../ui/categoryIcons';
 import { Banknote } from 'lucide-react';
+import { env } from '~/env';
 
 type ExpenseDetailsProps = {
   user: User;
@@ -54,7 +55,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
             <AppDrawer
               trigger={
                 <Image
-                  src={`https://pub-0624a769b22d4450bc688b50eb3fbd4e.r2.dev/${expense.fileKey}`}
+                  src={`${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${expense.fileKey}`}
                   alt="Expense receipt"
                   width={56}
                   height={56}
@@ -67,7 +68,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
             >
               <div className="mb-8 overflow-scroll">
                 <Image
-                  src={`https://pub-0624a769b22d4450bc688b50eb3fbd4e.r2.dev/${expense.fileKey}`}
+                  src={`${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${expense.fileKey}`}
                   width={300}
                   height={800}
                   alt="Expense receipt"

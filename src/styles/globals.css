@@ -71,7 +71,7 @@
     @apply border-border;
   }
   body {
-    @apply h-full bg-background text-foreground;
+    @apply h-full bg-background text-sm text-foreground lg:text-base;
   }
 }
 

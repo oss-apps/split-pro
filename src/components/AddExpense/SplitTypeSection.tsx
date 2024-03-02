@@ -13,6 +13,7 @@ export const SplitTypeSection: React.FC = () => {
   const participants = useAddExpenseStore((s) => s.participants);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
+  const splitType = useAddExpenseStore((s) => s.splitType);
 
   const { setPaidBy } = useAddExpenseStore((s) => s.actions);
 
@@ -21,7 +22,7 @@ export const SplitTypeSection: React.FC = () => {
       <p>Paid by</p>
       <AppDrawer
         trigger={
-          <div className="max-w-28 overflow-hidden text-ellipsis px-1.5 text-[16px] text-cyan-500">
+          <div className="max-w-28 overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16px] text-cyan-500 lg:max-w-48">
             {currentUser?.id === paidBy?.id ? 'you' : paidBy?.name ?? paidBy?.email}
           </div>
         }
@@ -49,8 +50,8 @@ export const SplitTypeSection: React.FC = () => {
       <p>and </p>
       <AppDrawer
         trigger={
-          <div className="max-w-28 overflow-hidden text-ellipsis px-1.5 text-[16px] text-cyan-500">
-            split equally
+          <div className=" max-w-32 overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16px] text-cyan-500 lg:max-w-48">
+            {splitType === SplitType.EQUAL ? 'split equally' : `split unequally`}
           </div>
         }
         title="Paid by"

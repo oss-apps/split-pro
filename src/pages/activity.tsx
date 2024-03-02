@@ -48,7 +48,7 @@ const ActivityPage: NextPage<{ user: User }> = ({ user }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout user={user} title="Activity">
-        <div className="h-full px-4">
+        <div className="mb-28 h-full px-4">
           <div className="flex flex-col gap-4">
             {expensesQuery.data?.map((e) => (
               <Link href={`/expenses/${e.expenseId}`} key={e.expenseId} className="flex  gap-2">

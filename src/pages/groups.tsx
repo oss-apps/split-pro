@@ -1,18 +1,15 @@
 import { type GetServerSideProps, type NextPage } from 'next';
 import Head from 'next/head';
-import { useRef, useState } from 'react';
 import MainLayout from '~/components/Layout/MainLayout';
-import Avatar from 'boring-avatars';
 import clsx from 'clsx';
 import { Button } from '~/components/ui/button';
-import { PlusIcon, UserPlusIcon } from '@heroicons/react/24/solid';
+import { UserPlusIcon } from '@heroicons/react/24/solid';
 import { getServerAuthSessionForSSG } from '~/server/auth';
 import { type User } from '@prisma/client';
 import { api } from '~/utils/api';
 import { CreateGroup } from '~/components/group/CreateGroup';
 import Link from 'next/link';
 import { GroupAvatar } from '~/components/ui/avatar';
-import Image from 'next/image';
 import { toUIString } from '~/utils/numbers';
 import { motion } from 'framer-motion';
 
@@ -44,7 +41,6 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
                 animate={{ opacity: 1 }}
                 className="mt-20 flex flex-col items-center justify-center gap-20"
               >
-                <Image alt="group icon" src="/group.svg" width={200} height={200} />
                 <CreateGroup>
                   <Button>
                     <UserPlusIcon className="mr-2 h-4 w-4" />

@@ -194,6 +194,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
                   size="sm"
                   className="w-[100px]"
                   onClick={leftActionOnClick}
+                  asChild
                 >
                   {shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined ? (
                     <DialogClose>{leftAction}</DialogClose>
@@ -235,6 +236,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
       <DrawerTrigger
         className="flex items-center justify-center gap-2 text-center text-sm focus:outline-none focus:ring-0"
         onClick={onTriggerClick}
+        asChild
       >
         {trigger}
       </DrawerTrigger>
@@ -246,6 +248,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
                 variant="ghost"
                 className=" px-0 text-left text-primary"
                 onClick={leftActionOnClick}
+                asChild
               >
                 {shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined ? (
                   <DrawerClose>{leftAction}</DrawerClose>

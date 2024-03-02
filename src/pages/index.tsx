@@ -13,8 +13,6 @@ import {
   Users,
 } from 'lucide-react';
 import Image from 'next/image';
-import { type GetServerSideProps } from 'next';
-import { getServerAuthSession } from '~/server/auth';
 import { BackgroundGradient } from '~/components/ui/background-gradient';
 
 export default function Home() {
@@ -28,7 +26,7 @@ export default function Home() {
       <main className="min-h-screen">
         <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4   py-4 lg:px-0 lg:py-5">
           <div className="flex items-center gap-2">
-            <p className="text-2xl font-bold">SplitPro</p>
+            <p className="text-2xl font-medium">SplitPro</p>
           </div>
         </nav>
         <div className="mx-auto mt-20 flex w-full items-start  gap-8 px-4 lg:max-w-5xl lg:px-0 ">

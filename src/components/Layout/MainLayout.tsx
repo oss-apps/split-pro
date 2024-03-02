@@ -47,9 +47,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({
         )}
       >
         <nav className="item-center -ml-[170px]  hidden w-[170px] px-4 py-4  lg:flex lg:flex-col lg:gap-2 ">
-          <div className="mb-8 flex items-center gap-2 ">
-            <span className="text-xl font-medium text-cyan-500 ">SplitPro</span>
-          </div>
+          <Link href="/balances" className="mb-8 flex items-center gap-2 ">
+            <span className="text-xl font-medium  ">SplitPro</span>
+          </Link>
           <NavItemDesktop
             title="Balances"
             Icon={SolidScaleIcon}
@@ -138,6 +138,7 @@ const NavItem: React.FC<NavItemProps> = ({ title, Icon, link, currentPath }) => 
     <Link
       href={link}
       className={clsx('flex w-32 flex-col items-center justify-between gap-2 py-4')}
+      prefetch={true}
     >
       <Icon className={clsx('h-7 w-7', isActive ? 'text-cyan-500' : 'text-gray-600')} />
       <span className={clsx('text-xs', isActive ? 'font-medium text-cyan-500' : 'text-gray-500')}>
@@ -151,7 +152,7 @@ const NavItemDesktop: React.FC<NavItemProps> = ({ title, Icon, link, currentPath
   const isActive = currentPath?.startsWith(link);
 
   return (
-    <Link href={link} className={clsx(' flex w-[150px]  items-center gap-2 py-4')}>
+    <Link href={link} className={clsx(' flex w-[150px]  items-center gap-2 py-4')} prefetch={true}>
       <Icon className={clsx('h-7 w-7', isActive ? 'text-cyan-500' : 'text-gray-600')} />
       <span className={clsx('', isActive ? 'font-medium text-cyan-500' : 'text-gray-500')}>
         {title}

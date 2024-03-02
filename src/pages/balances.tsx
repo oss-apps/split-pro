@@ -1,7 +1,6 @@
 import { type GetServerSideProps, type NextPage } from 'next';
 import Head from 'next/head';
 import MainLayout from '~/components/Layout/MainLayout';
-import Avatar from 'boring-avatars';
 import clsx from 'clsx';
 import { Button } from '~/components/ui/button';
 import { ArrowUpOnSquareIcon } from '@heroicons/react/24/outline';
@@ -10,7 +9,7 @@ import { type User } from '@prisma/client';
 import { api } from '~/utils/api';
 import Link from 'next/link';
 import { toUIString } from '~/utils/numbers';
-import { Download, PlusIcon } from 'lucide-react';
+import { PlusIcon } from 'lucide-react';
 import { UserAvatar } from '~/components/ui/avatar';
 
 const BalancePage: NextPage<{ user: User }> = ({ user }) => {
@@ -116,11 +115,6 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
                     Add Expense
                   </Button>
                 </Link>
-                <p className="text-gray-300">or</p>
-                <Button className="w-[250px]">
-                  <Download className="mr-2 h-5 w-5 text-black" />
-                  Import from splitwise
-                </Button>
               </div>
             ) : null}
           </div>

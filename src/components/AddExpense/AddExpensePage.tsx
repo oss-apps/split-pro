@@ -293,10 +293,10 @@ export const AddExpensePage: React.FC = () => {
                 </div>
               </AppDrawer>
               <Input
-                placeholder="Description"
+                placeholder="Enter description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value.toString() ?? '')}
-                className="text-lg"
+                className="text-lg placeholder:text-sm"
               />
             </div>
             <div className="flex gap-2">
@@ -353,8 +353,8 @@ export const AddExpensePage: React.FC = () => {
               </AppDrawer>
 
               <Input
-                placeholder="Amount"
-                className="text-lg"
+                placeholder="Enter amount"
+                className="text-lg placeholder:text-sm"
                 type="text"
                 inputMode="decimal"
                 value={amtStr}

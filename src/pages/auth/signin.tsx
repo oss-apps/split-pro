@@ -52,7 +52,7 @@ export default function Home() {
 
     window.location.href = `/api/auth/callback/email?email=${encodeURIComponent(
       email,
-    )}&token=${values.otp}${callbackUrl ? `&callbackUrl=${callbackUrl}` : ''}`;
+    )}&token=${values.otp}${callbackUrl ? `&callbackUrl=${callbackUrl}/balances` : ''}`;
   }
 
   return (

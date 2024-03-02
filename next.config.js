@@ -31,7 +31,7 @@ const config = {
   images: {
     remotePatterns: [
       {
-        hostname: 'pub-0624a769b22d4450bc688b50eb3fbd4e.r2.dev',
+        hostname: 'upload-dev.splitpro.app',
         port: '',
         pathname: '/**',
       },

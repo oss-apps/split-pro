@@ -12,6 +12,7 @@ import Image from 'next/image';
 export const SelectUserOrGroup: React.FC = () => {
   const nameOrEmail = useAddExpenseStore((s) => s.nameOrEmail);
   const participants = useAddExpenseStore((s) => s.participants);
+  const group = useAddExpenseStore((s) => s.group);
   const { addOrUpdateParticipant, removeParticipant, setNameOrEmail, setGroup, setParticipants } =
     useAddExpenseStore((s) => s.actions);
 
@@ -62,6 +63,12 @@ export const SelectUserOrGroup: React.FC = () => {
       ]);
     }
     setNameOrEmail('');
+  }
+
+  if (group) {
+    return (
+      <div className="mt-4 text-center text-destructive">You can have only one group at a time</div>
+    );
   }
 
   return (

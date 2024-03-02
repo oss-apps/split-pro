@@ -175,7 +175,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
           {trigger}
         </DialogTrigger>
         <DialogContent
-          className="max-h-[70vh] "
+          className="max-h-[80vh] "
           onInteractOutside={(e) => {
             if (dismissible === false) {
               e.preventDefault();
@@ -185,48 +185,46 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
           <DialogHeader className="mb-4">
             <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
-          <div className=" max-h-[60vh] overflow-auto px-1 py-1">
-            {children}
-            <DialogFooter className="mt-8 flex items-center gap-2 ">
-              {leftAction ? (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="w-[100px]"
-                  onClick={leftActionOnClick}
-                  asChild
-                >
-                  {shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined ? (
-                    <DialogClose>{leftAction}</DialogClose>
-                  ) : (
-                    leftAction
-                  )}
-                </Button>
-              ) : null}
-              {actionTitle ? (
-                !shouldCloseOnAction ? (
-                  <Button
-                    className=" w-[100px]"
-                    onClick={actionOnClick}
-                    disabled={actionDisabled}
-                    size="sm"
-                  >
-                    {actionTitle}
-                  </Button>
+          <div className=" max-h-[60vh] overflow-auto px-1 py-1">{children}</div>
+          <DialogFooter className="mt-8 flex items-center gap-2 ">
+            {leftAction ? (
+              <Button
+                variant="secondary"
+                size="sm"
+                className="w-[100px]"
+                onClick={leftActionOnClick}
+                asChild
+              >
+                {shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined ? (
+                  <DialogClose>{leftAction}</DialogClose>
                 ) : (
-                  <DialogClose
-                    onClick={actionOnClick}
-                    className="w-[100px] rounded-md bg-primary py-2 text-sm text-black disabled:opacity-50"
-                    disabled={actionDisabled}
-                  >
-                    {actionTitle}
-                  </DialogClose>
-                )
+                  leftAction
+                )}
+              </Button>
+            ) : null}
+            {actionTitle ? (
+              !shouldCloseOnAction ? (
+                <Button
+                  className=" w-[100px]"
+                  onClick={actionOnClick}
+                  disabled={actionDisabled}
+                  size="sm"
+                >
+                  {actionTitle}
+                </Button>
               ) : (
-                <div className="w-10"> </div>
-              )}
-            </DialogFooter>
-          </div>
+                <DialogClose
+                  onClick={actionOnClick}
+                  className="w-[100px] rounded-md bg-primary py-2 text-sm text-black disabled:opacity-50"
+                  disabled={actionDisabled}
+                >
+                  {actionTitle}
+                </DialogClose>
+              )
+            ) : (
+              <div className="w-10"> </div>
+            )}
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     );

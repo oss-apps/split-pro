@@ -33,7 +33,7 @@ const ExpensesPage: NextPage<{ user: User }> = ({ user }) => {
             <p className="text-[16px] font-normal">Expense details</p>
           </div>
         }
-        actions={<DeleteExpense expenseId={expenseId} />}
+        actions={!expenseQuery.data?.deletedBy ? <DeleteExpense expenseId={expenseId} /> : null}
       >
         {expenseQuery.data ? <ExpenseDetails user={user} expense={expenseQuery.data} /> : null}
       </MainLayout>

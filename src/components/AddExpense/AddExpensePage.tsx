@@ -206,7 +206,6 @@ export const AddExpensePage: React.FC = () => {
         },
       );
     } else {
-      console.log('Dateeee', date?.toString());
       addExpenseMutation.mutate(
         {
           name: description,

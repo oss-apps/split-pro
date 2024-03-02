@@ -14,6 +14,7 @@ import { Button } from '~/components/ui/button';
 import { SettleUp } from '~/components/Friend/Settleup';
 import { toUIString } from '~/utils/numbers';
 import { CategoryIcon, CategoryIcons } from '~/components/ui/categoryIcons';
+import { LoadingSpinner } from '~/components/ui/spinner';
 
 const FriendPage: NextPage<{ user: User; friend: User }> = ({ user, friend }) => {
   const expenses = api.user.getExpensesWithFriend.useQuery({ friendId: friend.id });
@@ -52,7 +53,7 @@ const FriendPage: NextPage<{ user: User; friend: User }> = ({ user, friend }) =>
         }
       >
         {balances.isLoading && expenses ? (
-          <div>Loading...</div>
+          <div className="mt-20 flex justify-center"></div>
         ) : (
           <div className="mb-28">
             <div className="mx-4 flex flex-wrap gap-2">

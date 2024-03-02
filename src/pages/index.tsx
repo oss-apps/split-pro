@@ -29,7 +29,7 @@ export default function Home() {
             <p className="text-2xl font-medium">SplitPro</p>
           </div>
         </nav>
-        <div className="mx-auto mt-20 flex w-full items-start  gap-8 px-4 lg:max-w-5xl lg:px-0 ">
+        <div className="mx-auto mt-20 flex w-full items-start justify-center  gap-16 px-4 lg:max-w-5xl lg:px-0 ">
           <div>
             <div className=" mb-32 text-center lg:mb-0 lg:h-[70vh] lg:text-left">
               <h1 className="max-w-3xl text-center text-2xl font-semibold leading-loose text-gray-100 lg:text-left lg:text-5xl lg:leading-[4rem]">
@@ -37,14 +37,15 @@ export default function Home() {
                 <span className="font-bold text-primary">free</span>.
               </h1>
               <h2 className="mt-5  text-gray-300  lg:mt-8 lg:text-lg">
+                An{' '}
                 <a
                   className="text-primary hover:underline"
                   href="https://github.com/oss-apps/split-pro"
                   target="_blank"
                 >
-                  Open source
+                  open source
                 </a>{' '}
-                and <span className="text-primary">PWA</span> alternative of SplitWise
+                alternative to SplitWise
               </h2>
               <div className="mt-10 flex flex-col">
                 <Link href="/auth/signin" className="mx-auto lg:mx-0">
@@ -67,7 +68,8 @@ export default function Home() {
                     <p className="text-lg font-medium">Groups and Friends</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Can create multiple users or add balance directly everything will be synced
+                    Can create multiple groups or add balance directly. Everything will be
+                    consolidated
                   </p>
                 </div>
 
@@ -77,7 +79,7 @@ export default function Home() {
                     <p className="text-lg font-medium">Multiple currencies</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Can create multiple users or add balance directly everything will be synced
+                    Need to add expense with different currency for same user? No problem!
                   </p>
                 </div>
               </div>
@@ -89,7 +91,7 @@ export default function Home() {
                     <p className="text-lg font-medium">Unequal Split</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Split equally or by shares, percentage or exact amounts.
+                    Advanced split options. By shares, percentage or exact amounts.
                   </p>
                 </div>
 
@@ -99,7 +101,8 @@ export default function Home() {
                     <p className="text-lg font-medium">PWA support</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Add to home screen and use it as an app
+                    Love mobile apps? We got you covered. Install it as a PWA and you won&apos;t
+                    even notice!
                   </p>
                 </div>
               </div>
@@ -117,26 +120,6 @@ export default function Home() {
 
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Sigma className="h-6 w-6 text-primary" />
-                    <p className="text-lg font-medium">Total balance</p>
-                  </div>
-                  <p className="px-4 text-gray-400 lg:px-0">
-                    Consolidated across groups and individual expenses
-                  </p>{' '}
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
-                <div className="flex flex-col gap-1 lg:w-1/2">
-                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Ban className="h-6 w-6 text-primary" />
-                    <p className="text-lg font-medium">No ads</p>
-                  </div>
-                  <p className="text-gray-400">Upload receipts along with the expense</p>
-                </div>
-
-                <div className="flex flex-col gap-1 lg:w-1/2">
-                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <GitFork className="h-6 w-6 text-primary" />
                     <p className="text-lg font-medium">Open source</p>
                   </div>
@@ -149,15 +132,25 @@ export default function Home() {
 
             <div className="mb-20 mt-24 flex flex-col gap-8 text-center lg:text-left">
               <div>
-                Built by <a className=" text-primary">KM Koushik</a>
+                Built by{' '}
+                <a className=" text-primary" href="https://koushik.dev" target="_blank">
+                  KM Koushik
+                </a>
                 <p className="text-gray-400">
                   A product of <a className="underline underline-offset-2">ossapps.dev</a>
                 </p>
               </div>
               <div className="flex justify-center gap-4 lg:justify-start">
-                <a className="text-primary">x</a>
-                <a className="text-primary">Github</a>
-                <a className="text-primary">ProductHunt</a>
+                <a className="text-primary" href="https://twitter.com/KM_Koushik_" target="_blank">
+                  x
+                </a>
+                <a
+                  className="text-primary"
+                  href="https://github.com/oss-apps/split-pro"
+                  target="_blank"
+                >
+                  Github
+                </a>
               </div>
             </div>
           </div>

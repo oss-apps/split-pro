@@ -6,16 +6,12 @@ import {
   ChartPieIcon as SolidScaleIcon,
   UserGroupIcon as SolidUserGroupIcon,
   PlusCircleIcon as SolidPlusCircleIcon,
-  SparklesIcon as SolidSparklesIcon,
   UserCircleIcon as SolidUserCircleIcon,
   ListBulletIcon as SolidListBulletIcon,
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { motion } from 'framer-motion';
-import AppInstallBanner from '../AppInstallBanner';
 import { type User } from '@prisma/client';
-import Image from 'next/image';
 
 interface MainLayoutProps {
   title?: React.ReactNode;
@@ -26,14 +22,7 @@ interface MainLayoutProps {
   hideAppBar?: boolean;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({
-  children,
-  actions,
-  user,
-  header,
-  hideAppBar,
-  title,
-}) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, title }) => {
   const router = useRouter();
   const currentPath = router.pathname;
 

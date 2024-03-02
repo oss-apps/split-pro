@@ -301,7 +301,7 @@ export const AddExpensePage: React.FC = () => {
             <div className="flex gap-2">
               <AppDrawer
                 trigger={
-                  <div className="flex w-[70px] justify-center rounded-lg border py-2  text-center">
+                  <div className="flex w-[70px] justify-center rounded-lg border py-2  text-center text-base">
                     {currency ?? 'USD'}
                   </div>
                 }

@@ -151,9 +151,9 @@ const FriendPage: NextPage<{ user: User; friend: User }> = ({ user, friend }) =>
                         <CategoryIcon category={e.category} className="h-5 w-5 text-gray-400" />
                       </div>
                       <div>
-                        {!isSettlement ? <p>{e.name}</p> : null}
+                        {!isSettlement ? <p className="text-sm lg:text-base">{e.name}</p> : null}
                         <p
-                          className={`flex items-center text-center ${isSettlement ? 'text-sm text-gray-400' : 'text-xs text-gray-500'}`}
+                          className={`flex ${isSettlement ? 'text-sm text-gray-400' : 'text-xs text-gray-500'}`}
                         >
                           <span className={`text-[8px] ${isSettlement ? 'mr-1' : ''} `}>
                             {isSettlement ? '  🎉 ' : null}

@@ -54,8 +54,8 @@ export const SplitTypeSection: React.FC = () => {
             {splitType === SplitType.EQUAL ? 'split equally' : `split unequally`}
           </div>
         }
-        title="Paid by"
-        className="h-[98vh] lg:h-[70vh]"
+        title={splitType.toLowerCase()}
+        className="h-[85vh] lg:h-[70vh]"
         shouldCloseOnAction
         dismissible={false}
         actionTitle="Save"

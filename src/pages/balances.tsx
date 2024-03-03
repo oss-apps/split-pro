@@ -61,14 +61,14 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
                 </div>
                 <div className="mb-2 mt-4 flex flex-wrap justify-center gap-1">
                   {balanceQuery.data?.youOwe.map((b, index) => (
-                    <div key={b.currency}>
+                    <span key={b.currency} className="flex gap-1">
                       <span className="text-orange-600">
                         {b.currency.toUpperCase()} {toUIString(b.amount)}
                       </span>
                       {index !== balanceQuery.data.youOwe.length - 1 ? (
                         <span className="">+</span>
                       ) : null}
-                    </div>
+                    </span>
                   ))}
                 </div>
               </div>
@@ -82,14 +82,14 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
                 </div>
                 <div className="mb-2 mt-4 flex flex-wrap justify-center gap-1">
                   {balanceQuery.data?.youGet.map((b, index) => (
-                    <div key={b.currency}>
+                    <span key={b.currency} className="flex gap-1">
                       <p className=" text-emerald-500">
                         {b.currency.toUpperCase()} {toUIString(b.amount)}
                       </p>{' '}
                       {index !== balanceQuery.data.youGet.length - 1 ? (
                         <span className="text-gray-400">+</span>
                       ) : null}
-                    </div>
+                    </span>
                   ))}
                 </div>
               </div>
@@ -110,8 +110,9 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
             ))}
 
             {!balanceQuery.isLoading && !balanceQuery.data?.balances.length ? (
-              <div className="mt-[50vh] flex -translate-y-[130%] flex-col items-center justify-center gap-6">
+              <div className="mt-[40vh] flex -translate-y-[130%] flex-col items-center justify-center gap-6">
                 <InstallApp />
+
                 <Link href="/add">
                   <Button className="w-[250px]">
                     <PlusIcon className="mr-2 h-5 w-5 text-black" />

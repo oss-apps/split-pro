@@ -39,7 +39,7 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="mt-20 flex flex-col items-center justify-center gap-20"
+                className="mt-[30vh] flex flex-col items-center justify-center gap-20"
               >
                 <CreateGroup>
                   <Button>

@@ -50,6 +50,9 @@ const ActivityPage: NextPage<{ user: User }> = ({ user }) => {
       <MainLayout user={user} title="Activity">
         <div className="mb-28 h-full px-4">
           <div className="flex flex-col gap-4">
+            {!expensesQuery.data?.length ? (
+              <div className="mt-[30vh] text-center text-gray-400">No activities yet</div>
+            ) : null}
             {expensesQuery.data?.map((e) => (
               <Link href={`/expenses/${e.expenseId}`} key={e.expenseId} className="flex  gap-2">
                 <div className="mt-1">

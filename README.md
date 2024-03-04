@@ -56,6 +56,8 @@ _That's when I decided to work on this_
 - [tRPC](https://trpc.io/)
 - [ShadcnUI](https://ui.shadcn.com/)
 - [Prisma](https://www.prisma.io/)
+- [Postgres](https://www.postgresql.org/)
+- [NextAuht](https://next-auth.js.org/)
 
 
 ## Getting started.

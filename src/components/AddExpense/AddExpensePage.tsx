@@ -240,7 +240,26 @@ export const AddExpensePage: React.FC = () => {
   return (
     <>
       <div className="flex flex-col gap-4 px-4 py-2">
-        <div className="text-center">Add new expense</div>
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" className=" px-0 text-primary" onClick={resetState}>
+            Cancel
+          </Button>
+          <div className="text-center">Add new expense</div>
+          <Button
+            variant="ghost"
+            className=" px-0 text-primary"
+            disabled={
+              addExpenseMutation.isLoading ||
+              addGroupExpenseMutation.isLoading ||
+              !amount ||
+              description === '' ||
+              isFileUploading
+            }
+            onClick={addExpense}
+          >
+            Save
+          </Button>{' '}
+        </div>
         <UserInput />
         {showFriends || participants.length === 1 ? (
           <SelectUserOrGroup />

@@ -48,7 +48,7 @@ const ActivityPage: NextPage<{ user: User }> = ({ user }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout user={user} title="Activity">
-        <div className="mb-28 h-full px-4">
+        <div className=" h-full px-4">
           <div className="flex flex-col gap-4">
             {!expensesQuery.data?.length ? (
               <div className="mt-[30vh] text-center text-gray-400">No activities yet</div>
@@ -97,6 +97,7 @@ const ActivityPage: NextPage<{ user: User }> = ({ user }) => {
               </Link>
             ))}
           </div>
+          <div className="h-28"></div>
         </div>
       </MainLayout>
     </>

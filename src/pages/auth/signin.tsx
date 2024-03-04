@@ -51,7 +51,7 @@ export default function Home() {
     console.log('email', email);
 
     window.location.href = `/api/auth/callback/email?email=${encodeURIComponent(
-      email,
+      email.toLowerCase(),
     )}&token=${values.otp}${callbackUrl ? `&callbackUrl=${callbackUrl}/balances` : ''}`;
   }
 

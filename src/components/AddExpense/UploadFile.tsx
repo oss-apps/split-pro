@@ -62,6 +62,8 @@ export const UploadFile: React.FC = () => {
         return;
       }
 
+      toast.success('File uploaded successfully');
+
       setFileKey(key);
       console.log('Setting file key', key);
     } catch (error) {

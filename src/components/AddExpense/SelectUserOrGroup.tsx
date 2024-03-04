@@ -67,7 +67,7 @@ export const SelectUserOrGroup: React.FC = () => {
 
   if (group) {
     return (
-      <div className="mt-4 text-center text-destructive">You can have only one group at a time</div>
+      <div className="mt-4 text-center text-red-500">You can have only one group at a time</div>
     );
   }
 

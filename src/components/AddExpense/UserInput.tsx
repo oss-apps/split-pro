@@ -81,13 +81,20 @@ export const UserInput: React.FC = () => {
           ) : null,
         )
       )}
+
       <input
         type="email"
-        placeholder="Name or email"
+        placeholder={
+          group
+            ? 'Press delete to remove group'
+            : participants.length > 1
+              ? 'Add more friends'
+              : 'Search friends, groups or add email'
+        }
         value={nameOrEmail}
         onChange={(e) => setNameOrEmail(e.target.value)}
         onKeyDown={handleKeyDown}
-        className="min-w-[100px] flex-grow bg-transparent outline-none focus:ring-0"
+        className="min-w-[100px] flex-grow bg-transparent outline-none placeholder:text-sm focus:ring-0"
         autoFocus
       />
     </div>

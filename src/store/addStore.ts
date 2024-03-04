@@ -159,15 +159,15 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     setFileUploading: (isFileUploading) => set({ isFileUploading }),
     setFileKey: (fileKey) => set({ fileKey }),
     resetState: () =>
-      set({
+      set((s) => ({
         amount: 0,
-        participants: [],
+        participants: s.currentUser ? [s.currentUser] : [],
         description: '',
         fileKey: '',
         category: 'general',
         splitType: SplitType.EQUAL,
         group: undefined,
-      }),
+      })),
   },
 }));
 

@@ -68,6 +68,7 @@ export const SettleUp: React.FC<{ balances: Array<Balance>; friend: User; curren
           <Button
             size="sm"
             className="flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500 px-3  text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 focus-visible:outline-none lg:w-[180px] "
+            disabled={!balances.length}
           >
             Settle up
           </Button>
@@ -83,14 +84,14 @@ export const SettleUp: React.FC<{ balances: Array<Balance>; friend: User; curren
         shouldCloseOnAction
       >
         <div>
-          <div className="flex items-center justify-between px-2 lg:hidden">
+          <div className="flex items-center justify-between px-2">
             <div>
               {balanceToSettle ? (
                 balances.length > 1 ? (
                   <Button
                     size="sm"
                     variant="ghost"
-                    className=" text-cyan-500"
+                    className=" text-cyan-500 lg:hidden"
                     onClick={() => setBallanceToSettle(undefined)}
                   >
                     Back
@@ -100,7 +101,7 @@ export const SettleUp: React.FC<{ balances: Array<Balance>; friend: User; curren
                     <Button
                       size="sm"
                       variant="ghost"
-                      className=" text-cyan-500"
+                      className=" text-cyan-500 lg:hidden"
                       onClick={() => (balances.length > 1 ? setBallanceToSettle(undefined) : null)}
                     >
                       Back
@@ -119,7 +120,7 @@ export const SettleUp: React.FC<{ balances: Array<Balance>; friend: User; curren
                 <Button
                   size="sm"
                   variant="ghost"
-                  className=" mx-auto text-cyan-500"
+                  className=" mx-auto text-cyan-500 lg:hidden"
                   onClick={() => saveExpense()}
                 >
                   Save

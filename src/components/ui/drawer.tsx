@@ -154,8 +154,8 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
 
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
-  const localOnOpenChange = (open: boolean) => {
-    if (onOpenChange) onOpenChange(open);
+  const localOnOpenChange = (_open: boolean) => {
+    if (onOpenChange && open !== _open) onOpenChange(_open);
   };
 
   if (!isClient) return null;
@@ -175,7 +175,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
           {trigger}
         </DialogTrigger>
         <DialogContent
-          className="max-h-[80vh] "
+          className=""
           onInteractOutside={(e) => {
             if (dismissible === false) {
               e.preventDefault();

@@ -334,7 +334,7 @@ export const AddExpensePage: React.FC = () => {
                 }}
               >
                 <div className="">
-                  <Command className="h-[60vh]">
+                  <Command className="h-[50vh]">
                     <CommandInput className="text-lg" placeholder="Search currency" />
                     <CommandEmpty>No currency found.</CommandEmpty>
                     <CommandGroup className="h-full overflow-auto">

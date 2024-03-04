@@ -10,6 +10,10 @@ import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { sendFeedbackEmail } from '~/server/mailer';
 
 export const userRouter = createTRPCRouter({
+  me: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.session.user;
+  }),
+
   getBalances: protectedProcedure.query(async ({ ctx }) => {
     const balancesRaw = await db.balance.findMany({
       where: {

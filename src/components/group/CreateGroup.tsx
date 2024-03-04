@@ -27,7 +27,6 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
   const router = useRouter();
 
   async function onGroupSubmit(values: z.infer<typeof groupSchema>) {
-    console.log('hello');
     await createGroup.mutateAsync(
       { name: values.name },
       {

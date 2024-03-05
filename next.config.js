@@ -35,6 +35,11 @@ const config = {
         port: '',
         pathname: '/**',
       },
+      {
+        hostname: 'uploads.splitpro.app',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };

@@ -14,7 +14,7 @@ const Privacy: NextPage = () => {
             </Link>
           </nav>
           <h1 className="mt-20 text-2xl font-semibold">Privacy Policy</h1>
-          <p className="text-sm text-gray-400">Last Updated: 22 Apr, 2023</p>
+          <p className="text-sm text-gray-400">Last Updated: 06 Mar, 2022</p>
 
           <p className="mt-4 text-lg text-gray-400">
             Splitpro is committed to protecting your privacy. This Privacy Policy outlines how we
@@ -24,7 +24,8 @@ const Privacy: NextPage = () => {
           <p className="mt-16 text-xl font-semibold">Information We Collect</p>
           <p className="mt-4 text-lg text-gray-300">Personal Information</p>
           <p className="mt-0.5 text-lg text-gray-400">
-            When you create an account, we collect your email address, name.
+            When you create an account, we collect your email address, name, photo (If you choose to
+            use continue with google)
           </p>
           <p className="mt-4 text-lg text-gray-300">Usage Data</p>
           <p className="mt-0.5 text-lg text-gray-400">
@@ -39,6 +40,7 @@ const Privacy: NextPage = () => {
               <li>To provide and maintain the Service</li>
               <li>To improve and personalize your experience with the Service</li>
               <li>To communicate with you about updates, promotions, and customer support</li>
+              <li>To show people your name and photo if they have your email id</li>
             </ul>
           </p>
           <p className="mt-16 text-xl font-semibold">Sharing Your Information</p>

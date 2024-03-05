@@ -15,7 +15,7 @@ const Terms: NextPage = () => {
             </Link>
           </nav>
           <h1 className="mt-20 text-2xl font-semibold">Terms of service</h1>
-          <p className="text-sm text-gray-300">Last Updated: 22 Apr, 2023</p>
+          <p className="text-sm text-gray-400">Last Updated: 06 Mar, 2022</p>
 
           <p className="mt-12 text-xl font-semibold">1. Agreement</p>
           <p className="mt-1 text-lg text-gray-300">

@@ -28,6 +28,10 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <p className="text-2xl font-medium">SplitPro</p>
           </div>
+          <div className="flex items-center gap-8">
+            <Link href="/terms">Terms</Link>
+            <Link href="/privacy">Privacy</Link>
+          </div>
         </nav>
         <div className="mx-auto mt-20 flex w-full items-start justify-center  gap-16 px-4 lg:max-w-5xl lg:px-0 ">
           <div>

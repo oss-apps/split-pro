@@ -16,6 +16,7 @@ import { format } from 'date-fns';
 import { Calendar } from '../ui/calendar';
 import UploadFile from './UploadFile';
 import { CategoryIcons } from '../ui/categoryIcons';
+import Link from 'next/link';
 
 const currencies = [
   { code: 'USD', name: 'US Dollar' },
@@ -242,9 +243,17 @@ export const AddExpensePage: React.FC = () => {
     <>
       <div className="flex flex-col gap-4 px-4 py-2">
         <div className="flex items-center justify-between">
-          <Button variant="ghost" className=" px-0 text-primary" onClick={resetState}>
-            Cancel
-          </Button>
+          {participants.length === 1 ? (
+            <Link href="/balances">
+              <Button variant="ghost" className=" px-0 text-primary">
+                Cancel
+              </Button>
+            </Link>
+          ) : (
+            <Button variant="ghost" className=" px-0 text-primary" onClick={resetState}>
+              Cancel
+            </Button>
+          )}
           <div className="text-center">Add new expense</div>
           <Button
             variant="ghost"

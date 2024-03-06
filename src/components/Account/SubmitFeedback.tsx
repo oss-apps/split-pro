@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
+import { toast } from 'sonner';
 
 const feedbackSchema = z.object({
   feedback: z
@@ -23,7 +24,14 @@ export const SubmitFeedback: React.FC = () => {
   });
 
   async function onGroupSubmit(values: z.infer<typeof feedbackSchema>) {
-    await submitFeedbackMutation.mutateAsync({ feedback: values.feedback });
+    try {
+      await submitFeedbackMutation.mutateAsync({ feedback: values.feedback });
+      feedbackForm.reset();
+      toast.success('Feedback submitted', { duration: 1500 });
+    } catch (e) {
+      toast.error('Failed to submit feedback');
+    }
+    setFeedbackOpen(false);
   }
 
   return (
@@ -43,10 +51,10 @@ export const SubmitFeedback: React.FC = () => {
       leftAction="Close"
       title="Submit a feedback"
       className="h-[70vh]"
-      actionTitle="Save"
+      shouldCloseOnAction={false}
+      actionTitle="Submit"
       actionOnClick={async () => {
         await feedbackForm.handleSubmit(onGroupSubmit)();
-        setFeedbackOpen(false);
       }}
     >
       <div>

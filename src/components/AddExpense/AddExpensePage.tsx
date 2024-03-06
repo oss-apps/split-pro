@@ -165,6 +165,7 @@ export const AddExpensePage: React.FC = () => {
 
   const addExpenseMutation = api.user.addExpense.useMutation();
   const addGroupExpenseMutation = api.group.addExpense.useMutation();
+  const updateProfile = api.user.updateUserDetail.useMutation();
 
   const router = useRouter();
 
@@ -344,7 +345,9 @@ export const AddExpensePage: React.FC = () => {
                           key={`${framework.code}-${framework.name}`}
                           value={`${framework.code}-${framework.name}`}
                           onSelect={(currentValue) => {
-                            setCurrency(currentValue.split('-')[0]?.toUpperCase() ?? 'USD');
+                            const _currency = currentValue.split('-')[0]?.toUpperCase() ?? 'USD';
+                            updateProfile.mutate({ currency: _currency });
+                            setCurrency(_currency);
                             setOpen(false);
                           }}
                         >

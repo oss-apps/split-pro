@@ -1,10 +1,8 @@
-import { type GetServerSideProps, type NextPage } from 'next';
 import Head from 'next/head';
 import MainLayout from '~/components/Layout/MainLayout';
 import clsx from 'clsx';
 import { Button } from '~/components/ui/button';
 import { ArrowUpOnSquareIcon } from '@heroicons/react/24/outline';
-import { getServerAuthSessionForSSG } from '~/server/auth';
 import { type User } from '@prisma/client';
 import { api } from '~/utils/api';
 import Link from 'next/link';
@@ -12,8 +10,9 @@ import { toUIString } from '~/utils/numbers';
 import { PlusIcon } from 'lucide-react';
 import { UserAvatar } from '~/components/ui/avatar';
 import InstallApp from '~/components/InstallApp';
+import { type NextPageWithUser } from '~/types';
 
-const BalancePage: NextPage<{ user: User }> = ({ user }) => {
+const BalancePage: NextPageWithUser = () => {
   function shareWithFriends() {
     if (navigator.share) {
       navigator
@@ -36,7 +35,6 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
-        user={user}
         title="Balances"
         actions={
           typeof window !== 'undefined' && !!window.navigator?.share ? (
@@ -128,10 +126,6 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return getServerAuthSessionForSSG(context);
-};
-
 const FriendBalance: React.FC<{
   friend: User;
   amount: number;
@@ -169,5 +163,7 @@ const FriendBalance: React.FC<{
     </Link>
   );
 };
+
+BalancePage.auth = true;
 
 export default BalancePage;

@@ -1,10 +1,6 @@
-import { type GetServerSideProps, type NextPage } from 'next';
 import Head from 'next/head';
-import { useState } from 'react';
 import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
-import { getServerAuthSessionForSSG } from '~/server/auth';
-import { type User } from '@prisma/client';
 import Link from 'next/link';
 import { UserAvatar } from '~/components/ui/avatar';
 import { ChevronRight, Download, Github } from 'lucide-react';
@@ -13,8 +9,9 @@ import { AppDrawer } from '~/components/ui/drawer';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { UpdateDetails } from '~/components/Account/UpdateDetails';
 import { api } from '~/utils/api';
+import { type NextPageWithUser } from '~/types';
 
-const AccountPage: NextPage<{ user: User }> = ({ user }) => {
+const AccountPage: NextPageWithUser = ({ user }) => {
   const userQuery = api.user.me.useQuery();
 
   return (
@@ -23,11 +20,7 @@ const AccountPage: NextPage<{ user: User }> = ({ user }) => {
         <title>Account</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainLayout
-        user={user}
-        title="Account"
-        header={<div className="text-3xl font-semibold">Account</div>}
-      >
+      <MainLayout title="Account" header={<div className="text-3xl font-semibold">Account</div>}>
         <div className="mt-4 px-4">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
@@ -145,8 +138,6 @@ const AccountPage: NextPage<{ user: User }> = ({ user }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return getServerAuthSessionForSSG(context);
-};
+AccountPage.auth = true;
 
 export default AccountPage;

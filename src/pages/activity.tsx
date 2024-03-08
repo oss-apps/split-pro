@@ -1,13 +1,13 @@
-import { type GetServerSideProps, type NextPage } from 'next';
 import Head from 'next/head';
 import MainLayout from '~/components/Layout/MainLayout';
-import { getServerAuthSessionForSSG } from '~/server/auth';
-import { SplitType, type User } from '@prisma/client';
+import { SplitType } from '@prisma/client';
 import { api } from '~/utils/api';
 import { format } from 'date-fns';
 import { UserAvatar } from '~/components/ui/avatar';
 import { toUIString } from '~/utils/numbers';
 import Link from 'next/link';
+import { type NextPageWithUser } from '~/types';
+import { type User } from 'next-auth';
 
 function getPaymentString(
   user: User,
@@ -38,7 +38,7 @@ function getPaymentString(
   }
 }
 
-const ActivityPage: NextPage<{ user: User }> = ({ user }) => {
+const ActivityPage: NextPageWithUser = ({ user }) => {
   const expensesQuery = api.user.getAllExpenses.useQuery();
 
   return (
@@ -47,7 +47,7 @@ const ActivityPage: NextPage<{ user: User }> = ({ user }) => {
         <title>Activity</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainLayout user={user} title="Activity">
+      <MainLayout title="Activity">
         <div className=" h-full px-4">
           <div className="flex flex-col gap-4">
             {!expensesQuery.data?.length ? (
@@ -104,8 +104,6 @@ const ActivityPage: NextPage<{ user: User }> = ({ user }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return getServerAuthSessionForSSG(context);
-};
+ActivityPage.auth = true;
 
 export default ActivityPage;

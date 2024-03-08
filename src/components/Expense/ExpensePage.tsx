@@ -1,4 +1,5 @@
 import { type ExpenseParticipant, type Expense, type User } from '@prisma/client';
+import { type User as NextUser } from 'next-auth';
 import { format } from 'date-fns';
 import React from 'react';
 import { toUIString } from '~/utils/numbers';
@@ -11,7 +12,7 @@ import { Banknote } from 'lucide-react';
 import { env } from '~/env';
 
 type ExpenseDetailsProps = {
-  user: User;
+  user: NextUser;
   expense: Expense & {
     expenseParticipants: Array<ExpenseParticipant & { user: User }>;
     addedByUser: User;

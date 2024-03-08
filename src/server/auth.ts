@@ -98,7 +98,9 @@ export const getServerAuthSession = (ctx: {
 };
 
 export const getServerAuthSessionForSSG = async (context: GetServerSidePropsContext) => {
+  console.log('Before getting session');
   const session = await getServerAuthSession(context);
+  console.log('After getting session');
 
   if (!session?.user?.email) {
     return {

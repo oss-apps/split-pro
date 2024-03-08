@@ -1,4 +1,3 @@
-import { type GetServerSideProps, type NextPage } from 'next';
 import Head from 'next/head';
 import MainLayout from '~/components/Layout/MainLayout';
 import Avatar from 'boring-avatars';
@@ -21,8 +20,9 @@ import Link from 'next/link';
 import { CategoryIcon } from '~/components/ui/categoryIcons';
 import { env } from '~/env';
 import { useState } from 'react';
+import { type NextPageWithUser } from '~/types';
 
-const BalancePage: NextPage<{ user: User }> = ({ user }) => {
+const BalancePage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
   const groupId = parseInt(router.query.groupId as string);
 
@@ -57,11 +57,10 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
   return (
     <>
       <Head>
-        <title>Outstanding balances</title>
+        <title>Group outstanding balances</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
-        user={user}
         title={
           <div className="flex items-center">
             <Button
@@ -218,8 +217,6 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return getServerAuthSessionForSSG(context);
-};
+BalancePage.auth = true;
 
 export default BalancePage;

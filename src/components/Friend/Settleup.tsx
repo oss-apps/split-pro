@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '../ui/button';
 import { AppDrawer, Drawer, DrawerClose, DrawerContent, DrawerTrigger } from '../ui/drawer';
 import { type User, type Balance, SplitType } from '@prisma/client';
+import { type User as NextUser } from 'next-auth';
 import { FriendBalance } from './FirendBalance';
 import { Input } from '../ui/input';
 import { UserAvatar } from '../ui/avatar';
@@ -10,11 +11,11 @@ import { api } from '~/utils/api';
 import { toast } from 'sonner';
 import { toFixedNumber } from '~/utils/numbers';
 
-export const SettleUp: React.FC<{ balances: Array<Balance>; friend: User; currentUser: User }> = ({
-  balances,
-  friend,
-  currentUser,
-}) => {
+export const SettleUp: React.FC<{
+  balances: Array<Balance>;
+  friend: User;
+  currentUser: NextUser;
+}> = ({ balances, friend, currentUser }) => {
   const [balanceToSettle, setBallanceToSettle] = React.useState<Balance | undefined>(
     balances.length > 1 ? undefined : balances[0],
   );

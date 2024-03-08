@@ -371,4 +371,16 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       await sendFeedbackEmail(input.feedback, ctx.session.user);
     }),
+
+  getFriend: protectedProcedure
+    .input(z.object({ friendId: z.number() }))
+    .query(async ({ input, ctx }) => {
+      const friend = await db.user.findUnique({
+        where: {
+          id: input.friendId,
+        },
+      });
+
+      return friend;
+    }),
 });

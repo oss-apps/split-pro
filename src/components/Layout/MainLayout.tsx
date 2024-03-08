@@ -11,13 +11,11 @@ import {
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { type User } from '@prisma/client';
 
 interface MainLayoutProps {
   title?: React.ReactNode;
   children: React.ReactNode;
   actions?: React.ReactNode;
-  user?: User;
   header?: React.ReactNode;
   hideAppBar?: boolean;
 }

@@ -1,17 +1,14 @@
-import { type GetServerSideProps, type NextPage } from 'next';
 import Head from 'next/head';
 import MainLayout from '~/components/Layout/MainLayout';
-import { getServerAuthSessionForSSG } from '~/server/auth';
-import { type User } from '@prisma/client';
 import { api } from '~/utils/api';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ChevronLeftIcon, Trash, Trash2 } from 'lucide-react';
 import ExpenseDetails from '~/components/Expense/ExpensePage';
-import { Button } from '~/components/ui/button';
 import { DeleteExpense } from '~/components/Expense/DeleteExpense';
+import { type NextPageWithUser } from '~/types';
 
-const ExpensesPage: NextPage<{ user: User }> = ({ user }) => {
+const ExpensesPage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
   const expenseId = router.query.expenseId as string;
   const friendId = parseInt(router.query.friendId as string);
@@ -25,7 +22,6 @@ const ExpensesPage: NextPage<{ user: User }> = ({ user }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
-        user={user}
         title={
           <div className="flex items-center gap-2">
             <Link href={`/balances/${friendId}`}>
@@ -48,8 +44,6 @@ const ExpensesPage: NextPage<{ user: User }> = ({ user }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return getServerAuthSessionForSSG(context);
-};
+ExpensesPage.auth = true;
 
 export default ExpensesPage;

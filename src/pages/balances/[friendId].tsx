@@ -1,24 +1,43 @@
-import { type GetServerSideProps, type NextPage } from 'next';
 import Head from 'next/head';
 import MainLayout from '~/components/Layout/MainLayout';
-import { getServerAuthSessionForSSG } from '~/server/auth';
 import { SplitType, type User } from '@prisma/client';
 import { api } from '~/utils/api';
 import { db } from '~/server/db';
 import { UserAvatar } from '~/components/ui/avatar';
 import Link from 'next/link';
-import { Banknote, Bell, ChevronLeftIcon, DollarSign, PlusIcon } from 'lucide-react';
+import { ChevronLeftIcon, PlusIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { Separator } from '~/components/ui/separator';
 import { Button } from '~/components/ui/button';
 import { SettleUp } from '~/components/Friend/Settleup';
 import { toUIString } from '~/utils/numbers';
-import { CategoryIcon, CategoryIcons } from '~/components/ui/categoryIcons';
+import { CategoryIcon } from '~/components/ui/categoryIcons';
+import { useRouter } from 'next/router';
+import { type NextPageWithUser } from '~/types';
+import useEnableAfter from '~/hooks/useEnableAfter';
 import { LoadingSpinner } from '~/components/ui/spinner';
 
-const FriendPage: NextPage<{ user: User; friend: User }> = ({ user, friend }) => {
-  const expenses = api.user.getExpensesWithFriend.useQuery({ friendId: friend.id });
-  const balances = api.user.getBalancesWithFriend.useQuery({ friendId: friend.id });
+const FriendPage: NextPageWithUser = ({ user }) => {
+  const router = useRouter();
+  const { friendId } = router.query;
+
+  const _friendId = parseInt(friendId as string);
+
+  const friendQuery = api.user.getFriend.useQuery(
+    { friendId: _friendId },
+    { enabled: !!_friendId },
+  );
+
+  const expenses = api.user.getExpensesWithFriend.useQuery(
+    { friendId: _friendId },
+    { enabled: !!_friendId },
+  );
+  const balances = api.user.getBalancesWithFriend.useQuery(
+    { friendId: _friendId },
+    { enabled: !!_friendId },
+  );
+
+  const showProgress = useEnableAfter(300);
 
   const youLent = balances.data?.filter((b) => b.amount > 0);
   const youOwe = balances.data?.filter((b) => b.amount < 0);
@@ -30,13 +49,12 @@ const FriendPage: NextPage<{ user: User; friend: User }> = ({ user, friend }) =>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
-        user={user}
         title={
           <div className="flex items-center gap-2">
             <Link href="/balances">
               <ChevronLeftIcon className="mr-1 h-6 w-6" />
             </Link>
-            <p className="text-lg font-normal">{friend.name}</p>
+            <p className="text-lg font-normal">{friendQuery.data?.name}</p>
           </div>
         }
         header={
@@ -45,15 +63,17 @@ const FriendPage: NextPage<{ user: User; friend: User }> = ({ user, friend }) =>
               <Link href="/balances">
                 <ChevronLeftIcon className="mr-1 h-6 w-6" />
               </Link>
-              <UserAvatar user={friend} size={25} />
-              {friend.name}
+              <UserAvatar user={friendQuery.data} size={25} />
+              {friendQuery.data?.name}
             </div>
             <div></div>
           </div>
         }
       >
-        {balances.isLoading && expenses ? (
-          <div className="mt-20 flex justify-center"></div>
+        {balances.isLoading || expenses.isLoading || friendQuery.isLoading || !friendQuery.data ? (
+          <div className="mt-20 flex justify-center">
+            {showProgress ? <LoadingSpinner /> : null}
+          </div>
         ) : (
           <div className="mb-28">
             <div className="mx-4 flex flex-wrap gap-2">
@@ -93,8 +113,8 @@ const FriendPage: NextPage<{ user: User; friend: User }> = ({ user, friend }) =>
               {balances.data ? (
                 <SettleUp
                   balances={balances.data}
-                  key={`${friend.id}-${balances.data.length}`}
-                  friend={friend}
+                  key={`${friendQuery.data?.id}-${balances.data.length}`}
+                  friend={friendQuery.data}
                   currentUser={user}
                 />
               ) : (
@@ -108,7 +128,7 @@ const FriendPage: NextPage<{ user: User; friend: User }> = ({ user, friend }) =>
                 </Button>
               )}
 
-              <Link href={`/add?friendId=${friend.id}`}>
+              <Link href={`/add?friendId=${friendQuery.data.id}`}>
                 <Button
                   size="sm"
                   variant="secondary"
@@ -127,13 +147,13 @@ const FriendPage: NextPage<{ user: User; friend: User }> = ({ user, friend }) =>
               {expenses.data?.map((e) => {
                 const youPaid = e.paidBy === user.id;
                 const yourExpense = e.expenseParticipants.find(
-                  (p) => p.userId === (youPaid ? friend.id : user.id),
+                  (p) => p.userId === (youPaid ? friendQuery.data?.id : user.id),
                 );
                 const isSettlement = e.splitType === SplitType.SETTLEMENT;
 
                 return (
                   <Link
-                    href={`/balances/${friend.id}/expenses/${e.id}`}
+                    href={`/balances/${friendQuery.data?.id}/expenses/${e.id}`}
                     key={e.id}
                     className="flex items-center justify-between px-2 py-2"
                   >
@@ -159,7 +179,8 @@ const FriendPage: NextPage<{ user: User; friend: User }> = ({ user, friend }) =>
                             {isSettlement ? '  🎉 ' : null}
                           </span>
                           <span>
-                            {youPaid ? 'You' : friend.name} paid {e.currency} {toUIString(e.amount)}{' '}
+                            {youPaid ? 'You' : friendQuery.data?.name} paid {e.currency}{' '}
+                            {toUIString(e.amount)}{' '}
                           </span>
                         </p>
                       </div>
@@ -190,37 +211,6 @@ const FriendPage: NextPage<{ user: User; friend: User }> = ({ user, friend }) =>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const serverState = await getServerAuthSessionForSSG(context);
-  if (serverState.redirect) {
-    return serverState;
-  }
-
-  const friendId = context.params?.friendId as string;
-
-  if (!friendId) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const friend = await db.user.findUnique({
-    where: {
-      id: parseInt(friendId),
-    },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-    },
-  });
-
-  return {
-    props: {
-      user: serverState.props.user,
-      friend,
-    },
-  };
-};
+FriendPage.auth = true;
 
 export default FriendPage;

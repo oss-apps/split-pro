@@ -45,16 +45,16 @@ const AvatarFallback = React.forwardRef<
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
 const UserAvatar: React.FC<{
-  user: { name?: string | null; image?: string | null; email?: string | null };
+  user?: { name?: string | null; image?: string | null; email?: string | null } | null;
   size?: number;
 }> = ({ user, size }) => {
   return (
     <Avatar style={{ width: size ?? 40, height: size ?? 40 }}>
-      <AvatarImage src={user.image ?? undefined} alt={user.name ?? user.email ?? ''} />
+      <AvatarImage src={user?.image ?? undefined} alt={user?.name ?? user?.email ?? ''} />
       <AvatarFallback>
         <BoringAvatar
           size={size}
-          name={user.name ?? user.email ?? ''}
+          name={user?.name ?? user?.email ?? ''}
           variant="beam"
           // colors={['#ADDFD3', '#EAE3D0', '#DBC4B6', '#FFA5AA', '#EFD5C4']}
           // colors={['#565175', '#538A95', '#67B79E', '#FFB727', '#E4491C']}

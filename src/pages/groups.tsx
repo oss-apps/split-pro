@@ -1,4 +1,3 @@
-import { type GetServerSideProps, type NextPage } from 'next';
 import Head from 'next/head';
 import MainLayout from '~/components/Layout/MainLayout';
 import clsx from 'clsx';

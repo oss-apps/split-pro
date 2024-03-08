@@ -15,14 +15,6 @@ import { type NextPageWithUser } from '~/types';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { useEffect, useState } from 'react';
 
-NProgress.configure({ showSpinner: false });
-
-Router.events.on('routeChangeComplete', () => NProgress.done());
-Router.events.on('routeChangeStart', () => {
-  NProgress.start();
-});
-Router.events.on('routeChangeError', () => () => NProgress.done());
-
 const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });
 
 const MyApp: AppType<{ session: Session | null }> = ({

@@ -1,10 +1,8 @@
-import { type GetServerSideProps, type NextPage } from 'next';
 import Head from 'next/head';
 import MainLayout from '~/components/Layout/MainLayout';
 import clsx from 'clsx';
 import { Button } from '~/components/ui/button';
 import { ArrowUpOnSquareIcon } from '@heroicons/react/24/outline';
-import { getServerAuthSessionForSSG } from '~/server/auth';
 import { type User } from '@prisma/client';
 import { api } from '~/utils/api';
 import Link from 'next/link';

@@ -12,6 +12,7 @@ import { UserAvatar } from '~/components/ui/avatar';
 import InstallApp from '~/components/InstallApp';
 import { type NextPageWithUser } from '~/types';
 import { BalanceSkeleton } from '~/components/ui/skeleton';
+import useEnableAfter from '~/hooks/useEnableAfter';
 
 const BalancePage: NextPageWithUser = () => {
   function shareWithFriends() {
@@ -28,6 +29,7 @@ const BalancePage: NextPageWithUser = () => {
   }
 
   const balanceQuery = api.user.getBalances.useQuery();
+  const showProgress = useEnableAfter(350);
 
   return (
     <>
@@ -97,13 +99,15 @@ const BalancePage: NextPageWithUser = () => {
 
           <div className="mt-5 flex flex-col gap-8 px-4 pb-36">
             {balanceQuery.isLoading ? (
-              <>
-                <BalanceSkeleton />
-                <BalanceSkeleton />
-                <BalanceSkeleton />
-                <BalanceSkeleton />
-                <BalanceSkeleton />
-              </>
+              showProgress ? (
+                <>
+                  <BalanceSkeleton />
+                  <BalanceSkeleton />
+                  <BalanceSkeleton />
+                  <BalanceSkeleton />
+                  <BalanceSkeleton />
+                </>
+              ) : null
             ) : null}
 
             {balanceQuery.data?.balances.map((b) => (

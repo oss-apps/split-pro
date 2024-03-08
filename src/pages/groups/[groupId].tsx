@@ -22,6 +22,7 @@ import { useState } from 'react';
 import { type NextPageWithUser } from '~/types';
 import { BalanceSkeleton, Skeleton } from '~/components/ui/skeleton';
 import { Separator } from '~/components/ui/separator';
+import useEnableAfter from '~/hooks/useEnableAfter';
 
 const BalancePage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
@@ -31,6 +32,7 @@ const BalancePage: NextPageWithUser = ({ user }) => {
   const expensesQuery = api.group.getExpenses.useQuery({ groupId });
 
   const [isInviteCopied, setIsInviteCopied] = useState(false);
+  const showProgress = useEnableAfter(350);
 
   async function inviteMembers() {
     if (!groupDetailQuery.data) return;
@@ -119,10 +121,12 @@ const BalancePage: NextPageWithUser = ({ user }) => {
         }
       >
         {groupDetailQuery.isLoading ? (
-          <div className="mx-4 flex flex-col gap-4">
-            <Skeleton className=" h-12 w-full" />
-            <Separator />
-          </div>
+          showProgress ? (
+            <div className="mx-4 flex flex-col gap-4">
+              <Skeleton className=" h-12 w-full" />
+              <Separator />
+            </div>
+          ) : null
         ) : groupDetailQuery.data?.groupUsers.length === 1 ? (
           <NoMembers group={groupDetailQuery.data} />
         ) : (
@@ -158,13 +162,15 @@ const BalancePage: NextPageWithUser = ({ user }) => {
           </div>
         )}
         {expensesQuery.isLoading ? (
-          <div className="mt-4 flex flex-col gap-4 px-4">
-            <BalanceSkeleton />
-            <BalanceSkeleton />
-            <BalanceSkeleton />
-            <BalanceSkeleton />
-            <BalanceSkeleton />
-          </div>
+          showProgress ? (
+            <div className="mt-4 flex flex-col gap-4 px-4">
+              <BalanceSkeleton />
+              <BalanceSkeleton />
+              <BalanceSkeleton />
+              <BalanceSkeleton />
+              <BalanceSkeleton />
+            </div>
+          ) : null
         ) : null}
         {expensesQuery.data?.map((e) => {
           const youPaid = e.paidBy === user.id;

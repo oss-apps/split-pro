@@ -38,7 +38,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
     { enabled: !!_friendId },
   );
 
-  const showProgress = useEnableAfter(200);
+  const showProgress = useEnableAfter(350);
 
   const youLent = balances.data?.filter((b) => b.amount > 0);
   const youOwe = balances.data?.filter((b) => b.amount < 0);
@@ -72,15 +72,17 @@ const FriendPage: NextPageWithUser = ({ user }) => {
         }
       >
         {balances.isLoading || expenses.isLoading || friendQuery.isLoading || !friendQuery.data ? (
-          <div className="mx-4 flex flex-col gap-4">
-            <Skeleton className=" h-16 w-full" />
-            <Separator />
-            <BalanceSkeleton />
-            <BalanceSkeleton />
-            <BalanceSkeleton />
-            <BalanceSkeleton />
-            <BalanceSkeleton />
-          </div>
+          showProgress ? (
+            <div className="mx-4 flex flex-col gap-4">
+              <Skeleton className=" h-16 w-full" />
+              <Separator />
+              <BalanceSkeleton />
+              <BalanceSkeleton />
+              <BalanceSkeleton />
+              <BalanceSkeleton />
+              <BalanceSkeleton />
+            </div>
+          ) : null
         ) : (
           <div className="mb-28">
             <div className="mx-4 flex flex-wrap gap-2">

@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { type NextPageWithUser } from '~/types';
 import { type User } from 'next-auth';
 import { BalanceSkeleton } from '~/components/ui/skeleton';
+import useEnableAfter from '~/hooks/useEnableAfter';
 
 function getPaymentString(
   user: User,
@@ -41,6 +42,7 @@ function getPaymentString(
 
 const ActivityPage: NextPageWithUser = ({ user }) => {
   const expensesQuery = api.user.getAllExpenses.useQuery();
+  const showProgress = useEnableAfter(350);
 
   return (
     <>
@@ -52,14 +54,16 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
         <div className=" h-full px-4">
           <div className="flex flex-col gap-4">
             {expensesQuery.isLoading ? (
-              <>
-                <BalanceSkeleton />
-                <BalanceSkeleton />
-                <BalanceSkeleton />
-                <BalanceSkeleton />
-                <BalanceSkeleton />
-                <BalanceSkeleton />
-              </>
+              showProgress ? (
+                <>
+                  <BalanceSkeleton />
+                  <BalanceSkeleton />
+                  <BalanceSkeleton />
+                  <BalanceSkeleton />
+                  <BalanceSkeleton />
+                  <BalanceSkeleton />
+                </>
+              ) : null
             ) : (
               <>
                 {!expensesQuery.data?.length ? (

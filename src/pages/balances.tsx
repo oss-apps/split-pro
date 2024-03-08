@@ -11,6 +11,7 @@ import { PlusIcon } from 'lucide-react';
 import { UserAvatar } from '~/components/ui/avatar';
 import InstallApp from '~/components/InstallApp';
 import { type NextPageWithUser } from '~/types';
+import { BalanceSkeleton } from '~/components/ui/skeleton';
 
 const BalancePage: NextPageWithUser = () => {
   function shareWithFriends() {
@@ -95,6 +96,16 @@ const BalancePage: NextPageWithUser = () => {
           </div>
 
           <div className="mt-5 flex flex-col gap-8 px-4 pb-36">
+            {balanceQuery.isLoading ? (
+              <>
+                <BalanceSkeleton />
+                <BalanceSkeleton />
+                <BalanceSkeleton />
+                <BalanceSkeleton />
+                <BalanceSkeleton />
+              </>
+            ) : null}
+
             {balanceQuery.data?.balances.map((b) => (
               <FriendBalance
                 key={b.friend.id}

@@ -12,6 +12,7 @@ import { GroupAvatar } from '~/components/ui/avatar';
 import { toUIString } from '~/utils/numbers';
 import { motion } from 'framer-motion';
 import { type NextPageWithUser } from '~/types';
+import { BalanceSkeleton } from '~/components/ui/skeleton';
 
 const BalancePage: NextPageWithUser = () => {
   const groupQuery = api.group.getAllGroupsWithBalances.useQuery();
@@ -33,7 +34,13 @@ const BalancePage: NextPageWithUser = () => {
         <div className="mt-2">
           <div className="mt-5 flex flex-col gap-8 px-4 pb-36">
             {groupQuery.isLoading ? (
-              <p></p>
+              <>
+                <BalanceSkeleton />
+                <BalanceSkeleton />
+                <BalanceSkeleton />
+                <BalanceSkeleton />
+                <BalanceSkeleton />
+              </>
             ) : groupQuery.data?.length === 0 ? (
               <motion.div
                 initial={{ opacity: 0 }}

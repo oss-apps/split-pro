@@ -44,10 +44,10 @@ const AvatarFallback = React.forwardRef<
 ));
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
-const UserAvatar: React.FC<{ user: Omit<User, 'emailVerified' | 'currency'>; size?: number }> = ({
-  user,
-  size,
-}) => {
+const UserAvatar: React.FC<{
+  user: { name?: string | null; image?: string | null; email?: string | null };
+  size?: number;
+}> = ({ user, size }) => {
   return (
     <Avatar style={{ width: size ?? 40, height: size ?? 40 }}>
       <AvatarImage src={user.image ?? undefined} alt={user.name ?? user.email ?? ''} />

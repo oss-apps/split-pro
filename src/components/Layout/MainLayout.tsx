@@ -127,7 +127,6 @@ const NavItem: React.FC<NavItemProps> = ({ title, Icon, link, currentPath }) => 
     <Link
       href={link}
       className={clsx('flex w-32 flex-col items-center justify-between gap-2 py-4')}
-      prefetch={true}
     >
       <Icon className={clsx('h-7 w-7', isActive ? 'text-cyan-500' : 'text-gray-600')} />
       <span className={clsx('text-xs', isActive ? 'font-medium text-cyan-500' : 'text-gray-500')}>
@@ -141,7 +140,7 @@ const NavItemDesktop: React.FC<NavItemProps> = ({ title, Icon, link, currentPath
   const isActive = currentPath?.startsWith(link);
 
   return (
-    <Link href={link} className={clsx(' flex w-[150px]  items-center gap-2 py-4')} prefetch={true}>
+    <Link href={link} className={clsx(' flex w-[150px]  items-center gap-2 py-4')}>
       <Icon className={clsx('h-7 w-7', isActive ? 'text-cyan-500' : 'text-gray-600')} />
       <span className={clsx('', isActive ? 'font-medium text-cyan-500' : 'text-gray-500')}>
         {title}

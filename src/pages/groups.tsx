@@ -12,8 +12,9 @@ import Link from 'next/link';
 import { GroupAvatar } from '~/components/ui/avatar';
 import { toUIString } from '~/utils/numbers';
 import { motion } from 'framer-motion';
+import { type NextPageWithUser } from '~/types';
 
-const BalancePage: NextPage<{ user: User }> = ({ user }) => {
+const BalancePage: NextPageWithUser = () => {
   const groupQuery = api.group.getAllGroupsWithBalances.useQuery();
 
   return (
@@ -23,7 +24,6 @@ const BalancePage: NextPage<{ user: User }> = ({ user }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
-        user={user}
         title="Groups"
         actions={
           <CreateGroup>
@@ -110,8 +110,6 @@ const GroupBalance: React.FC<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return getServerAuthSessionForSSG(context);
-};
+BalancePage.auth = true;
 
 export default BalancePage;

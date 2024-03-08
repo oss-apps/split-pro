@@ -1,8 +1,6 @@
 import { type Session } from 'next-auth';
-import { SessionProvider } from 'next-auth/react';
+import { SessionProvider, useSession } from 'next-auth/react';
 import { type AppType } from 'next/app';
-import { GeistSans } from 'geist/font/sans';
-import { GeistMono } from 'geist/font/mono';
 import { Poppins } from 'next/font/google';
 import { ThemeProvider } from '~/components/theme-provider';
 import { api } from '~/utils/api';
@@ -13,6 +11,9 @@ import NProgress from 'nprogress';
 import Router from 'next/router';
 
 import '~/styles/globals.css';
+import { type NextPageWithUser } from '~/types';
+import { LoadingSpinner } from '~/components/ui/spinner';
+import { useEffect, useState } from 'react';
 
 NProgress.configure({ showSpinner: false });
 
@@ -76,11 +77,37 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <SessionProvider session={session}>
         <ThemeProvider attribute="class" defaultTheme="dark">
           <Toaster />
-          <Component {...pageProps} />
+          {(Component as NextPageWithUser).auth ? (
+            <Auth pageProps={pageProps} Page={Component as NextPageWithUser}></Auth>
+          ) : (
+            <Component {...pageProps} />
+          )}{' '}
         </ThemeProvider>
       </SessionProvider>
     </main>
   );
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, pageProps }) => {
+  const { status, data } = useSession({ required: true });
+  const [showSpinner, setShowSpinner] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowSpinner(true);
+    }, 300);
+  }, []);
+
+  if (status === 'loading') {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        {showSpinner ? <LoadingSpinner className="text-primary" /> : null}
+      </div>
+    );
+  }
+
+  return <Page user={data.user} {...pageProps} />;
 };
 
 export default api.withTRPC(MyApp);

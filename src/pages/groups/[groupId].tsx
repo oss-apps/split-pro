@@ -20,9 +20,7 @@ import { CategoryIcon } from '~/components/ui/categoryIcons';
 import { env } from '~/env';
 import { useState } from 'react';
 import { type NextPageWithUser } from '~/types';
-import { BalanceSkeleton, Skeleton } from '~/components/ui/skeleton';
-import { Separator } from '~/components/ui/separator';
-import useEnableAfter from '~/hooks/useEnableAfter';
+import { motion } from 'framer-motion';
 
 const BalancePage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
@@ -32,7 +30,6 @@ const BalancePage: NextPageWithUser = ({ user }) => {
   const expensesQuery = api.group.getExpenses.useQuery({ groupId });
 
   const [isInviteCopied, setIsInviteCopied] = useState(false);
-  const showProgress = useEnableAfter(350);
 
   async function inviteMembers() {
     if (!groupDetailQuery.data) return;
@@ -120,17 +117,14 @@ const BalancePage: NextPageWithUser = ({ user }) => {
           </div>
         }
       >
-        {groupDetailQuery.isLoading ? (
-          showProgress ? (
-            <div className="mx-4 flex flex-col gap-4">
-              <Skeleton className=" h-12 w-full" />
-              <Separator />
-            </div>
-          ) : null
-        ) : groupDetailQuery.data?.groupUsers.length === 1 ? (
+        {groupDetailQuery.isLoading ? null : groupDetailQuery.data?.groupUsers.length === 1 ? (
           <NoMembers group={groupDetailQuery.data} />
         ) : (
-          <div className=" mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className=" mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4"
+          >
             <Link href={`/add?groupId=${groupId}`}>
               <Button size="sm" className="gap-1 text-sm lg:w-[180px]">
                 Add Expense
@@ -159,19 +153,8 @@ const BalancePage: NextPageWithUser = ({ user }) => {
                 </>
               )}
             </Button>
-          </div>
+          </motion.div>
         )}
-        {expensesQuery.isLoading ? (
-          showProgress ? (
-            <div className="mt-4 flex flex-col gap-4 px-4">
-              <BalanceSkeleton />
-              <BalanceSkeleton />
-              <BalanceSkeleton />
-              <BalanceSkeleton />
-              <BalanceSkeleton />
-            </div>
-          ) : null
-        ) : null}
         {expensesQuery.data?.map((e) => {
           const youPaid = e.paidBy === user.id;
           const yourExpense = e.expenseParticipants.find((p) => p.userId === user.id);

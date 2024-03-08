@@ -51,13 +51,13 @@ export default function Home() {
                 </a>{' '}
                 alternative to SplitWise
               </h2>
-              <div className="mt-10 flex flex-col">
+              {/* <div className="mt-10 flex flex-col">
                 <Link href="/auth/signin" className="mx-auto lg:mx-0">
                   <Button className="flex w-[200px] items-center gap-2 rounded-full">
                     Add Expense <ArrowRight size={15} />{' '}
                   </Button>
                 </Link>
-              </div>
+              </div> */}
             </div>
             <div className="mb-20 mt-8 flex justify-center lg:hidden">
               <MobileScreenShot />
@@ -140,13 +140,13 @@ export default function Home() {
                 <a className=" text-primary" href="https://koushik.dev" target="_blank">
                   KM Koushik
                 </a>
-                <p className="text-gray-400">
+                {/* <p className="text-gray-400">
                   A product of <a className="underline underline-offset-2">ossapps.dev</a>
-                </p>
+                </p> */}
               </div>
               <div className="flex justify-center gap-4 lg:justify-start">
                 <a className="text-primary" href="https://twitter.com/KM_Koushik_" target="_blank">
-                  x
+                  Twitter
                 </a>
                 <a
                   className="text-primary"

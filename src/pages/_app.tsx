@@ -29,7 +29,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <meta name="application-name" content="SplitPro" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="SplitPro" />
-        <meta name="description" content="Best PWA App in the world" />
+        <meta name="description" content="Split Expenses with your friends for free" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-config" content="/icons/browserconfig.xml" />
@@ -51,20 +51,17 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <link rel="shortcut icon" href="/favicon.ico" />
 
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:url" content="https://yourdomain.com" />
+        <meta name="twitter:url" content="https://splitpro.app" />
         <meta name="twitter:title" content="SplitPro" />
         <meta name="twitter:description" content="Split Expenses with your friends for free" />
-        <meta
-          name="twitter:image"
-          content="https://yourdomain.com/icons/android-chrome-192x192.png"
-        />
-        <meta name="twitter:creator" content="@DavidWShadow" />
+        <meta name="twitter:image" content="https://splitpro.app/og_banner.png" />
+        <meta name="twitter:creator" content="@KM_Koushik_" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="SplitPro" />
-        <meta property="og:description" content="SplitPro" />
+        <meta property="og:description" content="Split Expenses with your friends for free" />
         <meta property="og:site_name" content="SplitPro" />
         <meta property="og:url" content="https://splitpro.app" />
-        <meta property="og:image" content="https://yourdomain.com/icons/apple-touch-icon.png" />
+        <meta property="og:image" content="https://splitpro.app/og_banner.png" />
       </Head>
       <SessionProvider session={session}>
         <ThemeProvider attribute="class" defaultTheme="dark">

@@ -14,9 +14,7 @@ import { toUIString } from '~/utils/numbers';
 import { CategoryIcon } from '~/components/ui/categoryIcons';
 import { useRouter } from 'next/router';
 import { type NextPageWithUser } from '~/types';
-import useEnableAfter from '~/hooks/useEnableAfter';
-import { LoadingSpinner } from '~/components/ui/spinner';
-import { BalanceSkeleton, Skeleton } from '~/components/ui/skeleton';
+import { motion } from 'framer-motion';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
@@ -37,8 +35,6 @@ const FriendPage: NextPageWithUser = ({ user }) => {
     { friendId: _friendId },
     { enabled: !!_friendId },
   );
-
-  const showProgress = useEnableAfter(350);
 
   const youLent = balances.data?.filter((b) => b.amount > 0);
   const youOwe = balances.data?.filter((b) => b.amount < 0);
@@ -71,20 +67,11 @@ const FriendPage: NextPageWithUser = ({ user }) => {
           </div>
         }
       >
-        {balances.isLoading || expenses.isLoading || friendQuery.isLoading || !friendQuery.data ? (
-          showProgress ? (
-            <div className="mx-4 flex flex-col gap-4">
-              <Skeleton className=" h-16 w-full" />
-              <Separator />
-              <BalanceSkeleton />
-              <BalanceSkeleton />
-              <BalanceSkeleton />
-              <BalanceSkeleton />
-              <BalanceSkeleton />
-            </div>
-          ) : null
-        ) : (
-          <div className="mb-28">
+        {balances.isLoading ||
+        expenses.isLoading ||
+        friendQuery.isLoading ||
+        !friendQuery.data ? null : (
+          <motion.div className="mb-28" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="mx-4 flex flex-wrap gap-2">
               <div className=" text-orange-700">
                 {(youOwe?.length ?? 0) > 0 && (
@@ -213,7 +200,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 );
               })}
             </div>
-          </div>
+          </motion.div>
         )}
       </MainLayout>
     </>

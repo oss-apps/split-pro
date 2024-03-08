@@ -10,6 +10,7 @@ import { type NextPageWithUser } from '~/types';
 import { type User } from 'next-auth';
 import { BalanceSkeleton } from '~/components/ui/skeleton';
 import useEnableAfter from '~/hooks/useEnableAfter';
+import { LoadingSpinner } from '~/components/ui/spinner';
 
 function getPaymentString(
   user: User,
@@ -55,14 +56,9 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
           <div className="flex flex-col gap-4">
             {expensesQuery.isLoading ? (
               showProgress ? (
-                <>
-                  <BalanceSkeleton />
-                  <BalanceSkeleton />
-                  <BalanceSkeleton />
-                  <BalanceSkeleton />
-                  <BalanceSkeleton />
-                  <BalanceSkeleton />
-                </>
+                <div className="mt-10 flex justify-center">
+                  <LoadingSpinner className="text-primary" />
+                </div>
               ) : null
             ) : (
               <>

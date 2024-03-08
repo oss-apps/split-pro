@@ -3,13 +3,12 @@ import MainLayout from '~/components/Layout/MainLayout';
 import Avatar from 'boring-avatars';
 import clsx from 'clsx';
 import { Button } from '~/components/ui/button';
-import { getServerAuthSessionForSSG } from '~/server/auth';
 import { SplitType, type User } from '@prisma/client';
 import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
 import { Check, ChevronLeft, Share, UserPlus } from 'lucide-react';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
-import { AppDrawer, Drawer, DrawerContent, DrawerTrigger } from '~/components/ui/drawer';
+import { AppDrawer } from '~/components/ui/drawer';
 import { UserAvatar } from '~/components/ui/avatar';
 import NoMembers from '~/components/group/NoMembers';
 import { format } from 'date-fns';
@@ -21,6 +20,8 @@ import { CategoryIcon } from '~/components/ui/categoryIcons';
 import { env } from '~/env';
 import { useState } from 'react';
 import { type NextPageWithUser } from '~/types';
+import { BalanceSkeleton, Skeleton } from '~/components/ui/skeleton';
+import { Separator } from '~/components/ui/separator';
 
 const BalancePage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
@@ -117,7 +118,12 @@ const BalancePage: NextPageWithUser = ({ user }) => {
           </div>
         }
       >
-        {groupDetailQuery.isLoading ? null : groupDetailQuery.data?.groupUsers.length === 1 ? (
+        {groupDetailQuery.isLoading ? (
+          <div className="mx-4 flex flex-col gap-4">
+            <Skeleton className=" h-12 w-full" />
+            <Separator />
+          </div>
+        ) : groupDetailQuery.data?.groupUsers.length === 1 ? (
           <NoMembers group={groupDetailQuery.data} />
         ) : (
           <div className=" mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4">
@@ -151,6 +157,15 @@ const BalancePage: NextPageWithUser = ({ user }) => {
             </Button>
           </div>
         )}
+        {expensesQuery.isLoading ? (
+          <div className="mt-4 flex flex-col gap-4 px-4">
+            <BalanceSkeleton />
+            <BalanceSkeleton />
+            <BalanceSkeleton />
+            <BalanceSkeleton />
+            <BalanceSkeleton />
+          </div>
+        ) : null}
         {expensesQuery.data?.map((e) => {
           const youPaid = e.paidBy === user.id;
           const yourExpense = e.expenseParticipants.find((p) => p.userId === user.id);

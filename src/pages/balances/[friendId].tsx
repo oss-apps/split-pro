@@ -16,6 +16,7 @@ import { useRouter } from 'next/router';
 import { type NextPageWithUser } from '~/types';
 import useEnableAfter from '~/hooks/useEnableAfter';
 import { LoadingSpinner } from '~/components/ui/spinner';
+import { BalanceSkeleton, Skeleton } from '~/components/ui/skeleton';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
@@ -37,7 +38,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
     { enabled: !!_friendId },
   );
 
-  const showProgress = useEnableAfter(300);
+  const showProgress = useEnableAfter(200);
 
   const youLent = balances.data?.filter((b) => b.amount > 0);
   const youOwe = balances.data?.filter((b) => b.amount < 0);
@@ -71,8 +72,14 @@ const FriendPage: NextPageWithUser = ({ user }) => {
         }
       >
         {balances.isLoading || expenses.isLoading || friendQuery.isLoading || !friendQuery.data ? (
-          <div className="mt-20 flex justify-center">
-            {showProgress ? <LoadingSpinner /> : null}
+          <div className="mx-4 flex flex-col gap-4">
+            <Skeleton className=" h-16 w-full" />
+            <Separator />
+            <BalanceSkeleton />
+            <BalanceSkeleton />
+            <BalanceSkeleton />
+            <BalanceSkeleton />
+            <BalanceSkeleton />
           </div>
         ) : (
           <div className="mb-28">

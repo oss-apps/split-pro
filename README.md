@@ -1,7 +1,7 @@
 
 <p align="center" style="margin-top: 12px">
   <a href="https://splitpro.app">
-  <img width="100px"  style="border-radius: 50%;" src="https://split-pro-dev.up.railway.app/logo_circle.png" alt="SplitPro Logo">
+  <img width="100px"  style="border-radius: 50%;" src="https://splitpro.app/logo_circle.png" alt="SplitPro Logo">
   </a>
 
   <h1 align="center">SplitPro</h1>

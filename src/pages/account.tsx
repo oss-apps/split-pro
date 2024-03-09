@@ -113,10 +113,10 @@ const AccountPage: NextPageWithUser = ({ user }) => {
                   If you are using Android, checkout this{' '}
                   <a
                     className="text-cyan-500 underline"
-                    href="https://web.dev/learn/pwa/installation#android_installation"
+                    href="https://youtube.com/shorts/VG6Vm_23tGs?feature=share"
                     target="_blank"
                   >
-                    Article
+                    Video
                   </a>
                 </p>
               </div>

@@ -61,7 +61,7 @@ const InstallApp: React.FC = () => {
             If you are using Android, checkout this{' '}
             <a
               className="text-cyan-500 underline"
-              href="https://youtube.com/shorts/VG6Vm_23tGs?feature=share"
+              href="https://youtube.com/shorts/04n7oKGzgOs"
               target="_blank"
             >
               Video

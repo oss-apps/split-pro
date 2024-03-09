@@ -378,6 +378,11 @@ export const userRouter = createTRPCRouter({
       const friend = await db.user.findUnique({
         where: {
           id: input.friendId,
+          userBalances: {
+            some: {
+              friendId: ctx.session.user.id,
+            },
+          },
         },
       });
 

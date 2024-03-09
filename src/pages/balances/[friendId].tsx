@@ -1,8 +1,7 @@
 import Head from 'next/head';
 import MainLayout from '~/components/Layout/MainLayout';
-import { SplitType, type User } from '@prisma/client';
+import { SplitType } from '@prisma/client';
 import { api } from '~/utils/api';
-import { db } from '~/server/db';
 import { UserAvatar } from '~/components/ui/avatar';
 import Link from 'next/link';
 import { ChevronLeftIcon, PlusIcon } from 'lucide-react';

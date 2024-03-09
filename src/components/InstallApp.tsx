@@ -50,7 +50,7 @@ const InstallApp: React.FC = () => {
             If you are using iOS, checkout this{' '}
             <a
               className="text-cyan-500 underline"
-              href="https://www.youtube.com/watch?v=Tta2h1HdxTk"
+              href="https://youtube.com/shorts/MQHeLOjr350"
               target="_blank"
             >
               video

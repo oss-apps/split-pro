@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from '../ui/button';
 import { toast } from 'sonner';
 import { env } from '~/env';
 import { Bell, BellOff, ChevronRight } from 'lucide-react';
 import { api } from '~/utils/api';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from './ui/alert-dialog';
 
 const base64ToUint8Array = (base64: string) => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4);
@@ -18,9 +27,12 @@ const base64ToUint8Array = (base64: string) => {
   return outputArray;
 };
 
-export const SubscribeNotification: React.FC = () => {
+const NOTIFICATION_DISMISSED_TIME = 'notification_dismissed_time';
+const NOTIFICATION_DISMISSED_TIME_THRESHOLD = 1000 * 60 * 60 * 24 * 14; // 14 days
+
+export const NotificationModal: React.FC = () => {
   const updatePushSubscription = api.user.updatePushNotification.useMutation();
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
@@ -30,8 +42,14 @@ export const SubscribeNotification: React.FC = () => {
           reg.pushManager
             .getSubscription()
             .then((sub) => {
-              if (sub) {
-                setIsSubscribed(true);
+              if (!sub) {
+                const _notificationTime = localStorage.getItem(NOTIFICATION_DISMISSED_TIME);
+                if (
+                  !_notificationTime ||
+                  Date.now() - parseInt(_notificationTime) > NOTIFICATION_DISMISSED_TIME_THRESHOLD
+                ) {
+                  setModalOpen(true);
+                }
               }
             })
             .catch(console.error);
@@ -52,53 +70,40 @@ export const SubscribeNotification: React.FC = () => {
               applicationServerKey: base64ToUint8Array(env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY),
             });
 
-            setIsSubscribed(true);
             updatePushSubscription.mutate({ subscription: JSON.stringify(sub) });
           })
           .catch((e) => {
             toast.error('Cannot subscribe to notification');
           });
+        setModalOpen(false);
       }
     } catch (e) {
       toast.error('Error requesting notification');
     }
   }
 
-  async function unSubscribeNotification() {
-    try {
-      const reg = await navigator.serviceWorker.ready;
-      const sub = await reg.pushManager.getSubscription();
-      if (sub) {
-        await sub.unsubscribe();
-        setIsSubscribed(false);
-      }
-    } catch (e) {
-      toast.error('Error unsubscribing notification');
-    }
+  function remindLater() {
+    localStorage.setItem(NOTIFICATION_DISMISSED_TIME, Date.now().toString());
+    setModalOpen(false);
   }
 
   return (
-    <>
-      <Button
-        variant="ghost"
-        className="text-md w-full justify-between px-0 hover:text-foreground/80"
-        onClick={isSubscribed ? unSubscribeNotification : onRequestNotification}
-      >
-        <div className="flex items-center gap-2">
-          {!isSubscribed ? (
-            <>
-              <Bell className="h-5 w-5 text-red-400" />
-              Enable Notification
-            </>
-          ) : (
-            <>
-              <BellOff className="h-5 w-5 text-red-400" />
-              Disable notification
-            </>
-          )}
-        </div>
-        <ChevronRight className="h-6 w-6 text-gray-500" />
-      </Button>
-    </>
+    <AlertDialog open={modalOpen}>
+      <AlertDialogContent className=" rounded-lg">
+        <AlertDialogHeader>
+          <AlertDialogTitle>Enable notifications</AlertDialogTitle>
+          <AlertDialogDescription>
+            Don&apos;t miss on important events. Subscribe to get notification for added expenses
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={remindLater}>Remind later</AlertDialogCancel>
+          <AlertDialogAction onClick={onRequestNotification}>
+            <Bell className="mr-1 h-4" />
+            Subscribe
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };

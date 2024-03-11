@@ -393,7 +393,7 @@ export const userRouter = createTRPCRouter({
   updatePushNotification: protectedProcedure
     .input(z.object({ subscription: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      const _pushNotification = await db.pushNotification.upsert({
+      await db.pushNotification.upsert({
         where: {
           userId: ctx.session.user.id,
         },
@@ -405,13 +405,5 @@ export const userRouter = createTRPCRouter({
           subscription: input.subscription,
         },
       });
-
-      setTimeout(() => {
-        console.log('Sending notification');
-        pushNotification(input.subscription, {
-          title: 'Successfully subscribed to notification',
-          message: 'You will receive notifications now',
-        }).catch(console.error);
-      }, 5000);
     }),
 });

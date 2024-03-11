@@ -495,7 +495,7 @@ export async function sendExpensePushNotification(expenseId: string) {
 
   const participants = expense.deletedBy
     ? expense.expenseParticipants.map((p) => p.userId).filter((e) => e !== expense.deletedBy)
-    : expense.expenseParticipants.map((p) => p.userId).filter((e) => e !== expense.paidBy);
+    : expense.expenseParticipants.map((p) => p.userId).filter((e) => e !== expense.addedBy);
 
   const subscriptions = await db.pushNotification.findMany({
     where: {
@@ -507,11 +507,11 @@ export async function sendExpensePushNotification(expenseId: string) {
 
   const pushData = expense.deletedBy
     ? {
-        title: `${expense.deletedByUser?.name ?? expense.deletedByUser?.email} Deleted the expense`,
-        message: `${expense.name}`,
+        title: `${expense.deletedByUser?.name ?? expense.deletedByUser?.email}`,
+        message: `Deleted ${expense.name}`,
       }
     : {
-        title: `${expense.addedByUser.name ?? expense.addedByUser.email} Added an expense`,
+        title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
         message: `${expense.paidByUser.name ?? expense.paidByUser.email} paid  ${expense.currency} ${toFixedNumber(expense.amount)} for ${expense.name}`,
       };
 

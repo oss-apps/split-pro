@@ -8,6 +8,7 @@ import { randomUUID } from 'crypto';
 import { getDocumentUploadUrl } from '~/server/storage';
 import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { sendFeedbackEmail } from '~/server/mailer';
+import { pushNotification } from '~/server/notification';
 
 export const userRouter = createTRPCRouter({
   me: protectedProcedure.query(async ({ ctx }) => {
@@ -387,5 +388,30 @@ export const userRouter = createTRPCRouter({
       });
 
       return friend;
+    }),
+
+  updatePushNotification: protectedProcedure
+    .input(z.object({ subscription: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const _pushNotification = await db.pushNotification.upsert({
+        where: {
+          userId: ctx.session.user.id,
+        },
+        create: {
+          userId: ctx.session.user.id,
+          subscription: input.subscription,
+        },
+        update: {
+          subscription: input.subscription,
+        },
+      });
+
+      setTimeout(() => {
+        console.log('Sending notification');
+        pushNotification(input.subscription, {
+          title: 'Successfully subscribed to notification',
+          message: 'You will receive notifications now',
+        }).catch(console.error);
+      }, 5000);
     }),
 });

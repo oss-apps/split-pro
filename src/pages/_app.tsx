@@ -65,7 +65,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       </Head>
       <SessionProvider session={session}>
         <ThemeProvider attribute="class" defaultTheme="dark">
-          <Toaster />
+          <Toaster toastOptions={{ duration: 1500 }} />
           {(Component as NextPageWithUser).auth ? (
             <Auth pageProps={pageProps} Page={Component as NextPageWithUser}></Auth>
           ) : (

@@ -13,6 +13,7 @@ import pwa from 'next-pwa';
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
 const withPwa = pwa({
   dest: 'public',
+  // disable: process.env.NODE_ENV === 'development',
 });
 
 const config = {

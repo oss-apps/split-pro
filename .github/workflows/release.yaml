@@ -25,6 +25,10 @@ jobs:
         with:
           node-version: 18.x
 
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
       - name: Install packages
         run: pnpm i
 

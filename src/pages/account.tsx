@@ -3,13 +3,16 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import { UserAvatar } from '~/components/ui/avatar';
-import { ChevronRight, Download, Github } from 'lucide-react';
+import { Bell, ChevronRight, Download, Github } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { AppDrawer } from '~/components/ui/drawer';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { UpdateDetails } from '~/components/Account/UpdateDetails';
 import { api } from '~/utils/api';
 import { type NextPageWithUser } from '~/types';
+import { toast } from 'sonner';
+import { env } from '~/env';
+import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
 
 const AccountPage: NextPageWithUser = ({ user }) => {
   const userQuery = api.user.me.useQuery();
@@ -79,7 +82,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
               </Button>
             </Link>
             <SubmitFeedback />
-
+            <SubscribeNotification />
             <AppDrawer
               trigger={
                 <div className="flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300 hover:text-foreground/80">

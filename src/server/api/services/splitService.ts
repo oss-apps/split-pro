@@ -1,6 +1,8 @@
 import { type SplitType } from '@prisma/client';
+import exp from 'constants';
 import { db } from '~/server/db';
-import { toInteger } from '~/utils/numbers';
+import { pushNotification } from '~/server/notification';
+import { toFixedNumber, toInteger } from '~/utils/numbers';
 
 export async function joinGroup(userId: number, publicGroupId: string) {
   const group = await db.group.findUnique({
@@ -180,6 +182,9 @@ export async function createGroupExpense(
     participants.map((p) => p.userId),
     currency,
   );
+  if (result[0]) {
+    sendExpensePushNotification(result[0].id).catch(console.error);
+  }
   return result[0];
 }
 
@@ -282,6 +287,9 @@ export async function addUserExpense(
     participants.map((p) => p.userId),
     currency,
   );
+  if (result[0]) {
+    sendExpensePushNotification(result[0].id).catch(console.error);
+  }
   return result[0];
 }
 
@@ -440,4 +448,74 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
   );
 
   await db.$transaction(operations);
+  sendExpensePushNotification(expenseId).catch(console.error);
+}
+
+export async function sendExpensePushNotification(expenseId: string) {
+  const expense = await db.expense.findUnique({
+    where: {
+      id: expenseId,
+    },
+    select: {
+      paidBy: true,
+      amount: true,
+      currency: true,
+      addedBy: true,
+      name: true,
+      deletedBy: true,
+      deletedByUser: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+      expenseParticipants: {
+        select: {
+          userId: true,
+        },
+      },
+      paidByUser: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+      addedByUser: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+
+  if (!expense) {
+    return;
+  }
+
+  const participants = expense.deletedBy
+    ? expense.expenseParticipants.map((p) => p.userId).filter((e) => e !== expense.deletedBy)
+    : expense.expenseParticipants.map((p) => p.userId).filter((e) => e !== expense.addedBy);
+
+  const subscriptions = await db.pushNotification.findMany({
+    where: {
+      userId: {
+        in: participants,
+      },
+    },
+  });
+
+  const pushData = expense.deletedBy
+    ? {
+        title: `${expense.deletedByUser?.name ?? expense.deletedByUser?.email}`,
+        message: `Deleted ${expense.name}`,
+      }
+    : {
+        title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
+        message: `${expense.paidByUser.name ?? expense.paidByUser.email} paid  ${expense.currency} ${toFixedNumber(expense.amount)} for ${expense.name}`,
+      };
+
+  const pushNotifications = subscriptions.map((s) => pushNotification(s.subscription, pushData));
+
+  await Promise.all(pushNotifications);
 }

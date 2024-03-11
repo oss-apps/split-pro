@@ -177,3 +177,8 @@ model ExpenseNote {
     createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
     expense     Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
 }
+
+model PushNotification {
+    userId       Int    @id
+    subscription String
+}

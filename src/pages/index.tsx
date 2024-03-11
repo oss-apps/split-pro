@@ -1,17 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { Button } from '~/components/ui/button';
-import {
-  ArrowRight,
-  Ban,
-  Banknote,
-  FileUp,
-  GitFork,
-  Globe,
-  Sigma,
-  Split,
-  Users,
-} from 'lucide-react';
+import { ArrowRight, Banknote, Bell, FileUp, GitFork, Globe, Split, Users } from 'lucide-react';
 import Image from 'next/image';
 import { BackgroundGradient } from '~/components/ui/background-gradient';
 
@@ -129,6 +119,18 @@ export default function Home() {
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     Which makes it hard to become evil. Easy to self host
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
+                <div className="flex flex-col gap-1 lg:w-1/2">
+                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
+                    <Bell className="h-6 w-6 text-primary" />
+                    <p className="text-lg font-medium">Push notification</p>
+                  </div>
+                  <p className="px-4 text-gray-400 lg:px-0">
+                    Never miss important notifications. Get notified when someone adds an expense or
+                    settles up
                   </p>
                 </div>
               </div>

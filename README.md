@@ -1,4 +1,3 @@
-
 <p align="center" style="margin-top: 12px">
   <a href="https://splitpro.app">
   <img width="100px"  style="border-radius: 50%;" src="https://splitpro.app/logo_circle.png" alt="SplitPro Logo">
@@ -8,15 +7,14 @@
   <h2 align="center">An open source alternative to Splitwise</h2>
 
 <p align="center">
-    <a href="https://splitpro.app"><strong>To our Website & App »</strong></a>
+    <a href="https://splitpro.app"><strong>To our App »</strong></a>
     <br />
     <br />
   </p>
 </p>
 
-
-
 ## About
+
 SplitPro aims to provide an open-source way to share expenses with your friends.
 
 It's meant to be a complete replacement for Splitwise.
@@ -29,9 +27,9 @@ It currently has most of the important features.
 - Upload expense bills
 - PWA support
 - Split expense unequally (share, percentage, exact amounts)
+- Push notification
 
 **More features coming every day**
-
 
 ---
 
@@ -49,8 +47,8 @@ I managed to find a good app [spliit.app](https://spliit.app/) by [Sebastien Cas
 
 _That's when I decided to work on this_
 
-
 ## Tech stack
+
 - [NextJS](https://nextjs.org/)
 - [Tailwind](https://tailwindcss.com/)
 - [tRPC](https://trpc.io/)
@@ -59,15 +57,16 @@ _That's when I decided to work on this_
 - [Postgres](https://www.postgresql.org/)
 - [NextAuth](https://next-auth.js.org/)
 
-
 ## Getting started.
 
 ### Prerequisites
+
 - Node.js (Version: >=18.x)
 - PostgreSQL
 - pnpm (recommended)
 
 ### Run locally
+
 - Copy .env.example to .env and add the required env variables
 - Run `pnpm install`
 - Run `pnpm db:push` or `pnpm prisma:prod` to populate db migrations

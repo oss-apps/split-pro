@@ -1,4 +1,4 @@
-import { type SplitType } from '@prisma/client';
+import { SplitType } from '@prisma/client';
 import exp from 'constants';
 import { db } from '~/server/db';
 import { pushNotification } from '~/server/notification';
@@ -463,6 +463,7 @@ export async function sendExpensePushNotification(expenseId: string) {
       addedBy: true,
       name: true,
       deletedBy: true,
+      splitType: true,
       deletedByUser: {
         select: {
           name: true,
@@ -510,10 +511,15 @@ export async function sendExpensePushNotification(expenseId: string) {
         title: `${expense.deletedByUser?.name ?? expense.deletedByUser?.email}`,
         message: `Deleted ${expense.name}`,
       }
-    : {
-        title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
-        message: `${expense.paidByUser.name ?? expense.paidByUser.email} paid  ${expense.currency} ${toFixedNumber(expense.amount)} for ${expense.name}`,
-      };
+    : expense.splitType === SplitType.SETTLEMENT
+      ? {
+          title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
+          message: `${expense.paidByUser.name ?? expense.paidByUser.email} settled up ${expense.currency} ${toFixedNumber(expense.amount)}`,
+        }
+      : {
+          title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
+          message: `${expense.paidByUser.name ?? expense.paidByUser.email} paid  ${expense.currency} ${toFixedNumber(expense.amount)} for ${expense.name}`,
+        };
 
   const pushNotifications = subscriptions.map((s) => pushNotification(s.subscription, pushData));
 

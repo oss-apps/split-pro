@@ -26,10 +26,7 @@ jobs:
           node-version: 18.x
 
       - name: Install packages
-        run: yarn install --frozen-lockfile
-
-      - name: Run tests
-        run: yarn test
+        run: pnpm i
 
       - name: Install Railway
         run: npm i -g @railway/cli

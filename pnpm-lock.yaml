@@ -110,9 +110,6 @@ dependencies:
   nodemailer:
     specifier: ^6.9.8
     version: 6.9.8
-  nprogress:
-    specifier: ^0.2.0
-    version: 0.2.0
   react:
     specifier: 18.2.0
     version: 18.2.0
@@ -166,9 +163,6 @@ devDependencies:
   '@types/node':
     specifier: ^18.17.0
     version: 18.19.8
-  '@types/nprogress':
-    specifier: ^0.2.3
-    version: 0.2.3
   '@types/react':
     specifier: ^18.2.37
     version: 18.2.48
@@ -4347,10 +4341,6 @@ packages:
     dependencies:
       undici-types: 5.26.5
 
-  /@types/nprogress@0.2.3:
-    resolution: {integrity: sha512-k7kRA033QNtC+gLc4VPlfnue58CM1iQLgn1IMAU8VPHGOj7oIHPp9UlhedEnD/Gl8evoCjwkZjlBORtZ3JByUA==}
-    dev: true
-
   /@types/prop-types@15.7.11:
     resolution: {integrity: sha512-ga8y9v9uyeiLdpKddhxYQkxNDrfvuPrlFb0N1qnZZByvcElJaXthF1UhvCh9TLWJBEHeNtdnbysW7Y6Uq8CVng==}
 
@@ -7040,10 +7030,6 @@ packages:
     resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
     engines: {node: '>=0.10.0'}
     dev: true
-
-  /nprogress@0.2.0:
-    resolution: {integrity: sha512-I19aIingLgR1fmhftnbWWO3dXc0hSxqHQHQb3H8m+K3TnEn/iSeTZZOyvKXWqQESMwuUVnatlCnZdLBZZt2VSA==}
-    dev: false
 
   /oauth@0.9.15:
     resolution: {integrity: sha512-a5ERWK1kh38ExDEfoO6qUHJb32rd7aYmPHuyCu3Fta/cnICvYmgd2uhuKXvPD+PXB+gCEYYEaQdIRAjCOwAKNA==}

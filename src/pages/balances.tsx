@@ -11,9 +11,9 @@ import { PlusIcon } from 'lucide-react';
 import { UserAvatar } from '~/components/ui/avatar';
 import InstallApp from '~/components/InstallApp';
 import { type NextPageWithUser } from '~/types';
-import { BalanceSkeleton } from '~/components/ui/skeleton';
 import useEnableAfter from '~/hooks/useEnableAfter';
 import { LoadingSpinner } from '~/components/ui/spinner';
+import { NotificationModal } from '~/components/NotificationModal';
 
 const BalancePage: NextPageWithUser = () => {
   function shareWithFriends() {
@@ -50,6 +50,7 @@ const BalancePage: NextPageWithUser = () => {
           )
         }
       >
+        <NotificationModal />
         <div className="">
           <div className="mx-4 flex items-stretch justify-between gap-4">
             {balanceQuery.data?.youOwe.length ? (

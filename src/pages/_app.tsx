@@ -7,14 +7,11 @@ import { api } from '~/utils/api';
 import clsx from 'clsx';
 import Head from 'next/head';
 import { Toaster } from 'sonner';
-import NProgress from 'nprogress';
-import Router from 'next/router';
 
 import '~/styles/globals.css';
 import { type NextPageWithUser } from '~/types';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { useEffect, useState } from 'react';
-import { NotificationModal } from '~/components/NotificationModal';
 
 const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });
 
@@ -66,7 +63,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
       </Head>
       <SessionProvider session={session}>
         <ThemeProvider attribute="class" defaultTheme="dark">
-          <NotificationModal />
           <Toaster toastOptions={{ duration: 1500 }} />
           {(Component as NextPageWithUser).auth ? (
             <Auth pageProps={pageProps} Page={Component as NextPageWithUser}></Auth>

@@ -17,49 +17,7 @@ import { Calendar } from '../ui/calendar';
 import UploadFile from './UploadFile';
 import { CategoryIcons } from '../ui/categoryIcons';
 import Link from 'next/link';
-
-const currencies = [
-  { code: 'USD', name: 'US Dollar' },
-  { code: 'EUR', name: 'Euro' },
-  { code: 'JPY', name: 'Japanese Yen' },
-  { code: 'GBP', name: 'British Pound' },
-  { code: 'AUD', name: 'Australian Dollar' },
-  { code: 'CAD', name: 'Canadian Dollar' },
-  { code: 'CHF', name: 'Swiss Franc' },
-  { code: 'CNY', name: 'Chinese Yuan' },
-  { code: 'SEK', name: 'Swedish Krona' },
-  { code: 'NZD', name: 'New Zealand Dollar' },
-  { code: 'INR', name: 'Indian Rupee' },
-  { code: 'BRL', name: 'Brazilian Real' },
-  { code: 'RUB', name: 'Russian Ruble' },
-  { code: 'KRW', name: 'South Korean Won' },
-  { code: 'TRY', name: 'Turkish Lira' },
-  { code: 'PLN', name: 'Polish Zloty' },
-  { code: 'TWD', name: 'Taiwan New Dollar' },
-  { code: 'SGD', name: 'Singapore Dollar' },
-  { code: 'NOK', name: 'Norwegian Krone' },
-  { code: 'MXN', name: 'Mexican Peso' },
-  { code: 'HKD', name: 'Hong Kong Dollar' },
-  { code: 'ILS', name: 'Israeli New Shekel' },
-  { code: 'PHP', name: 'Philippine Peso' },
-  { code: 'HUF', name: 'Hungarian Forint' },
-  { code: 'CZK', name: 'Czech Koruna' },
-  { code: 'IDR', name: 'Indonesian Rupiah' },
-  { code: 'MYR', name: 'Malaysian Ringgit' },
-  { code: 'ZAR', name: 'South African Rand' },
-  { code: 'RON', name: 'Romanian Leu' },
-  { code: 'ARS', name: 'Argentine Peso' },
-  { code: 'SAR', name: 'Saudi Riyal' },
-  { code: 'AED', name: 'United Arab Emirates Dirham' },
-  { code: 'COP', name: 'Colombian Peso' },
-  { code: 'CLP', name: 'Chilean Peso' },
-  { code: 'EGP', name: 'Egyptian Pound' },
-  { code: 'VND', name: 'Vietnamese Dong' },
-  { code: 'PKR', name: 'Pakistani Rupee' },
-  { code: 'NGN', name: 'Nigerian Naira' },
-  { code: 'UAH', name: 'Ukrainian Hryvnia' },
-  { code: 'QAR', name: 'Qatari Riyal' },
-];
+import { CURRENCIES } from '~/lib/currency';
 
 const categories = {
   entertainment: {
@@ -348,8 +306,7 @@ export const AddExpensePage: React.FC = () => {
                     <CommandInput className="text-lg" placeholder="Search currency" />
                     <CommandEmpty>No currency found.</CommandEmpty>
                     <CommandGroup className="h-full overflow-auto">
-                      {currencies.map((framework) => (
-                        // <DrawerClose key={`${framework.code}-${framework.name}`} className="w-full">
+                      {CURRENCIES.map((framework) => (
                         <CommandItem
                           key={`${framework.code}-${framework.name}`}
                           value={`${framework.code}-${framework.name}`}
@@ -375,7 +332,6 @@ export const AddExpensePage: React.FC = () => {
                             <p className=" text-muted-foreground">{framework.code}</p>
                           </div>
                         </CommandItem>
-                        // </DrawerClose>
                       ))}
                     </CommandGroup>
                   </Command>

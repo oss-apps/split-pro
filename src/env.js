@@ -45,7 +45,7 @@ export const env = createEnv({
     NEXT_PUBLIC_URL: z.string(),
     NEXT_PUBLIC_R2_PUBLIC_URL: z.string(),
     NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY: z.string(),
-    NEXT_PUBLIC_BEAM_ID: z.string(),
+    NEXT_PUBLIC_BEAM_ID: z.string().optional(),
   },
 
   /**

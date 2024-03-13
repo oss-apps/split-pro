@@ -60,7 +60,11 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
                   alt="Expense receipt"
                   width={56}
                   height={56}
-                  className=" h-14 w-14 rounded-md object-cover object-center"
+                  data-loaded="false"
+                  onLoad={(event) => {
+                    event.currentTarget.setAttribute('data-loaded', 'true');
+                  }}
+                  className=" h-14 w-14 rounded-md object-cover object-center data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
                 />
               }
               leftAction="Close"
@@ -73,7 +77,11 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
                   width={300}
                   height={800}
                   alt="Expense receipt"
-                  className="h-full w-full rounded-2xl object-cover"
+                  data-loaded="false"
+                  onLoad={(event) => {
+                    event.currentTarget.setAttribute('data-loaded', 'true');
+                  }}
+                  className="h-full w-full rounded-2xl object-cover data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
                 />
               </div>
             </AppDrawer>

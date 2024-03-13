@@ -45,6 +45,7 @@ export const env = createEnv({
     NEXT_PUBLIC_URL: z.string(),
     NEXT_PUBLIC_R2_PUBLIC_URL: z.string(),
     NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY: z.string(),
+    NEXT_PUBLIC_BEAM_ID: z.string(),
   },
 
   /**
@@ -70,6 +71,7 @@ export const env = createEnv({
     WEB_PUSH_EMAIL: process.env.WEB_PUSH_EMAIL,
     WEB_PUSH_PRIVATE_KEY: process.env.WEB_PUSH_PRIVATE_KEY,
     NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY: process.env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY,
+    NEXT_PUBLIC_BEAM_ID: process.env.NEXT_PUBLIC_BEAM_ID,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

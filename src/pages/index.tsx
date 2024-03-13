@@ -4,6 +4,7 @@ import { Button } from '~/components/ui/button';
 import { ArrowRight, Banknote, Bell, FileUp, GitFork, Globe, Split, Users } from 'lucide-react';
 import Image from 'next/image';
 import { BackgroundGradient } from '~/components/ui/background-gradient';
+import { env } from '~/env';
 
 export default function Home() {
   return (
@@ -12,6 +13,13 @@ export default function Home() {
         <title>SplitPro: Split Expenses with your friends for free</title>
         <meta name="description" content="SplitPro: Split Expenses with your friends for free" />
         <link rel="icon" href="/favicon.ico" />
+        {env.NEXT_PUBLIC_BEAM_ID ? (
+          <script
+            src="https://beamanalytics.b-cdn.net/beam.min.js"
+            data-token={env.NEXT_PUBLIC_BEAM_ID}
+            async
+          ></script>
+        ) : null}
       </Head>
       <main className="min-h-screen">
         <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4   py-4 lg:px-0 lg:py-5">

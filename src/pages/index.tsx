@@ -56,6 +56,7 @@ export default function Home() {
                   </Button>
                 </Link>
               </div>
+              <div className=" mt-40"></div>
             </div>
             <div className="mb-20 mt-8 flex justify-center lg:hidden">
               <MobileScreenShot />
@@ -145,6 +146,18 @@ export default function Home() {
             </div>
 
             <div className="mb-20 mt-24 flex flex-col gap-8 text-center lg:text-left">
+              <a
+                href="https://www.producthunt.com/posts/splitpro?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-splitpro"
+                target="_blank"
+              >
+                <img
+                  src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=444717&theme=light"
+                  alt="Splitpro - Free&#0032;drop&#0032;in&#0032;replacement&#0032;&#0032;to&#0032;Splitwise&#0058;&#0032;Fully&#0032;Open&#0032;source | Product Hunt"
+                  className="h-[47px] w-[200px]"
+                  width="200"
+                  height="47"
+                />
+              </a>
               <div>
                 Built by{' '}
                 <a className=" text-primary" href="https://koushik.dev" target="_blank">

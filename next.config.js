@@ -41,6 +41,11 @@ const config = {
         port: '',
         pathname: '/**',
       },
+      {
+        hostname: 'api.producthunt.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };

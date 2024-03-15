@@ -1,8 +1,7 @@
 import { type Participant, useAddExpenseStore } from '~/store/addStore';
-import { Button } from '../ui/button';
-import { AppDrawer, Drawer, DrawerClose, DrawerContent, DrawerTrigger } from '../ui/drawer';
+import { AppDrawer, Drawer, DrawerClose } from '../ui/drawer';
 import { UserAvatar } from '../ui/avatar';
-import { BarChart2, Check, Diff, DollarSign, Equal, Percent } from 'lucide-react';
+import { BarChart2, Check, DollarSign, Equal, Percent } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Input } from '../ui/input';
 import { useState } from 'react';
@@ -18,13 +17,17 @@ export const SplitTypeSection: React.FC = () => {
   const { setPaidBy } = useAddExpenseStore((s) => s.actions);
 
   return (
-    <div className="mt-4 flex items-center justify-center text-gray-400">
-      <p>Paid by</p>
+    <div className="mt-4 flex items-center justify-center text-[16px] text-gray-400">
+      <p className="text-[16px]">Paid by </p>
       <AppDrawer
         trigger={
-          <div className="max-w-28 overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16px] text-cyan-500 lg:max-w-48">
-            {currentUser?.id === paidBy?.id ? 'you' : paidBy?.name ?? paidBy?.email}
-          </div>
+          <p className="overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16.5px] text-cyan-500 lg:max-w-48">
+            {
+              (currentUser?.id === paidBy?.id ? 'you' : paidBy?.name ?? paidBy?.email)?.split(
+                ' ',
+              )[0]
+            }
+          </p>
         }
         title="Paid by"
         className="h-[70vh]"
@@ -50,7 +53,7 @@ export const SplitTypeSection: React.FC = () => {
       <p>and </p>
       <AppDrawer
         trigger={
-          <div className=" max-w-32 overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16px] text-cyan-500 lg:max-w-48">
+          <div className=" max-w-32 overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16.5px] text-cyan-500 lg:max-w-48">
             {splitType === SplitType.EQUAL ? 'split equally' : `split unequally`}
           </div>
         }

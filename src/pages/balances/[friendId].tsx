@@ -150,9 +150,9 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   <Link
                     href={`/balances/${friendQuery.data?.id}/expenses/${e.id}`}
                     key={e.id}
-                    className="flex items-center justify-between px-2 py-2"
+                    className="flex items-start justify-between px-2 py-2"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 px-1">
                       <div className="text-xs text-gray-500">
                         {format(e.expenseDate, 'MMM dd')
                           .split(' ')
@@ -166,7 +166,11 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                         <CategoryIcon category={e.category} className="h-5 w-5 text-gray-400" />
                       </div>
                       <div>
-                        {!isSettlement ? <p className="text-sm lg:text-base">{e.name}</p> : null}
+                        {!isSettlement ? (
+                          <p className=" max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">
+                            {e.name}
+                          </p>
+                        ) : null}
                         <p
                           className={`flex ${isSettlement ? 'text-sm text-gray-400' : 'text-xs text-gray-500'}`}
                         >
@@ -181,7 +185,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                       </div>
                     </div>
                     {isSettlement ? null : (
-                      <div>
+                      <div className="min-w-10 shrink-0">
                         <div
                           className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-700'}`}
                         >

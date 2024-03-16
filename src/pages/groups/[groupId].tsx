@@ -183,7 +183,11 @@ const BalancePage: NextPageWithUser = ({ user }) => {
                   <CategoryIcon category={e.category} className="h-5 w-5 text-gray-400" />
                 </div>
                 <div>
-                  {!isSettlement ? <p>{e.name}</p> : null}
+                  {!isSettlement ? (
+                    <p className=" max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">
+                      {e.name}
+                    </p>
+                  ) : null}
                   <p
                     className={`flex text-center ${isSettlement ? 'text-sm text-gray-400' : 'text-xs text-gray-500'}`}
                   >
@@ -194,7 +198,7 @@ const BalancePage: NextPageWithUser = ({ user }) => {
                 </div>
               </div>
               {isSettlement ? null : (
-                <div>
+                <div className="min-w-10 shrink-0">
                   <div
                     className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
                   >

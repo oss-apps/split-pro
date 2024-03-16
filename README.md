@@ -37,13 +37,13 @@ It currently has most of the important features.
 
 Splitwise is one of the best apps to add expenses and bills.
 
-I get it that every app needs to make money, After all, lots of effort has been put into Spliwise. My main problem is how they implemented this.
+I understand that every app needs to make money, After all, lots of effort has been put into Spliwise. My main problem is how they implemented this.
 
 Making pro features or asking money to remove ads is fine, But asking money for adding Expenses (Core feature) is frustrating.
 
 I was searching for other open-source alternatives (Let's be honest, any closed-source product might do the same and I don't have any reason to believe otherwise).
 
-I managed to find a good app [spliit.app](https://spliit.app/) by [Sebastien Castiel](https://scastiel.dev/) but it's not a complete replacement and didn't suit my workflow sadly. You should check it out.
+I managed to find a good app [spliit.app](https://spliit.app/) by [Sebastien Castiel](https://scastiel.dev/) but it's not a complete replacement and didn't suit my workflow sadly. Check it out to see if it fits you.
 
 _That's when I decided to work on this_
 

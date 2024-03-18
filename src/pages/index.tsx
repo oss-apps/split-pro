@@ -1,7 +1,17 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { Button } from '~/components/ui/button';
-import { ArrowRight, Banknote, Bell, FileUp, GitFork, Globe, Split, Users } from 'lucide-react';
+import {
+  ArrowRight,
+  Banknote,
+  Bell,
+  FileUp,
+  GitFork,
+  Github,
+  Globe,
+  Split,
+  Users,
+} from 'lucide-react';
 import Image from 'next/image';
 import { BackgroundGradient } from '~/components/ui/background-gradient';
 import { env } from '~/env';
@@ -49,10 +59,22 @@ export default function Home() {
                 </a>{' '}
                 alternative to SplitWise
               </h2>
-              <div className="mt-10 flex flex-col">
+              <div className="mt-10 flex gap-6">
                 <Link href="/auth/signin" className="mx-auto lg:mx-0">
                   <Button className="flex w-[200px] items-center gap-2 rounded-full">
                     Add Expense <ArrowRight size={15} />{' '}
+                  </Button>
+                </Link>
+                <Link
+                  href="https://github.com/oss-apps/split-pro"
+                  target="_blank"
+                  className="mx-auto lg:mx-0"
+                >
+                  <Button
+                    variant="outline"
+                    className="flex w-[200px] items-center gap-2 rounded-full"
+                  >
+                    <Github size={15} /> Star us on github
                   </Button>
                 </Link>
               </div>

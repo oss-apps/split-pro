@@ -38,7 +38,7 @@ export const SubmitFeedback: React.FC = () => {
     <AppDrawer
       trigger={
         <div className="flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300 hover:text-foreground/80">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4 text-[16px]">
             <MessageSquare className="h-5 w-5 text-green-500" />
             Submit feedback
           </div>

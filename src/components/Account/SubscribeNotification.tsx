@@ -84,7 +84,7 @@ export const SubscribeNotification: React.FC = () => {
         className="text-md w-full justify-between px-0 hover:text-foreground/80"
         onClick={isSubscribed ? unSubscribeNotification : onRequestNotification}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           {!isSubscribed ? (
             <>
               <Bell className="h-5 w-5 text-red-400" />

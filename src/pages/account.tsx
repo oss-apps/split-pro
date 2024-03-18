@@ -3,7 +3,7 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import { UserAvatar } from '~/components/ui/avatar';
-import { Bell, ChevronRight, Download, Github } from 'lucide-react';
+import { Bell, ChevronRight, Download, Github, Star } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { AppDrawer } from '~/components/ui/drawer';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
@@ -45,7 +45,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
                 variant="ghost"
                 className="text-md w-full justify-between px-0 hover:text-foreground/80"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-4">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 1200 1227"
@@ -74,7 +74,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
                 variant="ghost"
                 className="text-md w-full justify-between px-0 hover:text-foreground/80"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-4">
                   <Github className="h-5 w-5 text-gray-200" />
                   Star us on Github
                 </div>
@@ -83,10 +83,22 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             </Link>
             <SubmitFeedback />
             <SubscribeNotification />
+            <Link href="https://www.producthunt.com/products/splitpro/reviews/new" target="_blank">
+              <Button
+                variant="ghost"
+                className="text-md w-full justify-between px-0 hover:text-foreground/80"
+              >
+                <div className="flex items-center gap-4">
+                  <Star className="h-5 w-5 text-yellow-400" />
+                  Write a review
+                </div>
+                <ChevronRight className="h-6 w-6 text-gray-500" />
+              </Button>
+            </Link>
             <AppDrawer
               trigger={
                 <div className="flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300 hover:text-foreground/80">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-4">
                     <Download className="h-5 w-5 text-blue-500" />
                     Download App
                   </div>

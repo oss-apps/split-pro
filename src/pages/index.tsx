@@ -59,7 +59,7 @@ export default function Home() {
                 </a>{' '}
                 alternative to SplitWise
               </h2>
-              <div className="mt-10 flex gap-6">
+              <div className="mt-10 flex flex-col gap-6 lg:flex-row">
                 <Link href="/auth/signin" className="mx-auto lg:mx-0">
                   <Button className="flex w-[200px] items-center gap-2 rounded-full">
                     Add Expense <ArrowRight size={15} />{' '}
@@ -175,7 +175,7 @@ export default function Home() {
                 <img
                   src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=444717&theme=light"
                   alt="Splitpro - Free&#0032;drop&#0032;in&#0032;replacement&#0032;&#0032;to&#0032;Splitwise&#0058;&#0032;Fully&#0032;Open&#0032;source | Product Hunt"
-                  className="h-[47px] w-[200px]"
+                  className="mx-auto h-[47px] w-[200px] lg:mx-0"
                   width="200"
                   height="47"
                 />

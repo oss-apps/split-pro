@@ -6,7 +6,7 @@ import { Button } from '~/components/ui/button';
 import { SplitType, type User } from '@prisma/client';
 import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
-import { Check, ChevronLeft, Share, UserPlus } from 'lucide-react';
+import { Check, ChevronLeft, DoorOpen, LogOut, Share, Trash2, UserPlus } from 'lucide-react';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { AppDrawer } from '~/components/ui/drawer';
 import { UserAvatar } from '~/components/ui/avatar';
@@ -157,14 +157,6 @@ const BalancePage: NextPageWithUser = ({ user }) => {
               <div className="mt-2 flex flex-col gap-1">
                 {isAdmin ? (
                   <>
-                    <Button
-                      variant="ghost"
-                      className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
-                      disabled
-                    >
-                      Admin can&apos;t leave group
-                    </Button>
-
                     <AlertDialog
                       open={showDeleteTrigger}
                       onOpenChange={(status) =>
@@ -175,30 +167,35 @@ const BalancePage: NextPageWithUser = ({ user }) => {
                         <Button
                           variant="ghost"
                           className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
-                          disabled={!canDelete}
                           onClick={() => setShowDeleteTrigger(true)}
                         >
-                          {canDelete ? 'Delete group' : "Can't delete with outstanding balances"}
+                          <Trash2 className="mr-2 h-4 w-4" /> Delete group
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent className="max-w-xs rounded-lg">
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogTitle>
+                            {canDelete ? 'Are you absolutely sure?' : ''}
+                          </AlertDialogTitle>
                           <AlertDialogDescription>
-                            This action cannot be reversed
+                            {canDelete
+                              ? 'This action cannot be reversed'
+                              : "Can't delete the group until everyone settles up the balance"}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={onGroupDelete}
-                            disabled={deleteGroupMutation.isLoading}
-                            loading={deleteGroupMutation.isLoading}
-                          >
-                            Delete
-                          </Button>
+                          {canDelete ? (
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={onGroupDelete}
+                              disabled={deleteGroupMutation.isLoading}
+                              loading={deleteGroupMutation.isLoading}
+                            >
+                              Delete
+                            </Button>
+                          ) : null}
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
@@ -215,30 +212,35 @@ const BalancePage: NextPageWithUser = ({ user }) => {
                         <Button
                           variant="ghost"
                           className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
-                          disabled={!canLeave}
                           onClick={() => setShowLeaveTrigger(true)}
                         >
-                          {canLeave ? 'Leave group' : 'Balances should be empty to leave group'}
+                          <DoorOpen className="mr-2 h-5 w-5" /> Leave group
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent className="max-w-xs rounded-lg">
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogTitle>
+                            {canLeave ? 'Are you absolutely sure?' : ''}
+                          </AlertDialogTitle>
                           <AlertDialogDescription>
-                            This action cannot be reversed
+                            {canLeave
+                              ? 'This action cannot be reversed'
+                              : "Can't leave the group until your outstanding balance is settled"}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={onGroupLeave}
-                            disabled={leaveGroupMutation.isLoading}
-                            loading={leaveGroupMutation.isLoading}
-                          >
-                            Leave
-                          </Button>
+                          {canLeave ? (
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={onGroupLeave}
+                              disabled={leaveGroupMutation.isLoading}
+                              loading={leaveGroupMutation.isLoading}
+                            >
+                              Leave
+                            </Button>
+                          ) : null}
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>

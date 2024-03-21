@@ -406,4 +406,39 @@ export const userRouter = createTRPCRouter({
         },
       });
     }),
+
+  deleteFriend: protectedProcedure
+    .input(z.object({ friendId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const friendBalances = await db.balance.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          friendId: input.friendId,
+          amount: {
+            not: 0,
+          },
+        },
+      });
+
+      if (friendBalances.length > 0) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'You have outstanding balances with this friend',
+        });
+      }
+
+      await db.balance.deleteMany({
+        where: {
+          userId: input.friendId,
+          friendId: ctx.session.user.id,
+        },
+      });
+
+      await db.balance.deleteMany({
+        where: {
+          friendId: input.friendId,
+          userId: ctx.session.user.id,
+        },
+      });
+    }),
 });

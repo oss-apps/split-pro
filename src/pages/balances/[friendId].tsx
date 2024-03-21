@@ -55,9 +55,10 @@ const FriendPage: NextPageWithUser = ({ user }) => {
           </div>
         }
         actions={
-          youLent?.length === 0 && youOwe?.length === 0 ? (
-            <DeleteFriend friendId={_friendId} />
-          ) : null
+          <DeleteFriend
+            friendId={_friendId}
+            disabled={!(youLent?.length === 0 && youOwe?.length === 0)}
+          />
         }
         header={
           <div className="flex w-full items-center justify-between">

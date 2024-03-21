@@ -18,7 +18,8 @@ import { toast } from 'sonner';
 
 export const DeleteFriend: React.FC<{
   friendId: number;
-}> = ({ friendId }) => {
+  disabled: boolean;
+}> = ({ friendId, disabled }) => {
   const router = useRouter();
   const [showTrigger, setShowTrigger] = useState(false);
 
@@ -51,20 +52,26 @@ export const DeleteFriend: React.FC<{
         </AlertDialogTrigger>
         <AlertDialogContent className="max-w-xs rounded-lg">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>Do you really want to continue</AlertDialogDescription>
+            <AlertDialogTitle>{disabled ? '' : 'Are you absolutely sure?'} </AlertDialogTitle>
+            <AlertDialogDescription>
+              {disabled
+                ? "Can't remove friend with outstanding balances. Settle up first"
+                : 'Do you really want to continue'}
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button
-              size="sm"
-              variant="destructive"
-              onClick={onDeleteFriend}
-              disabled={deleteFriendMutation.isLoading}
-              loading={deleteFriendMutation.isLoading}
-            >
-              Delete
-            </Button>
+            {!disabled ? (
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={onDeleteFriend}
+                disabled={deleteFriendMutation.isLoading}
+                loading={deleteFriendMutation.isLoading}
+              >
+                Delete
+              </Button>
+            ) : null}
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

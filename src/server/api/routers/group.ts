@@ -229,4 +229,58 @@ export const groupRouter = createTRPCRouter({
 
       return groupUsers;
     }),
+
+  leaveGroup: groupProcedure
+    .input(z.object({ groupId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const nonZeroBalance = await ctx.db.groupBalance.findFirst({
+        where: {
+          groupId: input.groupId,
+          userId: ctx.session.user.id,
+          amount: {
+            not: 0,
+          },
+        },
+      });
+
+      if (nonZeroBalance) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'You have a non-zero balance in this group',
+        });
+      }
+
+      const groupUser = await ctx.db.groupUser.delete({
+        where: {
+          groupId_userId: {
+            groupId: input.groupId,
+            userId: ctx.session.user.id,
+          },
+        },
+      });
+
+      return groupUser;
+    }),
+
+  delete: groupProcedure
+    .input(z.object({ groupId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const group = await ctx.db.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+      });
+
+      if (group?.userId !== ctx.session.user.id) {
+        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Only creator can delete the group' });
+      }
+
+      await ctx.db.group.delete({
+        where: {
+          id: input.groupId,
+        },
+      });
+
+      return group;
+    }),
 });

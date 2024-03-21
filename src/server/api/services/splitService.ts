@@ -364,7 +364,7 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
     }
 
     operations.push(
-      db.balance.update({
+      db.balance.upsert({
         where: {
           userId_currency_friendId: {
             userId: expense.paidBy,
@@ -372,7 +372,13 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
             friendId: participant.userId,
           },
         },
-        data: {
+        create: {
+          amount: participant.amount,
+          userId: expense.paidBy,
+          currency: expense.currency,
+          friendId: participant.userId,
+        },
+        update: {
           amount: {
             decrement: -participant.amount,
           },
@@ -382,7 +388,7 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
 
     // Update participant's balance towards the payer
     operations.push(
-      db.balance.update({
+      db.balance.upsert({
         where: {
           userId_currency_friendId: {
             userId: participant.userId,
@@ -390,7 +396,13 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
             friendId: expense.paidBy,
           },
         },
-        data: {
+        create: {
+          amount: -participant.amount,
+          userId: participant.userId,
+          currency: expense.currency,
+          friendId: expense.paidBy,
+        },
+        update: {
           amount: {
             decrement: participant.amount,
           },
@@ -400,7 +412,7 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
 
     if (expense.groupId) {
       operations.push(
-        db.groupBalance.update({
+        db.groupBalance.upsert({
           where: {
             groupId_currency_firendId_userId: {
               groupId: expense.groupId,
@@ -409,7 +421,14 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
               firendId: participant.userId,
             },
           },
-          data: {
+          create: {
+            amount: participant.amount,
+            groupId: expense.groupId,
+            currency: expense.currency,
+            userId: expense.paidBy,
+            firendId: participant.userId,
+          },
+          update: {
             amount: {
               decrement: -participant.amount,
             },
@@ -418,7 +437,7 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
       );
 
       operations.push(
-        db.groupBalance.update({
+        db.groupBalance.upsert({
           where: {
             groupId_currency_firendId_userId: {
               groupId: expense.groupId,
@@ -427,7 +446,14 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
               firendId: expense.paidBy,
             },
           },
-          data: {
+          create: {
+            amount: -participant.amount,
+            groupId: expense.groupId,
+            currency: expense.currency,
+            userId: participant.userId,
+            firendId: expense.paidBy,
+          },
+          update: {
             amount: {
               decrement: participant.amount,
             },

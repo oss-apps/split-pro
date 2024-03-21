@@ -21,6 +21,17 @@ import { env } from '~/env';
 import { useState } from 'react';
 import { type NextPageWithUser } from '~/types';
 import { motion } from 'framer-motion';
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '~/components/ui/alert-dialog';
+import { toast } from 'sonner';
 
 const BalancePage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
@@ -28,8 +39,12 @@ const BalancePage: NextPageWithUser = ({ user }) => {
 
   const groupDetailQuery = api.group.getGroupDetails.useQuery({ groupId });
   const expensesQuery = api.group.getExpenses.useQuery({ groupId });
+  const deleteGroupMutation = api.group.delete.useMutation();
+  const leaveGroupMutation = api.group.leaveGroup.useMutation();
 
   const [isInviteCopied, setIsInviteCopied] = useState(false);
+  const [showDeleteTrigger, setShowDeleteTrigger] = useState(false);
+  const [showLeaveTrigger, setShowLeaveTrigger] = useState(false);
 
   async function inviteMembers() {
     if (!groupDetailQuery.data) return;
@@ -54,6 +69,48 @@ const BalancePage: NextPageWithUser = ({ user }) => {
     }
   }
 
+  const isAdmin = groupDetailQuery.data?.userId === user.id;
+  const canDelete =
+    groupDetailQuery.data?.userId === user.id &&
+    !groupDetailQuery.data.groupBalances.find((b) => b.amount !== 0);
+  const canLeave = !groupDetailQuery.data?.groupBalances.find(
+    (b) => b.amount !== 0 && b.userId === user.id,
+  );
+
+  function onGroupDelete() {
+    deleteGroupMutation.mutate(
+      { groupId },
+      {
+        onSuccess: () => {
+          router.replace('/groups').catch(console.error);
+          setShowDeleteTrigger(false);
+        },
+        onError: () => {
+          setShowDeleteTrigger(false);
+          toast.error('Something went wrong');
+        },
+      },
+    );
+  }
+
+  function onGroupLeave() {
+    leaveGroupMutation.mutate(
+      { groupId },
+      {
+        onSuccess: () => {
+          router.replace('/groups').catch(console.error);
+          setShowLeaveTrigger(false);
+        },
+        onError: () => {
+          setShowLeaveTrigger(false);
+          toast.error('Something went wrong');
+        },
+      },
+    );
+  }
+
+  console.log(canDelete, canLeave, isAdmin);
+
   return (
     <>
       <Head>
@@ -77,12 +134,13 @@ const BalancePage: NextPageWithUser = ({ user }) => {
         }
         actions={
           <AppDrawer
-            title="Members"
+            title="Group info"
             trigger={<InformationCircleIcon className="h-6 w-6" />}
             className="h-[85vh]"
           >
             <div className="">
-              <div className="flex flex-col gap-2">
+              <p className="font-semibold">Members</p>
+              <div className="mt-2 flex flex-col gap-2">
                 {groupDetailQuery.data?.groupUsers.map((groupUser) => (
                   <div
                     key={groupUser.userId}
@@ -92,6 +150,100 @@ const BalancePage: NextPageWithUser = ({ user }) => {
                     <p>{groupUser.user.name ?? groupUser.user.email}</p>
                   </div>
                 ))}
+              </div>
+            </div>
+            <div className="mt-8">
+              <p className="font-semibold ">Actions</p>
+              <div className="mt-2 flex flex-col gap-1">
+                {isAdmin ? (
+                  <>
+                    <Button
+                      variant="ghost"
+                      className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
+                      disabled
+                    >
+                      Admin can&apos;t leave group
+                    </Button>
+
+                    <AlertDialog
+                      open={showDeleteTrigger}
+                      onOpenChange={(status) =>
+                        status !== showDeleteTrigger ? setShowDeleteTrigger(status) : null
+                      }
+                    >
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
+                          disabled={!canDelete}
+                          onClick={() => setShowDeleteTrigger(true)}
+                        >
+                          {canDelete ? 'Delete group' : "Can't delete with outstanding balances"}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="max-w-xs rounded-lg">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be reversed
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={onGroupDelete}
+                            disabled={deleteGroupMutation.isLoading}
+                            loading={deleteGroupMutation.isLoading}
+                          >
+                            Delete
+                          </Button>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </>
+                ) : (
+                  <>
+                    <AlertDialog
+                      open={showLeaveTrigger}
+                      onOpenChange={(status) =>
+                        status !== showLeaveTrigger ? setShowLeaveTrigger(status) : null
+                      }
+                    >
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
+                          disabled={!canLeave}
+                          onClick={() => setShowLeaveTrigger(true)}
+                        >
+                          {canLeave ? 'Leave group' : 'Balances should be empty to leave group'}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="max-w-xs rounded-lg">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be reversed
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={onGroupLeave}
+                            disabled={leaveGroupMutation.isLoading}
+                            loading={leaveGroupMutation.isLoading}
+                          >
+                            Leave
+                          </Button>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </>
+                )}
               </div>
             </div>
           </AppDrawer>

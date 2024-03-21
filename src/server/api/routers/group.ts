@@ -269,10 +269,22 @@ export const groupRouter = createTRPCRouter({
         where: {
           id: input.groupId,
         },
+        include: {
+          groupBalances: true,
+        },
       });
 
       if (group?.userId !== ctx.session.user.id) {
         throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Only creator can delete the group' });
+      }
+
+      const balanceWithNonZero = group?.groupBalances.find((b) => b.amount !== 0);
+
+      if (balanceWithNonZero) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'You have a non-zero balance in this group',
+        });
       }
 
       await ctx.db.group.delete({

@@ -4,7 +4,7 @@ import { SplitType } from '@prisma/client';
 import { api } from '~/utils/api';
 import { UserAvatar } from '~/components/ui/avatar';
 import Link from 'next/link';
-import { ChevronLeftIcon, PlusIcon } from 'lucide-react';
+import { ChevronLeftIcon, PlusIcon, Trash, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Separator } from '~/components/ui/separator';
 import { Button } from '~/components/ui/button';
@@ -14,6 +14,7 @@ import { CategoryIcon } from '~/components/ui/categoryIcons';
 import { useRouter } from 'next/router';
 import { type NextPageWithUser } from '~/types';
 import { motion } from 'framer-motion';
+import { DeleteFriend } from '~/components/Friend/DeleteFriend';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
@@ -53,6 +54,11 @@ const FriendPage: NextPageWithUser = ({ user }) => {
             <p className="text-lg font-normal">{friendQuery.data?.name}</p>
           </div>
         }
+        actions={
+          youLent?.length === 0 && youOwe?.length === 0 ? (
+            <DeleteFriend friendId={_friendId} />
+          ) : null
+        }
         header={
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center gap-2">
@@ -62,7 +68,6 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <UserAvatar user={friendQuery.data} size={25} />
               {friendQuery.data?.name}
             </div>
-            <div></div>
           </div>
         }
       >

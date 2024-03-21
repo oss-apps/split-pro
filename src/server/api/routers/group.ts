@@ -207,9 +207,7 @@ export const groupRouter = createTRPCRouter({
             user: true,
           },
         },
-        groupBalances: {
-          where: { userId: ctx.session.user.id },
-        },
+        groupBalances: true,
       },
     });
 

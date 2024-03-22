@@ -68,9 +68,8 @@ _That's when I decided to work on this_
 ### Run locally
 
 - Copy .env.example to .env to the root directory and add the required env variables.
-- Few .env variables which are marked required can be passed with random string for setting up the code locally.<br />
-  ![Example to set required varaibles in .env file](image-1.png)<br />
-- RESEND_API_KEY could be obtained by creating a free account on [here](https://resend.com/)
+- R2 related env is for cloudflare R2 used to upload and can be set up [here](https://www.cloudflare.com/en-au/developer-platform/r2/)
+- RESEND env could be obtained by creating a free account on [here](https://resend.com/)
 - Run `pnpm install`
 - Run `pnpm db:push` or `pnpm prisma:prod` to populate db migrations
 - Run `pnpm dev`

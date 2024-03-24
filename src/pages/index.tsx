@@ -37,6 +37,7 @@ export default function Home() {
             <p className="text-2xl font-medium">SplitPro</p>
           </div>
           <div className="flex items-center gap-8">
+            <Link href="/blog/need-for-splitwise-alternative">Why?</Link>
             <Link href="/terms">Terms</Link>
             <Link href="/privacy">Privacy</Link>
           </div>

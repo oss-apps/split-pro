@@ -10,13 +10,29 @@ Don't get me wrong, I'm fine with products charging money. After all, splitwise 
 
 I will happily pay for the pro features, but this really frustrates me.
 
-## I'm not alone
-
-As you guessed this created a ripple over the internet. I'll list few comments from the internet.
-
-![reddit1](https://github.com/oss-apps/split-pro/assets/24666922/e3f0bd4e-73ff-4f16-81ef-db368506c503)
-![appstore1](https://github.com/oss-apps/split-pro/assets/24666922/00beeb8a-c82d-4c3b-b42c-b571fb900c18)
-
 ## Okay, what now?
 
 Creating an open source alternative is very important now. Any closed source alternative might do the same and I don't have any reason to believe otherwise. This will force us to create a better product and makes it hard to be evil. After all we will have an option to host the solution ourselves.
+
+Splitpro is designed to be an drop in open source replacement for Splitwise with all the important features. And completely free to use.
+
+- ➕ Add expenses with an individual or groups.
+- 👥 Overall balances across the groups.
+- 💵 Multiple currency support
+- 📄 Upload expense bills
+- 📱 PWA support
+- ✂️ Split expenses unequally (share, percentage, exact amounts)
+- 🔔 Push notification
+- ✅ Settle up expenses
+
+## Will you make it paid?
+
+Any existing features will not be paid. But I have plans to introduce paid features which are not core for this product. This is mainly to fund this project.
+
+## How are you running it for free?
+
+I working on a full time job and this is my side project. Even with very high usage, splitrpo won't cost more than $100 a month. I currently can afford this. As I said earlier I will add some paid pro features / open up donations to fund the project.
+
+## How can I help?
+
+Very simple! Use the product, share it with your friends and give feedback. If you want to contribute, head to our [github](https://github.com/oss-apps/split-pro) repo and open a PR.

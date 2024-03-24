@@ -7,7 +7,7 @@ import { Separator } from '~/components/ui/separator';
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 const config = {
   footer: (
-    <div className="flex items-center justify-center gap-4">
+    <div className="mt-20 flex items-center justify-center gap-4">
       <Link href="https://splitpro.app/balances" target="_blank">
         App
       </Link>

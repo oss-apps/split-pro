@@ -14,10 +14,10 @@ import { api } from '~/utils/api';
 // 🧾
 
 const AddPage: NextPageWithUser = ({ user }) => {
-  const { setCurrentUser, setGroup, setParticipants, addOrUpdateParticipant, setCurrency } =
-    useAddExpenseStore((s) => s.actions);
+  const { setCurrentUser, setGroup, setParticipants, setCurrency } = useAddExpenseStore(
+    (s) => s.actions,
+  );
   const currentUser = useAddExpenseStore((s) => s.currentUser);
-  const groupState = useAddExpenseStore((s) => s.group);
 
   useEffect(() => {
     setCurrentUser({

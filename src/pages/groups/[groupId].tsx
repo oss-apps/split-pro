@@ -32,6 +32,7 @@ import {
   AlertDialogTrigger,
 } from '~/components/ui/alert-dialog';
 import { toast } from 'sonner';
+import GroupMyBalance from '~/components/group/GroupMyBalance';
 
 const BalancePage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
@@ -108,8 +109,6 @@ const BalancePage: NextPageWithUser = ({ user }) => {
       },
     );
   }
-
-  console.log(canDelete, canLeave, isAdmin);
 
   return (
     <>
@@ -274,39 +273,44 @@ const BalancePage: NextPageWithUser = ({ user }) => {
         {groupDetailQuery.isLoading ? null : groupDetailQuery.data?.groupUsers.length === 1 ? (
           <NoMembers group={groupDetailQuery.data} />
         ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className=" mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4"
-          >
-            <Link href={`/add?groupId=${groupId}`}>
-              <Button size="sm" className="gap-1 text-sm lg:w-[180px]">
-                Add Expense
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <div className="mb-4 px-4">
+              <GroupMyBalance
+                userId={user.id}
+                groupBalances={groupDetailQuery.data?.groupBalances ?? []}
+                users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
+              />
+            </div>
+            <div className=" mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4">
+              <Link href={`/add?groupId=${groupId}`}>
+                <Button size="sm" className="gap-1 text-sm lg:w-[180px]">
+                  Add Expense
+                </Button>
+              </Link>
+              <Button size="sm" className="gap-1 text-sm" variant="secondary">
+                {groupDetailQuery.data ? (
+                  <AddMembers group={groupDetailQuery.data}>
+                    <UserPlus className="h-4 w-4 text-gray-400" /> Add members
+                  </AddMembers>
+                ) : null}
               </Button>
-            </Link>
-            <Button size="sm" className="gap-1 text-sm" variant="secondary">
-              {groupDetailQuery.data ? (
-                <AddMembers group={groupDetailQuery.data}>
-                  <UserPlus className="h-4 w-4 text-gray-400" /> Add members
-                </AddMembers>
-              ) : null}
-            </Button>
-            <Button
-              size="sm"
-              className="gap-1 text-sm lg:w-[180px]"
-              variant="secondary"
-              onClick={inviteMembers}
-            >
-              {isInviteCopied ? (
-                <>
-                  <Check className="h-4 w-4 text-gray-400" /> Copied
-                </>
-              ) : (
-                <>
-                  <Share className="h-4 w-4 text-gray-400" /> Invite
-                </>
-              )}
-            </Button>
+              <Button
+                size="sm"
+                className="gap-1 text-sm lg:w-[180px]"
+                variant="secondary"
+                onClick={inviteMembers}
+              >
+                {isInviteCopied ? (
+                  <>
+                    <Check className="h-4 w-4 text-gray-400" /> Copied
+                  </>
+                ) : (
+                  <>
+                    <Share className="h-4 w-4 text-gray-400" /> Invite
+                  </>
+                )}
+              </Button>
+            </div>
           </motion.div>
         )}
         {expensesQuery.data?.map((e) => {

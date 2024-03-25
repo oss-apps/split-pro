@@ -91,12 +91,12 @@ const GroupBalance: React.FC<{
               <div
                 className={clsx(
                   'text-right text-xs',
-                  isPositive ? 'text-emerald-500' : 'text-red-500',
+                  isPositive ? 'text-emerald-500' : 'text-orange-600',
                 )}
               >
                 {isPositive ? 'you lent' : 'you owe'}
               </div>
-              <div className={`${isPositive ? 'text-emerald-500' : 'text-red-500'} text-right`}>
+              <div className={`${isPositive ? 'text-emerald-500' : 'text-orange-600'} text-right`}>
                 {currency} {toUIString(amount)}
               </div>
             </>

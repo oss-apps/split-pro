@@ -158,9 +158,11 @@ export const AddExpensePage: React.FC = () => {
         },
         {
           onSuccess: (d) => {
-            resetState();
             if (d) {
-              router.push(`/groups/${group.id}/expenses/${d?.id}`).catch(console.error);
+              router
+                .push(`/groups/${group.id}/expenses/${d?.id}`)
+                .then(() => resetState())
+                .catch(console.error);
             }
           },
         },
@@ -187,6 +189,7 @@ export const AddExpensePage: React.FC = () => {
             if (participants[1] && d) {
               router
                 .push(`/balances/${participants[1]?.id}/expenses/${d?.id}`)
+                .then(() => resetState())
                 .catch(console.error);
             }
           },

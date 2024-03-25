@@ -49,7 +49,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
       ) : null}
 
       {youOwe.length > 0 ? (
-        <div className="text-orange-6000 flex flex-wrap gap-1">
+        <div className="text-orange-6000 flex flex-wrap gap-1 text-orange-600">
           You owe
           {youOwe.map(([currency, amount], index, arr) => {
             return (

@@ -134,8 +134,6 @@ export const AddExpensePage: React.FC = () => {
     setAmount(Number(amt) || 0);
   }
 
-  const { update } = useSession({ required: true });
-
   function addExpense() {
     const { group, paidBy, splitType, fileKey } = useAddExpenseStore.getState();
     if (!paidBy) {
@@ -318,14 +316,7 @@ export const AddExpensePage: React.FC = () => {
                           value={`${framework.code}-${framework.name}`}
                           onSelect={(currentValue) => {
                             const _currency = currentValue.split('-')[0]?.toUpperCase() ?? 'USD';
-                            updateProfile.mutate(
-                              { currency: _currency },
-                              {
-                                onSuccess: () => {
-                                  update({ currency: _currency }).catch(console.error);
-                                },
-                              },
-                            );
+                            updateProfile.mutate({ currency: _currency });
 
                             setCurrency(_currency);
                             setOpen(false);

@@ -27,7 +27,6 @@ const AddPage: NextPageWithUser = ({ user }) => {
       email: user.email ?? null,
       image: user.image ?? null,
     });
-    setCurrency(user.currency ?? 'USD');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

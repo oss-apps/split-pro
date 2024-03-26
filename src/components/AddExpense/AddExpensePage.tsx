@@ -18,6 +18,7 @@ import UploadFile from './UploadFile';
 import { CategoryIcons } from '../ui/categoryIcons';
 import Link from 'next/link';
 import { CURRENCIES } from '~/lib/currency';
+import { useSession } from 'next-auth/react';
 
 const categories = {
   entertainment: {
@@ -132,6 +133,8 @@ export const AddExpensePage: React.FC = () => {
     setAmountStr(amt);
     setAmount(Number(amt) || 0);
   }
+
+  const { update } = useSession({ required: true });
 
   function addExpense() {
     const { group, paidBy, splitType, fileKey } = useAddExpenseStore.getState();
@@ -315,7 +318,15 @@ export const AddExpensePage: React.FC = () => {
                           value={`${framework.code}-${framework.name}`}
                           onSelect={(currentValue) => {
                             const _currency = currentValue.split('-')[0]?.toUpperCase() ?? 'USD';
-                            updateProfile.mutate({ currency: _currency });
+                            updateProfile.mutate(
+                              { currency: _currency },
+                              {
+                                onSuccess: () => {
+                                  update({ currency: _currency }).catch(console.error);
+                                },
+                              },
+                            );
+
                             setCurrency(_currency);
                             setOpen(false);
                           }}

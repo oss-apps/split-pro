@@ -12,6 +12,7 @@ import '~/styles/globals.css';
 import { type NextPageWithUser } from '~/types';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { useEffect, useState } from 'react';
+import { useAddExpenseStore } from '~/store/addStore';
 
 const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });
 
@@ -80,11 +81,19 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
   const { status, data } = useSession({ required: true });
   const [showSpinner, setShowSpinner] = useState(false);
 
+  const { setCurrency } = useAddExpenseStore((s) => s.actions);
+
   useEffect(() => {
     setTimeout(() => {
       setShowSpinner(true);
     }, 300);
   }, []);
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      setCurrency(data.user.currency);
+    }
+  }, [status, data?.user, setCurrency]);
 
   if (status === 'loading') {
     return (

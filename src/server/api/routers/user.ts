@@ -1,14 +1,20 @@
-import { SplitType } from '@prisma/client';
+import { type Balance, SplitType } from '@prisma/client';
 import { boolean, z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
-import { addUserExpense, deleteExpense } from '../services/splitService';
+import {
+  addUserExpense,
+  deleteExpense,
+  getCompleteFriendsDetails,
+  getCompleteGroupDetails,
+} from '../services/splitService';
 import { TRPCError } from '@trpc/server';
 import { randomUUID } from 'crypto';
 import { getDocumentUploadUrl } from '~/server/storage';
 import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { sendFeedbackEmail } from '~/server/mailer';
 import { pushNotification } from '~/server/notification';
+import { toFixedNumber, toUIString } from '~/utils/numbers';
 
 export const userRouter = createTRPCRouter({
   me: protectedProcedure.query(async ({ ctx }) => {
@@ -441,4 +447,13 @@ export const userRouter = createTRPCRouter({
         },
       });
     }),
+
+  downloadData: protectedProcedure.mutation(async ({ ctx }) => {
+    const user = ctx.session.user;
+
+    const friends = await getCompleteFriendsDetails(user.id);
+    const groups = await getCompleteGroupDetails(user.id);
+
+    return { friends, groups };
+  }),
 });

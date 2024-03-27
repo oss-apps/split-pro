@@ -3,7 +3,7 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import { UserAvatar } from '~/components/ui/avatar';
-import { Bell, ChevronRight, Download, Github, Star } from 'lucide-react';
+import { Bell, ChevronRight, Download, FileDown, Github, Star } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { AppDrawer } from '~/components/ui/drawer';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
@@ -13,9 +13,27 @@ import { type NextPageWithUser } from '~/types';
 import { toast } from 'sonner';
 import { env } from '~/env';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
+import { useState } from 'react';
+import { LoadingSpinner } from '~/components/ui/spinner';
 
 const AccountPage: NextPageWithUser = ({ user }) => {
   const userQuery = api.user.me.useQuery();
+  const downloadQuery = api.user.downloadData.useMutation();
+
+  const [downloading, setDownloading] = useState(false);
+
+  async function downloadData() {
+    setDownloading(true);
+    const data = await downloadQuery.mutateAsync();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'splitpro_data.json';
+    link.click();
+    URL.revokeObjectURL(url);
+    setDownloading(false);
+  }
 
   return (
     <>
@@ -136,6 +154,22 @@ const AccountPage: NextPageWithUser = ({ user }) => {
                 </p>
               </div>
             </AppDrawer>
+            <Button
+              variant="ghost"
+              className="text-md w-full justify-between px-0 hover:text-foreground/80"
+              onClick={downloadData}
+              disabled={downloading}
+            >
+              <div className="flex items-center gap-4">
+                <FileDown className="h-5 w-5 text-teal-500" />
+                Download splitpro data
+              </div>
+              {downloading ? (
+                <LoadingSpinner />
+              ) : (
+                <ChevronRight className="h-6 w-6 text-gray-500" />
+              )}
+            </Button>
           </div>
 
           <div className="mt-20 flex justify-center">

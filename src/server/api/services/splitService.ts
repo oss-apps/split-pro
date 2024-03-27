@@ -551,3 +551,67 @@ export async function sendExpensePushNotification(expenseId: string) {
 
   await Promise.all(pushNotifications);
 }
+
+export async function getCompleteFriendsDetails(userId: number) {
+  const balances = await db.balance.findMany({
+    where: {
+      userId,
+    },
+    include: {
+      friend: true,
+    },
+  });
+
+  const friends = balances.reduce(
+    (acc, balance) => {
+      const friendId = balance.friendId;
+      if (!acc[friendId]) {
+        acc[friendId] = {
+          balances: [],
+          id: balance.friendId,
+          email: balance.friend.email,
+          name: balance.friend.name,
+        };
+      }
+
+      if (balance.amount !== 0) {
+        acc[friendId]?.balances.push({
+          currency: balance.currency,
+          amount:
+            balance.amount > 0 ? toFixedNumber(balance.amount) : toFixedNumber(balance.amount),
+        });
+      }
+
+      return acc;
+    },
+    {} as Record<
+      number,
+      {
+        id: number;
+        email?: string | null;
+        name?: string | null;
+        balances: { currency: string; amount: number }[];
+      }
+    >,
+  );
+
+  return friends;
+}
+
+export async function getCompleteGroupDetails(userId: number) {
+  const groups = await db.group.findMany({
+    where: {
+      groupUsers: {
+        some: {
+          userId,
+        },
+      },
+    },
+    include: {
+      groupUsers: true,
+      groupBalances: true,
+    },
+  });
+
+  return groups;
+}

@@ -33,8 +33,8 @@ function getPaymentString(
     return (
       <div className={`${user.id === paidBy ? ' text-emerald-500' : 'text-orange-500'} text-sm`}>
         {user.id === paidBy
-          ? `You paid ${currency}
-        ${toUIString(amount - Math.abs(expenseUserAmt))}`
+          ? `You lent ${currency}
+        ${toUIString(Math.abs(expenseUserAmt))}`
           : `You owe ${currency} ${toUIString(expenseUserAmt)}`}
       </div>
     );

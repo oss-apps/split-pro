@@ -1,3 +1,4 @@
+'use client';
 import { signIn } from 'next-auth/react';
 import Head from 'next/head';
 import { Button } from '~/components/ui/button';
@@ -16,8 +17,15 @@ import {
   FormDescription,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '~/components/ui/form';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from '~/components/ui/input-otp';
 
 const emailSchema = z.object({
   email: z.string({ required_error: 'Email is required' }).email({ message: 'Invalid email' }),
@@ -90,7 +98,7 @@ export default function Home() {
               <p className="mt-6 w-[300px] text-center text-sm">
                 We have sent an email with the OTP. Please check your inbox
               </p>
-              <Form {...otpForm}>
+              {/* <Form {...otpForm}>
                 <form onSubmit={otpForm.handleSubmit(onOTPSubmit)} className="mt-6 space-y-8">
                   <FormField
                     control={otpForm.control}
@@ -109,6 +117,35 @@ export default function Home() {
                       </FormItem>
                     )}
                   />
+                  <Button className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100">
+                    Submit
+                  </Button>
+                </form>
+              </Form> */}
+              <Form {...otpForm}>
+                <form onSubmit={otpForm.handleSubmit(onOTPSubmit)} className="mt-6 space-y-8">
+                  <FormField
+                    control={otpForm.control}
+                    name="otp"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <InputOTP className=" w-[300px] text-lg" maxLength={5} {...field}>
+                            <InputOTPGroup>
+                              <InputOTPSlot index={0} />
+                              <InputOTPSlot index={1} />
+                              <InputOTPSlot index={2} />
+                              <InputOTPSlot index={3} />
+                              <InputOTPSlot index={4} />
+                            </InputOTPGroup>
+                          </InputOTP>
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
                   <Button className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100">
                     Submit
                   </Button>

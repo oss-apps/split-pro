@@ -28,7 +28,7 @@ const base64ToUint8Array = (base64: string) => {
 };
 
 const NOTIFICATION_DISMISSED_TIME = 'notification_dismissed_time';
-const NOTIFICATION_DISMISSED_TIME_THRESHOLD = 1000 * 60 * 60 * 24 * 14; // 14 days
+const NOTIFICATION_DISMISSED_TIME_THRESHOLD = 1000 * 60 * 60 * 24 * 30; // 14 days
 
 export const NotificationModal: React.FC = () => {
   const updatePushSubscription = api.user.updatePushNotification.useMutation();

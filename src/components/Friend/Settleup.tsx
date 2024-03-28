@@ -45,8 +45,14 @@ export const SettleUp: React.FC<{
         amount: parseFloat(amount),
         splitType: SplitType.SETTLEMENT,
         participants: [
-          { userId: currentUser.id, amount: isCurrentUserPaying ? 0 : -parseFloat(amount) },
-          { userId: friend.id, amount: isCurrentUserPaying ? -parseFloat(amount) : 0 },
+          {
+            userId: currentUser.id,
+            amount: isCurrentUserPaying ? parseFloat(amount) : -parseFloat(amount),
+          },
+          {
+            userId: friend.id,
+            amount: isCurrentUserPaying ? -parseFloat(amount) : parseFloat(amount),
+          },
         ],
         paidBy: isCurrentUserPaying ? currentUser.id : friend.id,
         category: 'general',

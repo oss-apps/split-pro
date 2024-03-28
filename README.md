@@ -28,6 +28,7 @@ It currently has most of the important features.
 - PWA support
 - Split expense unequally (share, percentage, exact amounts)
 - Push notification
+- Download your data
 
 **More features coming every day**
 

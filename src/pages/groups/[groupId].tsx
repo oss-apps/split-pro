@@ -6,7 +6,7 @@ import { Button } from '~/components/ui/button';
 import { SplitType, type User } from '@prisma/client';
 import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
-import { Check, ChevronLeft, Share, UserPlus } from 'lucide-react';
+import { Check, ChevronLeft, DoorOpen, LogOut, Share, Trash2, UserPlus } from 'lucide-react';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { AppDrawer } from '~/components/ui/drawer';
 import { UserAvatar } from '~/components/ui/avatar';
@@ -21,6 +21,18 @@ import { env } from '~/env';
 import { useState } from 'react';
 import { type NextPageWithUser } from '~/types';
 import { motion } from 'framer-motion';
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '~/components/ui/alert-dialog';
+import { toast } from 'sonner';
+import GroupMyBalance from '~/components/group/GroupMyBalance';
 
 const BalancePage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
@@ -28,8 +40,12 @@ const BalancePage: NextPageWithUser = ({ user }) => {
 
   const groupDetailQuery = api.group.getGroupDetails.useQuery({ groupId });
   const expensesQuery = api.group.getExpenses.useQuery({ groupId });
+  const deleteGroupMutation = api.group.delete.useMutation();
+  const leaveGroupMutation = api.group.leaveGroup.useMutation();
 
   const [isInviteCopied, setIsInviteCopied] = useState(false);
+  const [showDeleteTrigger, setShowDeleteTrigger] = useState(false);
+  const [showLeaveTrigger, setShowLeaveTrigger] = useState(false);
 
   async function inviteMembers() {
     if (!groupDetailQuery.data) return;
@@ -52,6 +68,46 @@ const BalancePage: NextPageWithUser = ({ user }) => {
         setIsInviteCopied(false);
       }, 2000);
     }
+  }
+
+  const isAdmin = groupDetailQuery.data?.userId === user.id;
+  const canDelete =
+    groupDetailQuery.data?.userId === user.id &&
+    !groupDetailQuery.data.groupBalances.find((b) => b.amount !== 0);
+  const canLeave = !groupDetailQuery.data?.groupBalances.find(
+    (b) => b.amount !== 0 && b.userId === user.id,
+  );
+
+  function onGroupDelete() {
+    deleteGroupMutation.mutate(
+      { groupId },
+      {
+        onSuccess: () => {
+          router.replace('/groups').catch(console.error);
+          setShowDeleteTrigger(false);
+        },
+        onError: () => {
+          setShowDeleteTrigger(false);
+          toast.error('Something went wrong');
+        },
+      },
+    );
+  }
+
+  function onGroupLeave() {
+    leaveGroupMutation.mutate(
+      { groupId },
+      {
+        onSuccess: () => {
+          router.replace('/groups').catch(console.error);
+          setShowLeaveTrigger(false);
+        },
+        onError: () => {
+          setShowLeaveTrigger(false);
+          toast.error('Something went wrong');
+        },
+      },
+    );
   }
 
   return (
@@ -77,12 +133,13 @@ const BalancePage: NextPageWithUser = ({ user }) => {
         }
         actions={
           <AppDrawer
-            title="Members"
+            title="Group info"
             trigger={<InformationCircleIcon className="h-6 w-6" />}
             className="h-[85vh]"
           >
             <div className="">
-              <div className="flex flex-col gap-2">
+              <p className="font-semibold">Members</p>
+              <div className="mt-2 flex flex-col gap-2">
                 {groupDetailQuery.data?.groupUsers.map((groupUser) => (
                   <div
                     key={groupUser.userId}
@@ -92,6 +149,102 @@ const BalancePage: NextPageWithUser = ({ user }) => {
                     <p>{groupUser.user.name ?? groupUser.user.email}</p>
                   </div>
                 ))}
+              </div>
+            </div>
+            <div className="mt-8">
+              <p className="font-semibold ">Actions</p>
+              <div className="mt-2 flex flex-col gap-1">
+                {isAdmin ? (
+                  <>
+                    <AlertDialog
+                      open={showDeleteTrigger}
+                      onOpenChange={(status) =>
+                        status !== showDeleteTrigger ? setShowDeleteTrigger(status) : null
+                      }
+                    >
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
+                          onClick={() => setShowDeleteTrigger(true)}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" /> Delete group
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="max-w-xs rounded-lg">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            {canDelete ? 'Are you absolutely sure?' : ''}
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            {canDelete
+                              ? 'This action cannot be reversed'
+                              : "Can't delete the group until everyone settles up the balance"}
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          {canDelete ? (
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={onGroupDelete}
+                              disabled={deleteGroupMutation.isLoading}
+                              loading={deleteGroupMutation.isLoading}
+                            >
+                              Delete
+                            </Button>
+                          ) : null}
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </>
+                ) : (
+                  <>
+                    <AlertDialog
+                      open={showLeaveTrigger}
+                      onOpenChange={(status) =>
+                        status !== showLeaveTrigger ? setShowLeaveTrigger(status) : null
+                      }
+                    >
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
+                          onClick={() => setShowLeaveTrigger(true)}
+                        >
+                          <DoorOpen className="mr-2 h-5 w-5" /> Leave group
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="max-w-xs rounded-lg">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            {canLeave ? 'Are you absolutely sure?' : ''}
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            {canLeave
+                              ? 'This action cannot be reversed'
+                              : "Can't leave the group until your outstanding balance is settled"}
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          {canLeave ? (
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={onGroupLeave}
+                              disabled={leaveGroupMutation.isLoading}
+                              loading={leaveGroupMutation.isLoading}
+                            >
+                              Leave
+                            </Button>
+                          ) : null}
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </>
+                )}
               </div>
             </div>
           </AppDrawer>
@@ -120,39 +273,44 @@ const BalancePage: NextPageWithUser = ({ user }) => {
         {groupDetailQuery.isLoading ? null : groupDetailQuery.data?.groupUsers.length === 1 ? (
           <NoMembers group={groupDetailQuery.data} />
         ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className=" mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4"
-          >
-            <Link href={`/add?groupId=${groupId}`}>
-              <Button size="sm" className="gap-1 text-sm lg:w-[180px]">
-                Add Expense
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <div className="mb-4 px-4">
+              <GroupMyBalance
+                userId={user.id}
+                groupBalances={groupDetailQuery.data?.groupBalances ?? []}
+                users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
+              />
+            </div>
+            <div className=" mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4">
+              <Link href={`/add?groupId=${groupId}`}>
+                <Button size="sm" className="gap-1 text-sm lg:w-[180px]">
+                  Add Expense
+                </Button>
+              </Link>
+              <Button size="sm" className="gap-1 text-sm" variant="secondary">
+                {groupDetailQuery.data ? (
+                  <AddMembers group={groupDetailQuery.data}>
+                    <UserPlus className="h-4 w-4 text-gray-400" /> Add members
+                  </AddMembers>
+                ) : null}
               </Button>
-            </Link>
-            <Button size="sm" className="gap-1 text-sm" variant="secondary">
-              {groupDetailQuery.data ? (
-                <AddMembers group={groupDetailQuery.data}>
-                  <UserPlus className="h-4 w-4 text-gray-400" /> Add members
-                </AddMembers>
-              ) : null}
-            </Button>
-            <Button
-              size="sm"
-              className="gap-1 text-sm lg:w-[180px]"
-              variant="secondary"
-              onClick={inviteMembers}
-            >
-              {isInviteCopied ? (
-                <>
-                  <Check className="h-4 w-4 text-gray-400" /> Copied
-                </>
-              ) : (
-                <>
-                  <Share className="h-4 w-4 text-gray-400" /> Invite
-                </>
-              )}
-            </Button>
+              <Button
+                size="sm"
+                className="gap-1 text-sm lg:w-[180px]"
+                variant="secondary"
+                onClick={inviteMembers}
+              >
+                {isInviteCopied ? (
+                  <>
+                    <Check className="h-4 w-4 text-gray-400" /> Copied
+                  </>
+                ) : (
+                  <>
+                    <Share className="h-4 w-4 text-gray-400" /> Invite
+                  </>
+                )}
+              </Button>
+            </div>
           </motion.div>
         )}
         {expensesQuery.data?.map((e) => {

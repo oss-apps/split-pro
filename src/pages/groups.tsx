@@ -47,9 +47,9 @@ const BalancePage: NextPageWithUser = () => {
               </motion.div>
             ) : (
               groupQuery.data?.map((g) => {
-                const amount = Object.keys(g.balances).length
-                  ? Object.values(g.balances)[0] ?? 0
-                  : 0;
+                const [amount, currency] = Object.keys(g.balances).length
+                  ? [Object.values(g.balances)[0] ?? 0, Object.keys(g.balances)[0] ?? 'USD']
+                  : [0, 'USD'];
                 return (
                   <GroupBalance
                     key={g.id}
@@ -57,7 +57,7 @@ const BalancePage: NextPageWithUser = () => {
                     name={g.name}
                     amount={amount}
                     isPositive={amount >= 0 ? true : false}
-                    currency={g.defaultCurrency}
+                    currency={currency}
                   />
                 );
               })
@@ -91,12 +91,12 @@ const GroupBalance: React.FC<{
               <div
                 className={clsx(
                   'text-right text-xs',
-                  isPositive ? 'text-emerald-500' : 'text-red-500',
+                  isPositive ? 'text-emerald-500' : 'text-orange-600',
                 )}
               >
                 {isPositive ? 'you lent' : 'you owe'}
               </div>
-              <div className={`${isPositive ? 'text-emerald-500' : 'text-red-500'} text-right`}>
+              <div className={`${isPositive ? 'text-emerald-500' : 'text-orange-600'} text-right`}>
                 {currency} {toUIString(amount)}
               </div>
             </>

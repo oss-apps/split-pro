@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /**
@@ -9,6 +10,8 @@ await import('./src/env.js');
 /** @type {import("next").NextConfig} */
 
 import pwa from 'next-pwa';
+// @ts-ignore
+import nextra from 'nextra';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
 const withPwa = pwa({
@@ -50,4 +53,9 @@ const config = {
   },
 };
 
-export default withPwa(config);
+const withNextra = nextra({
+  theme: 'nextra-theme-blog',
+  themeConfig: './theme.config.jsx',
+});
+
+export default withNextra(withPwa(config));

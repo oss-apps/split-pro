@@ -129,7 +129,7 @@ const AddMembers: React.FC<{
             <Button
               variant="ghost"
               key={friend.id}
-              className="flex items-center justify-between px-0"
+              className="flex items-center justify-between px-0 focus:text-foreground"
               onClick={() => onUserSelect(friend.id)}
             >
               <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>

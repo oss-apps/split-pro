@@ -364,7 +364,7 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
     }
 
     operations.push(
-      db.balance.update({
+      db.balance.upsert({
         where: {
           userId_currency_friendId: {
             userId: expense.paidBy,
@@ -372,7 +372,13 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
             friendId: participant.userId,
           },
         },
-        data: {
+        create: {
+          amount: participant.amount,
+          userId: expense.paidBy,
+          currency: expense.currency,
+          friendId: participant.userId,
+        },
+        update: {
           amount: {
             decrement: -participant.amount,
           },
@@ -382,7 +388,7 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
 
     // Update participant's balance towards the payer
     operations.push(
-      db.balance.update({
+      db.balance.upsert({
         where: {
           userId_currency_friendId: {
             userId: participant.userId,
@@ -390,7 +396,13 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
             friendId: expense.paidBy,
           },
         },
-        data: {
+        create: {
+          amount: -participant.amount,
+          userId: participant.userId,
+          currency: expense.currency,
+          friendId: expense.paidBy,
+        },
+        update: {
           amount: {
             decrement: participant.amount,
           },
@@ -400,7 +412,7 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
 
     if (expense.groupId) {
       operations.push(
-        db.groupBalance.update({
+        db.groupBalance.upsert({
           where: {
             groupId_currency_firendId_userId: {
               groupId: expense.groupId,
@@ -409,7 +421,14 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
               firendId: participant.userId,
             },
           },
-          data: {
+          create: {
+            amount: participant.amount,
+            groupId: expense.groupId,
+            currency: expense.currency,
+            userId: expense.paidBy,
+            firendId: participant.userId,
+          },
+          update: {
             amount: {
               decrement: -participant.amount,
             },
@@ -418,7 +437,7 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
       );
 
       operations.push(
-        db.groupBalance.update({
+        db.groupBalance.upsert({
           where: {
             groupId_currency_firendId_userId: {
               groupId: expense.groupId,
@@ -427,7 +446,14 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
               firendId: expense.paidBy,
             },
           },
-          data: {
+          create: {
+            amount: -participant.amount,
+            groupId: expense.groupId,
+            currency: expense.currency,
+            userId: participant.userId,
+            firendId: expense.paidBy,
+          },
+          update: {
             amount: {
               decrement: participant.amount,
             },
@@ -524,4 +550,68 @@ export async function sendExpensePushNotification(expenseId: string) {
   const pushNotifications = subscriptions.map((s) => pushNotification(s.subscription, pushData));
 
   await Promise.all(pushNotifications);
+}
+
+export async function getCompleteFriendsDetails(userId: number) {
+  const balances = await db.balance.findMany({
+    where: {
+      userId,
+    },
+    include: {
+      friend: true,
+    },
+  });
+
+  const friends = balances.reduce(
+    (acc, balance) => {
+      const friendId = balance.friendId;
+      if (!acc[friendId]) {
+        acc[friendId] = {
+          balances: [],
+          id: balance.friendId,
+          email: balance.friend.email,
+          name: balance.friend.name,
+        };
+      }
+
+      if (balance.amount !== 0) {
+        acc[friendId]?.balances.push({
+          currency: balance.currency,
+          amount:
+            balance.amount > 0 ? toFixedNumber(balance.amount) : toFixedNumber(balance.amount),
+        });
+      }
+
+      return acc;
+    },
+    {} as Record<
+      number,
+      {
+        id: number;
+        email?: string | null;
+        name?: string | null;
+        balances: { currency: string; amount: number }[];
+      }
+    >,
+  );
+
+  return friends;
+}
+
+export async function getCompleteGroupDetails(userId: number) {
+  const groups = await db.group.findMany({
+    where: {
+      groupUsers: {
+        some: {
+          userId,
+        },
+      },
+    },
+    include: {
+      groupUsers: true,
+      groupBalances: true,
+    },
+  });
+
+  return groups;
 }

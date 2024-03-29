@@ -26,6 +26,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from '~/components/ui/input-otp';
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
 
 const emailSchema = z.object({
   email: z.string({ required_error: 'Email is required' }).email({ message: 'Invalid email' }),
@@ -98,30 +99,7 @@ export default function Home() {
               <p className="mt-6 w-[300px] text-center text-sm">
                 We have sent an email with the OTP. Please check your inbox
               </p>
-              {/* <Form {...otpForm}>
-                <form onSubmit={otpForm.handleSubmit(onOTPSubmit)} className="mt-6 space-y-8">
-                  <FormField
-                    control={otpForm.control}
-                    name="otp"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter your OTP"
-                            className=" w-[300px] text-lg"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100">
-                    Submit
-                  </Button>
-                </form>
-              </Form> */}
+
               <Form {...otpForm}>
                 <form onSubmit={otpForm.handleSubmit(onOTPSubmit)} className="mt-6 space-y-8">
                   <FormField
@@ -130,7 +108,7 @@ export default function Home() {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <InputOTP className=" w-[300px] text-lg" maxLength={5} {...field}>
+                          <InputOTP maxLength={5} pattern={REGEXP_ONLY_DIGITS_AND_CHARS} {...field}>
                             <InputOTPGroup>
                               <InputOTPSlot index={0} />
                               <InputOTPSlot index={1} />

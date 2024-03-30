@@ -99,7 +99,6 @@ export default function Home() {
               <p className="mt-6 w-[300px] text-center text-sm">
                 We have sent an email with the OTP. Please check your inbox
               </p>
-
               <Form {...otpForm}>
                 <form onSubmit={otpForm.handleSubmit(onOTPSubmit)} className="mt-6 space-y-8">
                   <FormField

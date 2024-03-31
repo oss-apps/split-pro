@@ -111,6 +111,7 @@ export default function Home() {
                             className="w-[300px]"
                             maxLength={5}
                             pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+                            inputMode="text"
                             {...field}
                           >
                             <InputOTPGroup>

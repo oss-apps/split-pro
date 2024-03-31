@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
         await sendSignUpEmail(email, token, url);
       },
       async generateVerificationToken() {
-        return Math.random().toString(36).substring(2, 7);
+        return Math.random().toString(36).substring(2, 7).toLowerCase();
       },
     }),
   ],

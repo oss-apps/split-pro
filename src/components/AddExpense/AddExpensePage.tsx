@@ -130,8 +130,9 @@ export const AddExpensePage: React.FC = () => {
   const router = useRouter();
 
   function onUpdateAmount(amt: string) {
-    setAmountStr(amt);
-    setAmount(Number(amt) || 0);
+    const _amt = amt.replace(',', '.');
+    setAmountStr(_amt);
+    setAmount(Number(_amt) || 0);
   }
 
   function addExpense() {

@@ -12,7 +12,7 @@ import { TRPCError } from '@trpc/server';
 import { randomUUID } from 'crypto';
 import { getDocumentUploadUrl } from '~/server/storage';
 import { FILE_SIZE_LIMIT } from '~/lib/constants';
-import { sendFeedbackEmail } from '~/server/mailer';
+import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
 import { pushNotification } from '~/server/notification';
 import { toFixedNumber, toUIString } from '~/utils/numbers';
 
@@ -107,7 +107,7 @@ export const userRouter = createTRPCRouter({
 
   inviteFriend: protectedProcedure
     .input(z.object({ email: z.string() }))
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx: { session } }) => {
       const friend = await db.user.findUnique({
         where: {
           email: input.email,
@@ -124,6 +124,10 @@ export const userRouter = createTRPCRouter({
           email: input.email,
           name: input.email.split('@')[0],
         },
+      });
+
+      sendInviteEmail(input.email, session.user.name ?? session.user.email ?? '').catch((err) => {
+        console.error('Error sending invite email', err);
       });
 
       return user;

@@ -26,7 +26,7 @@ It currently has most of the important features.
 - Multiple currency support
 - Upload expense bills
 - PWA support
-- Split expense unequally (share, percentage, exact amounts)
+- Split expense unequally (share, percentage, exact amounts, adjustments)
 - Push notification
 - Download your data
 

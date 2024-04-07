@@ -1,7 +1,7 @@
 import { type Participant, useAddExpenseStore } from '~/store/addStore';
 import { AppDrawer, Drawer, DrawerClose } from '../ui/drawer';
 import { UserAvatar } from '../ui/avatar';
-import { BarChart2, Check, DollarSign, Equal, Percent } from 'lucide-react';
+import { BarChart2, Check, DollarSign, Equal, Percent, Plus } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Input } from '../ui/input';
 import { useState } from 'react';
@@ -57,7 +57,7 @@ export const SplitTypeSection: React.FC = () => {
             {splitType === SplitType.EQUAL ? 'split equally' : `split unequally`}
           </div>
         }
-        title={splitType.toLowerCase()}
+        title={splitType.charAt(0).toUpperCase() + splitType.slice(1).toLowerCase()}
         className="h-[85vh] lg:h-[70vh]"
         shouldCloseOnAction
         dismissible={false}
@@ -94,6 +94,9 @@ const SplitExpenseForm: React.FC = () => {
           <TabsTrigger className="text-xs" value={SplitType.SHARE}>
             <BarChart2 className="h-5 w-5" />
           </TabsTrigger>
+          <TabsTrigger className="text-xs" value={SplitType.ADJUSTMENT}>
+            <Plus className="h-5 w-5" />
+          </TabsTrigger>
         </TabsList>
         <TabsContent value={SplitType.EQUAL}>
           <SplitEqualSection />
@@ -107,7 +110,9 @@ const SplitExpenseForm: React.FC = () => {
         <TabsContent value={SplitType.SHARE}>
           <SplitByShareSection />
         </TabsContent>
-        <TabsContent value="password">Change your password here.</TabsContent>
+        <TabsContent value={SplitType.ADJUSTMENT}>
+          <SplitByAdjustmentSection />
+        </TabsContent>
       </Tabs>
     </div>
   );
@@ -135,10 +140,7 @@ const SplitEqualSection: React.FC = () => {
           className=" mt-2.5 flex justify-between"
           onClick={() => addOrUpdateParticipant({ ...p, splitShare: p.splitShare === 0 ? 1 : 0 })}
         >
-          <div className="flex items-center gap-2">
-            <UserAvatar user={p} size={30} />
-            {p.name ?? p.email}
-          </div>
+          <UserAndAmount user={p} currency={currency} />
           {p.splitShare !== 0 ? (
             <div>
               <Check className="h-6 w-6 text-cyan-500" />
@@ -154,6 +156,7 @@ const SplitByPercentageSection: React.FC = () => {
   const participants = useAddExpenseStore((s) => s.participants);
   const { addOrUpdateParticipant } = useAddExpenseStore((s) => s.actions);
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
+  const currency = useAddExpenseStore((s) => s.currency);
 
   const [splitShareValue, setSplitShareValue] = useState(
     participants.reduce(
@@ -185,10 +188,8 @@ const SplitByPercentageSection: React.FC = () => {
       </div>
       {participants.map((p) => (
         <div key={p.id} className="flex justify-between">
-          <div className="flex items-center gap-2">
-            <UserAvatar user={p} size={30} />
-            {p.name ?? p.email}
-          </div>
+          <UserAndAmount user={p} currency={currency} />
+
           <div className="flex items-center gap-1">
             <Input
               type="number"
@@ -268,6 +269,7 @@ const SplitByAmountSection: React.FC = () => {
 const SplitByShareSection: React.FC = () => {
   const participants = useAddExpenseStore((s) => s.participants);
   const { addOrUpdateParticipant } = useAddExpenseStore((s) => s.actions);
+  const currency = useAddExpenseStore((s) => s.currency);
 
   const [splitShareValue, setSplitShareValue] = useState(
     participants.reduce(
@@ -295,10 +297,7 @@ const SplitByShareSection: React.FC = () => {
       <div className="mb-2 text-center text-gray-300">Total shares {totalShare}</div>
       {participants.map((p) => (
         <div key={p.id} className="flex justify-between">
-          <div className="flex items-center gap-2">
-            <UserAvatar user={p} size={30} />
-            {p.name ?? p.email}
-          </div>
+          <UserAndAmount user={p} currency={currency} />
           <div className="flex items-center gap-1">
             <Input
               type="number"
@@ -311,6 +310,85 @@ const SplitByShareSection: React.FC = () => {
           </div>
         </div>
       ))}
+    </div>
+  );
+};
+
+const SplitByAdjustmentSection: React.FC = () => {
+  const participants = useAddExpenseStore((s) => s.participants);
+  const currency = useAddExpenseStore((s) => s.currency);
+  const amount = useAddExpenseStore((s) => s.amount);
+  const { addOrUpdateParticipant } = useAddExpenseStore((s) => s.actions);
+  const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
+
+  const [splitShareValue, setSplitShareValue] = useState(
+    participants.reduce(
+      (acc, p) => {
+        acc[p.id] = p.splitShare?.toString();
+        return acc;
+      },
+      {} as Record<string, string | undefined>,
+    ),
+  );
+
+  const handleSplitShareChange = (p: Participant, value: string) => {
+    setSplitShareValue({ ...splitShareValue, [p.id]: value });
+    if (value === '' || isNaN(parseFloat(value))) {
+      addOrUpdateParticipant({ ...p, splitShare: 0 });
+      return;
+    }
+    addOrUpdateParticipant({ ...p, splitShare: parseFloat(value) });
+  };
+
+  const remainingPercentage =
+    amount - participants.reduce((acc, p) => acc + (p.splitShare ?? 0), 0);
+
+  return (
+    <div className="mt-4 flex flex-col gap-6 px-2">
+      <div
+        className={`mb-2 text-center ${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'} t`}
+      >
+        {' '}
+        Remaining to split equally {currency} {remainingPercentage}
+      </div>
+      {participants.map((p) => (
+        <div key={p.id} className="flex justify-between">
+          <UserAndAmount user={p} currency={currency} />
+          <div className="flex items-center gap-1">
+            <p className="text-xs">{currency}</p>
+
+            <Input
+              type="number"
+              value={splitShareValue[p.id]}
+              inputMode="decimal"
+              className=" ml-2 w-16 text-lg"
+              onChange={(e) => handleSplitShareChange(p, e.target.value)}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export const UserAndAmount: React.FC<{ user: Participant; currency: string }> = ({
+  user,
+  currency,
+}) => {
+  const paidBy = useAddExpenseStore((s) => s.paidBy);
+  const amount = useAddExpenseStore((s) => s.amount);
+
+  const shareAmount = paidBy?.id === user.id ? (user.amount ?? 0) - amount : user.amount;
+
+  return (
+    <div className="flex items-center gap-2">
+      <UserAvatar user={user} size={30} />
+      <div className="flex flex-col items-start">
+        <p>{user.name ?? user.email}</p>
+        <p className={`'text-gray-400' text-sm text-gray-400`}>
+          {(shareAmount ?? 0) < 0 ? '' : '-'} {currency} {Math.abs(shareAmount ?? 0).toFixed(2)}
+        </p>
+      </div>
     </div>
   );
 };

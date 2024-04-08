@@ -386,7 +386,7 @@ export const UserAndAmount: React.FC<{ user: Participant; currency: string }> = 
       <div className="flex flex-col items-start">
         <p>{user.name ?? user.email}</p>
         <p className={`'text-gray-400' text-sm text-gray-400`}>
-          {(shareAmount ?? 0) < 0 ? '' : '-'} {currency} {Math.abs(shareAmount ?? 0).toFixed(2)}
+          {(shareAmount ?? 0) > 0 ? '-' : ''} {currency} {Math.abs(shareAmount ?? 0).toFixed(2)}
         </p>
       </div>
     </div>

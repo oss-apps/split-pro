@@ -73,30 +73,32 @@ model VerificationToken {
 }
 
 model Balance {
-    userId    Int
-    currency  String
-    friendId  Int
-    amount    Int
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    user      User     @relation(name: "UserBalance", fields: [userId], references: [id], onDelete: Cascade)
-    friend    User     @relation(name: "FriendBalance", fields: [friendId], references: [id], onDelete: Cascade)
+    userId                Int
+    currency              String
+    friendId              Int
+    amount                Int
+    createdAt             DateTime @default(now())
+    updatedAt             DateTime @updatedAt
+    importedFromSplitwise Boolean  @default(false)
+    user                  User     @relation(name: "UserBalance", fields: [userId], references: [id], onDelete: Cascade)
+    friend                User     @relation(name: "FriendBalance", fields: [friendId], references: [id], onDelete: Cascade)
 
     @@id([userId, currency, friendId])
 }
 
 model Group {
-    id              Int            @id @default(autoincrement())
-    publicId        String         @unique
-    name            String
-    userId          Int
-    defaultCurrency String         @default("USD")
-    createdAt       DateTime       @default(now())
-    updatedAt       DateTime       @updatedAt
-    createdBy       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-    groupUsers      GroupUser[]
-    expenses        Expense[]
-    groupBalances   GroupBalance[]
+    id               Int            @id @default(autoincrement())
+    publicId         String         @unique
+    name             String
+    userId           Int
+    defaultCurrency  String         @default("USD")
+    createdAt        DateTime       @default(now())
+    updatedAt        DateTime       @updatedAt
+    splitwiseGroupId String?        @unique
+    createdBy        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+    groupUsers       GroupUser[]
+    expenses         Expense[]
+    groupBalances    GroupBalance[]
 }
 
 model GroupUser {

@@ -7,6 +7,8 @@ import {
   deleteExpense,
   getCompleteFriendsDetails,
   getCompleteGroupDetails,
+  importGroupFromSplitwise,
+  importUserBalanceFromSplitWise,
 } from '../services/splitService';
 import { TRPCError } from '@trpc/server';
 import { randomUUID } from 'crypto';
@@ -15,6 +17,7 @@ import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
 import { pushNotification } from '~/server/notification';
 import { toFixedNumber, toUIString } from '~/utils/numbers';
+import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
 
 export const userRouter = createTRPCRouter({
   me: protectedProcedure.query(async ({ ctx }) => {
@@ -460,4 +463,16 @@ export const userRouter = createTRPCRouter({
 
     return { friends, groups };
   }),
+
+  importUsersFromSplitWise: protectedProcedure
+    .input(
+      z.object({
+        usersWithBalance: z.array(SplitwiseUserSchema),
+        groups: z.array(SplitwiseGroupSchema),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      await importUserBalanceFromSplitWise(ctx.session.user.id, input.usersWithBalance);
+      await importGroupFromSplitwise(ctx.session.user.id, input.groups);
+    }),
 });

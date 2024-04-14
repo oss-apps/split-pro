@@ -1,7 +1,9 @@
-import { SplitType } from '@prisma/client';
+import { SplitType, type User } from '@prisma/client';
 import exp from 'constants';
+import { nanoid } from 'nanoid';
 import { db } from '~/server/db';
 import { pushNotification } from '~/server/notification';
+import { type SplitwiseGroup, type SplitwiseUser } from '~/types';
 import { toFixedNumber, toInteger } from '~/utils/numbers';
 
 export async function joinGroup(userId: number, publicGroupId: string) {
@@ -614,4 +616,205 @@ export async function getCompleteGroupDetails(userId: number) {
   });
 
   return groups;
+}
+
+export async function importUserBalanceFromSplitWise(
+  currentUserId: number,
+  splitWiseUsers: SplitwiseUser[],
+) {
+  const operations = [];
+
+  const users = await createUsersFromSplitwise(splitWiseUsers);
+
+  const userMap = users.reduce(
+    (acc, user) => {
+      if (user.email) {
+        acc[user.email] = user;
+      }
+
+      return acc;
+    },
+    {} as Record<string, User>,
+  );
+
+  for (const user of splitWiseUsers) {
+    const dbUser = userMap[user.email];
+    if (!dbUser) {
+      continue;
+    }
+
+    for (const balance of user.balance) {
+      const amount = toInteger(parseFloat(balance.amount));
+      const currency = balance.currency_code;
+      const existingBalance = await db.balance.findUnique({
+        where: {
+          userId_currency_friendId: {
+            userId: currentUserId,
+            currency,
+            friendId: dbUser.id,
+          },
+        },
+      });
+
+      if (existingBalance?.importedFromSplitwise) {
+        continue;
+      }
+
+      operations.push(
+        db.balance.upsert({
+          where: {
+            userId_currency_friendId: {
+              userId: currentUserId,
+              currency,
+              friendId: dbUser.id,
+            },
+          },
+          update: {
+            amount: {
+              increment: amount,
+            },
+            importedFromSplitwise: true,
+          },
+          create: {
+            userId: currentUserId,
+            currency,
+            friendId: dbUser.id,
+            amount,
+            importedFromSplitwise: true,
+          },
+        }),
+      );
+
+      operations.push(
+        db.balance.upsert({
+          where: {
+            userId_currency_friendId: {
+              userId: dbUser.id,
+              currency,
+              friendId: currentUserId,
+            },
+          },
+          update: {
+            amount: {
+              increment: -amount,
+            },
+            importedFromSplitwise: true,
+          },
+          create: {
+            userId: dbUser.id,
+            currency,
+            friendId: currentUserId,
+            amount: -amount,
+            importedFromSplitwise: true,
+          },
+        }),
+      );
+    }
+  }
+
+  await db.$transaction(operations);
+}
+
+async function createUsersFromSplitwise(users: Array<SplitwiseUser>) {
+  const userEmails = users.map((u) => u.email);
+
+  const existingUsers = await db.user.findMany({
+    where: {
+      email: {
+        in: userEmails,
+      },
+    },
+  });
+
+  const existingUserMap: Record<string, boolean> = {};
+
+  for (const user of existingUsers) {
+    if (user.email) {
+      existingUserMap[user.email] = true;
+    }
+  }
+
+  const newUsers = users.filter((u) => !existingUserMap[u.email]);
+
+  await db.user.createMany({
+    data: newUsers.map((u) => ({
+      email: u.email,
+      name: `${u.first_name}${u.last_name ? ' ' + u.last_name : ''}`,
+    })),
+  });
+
+  return db.user.findMany({
+    where: {
+      email: {
+        in: userEmails,
+      },
+    },
+  });
+}
+
+export async function importGroupFromSplitwise(
+  currentUserId: number,
+  splitWiseGroups: Array<SplitwiseGroup>,
+) {
+  const splitwiseUserMap: Record<string, SplitwiseUser> = {};
+
+  for (const group of splitWiseGroups) {
+    for (const member of group.members) {
+      splitwiseUserMap[member.id.toString()] = member;
+    }
+  }
+  console.log('splitwiseUserMap', splitwiseUserMap);
+
+  const users = await createUsersFromSplitwise(Object.values(splitwiseUserMap));
+
+  const userMap = users.reduce(
+    (acc, user) => {
+      if (user.email) {
+        acc[user.email] = user;
+      }
+
+      return acc;
+    },
+    {} as Record<string, User>,
+  );
+
+  console.log('userMap', userMap, splitWiseGroups);
+
+  const operations = [];
+  console.log('Hello world');
+
+  for (const group of splitWiseGroups) {
+    console.log('group', group);
+    const dbGroup = await db.group.findUnique({
+      where: {
+        splitwiseGroupId: group.id.toString(),
+      },
+    });
+
+    if (dbGroup) {
+      continue;
+    }
+
+    const groupmembers = group.members.map((member) => ({
+      userId: userMap[member.email.toString()]!.id,
+    }));
+
+    console.log('groupmembers', groupmembers);
+
+    operations.push(
+      db.group.create({
+        data: {
+          name: group.name,
+          splitwiseGroupId: group.id.toString(),
+          publicId: nanoid(),
+          userId: currentUserId,
+          groupUsers: {
+            create: groupmembers,
+          },
+        },
+      }),
+    );
+  }
+
+  await db.$transaction(operations);
 }

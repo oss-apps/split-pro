@@ -45,6 +45,16 @@ const config = {
         pathname: '/**',
       },
       {
+        hostname: 's3.amazonaws.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        hostname: 'splitwise.s3.amazonaws.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
         hostname: 'api.producthunt.com',
         port: '',
         pathname: '/**',

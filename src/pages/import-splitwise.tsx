@@ -127,9 +127,10 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             <label htmlFor="splitwise-json" className="w-full cursor-pointer rounded border">
               <div className="flex cursor-pointer px-3 py-[6px] ">
                 <div className="flex items-center border-r pr-4 ">
-                  <PaperClipIcon className="mr-2 h-4 w-4" /> Choose file
+                  <PaperClipIcon className="mr-2 h-4 w-4" />{' '}
+                  <span className="hidden text-sm md:block">Choose file</span>
                 </div>
-                <div className="pl-4 text-gray-400">
+                <div className=" pl-4 text-gray-400  ">
                   {uploadedFile ? uploadedFile.name : 'No file chosen'}
                 </div>
               </div>
@@ -149,6 +150,10 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             >
               {importMutation.isLoading ? <LoadingSpinner /> : 'Import'}
             </Button>
+          </div>
+          <div className="mt-4 text-sm text-gray-400">
+            Note: It currently only supports importing friends and groups. It will not import
+            transactions. We are working on it.
           </div>
 
           {uploadedFile ? (

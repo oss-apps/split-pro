@@ -24,6 +24,7 @@ Splitpro is designed to be an drop in open source replacement for Splitwise with
 - ✂️ Split expenses unequally (share, percentage, exact amounts)
 - 🔔 Push notification
 - ✅ Settle up expenses
+- 📲 Import data from Splitwise
 
 ## Will you make it paid?
 

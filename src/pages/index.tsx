@@ -9,6 +9,7 @@ import {
   GitFork,
   Github,
   Globe,
+  Import,
   Split,
   Users,
 } from 'lucide-react';
@@ -155,6 +156,16 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
+                <div className="flex flex-col gap-1 lg:w-1/2">
+                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
+                    <Import className="h-6 w-6 text-primary" />
+                    <p className="text-lg font-medium">Import from splitwise</p>
+                  </div>
+                  <p className="px-4 text-gray-400 lg:px-0">
+                    Don&apos;t have to manually migrate balances. You can import users and groups
+                    from splitwise
+                  </p>
+                </div>
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Bell className="h-6 w-6 text-primary" />

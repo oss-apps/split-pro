@@ -29,6 +29,7 @@ It currently has most of the important features.
 - Split expense unequally (share, percentage, exact amounts, adjustments)
 - Push notification
 - Download your data
+- Import from splitwise
 
 **More features coming every day**
 

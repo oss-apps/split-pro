@@ -7,10 +7,10 @@ const resend = new Resend(env.RESEND_API_KEY);
 export async function sendSignUpEmail(email: string, token: string, url: string) {
   const { host } = new URL(url);
 
-  // if (env.NODE_ENV === 'development') {
-  //   console.log('Sending sign in email', email, url, token);
-  //   return;
-  // }
+  if (env.NODE_ENV === 'development') {
+    console.log('Sending sign in email', email, url, token);
+    return;
+  }
 
   const subject = 'Sign in to SplitPro';
   const text = `Hey,\n\nYou can sign in to SplitPro by clicking the below URL:\n${url}\n\nYou can also use this OTP: ${token}\n\nThanks,\nKoushik KM\nSplitPro`;

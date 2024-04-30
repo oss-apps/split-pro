@@ -329,7 +329,7 @@ const BalancePage: NextPageWithUser = ({ user }) => {
             >
               <div className="flex items-center gap-4">
                 <div className="text-xs text-gray-500">
-                  {format(e.createdAt, 'MMM dd')
+                  {format(e.expenseDate, 'MMM dd')
                     .split(' ')
                     .map((d) => (
                       <div className="text-center" key={d}>

@@ -1,6 +1,6 @@
 import { type ExpenseParticipant, type Expense, type User } from '@prisma/client';
 import { type User as NextUser } from 'next-auth';
-import { format } from 'date-fns';
+import { format, isSameDay } from 'date-fns';
 import React from 'react';
 import { toUIString } from '~/utils/numbers';
 import { UserAvatar } from '../ui/avatar';
@@ -38,15 +38,18 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
             <p className="text-2xl font-semibold">
               {expense.currency} {toUIString(expense.amount ?? 0)}
             </p>
+            {!isSameDay(expense.expenseDate, expense.createdAt) ? (
+              <p className="text-sm text-gray-500">{format(expense.expenseDate, 'dd MMM yyyy')}</p>
+            ) : null}
             {expense.deletedByUser ? (
               <p className=" text-sm text-orange-600">
                 Deleted by {expense.deletedByUser.name ?? expense.addedByUser.email} on{' '}
-                {format(expense.deletedAt ?? expense.expenseDate, 'dd MMM yyyy')}
+                {format(expense.deletedAt ?? expense.createdAt, 'dd MMM yyyy')}
               </p>
             ) : (
               <p className=" text-sm text-gray-500">
                 Added by {expense.addedByUser.name ?? expense.addedByUser.email} on{' '}
-                {format(expense.expenseDate, 'dd MMM yyyy')}
+                {format(expense.createdAt, 'dd MMM yyyy')}
               </p>
             )}
           </div>

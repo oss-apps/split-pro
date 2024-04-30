@@ -161,7 +161,7 @@ export const groupRouter = createTRPCRouter({
           deletedBy: null,
         },
         orderBy: {
-          createdAt: 'desc',
+          expenseDate: 'desc',
         },
         include: {
           expenseParticipants: true,

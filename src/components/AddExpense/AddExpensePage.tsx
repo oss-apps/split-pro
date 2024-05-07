@@ -4,7 +4,7 @@ import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { UserInput } from './UserInput';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
-import { AppDrawer, Drawer, DrawerClose, DrawerContent, DrawerTrigger } from '../ui/drawer';
+import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Button } from '../ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../ui/command';
 import { Banknote, CalendarIcon, Check } from 'lucide-react';
@@ -18,7 +18,6 @@ import UploadFile from './UploadFile';
 import { CategoryIcons } from '../ui/categoryIcons';
 import Link from 'next/link';
 import { CURRENCIES } from '~/lib/currency';
-import { useSession } from 'next-auth/react';
 
 const categories = {
   entertainment: {
@@ -114,6 +113,7 @@ export const AddExpensePage: React.FC = () => {
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
   const participants = useAddExpenseStore((s) => s.participants);
+  const group = useAddExpenseStore((s) => s.group);
   const currency = useAddExpenseStore((s) => s.currency);
   const category = useAddExpenseStore((s) => s.category);
   const description = useAddExpenseStore((s) => s.description);
@@ -234,7 +234,7 @@ export const AddExpensePage: React.FC = () => {
           </Button>{' '}
         </div>
         <UserInput />
-        {showFriends || participants.length === 1 ? (
+        {showFriends || (participants.length === 1 && !group) ? (
           <SelectUserOrGroup />
         ) : (
           <>

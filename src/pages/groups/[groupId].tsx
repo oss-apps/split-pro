@@ -270,7 +270,8 @@ const BalancePage: NextPageWithUser = ({ user }) => {
           </div>
         }
       >
-        {groupDetailQuery.isLoading ? null : groupDetailQuery.data?.groupUsers.length === 1 ? (
+        {groupDetailQuery.isLoading ? null : groupDetailQuery.data?.groupUsers.length === 1 &&
+          !expensesQuery.data?.length ? (
           <NoMembers group={groupDetailQuery.data} />
         ) : (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>

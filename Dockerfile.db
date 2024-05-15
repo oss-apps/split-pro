@@ -1,0 +1,4 @@
+FROM postgres
+COPY prisma /prisma
+RUN sh /prisma/seed.sh
+RUN cp /seed.sql /docker-entrypoint-initdb.d/

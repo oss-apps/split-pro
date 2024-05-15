@@ -1,0 +1,32 @@
+services:
+  split-pro-pg:
+    build:
+      context: ./
+      dockerfile: Dockerfile.db
+    image: split-pro-pg
+    container_name: split-pro-pg
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - split-pro_pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  split-pro-ws:
+    build:
+      context: ./
+      dockerfile: Dockerfile.ws
+    image: split-pro-ws
+    container_name: split-pro-ws
+    restart: always
+    ports:
+      - "3337:3000"
+    env_file:
+      - .env
+    depends_on:
+      - split-pro-pg
+
+volumes:
+  split-pro_pgdata:

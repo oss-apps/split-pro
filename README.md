@@ -67,6 +67,17 @@ _That's when I decided to work on this_
 - PostgreSQL
 - pnpm (recommended)
 
+## Self Hosting
+### Prerequisites
+- Docker
+- Docker compose plugin
+- .env file with all the required secrets and env vars
+
+### Instructions to deploy (it's just one command away)
+```bash
+docker compose build && docker compose up -d
+```
+
 ### Run locally
 
 - Copy .env.example to .env to the root directory and add the required env variables.

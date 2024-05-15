@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "pnpm prisma:prod && next build",
+    "just-build": "next build",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:dev": "prisma migrate dev",

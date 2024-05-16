@@ -67,6 +67,67 @@ _That's when I decided to work on this_
 - PostgreSQL
 - pnpm (recommended)
 
+## Self Hosting
+### Prerequisites
+- Docker
+- Docker compose plugin
+- .env file with all the required secrets and env vars (make sure to uncomment POSTGRES_HOST, POSTGRES_PORT, POSTGRES_USER, POSTGRES_PASSWORD)
+
+### Instructions to deploy (it's just one command away)
+```bash
+docker compose build && docker compose up -d
+```
+
+### Domain setup, SSL certs and reverse proxy
+### Prerequisites
+- nginx
+- certbot
+- certbot nginx plugin
+#### Nginx Guide for RedHat based systems (Fedora, RHEL, CentOS etc)
+Add a new conf file to your nginx configuration for this application
+```bash
+sudo cp ./splitpro-nginx.conf /etc/nginx/conf.d/
+```
+Validate the new config
+```bash
+sudo nginx -t
+```
+If everything looks good, you can go ahead and restart nginx to reflect the new config (You can also reload it but I prefer restart)
+```bash
+sudo systemctl restart nginx
+```
+Now let's install certbot to request a free SSL cert from letsencrypt
+```bash
+sudo dnf install -y certbot python3-certbot-nginx
+```
+Request the certificate
+```bash
+sudo certbot --nginx -d splitpro.domain.com
+```
+and that's it!
+
+## Setup Backups
+### Prerequisites
+- mutt (install and configure, see instructions here https://www.makeuseof.com/install-configure-mutt-with-gmail-on-linux/)
+- crontab
+
+Create a folder called as `.bps` in root's home dir
+```bash
+mkdir /root/.bps
+```
+
+*Update the script.sh to have your own target email address instead of `target@email.com`*
+
+Copy the backup script into `.bps` location
+```bash
+cp ./backup/script.sh /root/.bps/
+```
+
+Add the cron job in the crontab
+```bash
+crontab ./backup/crontab.txt
+```
+
 ### Run locally
 
 - Copy .env.example to .env to the root directory and add the required env variables.

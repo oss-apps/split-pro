@@ -14,7 +14,8 @@
     "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "start-with-latest-migrations": "prisma migrate deploy && next start"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.515.0",

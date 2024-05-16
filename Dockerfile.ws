@@ -10,4 +10,4 @@ RUN npm run just-build
 
 RUN rm /src/.env
 
-CMD npm start
+CMD npm run start-with-latest-migrations

@@ -1,9 +1,6 @@
 services:
   split-pro-pg:
-    build:
-      context: ./
-      dockerfile: Dockerfile.db
-    image: ${POSTGRES_HOST}
+    image: postgres
     container_name: ${POSTGRES_HOST}
     restart: always
     environment:

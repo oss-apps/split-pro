@@ -116,6 +116,8 @@ Create a folder called as `.bps` in root's home dir
 mkdir /root/.bps
 ```
 
+*Update the script.sh to have your own target email address instead of `target@email.com`*
+
 Copy the backup script into `.bps` location
 ```bash
 cp ./backup/script.sh /root/.bps/

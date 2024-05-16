@@ -106,6 +106,26 @@ sudo certbot --nginx -d splitpro.domain.com
 ```
 and that's it!
 
+## Setup Backups
+### Prerequisites
+- mutt (install and configure, see instructions here https://www.makeuseof.com/install-configure-mutt-with-gmail-on-linux/)
+- crontab
+
+Create a folder called as `.bps` in root's home dir
+```bash
+mkdir /root/.bps
+```
+
+Copy the backup script into `.bps` location
+```bash
+cp ./backup/script.sh /root/.bps/
+```
+
+Add the cron job in the crontab
+```bash
+crontab ./backup/crontab.txt
+```
+
 ### Run locally
 
 - Copy .env.example to .env to the root directory and add the required env variables.

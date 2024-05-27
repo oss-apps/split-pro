@@ -65,6 +65,9 @@ export const NotificationModal: React.FC = () => {
         toast.success('You will receive notifications now');
         navigator.serviceWorker.ready
           .then(async (reg) => {
+            if (!env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY) {
+              return;
+            }
             const sub = await reg.pushManager.subscribe({
               userVisibleOnly: true,
               applicationServerKey: base64ToUint8Array(env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY),
@@ -85,6 +88,10 @@ export const NotificationModal: React.FC = () => {
   function remindLater() {
     localStorage.setItem(NOTIFICATION_DISMISSED_TIME, Date.now().toString());
     setModalOpen(false);
+  }
+
+  if (!env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY) {
+    return null;
   }
 
   return (

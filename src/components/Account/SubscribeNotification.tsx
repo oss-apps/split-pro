@@ -47,6 +47,11 @@ export const SubscribeNotification: React.FC = () => {
         toast.success('You will receive notifications now');
         navigator.serviceWorker.ready
           .then(async (reg) => {
+            if (!env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY) {
+              toast.error('Notification is not supported');
+              return;
+            }
+
             const sub = await reg.pushManager.subscribe({
               userVisibleOnly: true,
               applicationServerKey: base64ToUint8Array(env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY),
@@ -75,6 +80,10 @@ export const SubscribeNotification: React.FC = () => {
     } catch (e) {
       toast.error('Error unsubscribing notification');
     }
+  }
+
+  if (!env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY) {
+    return null;
   }
 
   return (

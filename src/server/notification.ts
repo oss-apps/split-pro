@@ -1,11 +1,13 @@
 import webPush, { type PushSubscription } from 'web-push';
 import { env } from '~/env';
 
-webPush.setVapidDetails(
-  `mailto:${env.WEB_PUSH_EMAIL}`,
-  env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY,
-  env.WEB_PUSH_PRIVATE_KEY,
-);
+if (env.WEB_PUSH_EMAIL && env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY && env.WEB_PUSH_PRIVATE_KEY) {
+  webPush.setVapidDetails(
+    `mailto:${env.WEB_PUSH_EMAIL}`,
+    env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY,
+    env.WEB_PUSH_PRIVATE_KEY,
+  );
+}
 
 export async function pushNotification(
   subscription: string,

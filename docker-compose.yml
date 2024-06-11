@@ -18,12 +18,12 @@ services:
   split-pro-ws:
     build:
       context: ./
-      dockerfile: Dockerfile.ws
+      dockerfile: Dockerfile.prod
     image: split-pro-ws
     container_name: split-pro-ws
     restart: always
     ports:
-      - "3337:3000"
+      - '3337:3000'
     env_file:
       - .env
     depends_on:

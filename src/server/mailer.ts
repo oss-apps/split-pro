@@ -64,7 +64,7 @@ async function sendMail(email: string, subject: string, text: string, html: stri
       });
 
       if (resp.status === 200) {
-        console.log('Email sent using unsend');
+        console.log('Email sent using unsend', await resp.json());
         return;
       } else {
         console.log(

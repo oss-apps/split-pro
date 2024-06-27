@@ -6,7 +6,7 @@ import { Button } from '~/components/ui/button';
 import { SplitType, type User } from '@prisma/client';
 import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
-import { Check, ChevronLeft, DoorOpen, LogOut, Share, Trash2, Plus } from 'lucide-react';
+import { Check, ChevronLeft, DoorOpen, LogOut, Share, Trash2, UserPlus } from 'lucide-react';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { AppDrawer } from '~/components/ui/drawer';
 import { UserAvatar } from '~/components/ui/avatar';
@@ -291,7 +291,7 @@ const BalancePage: NextPageWithUser = ({ user }) => {
               <Button size="sm" className="gap-1 text-sm" variant="secondary">
                 {groupDetailQuery.data ? (
                   <AddMembers group={groupDetailQuery.data}>
-                    <Plus className="h-4 w-4 text-gray-400" /> Add members
+                    <UserPlus className="h-4 w-4 text-gray-400" /> Add members
                   </AddMembers>
                 ) : null}
               </Button>

@@ -2,7 +2,7 @@ import Head from 'next/head';
 import MainLayout from '~/components/Layout/MainLayout';
 import clsx from 'clsx';
 import { Button } from '~/components/ui/button';
-import { UserPlusIcon } from '@heroicons/react/24/solid';
+import { PlusIcon } from '@heroicons/react/24/solid';
 import { getServerAuthSessionForSSG } from '~/server/auth';
 import { type User } from '@prisma/client';
 import { api } from '~/utils/api';
@@ -26,7 +26,7 @@ const BalancePage: NextPageWithUser = () => {
         title="Groups"
         actions={
           <CreateGroup>
-            <UserPlusIcon className="h-6 w-6 text-primary" />
+            <PlusIcon className="h-6 w-6 text-primary" />
           </CreateGroup>
         }
       >
@@ -40,7 +40,7 @@ const BalancePage: NextPageWithUser = () => {
               >
                 <CreateGroup>
                   <Button>
-                    <UserPlusIcon className="mr-2 h-4 w-4" />
+                    <PlusIcon className="mr-2 h-4 w-4" />
                     Create Group
                   </Button>
                 </CreateGroup>

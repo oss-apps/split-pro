@@ -1,8 +1,11 @@
 import { type User } from 'next-auth';
+import { Unsend } from 'unsend';
 import { Resend } from 'resend';
 import { env } from '~/env';
 
 const resend = new Resend(env.RESEND_API_KEY);
+
+const unsend = new Unsend(env.UNSEND_API_KEY);
 
 export async function sendSignUpEmail(email: string, token: string, url: string) {
   const { host } = new URL(url);
@@ -47,31 +50,20 @@ export async function sendFeedbackEmail(feedback: string, user: User) {
 
 async function sendMail(email: string, subject: string, text: string, html: string) {
   try {
-    if (env.UNSEND_API_KEY && env.UNSEND_URL) {
-      const resp = await fetch(`${env.UNSEND_URL}/emails`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${env.UNSEND_API_KEY}`,
-        },
-        body: JSON.stringify({
-          from: 'hello@auth.splitpro.app',
-          to: email,
-          subject,
-          text,
-          html,
-        }),
+    if (env.UNSEND_API_KEY) {
+      const response = await unsend.emails.send({
+        from: 'hello@auth.splitpro.app',
+        to: email,
+        subject,
+        text,
+        html,
       });
 
-      if (resp.status === 200) {
-        console.log('Email sent using unsend', await resp.json());
+      if (response.data) {
+        console.log('Email sent using unsend', response.data);
         return;
       } else {
-        console.log(
-          'Error sending email using unsend, so fallback to resend',
-          resp.status,
-          resp.statusText,
-        );
+        console.log('Error sending email using unsend', response.error);
       }
     }
   } catch (error) {

@@ -136,3 +136,14 @@ crontab ./backup/crontab.txt
 - Run `pnpm install`
 - Run `pnpm db:push` or `pnpm prisma:prod` to populate db migrations
 - Run `pnpm dev`
+
+
+## Sponsors
+
+We are grateful for the support of our sponsors. If you are interested in becoming a sponsor, please contact us.
+
+### Our Sponsors
+
+<a href="https://hekuta.net/en" target="_blank">
+  <img src="https://pbs.twimg.com/profile_images/1743758975026470912/MQ1U1bye_400x400.jpg" alt="hekuta" style="width:60px;height:60px;">
+</a>

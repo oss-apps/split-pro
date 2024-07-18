@@ -140,7 +140,7 @@ crontab ./backup/crontab.txt
 
 ## Sponsors
 
-We are grateful for the support of our sponsors. If you are interested in becoming a sponsor, please contact us.
+We are grateful for the support of our sponsors.
 
 ### Our Sponsors
 

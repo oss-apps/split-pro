@@ -105,7 +105,9 @@ const categories = {
   },
 };
 
-export const AddExpensePage: React.FC = () => {
+export const AddExpensePage: React.FC<{ isStorageConfigured: boolean }> = ({
+  isStorageConfigured,
+}) => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [open, setOpen] = React.useState(false);
   const [amtStr, setAmountStr] = React.useState('');
@@ -386,7 +388,7 @@ export const AddExpensePage: React.FC = () => {
                     </Popover>
                   </div>
                   <div className="flex items-center gap-4">
-                    <UploadFile />
+                    {isStorageConfigured ? <UploadFile /> : null}
 
                     <Button
                       className=" min-w-[100px]"

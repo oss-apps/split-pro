@@ -2,7 +2,8 @@ import { type NextPage } from 'next';
 import { type User } from 'next-auth';
 import { z } from 'zod';
 
-export type NextPageWithUser = NextPage<{ user: User }> & { auth: boolean };
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type NextPageWithUser<T = {}> = NextPage<{ user: User } & T> & { auth: boolean };
 
 export type PushMessage = { title: string; message: string };
 

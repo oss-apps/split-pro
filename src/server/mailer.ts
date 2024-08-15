@@ -3,8 +3,6 @@ import { Unsend } from 'unsend';
 import { Resend } from 'resend';
 import { env } from '~/env';
 
-const resend = new Resend(env.RESEND_API_KEY);
-
 const unsend = new Unsend(env.UNSEND_API_KEY);
 
 export async function sendSignUpEmail(email: string, token: string, url: string) {
@@ -69,14 +67,4 @@ async function sendMail(email: string, subject: string, text: string, html: stri
   } catch (error) {
     console.log('Error sending email using unsend, so fallback to resend', error);
   }
-
-  const response = await resend.emails.send({
-    from: env.FROM_EMAIL,
-    to: email,
-    subject,
-    text,
-    html,
-  });
-
-  console.log('Email sent', response);
 }

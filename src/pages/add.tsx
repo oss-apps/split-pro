@@ -7,13 +7,17 @@ import { AddExpensePage } from '~/components/AddExpense/AddExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
 import { getServerAuthSessionForSSG } from '~/server/auth';
 import { db } from '~/server/db';
+import { isStorageConfigured } from '~/server/storage';
 import { useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 
 // 🧾
 
-const AddPage: NextPageWithUser = ({ user }) => {
+const AddPage: NextPageWithUser<{ isStorageConfigured: boolean }> = ({
+  user,
+  isStorageConfigured,
+}) => {
   const { setCurrentUser, setGroup, setParticipants, setCurrency } = useAddExpenseStore(
     (s) => s.actions,
   );
@@ -73,7 +77,9 @@ const AddPage: NextPageWithUser = ({ user }) => {
       <Head>
         <title>Add Expense</title>
       </Head>
-      <MainLayout hideAppBar>{currentUser ? <AddExpensePage /> : <div></div>}</MainLayout>
+      <MainLayout hideAppBar>
+        {currentUser ? <AddExpensePage isStorageConfigured={isStorageConfigured} /> : <div></div>}
+      </MainLayout>
     </>
   );
 };
@@ -81,3 +87,13 @@ const AddPage: NextPageWithUser = ({ user }) => {
 AddPage.auth = true;
 
 export default AddPage;
+
+export async function getStaticProps() {
+  console.log('isStorageConfigured', isStorageConfigured());
+
+  return {
+    props: {
+      isStorageConfigured: !!isStorageConfigured(),
+    },
+  };
+}

@@ -50,7 +50,7 @@ const BalancePage: NextPageWithUser = ({ user }) => {
   async function inviteMembers() {
     if (!groupDetailQuery.data) return;
     const inviteLink =
-      env.NEXT_PUBLIC_URL + '/join-group?groupId=' + groupDetailQuery.data.publicId;
+      window.location.origin + '/join-group?groupId=' + groupDetailQuery.data.publicId;
 
     if (navigator.share) {
       navigator

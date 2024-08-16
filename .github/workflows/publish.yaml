@@ -1,0 +1,147 @@
+name: Publish Docker
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run the action on'
+        default: 'main'
+        required: true
+
+jobs:
+  build_and_publish_platform_containers:
+    name: Build and publish platform containers
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - linux/amd64
+          - linux/arm64
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the docker image
+        env:
+          BUILD_PLATFORM: ${{ matrix.platform == 'linux/arm64' && 'arm64' || 'amd64' }}
+        run: |
+          APP_VERSION="$(git name-rev --tags --name-only $(git rev-parse HEAD) | head -n 1 | sed 's/\^0//')"
+          GIT_SHA="$(git rev-parse HEAD)"
+
+          docker build \
+            -f ./docker/Dockerfile \
+            --progress=plain \
+            -t "ossapps/splitpro-$BUILD_PLATFORM:latest" \
+            -t "ossapps/splitpro-$BUILD_PLATFORM:$GIT_SHA" \
+            -t "ossapps/splitpro-$BUILD_PLATFORM:$APP_VERSION" \
+            -t "ghcr.io/oss-apps/splitpro-$BUILD_PLATFORM:latest" \
+            -t "ghcr.io/oss-apps/splitpro-$BUILD_PLATFORM:$GIT_SHA" \
+            -t "ghcr.io/oss-apps/splitpro-$BUILD_PLATFORM:$APP_VERSION" \
+            .
+
+      - name: Push the docker image to DockerHub
+        run: docker push --all-tags "ossapps/splitpro-$BUILD_PLATFORM"
+        env:
+          BUILD_PLATFORM: ${{ matrix.platform == 'linux/arm64' && 'arm64' || 'amd64' }}
+
+      - name: Push the docker image to GitHub Container Registry
+        run: docker push --all-tags "ghcr.io/oss-apps/splitpro-$BUILD_PLATFORM"
+        env:
+          BUILD_PLATFORM: ${{ matrix.platform == 'linux/arm64' && 'arm64' || 'amd64' }}
+
+  create_and_publish_manifest:
+    name: Create and publish manifest
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    needs: build_and_publish_platform_containers
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and push DockerHub manifest
+        run: |
+          APP_VERSION="$(git name-rev --tags --name-only $(git rev-parse HEAD) | head -n 1 | sed 's/\^0//')"
+          GIT_SHA="$(git rev-parse HEAD)"
+
+          docker manifest create \
+            ossapps/splitpro:latest \
+            --amend ossapps/splitpro-amd64:latest \
+            --amend ossapps/splitpro-arm64:latest \
+
+          docker manifest create \
+            ossapps/splitpro:$GIT_SHA \
+            --amend ossapps/splitpro-amd64:$GIT_SHA \
+            --amend ossapps/splitpro-arm64:$GIT_SHA \
+
+          docker manifest create \
+            ossapps/splitpro:$APP_VERSION \
+            --amend ossapps/splitpro-amd64:$APP_VERSION \
+            --amend ossapps/splitpro-arm64:$APP_VERSION \
+
+          docker manifest push ossapps/splitpro:latest
+          docker manifest push ossapps/splitpro:$GIT_SHA
+          docker manifest push ossapps/splitpro:$APP_VERSION
+
+      - name: Create and push Github Container Registry manifest
+        run: |
+          APP_VERSION="$(git name-rev --tags --name-only $(git rev-parse HEAD) | head -n 1 | sed 's/\^0//')"
+          GIT_SHA="$(git rev-parse HEAD)"
+
+          docker manifest create \
+            ghcr.io/oss-apps/splitpro:latest \
+            --amend ghcr.io/oss-apps/splitpro-amd64:latest \
+            --amend ghcr.io/oss-apps/splitpro-arm64:latest \
+
+          docker manifest create \
+            ghcr.io/oss-apps/splitpro:$GIT_SHA \
+            --amend ghcr.io/oss-apps/splitpro-amd64:$GIT_SHA \
+            --amend ghcr.io/oss-apps/splitpro-arm64:$GIT_SHA \
+
+          docker manifest create \
+            ghcr.io/oss-apps/splitpro:$APP_VERSION \
+            --amend ghcr.io/oss-apps/splitpro-amd64:$APP_VERSION \
+            --amend ghcr.io/oss-apps/splitpro-arm64:$APP_VERSION \
+
+          docker manifest push ghcr.io/oss-apps/splitpro:latest
+          docker manifest push ghcr.io/oss-apps/splitpro:$GIT_SHA
+          docker manifest push ghcr.io/oss-apps/splitpro:$APP_VERSION

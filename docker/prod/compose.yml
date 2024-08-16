@@ -1,0 +1,40 @@
+name: split-pro-prod
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: splitpro-db-prod
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:?err}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?err}
+      - POSTGRES_DB=${POSTGRES_DB:?err}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # ports:
+    #   - "5432:5432"
+    volumes:
+      - database:/var/lib/postgresql/data
+
+  splitpro:
+    image: ossapps/splitpro:latest
+    container_name: splitpro
+    restart: always
+    ports:
+      - ${PORT:-3000}:${PORT:-3000}
+    environment:
+      - PORT=${PORT:-3000}
+      - DATABASE_URL=${DATABASE_URL:?err}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:?err}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:?err}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:?err}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:?err}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  database:

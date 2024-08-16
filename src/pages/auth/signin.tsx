@@ -37,8 +37,6 @@ const otpSchema = z.object({
 });
 
 export default function Home() {
-  const callbackUrl = env.NEXT_PUBLIC_URL;
-
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
@@ -58,6 +56,8 @@ export default function Home() {
   async function onOTPSubmit(values: z.infer<typeof otpSchema>) {
     const email = emailForm.getValues().email;
     console.log('email', email);
+
+    const callbackUrl = window.location.origin;
 
     window.location.href = `/api/auth/callback/email?email=${encodeURIComponent(
       email.toLowerCase(),

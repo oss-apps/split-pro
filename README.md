@@ -67,66 +67,19 @@ _That's when I decided to work on this_
 - PostgreSQL
 - pnpm (recommended)
 
-## Self Hosting
-### Prerequisites
-- Docker
-- Docker compose plugin
-- .env file with all the required secrets and env vars (make sure to uncomment POSTGRES_HOST, POSTGRES_PORT, POSTGRES_USER, POSTGRES_PASSWORD)
+## Docker
 
-### Instructions to deploy (it's just one command away)
-```bash
-docker compose build && docker compose up -d
-```
+We provide a Docker container for Splitpro, which is published on both DockerHub and GitHub Container Registry.
 
-### Domain setup, SSL certs and reverse proxy
-### Prerequisites
-- nginx
-- certbot
-- certbot nginx plugin
-#### Nginx Guide for RedHat based systems (Fedora, RHEL, CentOS etc)
-Add a new conf file to your nginx configuration for this application
-```bash
-sudo cp ./splitpro-nginx.conf /etc/nginx/conf.d/
-```
-Validate the new config
-```bash
-sudo nginx -t
-```
-If everything looks good, you can go ahead and restart nginx to reflect the new config (You can also reload it but I prefer restart)
-```bash
-sudo systemctl restart nginx
-```
-Now let's install certbot to request a free SSL cert from letsencrypt
-```bash
-sudo dnf install -y certbot python3-certbot-nginx
-```
-Request the certificate
-```bash
-sudo certbot --nginx -d splitpro.domain.com
-```
-and that's it!
+DockerHub: [https://hub.docker.com/r/ossapps/splitpro](https://hub.docker.com/r/ossapps/splitpro)
 
-## Setup Backups
-### Prerequisites
-- mutt (install and configure, see instructions here https://www.makeuseof.com/install-configure-mutt-with-gmail-on-linux/)
-- crontab
+GitHub Container Registry: [https://ghcr.io/oss-apps/splitpro](https://ghcr.io/oss-apps/splitpro)
 
-Create a folder called as `.bps` in root's home dir
-```bash
-mkdir /root/.bps
-```
+You can pull the Docker image from either of these registries and run it with your preferred container hosting provider.
 
-*Update the script.sh to have your own target email address instead of `target@email.com`*
+Please note that you will need to provide environment variables for connecting to the database, redis, aws and so forth.
 
-Copy the backup script into `.bps` location
-```bash
-cp ./backup/script.sh /root/.bps/
-```
-
-Add the cron job in the crontab
-```bash
-crontab ./backup/crontab.txt
-```
+For detailed instructions on how to configure and run the Docker container, please refer to the Docker [Docker README](./docker/README.md) in the docker directory.
 
 ### Run locally
 
@@ -136,7 +89,6 @@ crontab ./backup/crontab.txt
 - Run `pnpm install`
 - Run `pnpm db:push` or `pnpm prisma:prod` to populate db migrations
 - Run `pnpm dev`
-
 
 ## Sponsors
 

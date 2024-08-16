@@ -34,6 +34,7 @@ yarn-error.log*
 # local env files
 # do not commit any .env files to git, except for the .env.example file. https://create.t3.gg/en/usage/env-variables#using-environment-variables
 # .env
+.env
 .env.example
 .env*.local
 
@@ -49,6 +50,8 @@ yarn-error.log*
 **/public/sw.js.map
 **/public/worker-*.js
 src/server/random.code-workspace
+
+prisma/seed.ts
 
 creds
 package-lock.json

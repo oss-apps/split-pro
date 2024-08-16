@@ -13,6 +13,7 @@
     "prisma:prod": "prisma migrate deploy",
     "dev": "next dev",
     "postinstall": "prisma generate",
+    "generate": "prisma generate",
     "lint": "next lint",
     "start": "sleep 3 && pnpm prisma:prod && next start",
     "start-with-latest-migrations": "prisma migrate deploy && next start"
@@ -62,7 +63,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.50.1",
     "resend": "^3.2.0",
-    "sharp": "^0.33.2",
+    "sharp": "0.32.6",
     "sonner": "^1.4.0",
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.2.0",

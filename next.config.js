@@ -21,7 +21,7 @@ const withPwa = pwa({
 
 const config = {
   reactStrictMode: true,
-
+  output: process.env.DOCKER_OUTPUT ? 'standalone' : undefined,
   /**
    * If you are using `appDir` then you must comment the below `i18n` config out.
    *
@@ -68,4 +68,5 @@ const withNextra = nextra({
   themeConfig: './theme.config.jsx',
 });
 
+// @ts-ignore
 export default withNextra(withPwa(config));

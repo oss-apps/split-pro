@@ -43,7 +43,6 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    NEXT_PUBLIC_URL: z.string(),
     NEXT_PUBLIC_R2_PUBLIC_URL: z.string().optional(),
     NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY: z.string().optional(),
     NEXT_PUBLIC_BEAM_ID: z.string().optional(),
@@ -68,7 +67,6 @@ export const env = createEnv({
     R2_URL: process.env.R2_URL,
     FROM_EMAIL: process.env.FROM_EMAIL,
     FEEDBACK_EMAIL: process.env.FEEDBACK_EMAIL,
-    NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
     NEXT_PUBLIC_R2_PUBLIC_URL: process.env.NEXT_PUBLIC_R2_PUBLIC_URL,
     WEB_PUSH_EMAIL: process.env.WEB_PUSH_EMAIL,
     WEB_PUSH_PRIVATE_KEY: process.env.WEB_PUSH_PRIVATE_KEY,

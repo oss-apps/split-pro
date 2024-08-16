@@ -1,9 +1,8 @@
 import { type User } from 'next-auth';
 import { Unsend } from 'unsend';
-import { Resend } from 'resend';
 import { env } from '~/env';
 
-const unsend = new Unsend(env.UNSEND_API_KEY);
+const unsend: Unsend | null = env.UNSEND_API_KEY ? new Unsend(env.UNSEND_API_KEY) : null;
 
 export async function sendSignUpEmail(email: string, token: string, url: string) {
   const { host } = new URL(url);
@@ -48,7 +47,7 @@ export async function sendFeedbackEmail(feedback: string, user: User) {
 
 async function sendMail(email: string, subject: string, text: string, html: string) {
   try {
-    if (env.UNSEND_API_KEY) {
+    if (unsend) {
       const response = await unsend.emails.send({
         from: 'hello@auth.splitpro.app',
         to: email,

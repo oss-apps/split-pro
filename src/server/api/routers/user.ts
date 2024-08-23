@@ -109,7 +109,7 @@ export const userRouter = createTRPCRouter({
   }),
 
   inviteFriend: protectedProcedure
-    .input(z.object({ email: z.string() }))
+    .input(z.object({ email: z.string(), sendInviteEmail: z.boolean().optional() }))
     .mutation(async ({ input, ctx: { session } }) => {
       const friend = await db.user.findUnique({
         where: {
@@ -129,9 +129,11 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      sendInviteEmail(input.email, session.user.name ?? session.user.email ?? '').catch((err) => {
-        console.error('Error sending invite email', err);
-      });
+      if (input.sendInviteEmail) {
+        sendInviteEmail(input.email, session.user.name ?? session.user.email ?? '').catch((err) => {
+          console.error('Error sending invite email', err);
+        });
+      }
 
       return user;
     }),

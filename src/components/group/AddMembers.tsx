@@ -12,7 +12,7 @@ import {
 import clsx from 'clsx';
 import { UserAvatar } from '../ui/avatar';
 import { type Group, type GroupUser } from '@prisma/client';
-import { CheckIcon, UserPlus } from 'lucide-react';
+import { CheckIcon, SendIcon, UserPlus } from 'lucide-react';
 import { Input } from '../ui/input';
 import { z } from 'zod';
 
@@ -79,10 +79,10 @@ const AddMembers: React.FC<{
 
   const isEmail = z.string().email().safeParse(inputValue);
 
-  function onAddEmailClick() {
+  function onAddEmailClick(invite = false) {
     if (isEmail.success) {
       addFriendMutation.mutate(
-        { email: inputValue.toLowerCase() },
+        { email: inputValue.toLowerCase(), sendInviteEmail: invite },
         {
           onSuccess: (user) => {
             onSave({ ...userIds, [user.id]: true });
@@ -115,15 +115,30 @@ const AddMembers: React.FC<{
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />
-        <Button
-          className="mt-4 w-full text-cyan-500"
-          variant="ghost"
-          disabled={!isEmail.success}
-          onClick={() => onAddEmailClick()}
-        >
-          <UserPlusIcon className="mr-2 h-6 w-6" />
-          {isEmail.success ? 'Add email to Split Pro' : 'Enter valid email'}
-        </Button>
+        {!isEmail.success ? (
+          <p className="mt-4 text-red-500">Enter valid email</p>
+        ) : (
+          <div className="flex gap-4">
+            <Button
+              className="mt-4 w-full text-cyan-500"
+              variant="outline"
+              disabled={!isEmail.success}
+              onClick={() => onAddEmailClick(false)}
+            >
+              <SendIcon className="mr-2 h-4 w-4" />
+              {isEmail.success ? 'Send invite to user' : 'Enter valid email'}
+            </Button>
+            <Button
+              className="mt-4 w-full text-cyan-500"
+              variant="outline"
+              disabled={!isEmail.success}
+              onClick={() => onAddEmailClick(true)}
+            >
+              <UserPlusIcon className="mr-2 h-4 w-4" />
+              {isEmail.success ? 'Add to Split Pro' : 'Enter valid email'}
+            </Button>
+          </div>
+        )}
         <div className="mt-4 flex flex-col gap-4">
           {filteredUsers?.map((friend) => (
             <Button

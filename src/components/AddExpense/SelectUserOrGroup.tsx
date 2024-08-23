@@ -8,6 +8,7 @@ import { CheckIcon } from '@heroicons/react/24/outline';
 import { type Group, type GroupUser, type User } from '@prisma/client';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { SendIcon } from 'lucide-react';
 
 export const SelectUserOrGroup: React.FC = () => {
   const nameOrEmail = useAddExpenseStore((s) => s.nameOrEmail);
@@ -29,10 +30,10 @@ export const SelectUserOrGroup: React.FC = () => {
     (f.name ?? f.email)?.toLowerCase().includes(nameOrEmail.toLowerCase()),
   );
 
-  function onAddEmailClick() {
+  function onAddEmailClick(invite = false) {
     if (isEmail.success) {
       addFriendMutation.mutate(
-        { email: nameOrEmail },
+        { email: nameOrEmail, sendInviteEmail: invite },
         {
           onSuccess: (user) => {
             removeParticipant(-1);
@@ -73,15 +74,26 @@ export const SelectUserOrGroup: React.FC = () => {
 
   return (
     <div className="mt-1 ">
-      <Button
-        className="w-full text-cyan-500"
-        variant="ghost"
-        disabled={!isEmail.success}
-        onClick={() => onAddEmailClick()}
-      >
-        <UserPlusIcon className="mr-2 h-6 w-6" />
-        {isEmail.success ? 'Add email to Split Pro' : 'Enter valid email'}
-      </Button>
+      <div className="flex gap-4">
+        <Button
+          className="mt-4 w-full text-cyan-500 hover:text-cyan-500"
+          variant="outline"
+          disabled={!isEmail.success}
+          onClick={() => onAddEmailClick(false)}
+        >
+          <SendIcon className="mr-2 h-4 w-4" />
+          Send invite to user
+        </Button>
+        <Button
+          className="mt-4 w-full text-cyan-500 hover:text-cyan-500"
+          variant="outline"
+          disabled={!isEmail.success}
+          onClick={() => onAddEmailClick(true)}
+        >
+          <UserPlusIcon className="mr-2 h-4 w-4" />
+          Add to Split Pro
+        </Button>
+      </div>
       <div className="mt-2">
         {filteredFriends?.length ? (
           <>

@@ -13,6 +13,7 @@ import { type NextPageWithUser } from '~/types';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { useEffect, useState } from 'react';
 import { useAddExpenseStore } from '~/store/addStore';
+import { useAppStore } from '~/store/appStore';
 
 const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });
 
@@ -82,12 +83,21 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
   const [showSpinner, setShowSpinner] = useState(false);
 
   const { setCurrency } = useAddExpenseStore((s) => s.actions);
+  const { setWebPushPublicKey } = useAppStore((s) => s.actions);
+
+  const { data: webPushPublicKey } = api.user.getWebPushPublicKey.useQuery();
 
   useEffect(() => {
     setTimeout(() => {
       setShowSpinner(true);
     }, 300);
   }, []);
+
+  useEffect(() => {
+    if (webPushPublicKey) {
+      setWebPushPublicKey(webPushPublicKey);
+    }
+  }, [webPushPublicKey, setWebPushPublicKey]);
 
   useEffect(() => {
     if (status === 'authenticated') {

@@ -14,6 +14,7 @@ import { type NextPageWithUser } from '~/types';
 import useEnableAfter from '~/hooks/useEnableAfter';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { NotificationModal } from '~/components/NotificationModal';
+import { GetServerSideProps } from 'next';
 
 const BalancePage: NextPageWithUser = () => {
   function shareWithFriends() {
@@ -178,5 +179,10 @@ const FriendBalance: React.FC<{
 };
 
 BalancePage.auth = true;
+
+// export const getServerSideProps = (async () => {
+
+//   return { props: { webPushKey: env } };
+// }) satisfies GetServerSideProps<{ webPushKey: string }>;
 
 export default BalancePage;

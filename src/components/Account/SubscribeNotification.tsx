@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { env } from '~/env';
 import { Bell, BellOff, ChevronRight } from 'lucide-react';
 import { api } from '~/utils/api';
+import { useAppStore } from '~/store/appStore';
 
 const base64ToUint8Array = (base64: string) => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4);
@@ -21,6 +22,7 @@ const base64ToUint8Array = (base64: string) => {
 export const SubscribeNotification: React.FC = () => {
   const updatePushSubscription = api.user.updatePushNotification.useMutation();
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const webPushPublicKey = useAppStore((s) => s.webPushPublicKey);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
@@ -47,14 +49,14 @@ export const SubscribeNotification: React.FC = () => {
         toast.success('You will receive notifications now');
         navigator.serviceWorker.ready
           .then(async (reg) => {
-            if (!env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY) {
+            if (!webPushPublicKey) {
               toast.error('Notification is not supported');
               return;
             }
 
             const sub = await reg.pushManager.subscribe({
               userVisibleOnly: true,
-              applicationServerKey: base64ToUint8Array(env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY),
+              applicationServerKey: base64ToUint8Array(webPushPublicKey),
             });
 
             setIsSubscribed(true);
@@ -82,7 +84,7 @@ export const SubscribeNotification: React.FC = () => {
     }
   }
 
-  if (!env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY) {
+  if (!webPushPublicKey) {
     return null;
   }
 

@@ -13,6 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from './ui/alert-dialog';
+import { useAppStore } from '~/store/appStore';
 
 const base64ToUint8Array = (base64: string) => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4);
@@ -32,6 +33,8 @@ const NOTIFICATION_DISMISSED_TIME_THRESHOLD = 1000 * 60 * 60 * 24 * 30; // 14 da
 
 export const NotificationModal: React.FC = () => {
   const updatePushSubscription = api.user.updatePushNotification.useMutation();
+  const webPushPublicKey = useAppStore((s) => s.webPushPublicKey);
+
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
@@ -65,12 +68,12 @@ export const NotificationModal: React.FC = () => {
         toast.success('You will receive notifications now');
         navigator.serviceWorker.ready
           .then(async (reg) => {
-            if (!env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY) {
+            if (!webPushPublicKey) {
               return;
             }
             const sub = await reg.pushManager.subscribe({
               userVisibleOnly: true,
-              applicationServerKey: base64ToUint8Array(env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY),
+              applicationServerKey: base64ToUint8Array(webPushPublicKey),
             });
 
             updatePushSubscription.mutate({ subscription: JSON.stringify(sub) });
@@ -90,7 +93,7 @@ export const NotificationModal: React.FC = () => {
     setModalOpen(false);
   }
 
-  if (!env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY) {
+  if (!webPushPublicKey) {
     return null;
   }
 

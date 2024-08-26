@@ -35,6 +35,7 @@ export const env = createEnv({
     WEB_PUSH_PRIVATE_KEY: z.string().optional(),
     UNSEND_API_KEY: z.string().optional(),
     UNSEND_URL: z.string().optional(),
+    WEB_PUSH_PUBLIC_KEY: z.string().optional(),
   },
 
   /**
@@ -44,7 +45,6 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_R2_PUBLIC_URL: z.string().optional(),
-    NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY: z.string().optional(),
     NEXT_PUBLIC_BEAM_ID: z.string().optional(),
   },
 
@@ -70,7 +70,7 @@ export const env = createEnv({
     NEXT_PUBLIC_R2_PUBLIC_URL: process.env.NEXT_PUBLIC_R2_PUBLIC_URL,
     WEB_PUSH_EMAIL: process.env.WEB_PUSH_EMAIL,
     WEB_PUSH_PRIVATE_KEY: process.env.WEB_PUSH_PRIVATE_KEY,
-    NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY: process.env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY,
+    WEB_PUSH_PUBLIC_KEY: process.env.WEB_PUSH_PUBLIC_KEY,
     NEXT_PUBLIC_BEAM_ID: process.env.NEXT_PUBLIC_BEAM_ID,
     UNSEND_API_KEY: process.env.UNSEND_API_KEY,
     UNSEND_URL: process.env.UNSEND_URL,

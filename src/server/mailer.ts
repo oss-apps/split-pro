@@ -42,10 +42,16 @@ export async function sendFeedbackEmail(feedback: string, user: User) {
   const subject = `Feedback received on SplitPro from ${user.name}`;
   const text = `Feedback created by ${user.name} :\n\nFeedback: ${feedback}\n\nemail: ${user.email}`;
 
-  await sendMail(env.FEEDBACK_EMAIL, subject, text, text);
+  await sendMail(env.FEEDBACK_EMAIL, subject, text, text, user.email ?? undefined);
 }
 
-async function sendMail(email: string, subject: string, text: string, html: string) {
+async function sendMail(
+  email: string,
+  subject: string,
+  text: string,
+  html: string,
+  replyTo?: string,
+) {
   try {
     if (unsend) {
       const response = await unsend.emails.send({
@@ -54,6 +60,7 @@ async function sendMail(email: string, subject: string, text: string, html: stri
         subject,
         text,
         html,
+        replyTo,
       });
 
       if (response.data) {

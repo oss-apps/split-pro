@@ -5,6 +5,8 @@ import { env } from '~/env';
 import { Bell, BellOff, ChevronRight } from 'lucide-react';
 import { api } from '~/utils/api';
 import { useAppStore } from '~/store/appStore';
+import '../../i18n/config';
+import { useTranslation } from 'react-i18next';
 
 const base64ToUint8Array = (base64: string) => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4);
@@ -23,6 +25,12 @@ export const SubscribeNotification: React.FC = () => {
   const updatePushSubscription = api.user.updatePushNotification.useMutation();
   const [isSubscribed, setIsSubscribed] = useState(false);
   const webPushPublicKey = useAppStore((s) => s.webPushPublicKey);
+  
+  const { t, ready } = useTranslation();
+  // Ensure i18n is ready
+  useEffect(() => {
+    if (!ready) return; // Don't render the component until i18n is ready
+  }, [ready]);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
@@ -46,11 +54,11 @@ export const SubscribeNotification: React.FC = () => {
     try {
       const result = await Notification.requestPermission();
       if (result === 'granted') {
-        toast.success('You will receive notifications now');
+        toast.success(t('notifications_enabled'));
         navigator.serviceWorker.ready
           .then(async (reg) => {
             if (!webPushPublicKey) {
-              toast.error('Notification is not supported');
+              toast.error(t('notifications_unsupported'));
               return;
             }
 
@@ -63,11 +71,11 @@ export const SubscribeNotification: React.FC = () => {
             updatePushSubscription.mutate({ subscription: JSON.stringify(sub) });
           })
           .catch((e) => {
-            toast.error('Cannot subscribe to notification');
+            toast.error(t('notifications_error'));
           });
       }
     } catch (e) {
-      toast.error('Error requesting notification');
+      toast.error(t('notifications_error'));
     }
   }
 
@@ -80,7 +88,7 @@ export const SubscribeNotification: React.FC = () => {
         setIsSubscribed(false);
       }
     } catch (e) {
-      toast.error('Error unsubscribing notification');
+      toast.error(t('notifications_error_unsubscribe'));
     }
   }
 

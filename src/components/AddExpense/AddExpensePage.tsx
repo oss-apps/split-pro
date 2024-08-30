@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { UserInput } from './UserInput';
@@ -18,92 +18,8 @@ import UploadFile from './UploadFile';
 import { CategoryIcons } from '../ui/categoryIcons';
 import Link from 'next/link';
 import { CURRENCIES } from '~/lib/currency';
-
-const categories = {
-  entertainment: {
-    name: 'Entertainment',
-    items: [
-      {
-        games: 'Games',
-        movies: 'Movies',
-        music: 'Music',
-        sports: 'Sports',
-        other: 'Entertainment',
-      },
-    ],
-  },
-  food: {
-    name: 'Food & Drinks',
-    items: [
-      {
-        diningOut: 'Dining Out',
-        groceries: 'Groceries',
-        liquor: 'Liquor',
-        other: 'Food & Drinks',
-      },
-    ],
-  },
-  home: {
-    name: 'Home',
-    items: [
-      {
-        electronics: 'Electronics',
-        furniture: 'Furniture',
-        supplies: 'Supplies',
-        maintenance: 'Maintenance',
-        mortgage: 'Mortgage',
-        pets: 'Pets',
-        rent: 'Rent',
-        services: 'Services',
-        other: 'Home',
-      },
-    ],
-  },
-  life: {
-    name: 'Life',
-    items: [
-      {
-        childcare: 'Childcare',
-        clothing: 'Clothing',
-        education: 'Education',
-        gifts: 'Gifts',
-        medical: 'Medical',
-        taxes: 'Taxes',
-        other: 'Life',
-      },
-    ],
-  },
-  travel: {
-    name: 'Travel',
-    items: [
-      {
-        bus: 'Bus',
-        train: 'Train',
-        car: 'Car',
-        fuel: 'Fuel',
-        parking: 'Parking',
-        plane: 'Plane',
-        taxi: 'Taxi',
-        other: 'Travel',
-      },
-    ],
-  },
-  utilities: {
-    name: 'Utilities',
-    items: [
-      {
-        cleaning: 'Cleaning',
-        electricity: 'Electricity',
-        gas: 'Gas',
-        internet: 'Internet',
-        trash: 'Trash',
-        phone: 'Phone',
-        water: 'Water',
-        other: 'Utilities',
-      },
-    ],
-  },
-};
+import '../../i18n/config';
+import { useTranslation } from 'react-i18next';
 
 export const AddExpensePage: React.FC<{ isStorageConfigured: boolean }> = ({
   isStorageConfigured,
@@ -111,6 +27,99 @@ export const AddExpensePage: React.FC<{ isStorageConfigured: boolean }> = ({
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [open, setOpen] = React.useState(false);
   const [amtStr, setAmountStr] = React.useState('');
+  
+  const { t, ready } = useTranslation();
+
+  // Ensure i18n is ready
+  useEffect(() => {
+    if (!ready) return; // Don't render the component until i18n is ready
+  }, [ready]);
+
+  const categories = {
+    entertainment: {
+      name: t('category_entertainment'),
+      items: [
+        {
+          games: t('category_games'),
+          movies: t('category_movies'),
+          music: t('category_music'),
+          sports: t('category_sports'),
+          other: t('category_entertainment'),
+        },
+      ],
+    },
+    food: {
+      name: t('category_food'),
+      items: [
+        {
+          diningOut: t('category_diningOut'),
+          groceries: t('category_groceries'),
+          liquor: t('category_liquor'),
+          other: t('category_food'),
+        },
+      ],
+    },
+    home: {
+      name: t('category_home'),
+      items: [
+        {
+          electronics: t('category_electronics'),
+          furniture: t('category_furniture'),
+          supplies: t('category_supplies'),
+          maintenance: t('category_maintenance'),
+          mortgage: t('category_mortgage'),
+          pets: t('category_pets'),
+          rent: t('category_rent'),
+          services: t('category_services'),
+          other: t('category_home'),
+        },
+      ],
+    },
+    life: {
+      name: t('category_life'),
+      items: [
+        {
+          childcare: t('category_childcare'),
+          clothing: t('category_clothing'),
+          education: t('category_education'),
+          gifts: t('category_gifts'),
+          medical: t('category_medical'),
+          taxes: t('category_taxes'),
+          other: t('category_life'),
+        },
+      ],
+    },
+    travel: {
+      name: t('category_travel'),
+      items: [
+        {
+          bus: t('category_bus'),
+          train: t('category_train'),
+          car: t('category_car'),
+          fuel: t('category_fuel'),
+          parking: t('category_parking'),
+          plane: t('category_plane'),
+          taxi: t('category_taxi'),
+          other: t('category_travel'),
+        },
+      ],
+    },
+    utilities: {
+      name: t('category_utilities'),
+      items: [
+        {
+          cleaning: t('category_cleaning'),
+          electricity: t('category_electricity'),
+          gas: t('category_gas'),
+          internet: t('category_internet'),
+          trash: t('category_trash'),
+          phone: t('category_phone'),
+          water: t('category_water'),
+          other: t('category_utilities'),
+        },
+      ],
+    },
+  };
 
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
@@ -211,15 +220,15 @@ export const AddExpensePage: React.FC<{ isStorageConfigured: boolean }> = ({
           {participants.length === 1 ? (
             <Link href="/balances">
               <Button variant="ghost" className=" px-0 text-primary">
-                Cancel
+                {t('cancel')}
               </Button>
             </Link>
           ) : (
             <Button variant="ghost" className=" px-0 text-primary" onClick={resetState}>
-              Cancel
+              {t('cancel')}
             </Button>
           )}
-          <div className="text-center">Add new expense</div>
+          <div className="text-center">{t('add_expense')}</div>
           <Button
             variant="ghost"
             className=" px-0 text-primary"
@@ -232,7 +241,7 @@ export const AddExpensePage: React.FC<{ isStorageConfigured: boolean }> = ({
             }
             onClick={addExpense}
           >
-            Save
+            {t('save')}
           </Button>{' '}
         </div>
         <UserInput />
@@ -247,7 +256,7 @@ export const AddExpensePage: React.FC<{ isStorageConfigured: boolean }> = ({
                     <CategoryIcon size={20} />
                   </div>
                 }
-                title="Categories"
+                title={t('expense_categories')}
                 className="h-[70vh]"
                 shouldCloseOnAction
               >
@@ -286,7 +295,7 @@ export const AddExpensePage: React.FC<{ isStorageConfigured: boolean }> = ({
                 </div>
               </AppDrawer>
               <Input
-                placeholder="Enter description"
+                placeholder={t('expense_description_placeholder')}
                 value={description}
                 onChange={(e) => setDescription(e.target.value.toString() ?? '')}
                 className="text-lg placeholder:text-sm"
@@ -300,7 +309,7 @@ export const AddExpensePage: React.FC<{ isStorageConfigured: boolean }> = ({
                   </div>
                 }
                 onTriggerClick={() => setOpen(true)}
-                title="Select currency"
+                title={t('expense_select_currency')}
                 className="h-[70vh]"
                 shouldCloseOnAction
                 open={open}
@@ -310,8 +319,8 @@ export const AddExpensePage: React.FC<{ isStorageConfigured: boolean }> = ({
               >
                 <div className="">
                   <Command className="h-[50vh]">
-                    <CommandInput className="text-lg" placeholder="Search currency" />
-                    <CommandEmpty>No currency found.</CommandEmpty>
+                    <CommandInput className="text-lg" placeholder={t('expense_currency_search')}/>
+                    <CommandEmpty>{t('expense_currency_notfound')}.</CommandEmpty>
                     <CommandGroup className="h-full overflow-auto">
                       {CURRENCIES.map((framework) => (
                         <CommandItem
@@ -347,7 +356,7 @@ export const AddExpensePage: React.FC<{ isStorageConfigured: boolean }> = ({
               </AppDrawer>
 
               <Input
-                placeholder="Enter amount"
+                placeholder={t('expense_amount_placeholder')}
                 className="text-lg placeholder:text-sm"
                 type="text"
                 inputMode="decimal"
@@ -373,12 +382,13 @@ export const AddExpensePage: React.FC<{ isStorageConfigured: boolean }> = ({
                           <CalendarIcon className="mr-2 h-6 w-6 text-cyan-500" />
                           {date ? (
                             format(date, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? (
-                              'Today'
+                              t('today')
                             ) : (
-                              format(date, 'MMM dd')
+                              //format(date, 'MMM dd')
+                              t('local_date', {value: new Date(date)})
                             )
                           ) : (
-                            <span>Pick a date</span>
+                            <span>{t('expense_date')}</span>
                           )}
                         </Button>
                       </PopoverTrigger>
@@ -407,7 +417,7 @@ export const AddExpensePage: React.FC<{ isStorageConfigured: boolean }> = ({
                       }
                       onClick={() => addExpense()}
                     >
-                      Submit
+                      {t('submit')}
                     </Button>
                   </div>
                 </div>

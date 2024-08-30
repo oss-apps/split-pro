@@ -14,6 +14,8 @@ import {
   AlertDialogTitle,
 } from './ui/alert-dialog';
 import { useAppStore } from '~/store/appStore';
+import '../i18n/config';
+import { useTranslation } from 'react-i18next';
 
 const base64ToUint8Array = (base64: string) => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4);
@@ -34,6 +36,13 @@ const NOTIFICATION_DISMISSED_TIME_THRESHOLD = 1000 * 60 * 60 * 24 * 30; // 14 da
 export const NotificationModal: React.FC = () => {
   const updatePushSubscription = api.user.updatePushNotification.useMutation();
   const webPushPublicKey = useAppStore((s) => s.webPushPublicKey);
+
+  const { t, ready } = useTranslation();
+
+  // Ensure i18n is ready
+  useEffect(() => {
+    if (!ready) return; // Don't render the component until i18n is ready
+  }, [ready]);
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -65,7 +74,7 @@ export const NotificationModal: React.FC = () => {
     try {
       const result = await Notification.requestPermission();
       if (result === 'granted') {
-        toast.success('You will receive notifications now');
+        toast.success(t('notifications_enabled'));
         navigator.serviceWorker.ready
           .then(async (reg) => {
             if (!webPushPublicKey) {
@@ -79,12 +88,12 @@ export const NotificationModal: React.FC = () => {
             updatePushSubscription.mutate({ subscription: JSON.stringify(sub) });
           })
           .catch((e) => {
-            toast.error('Cannot subscribe to notification');
+            toast.error(t('notifications_error'));
           });
         setModalOpen(false);
       }
     } catch (e) {
-      toast.error('Error requesting notification');
+      toast.error(t('notifications_error'));
     }
   }
 
@@ -101,16 +110,16 @@ export const NotificationModal: React.FC = () => {
     <AlertDialog open={modalOpen}>
       <AlertDialogContent className=" rounded-lg">
         <AlertDialogHeader>
-          <AlertDialogTitle>Enable notifications</AlertDialogTitle>
+          <AlertDialogTitle>{t('notification_enable')}</AlertDialogTitle>
           <AlertDialogDescription>
-            Don&apos;t miss on important events. Subscribe to get notification for added expenses
+            {t('notifications_description')}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={remindLater}>Remind later</AlertDialogCancel>
+          <AlertDialogCancel onClick={remindLater}>{t('notifications_remind_later')}</AlertDialogCancel>
           <AlertDialogAction onClick={onRequestNotification}>
             <Bell className="mr-1 h-4" />
-            Subscribe
+            {t('subscribe')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

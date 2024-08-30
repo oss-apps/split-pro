@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import MainLayout from '~/components/Layout/MainLayout';
+import React, { useEffect } from 'react';
 import { api } from '~/utils/api';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -7,6 +8,8 @@ import { ChevronLeftIcon, Trash, Trash2 } from 'lucide-react';
 import ExpenseDetails from '~/components/Expense/ExpensePage';
 import { DeleteExpense } from '~/components/Expense/DeleteExpense';
 import { type NextPageWithUser } from '~/types';
+import '../../../../i18n/config';
+import { useTranslation } from 'react-i18next';
 
 const ExpensesPage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
@@ -14,11 +17,17 @@ const ExpensesPage: NextPageWithUser = ({ user }) => {
   const friendId = parseInt(router.query.friendId as string);
 
   const expenseQuery = api.user.getExpenseDetails.useQuery({ expenseId });
+  const { t, ready } = useTranslation();
+
+  // Ensure i18n is ready
+  useEffect(() => {
+    if (!ready) return; // Don't render the component until i18n is ready
+  }, [ready]);
 
   return (
     <>
       <Head>
-        <title>Outstanding balances</title>
+        <title>{t('outstanding_balances')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
@@ -27,7 +36,7 @@ const ExpensesPage: NextPageWithUser = ({ user }) => {
             <Link href={`/balances/${friendId}`}>
               <ChevronLeftIcon className="mr-1 h-6 w-6" />
             </Link>
-            <p className="text-[16px] font-normal">Expense details</p>
+            <p className="text-[16px] font-normal">{t('expense_details')}</p>
           </div>
         }
         actions={

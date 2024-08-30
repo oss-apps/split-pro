@@ -17,6 +17,7 @@ echo "Git SHA: $GIT_SHA"
 
 docker build -f "$SCRIPT_DIR/Dockerfile" \
     --progress=plain \
+    -t "registry.pthome.de/splitpro:latest" \
     -t "ossapps/splitpro:latest" \
     -t "ossapps/splitpro:$GIT_SHA" \
     -t "ossapps/splitpro:$APP_VERSION" \

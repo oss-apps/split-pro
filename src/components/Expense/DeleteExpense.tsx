@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Trash2 } from 'lucide-react';
 import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
+import '../../i18n/config';
+import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +23,13 @@ export const DeleteExpense: React.FC<{
   groupId?: number;
 }> = ({ expenseId, friendId, groupId }) => {
   const router = useRouter();
+
+  const { t, ready } = useTranslation();
+
+  // Ensure i18n is ready
+  useEffect(() => {
+    if (!ready) return; // Don't render the component until i18n is ready
+  }, [ready]);
 
   const deleteExpenseMutation = api.user.deleteExpense.useMutation();
 
@@ -48,15 +57,15 @@ export const DeleteExpense: React.FC<{
         </AlertDialogTrigger>
         <AlertDialogContent className="max-w-xs rounded-lg">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>{t('expense_delete_alert_title')}?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your expense.
+              {t('expense_delete_alert_text')}.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
             <AlertDialogAction size="sm" variant="destructive" onClick={onDeleteExpense}>
-              Delete
+              {t('delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

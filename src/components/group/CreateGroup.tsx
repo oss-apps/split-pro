@@ -1,5 +1,5 @@
 import Avatar from 'boring-avatars';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppDrawer } from '~/components/ui/drawer';
 import { Input } from '~/components/ui/input';
 import { api } from '~/utils/api';
@@ -9,16 +9,26 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
 import { Button } from '../ui/button';
+import '../../i18n/config';
+import { useTranslation } from 'react-i18next';
 
-const groupSchema = z.object({
-  name: z.string({ required_error: 'Name is required' }).min(1, { message: 'Name is required' }),
-});
 
 export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const createGroup = api.group.create.useMutation(undefined);
   const utils = api.useUtils();
+
+  const { t, ready } = useTranslation();
+
+  // Ensure i18n is ready
+  useEffect(() => {
+    if (!ready) return; // Don't render the component until i18n is ready
+  }, [ready]);
+
+  const groupSchema = z.object({
+    name: z.string({ required_error: t('group_name_empty') }).min(1, { message: t('group_name_empty') }),
+  });
 
   const groupForm = useForm<z.infer<typeof groupSchema>>({
     resolver: zodResolver(groupSchema),
@@ -49,11 +59,11 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
           if (openVal !== drawerOpen) setDrawerOpen(openVal);
         }}
         trigger={children}
-        leftAction="Cancel"
+        leftAction={t('cancel')}
         leftActionOnClick={() => setDrawerOpen(false)}
-        title="Create a group"
+        title={t('group_create')}
         className="h-[70vh]"
-        actionTitle="Submit"
+        actionTitle={t('submit')}
         actionOnClick={async () => {
           await groupForm.handleSubmit(onGroupSubmit)();
         }}
@@ -76,7 +86,7 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormControl>
-                      <Input placeholder="Group name" className="w-full py-2 text-lg" {...field} />
+                      <Input placeholder={t('group_name_placeholder')}className="w-full py-2 text-lg" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

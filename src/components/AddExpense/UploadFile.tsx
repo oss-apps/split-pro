@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { type File, FileUp, ImagePlus, Image as ImageUploaded } from 'lucide-react';
@@ -6,6 +6,8 @@ import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { toast } from 'sonner';
+import '../../i18n/config';
+import { useTranslation } from 'react-i18next';
 
 const getImgHeightAndWidth = (file: File) => {
   return new Promise<{ width: number; height: number }>((resolve, reject) => {
@@ -27,6 +29,13 @@ export const UploadFile: React.FC = () => {
 
   const getUploadUrl = api.user.getUploadUrl.useMutation();
 
+  const { t, ready } = useTranslation();
+
+  // Ensure i18n is ready
+  useEffect(() => {
+    if (!ready) return; // Don't render the component until i18n is ready
+  }, [ready]);
+
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
 
@@ -35,7 +44,7 @@ export const UploadFile: React.FC = () => {
     if (!file) return;
 
     if (file.size > FILE_SIZE_LIMIT) {
-      toast.error(`File should be less than ${FILE_SIZE_LIMIT / 1024 / 1024}MB`);
+      toast.error(`${t('upload_to_big_error')} ${FILE_SIZE_LIMIT / 1024 / 1024}MB`);
       return;
     }
 
@@ -58,17 +67,17 @@ export const UploadFile: React.FC = () => {
       });
 
       if (!response.ok) {
-        toast.error('Failed to upload file');
+        toast.error(t('upload_failed'));
         return;
       }
 
-      toast.success('File uploaded successfully');
+      toast.success(t('upload_ok'));
 
       setFileKey(key);
       console.log('Setting file key', key);
     } catch (error) {
       console.error('Error getting upload url:', error);
-      toast.error(`Error uploading file`);
+      toast.error(t('upload_failed'));
     }
 
     setFileUploading(false);

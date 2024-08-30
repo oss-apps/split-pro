@@ -1,4 +1,5 @@
 import { api } from '~/utils/api';
+import React, { useEffect } from 'react';
 import { GroupAvatar, UserAvatar } from '../ui/avatar';
 import { useAddExpenseStore } from '~/store/addStore';
 import { z } from 'zod';
@@ -9,6 +10,8 @@ import { type Group, type GroupUser, type User } from '@prisma/client';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { SendIcon } from 'lucide-react';
+import '../../i18n/config';
+import { useTranslation } from 'react-i18next';
 
 export const SelectUserOrGroup: React.FC = () => {
   const nameOrEmail = useAddExpenseStore((s) => s.nameOrEmail);
@@ -16,6 +19,12 @@ export const SelectUserOrGroup: React.FC = () => {
   const group = useAddExpenseStore((s) => s.group);
   const { addOrUpdateParticipant, removeParticipant, setNameOrEmail, setGroup, setParticipants } =
     useAddExpenseStore((s) => s.actions);
+
+    const { t, ready } = useTranslation();
+    // Ensure i18n is ready
+    useEffect(() => {
+      if (!ready) return; // Don't render the component until i18n is ready
+    }, [ready]);
 
   const friendsQuery = api.user.getFriends.useQuery();
   const groupsQuery = api.group.getAllGroups.useQuery();
@@ -68,7 +77,7 @@ export const SelectUserOrGroup: React.FC = () => {
 
   if (group) {
     return (
-      <div className="mt-4 text-center text-red-500">You can have only one group at a time</div>
+      <div className="mt-4 text-center text-red-500">{t('select_group_error')}</div>
     );
   }
 
@@ -82,7 +91,7 @@ export const SelectUserOrGroup: React.FC = () => {
           onClick={() => onAddEmailClick(false)}
         >
           <SendIcon className="mr-2 h-4 w-4" />
-          Send invite to user
+          {t('addmember_invite_user')}
         </Button>
         <Button
           className="mt-4 w-full text-cyan-500 hover:text-cyan-500"
@@ -91,13 +100,13 @@ export const SelectUserOrGroup: React.FC = () => {
           onClick={() => onAddEmailClick(true)}
         >
           <UserPlusIcon className="mr-2 h-4 w-4" />
-          Add to Split Pro
+          {t('addmember_add_to_split')}
         </Button>
       </div>
       <div className="mt-2">
         {filteredFriends?.length ? (
           <>
-            <div className=" font-normal text-gray-500">Friends</div>
+            <div className=" font-normal text-gray-500">{t('Friends')}</div>
             {filteredFriends.map((f) => {
               const isExisting = participants.some((p) => p.id === f.id);
 
@@ -132,7 +141,7 @@ export const SelectUserOrGroup: React.FC = () => {
         {/*Can't select multiple groups or groups with outside ppl */}
         {filteredGroups?.length && participants.length === 1 ? (
           <>
-            <div className="mt-8 text-gray-500">Groups</div>
+            <div className="mt-8 text-gray-500">{t('groups')}</div>
             <div className="mt-2 flex flex-col gap-1">
               {filteredGroups.map((g) => (
                 <button

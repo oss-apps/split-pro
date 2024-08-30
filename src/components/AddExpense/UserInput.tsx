@@ -1,8 +1,11 @@
 import { useAddExpenseStore } from '~/store/addStore';
 import { GroupAvatar, UserAvatar } from '../ui/avatar';
+import React, { useEffect } from 'react';
 import { z } from 'zod';
 import { api } from '~/utils/api';
 import Router from 'next/router';
+import '../../i18n/config';
+import { useTranslation } from 'react-i18next';
 
 export const UserInput: React.FC = () => {
   const {
@@ -17,6 +20,13 @@ export const UserInput: React.FC = () => {
   const participants = useAddExpenseStore((s) => s.participants);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
   const group = useAddExpenseStore((s) => s.group);
+
+  const { t, ready } = useTranslation();
+
+  // Ensure i18n is ready
+  useEffect(() => {
+    if (!ready) return; // Don't render the component until i18n is ready
+  }, [ready]);
 
   const addFriendMutation = api.user.inviteFriend.useMutation();
 
@@ -86,10 +96,10 @@ export const UserInput: React.FC = () => {
         type="email"
         placeholder={
           group
-            ? 'Press delete to remove group'
+            ? t('delete_group')
             : participants.length > 1
-              ? 'Add more friends'
-              : 'Search friends, groups or add email'
+              ? t('addmembers')
+              : t('add_action')
         }
         value={nameOrEmail}
         onChange={(e) => setNameOrEmail(e.target.value)}

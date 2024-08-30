@@ -1,11 +1,14 @@
 import { type Participant, useAddExpenseStore } from '~/store/addStore';
 import { AppDrawer, Drawer, DrawerClose } from '../ui/drawer';
+import React, { useEffect } from 'react';
 import { UserAvatar } from '../ui/avatar';
 import { BarChart2, Check, DollarSign, Equal, Percent, Plus } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Input } from '../ui/input';
 import { useState } from 'react';
 import { SplitType } from '@prisma/client';
+import '../../i18n/config';
+import { useTranslation } from 'react-i18next';
 
 export const SplitTypeSection: React.FC = () => {
   const paidBy = useAddExpenseStore((s) => s.paidBy);
@@ -16,20 +19,27 @@ export const SplitTypeSection: React.FC = () => {
 
   const { setPaidBy } = useAddExpenseStore((s) => s.actions);
 
+  const { t, ready } = useTranslation();
+
+  // Ensure i18n is ready
+  useEffect(() => {
+    if (!ready) return; // Don't render the component until i18n is ready
+  }, [ready]);
+
   return (
     <div className="mt-4 flex items-center justify-center text-[16px] text-gray-400">
-      <p className="text-[16px]">Paid by </p>
+      <p className="text-[16px]">{t('paid_by')} </p>
       <AppDrawer
         trigger={
           <p className="overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16.5px] text-cyan-500 lg:max-w-48">
             {
-              (currentUser?.id === paidBy?.id ? 'you' : paidBy?.name ?? paidBy?.email)?.split(
+              (currentUser?.id === paidBy?.id ? t('you_split') : paidBy?.name ?? paidBy?.email)?.split(
                 ' ',
               )[0]
             }
           </p>
         }
-        title="Paid by"
+        title={t('paid_by')}
         className="h-[70vh]"
         shouldCloseOnAction
       >
@@ -50,18 +60,18 @@ export const SplitTypeSection: React.FC = () => {
         </div>
       </AppDrawer>
 
-      <p>and </p>
+      <p>{t('and')} </p>
       <AppDrawer
         trigger={
           <div className=" max-w-32 overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16.5px] text-cyan-500 lg:max-w-48">
-            {splitType === SplitType.EQUAL ? 'split equally' : `split unequally`}
+            {splitType === SplitType.EQUAL ? t('split_equally') : t('split_unequally')}
           </div>
         }
         title={splitType.charAt(0).toUpperCase() + splitType.slice(1).toLowerCase()}
         className="h-[85vh] lg:h-[70vh]"
         shouldCloseOnAction
         dismissible={false}
-        actionTitle="Save"
+        actionTitle={t('save')}
         actionDisabled={!canSplitScreenClosed}
       >
         <SplitExpenseForm />
@@ -127,12 +137,19 @@ const SplitEqualSection: React.FC = () => {
 
   const totalParticipants = participants.filter((p) => p.splitShare !== 0).length;
 
+  const { t, ready } = useTranslation();
+
+  // Ensure i18n is ready
+  useEffect(() => {
+    if (!ready) return; // Don't render the component until i18n is ready
+  }, [ready]);
+
   return (
     <div className="mt-4 flex flex-col gap-6 px-2">
       <div
         className={`mb-2 text-center ${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'} t`}
       >
-        {currency} {(amount / totalParticipants).toFixed(2)} per person
+        {currency} {(amount / totalParticipants).toFixed(2)} {t('per_person')}
       </div>
       {participants.map((p) => (
         <button
@@ -157,6 +174,13 @@ const SplitByPercentageSection: React.FC = () => {
   const { addOrUpdateParticipant } = useAddExpenseStore((s) => s.actions);
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
   const currency = useAddExpenseStore((s) => s.currency);
+
+  const { t, ready } = useTranslation();
+
+  // Ensure i18n is ready
+  useEffect(() => {
+    if (!ready) return; // Don't render the component until i18n is ready
+  }, [ready]);
 
   const [splitShareValue, setSplitShareValue] = useState(
     participants.reduce(
@@ -184,7 +208,7 @@ const SplitByPercentageSection: React.FC = () => {
       <div
         className={`mb-2 text-center ${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'} t`}
       >
-        Remaining {remainingPercentage}%
+        {t('remaining')} {remainingPercentage}%
       </div>
       {participants.map((p) => (
         <div key={p.id} className="flex justify-between">
@@ -212,6 +236,13 @@ const SplitByAmountSection: React.FC = () => {
   const amount = useAddExpenseStore((s) => s.amount);
   const { addOrUpdateParticipant } = useAddExpenseStore((s) => s.actions);
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
+
+  const { t, ready } = useTranslation();
+
+  // Ensure i18n is ready
+  useEffect(() => {
+    if (!ready) return; // Don't render the component until i18n is ready
+  }, [ready]);
 
   const [splitShareValue, setSplitShareValue] = useState(
     participants.reduce(
@@ -241,7 +272,7 @@ const SplitByAmountSection: React.FC = () => {
         className={`mb-2 text-center ${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'} t`}
       >
         {' '}
-        Remaining {currency} {remainingPercentage}
+        {t('remaining')} {currency} {remainingPercentage}
       </div>
       {participants.map((p) => (
         <div key={p.id} className="flex justify-between">
@@ -271,6 +302,13 @@ const SplitByShareSection: React.FC = () => {
   const { addOrUpdateParticipant } = useAddExpenseStore((s) => s.actions);
   const currency = useAddExpenseStore((s) => s.currency);
 
+  const { t, ready } = useTranslation();
+
+  // Ensure i18n is ready
+  useEffect(() => {
+    if (!ready) return; // Don't render the component until i18n is ready
+  }, [ready]);
+
   const [splitShareValue, setSplitShareValue] = useState(
     participants.reduce(
       (acc, p) => {
@@ -294,7 +332,7 @@ const SplitByShareSection: React.FC = () => {
 
   return (
     <div className="mt-4 flex flex-col gap-6 px-2">
-      <div className="mb-2 text-center text-gray-300">Total shares {totalShare}</div>
+      <div className="mb-2 text-center text-gray-300">{t('total_shares')} {totalShare}</div>
       {participants.map((p) => (
         <div key={p.id} className="flex justify-between">
           <UserAndAmount user={p} currency={currency} />
@@ -306,7 +344,7 @@ const SplitByShareSection: React.FC = () => {
               className=" ml-2 w-16 text-lg"
               onChange={(e) => handleSplitShareChange(p, e.target.value)}
             />
-            <p className="text-xs">Share(s)</p>
+            <p className="text-xs">{t('share')}(s)</p>
           </div>
         </div>
       ))}
@@ -320,6 +358,13 @@ const SplitByAdjustmentSection: React.FC = () => {
   const amount = useAddExpenseStore((s) => s.amount);
   const { addOrUpdateParticipant } = useAddExpenseStore((s) => s.actions);
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
+
+  const { t, ready } = useTranslation();
+
+  // Ensure i18n is ready
+  useEffect(() => {
+    if (!ready) return; // Don't render the component until i18n is ready
+  }, [ready]);
 
   const [splitShareValue, setSplitShareValue] = useState(
     participants.reduce(
@@ -349,7 +394,7 @@ const SplitByAdjustmentSection: React.FC = () => {
         className={`mb-2 text-center ${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'} t`}
       >
         {' '}
-        Remaining to split equally {currency} {remainingPercentage}
+        {t('remain_to_split')} {currency} {remainingPercentage}
       </div>
       {participants.map((p) => (
         <div key={p.id} className="flex justify-between">

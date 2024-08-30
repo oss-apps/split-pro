@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import MainLayout from '~/components/Layout/MainLayout';
+import React, { useEffect } from 'react';
 import { SplitType } from '@prisma/client';
 import { api } from '~/utils/api';
 import { UserAvatar } from '~/components/ui/avatar';
@@ -15,6 +16,8 @@ import { useRouter } from 'next/router';
 import { type NextPageWithUser } from '~/types';
 import { motion } from 'framer-motion';
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
+import '../../i18n/config';
+import { useTranslation } from 'react-i18next';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
@@ -39,10 +42,17 @@ const FriendPage: NextPageWithUser = ({ user }) => {
   const youLent = balances.data?.filter((b) => b.amount > 0);
   const youOwe = balances.data?.filter((b) => b.amount < 0);
 
+  const { t, ready } = useTranslation();
+
+  // Ensure i18n is ready
+  useEffect(() => {
+    if (!ready) return; // Don't render the component until i18n is ready
+  }, [ready]);
+
   return (
     <>
       <Head>
-        <title>Outstanding balances</title>
+        <title>{t('outstanding_balances')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
@@ -81,7 +91,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <div className=" text-orange-700">
                 {(youOwe?.length ?? 0) > 0 && (
                   <>
-                    You owe{' '}
+                    {t('you_owe')}{' '}
                     {youOwe?.map((b, index) => (
                       <span key={b.currency}>
                         <span className=" font-semibold tracking-wide">
@@ -97,7 +107,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <div className=" text-emerald-600">
                 {(youLent?.length ?? 0) > 0 && (
                   <>
-                    You lent{' '}
+                    {t('you_lent')}{' '}
                     {youLent?.map((b, index) => (
                       <span key={b.currency}>
                         <span className=" font-semibold tracking-wide">
@@ -125,7 +135,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   className="w-[150px] gap-1 text-sm lg:w-[180px]"
                   disabled
                 >
-                  Settle up
+                  {t('settle_up')}
                 </Button>
               )}
 
@@ -135,7 +145,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   variant="secondary"
                   className="w-[150px] gap-1 text-sm lg:w-[180px]"
                 >
-                  <PlusIcon className="h-4 w-4 text-gray-400" /> Add Expense
+                  <PlusIcon className="h-4 w-4 text-gray-400" /> {t('add_expense')}
                 </Button>
               </Link>
               {/* <Button size="sm" className="gap-1 text-sm lg:w-[180px]" variant="secondary">
@@ -184,8 +194,9 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                             {isSettlement ? '  🎉 ' : null}
                           </span>
                           <span>
-                            {youPaid ? 'You' : friendQuery.data?.name} paid {e.currency}{' '}
-                            {toUIString(e.amount)}{' '}
+                            {youPaid ? t('you') : friendQuery.data?.name}{' '}
+                            {isSettlement ? (youPaid ? t('you_settled') : t('settled')) : (youPaid ? t('you_paid') : t('paid'))} 
+                            {' '}{e.currency}{' '}{toUIString(e.amount)}{' '}
                           </span>
                         </p>
                       </div>
@@ -195,7 +206,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                         <div
                           className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-700'}`}
                         >
-                          {youPaid ? 'You lent' : 'You owe'}
+                          {youPaid ? t('you_lent') : t('you_owe')}
                         </div>
                         <div
                           className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-700'}`}

@@ -1,11 +1,43 @@
 import { type User } from 'next-auth';
-import { Unsend } from 'unsend';
+import nodemailer, { type Transporter } from 'nodemailer';
 import { env } from '~/env';
+import { sendToDiscord } from './service-notification';
 
-const unsend: Unsend | null = env.UNSEND_API_KEY ? new Unsend(env.UNSEND_API_KEY) : null;
+let transporter: Transporter;
+
+const getTransporter = () => {
+  if (transporter) return transporter;
+
+  const host = env.EMAIL_SERVER_HOST;
+  const port = parseInt(env.EMAIL_SERVER_PORT ?? '');
+  const user = env.EMAIL_SERVER_USER;
+  const pass = env.EMAIL_SERVER_PASSWORD;
+
+  if (!host) {
+    return;
+  }
+
+  const transport = {
+    host,
+    secure: port === 465,
+    port,
+    auth: {
+      user,
+      pass,
+    },
+    tls: {
+      rejectUnauthorized: env.NODE_ENV !== 'development',
+    },
+  };
+
+  transporter = nodemailer.createTransport(transport);
+  return transporter;
+};
 
 export async function sendSignUpEmail(email: string, token: string, url: string) {
   const { host } = new URL(url);
+
+  console.log(env.NODE_ENV);
 
   if (env.NODE_ENV === 'development') {
     console.log('Sending sign in email', email, url, token);
@@ -13,10 +45,10 @@ export async function sendSignUpEmail(email: string, token: string, url: string)
   }
 
   const subject = 'Sign in to SplitPro';
-  const text = `Hey,\n\nYou can sign in to SplitPro by clicking the below URL:\n${url}\n\nYou can also use this OTP: ${token}\n\nThanks,\nKoushik KM\nSplitPro`;
-  const html = `<p>Hey,</p> <p>You can sign in to SplitPro by clicking the below URL:</p><p><a href="${url}">Sign in to ${host}</a></p><p>You can also use this OTP: <b>${token}</b></p<br /><br /><p>Thanks,</p><p>Koushik KM<br/>SplitPro</p>`;
+  const text = `Hey,\n\nYou can sign in to SplitPro by clicking the below URL:\n${url}\n\nYou can also use this OTP: ${token}\n\nThanks,\nSplitPro Team`;
+  const html = `<p>Hey,</p> <p>You can sign in to SplitPro by clicking the below URL:</p><p><a href="${url}">Sign in to ${host}</a></p><p>You can also use this OTP: <b>${token}</b></p<br /><br /><p>Thanks,</p><br/>SplitPro Team</p>`;
 
-  await sendMail(email, subject, text, html);
+  return await sendMail(email, subject, text, html);
 }
 
 export async function sendInviteEmail(email: string, name: string) {
@@ -28,8 +60,8 @@ export async function sendInviteEmail(email: string, name: string) {
   }
 
   const subject = 'Invitation to SplitPro';
-  const text = `Hey,\n\nYou have been invited to SplitPro by ${name}. It's a completely open source free alternative to splitwise. You can sign in to SplitPro by clicking the below URL:\n${env.NEXTAUTH_URL}\n\nThanks,\nKoushik KM\nSplitPro`;
-  const html = `<p>Hey,</p> <p>You have been invited to SplitPro by ${name}. It's a completely open source free alternative to splitwise. You can sign in to SplitPro by clicking the below URL:</p><p><a href="${env.NEXTAUTH_URL}">Sign in to ${host}</a></p><br><p>Thanks,<br/>Koushik KM<br/>SplitPro</p>`;
+  const text = `Hey,\n\nYou have been invited to SplitPro by ${name}. It's a completely open source free alternative to splitwise. You can sign in to SplitPro by clicking the below URL:\n${env.NEXTAUTH_URL}\n\nThanks,\nSplitPro Team`;
+  const html = `<p>Hey,</p> <p>You have been invited to SplitPro by ${name}. It's a completely open source free alternative to splitwise. You can sign in to SplitPro by clicking the below URL:</p><p><a href="${env.NEXTAUTH_URL}">Sign in to ${host}</a></p><br><p>Thanks,<br/>SplitPro Team</p>`;
 
   await sendMail(email, subject, text, html);
 }
@@ -52,25 +84,33 @@ async function sendMail(
   html: string,
   replyTo?: string,
 ) {
+  const transporter = getTransporter();
   try {
-    if (unsend) {
-      const response = await unsend.emails.send({
-        from: 'hello@auth.splitpro.app',
+    if (transporter) {
+      await transporter.sendMail({
         to: email,
+        from: env.FROM_EMAIL,
         subject,
         text,
         html,
         replyTo,
       });
 
-      if (response.data) {
-        console.log('Email sent using unsend', response.data);
-        return;
-      } else {
-        console.log('Error sending email using unsend', response.error);
-      }
+      console.log('Email sent');
+      return true;
+    } else {
+      console.log('SMTP server not configured, so skipping');
     }
   } catch (error) {
-    console.log('Error sending email using unsend, so fallback to resend', error);
+    console.log('Error sending email', error);
+    await sendToDiscord(
+      `Error sending email: ${
+        error instanceof Error
+          ? `error.message: ${error.message}\nerror.stack: ${error.stack}`
+          : 'Unknown error'
+      }`,
+    );
   }
+
+  return false;
 }

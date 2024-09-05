@@ -33,9 +33,12 @@ export const env = createEnv({
     FEEDBACK_EMAIL: z.string().optional(),
     WEB_PUSH_EMAIL: z.string().optional(),
     WEB_PUSH_PRIVATE_KEY: z.string().optional(),
-    UNSEND_API_KEY: z.string().optional(),
-    UNSEND_URL: z.string().optional(),
     WEB_PUSH_PUBLIC_KEY: z.string().optional(),
+    EMAIL_SERVER_HOST: z.string().optional(),
+    EMAIL_SERVER_PORT: z.string().optional(),
+    EMAIL_SERVER_USER: z.string().optional(),
+    EMAIL_SERVER_PASSWORD: z.string().optional(),
+    DISCORD_WEBHOOK_URL: z.string().optional(),
   },
 
   /**
@@ -72,8 +75,11 @@ export const env = createEnv({
     WEB_PUSH_PRIVATE_KEY: process.env.WEB_PUSH_PRIVATE_KEY,
     WEB_PUSH_PUBLIC_KEY: process.env.WEB_PUSH_PUBLIC_KEY,
     NEXT_PUBLIC_BEAM_ID: process.env.NEXT_PUBLIC_BEAM_ID,
-    UNSEND_API_KEY: process.env.UNSEND_API_KEY,
-    UNSEND_URL: process.env.UNSEND_URL,
+    EMAIL_SERVER_HOST: process.env.EMAIL_SERVER_HOST,
+    EMAIL_SERVER_PORT: process.env.EMAIL_SERVER_PORT,
+    EMAIL_SERVER_USER: process.env.EMAIL_SERVER_USER,
+    EMAIL_SERVER_PASSWORD: process.env.EMAIL_SERVER_PASSWORD,
+    DISCORD_WEBHOOK_URL: process.env.DISCORD_WEBHOOK_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

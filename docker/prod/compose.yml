@@ -40,6 +40,10 @@ services:
       - R2_BUCKET=${R2_BUCKET}
       - R2_URL=${R2_URL}
       - NEXT_PUBLIC_R2_PUBLIC_URL=${NEXT_PUBLIC_R2_PUBLIC_URL}
+      - EMAIL_SERVER_HOST=${EMAIL_SERVER_HOST}
+      - EMAIL_SERVER_PORT=${EMAIL_SERVER_PORT}
+      - EMAIL_SERVER_USER=${EMAIL_SERVER_USER}
+      - EMAIL_SERVER_PASSWORD=${EMAIL_SERVER_PASSWORD}
     depends_on:
       postgres:
         condition: service_healthy

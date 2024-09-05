@@ -44,6 +44,7 @@ services:
       - EMAIL_SERVER_PORT=${EMAIL_SERVER_PORT}
       - EMAIL_SERVER_USER=${EMAIL_SERVER_USER}
       - EMAIL_SERVER_PASSWORD=${EMAIL_SERVER_PASSWORD}
+      - FROM_EMAIL=${FROM_EMAIL}
     depends_on:
       postgres:
         condition: service_healthy

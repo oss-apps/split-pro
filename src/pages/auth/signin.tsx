@@ -168,6 +168,10 @@ export default function Home() {
               </Form>
             </>
           )}
+          <p className="mt-6 w-[300px] text-center text-sm text-muted-foreground">
+            Trouble logging in? contact
+            <br /> hello@ossapps.dev
+          </p>
         </div>
       </main>
     </>

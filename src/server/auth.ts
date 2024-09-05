@@ -61,7 +61,10 @@ export const authOptions: NextAuthOptions = {
     EmailProvider({
       from: 'no-reply@splitpro.app',
       async sendVerificationRequest({ identifier: email, url, token }) {
-        await sendSignUpEmail(email, token, url);
+        const result = await sendSignUpEmail(email, token, url);
+        if (!result) {
+          throw new Error('Failed to send email');
+        }
       },
       async generateVerificationToken() {
         return Math.random().toString(36).substring(2, 7).toLowerCase();

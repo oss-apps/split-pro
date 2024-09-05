@@ -68,7 +68,6 @@
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",
-    "unsend": "^1.0.0",
     "vaul": "^0.8.9",
     "web-push": "^3.6.7",
     "zod": "^3.22.4",

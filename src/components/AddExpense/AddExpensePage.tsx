@@ -355,11 +355,13 @@ export const AddExpensePage: React.FC<{ isStorageConfigured: boolean }> = ({
                 onChange={(e) => onUpdateAmount(e.target.value)}
               />
             </div>
-            {!amount || description === '' ? null : (
-              <>
+            {!amount || description === '' ? (
+              <div className="h-[180px]"></div>
+            ) : (
+              <div className="h-[180px]">
                 <SplitTypeSection />
 
-                <div className="mt-4 flex items-center justify-between">
+                <div className="mt-4 flex  items-center justify-between">
                   <div className="flex items-center gap-4">
                     <Popover>
                       <PopoverTrigger asChild>
@@ -411,17 +413,17 @@ export const AddExpensePage: React.FC<{ isStorageConfigured: boolean }> = ({
                     </Button>
                   </div>
                 </div>
-              </>
+              </div>
             )}
-            <div className="absolute bottom-[100px] mx-auto flex w-full justify-center">
+            <div className=" flex w-full justify-center">
               <Link
                 href="https://github.com/sponsors/KMKoushik"
                 target="_blank"
-                className="rounded-full border border-pink-500 px-5"
+                className="mx-auto"
               >
                 <Button
-                  variant="ghost"
-                  className="text-md w-full justify-between px-0 hover:text-foreground/80"
+                  variant="outline"
+                  className="text-md  justify-between rounded-full border-pink-500 hover:text-foreground/80"
                 >
                   <div className="flex items-center gap-4">
                     <HeartHandshakeIcon className="h-5 w-5 text-pink-500" />

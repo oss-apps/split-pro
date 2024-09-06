@@ -7,7 +7,7 @@ import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Button } from '../ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../ui/command';
-import { Banknote, CalendarIcon, Check } from 'lucide-react';
+import { Banknote, CalendarIcon, Check, HeartHandshakeIcon } from 'lucide-react';
 import { Input } from '../ui/input';
 import { SplitTypeSection } from './SplitTypeSection';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
@@ -413,6 +413,23 @@ export const AddExpensePage: React.FC<{ isStorageConfigured: boolean }> = ({
                 </div>
               </>
             )}
+            <div className="absolute bottom-[100px] mx-auto flex w-full justify-center">
+              <Link
+                href="https://github.com/sponsors/KMKoushik"
+                target="_blank"
+                className="rounded-full border border-pink-500 px-5"
+              >
+                <Button
+                  variant="ghost"
+                  className="text-md w-full justify-between px-0 hover:text-foreground/80"
+                >
+                  <div className="flex items-center gap-4">
+                    <HeartHandshakeIcon className="h-5 w-5 text-pink-500" />
+                    Sponsor us
+                  </div>
+                </Button>
+              </Link>
+            </div>
           </>
         )}
       </div>

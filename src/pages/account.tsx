@@ -3,7 +3,16 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import { UserAvatar } from '~/components/ui/avatar';
-import { Bell, ChevronRight, Download, DownloadCloud, FileDown, Github, Star } from 'lucide-react';
+import {
+  Bell,
+  ChevronRight,
+  Download,
+  DownloadCloud,
+  FileDown,
+  Github,
+  HeartHandshakeIcon,
+  Star,
+} from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { AppDrawer } from '~/components/ui/drawer';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
@@ -95,6 +104,18 @@ const AccountPage: NextPageWithUser = ({ user }) => {
                 <div className="flex items-center gap-4">
                   <Github className="h-5 w-5 text-gray-200" />
                   Star us on Github
+                </div>
+                <ChevronRight className="h-6 w-6 text-gray-500" />
+              </Button>
+            </Link>
+            <Link href="https://github.com/sponsors/KMKoushik" target="_blank">
+              <Button
+                variant="ghost"
+                className="text-md w-full justify-between px-0 hover:text-foreground/80"
+              >
+                <div className="flex items-center gap-4">
+                  <HeartHandshakeIcon className="h-5 w-5 text-pink-600" />
+                  Sponsor us
                 </div>
                 <ChevronRight className="h-6 w-6 text-gray-500" />
               </Button>

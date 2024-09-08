@@ -39,6 +39,7 @@ export const env = createEnv({
     EMAIL_SERVER_USER: z.string().optional(),
     EMAIL_SERVER_PASSWORD: z.string().optional(),
     DISCORD_WEBHOOK_URL: z.string().optional(),
+    R2_PUBLIC_URL: z.string().optional(),
   },
 
   /**
@@ -46,10 +47,7 @@ export const env = createEnv({
    * isn't built with invalid env vars. To expose them to the client, prefix them with
    * `NEXT_PUBLIC_`.
    */
-  client: {
-    NEXT_PUBLIC_R2_PUBLIC_URL: z.string().optional(),
-    NEXT_PUBLIC_BEAM_ID: z.string().optional(),
-  },
+  client: {},
 
   /**
    * You can't destruct `process.env` as a regular object in the Next.js edge runtimes (e.g.
@@ -70,11 +68,10 @@ export const env = createEnv({
     R2_URL: process.env.R2_URL,
     FROM_EMAIL: process.env.FROM_EMAIL,
     FEEDBACK_EMAIL: process.env.FEEDBACK_EMAIL,
-    NEXT_PUBLIC_R2_PUBLIC_URL: process.env.NEXT_PUBLIC_R2_PUBLIC_URL,
+    R2_PUBLIC_URL: process.env.R2_PUBLIC_URL,
     WEB_PUSH_EMAIL: process.env.WEB_PUSH_EMAIL,
     WEB_PUSH_PRIVATE_KEY: process.env.WEB_PUSH_PRIVATE_KEY,
     WEB_PUSH_PUBLIC_KEY: process.env.WEB_PUSH_PUBLIC_KEY,
-    NEXT_PUBLIC_BEAM_ID: process.env.NEXT_PUBLIC_BEAM_ID,
     EMAIL_SERVER_HOST: process.env.EMAIL_SERVER_HOST,
     EMAIL_SERVER_PORT: process.env.EMAIL_SERVER_PORT,
     EMAIL_SERVER_USER: process.env.EMAIL_SERVER_USER,

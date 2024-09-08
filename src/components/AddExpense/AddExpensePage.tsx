@@ -105,9 +105,9 @@ const categories = {
   },
 };
 
-export const AddExpensePage: React.FC<{ isStorageConfigured: boolean }> = ({
-  isStorageConfigured,
-}) => {
+export const AddExpensePage: React.FC<{
+  isStorageConfigured: boolean;
+}> = ({ isStorageConfigured }) => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [open, setOpen] = React.useState(false);
   const [amtStr, setAmountStr] = React.useState('');

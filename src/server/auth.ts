@@ -52,33 +52,7 @@ export const authOptions: NextAuthOptions = {
     }),
   },
   adapter: PrismaAdapter(db),
-  providers: [
-    GoogleProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking: true,
-    }),
-    EmailProvider({
-      server: {
-        host: env.EMAIL_SERVER_HOST,
-        port: env.EMAIL_SERVER_PORT,
-        auth: {
-          user: env.EMAIL_SERVER_USER,
-          pass: env.EMAIL_SERVER_PASSWORD
-        }
-      },
-      from: env.FROM_EMAIL,
-      async sendVerificationRequest({ identifier: email, url, token }) {
-        const result = await sendSignUpEmail(email, token, url);
-        if (!result) {
-          throw new Error('Failed to send email');
-        }
-      },
-      async generateVerificationToken() {
-        return Math.random().toString(36).substring(2, 7).toLowerCase();
-      },
-    }),
-  ],
+  providers: getProviders(),
   events: {
     createUser: async ({ user }) => {
       // Check if the user's name is empty
@@ -128,3 +102,48 @@ export const getServerAuthSessionForSSG = async (context: GetServerSidePropsCont
     },
   };
 };
+
+/**
+ * Get providers to enable
+ */
+function getProviders() {
+  const providersList = [];
+  const envProviders = env.PROVIDERS?.split(',').map((provider) => provider.trim().toUpperCase());
+
+  if (envProviders?.includes('GOOGLE') && env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
+    providersList.push(
+      GoogleProvider({
+        clientId: env.GOOGLE_CLIENT_ID,
+        clientSecret: env.GOOGLE_CLIENT_SECRET,
+        allowDangerousEmailAccountLinking: true,
+      }),
+    );
+  }
+
+  if (envProviders?.includes('EMAIL')) {
+    providersList.push(
+      EmailProvider({
+        from: env.FROM_EMAIL,
+        server: {
+          host: env.EMAIL_SERVER_HOST,
+          port: parseInt(env.EMAIL_SERVER_PORT ?? ''),
+          auth: {
+            user: env.EMAIL_SERVER_USER,
+            pass: env.EMAIL_SERVER_PASSWORD,
+          },
+        },
+        async sendVerificationRequest({ identifier: email, url, token }) {
+          const result = await sendSignUpEmail(email, token, url);
+          if (!result) {
+            throw new Error('Failed to send email');
+          }
+        },
+        async generateVerificationToken() {
+          return Math.random().toString(36).substring(2, 7).toLowerCase();
+        },
+      }),
+    );
+  }
+
+  return providersList;
+}

@@ -59,7 +59,15 @@ export const authOptions: NextAuthOptions = {
       allowDangerousEmailAccountLinking: true,
     }),
     EmailProvider({
-      from: 'no-reply@splitpro.app',
+      server: {
+        host: env.EMAIL_SERVER_HOST,
+        port: env.EMAIL_SERVER_PORT,
+        auth: {
+          user: env.EMAIL_SERVER_USER,
+          pass: env.EMAIL_SERVER_PASSWORD
+        }
+      },
+      from: env.FROM_EMAIL,
       async sendVerificationRequest({ identifier: email, url, token }) {
         const result = await sendSignUpEmail(email, token, url);
         if (!result) {

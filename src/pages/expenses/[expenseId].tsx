@@ -9,8 +9,12 @@ import { ChevronLeftIcon } from 'lucide-react';
 import ExpenseDetails from '~/components/Expense/ExpensePage';
 import { DeleteExpense } from '~/components/Expense/DeleteExpense';
 import { type NextPageWithUser } from '~/types';
+import { env } from 'process';
 
-const ExpensesPage: NextPageWithUser = ({ user }) => {
+const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
+  user,
+  storagePublicUrl,
+}) => {
   const router = useRouter();
   const expenseId = router.query.expenseId as string;
 
@@ -33,12 +37,26 @@ const ExpensesPage: NextPageWithUser = ({ user }) => {
         }
         actions={!expenseQuery.data?.deletedBy ? <DeleteExpense expenseId={expenseId} /> : null}
       >
-        {expenseQuery.data ? <ExpenseDetails user={user} expense={expenseQuery.data} /> : null}
+        {expenseQuery.data ? (
+          <ExpenseDetails
+            user={user}
+            expense={expenseQuery.data}
+            storagePublicUrl={storagePublicUrl}
+          />
+        ) : null}
       </MainLayout>
     </>
   );
 };
 
 ExpensesPage.auth = true;
+
+export async function getServerSideProps() {
+  return {
+    props: {
+      storagePublicUrl: env.R2_PUBLIC_URL,
+    },
+  };
+}
 
 export default ExpensesPage;

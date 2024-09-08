@@ -1,12 +1,9 @@
-import { type GroupUser, type Group, type User } from '@prisma/client';
-import { type GetServerSideProps, type NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import { AddExpensePage } from '~/components/AddExpense/AddExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
-import { getServerAuthSessionForSSG } from '~/server/auth';
-import { db } from '~/server/db';
+import { env } from '~/env';
 import { isStorageConfigured } from '~/server/storage';
 import { useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
@@ -88,7 +85,7 @@ AddPage.auth = true;
 
 export default AddPage;
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   console.log('isStorageConfigured', isStorageConfigured());
 
   return {

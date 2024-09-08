@@ -19,9 +19,10 @@ type ExpenseDetailsProps = {
     paidByUser: User;
     deletedByUser: User | null;
   };
+  storagePublicUrl?: string;
 };
 
-const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
+const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
   const youPaid = expense.paidBy === user.id;
 
   const CategoryIcon = CategoryIcons[expense.category] ?? Banknote;
@@ -59,7 +60,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
             <AppDrawer
               trigger={
                 <Image
-                  src={`${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${expense.fileKey}`}
+                  src={`${storagePublicUrl}/${expense.fileKey}`}
                   alt="Expense receipt"
                   width={56}
                   height={56}
@@ -76,7 +77,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
             >
               <div className="mb-8 overflow-scroll">
                 <Image
-                  src={`${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${expense.fileKey}`}
+                  src={`${storagePublicUrl}/${expense.fileKey}`}
                   width={300}
                   height={800}
                   alt="Expense receipt"

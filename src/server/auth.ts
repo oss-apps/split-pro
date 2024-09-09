@@ -108,7 +108,9 @@ export const getServerAuthSessionForSSG = async (context: GetServerSidePropsCont
  */
 function getProviders() {
   const providersList = [];
-  const envProviders = env.PROVIDERS?.split(',').map((provider) => provider.trim().toUpperCase());
+  const envProviders = env.NEXT_PUBLIC_AUTH_PROVIDERS?.split(',').map((provider) =>
+    provider.trim().toUpperCase(),
+  );
 
   if (envProviders?.includes('GOOGLE') && env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
     providersList.push(

@@ -164,7 +164,7 @@ const SplitEqualSection: React.FC = () => {
       {participants.map((p) => (
         <button
           key={p.id}
-          className=" mt-2.5 flex justify-between"
+          className="flex items-center justify-between"
           onClick={() => addOrUpdateParticipant({ ...p, splitShare: p.splitShare === 0 ? 1 : 0 })}
         >
           <UserAndAmount user={p} currency={currency} />

@@ -15,6 +15,7 @@ import { type Group, type GroupUser } from '@prisma/client';
 import { CheckIcon, SendIcon, UserPlus } from 'lucide-react';
 import { Input } from '../ui/input';
 import { z } from 'zod';
+import { env } from '~/env';
 
 const AddMembers: React.FC<{
   group: Group & { groupUsers: Array<GroupUser> };
@@ -119,22 +120,27 @@ const AddMembers: React.FC<{
           <p className="mt-4 text-red-500">Enter valid email</p>
         ) : (
           <div>
-            {/* <div className="mt-1 text-orange-600">
-              Warning: Don&apos;t use send invite if it&apos;s invalid email. use add to Split Pro
-              instead. Your account will be blocked if this feature is misused
-            </div> */}
-            <div>Note: sending invite is disabled for now because of spam</div>
+            {env.NEXT_PUBLIC_ENABLE_SENDING_INVITES ? (
+              <div className="mt-1 text-orange-600">
+                Warning: Don&apos;t use send invite if it&apos;s invalid email. use add to Split Pro
+                instead. Your account will be blocked if this feature is misused
+              </div>
+            ) : (
+              <div>Note: sending invite is disabled for now because of spam</div>
+            )}
 
             <div className="flex justify-center gap-4">
-              {/* <Button
-                className="mt-4 w-full text-cyan-500"
-                variant="outline"
-                disabled={!isEmail.success}
-                onClick={() => onAddEmailClick(true)}
-              >
-                <SendIcon className="mr-2 h-4 w-4" />
-                {isEmail.success ? 'Send invite to user' : 'Enter valid email'}
-              </Button> */}
+              {env.NEXT_PUBLIC_ENABLE_SENDING_INVITES && (
+                <Button
+                  className="mt-4 w-full text-cyan-500"
+                  variant="outline"
+                  disabled={!isEmail.success}
+                  onClick={() => onAddEmailClick(true)}
+                >
+                  <SendIcon className="mr-2 h-4 w-4" />
+                  {isEmail.success ? 'Send invite to user' : 'Enter valid email'}
+                </Button>
+              )}
               <Button
                 className="mt-4 w-full text-cyan-500"
                 variant="outline"

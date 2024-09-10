@@ -49,6 +49,7 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_AUTH_PROVIDERS: z.string(),
     NEXT_PUBLIC_FEEDBACK_EMAIL: z.string().optional(),
+    NEXT_PUBLIC_ENABLE_SENDING_INVITES: z.boolean(),
   },
 
   /**
@@ -63,6 +64,7 @@ export const env = createEnv({
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     NEXT_PUBLIC_AUTH_PROVIDERS: process.env.NEXT_PUBLIC_AUTH_PROVIDERS,
+    NEXT_PUBLIC_ENABLE_SENDING_INVITES: process.env.NEXT_PUBLIC_ENABLE_SENDING_INVITES === 'true',
     FROM_EMAIL: process.env.FROM_EMAIL,
     EMAIL_SERVER_HOST: process.env.EMAIL_SERVER_HOST,
     EMAIL_SERVER_PORT: process.env.EMAIL_SERVER_PORT,

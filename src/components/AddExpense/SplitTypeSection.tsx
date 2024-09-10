@@ -1,7 +1,7 @@
 import { type Participant, useAddExpenseStore } from '~/store/addStore';
 import { AppDrawer, Drawer, DrawerClose } from '../ui/drawer';
 import { UserAvatar } from '../ui/avatar';
-import { BarChart2, Check, DollarSign, Equal, Percent, Plus } from 'lucide-react';
+import { BarChart2, Check, DollarSign, Equal, Percent, Plus, X } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Input } from '../ui/input';
 import { useState } from 'react';
@@ -127,17 +127,44 @@ const SplitEqualSection: React.FC = () => {
 
   const totalParticipants = participants.filter((p) => p.splitShare !== 0).length;
 
+  const selectAll = () => {
+    const allSelected = participants.every((p) => p.splitShare !== 0);
+    participants.forEach((p) => {
+      addOrUpdateParticipant({ ...p, splitShare: allSelected ? 0 : 1 });
+    });
+  };
+
+  const allSelected = participants.every((p) => p.splitShare !== 0);
+
   return (
-    <div className="mt-4 flex flex-col gap-6 px-2">
-      <div
-        className={`mb-2 text-center ${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'} t`}
-      >
-        {currency} {(amount / totalParticipants).toFixed(2)} per person
+    <div className="mt-4 flex flex-col gap-6 px-2 relative">
+      <div className="flex items-center">
+        <div className="mb-2 flex-grow flex justify-center">
+          <div
+            className={`${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'
+              }`}
+          >
+            {currency} {(amount / totalParticipants).toFixed(2)} per person
+          </div>
+        </div>
+      </div>
+      <div className="absolute top-0 right-0">
+        <button
+          className="flex items-center gap-1 border rounded-md py-0.5 px-2 whitespace-nowrap"
+          onClick={selectAll}
+        >
+          {allSelected ? (
+            <X className="h-4 w-4" />
+          ) : (
+            <Check className="h-4 w-4" />
+          )}
+          <span className="text-sm">All</span>
+        </button>
       </div>
       {participants.map((p) => (
         <button
           key={p.id}
-          className=" mt-2.5 flex justify-between"
+          className="flex items-center justify-between"
           onClick={() => addOrUpdateParticipant({ ...p, splitShare: p.splitShare === 0 ? 1 : 0 })}
         >
           <UserAndAmount user={p} currency={currency} />

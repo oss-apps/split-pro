@@ -180,7 +180,10 @@ export default function Home() {
             ))}
           <p className="mt-6 w-[300px] text-center text-sm text-muted-foreground">
             Trouble logging in? contact
-            <br /> hello@ossapps.dev
+            <br />
+            <a className="underline" href={'mailto:' + env.NEXT_PUBLIC_FEEDBACK_EMAIL}>
+              {env.NEXT_PUBLIC_FEEDBACK_EMAIL ?? ''}
+            </a>
           </p>
         </div>
       </main>

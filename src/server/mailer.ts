@@ -69,12 +69,12 @@ export async function sendInviteEmail(email: string, name: string) {
 export async function sendFeedbackEmail(feedback: string, user: User) {
   console.log('Received feedback from: ', user.email, 'Feedback: ', feedback);
 
-  if (!env.FEEDBACK_EMAIL) return;
+  if (!env.NEXT_PUBLIC_FEEDBACK_EMAIL) return;
 
   const subject = `Feedback received on SplitPro from ${user.name}`;
   const text = `Feedback created by ${user.name} :\n\nFeedback: ${feedback}\n\nemail: ${user.email}`;
 
-  await sendMail(env.FEEDBACK_EMAIL, subject, text, text, user.email ?? undefined);
+  await sendMail(env.NEXT_PUBLIC_FEEDBACK_EMAIL, subject, text, text, user.email ?? undefined);
 }
 
 async function sendMail(

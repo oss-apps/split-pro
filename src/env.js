@@ -37,7 +37,6 @@ export const env = createEnv({
     WEB_PUSH_EMAIL: z.string().optional(),
     WEB_PUSH_PRIVATE_KEY: z.string().optional(),
     WEB_PUSH_PUBLIC_KEY: z.string().optional(),
-    FEEDBACK_EMAIL: z.string().optional(),
     DISCORD_WEBHOOK_URL: z.string().optional(),
     R2_PUBLIC_URL: z.string().optional(),
   },
@@ -49,6 +48,7 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_AUTH_PROVIDERS: z.string(),
+    NEXT_PUBLIC_FEEDBACK_EMAIL: z.string().optional(),
   },
 
   /**
@@ -78,7 +78,7 @@ export const env = createEnv({
     WEB_PUSH_EMAIL: process.env.WEB_PUSH_EMAIL,
     WEB_PUSH_PRIVATE_KEY: process.env.WEB_PUSH_PRIVATE_KEY,
     WEB_PUSH_PUBLIC_KEY: process.env.WEB_PUSH_PUBLIC_KEY,
-    FEEDBACK_EMAIL: process.env.FEEDBACK_EMAIL,
+    NEXT_PUBLIC_FEEDBACK_EMAIL: process.env.NEXT_PUBLIC_FEEDBACK_EMAIL,
     DISCORD_WEBHOOK_URL: process.env.DISCORD_WEBHOOK_URL,
   },
   /**

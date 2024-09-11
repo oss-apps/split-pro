@@ -16,11 +16,13 @@ import { CheckIcon, SendIcon, UserPlus } from 'lucide-react';
 import { Input } from '../ui/input';
 import { z } from 'zod';
 import { env } from '~/env';
+import { isStorageConfigured } from '~/server/storage';
 
 const AddMembers: React.FC<{
+  enableSendingInvites: boolean;
   group: Group & { groupUsers: Array<GroupUser> };
   children: React.ReactNode;
-}> = ({ group, children }) => {
+}> = ({ group, children, enableSendingInvites }) => {
   const [open, setOpen] = useState(false);
   const [userIds, setUserIds] = useState<Record<number, boolean>>({});
   const [inputValue, setInputValue] = useState('');
@@ -120,7 +122,7 @@ const AddMembers: React.FC<{
           <p className="mt-4 text-red-500">Enter valid email</p>
         ) : (
           <div>
-            {env.NEXT_PUBLIC_ENABLE_SENDING_INVITES ? (
+            {enableSendingInvites ? (
               <div className="mt-1 text-orange-600">
                 Warning: Don&apos;t use send invite if it&apos;s invalid email. use add to Split Pro
                 instead. Your account will be blocked if this feature is misused
@@ -130,7 +132,7 @@ const AddMembers: React.FC<{
             )}
 
             <div className="flex justify-center gap-4">
-              {env.NEXT_PUBLIC_ENABLE_SENDING_INVITES && (
+              {enableSendingInvites && (
                 <Button
                   className="mt-4 w-full text-cyan-500"
                   variant="outline"

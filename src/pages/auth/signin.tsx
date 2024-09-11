@@ -11,6 +11,7 @@ import { env } from '~/env';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { type NextPage } from 'next';
 import {
   Form,
   FormControl,
@@ -27,6 +28,8 @@ import {
   InputOTPSlot,
 } from '~/components/ui/input-otp';
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
+import type { NextPageWithUser } from '~/types';
+import AddPage from '~/pages/add';
 
 const emailSchema = z.object({
   email: z.string({ required_error: 'Email is required' }).email({ message: 'Invalid email' }),
@@ -36,12 +39,13 @@ const otpSchema = z.object({
   otp: z.string({ required_error: 'OTP is required' }).length(5, { message: 'Invalid OTP' }),
 });
 
-const providers = env.NEXT_PUBLIC_AUTH_PROVIDERS?.split(',').map((provider) =>
-  provider.trim().toUpperCase(),
-);
-
-export default function Home() {
+const Home: NextPage<{ authProviders: string; feedbackEmail: string }> = ({
+  authProviders,
+  feedbackEmail,
+}) => {
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
+
+  const providers = authProviders.split(',').map((provider) => provider.trim().toUpperCase());
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),
@@ -80,7 +84,7 @@ export default function Home() {
           <div className="mb-10 flex items-center gap-4">
             <p className="text-3xl text-primary">SplitPro</p>
           </div>
-          {providers && providers.includes('GOOGLE') && (
+          {providers?.includes('GOOGLE') && (
             <Button
               className="mx-auto flex w-[300px] items-center gap-2 bg-white hover:bg-gray-100 focus:bg-gray-100"
               onClick={() => signIn('google')}
@@ -102,8 +106,7 @@ export default function Home() {
               <div className="absolute h-[1px] w-[300px]  bg-gradient-to-r from-zinc-800 via-zinc-300 to-zinc-800"></div>
             </div>
           )}
-          {providers &&
-            providers.includes('EMAIL') &&
+          {providers?.includes('EMAIL') &&
             (emailStatus === 'success' ? (
               <>
                 <p className="mt-6 w-[300px] text-center text-sm">
@@ -181,15 +184,17 @@ export default function Home() {
           <p className="mt-6 w-[300px] text-center text-sm text-muted-foreground">
             Trouble logging in? contact
             <br />
-            <a className="underline" href={'mailto:' + env.NEXT_PUBLIC_FEEDBACK_EMAIL}>
-              {env.NEXT_PUBLIC_FEEDBACK_EMAIL ?? ''}
+            <a className="underline" href={'mailto:' + feedbackEmail}>
+              {feedbackEmail ?? ''}
             </a>
           </p>
         </div>
       </main>
     </>
   );
-}
+};
+
+export default Home;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);
@@ -204,6 +209,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: {},
+    props: {
+      authProviders: env.AUTH_PROVIDERS,
+      feedbackEmail: env.FEEDBACK_EMAIL ?? '',
+    },
   };
 };

@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { env } from '~/env';
 
-const Terms: NextPage = () => {
+const Terms: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
   return (
     <>
       <div>
@@ -64,8 +64,8 @@ const Terms: NextPage = () => {
           <p className="mt-12 text-xl font-semibold">8. Contact</p>
           <p className="mt-1 text-lg text-gray-300">
             If you have any questions or concerns regarding these Terms, please contact us at{' '}
-            <a className="underline" href={'mailto:' + env.NEXT_PUBLIC_FEEDBACK_EMAIL}>
-              {env.NEXT_PUBLIC_FEEDBACK_EMAIL ?? ''}
+            <a className="underline" href={'mailto:' + feedbackEmail}>
+              {feedbackEmail ?? ''}
             </a>
             .
           </p>
@@ -76,3 +76,11 @@ const Terms: NextPage = () => {
 };
 
 export default Terms;
+
+export async function getServerSideProps() {
+  return {
+    props: {
+      feedbackEmail: env.FEEDBACK_EMAIL ?? '',
+    },
+  };
+}

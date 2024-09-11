@@ -108,7 +108,7 @@ export const getServerAuthSessionForSSG = async (context: GetServerSidePropsCont
  */
 function getProviders() {
   const providersList = [];
-  const envProviders = env.NEXT_PUBLIC_AUTH_PROVIDERS?.split(',').map((provider) =>
+  const envProviders = env.AUTH_PROVIDERS?.split(',').map((provider) =>
     provider.trim().toUpperCase(),
   );
 

@@ -5,7 +5,10 @@ import { Share, UserPlus } from 'lucide-react';
 import { type Group, type GroupUser } from '@prisma/client';
 import AddMembers from './AddMembers';
 
-const NoMembers: React.FC<{ group: Group & { groupUsers: Array<GroupUser> } }> = ({ group }) => {
+const NoMembers: React.FC<{
+  group: Group & { groupUsers: Array<GroupUser> };
+  enableSendingInvites: boolean;
+}> = ({ group, enableSendingInvites }) => {
   const [isCopied, setIsCopied] = React.useState(false);
 
   async function copyToClipboard() {
@@ -21,7 +24,7 @@ const NoMembers: React.FC<{ group: Group & { groupUsers: Array<GroupUser> } }> =
     <div className=" mt-[50%] flex flex-col items-center justify-center gap-4">
       <p className="mb-4 text-center text-gray-500">No members in the group yet.</p>
       <Button className="w-[200px]">
-        <AddMembers group={group}>
+        <AddMembers group={group} enableSendingInvites={enableSendingInvites}>
           <UserPlus className="h-5 w-5 text-primary-foreground" />
           <p>Add Members</p>
         </AddMembers>

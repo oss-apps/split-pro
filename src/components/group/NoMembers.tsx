@@ -9,7 +9,7 @@ const NoMembers: React.FC<{ group: Group & { groupUsers: Array<GroupUser> } }> =
   const [isCopied, setIsCopied] = React.useState(false);
 
   async function copyToClipboard() {
-    const inviteLink = `${window.location.origin}/groups/join-group?groupId=${group.publicId}`;
+    const inviteLink = `${window.location.origin}/join-group?groupId=${group.publicId}`;
     await navigator.clipboard.writeText(inviteLink);
     setIsCopied(true);
     setTimeout(() => {

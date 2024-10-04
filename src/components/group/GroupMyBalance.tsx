@@ -5,7 +5,12 @@ import { toUIString } from '~/utils/numbers';
 type GroupMyBalanceProps = {
   userId: number;
   groupBalances: GroupBalance[];
-  groupTotals;
+  groupTotals: {
+    currency: string;
+    _sum: {
+      amount: number | null;
+    };
+  }[];
   users: User[];
 };
 
@@ -71,19 +76,21 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
           </div>
         ) : null}
       </div>
-      <div className="flex flex-wrap gap-1">
-        of the total
-        {groupTotals.map((total, index, arr) => {
-          return (
-            <>
-              <div key={total.currency} className="flex flex-wrap gap-1 font-semibold">
-                {total.currency} {toUIString(total._sum.amount)}
-              </div>
-              {index < arr.length - 1 ? <span>+</span> : null}
-            </>
-          );
-        })}
-      </div>
+      {groupTotals.length > 0 ? (
+        <div className="flex flex-wrap gap-1">
+          of the total
+          {groupTotals?.map((total, index, arr) => {
+            return total._sum.amount != null ? (
+              <>
+                <div key={total.currency} className="flex flex-wrap gap-1 font-semibold">
+                  {total.currency} {toUIString(total._sum.amount)}
+                </div>
+                {index < arr.length - 1 ? <span>+</span> : null}
+              </>
+            ) : null;
+          })}
+        </div>
+      ) : null}
     </div>
   );
 };

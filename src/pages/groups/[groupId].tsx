@@ -280,7 +280,7 @@ const BalancePage: NextPageWithUser = ({ user }) => {
               <GroupMyBalance
                 userId={user.id}
                 groupBalances={groupDetailQuery.data?.groupBalances ?? []}
-                groupTotals={groupTotalQuery.data}
+                groupTotals={groupTotalQuery.data ?? []}
                 users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
               />
             </div>

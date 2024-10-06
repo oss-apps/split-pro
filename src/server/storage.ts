@@ -18,6 +18,7 @@ const getClient = () => {
         accessKeyId: env.R2_ACCESS_KEY,
         secretAccessKey: env.R2_SECRET_KEY,
       },
+      forcePathStyle: true, // needed for minio
     });
   }
 

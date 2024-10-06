@@ -39,9 +39,9 @@ It currently has most of the important features.
 
 Splitwise is one of the best apps to add expenses and bills.
 
-I understand that every app needs to make money, After all, lots of effort has been put into Spliwise. My main problem is how they implemented this.
+I understand that every app needs to make money, After all, lots of effort has been put into Splitwise. My main problem is how they implemented this.
 
-Making pro features or asking money to remove ads is fine, But asking money for adding Expenses (Core feature) is frustrating.
+Monetising on pro features or ads is fine, but asking money for adding expenses (core feature) is frustrating.
 
 I was searching for other open-source alternatives (Let's be honest, any closed-source product might do the same and I don't have any reason to believe otherwise).
 
@@ -81,14 +81,29 @@ Please note that you will need to provide environment variables for connecting t
 
 For detailed instructions on how to configure and run the Docker container, please refer to the Docker [Docker README](./docker/README.md) in the docker directory.
 
-### Run locally
+## Developer Setup
 
-- Copy .env.example to .env to the root directory and add the required env variables.
-- R2 related env is for cloudflare R2 used to upload and can be set up [here](https://www.cloudflare.com/en-au/developer-platform/r2/)
-- RESEND env could be obtained by creating a free account on [here](https://resend.com/)
-- Run `pnpm install`
-- Run `pnpm db:push` or `pnpm prisma:prod` to populate db migrations
-- Run `pnpm dev`
+### Install Dependencies
+
+```bash
+corepack enable
+```
+
+```bash
+pnpm i
+```
+
+### Setting up the environment
+
+- Copy the env.example file into .env
+- Setup google oauth required for auth https://next-auth.js.org/providers/google
+- Login to minio console using `splitpro` user and password `password` and [create access keys](http://localhost:9001/access-keys/new-account) and the R2 related env variables
+
+### Run the app
+
+```bash
+pnpm d
+```
 
 ## Sponsors
 
@@ -97,5 +112,5 @@ We are grateful for the support of our sponsors.
 ### Our Sponsors
 
 <a href="https://hekuta.net/en" target="_blank">
-  <img src="https://pbs.twimg.com/profile_images/1743758975026470912/MQ1U1bye_400x400.jpg" alt="hekuta" style="width:60px;height:60px;">
+  <img src="https://avatars.githubusercontent.com/u/70084358?v=4" alt="hekuta" style="width:60px;height:60px;">
 </a>

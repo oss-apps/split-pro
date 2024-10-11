@@ -36,7 +36,7 @@ const otpSchema = z.object({
   otp: z.string({ required_error: 'OTP is required' }).length(5, { message: 'Invalid OTP' }),
 });
 
-export default function Home() {
+export default function Home({ feedbackEmail }: { feedbackEmail: string }) {
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
@@ -170,7 +170,7 @@ export default function Home() {
           )}
           <p className="mt-6 w-[300px] text-center text-sm text-muted-foreground">
             Trouble logging in? contact
-            <br /> hello@ossapps.dev
+            <br /> {feedbackEmail}
           </p>
         </div>
       </main>
@@ -180,6 +180,7 @@ export default function Home() {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);
+  const feedbackEmail = process.env.FEEDBACK_EMAIL;
 
   if (session) {
     return {
@@ -191,6 +192,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: {},
+    props: {
+      feedbackEmail,
+    },
   };
 };

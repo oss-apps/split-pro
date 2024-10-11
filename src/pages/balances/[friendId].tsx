@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import { type NextPageWithUser } from '~/types';
 import { motion } from 'framer-motion';
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
+import { Export } from '~/components/Friend/Export';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
@@ -55,10 +56,20 @@ const FriendPage: NextPageWithUser = ({ user }) => {
           </div>
         }
         actions={
-          <DeleteFriend
-            friendId={_friendId}
-            disabled={!(youLent?.length === 0 && youOwe?.length === 0)}
-          />
+          <div className="flex items-center space-x-2">
+            <Export
+              expenses={expenses.data ?? []}
+              fileName={`expenses_with_${friendQuery.data?.name}`}
+              currentUserId={user.id}
+              friendName={friendQuery.data?.name ?? ''}
+              friendId={friendQuery.data?.id ?? ''}
+              disabled={!expenses.data || expenses.data.length === 0}
+            />
+            <DeleteFriend
+              friendId={_friendId}
+              disabled={!(youLent?.length === 0 && youOwe?.length === 0)}
+            />
+          </div>
         }
         header={
           <div className="flex w-full items-center justify-between">

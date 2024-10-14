@@ -11,6 +11,7 @@ import { env } from '~/env';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { type NextPage } from 'next';
 import {
   Form,
   FormControl,
@@ -27,6 +28,8 @@ import {
   InputOTPSlot,
 } from '~/components/ui/input-otp';
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
+import type { NextPageWithUser } from '~/types';
+import AddPage from '~/pages/add';
 
 const emailSchema = z.object({
   email: z.string({ required_error: 'Email is required' }).email({ message: 'Invalid email' }),
@@ -36,8 +39,13 @@ const otpSchema = z.object({
   otp: z.string({ required_error: 'OTP is required' }).length(5, { message: 'Invalid OTP' }),
 });
 
-export default function Home() {
+const Home: NextPage<{ authProviders: string; feedbackEmail: string }> = ({
+  authProviders,
+  feedbackEmail,
+}) => {
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
+
+  const providers = authProviders.split(',').map((provider) => provider.trim().toUpperCase());
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),
@@ -76,107 +84,117 @@ export default function Home() {
           <div className="mb-10 flex items-center gap-4">
             <p className="text-3xl text-primary">SplitPro</p>
           </div>
-          <Button
-            className="mx-auto flex w-[300px] items-center gap-2 bg-white hover:bg-gray-100 focus:bg-gray-100"
-            onClick={() => signIn('google')}
-          >
-            <Image
-              alt="Google logo"
-              loading="lazy"
-              height="15"
-              width="15"
-              id="provider-logo-dark"
-              src="https://authjs.dev/img/providers/google.svg"
-            />
-            Continue with Google
-          </Button>
-          <div className="mt-6 flex w-[300px]  items-center justify-between gap-2">
-            <p className=" z-10 ml-[150px] -translate-x-1/2 bg-background px-4 text-sm">or</p>
-            <div className="absolute h-[1px] w-[300px]  bg-gradient-to-r from-zinc-800 via-zinc-300 to-zinc-800"></div>
-          </div>
-          {emailStatus === 'success' ? (
-            <>
-              <p className="mt-6 w-[300px] text-center text-sm">
-                We have sent an email with the OTP. Please check your inbox
-              </p>
-              <Form {...otpForm}>
-                <form onSubmit={otpForm.handleSubmit(onOTPSubmit)} className="mt-6 space-y-8">
-                  <FormField
-                    control={otpForm.control}
-                    name="otp"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <InputOTP
-                            className="w-[300px]"
-                            maxLength={5}
-                            pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
-                            inputMode="text"
-                            {...field}
-                          >
-                            <InputOTPGroup>
-                              <InputOTPSlot className="w-[60px]" index={0} />
-                              <InputOTPSlot className="w-[60px]" index={1} />
-                              <InputOTPSlot className="w-[60px]" index={2} />
-                              <InputOTPSlot className="w-[60px]" index={3} />
-                              <InputOTPSlot className="w-[60px]" index={4} />
-                            </InputOTPGroup>
-                          </InputOTP>
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <Button className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100">
-                    Submit
-                  </Button>
-                </form>
-              </Form>
-            </>
-          ) : (
-            <>
-              <Form {...emailForm}>
-                <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="mt-6 space-y-8">
-                  <FormField
-                    control={emailForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter your email"
-                            className=" w-[300px] text-lg"
-                            type="email"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button
-                    className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
-                    type="submit"
-                    disabled={emailStatus === 'sending'}
-                  >
-                    {emailStatus === 'sending' ? 'Sending...' : 'Send magic link'}
-                  </Button>
-                </form>
-              </Form>
-            </>
+          {providers?.includes('GOOGLE') && (
+            <Button
+              className="mx-auto flex w-[300px] items-center gap-2 bg-white hover:bg-gray-100 focus:bg-gray-100"
+              onClick={() => signIn('google')}
+            >
+              <Image
+                alt="Google logo"
+                loading="lazy"
+                height="15"
+                width="15"
+                id="provider-logo-dark"
+                src="https://authjs.dev/img/providers/google.svg"
+              />
+              Continue with Google
+            </Button>
           )}
+          {providers && providers.length === 2 && (
+            <div className="mt-6 flex w-[300px]  items-center justify-between gap-2">
+              <p className=" z-10 ml-[150px] -translate-x-1/2 bg-background px-4 text-sm">or</p>
+              <div className="absolute h-[1px] w-[300px]  bg-gradient-to-r from-zinc-800 via-zinc-300 to-zinc-800"></div>
+            </div>
+          )}
+          {providers?.includes('EMAIL') &&
+            (emailStatus === 'success' ? (
+              <>
+                <p className="mt-6 w-[300px] text-center text-sm">
+                  We have sent an email with the OTP. Please check your inbox
+                </p>
+                <Form {...otpForm}>
+                  <form onSubmit={otpForm.handleSubmit(onOTPSubmit)} className="mt-6 space-y-8">
+                    <FormField
+                      control={otpForm.control}
+                      name="otp"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <InputOTP
+                              className="w-[300px]"
+                              maxLength={5}
+                              pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+                              inputMode="text"
+                              {...field}
+                            >
+                              <InputOTPGroup>
+                                <InputOTPSlot className="w-[60px]" index={0} />
+                                <InputOTPSlot className="w-[60px]" index={1} />
+                                <InputOTPSlot className="w-[60px]" index={2} />
+                                <InputOTPSlot className="w-[60px]" index={3} />
+                                <InputOTPSlot className="w-[60px]" index={4} />
+                              </InputOTPGroup>
+                            </InputOTP>
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100">
+                      Submit
+                    </Button>
+                  </form>
+                </Form>
+              </>
+            ) : (
+              <>
+                <Form {...emailForm}>
+                  <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="mt-6 space-y-8">
+                    <FormField
+                      control={emailForm.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter your email"
+                              className=" w-[300px] text-lg"
+                              type="email"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormDescription />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
+                      type="submit"
+                      disabled={emailStatus === 'sending'}
+                    >
+                      {emailStatus === 'sending' ? 'Sending...' : 'Send magic link'}
+                    </Button>
+                  </form>
+                </Form>
+              </>
+            ))}
           <p className="mt-6 w-[300px] text-center text-sm text-muted-foreground">
             Trouble logging in? contact
-            <br /> hello@ossapps.dev
+            <br />
+            <a className="underline" href={'mailto:' + feedbackEmail}>
+              {feedbackEmail ?? ''}
+            </a>
           </p>
         </div>
       </main>
     </>
   );
-}
+};
+
+export default Home;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);
@@ -191,6 +209,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: {},
+    props: {
+      authProviders: env.AUTH_PROVIDERS,
+      feedbackEmail: env.FEEDBACK_EMAIL ?? '',
+    },
   };
 };

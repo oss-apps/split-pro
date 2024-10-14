@@ -11,10 +11,10 @@ import { api } from '~/utils/api';
 
 // 🧾
 
-const AddPage: NextPageWithUser<{ isStorageConfigured: boolean }> = ({
-  user,
-  isStorageConfigured,
-}) => {
+const AddPage: NextPageWithUser<{
+  isStorageConfigured: boolean;
+  enableSendingInvites: boolean;
+}> = ({ user, isStorageConfigured, enableSendingInvites }) => {
   const { setCurrentUser, setGroup, setParticipants, setCurrency } = useAddExpenseStore(
     (s) => s.actions,
   );
@@ -75,7 +75,14 @@ const AddPage: NextPageWithUser<{ isStorageConfigured: boolean }> = ({
         <title>Add Expense</title>
       </Head>
       <MainLayout hideAppBar>
-        {currentUser ? <AddExpensePage isStorageConfigured={isStorageConfigured} /> : <div></div>}
+        {currentUser ? (
+          <AddExpensePage
+            isStorageConfigured={isStorageConfigured}
+            enableSendingInvites={enableSendingInvites}
+          />
+        ) : (
+          <div></div>
+        )}
       </MainLayout>
     </>
   );
@@ -91,6 +98,7 @@ export async function getServerSideProps() {
   return {
     props: {
       isStorageConfigured: !!isStorageConfigured(),
+      enableSendingInvites: !!env.ENABLE_SENDING_INVITES,
     },
   };
 }

@@ -56,20 +56,10 @@ const FriendPage: NextPageWithUser = ({ user }) => {
           </div>
         }
         actions={
-          <div className="flex items-center space-x-2">
-            <Export
-              expenses={expenses.data ?? []}
-              fileName={`expenses_with_${friendQuery.data?.name}`}
-              currentUserId={user.id}
-              friendName={friendQuery.data?.name ?? ''}
-              friendId={friendQuery.data?.id ?? ''}
-              disabled={!expenses.data || expenses.data.length === 0}
-            />
-            <DeleteFriend
-              friendId={_friendId}
-              disabled={!(youLent?.length === 0 && youOwe?.length === 0)}
-            />
-          </div>
+          <DeleteFriend
+            friendId={_friendId}
+            disabled={!(youLent?.length === 0 && youOwe?.length === 0)}
+          />
         }
         header={
           <div className="flex w-full items-center justify-between">
@@ -149,6 +139,14 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   <PlusIcon className="h-4 w-4 text-gray-400" /> Add Expense
                 </Button>
               </Link>
+              <Export
+                expenses={expenses.data ?? []}
+                fileName={`expenses_with_${friendQuery.data?.name}`}
+                currentUserId={user.id}
+                friendName={friendQuery.data?.name ?? ''}
+                friendId={friendQuery.data?.id ?? ''}
+                disabled={!expenses.data || expenses.data.length === 0}
+              />
               {/* <Button size="sm" className="gap-1 text-sm lg:w-[180px]" variant="secondary">
                 <Bell className="h-4 w-4 text-gray-400" />
                 Remind

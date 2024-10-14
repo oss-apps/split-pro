@@ -9,8 +9,12 @@ import { type Group, type GroupUser, type User } from '@prisma/client';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { SendIcon } from 'lucide-react';
+import { env } from '~/env';
+import React from 'react';
 
-export const SelectUserOrGroup: React.FC = () => {
+export const SelectUserOrGroup: React.FC<{
+  enableSendingInvites: boolean;
+}> = ({ enableSendingInvites }) => {
   const nameOrEmail = useAddExpenseStore((s) => s.nameOrEmail);
   const participants = useAddExpenseStore((s) => s.participants);
   const group = useAddExpenseStore((s) => s.group);
@@ -76,23 +80,28 @@ export const SelectUserOrGroup: React.FC = () => {
     <div className="mt-1 ">
       <div>
         <div>
-          {/* <div className="mt-1 text-orange-600">
-            {isEmail.success
-              ? "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused"
-              : null}
-          </div> */}
-          <div>Note: sending invite is disabled for now because of spam</div>
+          {enableSendingInvites ? (
+            <div className="mt-1 text-orange-600">
+              {isEmail.success
+                ? "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused"
+                : null}
+            </div>
+          ) : (
+            <div>Note: sending invite is disabled for now because of spam</div>
+          )}
         </div>
         <div className="flex justify-center gap-4">
-          {/* <Button
-            className="mt-4 w-full text-cyan-500 hover:text-cyan-500"
-            variant="outline"
-            disabled={!isEmail.success}
-            onClick={() => onAddEmailClick(false)}
-          >
-            <SendIcon className="mr-2 h-4 w-4" />
-            Send invite to user
-          </Button> */}
+          {enableSendingInvites && (
+            <Button
+              className="mt-4 w-full text-cyan-500 hover:text-cyan-500"
+              variant="outline"
+              disabled={!isEmail.success}
+              onClick={() => onAddEmailClick(false)}
+            >
+              <SendIcon className="mr-2 h-4 w-4" />
+              Send invite to user
+            </Button>
+          )}
           <Button
             className="mt-4 w-full text-cyan-500 hover:text-cyan-500"
             variant="outline"

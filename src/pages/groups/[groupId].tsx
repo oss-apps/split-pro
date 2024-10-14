@@ -34,7 +34,9 @@ import {
 import { toast } from 'sonner';
 import GroupMyBalance from '~/components/group/GroupMyBalance';
 
-const BalancePage: NextPageWithUser = ({ user }) => {
+const BalancePage: NextPageWithUser<{
+  enableSendingInvites: boolean;
+}> = ({ user, enableSendingInvites }) => {
   const router = useRouter();
   const groupId = parseInt(router.query.groupId as string);
 
@@ -272,7 +274,7 @@ const BalancePage: NextPageWithUser = ({ user }) => {
       >
         {groupDetailQuery.isLoading ? null : groupDetailQuery.data?.groupUsers.length === 1 &&
           !expensesQuery.data?.length ? (
-          <NoMembers group={groupDetailQuery.data} />
+          <NoMembers group={groupDetailQuery.data} enableSendingInvites={enableSendingInvites} />
         ) : (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="mb-4 px-4">
@@ -290,7 +292,10 @@ const BalancePage: NextPageWithUser = ({ user }) => {
               </Link>
               <Button size="sm" className="gap-1 text-sm" variant="secondary">
                 {groupDetailQuery.data ? (
-                  <AddMembers group={groupDetailQuery.data}>
+                  <AddMembers
+                    group={groupDetailQuery.data}
+                    enableSendingInvites={enableSendingInvites}
+                  >
                     <UserPlus className="h-4 w-4 text-gray-400" /> Add members
                   </AddMembers>
                 ) : null}
@@ -387,3 +392,11 @@ const BalancePage: NextPageWithUser = ({ user }) => {
 BalancePage.auth = true;
 
 export default BalancePage;
+
+export async function getServerSideProps() {
+  return {
+    props: {
+      enableSendingInvites: env.ENABLE_SENDING_INVITES,
+    },
+  };
+}

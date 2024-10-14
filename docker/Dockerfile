@@ -7,7 +7,7 @@ RUN apk add --no-cache libc6-compat
 RUN apk update
 
 WORKDIR /app
-RUN npm i -g pnpm
+RUN npm i -g pnpm@8.9
 RUN ls
 COPY package.json pnpm-lock.yaml ./
 
@@ -19,7 +19,7 @@ RUN pnpm build
 
 FROM node:20-alpine3.19 as release
 WORKDIR /app
-RUN npm i -g pnpm
+RUN npm i -g pnpm@8.9
 
 RUN apk add --no-cache libc6-compat
 RUN apk update

@@ -40,8 +40,8 @@ export async function sendSignUpEmail(email: string, token: string, url: string)
   console.log(env.NODE_ENV);
 
   if (env.NODE_ENV === 'development') {
-    console.log('Sending sign in email', email, url, token);
-    return;
+    console.log('Sign in link : ', email, url, token);
+    return true;
   }
 
   const subject = 'Sign in to SplitPro';

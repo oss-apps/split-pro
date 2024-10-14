@@ -39,6 +39,7 @@ const otpSchema = z.object({
   otp: z.string({ required_error: 'OTP is required' }).length(5, { message: 'Invalid OTP' }),
 });
 
+
 const Home: NextPage<{ authProviders: string; feedbackEmail: string }> = ({
   authProviders,
   feedbackEmail,
@@ -183,6 +184,7 @@ const Home: NextPage<{ authProviders: string; feedbackEmail: string }> = ({
             ))}
           <p className="mt-6 w-[300px] text-center text-sm text-muted-foreground">
             Trouble logging in? contact
+
             <br />
             <a className="underline" href={'mailto:' + feedbackEmail}>
               {feedbackEmail ?? ''}
@@ -198,6 +200,7 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);
+  const feedbackEmail = process.env.FEEDBACK_EMAIL;
 
   if (session) {
     return {

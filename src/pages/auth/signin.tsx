@@ -80,8 +80,8 @@ const Home: NextPage<{ authProviders: string; feedbackEmail: string }> = ({
         <meta name="description" content="SplitPro: Split Expenses with your friends for free" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex h-full flex-col justify-center">
-        <div className="flex -translate-y-1/2 flex-col items-center">
+      <main className="flex h-full flex-col justify-center lg:justify-normal">
+        <div className="flex  flex-col items-center lg:mt-20 ">
           <div className="mb-10 flex items-center gap-4">
             <p className="text-3xl text-primary">SplitPro</p>
           </div>

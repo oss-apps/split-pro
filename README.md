@@ -96,7 +96,7 @@ pnpm i
 ### Setting up the environment
 
 - Copy the env.example file into .env
-- Setup google oauth required for auth https://next-auth.js.org/providers/google
+- Setup google oauth required for auth https://next-auth.js.org/providers/google or Email provider by setting SMTP details
 - Login to minio console using `splitpro` user and password `password` and [create access keys](http://localhost:9001/access-keys/new-account) and the R2 related env variables
 
 ### Run the app

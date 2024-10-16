@@ -13,12 +13,6 @@ import pwa from 'next-pwa';
 // @ts-ignore
 import nextra from 'nextra';
 
-import { fileURLToPath } from 'node:url';
-import createJiti from 'jiti';
-const jiti = createJiti(fileURLToPath(import.meta.url));
-
-jiti('./src/env.js');
-
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
 const withPwa = pwa({
   dest: 'public',
@@ -28,6 +22,9 @@ const withPwa = pwa({
 const config = {
   reactStrictMode: true,
   output: process.env.DOCKER_OUTPUT ? 'standalone' : undefined,
+  experimental: {
+    instrumentationHook: true,
+  },
   /**
    * If you are using `appDir` then you must comment the below `i18n` config out.
    *

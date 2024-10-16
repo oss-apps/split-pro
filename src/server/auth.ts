@@ -108,11 +108,8 @@ export const getServerAuthSessionForSSG = async (context: GetServerSidePropsCont
  */
 function getProviders() {
   const providersList = [];
-  const envProviders = env.AUTH_PROVIDERS?.split(',').map((provider) =>
-    provider.trim().toUpperCase(),
-  );
 
-  if (envProviders?.includes('GOOGLE') && env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
+  if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
     providersList.push(
       GoogleProvider({
         clientId: env.GOOGLE_CLIENT_ID,
@@ -122,7 +119,7 @@ function getProviders() {
     );
   }
 
-  if (envProviders?.includes('EMAIL')) {
+  if (env.EMAIL_SERVER_HOST) {
     providersList.push(
       EmailProvider({
         from: env.FROM_EMAIL,
@@ -148,4 +145,22 @@ function getProviders() {
   }
 
   return providersList;
+}
+
+/**
+ * Validates the environment variables that are related to authentication.
+ * this will check if atleat one provider is set properly.
+ *
+ * this function should be updated if new providers are added.
+ */
+export function validateAuthEnv() {
+  console.log('Validating auth env');
+  if (!process.env.SKIP_ENV_VALIDATION) {
+    const providers = getProviders();
+    if (providers.length === 0) {
+      throw new Error(
+        'No authentication providers are configured, at least one is required. Learn more here: https://github.com/oss-apps/split-pro?tab=readme-ov-file#setting-up-the-environment',
+      );
+    }
+  }
 }

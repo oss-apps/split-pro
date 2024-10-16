@@ -41,6 +41,7 @@ const BalancePage: NextPageWithUser<{
   const groupId = parseInt(router.query.groupId as string);
 
   const groupDetailQuery = api.group.getGroupDetails.useQuery({ groupId });
+  const groupTotalQuery = api.group.getGroupTotals.useQuery({ groupId });
   const expensesQuery = api.group.getExpenses.useQuery({ groupId });
   const deleteGroupMutation = api.group.delete.useMutation();
   const leaveGroupMutation = api.group.leaveGroup.useMutation();
@@ -281,6 +282,7 @@ const BalancePage: NextPageWithUser<{
               <GroupMyBalance
                 userId={user.id}
                 groupBalances={groupDetailQuery.data?.groupBalances ?? []}
+                groupTotals={groupTotalQuery.data ?? []}
                 users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
               />
             </div>

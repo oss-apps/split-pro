@@ -216,8 +216,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);
   const providers = await getProviders();
 
-  console.log('providers', providers);
-
   if (session) {
     return {
       redirect: {

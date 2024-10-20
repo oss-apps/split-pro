@@ -13,9 +13,9 @@ import {
   Share,
   Trash2,
   UserPlus,
-  LucideBarChartHorizontal,
+  BarChartHorizontal,
+  Info,
 } from 'lucide-react';
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { AppDrawer } from '~/components/ui/drawer';
 import { UserAvatar } from '~/components/ui/avatar';
 import NoMembers from '~/components/group/NoMembers';
@@ -143,7 +143,7 @@ const BalancePage: NextPageWithUser = ({ user }) => {
           <div className="flex gap-2">
             <AppDrawer
               title="Group statistics"
-              trigger={<LucideBarChartHorizontal className="h-6 w-6" />}
+              trigger={<BarChartHorizontal className="h-6 w-6" />}
               className="h-[85vh]"
             >
               <div className="">
@@ -164,7 +164,7 @@ const BalancePage: NextPageWithUser = ({ user }) => {
             </AppDrawer>
             <AppDrawer
               title="Group info"
-              trigger={<InformationCircleIcon className="h-6 w-6" />}
+              trigger={<Info className="h-6 w-6" />}
               className="h-[85vh]"
             >
               <div className="">

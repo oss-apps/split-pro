@@ -52,25 +52,7 @@ export const authOptions: NextAuthOptions = {
     }),
   },
   adapter: PrismaAdapter(db),
-  providers: [
-    GoogleProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking: true,
-    }),
-    EmailProvider({
-      from: 'no-reply@splitpro.app',
-      async sendVerificationRequest({ identifier: email, url, token }) {
-        const result = await sendSignUpEmail(email, token, url);
-        if (!result) {
-          throw new Error('Failed to send email');
-        }
-      },
-      async generateVerificationToken() {
-        return Math.random().toString(36).substring(2, 7).toLowerCase();
-      },
-    }),
-  ],
+  providers: getProviders(),
   events: {
     createUser: async ({ user }) => {
       // Check if the user's name is empty
@@ -120,3 +102,65 @@ export const getServerAuthSessionForSSG = async (context: GetServerSidePropsCont
     },
   };
 };
+
+/**
+ * Get providers to enable
+ */
+function getProviders() {
+  const providersList = [];
+
+  if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
+    providersList.push(
+      GoogleProvider({
+        clientId: env.GOOGLE_CLIENT_ID,
+        clientSecret: env.GOOGLE_CLIENT_SECRET,
+        allowDangerousEmailAccountLinking: true,
+      }),
+    );
+  }
+
+  if (env.EMAIL_SERVER_HOST) {
+    providersList.push(
+      EmailProvider({
+        from: env.FROM_EMAIL,
+        server: {
+          host: env.EMAIL_SERVER_HOST,
+          port: parseInt(env.EMAIL_SERVER_PORT ?? ''),
+          auth: {
+            user: env.EMAIL_SERVER_USER,
+            pass: env.EMAIL_SERVER_PASSWORD,
+          },
+        },
+        async sendVerificationRequest({ identifier: email, url, token }) {
+          const result = await sendSignUpEmail(email, token, url);
+          if (!result) {
+            throw new Error('Failed to send email');
+          }
+        },
+        async generateVerificationToken() {
+          return Math.random().toString(36).substring(2, 7).toLowerCase();
+        },
+      }),
+    );
+  }
+
+  return providersList;
+}
+
+/**
+ * Validates the environment variables that are related to authentication.
+ * this will check if atleat one provider is set properly.
+ *
+ * this function should be updated if new providers are added.
+ */
+export function validateAuthEnv() {
+  console.log('Validating auth env');
+  if (!process.env.SKIP_ENV_VALIDATION) {
+    const providers = getProviders();
+    if (providers.length === 0) {
+      throw new Error(
+        'No authentication providers are configured, at least one is required. Learn more here: https://github.com/oss-apps/split-pro?tab=readme-ov-file#setting-up-the-environment',
+      );
+    }
+  }
+}

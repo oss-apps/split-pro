@@ -18,7 +18,6 @@ import {
   Hammer,
   HandIcon,
   Home,
-  Lightbulb,
   type LucideIcon,
   Music,
   ParkingCircle,
@@ -39,6 +38,9 @@ import {
   Wine,
   Zap,
   type LucideProps,
+  Paintbrush,
+  Trash,
+  Wrench,
 } from 'lucide-react';
 import { type ForwardRefExoticComponent } from 'react';
 
@@ -76,13 +78,15 @@ export const CategoryIcons: Record<string, LucideIcon> = {
   parking: ParkingCircle,
   plane: Plane,
   taxi: CarTaxiFront,
-  utilities: Lightbulb,
+  utilities: Wrench,
   electricity: Zap,
   gas: Flame,
   internet: Globe,
   phone: Phone,
   water: GlassWater,
   general: Banknote,
+  cleaning: Paintbrush,
+  trash: Trash,
 };
 
 export const CategoryIcon: React.FC<{ category: string; className?: string }> = ({

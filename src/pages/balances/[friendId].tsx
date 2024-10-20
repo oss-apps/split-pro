@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import { type NextPageWithUser } from '~/types';
 import { motion } from 'framer-motion';
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
+import { Export } from '~/components/Friend/Export';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
@@ -138,6 +139,14 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   <PlusIcon className="h-4 w-4 text-gray-400" /> Add Expense
                 </Button>
               </Link>
+              <Export
+                expenses={expenses.data ?? []}
+                fileName={`expenses_with_${friendQuery.data?.name}`}
+                currentUserId={user.id}
+                friendName={friendQuery.data?.name ?? ''}
+                friendId={friendQuery.data?.id ?? ''}
+                disabled={!expenses.data || expenses.data.length === 0}
+              />
               {/* <Button size="sm" className="gap-1 text-sm lg:w-[180px]" variant="secondary">
                 <Bell className="h-4 w-4 text-gray-400" />
                 Remind

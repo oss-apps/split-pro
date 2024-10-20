@@ -18,6 +18,7 @@ import UploadFile from './UploadFile';
 import { CategoryIcons } from '../ui/categoryIcons';
 import Link from 'next/link';
 import { CURRENCIES } from '~/lib/currency';
+import { env } from '~/env';
 
 const categories = {
   entertainment: {
@@ -107,7 +108,8 @@ const categories = {
 
 export const AddExpensePage: React.FC<{
   isStorageConfigured: boolean;
-}> = ({ isStorageConfigured }) => {
+  enableSendingInvites: boolean;
+}> = ({ isStorageConfigured, enableSendingInvites }) => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [open, setOpen] = React.useState(false);
   const [amtStr, setAmountStr] = React.useState('');
@@ -237,7 +239,7 @@ export const AddExpensePage: React.FC<{
         </div>
         <UserInput />
         {showFriends || (participants.length === 1 && !group) ? (
-          <SelectUserOrGroup />
+          <SelectUserOrGroup enableSendingInvites={enableSendingInvites} />
         ) : (
           <>
             <div className="mt-10 flex gap-2">

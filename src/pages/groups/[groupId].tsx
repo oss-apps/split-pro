@@ -3,14 +3,13 @@ import MainLayout from '~/components/Layout/MainLayout';
 import Avatar from 'boring-avatars';
 import clsx from 'clsx';
 import { Button } from '~/components/ui/button';
-import { SplitType, type User } from '@prisma/client';
+import { SplitType } from '@prisma/client';
 import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
 import {
   Check,
   ChevronLeft,
   DoorOpen,
-  LogOut,
   Share,
   Trash2,
   UserPlus,
@@ -26,7 +25,6 @@ import Image from 'next/image';
 import { toUIString } from '~/utils/numbers';
 import Link from 'next/link';
 import { CategoryIcon } from '~/components/ui/categoryIcons';
-import { env } from '~/env';
 import { useState } from 'react';
 import { type NextPageWithUser } from '~/types';
 import { motion } from 'framer-motion';

@@ -25,6 +25,7 @@ import Image from 'next/image';
 import { toUIString } from '~/utils/numbers';
 import Link from 'next/link';
 import { CategoryIcon } from '~/components/ui/categoryIcons';
+import { env } from '~/env';
 import { useState } from 'react';
 import { type NextPageWithUser } from '~/types';
 import { motion } from 'framer-motion';

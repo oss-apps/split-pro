@@ -31,38 +31,40 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
   const youOwe = Object.entries(cumulatedBalances).filter(([_, amount]) => amount < 0);
 
   return (
-    <div className="flex flex-col gap-2">
-      {youLent.length > 0 ? (
-        <div className="flex flex-wrap gap-1 text-emerald-500">
-          You lent
-          {youLent.map(([currency, amount], index, arr) => {
-            return (
-              <>
-                <div key={currency} className="flex gap-1 font-semibold">
-                  {currency} {toUIString(amount)}
-                </div>
-                {index < arr.length - 1 ? <span>+</span> : null}
-              </>
-            );
-          })}
-        </div>
-      ) : null}
+    <div className="flex gap-2">
+      <div className="flex flex-col gap-2">
+        {youLent.length > 0 ? (
+          <div className="flex flex-wrap gap-1 text-emerald-500">
+            You lent
+            {youLent.map(([currency, amount], index, arr) => {
+              return (
+                <>
+                  <div key={currency} className="flex gap-1 font-semibold">
+                    {currency} {toUIString(amount)}
+                  </div>
+                  {index < arr.length - 1 ? <span>+</span> : null}
+                </>
+              );
+            })}
+          </div>
+        ) : null}
 
-      {youOwe.length > 0 ? (
-        <div className="text-orange-6000 flex flex-wrap gap-1 text-orange-600">
-          You owe
-          {youOwe.map(([currency, amount], index, arr) => {
-            return (
-              <>
-                <div key={currency} className="flex gap-1 font-semibold">
-                  {currency} {toUIString(amount)}
-                </div>
-                {index < arr.length - 1 ? <span>+</span> : null}
-              </>
-            );
-          })}
-        </div>
-      ) : null}
+        {youOwe.length > 0 ? (
+          <div className="text-orange-6000 flex flex-wrap gap-1 text-orange-600">
+            You owe
+            {youOwe.map(([currency, amount], index, arr) => {
+              return (
+                <>
+                  <div key={currency} className="flex gap-1 font-semibold">
+                    {currency} {toUIString(amount)}
+                  </div>
+                  {index < arr.length - 1 ? <span>+</span> : null}
+                </>
+              );
+            })}
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 };

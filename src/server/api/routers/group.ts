@@ -214,6 +214,20 @@ export const groupRouter = createTRPCRouter({
     return group;
   }),
 
+  getGroupTotals: groupProcedure.query(async ({ input, ctx }) => {
+    const totals = await ctx.db.expense.groupBy({
+      by: 'currency',
+      _sum: {
+        amount: true,
+      },
+      where: {
+        groupId: input.groupId,
+      },
+    });
+
+    return totals;
+  }),
+
   addMembers: groupProcedure
     .input(z.object({ userIds: z.array(z.number()) }))
     .mutation(async ({ input, ctx }) => {

@@ -39,6 +39,7 @@ export async function createGroupExpense(
   currentUserId: number,
   expenseDate: Date,
   fileKey?: string,
+  transactionId?: string
 ) {
   const operations = [];
 
@@ -64,6 +65,7 @@ export async function createGroupExpense(
         fileKey,
         addedBy: currentUserId,
         expenseDate,
+        transactionId: transactionId ?? "",
       },
     }),
   );
@@ -201,6 +203,7 @@ export async function addUserExpense(
   currentUserId: number,
   expenseDate: Date,
   fileKey?: string,
+  transactionId?: string
 ) {
   const operations = [];
 
@@ -223,6 +226,7 @@ export async function addUserExpense(
         fileKey,
         addedBy: currentUserId,
         expenseDate,
+        transactionId,
       },
     }),
   );
@@ -471,6 +475,7 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
       data: {
         deletedBy,
         deletedAt: new Date(),
+        transactionId: null
       },
     }),
   );

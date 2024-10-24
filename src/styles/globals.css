@@ -35,7 +35,8 @@
     --radius: 0.5rem;
   }
 
-  .dark {
+  .dark,
+  :root[class~='dark'] {
     --background: 224 71.4% 4.1%;
     --foreground: 222 2% 83%;
 

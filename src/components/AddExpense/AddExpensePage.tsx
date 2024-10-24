@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React from 'react';
-import { useAddExpenseStore } from '~/store/addStore';
+import { calculateParticipantSplit, useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { UserInput } from './UserInput';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
@@ -18,7 +18,7 @@ import UploadFile from './UploadFile';
 import { CategoryIcons } from '../ui/categoryIcons';
 import Link from 'next/link';
 import { CURRENCIES } from '~/lib/currency';
-import { env } from '~/env';
+import { GoCardlessTransactions } from './GoCardlessTransactions';
 
 const categories = {
   entertainment: {
@@ -106,6 +106,14 @@ const categories = {
   },
 };
 
+export type TransactionAddInputModel = {
+  date: Date;
+  description: string;
+  amount: string;
+  currency: string;
+  transactionId?: string;
+};
+
 export const AddExpensePage: React.FC<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
@@ -113,6 +121,8 @@ export const AddExpensePage: React.FC<{
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [open, setOpen] = React.useState(false);
   const [amtStr, setAmountStr] = React.useState('');
+  const [transactionId, setTransactionId] = React.useState('');
+  const [multipleArray, setMultipleArray] = React.useState<TransactionAddInputModel[]>([]);
 
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
@@ -139,6 +149,67 @@ export const AddExpensePage: React.FC<{
     setAmount(Number(_amt) || 0);
   }
 
+  async function addMultipleExpenses() {
+    const { group, paidBy, splitType, fileKey } = useAddExpenseStore.getState();
+    if (!paidBy) {
+      return;
+    }
+
+    for (const tempItem of multipleArray) {
+      if (tempItem) {
+        const _amt = Number(tempItem.amount.replace(',', '.')) ?? 0;
+
+        const { participants: tempParticipants } = calculateParticipantSplit(
+          _amt,
+          participants,
+          splitType,
+          paidBy,
+        );
+
+        if (group) {
+          await addGroupExpenseMutation.mutateAsync({
+            name: tempItem.description,
+            currency: tempItem.currency,
+            amount: _amt,
+            groupId: group.id,
+            splitType,
+            participants: tempParticipants.map((p) => ({
+              userId: p.id,
+              amount: p.amount ?? 0,
+            })),
+            paidBy: paidBy.id,
+            category,
+            fileKey,
+            expenseDate: tempItem.date,
+            transactionId: tempItem.transactionId,
+          });
+        } else {
+          await addExpenseMutation.mutateAsync({
+            name: tempItem.description,
+            currency: tempItem.currency,
+            amount: _amt,
+            splitType,
+            participants: tempParticipants.map((p) => ({
+              userId: p.id,
+              amount: p.amount ?? 0,
+            })),
+            paidBy: paidBy.id,
+            category,
+            fileKey,
+            expenseDate: tempItem.date,
+            transactionId: tempItem.transactionId,
+          });
+        }
+      }
+    }
+
+    setMultipleArray([]);
+    router
+      .push(`/groups/${group?.id}`)
+      .then(() => resetState())
+      .catch(console.error);
+  }
+
   function addExpense() {
     const { group, paidBy, splitType, fileKey } = useAddExpenseStore.getState();
     if (!paidBy) {
@@ -161,12 +232,14 @@ export const AddExpensePage: React.FC<{
           category,
           fileKey,
           expenseDate: date,
+          transactionId: transactionId,
         },
         {
           onSuccess: (d) => {
             if (d) {
               router
-                .push(`/groups/${group.id}/expenses/${d?.id}`)
+                // I think this makes more sence.
+                .push(`/groups/${group.id}`)
                 .then(() => resetState())
                 .catch(console.error);
             }
@@ -188,13 +261,15 @@ export const AddExpensePage: React.FC<{
           category,
           fileKey,
           expenseDate: date,
+          transactionId: transactionId,
         },
         {
           onSuccess: (d) => {
             resetState();
             if (participants[1] && d) {
               router
-                .push(`/balances/${participants[1]?.id}/expenses/${d?.id}`)
+                // I think this makes more sence.
+                .push(`/balances/${participants[1]?.id}`)
                 .then(() => resetState())
                 .catch(console.error);
             }
@@ -206,13 +281,28 @@ export const AddExpensePage: React.FC<{
 
   const CategoryIcon = CategoryIcons[category] ?? Banknote;
 
+  const addViaGoCardless = (obj: TransactionAddInputModel) => {
+    setDate(obj.date);
+    setDescription(obj.description);
+    setCurrency(obj.currency);
+    onUpdateAmount(obj.amount);
+    setTransactionId(obj.transactionId ?? '');
+  };
+
+  const resetAll = () => {
+    setAmount(0);
+    setDescription('');
+    setAmountStr('');
+    setDate(new Date());
+  };
+
   return (
     <>
       <div className="flex flex-col gap-4 px-4 py-2">
         <div className="flex items-center justify-between">
           {participants.length === 1 ? (
             <Link href="/balances">
-              <Button variant="ghost" className=" px-0 text-primary">
+              <Button onClick={resetAll} variant="ghost" className=" px-0 text-primary">
                 Cancel
               </Button>
             </Link>
@@ -358,7 +448,7 @@ export const AddExpensePage: React.FC<{
               />
             </div>
             {!amount || description === '' ? (
-              <div className="h-[180px]"></div>
+              <div className="h-[40px]"></div>
             ) : (
               <div className="h-[180px]">
                 <SplitTypeSection />
@@ -415,8 +505,22 @@ export const AddExpensePage: React.FC<{
                     </Button>
                   </div>
                 </div>
+                <div className="flex items-center justify-end gap-4">
+                  <Button variant="ghost" className=" px-0 text-primary" onClick={resetAll}>
+                    Clear
+                  </Button>
+                </div>
               </div>
             )}
+            <GoCardlessTransactions
+              add={addViaGoCardless}
+              addMultipleExpenses={addMultipleExpenses}
+              multipleArray={multipleArray}
+              setMultipleArray={(a: TransactionAddInputModel[]) => {
+                resetAll();
+                setMultipleArray(a);
+              }}
+            />
             <div className=" flex w-full justify-center">
               <Link
                 href="https://github.com/sponsors/KMKoushik"

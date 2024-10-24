@@ -27,6 +27,8 @@ const AddPage: NextPageWithUser<{
       name: user.name ?? null,
       email: user.email ?? null,
       image: user.image ?? null,
+      gocardlessId: user.gocardlessId ?? null,
+      gocardlessBankId: user.gocardlessBankId ?? null,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

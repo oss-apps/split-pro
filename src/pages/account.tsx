@@ -12,6 +12,7 @@ import {
   Github,
   HeartHandshakeIcon,
   Star,
+  CreditCard,
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { AppDrawer } from '~/components/ui/drawer';
@@ -24,10 +25,12 @@ import { env } from '~/env';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
 import { useState } from 'react';
 import { LoadingSpinner } from '~/components/ui/spinner';
+import { GoCardlessBankAccountSelect } from '~/components/Account/GoCardlessBankAccountSelect';
 
 const AccountPage: NextPageWithUser = ({ user }) => {
   const userQuery = api.user.me.useQuery();
   const downloadQuery = api.user.downloadData.useMutation();
+  const connectToBank = api.gocardless.connectToBank.useMutation();
 
   const [downloading, setDownloading] = useState(false);
 
@@ -43,6 +46,13 @@ const AccountPage: NextPageWithUser = ({ user }) => {
     URL.revokeObjectURL(url);
     setDownloading(false);
   }
+
+  const onConnectToBank = async () => {
+    const res = await connectToBank.mutateAsync(userQuery.data?.gocardlessBankId);
+    if (res?.link) {
+      window.location.href = res.link;
+    }
+  };
 
   return (
     <>
@@ -67,6 +77,24 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             </div>
           </div>
           <div className="mt-8 flex flex-col gap-4">
+            {env.NEXT_PUBLIC_GOCARDLESS_ENABLED && (
+              <>
+                <GoCardlessBankAccountSelect />
+                {userQuery.data?.gocardlessBankId && (
+                  <Button
+                    onClick={onConnectToBank}
+                    variant="ghost"
+                    className="text-md w-full justify-between px-0 hover:text-foreground/80"
+                  >
+                    <div className="flex items-center gap-4">
+                      <CreditCard className="h-5 w-5 text-teal-500" />
+                      <p>{userQuery.data?.gocardlessId ? 'Reconnect' : 'Connect'} to bank</p>
+                    </div>
+                    <ChevronRight className="h-6 w-6 text-gray-500" />
+                  </Button>
+                )}
+              </>
+            )}
             <Link href="https://twitter.com/KM_Koushik_" target="_blank">
               <Button
                 variant="ghost"
@@ -136,7 +164,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             </Link>
             <AppDrawer
               trigger={
-                <div className="flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300 hover:text-foreground/80">
+                <div className="flex w-full justify-between px-0 py-2 text-[16px] font-medium hover:text-foreground/80">
                   <div className="flex items-center gap-4">
                     <Download className="h-5 w-5 text-blue-500" />
                     Download App

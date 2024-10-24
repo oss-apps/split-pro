@@ -57,6 +57,8 @@ export const UserInput: React.FC = () => {
         emailVerified: new Date(),
         image: null,
         currency: 'USD',
+        gocardlessId: null,
+        gocardlessBankId: null,
       });
     }
   };
@@ -64,7 +66,7 @@ export const UserInput: React.FC = () => {
   return (
     <div className="mt-4 flex flex-wrap gap-2 border-b pb-4">
       {group ? (
-        <div className="flex items-center gap-2 rounded-full bg-slate-800 p-0.5 pr-4">
+        <div className="flex items-center gap-2 rounded-full bg-slate-100 dark:bg-slate-800 p-0.5 pr-4">
           <GroupAvatar name={group.name} size={30} />
           <p className="text-xs">{group.name}</p>
         </div>
@@ -73,7 +75,7 @@ export const UserInput: React.FC = () => {
           p.id !== currentUser?.id ? (
             <div
               key={p.id}
-              className="flex items-center gap-2 rounded-full bg-slate-800 p-0.5 pr-4"
+              className="flex items-center gap-2 rounded-full bg-slate-100 dark:bg-slate-800 p-0.5 pr-4"
             >
               <UserAvatar user={p} size={30} />
               <p className="text-xs">{p.name ?? p.email}</p>

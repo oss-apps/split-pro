@@ -157,7 +157,7 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
                       )}
                     />
 
-                    <Button className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100">
+                    <Button className="mt-6 w-[300px] bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 focus:bg-gray-100">
                       Submit
                     </Button>
                   </form>
@@ -186,7 +186,7 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
                       )}
                     />
                     <Button
-                      className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
+                      className="mt-6 w-[300px] bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 focus:bg-gray-100"
                       type="submit"
                       disabled={emailStatus === 'sending'}
                     >

@@ -53,6 +53,8 @@ export const SelectUserOrGroup: React.FC<{
         emailVerified: new Date(),
         image: null,
         currency: 'USD',
+        gocardlessId: null,
+        gocardlessBankId: null,
       });
       // add email to split pro
     }

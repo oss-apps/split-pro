@@ -127,7 +127,7 @@ const BalancePage: NextPageWithUser = () => {
 
                 <Link href="/add">
                   <Button className="w-[250px]">
-                    <PlusIcon className="mr-2 h-5 w-5 text-black" />
+                    <PlusIcon className="mr-2 h-5 w-5 text-white dark:text-black" />
                     Add Expense
                   </Button>
                 </Link>

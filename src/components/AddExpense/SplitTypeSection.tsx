@@ -17,7 +17,7 @@ export const SplitTypeSection: React.FC = () => {
   const { setPaidBy } = useAddExpenseStore((s) => s.actions);
 
   return (
-    <div className="mt-4 flex items-center justify-center text-[16px] text-gray-400">
+    <div className="mt-4 flex items-center justify-center text-[16px] text-gray-800 dark:text-gray-400">
       <p className="text-[16px]">Paid by </p>
       <AppDrawer
         trigger={

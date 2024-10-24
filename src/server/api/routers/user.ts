@@ -146,6 +146,7 @@ export const userRouter = createTRPCRouter({
         name: z.string(),
         category: z.string(),
         amount: z.number(),
+        transactionId: z.string().optional(),
         splitType: z.enum([
           SplitType.ADJUSTMENT,
           SplitType.EQUAL,
@@ -173,6 +174,7 @@ export const userRouter = createTRPCRouter({
           ctx.session.user.id,
           input.expenseDate ?? new Date(),
           input.fileKey,
+          input.transactionId,
         );
 
         return expense;
@@ -233,6 +235,24 @@ export const userRouter = createTRPCRouter({
       return expenses;
     }),
 
+    getOwnExpenses: protectedProcedure
+    .query(async ({ ctx }) => {
+      const expenses = await db.expense.findMany({
+        where: {
+          paidBy: ctx.session.user.id,
+          deletedBy: null,
+        },
+        orderBy: {
+          expenseDate: 'desc',
+        },
+        include: {
+          group: true
+        },
+      });
+
+      return expenses;
+    }),
+
   getBalancesWithFriend: protectedProcedure
     .input(z.object({ friendId: z.number() }))
     .query(async ({ input, ctx }) => {
@@ -273,7 +293,7 @@ export const userRouter = createTRPCRouter({
     }),
 
   updateUserDetail: protectedProcedure
-    .input(z.object({ name: z.string().optional(), currency: z.string().optional() }))
+    .input(z.object({ name: z.string().optional(), currency: z.string().optional(), gocardlessId: z.string().optional(), gocardlessBankId: z.string().optional() }))
     .mutation(async ({ input, ctx }) => {
       const user = await db.user.update({
         where: {

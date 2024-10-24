@@ -8,6 +8,7 @@ RUN apk update
 
 WORKDIR /app
 RUN npm i -g pnpm@8.9
+COPY . .
 RUN ls
 COPY package.json pnpm-lock.yaml ./
 
@@ -18,7 +19,6 @@ ENV NEXT_PUBLIC_GOCARDLESS_ENABLED=${NEXT_PUBLIC_GOCARDLESS_ENABLED}
 ARG NEXT_PUBLIC_GOCARDLESS_COUNTRY
 ENV NEXT_PUBLIC_GOCARDLESS_COUNTRY=${NEXT_PUBLIC_GOCARDLESS_COUNTRY}
 
-COPY . .
 RUN pnpm generate
 RUN pnpm build
 
@@ -38,8 +38,7 @@ COPY --from=base  /app/.next/standalone ./
 COPY --from=base  /app/.next/static ./.next/static
 COPY --from=base  /app/public ./public
 
-COPY --from=base  /app/prisma/schema.prisma ./prisma/schema.prisma
-COPY --from=base  /app/prisma/migrations ./prisma/migrations
+COPY --from=base  /app/prisma ./prisma
 COPY --from=base  /app/node_modules/prisma ./node_modules/prisma
 COPY --from=base  /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=base  /app/node_modules/sharp ./node_modules/sharp
@@ -51,6 +50,6 @@ RUN ln -s /app/node_modules/prisma/build/index.js ./node_modules/.bin/prisma
 # set this so it throws error where starting server
 ENV SKIP_ENV_VALIDATION="false"
 
-COPY  ./docker/start.sh ./start.sh
+COPY ./docker/start.sh ./start.sh
 
 CMD ["sh", "start.sh"]

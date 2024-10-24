@@ -69,11 +69,7 @@ export const groupRouter = createTRPCRouter({
       const balances: Record<string, number> = {};
 
       for (const balance of g.group.groupBalances) {
-        if (balances[balance.currency] === undefined) {
-          balances[balance.currency] = balance.amount;
-        } else {
-          balances[balance.currency] += balance.amount;
-        }
+        balances[balance.currency] = (balances[balance.currency] ?? 0) + balance.amount;
       }
 
       return {
@@ -115,6 +111,7 @@ export const groupRouter = createTRPCRouter({
         name: z.string(),
         category: z.string(),
         amount: z.number(),
+        transactionId: z.string().optional(),
         splitType: z.enum([
           SplitType.ADJUSTMENT,
           SplitType.EQUAL,
@@ -143,6 +140,7 @@ export const groupRouter = createTRPCRouter({
           ctx.session.user.id,
           input.expenseDate ?? new Date(),
           input.fileKey,
+          input.transactionId
         );
 
         return expense;
@@ -222,6 +220,7 @@ export const groupRouter = createTRPCRouter({
       },
       where: {
         groupId: input.groupId,
+        deletedBy: null,
       },
     });
 

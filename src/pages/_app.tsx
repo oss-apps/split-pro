@@ -64,7 +64,12 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <meta property="og:image" content="https://splitpro.app/og_banner.png" />
       </Head>
       <SessionProvider session={session}>
-        <ThemeProvider attribute="class" defaultTheme="dark">
+        <ThemeProvider
+          attribute="class"
+          enableColorScheme
+          enableSystem
+          defaultTheme='system'
+        >
           <Toaster toastOptions={{ duration: 1500 }} />
           {(Component as NextPageWithUser).auth ? (
             <Auth pageProps={pageProps} Page={Component as NextPageWithUser}></Auth>

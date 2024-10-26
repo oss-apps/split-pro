@@ -8,18 +8,6 @@ const client = new NordigenClient({
   secretKey: env.GOCARDLESS_SECRET_KEY
 });
 
-const SingleTransaction = z.object({
-  bookingDate: z.string(),
-  remittanceInformationUnstructured: z.string(),
-  transactionId: z.string(),
-  transactionAmount: z.object({
-    amount: z.string(),
-    currency: z.string()
-  })
-})
-
-export type SingleTransactionType = z.infer<typeof SingleTransaction>;
-
 export const gocardlessRouter = createTRPCRouter({
   getTransactions: protectedProcedure
     .input(z.string().optional())
@@ -66,9 +54,11 @@ export const gocardlessRouter = createTRPCRouter({
   connectToBank: protectedProcedure
     .input(z.string().optional())
     .mutation(async ({ input, ctx }) => {
+      const institutionId = input
+      if (!institutionId) return
+
       await client.generateToken();
 
-      const institutionId = input ?? "NORDEA_NDEASESS";
       const generateRandomId = Array.from({ length: 60 }, () => Math.random().toString(36)[2]).join('');
 
       const init = await client.initSession({

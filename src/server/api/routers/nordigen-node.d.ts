@@ -65,11 +65,11 @@ declare module 'nordigen-node' {
     account(accountId: string): Account
     initSession({
       redirectUrl: string,
-institutionId: string,
-referenceId: string,
-user_language: string,
-redirect_immediate: boolean,
-account_selection: boolean,
+      institutionId: string,
+      referenceId: string,
+      user_language: string,
+      redirect_immediate: boolean,
+      account_selection: boolean,
     }): Promise<Init>
 
     requisition: {

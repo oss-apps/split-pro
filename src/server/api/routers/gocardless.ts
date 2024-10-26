@@ -1,34 +1,12 @@
 import { env } from "~/env";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
-import NordigenClient from "nordigen-node"
+import NordigenClient, { type GetTransactions } from "nordigen-node"
 
 const client = new NordigenClient({
   secretId: env.GOCARDLESS_SECRET_ID,
   secretKey: env.GOCARDLESS_SECRET_KEY
 });
-
-export interface GoCardlessTransaction {
-  transactionId: string;
-  entryReference: string;
-  bookingDate: string;
-  valueDate: string;
-  transactionAmount: {
-    amount: string
-    currency: string
-  }
-  remittanceInformationUnstructured: string;
-  remittanceInformationStructured: string;
-  additionalInformation: string;
-  internalTransactionId: string;
-}
-
-interface GoCardlessGetTransactions {
-  transactions: {
-    booked: GoCardlessTransaction[]
-    pending: GoCardlessTransaction[]
-  }
-}
 
 const SingleTransaction = z.object({
   bookingDate: z.string(),
@@ -65,7 +43,7 @@ export const gocardlessRouter = createTRPCRouter({
           if (!cachedData.data) {
             throw new Error('Failed to fetch cached transactions');
           }
-          return JSON.parse(cachedData.data) as GoCardlessGetTransactions;
+          return JSON.parse(cachedData.data) as GetTransactions;
         }
       }
 

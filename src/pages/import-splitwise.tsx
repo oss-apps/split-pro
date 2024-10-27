@@ -1,6 +1,4 @@
-import { type GetServerSideProps, type NextPage } from 'next';
 import Head from 'next/head';
-import { type User } from '@prisma/client';
 import { Input } from '~/components/ui/input';
 import { toast } from 'sonner';
 import { useState } from 'react';
@@ -162,7 +160,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               {usersWithBalance.length ? (
                 <div className="mt-4 flex flex-col gap-3">
                   {usersWithBalance.map((user, index) => (
-                    <div key={user.id} className="">
+                    <div key={user.id}>
                       <div key={user.id} className="flex  items-center  justify-between gap-4">
                         <div className="flex shrink-0 items-center gap-2">
                           <Checkbox

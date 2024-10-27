@@ -8,7 +8,6 @@ import { toUIString } from '~/utils/numbers';
 import Link from 'next/link';
 import { type NextPageWithUser } from '~/types';
 import { type User } from 'next-auth';
-import { BalanceSkeleton } from '~/components/ui/skeleton';
 import useEnableAfter from '~/hooks/useEnableAfter';
 import { LoadingSpinner } from '~/components/ui/spinner';
 

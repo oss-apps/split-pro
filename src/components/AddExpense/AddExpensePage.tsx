@@ -359,13 +359,13 @@ export const AddExpensePage: React.FC<{
                 className="h-[70vh]"
                 shouldCloseOnAction
               >
-                <div className="">
+                <div>
                   {Object.entries(categories).map(([categoryName, categoryDetails]) => {
                     return (
                       <div key={categoryName} className="mb-8">
                         <h3 className="mb-4 text-lg font-semibold">{categoryDetails.name}</h3>
                         <div className="flex flex-wrap justify-between gap-2">
-                          {categoryDetails.items.map((item, index) =>
+                          {categoryDetails.items.map((item) =>
                             Object.entries(item).map(([key, value]) => {
                               const Icon =
                                 CategoryIcons[key] ?? CategoryIcons[categoryName] ?? Banknote;
@@ -416,7 +416,7 @@ export const AddExpensePage: React.FC<{
                   if (openVal !== open) setOpen(openVal);
                 }}
               >
-                <div className="">
+                <div>
                   <Command className="h-[50vh]">
                     <CommandInput className="text-lg" placeholder="Search currency" />
                     <CommandEmpty>No currency found.</CommandEmpty>

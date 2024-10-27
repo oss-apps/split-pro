@@ -4,7 +4,7 @@ import { SplitType } from '@prisma/client';
 import { api } from '~/utils/api';
 import { UserAvatar } from '~/components/ui/avatar';
 import Link from 'next/link';
-import { ChevronLeftIcon, PlusIcon, Trash, Trash2 } from 'lucide-react';
+import { ChevronLeftIcon, PlusIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { Separator } from '~/components/ui/separator';
 import { Button } from '~/components/ui/button';
@@ -177,7 +177,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                             </div>
                           ))}
                       </div>
-                      <div className="">
+                      <div>
                         <CategoryIcon category={e.category} className="h-5 w-5 text-gray-400" />
                       </div>
                       <div>

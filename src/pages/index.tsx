@@ -16,7 +16,6 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { BackgroundGradient } from '~/components/ui/background-gradient';
-import { env } from '~/env';
 
 export default function Home() {
   return (

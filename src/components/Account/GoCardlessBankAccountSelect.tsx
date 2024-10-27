@@ -48,7 +48,7 @@ export const GoCardlessBankAccountSelect = () => {
         if (openVal !== open) setOpen(openVal);
       }}
     >
-      <div className="">
+      <div>
         <Command className="h-[50vh]">
           <CommandInput className="text-lg" placeholder="Search bank" />
           <CommandEmpty>No bank providers found.</CommandEmpty>

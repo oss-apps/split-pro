@@ -2,7 +2,7 @@ import { SplitType } from '@prisma/client';
 import { z } from 'zod';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
-import { createGroupExpense, deleteExpense } from '../services/splitService';
+import { createGroupExpense } from '../services/splitService';
 import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 
@@ -49,7 +49,6 @@ export const groupRouter = createTRPCRouter({
   }),
 
   getAllGroupsWithBalances: protectedProcedure.query(async ({ ctx }) => {
-    const time = Date.now();
     const groups = await ctx.db.groupUser.findMany({
       where: {
         userId: ctx.session.user.id,

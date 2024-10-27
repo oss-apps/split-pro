@@ -89,7 +89,7 @@ export const gocardlessRouter = createTRPCRouter({
     .query(async () => {
       await client.generateToken();
 
-      const institutionsData = await client.institution.getInstitutions()
+      const institutionsData = await client.institution.getInstitutions(env.GOCARDLESS_COUNTRY ? {country: env.GOCARDLESS_COUNTRY} : undefined)
 
       if (!institutionsData) {
         throw new Error('Failed to fetch institutions');

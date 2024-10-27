@@ -228,7 +228,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               Follow this link to export splitwise data
               <Link href="https://export-splitwise.vercel.app/" target="_blank">
                 <Button>
-                  <DownloadCloud className="mr-2 text-gray-800" />
+                  <DownloadCloud className="mr-2 text-white dark:text-gray-800" />
                   Export splitwise data
                 </Button>
               </Link>

@@ -215,7 +215,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
               ) : (
                 <DialogClose
                   onClick={actionOnClick}
-                  className="w-[100px] rounded-md bg-primary py-2 text-sm text-black disabled:opacity-50"
+                  className="w-[100px] rounded-md bg-primary py-2 text-sm text-white disabled:opacity-50 dark:text-black"
                   disabled={actionDisabled}
                 >
                   {actionTitle}

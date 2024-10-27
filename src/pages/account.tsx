@@ -84,7 +84,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
                     <g clip-path="url(#clip0_1_2)">
                       <path
                         d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"
-                        fill="white"
+                        fill="gray"
                       />
                     </g>
                     <defs>
@@ -104,7 +104,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
                 className="text-md w-full justify-between px-0 hover:text-foreground/80"
               >
                 <div className="flex items-center gap-4">
-                  <Github className="h-5 w-5 text-gray-200" />
+                  <Github className="h-5 w-5 text-gray-800 dark:text-gray-200" />
                   Star us on Github
                 </div>
                 <ChevronRight className="h-6 w-6 text-gray-500" />
@@ -138,13 +138,16 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             </Link>
             <AppDrawer
               trigger={
-                <div className="flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300 hover:text-foreground/80">
+                <Button
+                  variant="ghost"
+                  className="text-md w-full justify-between px-0 hover:text-foreground/80"
+                >
                   <div className="flex items-center gap-4">
                     <Download className="h-5 w-5 text-blue-500" />
                     Download App
                   </div>
                   <ChevronRight className="h-6x w-6 text-gray-500" />
-                </div>
+                </Button>
               }
               leftAction="Close"
               title="Download App"

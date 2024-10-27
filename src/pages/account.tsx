@@ -24,6 +24,7 @@ import { env } from '~/env';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
 import { useState } from 'react';
 import { LoadingSpinner } from '~/components/ui/spinner';
+import { ThemeSelect } from '~/components/Account/ThemeSelect';
 
 const AccountPage: NextPageWithUser = ({ user }) => {
   const userQuery = api.user.me.useQuery();
@@ -67,6 +68,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             </div>
           </div>
           <div className="mt-8 flex flex-col gap-4">
+            <ThemeSelect />
             <Link href="https://twitter.com/KM_Koushik_" target="_blank">
               <Button
                 variant="ghost"

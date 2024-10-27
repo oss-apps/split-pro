@@ -137,27 +137,20 @@ const SplitEqualSection: React.FC = () => {
   const allSelected = participants.every((p) => p.splitShare !== 0);
 
   return (
-    <div className="mt-4 flex flex-col gap-6 px-2 relative">
+    <div className="relative mt-4 flex flex-col gap-6 px-2">
       <div className="flex items-center">
-        <div className="mb-2 flex-grow flex justify-center">
-          <div
-            className={`${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'
-              }`}
-          >
+        <div className="mb-2 flex flex-grow justify-center">
+          <div className={`${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'}`}>
             {currency} {(amount / totalParticipants).toFixed(2)} per person
           </div>
         </div>
       </div>
-      <div className="absolute top-0 right-0">
+      <div className="absolute right-0 top-0">
         <button
-          className="flex items-center gap-1 border rounded-md py-0.5 px-2 whitespace-nowrap"
+          className="flex items-center gap-1 whitespace-nowrap rounded-md border px-2 py-0.5"
           onClick={selectAll}
         >
-          {allSelected ? (
-            <X className="h-4 w-4" />
-          ) : (
-            <Check className="h-4 w-4" />
-          )}
+          {allSelected ? <X className="h-4 w-4" /> : <Check className="h-4 w-4" />}
           <span className="text-sm">All</span>
         </button>
       </div>
@@ -243,7 +236,7 @@ const SplitByAmountSection: React.FC = () => {
   const [splitShareValue, setSplitShareValue] = useState(
     participants.reduce(
       (acc, p) => {
-        acc[p.id] = p.splitShare?.toString();
+        acc[p.id] = p.splitShare?.toString() ?? '';
         return acc;
       },
       {} as Record<string, string | undefined>,
@@ -256,19 +249,20 @@ const SplitByAmountSection: React.FC = () => {
       addOrUpdateParticipant({ ...p, splitShare: 0 });
       return;
     }
-    addOrUpdateParticipant({ ...p, splitShare: parseFloat(value) });
+    const formattedValue = parseFloat(parseFloat(value).toFixed(2));
+    addOrUpdateParticipant({ ...p, splitShare: formattedValue });
   };
 
-  const remainingPercentage =
-    amount - participants.reduce((acc, p) => acc + (p.splitShare ?? 0), 0);
+  const totalSplitShare = participants.reduce((acc, p) => acc + (p.splitShare ?? 0), 0);
+
+  const remainingAmount = parseFloat((amount - totalSplitShare).toFixed(2));
 
   return (
     <div className="mt-4 flex flex-col gap-6 px-2">
       <div
         className={`mb-2 text-center ${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'} t`}
       >
-        {' '}
-        Remaining {currency} {remainingPercentage}
+        Remaining {currency} {remainingAmount}
       </div>
       {participants.map((p) => (
         <div key={p.id} className="flex justify-between">
@@ -278,7 +272,6 @@ const SplitByAmountSection: React.FC = () => {
           </div>
           <div className="flex items-center gap-1">
             <p className="text-xs">{currency}</p>
-
             <Input
               type="number"
               value={splitShareValue[p.id]}

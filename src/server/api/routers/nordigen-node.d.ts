@@ -57,8 +57,8 @@ declare module 'nordigen-node' {
 
   export default class NordigenClient {
     constructor(options: {
-      secretId: string | undefined;
-      secretKey: string | undefined;
+      secretId?: string;
+      secretKey?: string;
     });
 
     generateToken(): Promise<void>

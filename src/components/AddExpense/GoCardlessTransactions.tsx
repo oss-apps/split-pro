@@ -117,8 +117,9 @@ export const GoCardlessTransactions = ({
                       onTransactionRowClick(item, true);
                     }}
                   />
-                  <button
+                  <Button
                     className="flex items-center gap-4"
+                    variant="ghost"
                     disabled={alreadyAdded(item.transactionId)}
                     onClick={() => onTransactionRowClick(item, false)}
                   >
@@ -146,7 +147,7 @@ export const GoCardlessTransactions = ({
                           `(Already added${returnGroupName(item.transactionId)})`}
                       </p>
                     </div>
-                  </button>
+                  </Button>
                 </div>
                 <div className="min-w-10 shrink-0">
                   <div

@@ -11,8 +11,7 @@ const client = new NordigenClient({
 export const gocardlessRouter = createTRPCRouter({
   getTransactions: protectedProcedure
     .input(z.string().optional())
-    .query(async ({ input, ctx }) => {
-      const requisitionId = input
+    .query(async ({ input: requisitionId, ctx }) => {
       if (!requisitionId) return
 
       await client.generateToken();
@@ -53,8 +52,7 @@ export const gocardlessRouter = createTRPCRouter({
   }),
   connectToBank: protectedProcedure
     .input(z.string().optional())
-    .mutation(async ({ input, ctx }) => {
-      const institutionId = input
+    .mutation(async ({ input: institutionId, ctx }) => {
       if (!institutionId) return
 
       await client.generateToken();

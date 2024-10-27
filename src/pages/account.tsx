@@ -4,7 +4,6 @@ import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import { UserAvatar } from '~/components/ui/avatar';
 import {
-  Bell,
   ChevronRight,
   Download,
   DownloadCloud,
@@ -20,8 +19,6 @@ import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { UpdateDetails } from '~/components/Account/UpdateDetails';
 import { api } from '~/utils/api';
 import { type NextPageWithUser } from '~/types';
-import { toast } from 'sonner';
-import { env } from '~/env';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
 import { useState } from 'react';
 import { LoadingSpinner } from '~/components/ui/spinner';
@@ -31,6 +28,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
   const userQuery = api.user.me.useQuery();
   const downloadQuery = api.user.downloadData.useMutation();
   const connectToBank = api.gocardless.connectToBank.useMutation();
+  const gocardlessEnabled = api.gocardless.gocardlessEnabled.useQuery();
 
   const [downloading, setDownloading] = useState(false);
 
@@ -77,7 +75,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             </div>
           </div>
           <div className="mt-8 flex flex-col gap-4">
-            {env.NEXT_PUBLIC_GOCARDLESS_ENABLED && (
+            {gocardlessEnabled && (
               <>
                 <GoCardlessBankAccountSelect />
                 {userQuery.data?.gocardlessBankId && (

@@ -4,7 +4,6 @@ import { format } from 'date-fns';
 import { Button } from '../ui/button';
 import { Checkbox } from '../ui/checkbox';
 import { type TransactionAddInputModel } from './AddExpensePage';
-import { env } from '~/env';
 import { type Transaction } from 'nordigen-node';
 
 type Props = {
@@ -28,6 +27,7 @@ export const GoCardlessTransactions = ({
   const gctransactions = api.gocardless.getTransactions.useQuery(userQuery.data?.gocardlessId);
 
   const expensesQuery = api.user.getOwnExpenses.useQuery();
+  const gocardlessEnabled = api.gocardless.gocardlessEnabled.useQuery();
 
   const returnTransactionsArray = (): TransactionWithPendingStatus[] => {
     const transactions = gctransactions?.data?.transactions;
@@ -50,7 +50,7 @@ export const GoCardlessTransactions = ({
     return transaction?.group?.name ? ` to ${transaction.group.name}` : '';
   };
 
-  if (!env.NEXT_PUBLIC_GOCARDLESS_ENABLED) {
+  if (!gocardlessEnabled) {
     return <></>;
   }
 

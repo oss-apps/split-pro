@@ -6,15 +6,15 @@ import { cn } from '~/lib/utils';
 import { api } from '~/utils/api';
 import { Button } from '../ui/button';
 import Image from 'next/image';
-import { env } from '~/env';
 
 export const GoCardlessBankAccountSelect = () => {
   const [open, setOpen] = React.useState(false);
   const userQuery = api.user.me.useQuery();
   const updateProfile = api.user.updateUserDetail.useMutation();
-  const institutions = api.gocardless.getInstitutions.useQuery(env.NEXT_PUBLIC_GOCARDLESS_COUNTRY);
+  const institutions = api.gocardless.getInstitutions.useQuery();
+  const gocardlessEnabled = api.gocardless.gocardlessEnabled.useQuery();
 
-  if (!env.NEXT_PUBLIC_GOCARDLESS_ENABLED) {
+  if (!gocardlessEnabled) {
     return <></>;
   }
 

@@ -1,5 +1,5 @@
 import { env } from "~/env";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { z } from "zod";
 import NordigenClient, { type GetTransactions } from "nordigen-node"
 
@@ -86,18 +86,19 @@ export const gocardlessRouter = createTRPCRouter({
       return init;
   }),
   getInstitutions: protectedProcedure
-    .input(z.string().optional())
-    .query(async ({ input }) => {
-      const country = input
-
+    .query(async () => {
       await client.generateToken();
 
-      const institutionsData = await client.institution.getInstitutions(country ? {country} : undefined)
+      const institutionsData = await client.institution.getInstitutions()
 
       if (!institutionsData) {
         throw new Error('Failed to fetch institutions');
       }
   
       return institutionsData;
+  }),
+  gocardlessEnabled: publicProcedure
+    .query(async () => {
+      return env.GOCARDLESS_ENABLED ?? false
   }),
 })

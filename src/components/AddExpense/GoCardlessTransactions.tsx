@@ -57,31 +57,26 @@ export const GoCardlessTransactions = ({
   const transactionsArray = returnTransactionsArray();
 
   const onTransactionRowClick = (item: TransactionWithPendingStatus, multiple: boolean) => {
+    const transactionData = {
+      date: new Date(item.bookingDate),
+      amount: item.transactionAmount.amount.replace('-', ''),
+      currency: item.transactionAmount.currency,
+      description: item.remittanceInformationUnstructured,
+      transactionId: item.transactionId,
+    };
+
     if (multiple) {
-      if (multipleArray?.some((cItem) => cItem.transactionId === item.transactionId)) {
-        setMultipleArray(
-          multipleArray.filter((cItem) => cItem.transactionId !== item.transactionId),
-        );
-      } else {
-        setMultipleArray([
-          ...multipleArray,
-          {
-            date: new Date(item.bookingDate),
-            amount: item.transactionAmount.amount.replace('-', ''),
-            currency: item.transactionAmount.currency,
-            description: item.remittanceInformationUnstructured,
-            transactionId: item.transactionId,
-          },
-        ]);
-      }
+      const isInMultipleArray = multipleArray?.some(
+        (cItem) => cItem.transactionId === item.transactionId,
+      );
+
+      setMultipleArray(
+        isInMultipleArray
+          ? multipleArray.filter((cItem) => cItem.transactionId !== item.transactionId)
+          : [...multipleArray, transactionData],
+      );
     } else {
-      add({
-        date: new Date(item.bookingDate),
-        amount: item.transactionAmount.amount.replace('-', ''),
-        currency: item.transactionAmount.currency,
-        description: item.remittanceInformationUnstructured,
-        transactionId: item.transactionId,
-      });
+      add(transactionData);
       document.getElementById('mainlayout')?.scrollTo({ top: 0, behavior: 'instant' });
     }
   };

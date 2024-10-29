@@ -135,7 +135,7 @@ export const GoCardlessTransactions = ({
                     <div>
                       <p
                         className={
-                          'line-clamp-2 max-w-[200px] text-left text-sm lg:max-w-lg lg:text-base' +
+                          'line-clamp-2 whitespace-break-spaces text-left text-sm lg:text-base' +
                           (alreadyAdded(item.transactionId) ? ' line-through' : '')
                         }
                       >

@@ -7,9 +7,9 @@ import { Button } from '../ui/button';
 import { useTheme } from 'next-themes';
 
 const supportedThemes = {
-  system: 'System prefer',
   dark: 'Dark',
   light: 'Light',
+  system: 'System prefer',
 };
 
 export const ThemeSelect = () => {

@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { AppDrawer } from '../ui/drawer';
 import { Separator } from '../ui/separator';
 import { CategoryIcons } from '../ui/categoryIcons';
-import { Banknote } from 'lucide-react';
+import { BadgeCheck, Banknote } from 'lucide-react';
 
 type ExpenseDetailsProps = {
   user: NextUser;
@@ -50,6 +50,12 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
               <p className=" text-sm text-gray-500">
                 Added by {expense.addedByUser.name ?? expense.addedByUser.email} on{' '}
                 {format(expense.createdAt, 'dd MMM yyyy')}
+              </p>
+            )}
+            {expense.transactionId && (
+              <p className=" flex gap-2 text-sm text-gray-500">
+                Verified transaction
+                <BadgeCheck className="h-4 w-4 text-emerald-500" />
               </p>
             )}
           </div>

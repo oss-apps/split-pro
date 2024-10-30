@@ -363,7 +363,7 @@ const BalancePage: NextPageWithUser<{
             <Link
               href={`/groups/${groupId}/expenses/${e.id}`}
               key={e.id}
-              className="flex items-center justify-between px-2 py-2"
+              className="flex items-center justify-between px-2 py-3"
             >
               <div className="flex items-center gap-4">
                 <div className="text-xs text-gray-500">

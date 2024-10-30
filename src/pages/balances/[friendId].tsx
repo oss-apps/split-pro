@@ -165,7 +165,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   <Link
                     href={`/balances/${friendQuery.data?.id}/expenses/${e.id}`}
                     key={e.id}
-                    className="flex items-start justify-between px-2 py-2"
+                    className="flex items-start justify-between px-2 py-3"
                   >
                     <div className="flex items-center gap-3 px-1">
                       <div className="text-xs text-gray-500">

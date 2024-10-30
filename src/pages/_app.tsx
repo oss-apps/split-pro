@@ -35,21 +35,19 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <meta name="msapplication-config" content="/icons/browserconfig.xml" />
         <meta name="msapplication-TileColor" content="#2B5797" />
         <meta name="msapplication-tap-highlight" content="no" />
-
-        <meta name="theme-color" content="#030711" />
+        <meta name="color-scheme" content="light dark" />
+        <meta name="theme-color" content="#030711" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-
         <link rel="apple-touch-icon" href="/icons/ios/144.png" />
         <link rel="apple-touch-icon" sizes="152x152" href="/icons/ios/152.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/icons/ios/180.png" />
         <link rel="apple-touch-icon" sizes="167x167" href="/icons/ios/167.png" />
-
         <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#5bbad5" />
         <link rel="shortcut icon" href="/favicon.ico" />
-
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:url" content="https://splitpro.app" />
         <meta name="twitter:title" content="SplitPro" />

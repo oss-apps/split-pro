@@ -149,7 +149,7 @@ const BalancePage: NextPageWithUser<{
               trigger={<BarChartHorizontal className="h-6 w-6" />}
               className="h-[85vh]"
             >
-              <div className="">
+              <div>
                 <p className="font-semibold">Total expenses</p>
                 <div className="mt-2 flex flex-wrap gap-1">
                   {groupTotalQuery.data?.map((total, index, arr) => {
@@ -170,7 +170,7 @@ const BalancePage: NextPageWithUser<{
               trigger={<Info className="h-6 w-6" />}
               className="h-[85vh]"
             >
-              <div className="">
+              <div>
                 <p className="font-semibold">Members</p>
                 <div className="mt-2 flex flex-col gap-2">
                   {groupDetailQuery.data?.groupUsers.map((groupUser) => (
@@ -363,7 +363,7 @@ const BalancePage: NextPageWithUser<{
             <Link
               href={`/groups/${groupId}/expenses/${e.id}`}
               key={e.id}
-              className="flex items-center justify-between px-2 py-2"
+              className="flex items-center justify-between px-2 py-3"
             >
               <div className="flex items-center gap-4">
                 <div className="text-xs text-gray-500">

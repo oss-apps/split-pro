@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { type File, FileUp, ImagePlus, Image as ImageUploaded } from 'lucide-react';
+import { type File, ImagePlus, Image as ImageUploaded } from 'lucide-react';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { FILE_SIZE_LIMIT } from '~/lib/constants';

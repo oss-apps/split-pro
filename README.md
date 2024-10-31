@@ -30,6 +30,7 @@ It currently has most of the important features.
 - Push notification
 - Download your data
 - Import from splitwise
+- Bank account transactions integration
 
 **More features coming every day**
 
@@ -98,6 +99,7 @@ pnpm i
 - Copy the env.example file into .env
 - Setup google oauth required for auth https://next-auth.js.org/providers/google or Email provider by setting SMTP details
 - Login to minio console using `splitpro` user and password `password` and [create access keys](http://localhost:9001/access-keys/new-account) and the R2 related env variables
+- If you want to use bank integration please create a free account on [GoCardless](https://gocardless.com/bank-account-data/) and then enter the the related env variables
 
 ### Run the app
 

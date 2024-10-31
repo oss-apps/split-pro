@@ -5,11 +5,10 @@ import React from 'react';
 import { toUIString } from '~/utils/numbers';
 import { UserAvatar } from '../ui/avatar';
 import Image from 'next/image';
-import { AppDrawer, Drawer, DrawerContent, DrawerTrigger } from '../ui/drawer';
+import { AppDrawer } from '../ui/drawer';
 import { Separator } from '../ui/separator';
 import { CategoryIcons } from '../ui/categoryIcons';
-import { Banknote } from 'lucide-react';
-import { env } from '~/env';
+import { BadgeCheck, Banknote } from 'lucide-react';
 
 type ExpenseDetailsProps = {
   user: NextUser;
@@ -28,14 +27,14 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
   const CategoryIcon = CategoryIcons[expense.category] ?? Banknote;
 
   return (
-    <div className="">
+    <div>
       <div className="mb-4 flex items-start justify-between gap-2 px-6">
         <div className="flex items-start gap-4">
           <div className="rounded-lg border p-2 text-xl">
             <CategoryIcon className="text-gray-400" size={24} />
           </div>
           <div className="flex flex-col gap-2">
-            <p className="">{expense.name}</p>
+            <p>{expense.name}</p>
             <p className="text-2xl font-semibold">
               {expense.currency} {toUIString(expense.amount ?? 0)}
             </p>
@@ -51,6 +50,12 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
               <p className=" text-sm text-gray-500">
                 Added by {expense.addedByUser.name ?? expense.addedByUser.email} on{' '}
                 {format(expense.createdAt, 'dd MMM yyyy')}
+              </p>
+            )}
+            {expense.transactionId && (
+              <p className=" flex gap-2 text-sm text-gray-500">
+                Verified transaction
+                <BadgeCheck className="h-4 w-4 text-emerald-500" />
               </p>
             )}
           </div>

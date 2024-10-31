@@ -34,7 +34,7 @@ const InstallApp: React.FC = () => {
       <AppDrawer
         trigger={
           <Button className="w-[250px]">
-            <Download className="mr-2 h-5 w-5 text-black" />
+            <Download className="mr-2 h-5 w-5 text-white dark:text-black" />
             Download App
           </Button>
         }

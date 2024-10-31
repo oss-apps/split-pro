@@ -3,8 +3,6 @@ import MainLayout from '~/components/Layout/MainLayout';
 import clsx from 'clsx';
 import { Button } from '~/components/ui/button';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { getServerAuthSessionForSSG } from '~/server/auth';
-import { type User } from '@prisma/client';
 import { api } from '~/utils/api';
 import { CreateGroup } from '~/components/group/CreateGroup';
 import Link from 'next/link';

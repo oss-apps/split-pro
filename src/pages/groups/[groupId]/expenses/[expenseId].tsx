@@ -1,7 +1,5 @@
 import Head from 'next/head';
 import MainLayout from '~/components/Layout/MainLayout';
-import { getServerAuthSessionForSSG } from '~/server/auth';
-import { type User } from '@prisma/client';
 import { api } from '~/utils/api';
 import Link from 'next/link';
 import { useRouter } from 'next/router';

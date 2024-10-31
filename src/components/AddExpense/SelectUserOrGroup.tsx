@@ -9,7 +9,6 @@ import { type Group, type GroupUser, type User } from '@prisma/client';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { SendIcon } from 'lucide-react';
-import { env } from '~/env';
 import React from 'react';
 
 export const SelectUserOrGroup: React.FC<{
@@ -53,6 +52,8 @@ export const SelectUserOrGroup: React.FC<{
         emailVerified: new Date(),
         image: null,
         currency: 'USD',
+        gocardlessId: null,
+        gocardlessBankId: null,
       });
       // add email to split pro
     }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '../ui/button';
-import { AppDrawer, Drawer, DrawerClose, DrawerContent, DrawerTrigger } from '../ui/drawer';
+import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { type User, type Balance, SplitType } from '@prisma/client';
 import { type User as NextUser } from 'next-auth';
 import { FriendBalance } from './FirendBalance';
@@ -61,7 +61,7 @@ export const SettleUp: React.FC<{
         onSuccess: () => {
           utils.user.invalidate().catch(console.error);
         },
-        onError: (error) => {
+        onError: () => {
           toast.info('Error while saving expense');
         },
       },

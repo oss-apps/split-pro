@@ -3,7 +3,7 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { api } from '~/utils/api';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { ChevronLeftIcon, Trash, Trash2 } from 'lucide-react';
+import { ChevronLeftIcon } from 'lucide-react';
 import ExpenseDetails from '~/components/Expense/ExpensePage';
 import { DeleteExpense } from '~/components/Expense/DeleteExpense';
 import { type NextPageWithUser } from '~/types';

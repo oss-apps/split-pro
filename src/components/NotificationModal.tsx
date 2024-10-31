@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { env } from '~/env';
-import { Bell, BellOff, ChevronRight } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { api } from '~/utils/api';
 import {
   AlertDialog,
@@ -78,7 +77,7 @@ export const NotificationModal: React.FC = () => {
 
             updatePushSubscription.mutate({ subscription: JSON.stringify(sub) });
           })
-          .catch((e) => {
+          .catch(() => {
             toast.error('Cannot subscribe to notification');
           });
         setModalOpen(false);

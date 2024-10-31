@@ -15,9 +15,7 @@ const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
 }> = ({ user, isStorageConfigured, enableSendingInvites }) => {
-  const { setCurrentUser, setGroup, setParticipants, setCurrency } = useAddExpenseStore(
-    (s) => s.actions,
-  );
+  const { setCurrentUser, setGroup, setParticipants } = useAddExpenseStore((s) => s.actions);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
 
   useEffect(() => {
@@ -27,6 +25,8 @@ const AddPage: NextPageWithUser<{
       name: user.name ?? null,
       email: user.email ?? null,
       image: user.image ?? null,
+      gocardlessId: user.gocardlessId ?? null,
+      gocardlessBankId: user.gocardlessBankId ?? null,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

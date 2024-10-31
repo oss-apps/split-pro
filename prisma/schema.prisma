@@ -46,6 +46,8 @@ model User {
     id                  Int                  @id @default(autoincrement())
     name                String?
     email               String?              @unique
+    gocardlessId        String?
+    gocardlessBankId    String?
     emailVerified       DateTime?
     image               String?
     currency            String               @default("USD")
@@ -62,6 +64,16 @@ model User {
     paidExpenses        Expense[]            @relation("PaidByUser")
     addedExpenses       Expense[]            @relation("AddedByUser")
     deletedExpenses     Expense[]            @relation("DeletedByUser")
+}
+
+model CachedBankData {
+    id           Int      @id @default(autoincrement())
+    gocardlessId String   @unique
+    data         String
+    userId       Int
+    lastFetched  DateTime
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
 }
 
 model VerificationToken {
@@ -155,6 +167,7 @@ model Expense {
     deletedByUser       User?                @relation(name: "DeletedByUser", fields: [deletedBy], references: [id], onDelete: Cascade)
     expenseParticipants ExpenseParticipant[]
     expenseNotes        ExpenseNote[]
+    transactionId       String?
 
     @@index([groupId])
     @@index([paidBy])

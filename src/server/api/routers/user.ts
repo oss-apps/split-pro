@@ -1,5 +1,5 @@
-import { type Balance, SplitType } from '@prisma/client';
-import { boolean, z } from 'zod';
+import { SplitType } from '@prisma/client';
+import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import {
@@ -15,8 +15,6 @@ import { randomUUID } from 'crypto';
 import { getDocumentUploadUrl } from '~/server/storage';
 import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
-import { pushNotification } from '~/server/notification';
-import { toFixedNumber, toUIString } from '~/utils/numbers';
 import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
 import { env } from '~/env';
 
@@ -146,6 +144,7 @@ export const userRouter = createTRPCRouter({
         name: z.string(),
         category: z.string(),
         amount: z.number(),
+        transactionId: z.string().optional(),
         splitType: z.enum([
           SplitType.ADJUSTMENT,
           SplitType.EQUAL,
@@ -173,6 +172,7 @@ export const userRouter = createTRPCRouter({
           ctx.session.user.id,
           input.expenseDate ?? new Date(),
           input.fileKey,
+          input.transactionId,
         );
 
         return expense;
@@ -233,6 +233,24 @@ export const userRouter = createTRPCRouter({
       return expenses;
     }),
 
+    getOwnExpenses: protectedProcedure
+    .query(async ({ ctx }) => {
+      const expenses = await db.expense.findMany({
+        where: {
+          paidBy: ctx.session.user.id,
+          deletedBy: null,
+        },
+        orderBy: {
+          expenseDate: 'desc',
+        },
+        include: {
+          group: true
+        },
+      });
+
+      return expenses;
+    }),
+
   getBalancesWithFriend: protectedProcedure
     .input(z.object({ friendId: z.number() }))
     .query(async ({ input, ctx }) => {
@@ -273,7 +291,7 @@ export const userRouter = createTRPCRouter({
     }),
 
   updateUserDetail: protectedProcedure
-    .input(z.object({ name: z.string().optional(), currency: z.string().optional() }))
+    .input(z.object({ name: z.string().optional(), currency: z.string().optional(), gocardlessId: z.string().optional(), gocardlessBankId: z.string().optional() }))
     .mutation(async ({ input, ctx }) => {
       const user = await db.user.update({
         where: {
@@ -479,7 +497,7 @@ export const userRouter = createTRPCRouter({
       await importGroupFromSplitwise(ctx.session.user.id, input.groups);
     }),
 
-  getWebPushPublicKey: protectedProcedure.query(async ({ ctx }) => {
+  getWebPushPublicKey: protectedProcedure.query(async () => {
     return env.WEB_PUSH_PUBLIC_KEY;
   }),
 });

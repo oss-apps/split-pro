@@ -10,12 +10,12 @@ import {
   Github,
   Globe,
   Import,
+  Landmark,
   Split,
   Users,
 } from 'lucide-react';
 import Image from 'next/image';
 import { BackgroundGradient } from '~/components/ui/background-gradient';
-import { env } from '~/env';
 
 export default function Home() {
   return (
@@ -52,11 +52,11 @@ export default function Home() {
         <div className="mx-auto mt-20 flex w-full items-start justify-center  gap-16 px-4 lg:max-w-5xl lg:px-0 ">
           <div>
             <div className=" mb-32 text-center lg:mb-0 lg:h-[70vh] lg:text-left">
-              <h1 className="max-w-3xl text-center text-2xl font-semibold leading-loose text-gray-100 lg:text-left lg:text-5xl lg:leading-[4rem]">
+              <h1 className="max-w-3xl text-center text-2xl font-semibold leading-loose text-gray-600 dark:text-gray-100 lg:text-left lg:text-5xl lg:leading-[4rem]">
                 Split Expenses with your friends for{' '}
                 <span className="font-bold text-primary">free</span>.
               </h1>
-              <h2 className="mt-5  text-gray-300  lg:mt-8 lg:text-lg">
+              <h2 className="mt-5  text-gray-400 dark:text-gray-300  lg:mt-8 lg:text-lg">
                 An{' '}
                 <a
                   className="text-primary hover:underline"
@@ -180,6 +180,18 @@ export default function Home() {
                   <p className="px-4 text-gray-400 lg:px-0">
                     Never miss important notifications. Get notified when someone adds an expense or
                     settles up
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
+                <div className="flex flex-col gap-1 lg:w-1/2">
+                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
+                    <Landmark className="h-6 w-6 text-primary" />
+                    <p className="text-lg font-medium">Bank account transactions</p>
+                  </div>
+                  <p className="px-4 text-gray-400 lg:px-0">
+                    Add expenses faster with a integration to GoCardless bank account transactions
+                    api
                   </p>
                 </div>
               </div>

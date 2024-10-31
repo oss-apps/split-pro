@@ -1,22 +1,14 @@
 import React, { useState } from 'react';
 import { Button } from '~/components/ui/button';
-import { InformationCircleIcon, UserPlusIcon } from '@heroicons/react/24/solid';
+import { UserPlusIcon } from '@heroicons/react/24/solid';
 import { api } from '~/utils/api';
-import {
-  AppDrawer,
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerTrigger,
-} from '~/components/ui/drawer';
+import { AppDrawer } from '~/components/ui/drawer';
 import clsx from 'clsx';
 import { UserAvatar } from '../ui/avatar';
 import { type Group, type GroupUser } from '@prisma/client';
-import { CheckIcon, SendIcon, UserPlus } from 'lucide-react';
+import { CheckIcon, SendIcon } from 'lucide-react';
 import { Input } from '../ui/input';
 import { z } from 'zod';
-import { env } from '~/env';
-import { isStorageConfigured } from '~/server/storage';
 
 const AddMembers: React.FC<{
   enableSendingInvites: boolean;
@@ -111,7 +103,7 @@ const AddMembers: React.FC<{
       onClose={() => setOpen(false)}
       onOpenChange={(state) => state !== open && setOpen(state)}
     >
-      <div className="">
+      <div>
         <Input
           className="mt-8 w-full text-lg"
           placeholder="Enter name or email"

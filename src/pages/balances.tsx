@@ -14,7 +14,6 @@ import { type NextPageWithUser } from '~/types';
 import useEnableAfter from '~/hooks/useEnableAfter';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { NotificationModal } from '~/components/NotificationModal';
-import { GetServerSideProps } from 'next';
 
 const BalancePage: NextPageWithUser = () => {
   function shareWithFriends() {
@@ -52,7 +51,7 @@ const BalancePage: NextPageWithUser = () => {
         }
       >
         <NotificationModal />
-        <div className="">
+        <div>
           <div className="mx-4 flex items-stretch justify-between gap-4">
             {balanceQuery.data?.youOwe.length ? (
               <div className="w-1/2  rounded-2xl border px-2 py-2">
@@ -69,9 +68,7 @@ const BalancePage: NextPageWithUser = () => {
                       <span className="text-orange-600">
                         {b.currency.toUpperCase()} {toUIString(b.amount)}
                       </span>
-                      {index !== balanceQuery.data.youOwe.length - 1 ? (
-                        <span className="">+</span>
-                      ) : null}
+                      {index !== balanceQuery.data.youOwe.length - 1 ? <span>+</span> : null}
                     </span>
                   ))}
                 </div>
@@ -127,7 +124,7 @@ const BalancePage: NextPageWithUser = () => {
 
                 <Link href="/add">
                   <Button className="w-[250px]">
-                    <PlusIcon className="mr-2 h-5 w-5 text-black" />
+                    <PlusIcon className="mr-2 h-5 w-5 text-white dark:text-black" />
                     Add Expense
                   </Button>
                 </Link>

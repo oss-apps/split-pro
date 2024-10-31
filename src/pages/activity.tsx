@@ -8,7 +8,6 @@ import { toUIString } from '~/utils/numbers';
 import Link from 'next/link';
 import { type NextPageWithUser } from '~/types';
 import { type User } from 'next-auth';
-import { BalanceSkeleton } from '~/components/ui/skeleton';
 import useEnableAfter from '~/hooks/useEnableAfter';
 import { LoadingSpinner } from '~/components/ui/spinner';
 
@@ -69,7 +68,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                   <Link
                     href={`${e.expense.groupId ? `/groups/${e.expense.groupId}/` : '/'}expenses/${e.expenseId}`}
                     key={e.expenseId}
-                    className="flex  gap-2"
+                    className="flex gap-2"
                   >
                     <div className="mt-1">
                       <UserAvatar user={e.expense.paidByUser} size={30} />
@@ -86,14 +85,16 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                           <span className=" font-semibold ">{e.expense.name}</span>
                         </p>
                       ) : (
-                        <p className="text-gray-300">
-                          <span className="  font-semibold text-gray-300">
+                        <p className="text-gray-800 dark:text-gray-300">
+                          <span className="  font-semibold text-gray-800 dark:text-gray-300">
                             {e.expense.paidBy === user.id
                               ? 'You'
                               : e.expense.paidByUser.name ?? e.expense.paidByUser.email}
                           </span>
                           {' paid for '}
-                          <span className=" font-semibold text-gray-300">{e.expense.name}</span>
+                          <span className=" font-semibold text-gray-800 dark:text-gray-300">
+                            {e.expense.name}
+                          </span>
                         </p>
                       )}
 

@@ -2,7 +2,7 @@ import { SplitType } from '@prisma/client';
 import { z } from 'zod';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
-import { createGroupExpense, deleteExpense } from '../services/splitService';
+import { createGroupExpense } from '../services/splitService';
 import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 
@@ -49,7 +49,6 @@ export const groupRouter = createTRPCRouter({
   }),
 
   getAllGroupsWithBalances: protectedProcedure.query(async ({ ctx }) => {
-    const time = Date.now();
     const groups = await ctx.db.groupUser.findMany({
       where: {
         userId: ctx.session.user.id,
@@ -60,20 +59,28 @@ export const groupRouter = createTRPCRouter({
             groupBalances: {
               where: { userId: ctx.session.user.id },
             },
+            expenses: {
+              orderBy: {
+                createdAt: 'desc',
+              },
+              take: 1,
+            },
           },
         },
       },
     });
 
-    const groupsWithBalances = groups.map((g) => {
+    const sortedGroupsByLatestExpense = groups.sort((a, b) => {
+      const aDate = a.group.expenses[0]?.createdAt ?? new Date(0);
+      const bDate = b.group.expenses[0]?.createdAt ?? new Date(0);
+      return bDate.getTime() - aDate.getTime();
+    });
+
+    const groupsWithBalances = sortedGroupsByLatestExpense.map((g) => {
       const balances: Record<string, number> = {};
 
       for (const balance of g.group.groupBalances) {
-        if (balances[balance.currency] === undefined) {
-          balances[balance.currency] = balance.amount;
-        } else {
-          balances[balance.currency] += balance.amount;
-        }
+        balances[balance.currency] = (balances[balance.currency] ?? 0) + balance.amount;
       }
 
       return {
@@ -115,6 +122,7 @@ export const groupRouter = createTRPCRouter({
         name: z.string(),
         category: z.string(),
         amount: z.number(),
+        transactionId: z.string().optional(),
         splitType: z.enum([
           SplitType.ADJUSTMENT,
           SplitType.EQUAL,
@@ -143,6 +151,7 @@ export const groupRouter = createTRPCRouter({
           ctx.session.user.id,
           input.expenseDate ?? new Date(),
           input.fileKey,
+          input.transactionId
         );
 
         return expense;
@@ -222,6 +231,7 @@ export const groupRouter = createTRPCRouter({
       },
       where: {
         groupId: input.groupId,
+        deletedBy: null,
       },
     });
 

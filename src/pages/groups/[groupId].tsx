@@ -163,6 +163,19 @@ const BalancePage: NextPageWithUser<{
                     ) : null;
                   })}
                 </div>
+                {expensesQuery?.data && expensesQuery?.data?.length > 0 && (
+                  <div className="mt-8">
+                    <p className="font-semibold">First expense</p>
+                    <p>
+                      {format(
+                        new Date(
+                          expensesQuery.data[expensesQuery.data.length - 1]?.createdAt ?? '',
+                        ).toLocaleDateString(),
+                        'yyyy-MM-dd',
+                      )}
+                    </p>
+                  </div>
+                )}
               </div>
             </AppDrawer>
             <AppDrawer
@@ -184,6 +197,17 @@ const BalancePage: NextPageWithUser<{
                   ))}
                 </div>
               </div>
+              {groupDetailQuery?.data?.createdAt && (
+                <div className="mt-8">
+                  <p className="font-semibold ">Group created</p>
+                  <p>
+                    {format(
+                      new Date(groupDetailQuery.data?.createdAt).toLocaleDateString(),
+                      'yyyy-MM-dd',
+                    )}
+                  </p>
+                </div>
+              )}
               <div className="mt-8">
                 <p className="font-semibold ">Actions</p>
                 <div className="mt-2 flex flex-col gap-1">
@@ -356,7 +380,7 @@ const BalancePage: NextPageWithUser<{
           const yourExpense = e.expenseParticipants.find((p) => p.userId === user.id);
           const isSettlement = e.splitType === SplitType.SETTLEMENT;
           const yourExpenseAmount = youPaid
-            ? yourExpense?.amount ?? 0
+            ? (yourExpense?.amount ?? 0)
             : -(yourExpense?.amount ?? 0);
 
           return (
@@ -388,7 +412,7 @@ const BalancePage: NextPageWithUser<{
                     className={`flex text-center ${isSettlement ? 'text-sm text-gray-400' : 'text-xs text-gray-500'}`}
                   >
                     <span className="text-[10px]">{isSettlement ? '  🎉  ' : null}</span>
-                    {youPaid ? 'You' : e.paidByUser.name ?? e.paidByUser.email} paid {e.currency}{' '}
+                    {youPaid ? 'You' : (e.paidByUser.name ?? e.paidByUser.email)} paid {e.currency}{' '}
                     {toUIString(e.amount)}{' '}
                   </p>
                 </div>

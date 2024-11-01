@@ -168,7 +168,9 @@ const BalancePage: NextPageWithUser<{
                     <p className="font-semibold">First expense</p>
                     <p>
                       {format(
-                        expensesQuery.data[expensesQuery.data.length - 1]?.createdAt ?? new Date(),
+                        new Date(
+                          expensesQuery.data[expensesQuery.data.length - 1]?.createdAt ?? '',
+                        ).toLocaleDateString(),
                         'yyyy-MM-dd',
                       )}
                     </p>
@@ -198,7 +200,12 @@ const BalancePage: NextPageWithUser<{
               {groupDetailQuery?.data?.createdAt && (
                 <div className="mt-8">
                   <p className="font-semibold ">Group created</p>
-                  <p>{format(groupDetailQuery.data?.createdAt, 'yyyy-MM-dd')}</p>
+                  <p>
+                    {format(
+                      new Date(groupDetailQuery.data?.createdAt).toLocaleDateString(),
+                      'yyyy-MM-dd',
+                    )}
+                  </p>
                 </div>
               )}
               <div className="mt-8">

@@ -81,11 +81,7 @@ export const groupRouter = createTRPCRouter({
       const balances: Record<string, number> = {};
 
       for (const balance of g.group.groupBalances) {
-        if (balances[balance.currency] === undefined) {
-          balances[balance.currency] = balance.amount;
-        } else {
-          balances[balance.currency] += balance.amount;
-        }
+        balances[balance.currency] = (balances[balance.currency] ?? 0) + balance.amount;
       }
 
       return {
@@ -234,6 +230,7 @@ export const groupRouter = createTRPCRouter({
       },
       where: {
         groupId: input.groupId,
+        deletedAt: null,
       },
     });
 

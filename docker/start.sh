@@ -1,5 +1,5 @@
 #!/bin/sh
-
+#Changed from CRLF to LF
 set -x
 
 echo "Deploying prisma migrations"

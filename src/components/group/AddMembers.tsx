@@ -101,12 +101,12 @@ const AddMembers: React.FC<{
         <div className="flex items-center justify-center gap-2 lg:w-[180px]">{children}</div>
       }
       onTriggerClick={() => setOpen(true)}
-      title="Add members"
-      leftAction="Cancel"
+      title="Nutzer hinzufügen"
+      leftAction="Abbrechen"
       actionOnClick={() => onSave(userIds)}
       className="h-[85vh]"
       shouldCloseOnAction
-      actionTitle="Save"
+      actionTitle="Speichern"
       open={open}
       onClose={() => setOpen(false)}
       onOpenChange={(state) => state !== open && setOpen(state)}
@@ -114,7 +114,7 @@ const AddMembers: React.FC<{
       <div className="">
         <Input
           className="mt-8 w-full text-lg"
-          placeholder="Enter name or email"
+          placeholder="Gebe Name oder eMail-Adresse ein"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />
@@ -124,11 +124,10 @@ const AddMembers: React.FC<{
           <div>
             {enableSendingInvites ? (
               <div className="mt-1 text-orange-600">
-                Warning: Don&apos;t use send invite if it&apos;s invalid email. use add to Split Pro
-                instead. Your account will be blocked if this feature is misused
-              </div>
+                Warnung: Verwenden Sie „Einladung senden“ nicht, wenn es sich um eine ungültige E-Mail-Adresse handelt. Verwenden Sie stattdessen „Zu SplitPro hinzufügen“. Bei Missbrauch dieser Funktion wird Ihr Konto gesperrt.
+                </div>
             ) : (
-              <div>Note: sending invite is disabled for now because of spam</div>
+              <div>Hinweis: Das Senden von Einladungen ist aufgrund von Spam derzeit deaktiviert</div>
             )}
 
             <div className="flex justify-center gap-4">
@@ -140,7 +139,7 @@ const AddMembers: React.FC<{
                   onClick={() => onAddEmailClick(true)}
                 >
                   <SendIcon className="mr-2 h-4 w-4" />
-                  {isEmail.success ? 'Send invite to user' : 'Enter valid email'}
+                  {isEmail.success ? 'Sende Einladung an Freund' : 'Gebe gültige eMail-Adresse ein'}
                 </Button>
               )}
               <Button
@@ -150,7 +149,7 @@ const AddMembers: React.FC<{
                 onClick={() => onAddEmailClick(false)}
               >
                 <UserPlusIcon className="mr-2 h-4 w-4" />
-                {isEmail.success ? 'Add to Split Pro' : 'Enter valid email'}
+                {isEmail.success ? 'Zu SplitPro hinzufügen' : 'Gebe gültige eMail-Adresse ein'}
               </Button>
             </div>
           </div>

@@ -54,7 +54,7 @@ export const DeleteExpense: React.FC<{
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Abbrechen</AlertDialogCancel>
             <AlertDialogAction size="sm" variant="destructive" onClick={onDeleteExpense}>
               Delete
             </AlertDialogAction>

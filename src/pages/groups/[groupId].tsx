@@ -237,7 +237,7 @@ const BalancePage: NextPageWithUser<{
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel>Abbrechen</AlertDialogCancel>
                             {canDelete ? (
                               <Button
                                 size="sm"
@@ -282,7 +282,7 @@ const BalancePage: NextPageWithUser<{
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel>Abbrechen</AlertDialogCancel>
                             {canLeave ? (
                               <Button
                                 size="sm"

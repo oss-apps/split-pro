@@ -50,7 +50,7 @@ export const UpdateDetails: React.FC<{ defaultName: string }> = ({ defaultName }
       leftAction="Close"
       title="Edit details"
       className="h-[80vh]"
-      actionTitle="Save"
+      actionTitle="Speichern"
       actionOnClick={async () => {
         await detailForm.handleSubmit(onGroupSubmit)();
       }}

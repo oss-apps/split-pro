@@ -38,31 +38,31 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, 
             <span className="text-xl font-medium  ">SplitPro</span>
           </Link>
           <NavItemDesktop
-            title="Balances"
+            title="Bilanzen"
             Icon={SolidScaleIcon}
             link="/balances"
             currentPath={currentPath}
           />
           <NavItemDesktop
-            title="Groups"
+            title="Gruppen"
             Icon={SolidUserGroupIcon}
             link="/groups"
             currentPath={currentPath}
           />
           <NavItemDesktop
-            title="Add Expense"
+            title="Ausgabe hinzufügen"
             Icon={SolidPlusCircleIcon}
             link="/add"
             currentPath={currentPath}
           />
           <NavItemDesktop
-            title="Activity"
+            title="Aktivitäten"
             Icon={SolidListBulletIcon}
             link="/activity"
             currentPath={currentPath}
           />
           <NavItemDesktop
-            title="Account"
+            title="Konto"
             Icon={SolidUserCircleIcon}
             link="/account"
             currentPath={currentPath}
@@ -82,26 +82,26 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, 
 
       <nav className="fixed bottom-0 flex w-full justify-between border-t  bg-opacity-80 px-2 pb-4 shadow-sm backdrop-blur-lg lg:hidden">
         <NavItem
-          title="Balances"
+          title="Bilanzen"
           Icon={SolidScaleIcon}
           link="/balances"
           currentPath={currentPath}
         />
         <NavItem
-          title="Groups"
+          title="Gruppen"
           Icon={SolidUserGroupIcon}
           link="/groups"
           currentPath={currentPath}
         />
         <NavItem title="Add" Icon={SolidPlusCircleIcon} link="/add" currentPath={currentPath} />
         <NavItem
-          title="Activity"
+          title="Aktivitäten"
           Icon={SolidListBulletIcon}
           link="/activity"
           currentPath={currentPath}
         />
         <NavItem
-          title="Account"
+          title="Konto"
           Icon={SolidUserCircleIcon}
           link="/account"
           currentPath={currentPath}

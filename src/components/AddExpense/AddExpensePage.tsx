@@ -221,7 +221,7 @@ export const AddExpensePage: React.FC<{
               Cancel
             </Button>
           )}
-          <div className="text-center">Add new expense</div>
+          <div className="text-center">Neue Ausgabe hinzufügen</div>
           <Button
             variant="ghost"
             className=" px-0 text-primary"

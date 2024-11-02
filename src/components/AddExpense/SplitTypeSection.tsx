@@ -236,7 +236,7 @@ const SplitByAmountSection: React.FC = () => {
   const [splitShareValue, setSplitShareValue] = useState(
     participants.reduce(
       (acc, p) => {
-        acc[p.id] = p.splitShare?.toString();
+        acc[p.id] = p.splitShare?.toString() ?? '';
         return acc;
       },
       {} as Record<string, string | undefined>,
@@ -249,19 +249,20 @@ const SplitByAmountSection: React.FC = () => {
       addOrUpdateParticipant({ ...p, splitShare: 0 });
       return;
     }
-    addOrUpdateParticipant({ ...p, splitShare: parseFloat(value) });
+    const formattedValue = parseFloat(parseFloat(value).toFixed(2));
+    addOrUpdateParticipant({ ...p, splitShare: formattedValue });
   };
 
-  const remainingPercentage =
-    amount - participants.reduce((acc, p) => acc + (p.splitShare ?? 0), 0);
+  const totalSplitShare = participants.reduce((acc, p) => acc + (p.splitShare ?? 0), 0);
+
+  const remainingAmount = parseFloat((amount - totalSplitShare).toFixed(2));
 
   return (
     <div className="mt-4 flex flex-col gap-6 px-2">
       <div
         className={`mb-2 text-center ${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'} t`}
       >
-        {' '}
-        Remaining {currency} {remainingPercentage}
+        Remaining {currency} {remainingAmount}
       </div>
       {participants.map((p) => (
         <div key={p.id} className="flex justify-between">
@@ -271,7 +272,6 @@ const SplitByAmountSection: React.FC = () => {
           </div>
           <div className="flex items-center gap-1">
             <p className="text-xs">{currency}</p>
-
             <Input
               type="number"
               value={splitShareValue[p.id]}

@@ -60,20 +60,28 @@ export const groupRouter = createTRPCRouter({
             groupBalances: {
               where: { userId: ctx.session.user.id },
             },
+            expenses: {
+              orderBy: {
+                createdAt: 'desc',
+              },
+              take: 1,
+            },
           },
         },
       },
     });
 
-    const groupsWithBalances = groups.map((g) => {
+    const sortedGroupsByLatestExpense = groups.sort((a, b) => {
+      const aDate = a.group.expenses[0]?.createdAt ?? new Date(0);
+      const bDate = b.group.expenses[0]?.createdAt ?? new Date(0);
+      return bDate.getTime() - aDate.getTime();
+    });
+
+    const groupsWithBalances = sortedGroupsByLatestExpense.map((g) => {
       const balances: Record<string, number> = {};
 
       for (const balance of g.group.groupBalances) {
-        if (balances[balance.currency] === undefined) {
-          balances[balance.currency] = balance.amount;
-        } else {
-          balances[balance.currency] += balance.amount;
-        }
+        balances[balance.currency] = (balances[balance.currency] ?? 0) + balance.amount;
       }
 
       return {
@@ -222,6 +230,7 @@ export const groupRouter = createTRPCRouter({
       },
       where: {
         groupId: input.groupId,
+        deletedAt: null,
       },
     });
 

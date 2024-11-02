@@ -19,11 +19,11 @@ const BalancePage: NextPageWithUser = () => {
   return (
     <>
       <Head>
-        <title>Groups</title>
+        <title>Gruppen</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
-        title="Groups"
+        title="Gruppen"
         actions={
           <CreateGroup>
             <PlusIcon className="h-6 w-6 text-primary" />
@@ -85,7 +85,7 @@ const GroupBalance: React.FC<{
         </div>
         <div>
           {amount === 0 ? (
-            <div className="text-sm text-gray-400">Settled up</div>
+            <div className="text-sm text-gray-400">Ausgeglichen</div>
           ) : (
             <>
               <div
@@ -94,7 +94,7 @@ const GroupBalance: React.FC<{
                   isPositive ? 'text-emerald-500' : 'text-orange-600',
                 )}
               >
-                {isPositive ? 'you lent' : 'you owe'}
+                {isPositive ? 'du leihst' : 'du schuldest'}
               </div>
               <div className={`${isPositive ? 'text-emerald-500' : 'text-orange-600'} text-right`}>
                 {currency} {toUIString(amount)}

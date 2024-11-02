@@ -26,16 +26,16 @@ function getPaymentString(
   } else if (isSettlement) {
     return (
       <div className={`${user.id === paidBy ? ' text-emerald-500' : 'text-orange-500'} text-sm`}>
-        {user.id === paidBy ? 'You paid ' : 'You received '} {currency} {toUIString(amount)}
+        {user.id === paidBy ? 'Du hast bezahlt ' : 'Du hast erhalten '} {currency} {toUIString(amount)}
       </div>
     );
   } else {
     return (
       <div className={`${user.id === paidBy ? ' text-emerald-500' : 'text-orange-500'} text-sm`}>
         {user.id === paidBy
-          ? `You lent ${currency}
+          ? `Du leihts ${currency}
         ${toUIString(Math.abs(expenseUserAmt))}`
-          : `You owe ${currency} ${toUIString(expenseUserAmt)}`}
+          : `Du schuldest ${currency} ${toUIString(expenseUserAmt)}`}
       </div>
     );
   }
@@ -48,10 +48,10 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
   return (
     <>
       <Head>
-        <title>Activity</title>
+        <title>Aktivitäten</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainLayout title="Activity">
+      <MainLayout title="Aktivitäten">
         <div className=" h-full px-4">
           <div className="flex flex-col gap-4">
             {expensesQuery.isLoading ? (
@@ -63,7 +63,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
             ) : (
               <>
                 {!expensesQuery.data?.length ? (
-                  <div className="mt-[30vh] text-center text-gray-400">No activities yet</div>
+                  <div className="mt-[30vh] text-center text-gray-400">Bis jetzt keine Aktivitäten</div>
                 ) : null}
                 {expensesQuery.data?.map((e) => (
                   <Link
@@ -79,20 +79,20 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                         <p className="text-red-500 opacity-70">
                           <span className="  font-semibold ">
                             {e.expense.deletedBy === user.id
-                              ? 'You'
+                              ? 'Du'
                               : e.expense.deletedByUser.name ?? e.expense.deletedByUser.email}
                           </span>
-                          {' deleted the expense '}
+                          {' Ausgabe gelöscht '}
                           <span className=" font-semibold ">{e.expense.name}</span>
                         </p>
                       ) : (
                         <p className="text-gray-300">
                           <span className="  font-semibold text-gray-300">
                             {e.expense.paidBy === user.id
-                              ? 'You'
+                              ? 'Du'
                               : e.expense.paidByUser.name ?? e.expense.paidByUser.email}
                           </span>
-                          {' paid for '}
+                          {' hast gezahlt '}
                           <span className=" font-semibold text-gray-300">{e.expense.name}</span>
                         </p>
                       )}

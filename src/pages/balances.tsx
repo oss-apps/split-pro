@@ -36,11 +36,11 @@ const BalancePage: NextPageWithUser = () => {
   return (
     <>
       <Head>
-        <title>Outstanding balances</title>
+        <title>Hervorragende Bilanzen</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
-        title="Balances"
+        title="Bilanzen"
         actions={
           typeof window !== 'undefined' && !!window.navigator?.share ? (
             <Button variant="ghost" onClick={shareWithFriends}>
@@ -128,7 +128,7 @@ const BalancePage: NextPageWithUser = () => {
                 <Link href="/add">
                   <Button className="w-[250px]">
                     <PlusIcon className="mr-2 h-5 w-5 text-black" />
-                    Add Expense
+                    Ausgabe hinzufügen
                   </Button>
                 </Link>
               </div>
@@ -156,7 +156,7 @@ const FriendBalance: React.FC<{
       </div>
       {amount === 0 ? (
         <div>
-          <p className="text-xs">Settled up</p>
+          <p className="text-xs">Ausgeglichen</p>
         </div>
       ) : (
         <div>
@@ -166,7 +166,7 @@ const FriendBalance: React.FC<{
               isPositive ? 'text-emerald-500' : 'text-orange-600',
             )}
           >
-            {isPositive ? 'you get' : 'you owe'}
+            {isPositive ? 'du bekommst' : 'du schuldest'}
           </div>
           <div className={`${isPositive ? 'text-emerald-500' : 'text-orange-600'} flex text-right`}>
             {currency} {toUIString(amount)}

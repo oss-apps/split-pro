@@ -72,7 +72,7 @@ const AddPage: NextPageWithUser<{
   return (
     <>
       <Head>
-        <title>Add Expense</title>
+        <title>Ausgabe hinzufügen</title>
       </Head>
       <MainLayout hideAppBar>
         {currentUser ? (

@@ -11,7 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form'
 import { Button } from '../ui/button';
 
 const groupSchema = z.object({
-  name: z.string({ required_error: 'Name is required' }).min(1, { message: 'Name is required' }),
+  name: z.string({ required_error: 'Bitte Name angeben' }).min(1, { message: 'Bitte Name angeben' }),
 });
 
 export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -49,9 +49,9 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
           if (openVal !== drawerOpen) setDrawerOpen(openVal);
         }}
         trigger={children}
-        leftAction="Cancel"
+        leftAction="Abbrechen"
         leftActionOnClick={() => setDrawerOpen(false)}
-        title="Create a group"
+        title="Gruppe erstellen"
         className="h-[70vh]"
         actionTitle="Submit"
         actionOnClick={async () => {
@@ -76,7 +76,7 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormControl>
-                      <Input placeholder="Group name" className="w-full py-2 text-lg" {...field} />
+                      <Input placeholder="Gruppenname" className="w-full py-2 text-lg" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

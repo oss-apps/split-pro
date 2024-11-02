@@ -24,12 +24,12 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <main className={clsx(poppins.className, 'h-full')}>
       <Head>
-        <title>SplitPro: Split Expenses with your friends for free</title>
+        <title>SplitPro: Teile Ausgaben mit deinen Freunden, kostenlos!</title>
         <link rel="icon" href="/favicon.ico" />
         <meta name="application-name" content="SplitPro" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="SplitPro" />
-        <meta name="description" content="Split Expenses with your friends for free" />
+        <meta name="description" content="SplitPro: Teile Ausgaben mit deinen Freunden, kostenlos!" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-config" content="/icons/browserconfig.xml" />

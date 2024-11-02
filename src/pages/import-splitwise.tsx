@@ -87,7 +87,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
       },
       {
         onSuccess: () => {
-          toast.success('Import successful');
+          toast.success('Import erfolgreich');
           router.push('/balances').catch((err) => console.error(err));
         },
       },
@@ -106,7 +106,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             <div className="flex gap-4">
               <Link href="/balances">
                 <Button variant="ghost" className="px-0 py-0 text-primary" size="sm">
-                  Cancel
+                  Abbrechen
                 </Button>
               </Link>
             </div>
@@ -119,7 +119,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                 size="sm"
                 disabled={importMutation.isLoading || !uploadedFile}
               >
-                Import
+                Importieren
               </Button>
             </div>
           </div>
@@ -131,7 +131,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                   <span className="hidden text-sm md:block">Choose file</span>
                 </div>
                 <div className=" pl-4 text-gray-400  ">
-                  {uploadedFile ? uploadedFile.name : 'No file chosen'}
+                  {uploadedFile ? uploadedFile.name : 'Keine Datei ausgewählt'}
                 </div>
               </div>
               <Input
@@ -152,9 +152,8 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             </Button>
           </div>
           <div className="mt-4 text-sm text-gray-400">
-            Note: It currently only supports importing friends and groups. It will not import
-            transactions. We are working on it.
-          </div>
+            Hinweis: Aktuell können nur Freunde und Gruppen importiert werden. Es werden keine transaktionen importiert, wir arbeiten daran.
+            </div>
 
           {uploadedFile ? (
             <>
@@ -196,7 +195,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                   ))}
                 </div>
               ) : null}
-              <div className="mt-8 font-semibold">Groups ({groups.length})</div>
+              <div className="mt-8 font-semibold">Gruppen ({groups.length})</div>
               {groups.length ? (
                 <div className="mt-4 flex flex-col gap-3">
                   {groups.map((group, index) => (
@@ -225,11 +224,11 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             </>
           ) : (
             <div className="mt-20 flex flex-col items-center justify-center gap-4">
-              Follow this link to export splitwise data
+              Folge dem Link zum Export der Splitwise-Daten
               <Link href="https://export-splitwise.vercel.app/" target="_blank">
                 <Button>
                   <DownloadCloud className="mr-2 text-gray-800" />
-                  Export splitwise data
+                  Exportiere Splitwise-Daten
                 </Button>
               </Link>
             </div>

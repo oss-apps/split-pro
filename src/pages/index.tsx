@@ -21,8 +21,8 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>SplitPro: Split Expenses with your friends for free</title>
-        <meta name="description" content="SplitPro: Split Expenses with your friends for free" />
+        <title>SplitPro: Teile Ausgaben mit deinen Freunden, kostenlos!</title>
+        <meta name="description" content="SplitPro: Teile Ausgaben mit deinen Freunden, kostenlos!" />
         <link rel="icon" href="/favicon.ico" />
         {process.env.NODE_ENV === 'production' && (
           <>
@@ -44,37 +44,37 @@ export default function Home() {
             <p className="text-2xl font-medium">SplitPro</p>
           </div>
           <div className="flex items-center gap-8">
-            <Link href="/blog/need-for-splitwise-alternative">Why?</Link>
-            <Link href="/terms">Terms</Link>
-            <Link href="/privacy">Privacy</Link>
+            <Link href="/blog/need-for-splitwise-alternative">Warum SplitPro?</Link>
+            <Link href="/terms">Geschäftsbedingungen</Link>
+            <Link href="/privacy">Privatsphäre</Link>
           </div>
         </nav>
         <div className="mx-auto mt-20 flex w-full items-start justify-center  gap-16 px-4 lg:max-w-5xl lg:px-0 ">
           <div>
             <div className=" mb-32 text-center lg:mb-0 lg:h-[70vh] lg:text-left">
               <h1 className="max-w-3xl text-center text-2xl font-semibold leading-loose text-gray-100 lg:text-left lg:text-5xl lg:leading-[4rem]">
-                Split Expenses with your friends for{' '}
-                <span className="font-bold text-primary">free</span>.
+              Teile Ausgaben mit deinen Freunden{' '}
+                <span className="font-bold text-primary">kostenlos!</span>
               </h1>
               <h2 className="mt-5  text-gray-300  lg:mt-8 lg:text-lg">
-                An{' '}
+                Eine{' '}
                 <a
                   className="text-primary hover:underline"
-                  href="https://github.com/oss-apps/split-pro"
+                  href="https://github.com/SebastianHanz/split-pro"
                   target="_blank"
                 >
                   open source
                 </a>{' '}
-                alternative to SplitWise
+                Alternative zu SplitWise
               </h2>
               <div className="mt-10 flex flex-col gap-6 lg:flex-row">
                 <Link href="/auth/signin" className="mx-auto lg:mx-0">
                   <Button className="flex w-[200px] items-center gap-2 rounded-full">
-                    Add Expense <ArrowRight size={15} />{' '}
+                    Ausgabe hinzufügen <ArrowRight size={15} />{' '}
                   </Button>
                 </Link>
                 <Link
-                  href="https://github.com/oss-apps/split-pro"
+                  href="https://github.com/SebastianHanz/split-pro"
                   target="_blank"
                   className="mx-auto lg:mx-0"
                 >
@@ -82,8 +82,7 @@ export default function Home() {
                     variant="outline"
                     className="flex w-[200px] items-center gap-2 rounded-full"
                   >
-                    <Github size={15} /> Star us on github
-                  </Button>
+                    <Github size={15} /> Quellcode auf GitHub</Button>
                 </Link>
               </div>
               <div className=" mt-40"></div>
@@ -92,27 +91,26 @@ export default function Home() {
               <MobileScreenShot />
             </div>
             <div className=" flex flex-col gap-20 text-center lg:text-left">
-              <p className="text-2xl">Features</p>
+              <p className="text-2xl">Funktionsumfang</p>
 
               <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Users className="h-6 w-6 text-primary" />
-                    <p className="text-lg font-medium">Groups and Friends</p>
+                    <p className="text-lg font-medium">Gruppen und Freunde</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Can create multiple groups or add balance directly. Everything will be
-                    consolidated
+                  Erstelle Gruppen und tragt eure Ausgaben ein. Alle Kosten werden danach automatisch nach euren Kriterien auf die Gruppe aufgeteilt.
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Banknote className="h-6 w-6 text-primary" />
-                    <p className="text-lg font-medium">Multiple currencies</p>
+                    <p className="text-lg font-medium">Viele Währungen</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Need to add expense with different currency for same user? No problem!
+                  Musst du eine Ausgabe in einer anderen Währung für denselben Nutzer hinzufügen? Kein Problem!
                   </p>
                 </div>
               </div>
@@ -121,21 +119,20 @@ export default function Home() {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Split className="h-6 w-6 text-primary" />
-                    <p className="text-lg font-medium">Unequal Split</p>
+                    <p className="text-lg font-medium">Ungleiche Aufteilung</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Advanced split options. By shares, percentage or exact amounts.
+                  Erweiterte Optionen zur Aufteilung. Nach Anteilen, Prozentsatz oder exakten Beträgen.
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Globe className="h-6 w-6 text-primary" />
-                    <p className="text-lg font-medium">PWA support</p>
+                    <p className="text-lg font-medium">PWA-Unterstützung</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Love mobile apps? We got you covered. Install it as a PWA and you won&apos;t
-                    even notice!
+                  Liebst du mobile Apps? Wir haben an dich gedacht. Installiere die Anwendung als PWA und du wirst den Unterschied kaum bemerken!
                   </p>
                 </div>
               </div>
@@ -144,10 +141,10 @@ export default function Home() {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <FileUp className="h-6 w-6 text-primary" />
-                    <p className="text-lg font-medium">Upload Receipts</p>
+                    <p className="text-lg font-medium">Belege hochladen</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Upload receipts along with the expense
+                  Lade Belege zusammen mit der Ausgabe hoch.
                   </p>
                 </div>
 
@@ -157,7 +154,7 @@ export default function Home() {
                     <p className="text-lg font-medium">Open source</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Which makes it hard to become evil. Easy to self host
+                  Der Quellcode der App ist öffentlich und für jeden einsehbar. Du kannst die App aber auch selbst hosten.
                   </p>
                 </div>
               </div>
@@ -165,55 +162,35 @@ export default function Home() {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Import className="h-6 w-6 text-primary" />
-                    <p className="text-lg font-medium">Import from splitwise</p>
+                    <p className="text-lg font-medium">Import aus Splitwise</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Don&apos;t have to manually migrate balances. You can import users and groups
-                    from splitwise
+                  Keine manuelle Übertragung von Salden nötig. Du kannst Nutzer und Gruppen aus Splitwise importieren.
                   </p>
                 </div>
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Bell className="h-6 w-6 text-primary" />
-                    <p className="text-lg font-medium">Push notification</p>
+                    <p className="text-lg font-medium">Push-Benachrichtigungen</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Never miss important notifications. Get notified when someone adds an expense or
-                    settles up
+                  Verpasse nichts! Erhalte eine Push-Nachricht wenn jemand eine Ausgabe hinzufügt oder eine Abrechnung durchführt hat.
                   </p>
                 </div>
               </div>
             </div>
 
             <div className="mb-20 mt-24 flex flex-col gap-8 text-center lg:text-left">
-              <a
-                href="https://www.producthunt.com/posts/splitpro?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-splitpro"
-                target="_blank"
-              >
-                <img
-                  src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=444717&theme=light"
-                  alt="Splitpro - Free&#0032;drop&#0032;in&#0032;replacement&#0032;&#0032;to&#0032;Splitwise&#0058;&#0032;Fully&#0032;Open&#0032;source | Product Hunt"
-                  className="mx-auto h-[47px] w-[200px] lg:mx-0"
-                  width="200"
-                  height="47"
-                />
-              </a>
               <div>
                 Built by{' '}
-                <a className=" text-primary" href="https://koushik.dev" target="_blank">
-                  KM Koushik
-                </a>
-                {/* <p className="text-gray-400">
-                  A product of <a className="underline underline-offset-2">ossapps.dev</a>
-                </p> */}
+                <a className=" text-primary" href="https://github.com/SebastianHanz/" target="_blank">
+                  Sebastian Hanz
+                </a>   
               </div>
               <div className="flex justify-center gap-4 lg:justify-start">
-                <a className="text-primary" href="https://twitter.com/KM_Koushik_" target="_blank">
-                  Twitter
-                </a>
                 <a
                   className="text-primary"
-                  href="https://github.com/oss-apps/split-pro"
+                  href="https://github.com/SebastianHanz/split-pro"
                   target="_blank"
                 >
                   Github

@@ -4,36 +4,40 @@ date: 2024/3/17
 author: KM Koushik
 ---
 
-Splitwise doesn't need an introduction. It's a popular app for managing shared expenses. It's advertised as a free tool but they slowly started charging money for very basic features like adding more than 3 expenses in a day.
+Titel: Ein Bedarf an einer Open-Source-Alternative zu Splitwise
+Datum: 17. März 2024
+Autor: KM Koushik
 
-Don't get me wrong, I'm fine with products charging money. After all, splitwise is a very good product and lot's of effort has been put on the product. But the problem is locking you after you've used the product for a long time and charge for features that doesn't convert to the value they provide.
+Splitwise braucht keine Vorstellung – es ist eine beliebte App zur Verwaltung gemeinsamer Ausgaben. Es wird als kostenloses Tool beworben, aber inzwischen werden immer häufiger Gebühren für sehr grundlegende Funktionen erhoben, wie etwa das Hinzufügen von mehr als drei Ausgaben pro Tag.
 
-I will happily pay for the pro features, but this really frustrates me.
+Versteht mich nicht falsch, ich habe nichts gegen kostenpflichtige Produkte. Schließlich ist Splitwise ein sehr gutes Produkt, in das viel Arbeit geflossen ist. Das Problem ist jedoch, dass man nach langer Nutzung plötzlich für Funktionen zahlen soll, deren Nutzen nicht im Verhältnis zum Preis steht.
 
-## Okay, what now?
+Ich würde gerne für die Pro-Funktionen zahlen, aber das frustriert mich wirklich.
 
-Creating an open source alternative is very important now. Any closed source alternative might do the same and I don't have any reason to believe otherwise. This will force us to create a better product and makes it hard to be evil. After all we will have an option to host the solution ourselves.
+## Also, was nun?
 
-Splitpro is designed to be an drop in open source replacement for Splitwise with all the important features. And completely free to use.
+Eine Open-Source-Alternative zu schaffen, ist jetzt wichtiger denn je. Jede proprietäre Alternative könnte dasselbe tun, und es gibt keinen Grund, das Gegenteil anzunehmen. Eine Open-Source-Variante wird uns motivieren, ein besseres Produkt zu schaffen und es schwieriger machen, den Nutzern zu schaden. Schließlich hätten wir die Option, die Lösung selbst zu hosten.
 
-- ➕ Add expenses with an individual or groups.
-- 👥 Overall balances across the groups.
-- 💵 Multiple currency support
-- 📄 Upload expense bills
-- 📱 PWA support
-- ✂️ Split expenses unequally (share, percentage, exact amounts)
-- 🔔 Push notification
-- ✅ Settle up expenses
-- 📲 Import data from Splitwise
+SplitPro ist als Drop-in-Ersatz für Splitwise konzipiert – mit allen wichtigen Funktionen und komplett kostenlos nutzbar.
 
-## Will you make it paid?
+➕ Ausgaben hinzufügen, einzeln oder in Gruppen
+👥 Gesamtübersicht der Salden über alle Gruppen hinweg
+💵 Unterstützung für mehrere Währungen
+📄 Belege zu Ausgaben hochladen
+📱 PWA-Unterstützung (Installierbar als Web-App)
+✂️ Ungleiche Aufteilung von Ausgaben (Anteile, Prozentsätze, genaue Beträge)
+🔔 Push-Benachrichtigungen
+✅ Ausgaben begleichen
+📲 Datenimport aus Splitwise
 
-Any existing features will not be paid. But I have plans to introduce paid features which are not core for this product. This is mainly to fund this project.
+## Wird es irgendwann kostenpflichtig?
 
-## How are you running it for free?
+Bestehende Funktionen werden nicht kostenpflichtig sein. Ich plane jedoch, kostenpflichtige Zusatzfunktionen einzuführen, die nicht zum Kernprodukt gehören, um das Projekt zu finanzieren.
 
-I working on a full time job and this is my side project. Even with very high usage, splitrpo won't cost more than $100 a month. I currently can afford this. As I said earlier I will add some paid pro features / open up donations to fund the project.
+## Wie läuft das Projekt kostenlos?
 
-## How can I help?
+Ich habe einen Vollzeitjob und arbeite an diesem Projekt nebenbei. Selbst bei sehr hoher Nutzung dürften die Kosten für SplitPro monatlich nicht mehr als 100 Dollar betragen. Das kann ich derzeit abdecken. Wie gesagt, ich werde eventuell kostenpflichtige Pro-Funktionen hinzufügen oder Spenden annehmen, um das Projekt zu finanzieren.
 
-Very simple! Use the product, share it with your friends and give feedback. If you want to contribute, head to our [github](https://github.com/oss-apps/split-pro) repo and open a PR.
+## Wie kann ich helfen?
+
+Ganz einfach! Nutze das Produkt, teile es mit Freunden und gib Feedback. Wenn du beitragen möchtest, schau dir unser GitHub-Repository an und öffne einen PR.

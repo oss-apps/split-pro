@@ -30,7 +30,7 @@ export const DeleteFriend: React.FC<{
     try {
       await deleteFriendMutation.mutateAsync({ friendId });
     } catch (e) {
-      toast.error('Failed to delete user');
+      toast.error('Nutzer löschen fehlgeschlagen');
       return;
     }
     setShowTrigger(false);
@@ -52,15 +52,15 @@ export const DeleteFriend: React.FC<{
         </AlertDialogTrigger>
         <AlertDialogContent className="max-w-xs rounded-lg">
           <AlertDialogHeader>
-            <AlertDialogTitle>{disabled ? '' : 'Are you absolutely sure?'} </AlertDialogTitle>
+            <AlertDialogTitle>{disabled ? '' : 'Bist du absolut sicher?'} </AlertDialogTitle>
             <AlertDialogDescription>
               {disabled
-                ? "Can't remove friend with outstanding balances. Settle up first"
-                : 'Do you really want to continue'}
+                ? "Der Freund kann aufgrund nicht ausgeglichener Zahlungen nicht entfernt werden. Gleiche die Schulden aus."
+                : 'Möchtest du wirklich fortfahren?'}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Abbrechen</AlertDialogCancel>
             {!disabled ? (
               <Button
                 size="sm"
@@ -69,7 +69,7 @@ export const DeleteFriend: React.FC<{
                 disabled={deleteFriendMutation.isLoading}
                 loading={deleteFriendMutation.isLoading}
               >
-                Delete
+                Löschen
               </Button>
             ) : null}
           </AlertDialogFooter>

@@ -8,62 +8,61 @@ const Terms: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
     <>
       <div>
         <main className="mx-auto max-w-4xl px-4 pb-32 lg:px-0">
-          <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4   py-4 lg:px-0 lg:py-5">
+          <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4 py-4 lg:px-0 lg:py-5">
             <Link href="/">
               <div className="flex items-center gap-2">
                 <p className="text-2xl font-medium">SplitPro</p>
               </div>
             </Link>
           </nav>
-          <h1 className="mt-20 text-2xl font-semibold">Terms of service</h1>
-          <p className="text-sm text-gray-400">Last Updated: 06 Mar, 2022</p>
+          <h1 className="mt-20 text-2xl font-semibold">Nutzungsbedingungen</h1>
+          <p className="text-sm text-gray-400">Letzte Aktualisierung: 06. März 2022</p>
 
-          <p className="mt-12 text-xl font-semibold">1. Agreement</p>
+          <p className="mt-12 text-xl font-semibold">1. Zustimmung</p>
           <p className="mt-1 text-lg text-gray-300">
-            By using Splitpro, you agree to these Terms of Service. Splitpro reserves the right to
-            modify these Terms at any time. By continuing to use the Service, you agree to the
-            updated Terms.
+            Durch die Nutzung von SplitPro stimmen Sie diesen Nutzungsbedingungen zu. SplitPro
+            behält sich das Recht vor, diese Bedingungen jederzeit zu ändern. Durch die
+            fortgesetzte Nutzung des Dienstes stimmen Sie den aktualisierten Bedingungen zu.
           </p>
 
-          <p className="mt-12 text-xl font-semibold">2. Eligibility</p>
+          <p className="mt-12 text-xl font-semibold">2. Berechtigung</p>
           <p className="mt-1 text-lg text-gray-300">
-            You must be at least 13 years old to use the Service. By using the Service, you
-            represent that you meet this age requirement.
+            Sie müssen mindestens 13 Jahre alt sein, um den Dienst nutzen zu dürfen. Durch die Nutzung des Dienstes
+            versichern Sie, dass Sie diese Altersanforderung erfüllen.
           </p>
 
-          <p className="mt-12 text-xl font-semibold">3. Acceptable Use</p>
+          <p className="mt-12 text-xl font-semibold">3. Zulässige Nutzung</p>
           <p className="mt-1 text-lg text-gray-300">
-            You agree not to use the Service for any illegal or harmful activities. We reserve the
-            right to terminate your access to the Service if you violate this provision.
+            Sie verpflichten sich, den Dienst nicht für illegale oder schädliche Aktivitäten zu verwenden. Wir behalten
+            uns das Recht vor, Ihren Zugang zum Dienst zu beenden, wenn Sie gegen diese Bestimmung verstoßen.
           </p>
 
-          <p className="mt-12 text-xl font-semibold">4. Termination</p>
+          <p className="mt-12 text-xl font-semibold">4. Kündigung</p>
           <p className="mt-1 text-lg text-gray-300">
-            We reserve the right to suspend or terminate your access to the Service at any time,
-            with or without notice, for any reason.
+            Wir behalten uns das Recht vor, Ihren Zugang zum Dienst jederzeit, mit oder ohne Vorankündigung, aus
+            beliebigem Grund auszusetzen oder zu beenden.
           </p>
 
-          <p className="mt-12 text-xl font-semibold">5. Disclaimers and Limitation of Liability</p>
+          <p className="mt-12 text-xl font-semibold">5. Haftungsausschluss und Haftungsbeschränkung</p>
           <p className="mt-1 text-lg text-gray-300">
-            The Service is provided &quot;as is&quot; and &quot;as available,&quot; without
-            warranties of any kind. We disclaim all liability for any damages or losses arising from
-            your use of the Service.
+            Der Dienst wird „wie besehen“ und „wie verfügbar“ bereitgestellt, ohne jegliche Garantien. Wir lehnen
+            jegliche Haftung für Schäden oder Verluste ab, die aus Ihrer Nutzung des Dienstes entstehen.
           </p>
 
-          <p className="mt-12 text-xl font-semibold">6. Governing Law</p>
+          <p className="mt-12 text-xl font-semibold">6. Anwendbares Recht</p>
           <p className="mt-1 text-lg text-gray-300">
-            These Terms shall be governed by the laws of US. Any disputes arising from these Terms
-            shall be resolved in the courts located in US.
+            Diese Bedingungen unterliegen den Gesetzen der USA. Alle Streitigkeiten im Zusammenhang mit diesen
+            Bedingungen werden vor den Gerichten der USA entschieden.
           </p>
 
-          <p className="mt-12 text-xl font-semibold">7. Privacy</p>
+          <p className="mt-12 text-xl font-semibold">7. Datenschutz</p>
           <p className="mt-1 text-lg text-gray-300">
-            Please read our <Link href="/privacy">Privacy Policy</Link>
+            Bitte lesen Sie unsere <Link href="/privacy">Datenschutzerklärung</Link>.
           </p>
 
-          <p className="mt-12 text-xl font-semibold">8. Contact</p>
+          <p className="mt-12 text-xl font-semibold">8. Kontakt</p>
           <p className="mt-1 text-lg text-gray-300">
-            If you have any questions or concerns regarding these Terms, please contact us at{' '}
+            Wenn Sie Fragen oder Bedenken zu diesen Bedingungen haben, kontaktieren Sie uns bitte unter{' '}
             <a className="underline" href={'mailto:' + feedbackEmail}>
               {feedbackEmail ?? ''}
             </a>

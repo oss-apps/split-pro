@@ -70,8 +70,8 @@ const BalancePage: NextPageWithUser<{
           text: 'Join to the group and you can add, manage expenses, and track your balances',
           url: inviteLink,
         })
-        .then(() => console.log('Successful share'))
-        .catch((error) => console.log('Error sharing', error));
+        .then(() => console.log('Erfolgreich geteilt'))
+        .catch((error) => console.log('Teilen fehlgeschlagen', error));
     } else {
       await navigator.clipboard.writeText(inviteLink);
       setIsInviteCopied(true);
@@ -126,7 +126,7 @@ const BalancePage: NextPageWithUser<{
   return (
     <>
       <Head>
-        <title>Group outstanding balances</title>
+        <title>Gruppiere Bilanzen</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
@@ -152,7 +152,7 @@ const BalancePage: NextPageWithUser<{
               className="h-[85vh]"
             >
               <div className="">
-                <p className="font-semibold">Total expenses</p>
+                <p className="font-semibold">Gesamtausgaben</p>
                 <div className="mt-2 flex flex-wrap gap-1">
                   {groupTotalQuery.data?.map((total, index, arr) => {
                     return total._sum.amount != null ? (
@@ -167,7 +167,7 @@ const BalancePage: NextPageWithUser<{
                 </div>
                 {expensesQuery?.data && expensesQuery?.data?.length > 0 && (
                   <div className="mt-8">
-                    <p className="font-semibold">First expense</p>
+                    <p className="font-semibold">Erste Ausgabe</p>
                     <p>
                       {expensesQuery.data[expensesQuery.data.length - 1]?.createdAt
                         ? format(
@@ -340,7 +340,7 @@ const BalancePage: NextPageWithUser<{
             <div className=" mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4">
               <Link href={`/add?groupId=${groupId}`}>
                 <Button size="sm" className="gap-1 text-sm lg:w-[180px]">
-                  Add Expense
+                Ausgabe hinzufügen
                 </Button>
               </Link>
               <Button size="sm" className="gap-1 text-sm" variant="secondary">
@@ -349,7 +349,7 @@ const BalancePage: NextPageWithUser<{
                     group={groupDetailQuery.data}
                     enableSendingInvites={enableSendingInvites}
                   >
-                    <UserPlus className="h-4 w-4 text-gray-400" /> Add members
+                    <UserPlus className="h-4 w-4 text-gray-400" /> Teilnehmer hinzufügen
                   </AddMembers>
                 ) : null}
               </Button>
@@ -361,11 +361,11 @@ const BalancePage: NextPageWithUser<{
               >
                 {isInviteCopied ? (
                   <>
-                    <Check className="h-4 w-4 text-gray-400" /> Copied
+                    <Check className="h-4 w-4 text-gray-400" /> Kopiert
                   </>
                 ) : (
                   <>
-                    <Share className="h-4 w-4 text-gray-400" /> Invite
+                    <Share className="h-4 w-4 text-gray-400" /> Einladen
                   </>
                 )}
               </Button>

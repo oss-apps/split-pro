@@ -23,7 +23,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   return (
     <>
       <Head>
-        <title>Outstanding balances</title>
+        <title>Hervorragende Bilanzen</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
@@ -32,7 +32,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
             <Link href={`/activity`}>
               <ChevronLeftIcon className="mr-1 h-6 w-6" />
             </Link>
-            <p className="text-[16px] font-normal">Expense details</p>
+            <p className="text-[16px] font-normal">Detaillierte Ausgaben</p>
           </div>
         }
         actions={!expenseQuery.data?.deletedBy ? <DeleteExpense expenseId={expenseId} /> : null}

@@ -207,11 +207,14 @@ export function calculateParticipantSplit(
         amount: ((p.splitShare ?? 0) * amount) / totalShare,
       }));
       break;
-    case SplitType.EXACT:
-      updatedParticipants = participants.map((p) => ({ ...p, amount: p.splitShare ?? 0 }));
-      canSplitScreenClosed =
-        amount - participants.reduce((acc, p) => acc + (p.splitShare ?? 0), 0) === 0;
-      break;
+      case SplitType.EXACT:
+        const totalSplitShare = participants.reduce((acc, p) => acc + (p.splitShare ?? 0), 0);
+        
+        const epsilon = 0.01;
+        canSplitScreenClosed = Math.abs(amount - totalSplitShare) < epsilon;
+      
+        updatedParticipants = participants.map((p) => ({ ...p, amount: p.splitShare ?? 0 }));
+        break;
     case SplitType.ADJUSTMENT:
       const totalAdjustment = participants.reduce((acc, p) => acc + (p.splitShare ?? 0), 0);
       if (totalAdjustment > amount) {

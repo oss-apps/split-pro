@@ -121,6 +121,8 @@ const BalancePage: NextPageWithUser<{
     );
   }
 
+  console.log('expensesQuery.data', expensesQuery.data);
+
   return (
     <>
       <Head>
@@ -163,6 +165,19 @@ const BalancePage: NextPageWithUser<{
                     ) : null;
                   })}
                 </div>
+                {expensesQuery?.data && expensesQuery?.data?.length > 0 && (
+                  <div className="mt-8">
+                    <p className="font-semibold">First expense</p>
+                    <p>
+                      {expensesQuery.data[expensesQuery.data.length - 1]?.createdAt
+                        ? format(
+                            expensesQuery.data[expensesQuery.data.length - 1]!.createdAt,
+                            'MMM dd, yyyy',
+                          )
+                        : '--'}
+                    </p>
+                  </div>
+                )}
               </div>
             </AppDrawer>
             <AppDrawer
@@ -184,6 +199,12 @@ const BalancePage: NextPageWithUser<{
                   ))}
                 </div>
               </div>
+              {groupDetailQuery?.data?.createdAt && (
+                <div className="mt-8">
+                  <p className="font-semibold ">Group created</p>
+                  <p>{format(groupDetailQuery.data?.createdAt, 'MMM dd, yyyy')}</p>
+                </div>
+              )}
               <div className="mt-8">
                 <p className="font-semibold ">Actions</p>
                 <div className="mt-2 flex flex-col gap-1">

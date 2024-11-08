@@ -66,7 +66,11 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                   <div className="mt-[30vh] text-center text-gray-400">No activities yet</div>
                 ) : null}
                 {expensesQuery.data?.map((e) => (
-                  <Link href={`/expenses/${e.expenseId}`} key={e.expenseId} className="flex  gap-2">
+                  <Link
+                    href={`${e.expense.groupId ? `/groups/${e.expense.groupId}/` : '/'}expenses/${e.expenseId}`}
+                    key={e.expenseId}
+                    className="flex gap-2"
+                  >
                     <div className="mt-1">
                       <UserAvatar user={e.expense.paidByUser} size={30} />
                     </div>
@@ -82,14 +86,16 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                           <span className=" font-semibold ">{e.expense.name}</span>
                         </p>
                       ) : (
-                        <p className="text-gray-300">
-                          <span className="  font-semibold text-gray-300">
+                        <p className="text-gray-800 dark:text-gray-300">
+                          <span className="  font-semibold text-gray-800 dark:text-gray-300">
                             {e.expense.paidBy === user.id
                               ? 'You'
                               : e.expense.paidByUser.name ?? e.expense.paidByUser.email}
                           </span>
                           {' paid for '}
-                          <span className=" font-semibold text-gray-300">{e.expense.name}</span>
+                          <span className=" font-semibold text-gray-800 dark:text-gray-300">
+                            {e.expense.name}
+                          </span>
                         </p>
                       )}
 

@@ -114,3 +114,7 @@ We are grateful for the support of our sponsors.
 <a href="https://hekuta.net/en" target="_blank">
   <img src="https://avatars.githubusercontent.com/u/70084358?v=4" alt="hekuta" style="width:60px;height:60px;">
 </a>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=oss-apps/split-pro&type=Date)](https://star-history.com/#oss-apps/split-pro&Date)

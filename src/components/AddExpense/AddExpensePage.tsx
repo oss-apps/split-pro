@@ -106,13 +106,13 @@ const categories = {
   },
 };
 
-export const AddExpensePage: React.FC<{
+export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
-}> = ({ isStorageConfigured, enableSendingInvites }) => {
+  expenseId?: string;
+}> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [open, setOpen] = React.useState(false);
-  const [amtStr, setAmountStr] = React.useState('');
 
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
@@ -122,13 +122,13 @@ export const AddExpensePage: React.FC<{
   const category = useAddExpenseStore((s) => s.category);
   const description = useAddExpenseStore((s) => s.description);
   const isFileUploading = useAddExpenseStore((s) => s.isFileUploading);
+  const amtStr = useAddExpenseStore((s) => s.amountStr);
 
-  const { setCurrency, setCategory, setDescription, setAmount, resetState } = useAddExpenseStore(
-    (s) => s.actions,
-  );
+  const { setCurrency, setCategory, setDescription, setAmount, setAmountStr, resetState } =
+    useAddExpenseStore((s) => s.actions);
 
-  const addExpenseMutation = api.user.addExpense.useMutation();
-  const addGroupExpenseMutation = api.group.addExpense.useMutation();
+  const addExpenseMutation = api.user.addOrEditExpense.useMutation();
+  const addGroupExpenseMutation = api.group.addOrEditExpense.useMutation();
   const updateProfile = api.user.updateUserDetail.useMutation();
 
   const router = useRouter();
@@ -176,6 +176,7 @@ export const AddExpensePage: React.FC<{
     } else {
       addExpenseMutation.mutate(
         {
+          expenseId,
           name: description,
           currency,
           amount,
@@ -191,10 +192,10 @@ export const AddExpensePage: React.FC<{
         },
         {
           onSuccess: (d) => {
-            resetState();
             if (participants[1] && d) {
+              resetState();
               router
-                .push(`/balances/${participants[1]?.id}/expenses/${d?.id}`)
+                .push(`expenses/${d?.id ?? expenseId}`)
                 .then(() => resetState())
                 .catch(console.error);
             }

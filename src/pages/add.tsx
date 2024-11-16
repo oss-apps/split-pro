@@ -1,13 +1,14 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
-import { AddExpensePage } from '~/components/AddExpense/AddExpensePage';
+import { AddOrEditExpensePage } from '~/components/AddExpense/AddExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
 import { env } from '~/env';
 import { isStorageConfigured } from '~/server/storage';
 import { useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
+import { toFixedNumber, toInteger } from '~/utils/numbers';
 
 // 🧾
 
@@ -15,10 +16,18 @@ const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
 }> = ({ user, isStorageConfigured, enableSendingInvites }) => {
-  const { setCurrentUser, setGroup, setParticipants, setCurrency } = useAddExpenseStore(
-    (s) => s.actions,
-  );
+  const {
+    setCurrentUser,
+    setGroup,
+    setParticipants,
+    setCurrency,
+    setAmount,
+    setDescription,
+    setPaidBy,
+    setAmountStr,
+  } = useAddExpenseStore((s) => s.actions);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
+  const participants = useAddExpenseStore((s) => s.participants);
 
   useEffect(() => {
     setCurrentUser({
@@ -32,11 +41,11 @@ const AddPage: NextPageWithUser<{
   }, []);
 
   const router = useRouter();
-  const { friendId, groupId } = router.query;
+  const { friendId, groupId, expenseId } = router.query;
 
   const _groupId = parseInt(groupId as string);
   const _friendId = parseInt(friendId as string);
-
+  const _expenseId = expenseId as string;
   const groupQuery = api.group.getGroupDetails.useQuery(
     { groupId: _groupId },
     { enabled: !!_groupId },
@@ -45,6 +54,11 @@ const AddPage: NextPageWithUser<{
   const friendQuery = api.user.getFriend.useQuery(
     { friendId: _friendId },
     { enabled: !!_friendId },
+  );
+
+  const expenseQuery = api.user.getExpenseDetails.useQuery(
+    { expenseId: _expenseId },
+    { enabled: !!_expenseId, refetchOnWindowFocus: false },
   );
 
   useEffect(() => {
@@ -69,16 +83,38 @@ const AddPage: NextPageWithUser<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [friendId, friendQuery.isLoading, friendQuery.data, currentUser]);
 
+  useEffect(() => {
+    console.log('participants', participants, expenseQuery.data, _expenseId);
+    if (_expenseId && expenseQuery.data) {
+      console.log('expenseQuery.data', expenseQuery.data, participants);
+      expenseQuery.data.group && setGroup(expenseQuery.data.group);
+      setParticipants(
+        expenseQuery.data.expenseParticipants.map((ep) => ({
+          ...ep.user,
+          amount: toFixedNumber(ep.amount),
+        })),
+      );
+      setCurrency(expenseQuery.data.currency);
+      setAmount(toFixedNumber(expenseQuery.data.amount));
+      setAmountStr(toFixedNumber(expenseQuery.data.amount).toString());
+      setDescription(expenseQuery.data.name);
+      setPaidBy(expenseQuery.data.paidByUser);
+      useAddExpenseStore.setState({ showFriends: false });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [_expenseId, expenseQuery.data]);
+
   return (
     <>
       <Head>
         <title>Add Expense</title>
       </Head>
       <MainLayout hideAppBar>
-        {currentUser ? (
-          <AddExpensePage
+        {currentUser && (!_expenseId || expenseQuery.data) ? (
+          <AddOrEditExpensePage
             isStorageConfigured={isStorageConfigured}
             enableSendingInvites={enableSendingInvites}
+            expenseId={_expenseId}
           />
         ) : (
           <div></div>
@@ -93,8 +129,6 @@ AddPage.auth = true;
 export default AddPage;
 
 export async function getServerSideProps() {
-  console.log('isStorageConfigured', isStorageConfigured());
-
   return {
     props: {
       isStorageConfigured: !!isStorageConfigured(),

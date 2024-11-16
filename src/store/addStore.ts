@@ -6,6 +6,7 @@ export type Participant = User & { amount?: number; splitShare?: number };
 
 interface AddExpenseState {
   amount: number;
+  amountStr: string;
   currentUser: User | undefined;
   splitType: SplitType;
   group: Group | undefined;
@@ -21,6 +22,7 @@ interface AddExpenseState {
   canSplitScreenClosed: boolean;
   actions: {
     setAmount: (amount: number) => void;
+    setAmountStr: (amountStr: string) => void;
     setSplitType: (splitType: SplitType) => void;
     setGroup: (group: Group | undefined) => void;
     addOrUpdateParticipant: (user: Participant) => void;
@@ -41,6 +43,7 @@ interface AddExpenseState {
 
 export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   amount: 0,
+  amountStr: '',
   splitType: SplitType.EQUAL,
   group: undefined,
   participants: [],
@@ -66,6 +69,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
 
         return { amount, participants, canSplitScreenClosed };
       }),
+    setAmountStr: (amountStr) => set({ amountStr }),
     setSplitType: (splitType) =>
       set((state) => {
         return {
@@ -207,14 +211,14 @@ export function calculateParticipantSplit(
         amount: ((p.splitShare ?? 0) * amount) / totalShare,
       }));
       break;
-      case SplitType.EXACT:
-        const totalSplitShare = participants.reduce((acc, p) => acc + (p.splitShare ?? 0), 0);
-        
-        const epsilon = 0.01;
-        canSplitScreenClosed = Math.abs(amount - totalSplitShare) < epsilon;
-      
-        updatedParticipants = participants.map((p) => ({ ...p, amount: p.splitShare ?? 0 }));
-        break;
+    case SplitType.EXACT:
+      const totalSplitShare = participants.reduce((acc, p) => acc + (p.splitShare ?? 0), 0);
+
+      const epsilon = 0.01;
+      canSplitScreenClosed = Math.abs(amount - totalSplitShare) < epsilon;
+
+      updatedParticipants = participants.map((p) => ({ ...p, amount: p.splitShare ?? 0 }));
+      break;
     case SplitType.ADJUSTMENT:
       const totalAdjustment = participants.reduce((acc, p) => acc + (p.splitShare ?? 0), 0);
       if (totalAdjustment > amount) {

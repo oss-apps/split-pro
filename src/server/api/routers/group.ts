@@ -2,7 +2,7 @@ import { SplitType } from '@prisma/client';
 import { z } from 'zod';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
-import { createGroupExpense, deleteExpense } from '../services/splitService';
+import { createGroupExpense, deleteExpense, editExpense } from '../services/splitService';
 import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 
@@ -116,7 +116,7 @@ export const groupRouter = createTRPCRouter({
       return group;
     }),
 
-  addExpense: groupProcedure
+  addOrEditExpense: groupProcedure
     .input(
       z.object({
         paidBy: z.number(),
@@ -135,23 +135,56 @@ export const groupRouter = createTRPCRouter({
         participants: z.array(z.object({ userId: z.number(), amount: z.number() })),
         fileKey: z.string().optional(),
         expenseDate: z.date().optional(),
+        expenseId: z.string().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      if (input.expenseId) {
+        const expenseParticipant = await db.expenseParticipant.findUnique({
+          where: {
+            expenseId_userId: {
+              expenseId: input.expenseId,
+              userId: ctx.session.user.id,
+            },
+          },
+        });
+
+        if (!expenseParticipant) {
+          throw new TRPCError({
+            code: 'UNAUTHORIZED',
+            message: 'You are not the participant of the expense',
+          });
+        }
+      }
+
       try {
-        const expense = await createGroupExpense(
-          input.groupId,
-          input.paidBy,
-          input.name,
-          input.category,
-          input.amount,
-          input.splitType,
-          input.currency,
-          input.participants,
-          ctx.session.user.id,
-          input.expenseDate ?? new Date(),
-          input.fileKey,
-        );
+        const expense = input.expenseId
+          ? await editExpense(
+              input.expenseId,
+              input.paidBy,
+              input.name,
+              input.category,
+              input.amount,
+              input.splitType,
+              input.currency,
+              input.participants,
+              ctx.session.user.id,
+              input.expenseDate ?? new Date(),
+              input.fileKey,
+            )
+          : await createGroupExpense(
+              input.groupId,
+              input.paidBy,
+              input.name,
+              input.category,
+              input.amount,
+              input.splitType,
+              input.currency,
+              input.participants,
+              ctx.session.user.id,
+              input.expenseDate ?? new Date(),
+              input.fileKey,
+            );
 
         return expense;
       } catch (error) {

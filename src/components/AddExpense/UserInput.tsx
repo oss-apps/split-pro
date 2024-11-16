@@ -4,7 +4,9 @@ import { z } from 'zod';
 import { api } from '~/utils/api';
 import Router from 'next/router';
 
-export const UserInput: React.FC = () => {
+export const UserInput: React.FC<{
+  isEditing?: boolean;
+}> = ({ isEditing }) => {
   const {
     setNameOrEmail,
     removeLastParticipant,

@@ -5,6 +5,7 @@ import { db } from '~/server/db';
 import {
   addUserExpense,
   deleteExpense,
+  editExpense,
   getCompleteFriendsDetails,
   getCompleteGroupDetails,
   importGroupFromSplitwise,
@@ -139,7 +140,7 @@ export const userRouter = createTRPCRouter({
       return user;
     }),
 
-  addExpense: protectedProcedure
+  addOrEditExpense: protectedProcedure
     .input(
       z.object({
         paidBy: z.number(),
@@ -158,22 +159,57 @@ export const userRouter = createTRPCRouter({
         participants: z.array(z.object({ userId: z.number(), amount: z.number() })),
         fileKey: z.string().optional(),
         expenseDate: z.date().optional(),
+        expenseId: z.string().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      if (input.expenseId) {
+        const expenseParticipant = await db.expenseParticipant.findUnique({
+          where: {
+            expenseId_userId: {
+              expenseId: input.expenseId,
+              userId: ctx.session.user.id,
+            },
+          },
+        });
+
+        console.log('expenseParticipant', expenseParticipant);
+
+        if (!expenseParticipant) {
+          throw new TRPCError({
+            code: 'UNAUTHORIZED',
+            message: 'You are not the participant of the expense',
+          });
+        }
+      }
+
       try {
-        const expense = await addUserExpense(
-          input.paidBy,
-          input.name,
-          input.category,
-          input.amount,
-          input.splitType,
-          input.currency,
-          input.participants,
-          ctx.session.user.id,
-          input.expenseDate ?? new Date(),
-          input.fileKey,
-        );
+        const expense = input.expenseId
+          ? await editExpense(
+              input.expenseId,
+              input.paidBy,
+              input.name,
+              input.category,
+              input.amount,
+              input.splitType,
+              input.currency,
+              input.participants,
+              ctx.session.user.id,
+              input.expenseDate ?? new Date(),
+              input.fileKey,
+            )
+          : await addUserExpense(
+              input.paidBy,
+              input.name,
+              input.category,
+              input.amount,
+              input.splitType,
+              input.currency,
+              input.participants,
+              ctx.session.user.id,
+              input.expenseDate ?? new Date(),
+              input.fileKey,
+            );
 
         return expense;
       } catch (error) {
@@ -266,6 +302,7 @@ export const userRouter = createTRPCRouter({
           addedByUser: true,
           paidByUser: true,
           deletedByUser: true,
+          group: true,
         },
       });
 

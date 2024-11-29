@@ -302,6 +302,7 @@ export const userRouter = createTRPCRouter({
           addedByUser: true,
           paidByUser: true,
           deletedByUser: true,
+          updatedByUser: true,
           group: true,
         },
       });

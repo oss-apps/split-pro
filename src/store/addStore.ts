@@ -95,7 +95,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
       }),
     setParticipants: (_participants) =>
       set((state) => {
-        const participants = _participants.map((p) => ({ ...p, splitShare: 1 }));
+        const participants = _participants.map((p) => ({ splitShare: 1, ...p }));
         return {
           splitType: SplitType.EQUAL,
           ...calculateParticipantSplit(state.amount, participants, SplitType.EQUAL, state.paidBy),
@@ -240,4 +240,75 @@ export function calculateParticipantSplit(
   });
 
   return { participants: updatedParticipants, canSplitScreenClosed };
+}
+
+export function calculateSplitShareBasedOnAmount(
+  amount: number,
+  participants: Array<Participant>,
+  splitType: SplitType,
+  paidBy?: User,
+) {
+  let updatedParticipants = [...participants];
+
+  console.log('calculateSplitShareBasedOnAmount', amount, participants, splitType);
+
+  switch (splitType) {
+    case SplitType.EQUAL:
+      // For equal split, split share should be amount/participants or 0 if amount is 0
+      updatedParticipants = participants.map((p) => ({
+        ...p,
+        splitShare: p.amount === 0 ? 0 : 1,
+      }));
+      break;
+
+    case SplitType.PERCENTAGE:
+      // Convert amounts back to percentages
+      updatedParticipants = participants.map((p) => ({
+        ...p,
+        splitShare:
+          amount === 0
+            ? 0
+            : paidBy?.id !== p.id
+              ? (Math.abs(p.amount ?? 0) / amount) * 100
+              : (Math.abs(amount - (p.amount ?? 0)) / amount) * 100,
+      }));
+      break;
+
+    case SplitType.SHARE:
+      // Convert amounts back to shares
+      const totalAmount = participants.reduce((acc, p) => acc + Math.abs(p.amount ?? 0), 0);
+      updatedParticipants = participants.map((p) => ({
+        ...p,
+        splitShare:
+          totalAmount === 0
+            ? 0
+            : paidBy?.id !== p.id
+              ? Math.abs(p.amount ?? 0) / amount
+              : Math.abs(amount - (p.amount ?? 0)) / amount,
+      }));
+      break;
+
+    case SplitType.EXACT:
+      // For exact, split share is the absolute amount
+      updatedParticipants = participants.map((p) => ({
+        ...p,
+        splitShare: Math.abs(p.amount ?? 0),
+      }));
+      break;
+
+    case SplitType.ADJUSTMENT:
+      // For adjustment, split share is the difference from equal share
+      updatedParticipants = participants.map((p) => ({
+        ...p,
+        splitShare:
+          amount === 0
+            ? 0
+            : paidBy?.id !== p.id
+              ? Math.abs(p.amount ?? 0)
+              : Math.abs(amount - (p.amount ?? 0)),
+      }));
+      break;
+  }
+
+  return updatedParticipants;
 }

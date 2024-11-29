@@ -5,7 +5,7 @@ import { AddOrEditExpensePage } from '~/components/AddExpense/AddExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
 import { env } from '~/env';
 import { isStorageConfigured } from '~/server/storage';
-import { useAddExpenseStore } from '~/store/addStore';
+import { calculateSplitShareBasedOnAmount, useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { toFixedNumber, toInteger } from '~/utils/numbers';
@@ -25,9 +25,9 @@ const AddPage: NextPageWithUser<{
     setDescription,
     setPaidBy,
     setAmountStr,
+    setSplitType,
   } = useAddExpenseStore((s) => s.actions);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
-  const participants = useAddExpenseStore((s) => s.participants);
 
   useEffect(() => {
     setCurrentUser({
@@ -84,21 +84,39 @@ const AddPage: NextPageWithUser<{
   }, [friendId, friendQuery.isLoading, friendQuery.data, currentUser]);
 
   useEffect(() => {
-    console.log('participants', participants, expenseQuery.data, _expenseId);
     if (_expenseId && expenseQuery.data) {
-      console.log('expenseQuery.data', expenseQuery.data, participants);
+      console.log(
+        'expenseQuery.data 123',
+        expenseQuery.data.expenseParticipants,
+        expenseQuery.data.splitType,
+        calculateSplitShareBasedOnAmount(
+          toFixedNumber(expenseQuery.data.amount),
+          expenseQuery.data.expenseParticipants.map((ep) => ({
+            ...ep.user,
+            amount: toFixedNumber(ep.amount),
+          })),
+          expenseQuery.data.splitType,
+          expenseQuery.data.paidByUser,
+        ),
+      );
       expenseQuery.data.group && setGroup(expenseQuery.data.group);
       setParticipants(
-        expenseQuery.data.expenseParticipants.map((ep) => ({
-          ...ep.user,
-          amount: toFixedNumber(ep.amount),
-        })),
+        calculateSplitShareBasedOnAmount(
+          toFixedNumber(expenseQuery.data.amount),
+          expenseQuery.data.expenseParticipants.map((ep) => ({
+            ...ep.user,
+            amount: toFixedNumber(ep.amount),
+          })),
+          expenseQuery.data.splitType,
+          expenseQuery.data.paidByUser,
+        ),
       );
       setCurrency(expenseQuery.data.currency);
-      setAmount(toFixedNumber(expenseQuery.data.amount));
       setAmountStr(toFixedNumber(expenseQuery.data.amount).toString());
       setDescription(expenseQuery.data.name);
       setPaidBy(expenseQuery.data.paidByUser);
+      setAmount(toFixedNumber(expenseQuery.data.amount));
+      setSplitType(expenseQuery.data.splitType);
       useAddExpenseStore.setState({ showFriends: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

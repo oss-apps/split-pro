@@ -161,12 +161,13 @@ export const AddOrEditExpensePage: React.FC<{
           category,
           fileKey,
           expenseDate: date,
+          expenseId,
         },
         {
           onSuccess: (d) => {
             if (d) {
               router
-                .push(`/groups/${group.id}/expenses/${d?.id}`)
+                .push(`/groups/${group.id}/expenses/${d?.id ?? expenseId}`)
                 .then(() => resetState())
                 .catch(console.error);
             }
@@ -238,7 +239,7 @@ export const AddOrEditExpensePage: React.FC<{
             Save
           </Button>{' '}
         </div>
-        <UserInput />
+        <UserInput isEditing={!!expenseId} />
         {showFriends || (participants.length === 1 && !group) ? (
           <SelectUserOrGroup enableSendingInvites={enableSendingInvites} />
         ) : (

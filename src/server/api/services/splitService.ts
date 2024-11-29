@@ -564,6 +564,7 @@ export async function editExpense(
         },
         fileKey,
         expenseDate,
+        updatedBy: currentUserId,
       },
     }),
   );

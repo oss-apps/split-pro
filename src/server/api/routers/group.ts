@@ -231,6 +231,7 @@ export const groupRouter = createTRPCRouter({
           addedByUser: true,
           paidByUser: true,
           deletedByUser: true,
+          updatedByUser: true,
         },
       });
 

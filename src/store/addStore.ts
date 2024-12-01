@@ -292,7 +292,8 @@ export function calculateSplitShareBasedOnAmount(
       // For exact, split share is the absolute amount
       updatedParticipants = participants.map((p) => ({
         ...p,
-        splitShare: Math.abs(p.amount ?? 0),
+        splitShare:
+          paidBy?.id !== p.id ? Math.abs(p.amount ?? 0) : Math.abs(amount - (p.amount ?? 0)),
       }));
       break;
 

@@ -124,8 +124,15 @@ export const AddOrEditExpensePage: React.FC<{
   const isFileUploading = useAddExpenseStore((s) => s.isFileUploading);
   const amtStr = useAddExpenseStore((s) => s.amountStr);
 
-  const { setCurrency, setCategory, setDescription, setAmount, setAmountStr, resetState } =
-    useAddExpenseStore((s) => s.actions);
+  const {
+    setCurrency,
+    setCategory,
+    setDescription,
+    setAmount,
+    setAmountStr,
+    resetState,
+    setSplitScreenOpen,
+  } = useAddExpenseStore((s) => s.actions);
 
   const addExpenseMutation = api.user.addOrEditExpense.useMutation();
   const addGroupExpenseMutation = api.group.addOrEditExpense.useMutation();
@@ -140,8 +147,14 @@ export const AddOrEditExpensePage: React.FC<{
   }
 
   function addExpense() {
-    const { group, paidBy, splitType, fileKey } = useAddExpenseStore.getState();
+    const { group, paidBy, splitType, fileKey, canSplitScreenClosed } =
+      useAddExpenseStore.getState();
     if (!paidBy) {
+      return;
+    }
+
+    if (!canSplitScreenClosed) {
+      setSplitScreenOpen(true);
       return;
     }
 

@@ -20,6 +20,7 @@ interface AddExpenseState {
   isFileUploading: boolean;
   fileKey?: string;
   canSplitScreenClosed: boolean;
+  splitScreenOpen: boolean;
   actions: {
     setAmount: (amount: number) => void;
     setAmountStr: (amountStr: string) => void;
@@ -38,6 +39,7 @@ interface AddExpenseState {
     setFileUploading: (isFileUploading: boolean) => void;
     setFileKey: (fileKey: string) => void;
     resetState: () => void;
+    setSplitScreenOpen: (splitScreenOpen: boolean) => void;
   };
 }
 
@@ -57,6 +59,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   isFileUploading: false,
   fileKey: undefined,
   canSplitScreenClosed: true,
+  splitScreenOpen: false,
   actions: {
     setAmount: (amount) =>
       set((s) => {
@@ -165,7 +168,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     setDescription: (description) => set({ description }),
     setFileUploading: (isFileUploading) => set({ isFileUploading }),
     setFileKey: (fileKey) => set({ fileKey }),
-    resetState: () =>
+    resetState: () => {
       set((s) => ({
         amount: 0,
         participants: s.currentUser ? [s.currentUser] : [],
@@ -174,7 +177,12 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         category: 'general',
         splitType: SplitType.EQUAL,
         group: undefined,
-      })),
+        amountStr: '',
+      }));
+
+      Router.push('/add').catch(console.error);
+    },
+    setSplitScreenOpen: (splitScreenOpen) => set({ splitScreenOpen }),
   },
 }));
 

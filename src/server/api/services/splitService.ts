@@ -675,14 +675,13 @@ export async function editExpense(
     }
   });
 
-  const result = await db.$transaction(operations);
+  await db.$transaction(operations);
   await updateGroupExpenseForIfBalanceIsZero(
     paidBy,
     participants.map((p) => p.userId),
     currency,
   );
   sendExpensePushNotification(expenseId).catch(console.error);
-  console.log('result', result);
   return { id: expenseId }; // Return the updated expense
 }
 

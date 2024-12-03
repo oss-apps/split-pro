@@ -285,15 +285,26 @@ export function calculateSplitShareBasedOnAmount(
 
     case SplitType.SHARE:
       // Convert amounts back to shares
-      const totalAmount = participants.reduce((acc, p) => acc + Math.abs(p.amount ?? 0), 0);
+      const shares = participants.map((p) =>
+        p.id === paidBy?.id
+          ? Math.abs(amount - (p.amount ?? 0)) / amount
+          : Math.abs(p.amount ?? 0) / amount,
+      );
+
+      // Find the minimum share value
+      const minShare = Math.min(...shares);
+
+      // Calculate multiplier to make minimum share equal to 1
+      const multiplier = minShare !== 0 ? 1 / minShare : 1;
+
       updatedParticipants = participants.map((p) => ({
         ...p,
         splitShare:
-          totalAmount === 0
+          (amount === 0
             ? 0
             : paidBy?.id !== p.id
               ? Math.abs(p.amount ?? 0) / amount
-              : Math.abs(amount - (p.amount ?? 0)) / amount,
+              : Math.abs(amount - (p.amount ?? 0)) / amount) * multiplier,
       }));
       break;
 

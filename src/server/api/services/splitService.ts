@@ -682,7 +682,8 @@ export async function editExpense(
     currency,
   );
   sendExpensePushNotification(expenseId).catch(console.error);
-  return result[result.length - 2] as Expense; // Return the updated expense
+  console.log('result', result);
+  return { id: expenseId }; // Return the updated expense
 }
 
 async function updateGroupExpenseForIfBalanceIsZero(

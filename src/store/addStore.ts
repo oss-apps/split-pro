@@ -179,8 +179,6 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         group: undefined,
         amountStr: '',
       }));
-
-      Router.push('/add').catch(console.error);
     },
     setSplitScreenOpen: (splitScreenOpen) => set({ splitScreenOpen }),
   },

@@ -207,7 +207,6 @@ export const AddOrEditExpensePage: React.FC<{
         {
           onSuccess: (d) => {
             if (participants[1] && d) {
-              resetState();
               router
                 .push(`expenses/${d?.id ?? expenseId}`)
                 .then(() => resetState())

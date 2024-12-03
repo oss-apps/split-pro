@@ -18,6 +18,7 @@ type ExpenseDetailsProps = {
     addedByUser: User;
     paidByUser: User;
     deletedByUser: User | null;
+    updatedByUser: User | null;
   };
   storagePublicUrl?: string;
 };
@@ -41,6 +42,12 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
             </p>
             {!isSameDay(expense.expenseDate, expense.createdAt) ? (
               <p className="text-sm text-gray-500">{format(expense.expenseDate, 'dd MMM yyyy')}</p>
+            ) : null}
+            {expense.updatedByUser ? (
+              <p className=" text-sm text-gray-500">
+                Edited by {expense.updatedByUser?.name ?? expense.updatedByUser?.email} on{' '}
+                {format(expense.updatedAt, 'dd MMM yyyy')}
+              </p>
             ) : null}
             {expense.deletedByUser ? (
               <p className=" text-sm text-orange-600">

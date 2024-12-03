@@ -13,8 +13,9 @@ export const SplitTypeSection: React.FC = () => {
   const currentUser = useAddExpenseStore((s) => s.currentUser);
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
   const splitType = useAddExpenseStore((s) => s.splitType);
+  const splitScreenOpen = useAddExpenseStore((s) => s.splitScreenOpen);
 
-  const { setPaidBy } = useAddExpenseStore((s) => s.actions);
+  const { setPaidBy, setSplitScreenOpen } = useAddExpenseStore((s) => s.actions);
 
   return (
     <div className="mt-4 flex items-center justify-center text-[16px] text-gray-400">
@@ -63,6 +64,8 @@ export const SplitTypeSection: React.FC = () => {
         dismissible={false}
         actionTitle="Save"
         actionDisabled={!canSplitScreenClosed}
+        open={splitScreenOpen}
+        onOpenChange={(open) => setSplitScreenOpen(open)}
       >
         <SplitExpenseForm />
       </AppDrawer>

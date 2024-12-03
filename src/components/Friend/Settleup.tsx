@@ -30,7 +30,7 @@ export const SettleUp: React.FC<{
     setAmount(toFixedNumber(Math.abs(balance.amount)).toString());
   }
 
-  const addExpenseMutation = api.user.addExpense.useMutation();
+  const addExpenseMutation = api.user.addOrEditExpense.useMutation();
   const utils = api.useUtils();
 
   function saveExpense() {

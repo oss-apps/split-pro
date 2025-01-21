@@ -9,8 +9,8 @@ import GoogleProvider from 'next-auth/providers/google';
 import { env } from '~/env';
 import { db } from '~/server/db';
 
-import { sendSignUpEmail } from './mailer';
 import { getBaseUrl } from '~/utils/api';
+import { sendSignUpEmail } from './mailer';
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`

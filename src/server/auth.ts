@@ -1,10 +1,11 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { type GetServerSidePropsContext } from 'next';
-import { getServerSession, type DefaultSession, type NextAuthOptions } from 'next-auth';
+import { getServerSession, type DefaultSession, type NextAuthOptions, User } from 'next-auth';
 import { Adapter, AdapterUser } from 'next-auth/adapters';
 import DiscordProvider from 'next-auth/providers/discord';
 import GoogleProvider from 'next-auth/providers/google';
 import EmailProvider from 'next-auth/providers/email';
+import { OAuthConfig } from 'next-auth/providers/oauth';
 import AuthentikProvider from 'next-auth/providers/authentik';
 
 import { env } from '~/env';
@@ -55,6 +56,13 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
   }
 }
 
+interface OIDCProfile {
+  sub: string,
+  name: string,
+  email: string,
+  picture: string,
+  preferred_username: string
+}
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -179,7 +187,35 @@ function getProviders() {
       })
     );
   }
-  
+
+  if (env.OIDC_CLIENT_ID && env.OIDC_CLIENT_SECRET && env.OIDC_WELL_KNOWN_URL) {
+    providersList.push(
+      {
+        id: 'oidc',
+        name: env.OIDC_NAME ?? 'OIDC',
+        clientId: env.OIDC_CLIENT_ID,
+        clientSecret: env.OIDC_CLIENT_SECRET,
+        type: "oauth",
+        wellKnown: env.OIDC_WELL_KNOWN_URL,
+        authorization: { params: { scope: "openid email profile" } },
+        idToken: true,
+        profile(profile: OIDCProfile) {
+          // This function expects a "standard" next-auth user but we override
+          // what a next-auth user is above.  The expected next-auth user must be
+          // a record that has an id, a name, an email, and an image.
+          //
+          // To work around this, we case to unknown and then `User`.
+          return {
+            id: profile.sub,
+            name: profile.name,
+            email: profile.email,
+            image: profile.picture,
+          } as unknown as User
+        }
+      } satisfies OAuthConfig<OIDCProfile>
+    );
+  }
+
   return providersList;
 }
 

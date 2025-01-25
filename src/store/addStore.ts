@@ -270,7 +270,7 @@ export function calculateSplitShareBasedOnAmount(
       // For equal split, split share should be amount/participants or 0 if amount is 0
       updatedParticipants = participants.map((p) => ({
         ...p,
-        splitShare: p.amount === 0 ? 0 : 1,
+        splitShare: (paidBy?.id === p.id ? (p.amount ?? 0) - amount : p.amount) === 0 ? 0 : 1,
       }));
       break;
 

@@ -111,7 +111,6 @@ export const AddOrEditExpensePage: React.FC<{
   enableSendingInvites: boolean;
   expenseId?: string;
 }> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [open, setOpen] = React.useState(false);
 
   const showFriends = useAddExpenseStore((s) => s.showFriends);
@@ -123,6 +122,7 @@ export const AddOrEditExpensePage: React.FC<{
   const description = useAddExpenseStore((s) => s.description);
   const isFileUploading = useAddExpenseStore((s) => s.isFileUploading);
   const amtStr = useAddExpenseStore((s) => s.amountStr);
+  const expenseDate = useAddExpenseStore((s) => s.expenseDate);
 
   const {
     setCurrency,
@@ -132,6 +132,7 @@ export const AddOrEditExpensePage: React.FC<{
     setAmountStr,
     resetState,
     setSplitScreenOpen,
+    setExpenseDate,
   } = useAddExpenseStore((s) => s.actions);
 
   const addExpenseMutation = api.user.addOrEditExpense.useMutation();
@@ -173,7 +174,7 @@ export const AddOrEditExpensePage: React.FC<{
           paidBy: paidBy.id,
           category,
           fileKey,
-          expenseDate: date,
+          expenseDate,
           expenseId,
         },
         {
@@ -202,7 +203,7 @@ export const AddOrEditExpensePage: React.FC<{
           paidBy: paidBy.id,
           category,
           fileKey,
-          expenseDate: date,
+          expenseDate,
         },
         {
           onSuccess: (d) => {
@@ -385,15 +386,15 @@ export const AddOrEditExpensePage: React.FC<{
                           variant="ghost"
                           className={cn(
                             ' justify-start px-0 text-left font-normal',
-                            !date && 'text-muted-foreground',
+                            !expenseDate && 'text-muted-foreground',
                           )}
                         >
                           <CalendarIcon className="mr-2 h-6 w-6 text-cyan-500" />
-                          {date ? (
-                            format(date, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? (
+                          {expenseDate ? (
+                            format(expenseDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? (
                               'Today'
                             ) : (
-                              format(date, 'MMM dd')
+                              format(expenseDate, 'MMM dd')
                             )
                           ) : (
                             <span>Pick a date</span>
@@ -401,7 +402,7 @@ export const AddOrEditExpensePage: React.FC<{
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0">
-                        <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
+                        <Calendar mode="single" selected={expenseDate} onSelect={setExpenseDate} initialFocus />
                       </PopoverContent>
                     </Popover>
                   </div>

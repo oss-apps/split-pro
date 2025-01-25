@@ -21,6 +21,7 @@ interface AddExpenseState {
   fileKey?: string;
   canSplitScreenClosed: boolean;
   splitScreenOpen: boolean;
+  expenseDate: Date | undefined;
   actions: {
     setAmount: (amount: number) => void;
     setAmountStr: (amountStr: string) => void;
@@ -40,6 +41,7 @@ interface AddExpenseState {
     setFileKey: (fileKey: string) => void;
     resetState: () => void;
     setSplitScreenOpen: (splitScreenOpen: boolean) => void;
+    setExpenseDate: (expenseDate: Date | undefined) => void;
   };
 }
 
@@ -60,6 +62,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   fileKey: undefined,
   canSplitScreenClosed: true,
   splitScreenOpen: false,
+  expenseDate: undefined,
   actions: {
     setAmount: (amount) =>
       set((s) => {
@@ -181,6 +184,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
       }));
     },
     setSplitScreenOpen: (splitScreenOpen) => set({ splitScreenOpen }),
+    setExpenseDate: (expenseDate) => set({ expenseDate }),
   },
 }));
 

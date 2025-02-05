@@ -287,8 +287,8 @@ export function calculateSplitShareBasedOnAmount(
           amount === 0
             ? 0
             : paidBy?.id !== p.id
-              ? (Math.abs(p.amount ?? 0) / amount) * 100
-              : (Math.abs(amount - (p.amount ?? 0)) / amount) * 100,
+              ? Math.round((Math.abs(p.amount ?? 0) / amount) * 10000) / 100
+              : Math.round((Math.abs(amount - (p.amount ?? 0)) / amount) * 10000) / 100,
       }));
       break;
 

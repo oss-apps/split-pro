@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { UserInput } from './UserInput';
@@ -393,7 +393,8 @@ export const AddOrEditExpensePage: React.FC<{
                         >
                           <CalendarIcon className="mr-2 h-6 w-6 text-cyan-500" />
                           {expenseDate ? (
-                            format(expenseDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? (
+                            format(expenseDate, 'yyyy-MM-dd') ===
+                            format(new Date(), 'yyyy-MM-dd') ? (
                               'Today'
                             ) : (
                               format(expenseDate, 'MMM dd')
@@ -404,7 +405,12 @@ export const AddOrEditExpensePage: React.FC<{
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0">
-                        <Calendar mode="single" selected={expenseDate} onSelect={setExpenseDate} initialFocus />
+                        <Calendar
+                          mode="single"
+                          selected={expenseDate}
+                          onSelect={setExpenseDate}
+                          initialFocus
+                        />
                       </PopoverContent>
                     </Popover>
                   </div>

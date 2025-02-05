@@ -416,15 +416,25 @@ const BalancePage: NextPageWithUser<{
               </div>
               {isSettlement ? null : (
                 <div className="min-w-10 shrink-0">
-                  <div
-                    className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
-                  >
-                    {youPaid ? 'You lent' : 'You owe'}
-                  </div>
-                  <div className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}>
-                    <span className="font-light ">{e.currency}</span>{' '}
-                    {toUIString(yourExpenseAmount)}
-                  </div>
+                  {youPaid || yourExpenseAmount !== 0 ? (
+                    <>
+                      <div
+                        className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
+                      >
+                        {youPaid ? 'You lent' : 'You owe'}
+                      </div>
+                      <div
+                        className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
+                      >
+                        <span className="font-light ">{e.currency}</span>{' '}
+                        {toUIString(yourExpenseAmount)}
+                      </div>
+                    </>
+                  ) : (
+                    <div>
+                      <p className="text-xs text-gray-400">Not involved</p>
+                    </div>
+                  )}
                 </div>
               )}
             </Link>

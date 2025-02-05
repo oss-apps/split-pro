@@ -135,6 +135,8 @@ export const AddOrEditExpensePage: React.FC<{
     setExpenseDate,
   } = useAddExpenseStore((s) => s.actions);
 
+  useEffect(() => () => resetState(), []);
+
   const addExpenseMutation = api.user.addOrEditExpense.useMutation();
   const addGroupExpenseMutation = api.group.addOrEditExpense.useMutation();
   const updateProfile = api.user.updateUserDetail.useMutation();

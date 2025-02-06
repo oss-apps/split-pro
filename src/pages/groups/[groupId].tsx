@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   DoorOpen,
   Info,
+  Merge,
   Share,
   Trash2,
   UserPlus,
@@ -38,6 +39,7 @@ import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { CategoryIcon } from '~/components/ui/categoryIcons';
 import { AppDrawer } from '~/components/ui/drawer';
+import { Switch } from '~/components/ui/switch';
 import { env } from '~/env';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
@@ -54,6 +56,7 @@ const BalancePage: NextPageWithUser<{
   const expensesQuery = api.group.getExpenses.useQuery({ groupId });
   const deleteGroupMutation = api.group.delete.useMutation();
   const leaveGroupMutation = api.group.leaveGroup.useMutation();
+  const toggleSimplifyDebtsMutation = api.group.toggleSimplifyDebts.useMutation();
 
   const [isInviteCopied, setIsInviteCopied] = useState(false);
   const [showDeleteTrigger, setShowDeleteTrigger] = useState(false);
@@ -209,6 +212,28 @@ const BalancePage: NextPageWithUser<{
               <div className="mt-8">
                 <p className="font-semibold ">Actions</p>
                 <div className="mt-2 flex flex-col gap-1">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="simplify-debts" className="flex items-center">
+                      <Merge className="mr-2 h-4 w-4" /> Simplify debts
+                    </label>
+                    <Switch
+                      id="simplify-debts"
+                      checked={groupDetailQuery.data?.simplifyDebts ?? false}
+                      onCheckedChange={() => {
+                        toggleSimplifyDebtsMutation.mutate(
+                          { groupId },
+                          {
+                            onSuccess: () => {
+                              void groupDetailQuery.refetch();
+                            },
+                            onError: () => {
+                              toast.error('Failed to update setting');
+                            },
+                          },
+                        );
+                      }}
+                    />
+                  </div>
                   {isAdmin ? (
                     <>
                       <AlertDialog

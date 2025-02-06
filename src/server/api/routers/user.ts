@@ -519,6 +519,6 @@ export const userRouter = createTRPCRouter({
     }),
 
   getWebPushPublicKey: protectedProcedure.query(async ({ ctx }) => {
-    return env.WEB_PUSH_PUBLIC_KEY;
+    return env.WEB_PUSH_PUBLIC_KEY ?? '';
   }),
 });

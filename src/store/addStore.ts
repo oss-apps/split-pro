@@ -80,7 +80,12 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
       set((state) => {
         return {
           splitType,
-          ...calculateParticipantSplit(state.amount, state.participants, splitType, state.paidBy),
+          ...calculateSplitShareBasedOnAmount(
+            state.amount,
+            state.participants,
+            splitType,
+            state.paidBy,
+          ),
         };
       }),
     setGroup: (group) => {
@@ -282,8 +287,8 @@ export function calculateSplitShareBasedOnAmount(
           amount === 0
             ? 0
             : paidBy?.id !== p.id
-              ? (Math.abs(p.amount ?? 0) / amount) * 100
-              : (Math.abs(amount - (p.amount ?? 0)) / amount) * 100,
+              ? Math.round((Math.abs(p.amount ?? 0) / amount) * 10000) / 100
+              : Math.round((Math.abs(amount - (p.amount ?? 0)) / amount) * 10000) / 100,
       }));
       break;
 
@@ -335,5 +340,5 @@ export function calculateSplitShareBasedOnAmount(
       break;
   }
 
-  return updatedParticipants;
+  return { participants: updatedParticipants };
 }

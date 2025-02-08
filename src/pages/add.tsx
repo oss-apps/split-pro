@@ -98,7 +98,7 @@ const AddPage: NextPageWithUser<{
           })),
           expenseQuery.data.splitType,
           expenseQuery.data.paidByUser,
-        ),
+        ).participants,
       );
       expenseQuery.data.group && setGroup(expenseQuery.data.group);
       setParticipants(
@@ -110,7 +110,7 @@ const AddPage: NextPageWithUser<{
           })),
           expenseQuery.data.splitType,
           expenseQuery.data.paidByUser,
-        ),
+        ).participants,
       );
       setCurrency(expenseQuery.data.currency);
       setAmountStr(toFixedNumber(expenseQuery.data.amount).toString());

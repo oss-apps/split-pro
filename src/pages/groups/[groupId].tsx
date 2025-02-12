@@ -18,7 +18,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { toast } from 'sonner';
 
 import AddMembers from '~/components/group/AddMembers';
@@ -160,12 +160,12 @@ const BalancePage: NextPageWithUser<{
                 <div className="mt-2 flex flex-wrap gap-1">
                   {groupTotalQuery.data?.map((total, index, arr) => {
                     return total._sum.amount != null ? (
-                      <>
-                        <div key={total.currency} className="flex flex-wrap gap-1">
+                      <Fragment key={total.currency}>
+                        <div className="flex flex-wrap gap-1">
                           {total.currency} {toUIString(total._sum.amount)}
                         </div>
                         {index < arr.length - 1 ? <span>+</span> : null}
-                      </>
+                      </Fragment>
                     ) : null;
                   })}
                 </div>

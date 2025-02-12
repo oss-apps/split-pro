@@ -18,11 +18,25 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
     {} as Record<number, User>,
   );
 
-  const cumulatedBalances = groupBalances.reduce(
+  const friendBalances = groupBalances.reduce(
     (acc, balance) => {
       if (balance.userId === userId && Math.abs(balance.amount) > 0) {
-        acc[balance.currency] = (acc[balance.currency] ?? 0) + balance.amount;
+        if (!acc[balance.firendId]) {
+          acc[balance.firendId] = {};
+        }
+        const friendBalance = acc[balance.firendId]!;
+        friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0) + balance.amount;
       }
+      return acc;
+    },
+    {} as Record<number, Record<string, number>>,
+  );
+
+  const cumulatedBalances = Object.values(friendBalances).reduce(
+    (acc, balances) => {
+      Object.entries(balances).forEach(([currency, amount]) => {
+        acc[currency] = (acc[currency] ?? 0) + amount;
+      });
       return acc;
     },
     {} as Record<string, number>,
@@ -65,6 +79,24 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
             })}
           </div>
         ) : null}
+
+        {youLent.length === 0 && youOwe.length === 0 ? (
+          <div className="text-gray-500">You are all settled up</div>
+        ) : null}
+
+        {Object.entries(friendBalances).map(([friendId, balances]) => {
+          const friend = userMap[+friendId];
+          return (
+            <div key={friendId} className="text-sm text-gray-500">
+              {Object.entries(balances).map(([currency, amount]) => (
+                <div key={currency}>
+                  {amount > 0 ? `${friend?.name} owes you` : `You owe ${friend?.name}`}{' '}
+                  {toUIString(Math.abs(amount))} {currency}
+                </div>
+              ))}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

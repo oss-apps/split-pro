@@ -18,7 +18,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Fragment, useState } from 'react';
+import React, { Fragment, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import AddMembers from '~/components/group/AddMembers';
@@ -62,6 +62,16 @@ const BalancePage: NextPageWithUser<{
   const [showDeleteTrigger, setShowDeleteTrigger] = useState(false);
   const [showLeaveTrigger, setShowLeaveTrigger] = useState(false);
 
+  const groupBalances = useMemo(() => {
+    if (!groupDetailQuery.data) {
+      return [];
+    } else if (!groupDetailQuery.data.simplifyDebts) {
+      return groupDetailQuery.data.groupBalances;
+    } else {
+      return [];
+    }
+  }, [groupDetailQuery.data]);
+
   async function inviteMembers() {
     if (!groupDetailQuery.data) return;
     const inviteLink =
@@ -87,11 +97,8 @@ const BalancePage: NextPageWithUser<{
 
   const isAdmin = groupDetailQuery.data?.userId === user.id;
   const canDelete =
-    groupDetailQuery.data?.userId === user.id &&
-    !groupDetailQuery.data.groupBalances.find((b) => b.amount !== 0);
-  const canLeave = !groupDetailQuery.data?.groupBalances.find(
-    (b) => b.amount !== 0 && b.userId === user.id,
-  );
+    groupDetailQuery.data?.userId === user.id && !groupBalances.find((b) => b.amount !== 0);
+  const canLeave = !groupBalances.find((b) => b.amount !== 0 && b.userId === user.id);
 
   function onGroupDelete() {
     deleteGroupMutation.mutate(
@@ -359,7 +366,7 @@ const BalancePage: NextPageWithUser<{
             <div className="mb-4 px-4">
               <GroupMyBalance
                 userId={user.id}
-                groupBalances={groupDetailQuery.data?.groupBalances ?? []}
+                groupBalances={groupBalances}
                 users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
               />
             </div>

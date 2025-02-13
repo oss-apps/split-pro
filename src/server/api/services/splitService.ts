@@ -1,4 +1,4 @@
-import { type Expense, type SplitType, type User } from '@prisma/client';
+import { type SplitType, type User } from '@prisma/client';
 import { nanoid } from 'nanoid';
 import { db } from '~/server/db';
 import { type SplitwiseGroup, type SplitwiseUser } from '~/types';
@@ -705,6 +705,7 @@ async function updateGroupExpenseForIfBalanceIsZero(
   console.log('Total balances needs to be updated:', balances.length);
 
   if (balances.length) {
+    const friendIds = balances.map((b) => b.friendId);
     await db.groupBalance.updateMany({
       where: {
         userId,

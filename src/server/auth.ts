@@ -1,6 +1,7 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { type GetServerSidePropsContext } from 'next';
 import { getServerSession, type DefaultSession, type NextAuthOptions } from 'next-auth';
+import { Adapter, AdapterUser } from 'next-auth/adapters';
 import DiscordProvider from 'next-auth/providers/discord';
 import GoogleProvider from 'next-auth/providers/google';
 import EmailProvider from 'next-auth/providers/email';
@@ -32,6 +33,29 @@ declare module 'next-auth' {
   }
 }
 
+const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapter => {
+  const prismaAdapter = PrismaAdapter(...args)
+
+  return {
+    ...prismaAdapter,
+    createUser: async (user: Omit<AdapterUser, 'id'>): Promise<AdapterUser> => {
+      const prismaCreateUser = prismaAdapter.createUser
+
+      if (env.INVITE_ONLY) {
+        throw new Error("This instance is Invite Only")
+      }
+
+      if (!prismaCreateUser) {
+        // This should never happen but typing says it's possible.
+        throw new Error("Prisma Adapter lacks User Creation")
+      }
+
+      return prismaCreateUser(user)
+    },
+  }
+}
+
+
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
@@ -52,7 +76,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
-  adapter: PrismaAdapter(db),
+  adapter: SplitProPrismaAdapter(db),
   providers: getProviders(),
   events: {
     createUser: async ({ user }) => {

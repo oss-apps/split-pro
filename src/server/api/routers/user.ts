@@ -264,6 +264,7 @@ export const userRouter = createTRPCRouter({
               ],
             },
           },
+          paidByUser: true,
         },
       });
 
@@ -522,3 +523,5 @@ export const userRouter = createTRPCRouter({
     return env.WEB_PUSH_PUBLIC_KEY ?? '';
   }),
 });
+
+export type UserRouter = typeof userRouter;

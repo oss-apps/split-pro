@@ -1,18 +1,16 @@
-import { SplitType } from '@prisma/client';
-import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { ChevronLeftIcon, PlusIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+import { ExpenseList } from '~/components/Expense/ExpenseList';
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
 import { Export } from '~/components/Friend/Export';
 import { SettleUp } from '~/components/Friend/Settleup';
 import MainLayout from '~/components/Layout/MainLayout';
 import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
-import { CategoryIcon } from '~/components/ui/categoryIcons';
 import { Separator } from '~/components/ui/separator';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
@@ -155,69 +153,12 @@ const FriendPage: NextPageWithUser = ({ user }) => {
             </div>
             <Separator className="px-4" />
             <div className="mx-4 mt-4 flex  flex-col gap-3">
-              {expenses.data?.map((e) => {
-                const youPaid = e.paidBy === user.id;
-                const yourExpense = e.expenseParticipants.find(
-                  (p) => p.userId === (youPaid ? friendQuery.data?.id : user.id),
-                );
-                const isSettlement = e.splitType === SplitType.SETTLEMENT;
-
-                return (
-                  <Link
-                    href={`/balances/${friendQuery.data?.id}/expenses/${e.id}`}
-                    key={e.id}
-                    className="flex items-start justify-between px-2 py-2"
-                  >
-                    <div className="flex items-center gap-3 px-1">
-                      <div className="text-xs text-gray-500">
-                        {format(e.expenseDate, 'MMM dd')
-                          .split(' ')
-                          .map((d) => (
-                            <div className="text-center" key={d}>
-                              {d}
-                            </div>
-                          ))}
-                      </div>
-                      <div className="">
-                        <CategoryIcon category={e.category} className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <div>
-                        {!isSettlement ? (
-                          <p className=" max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">
-                            {e.name}
-                          </p>
-                        ) : null}
-                        <p
-                          className={`flex ${isSettlement ? 'text-sm text-gray-400' : 'text-xs text-gray-500'}`}
-                        >
-                          <span className={`text-[8px] ${isSettlement ? 'mr-1' : ''} `}>
-                            {isSettlement ? '  🎉 ' : null}
-                          </span>
-                          <span>
-                            {youPaid ? 'You' : friendQuery.data?.name} paid {e.currency}{' '}
-                            {toUIString(e.amount)}{' '}
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                    {isSettlement ? null : (
-                      <div className="min-w-10 shrink-0">
-                        <div
-                          className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-700'}`}
-                        >
-                          {youPaid ? 'You lent' : 'You owe'}
-                        </div>
-                        <div
-                          className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-700'}`}
-                        >
-                          <span className="font-light ">{e.currency}</span>{' '}
-                          {toUIString(yourExpense?.amount ?? 0)}
-                        </div>
-                      </div>
-                    )}
-                  </Link>
-                );
-              })}
+              <ExpenseList
+                expenses={expenses.data ?? []}
+                contactId={_friendId.toString()}
+                isLoading={expenses.isLoading}
+                userId={user.id}
+              />
             </div>
           </motion.div>
         )}

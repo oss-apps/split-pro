@@ -394,3 +394,5 @@ export const groupRouter = createTRPCRouter({
       return group;
     }),
 });
+
+export type GroupRouter = typeof groupRouter;

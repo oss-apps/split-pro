@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { UserAvatar } from '~/components/ui/avatar';
 import clsx from 'clsx';
 import { toUIString } from '~/utils/numbers';
-import { Accordion, AccordionItem, AccordionTrigger } from '../ui/accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 
 interface UserWithBalance {
   user: User;
@@ -16,9 +16,7 @@ interface UserWithBalance {
 export const BalanceList: React.FC<{
   balances: GroupBalance[];
   users: User[];
-  userId: number;
-  isLoading?: boolean;
-}> = ({ balances, users, userId, isLoading }) => {
+}> = ({ balances, users }) => {
   const userMap = users.reduce(
     (acc, user) => {
       acc[user.id] = { user, balances: {}, total: {} };
@@ -42,7 +40,7 @@ export const BalanceList: React.FC<{
 
   return (
     <Accordion type="multiple">
-      {Object.values(userMap).map(({ user, total }) => {
+      {Object.values(userMap).map(({ user, total, balances }) => {
         let totalAmount: [string, number] = ['', 0];
 
         Object.entries(total).forEach(([currency, amount]) => {
@@ -79,6 +77,38 @@ export const BalanceList: React.FC<{
                 </div>
               </div>
             </AccordionTrigger>
+            <AccordionContent>
+              {Object.entries(balances).map(([friendId, perFriendBalances]) => {
+                const friend = userMap[+friendId]!.user;
+
+                return (
+                  <>
+                    {Object.entries(perFriendBalances).map(([currency, amount]) => (
+                      <div key={friendId} className="mb-2 ml-5 flex items-center gap-3 text-sm">
+                        <UserAvatar user={friend} size={20} />
+                        <div className="text-foreground">
+                          {friend.name ?? friend.email}
+                          <span className="text-gray-400">
+                            {' '}
+                            {amount > 0 ? 'owes' : 'gets back'}{' '}
+                          </span>
+                          <span
+                            className={clsx(
+                              'text-right',
+                              amount > 0 ? 'text-emerald-500' : 'text-orange-600',
+                            )}
+                          >
+                            {toUIString(amount)} {currency}
+                          </span>
+                          <span className="text-gray-400"> {amount > 0 ? 'to' : 'from'} </span>
+                          <span className="text-foreground">{user.name ?? user.email}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                );
+              })}
+            </AccordionContent>
           </AccordionItem>
         );
       })}

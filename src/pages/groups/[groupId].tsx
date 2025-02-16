@@ -19,6 +19,7 @@ import { useRouter } from 'next/router';
 import React, { Fragment, useState } from 'react';
 import { toast } from 'sonner';
 
+import { BalanceList } from '~/components/Expense/BalanceList';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
 import AddMembers from '~/components/group/AddMembers';
 import GroupMyBalance from '~/components/group/GroupMyBalance';
@@ -410,7 +411,14 @@ const BalancePage: NextPageWithUser<{
               isLoading={expensesQuery.isLoading}
             />
           </TabsContent>
-          <TabsContent value="balances"></TabsContent>
+          <TabsContent value="balances">
+            <BalanceList
+              balances={groupDetailQuery.data?.groupBalances ?? []}
+              users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
+              userId={user.id}
+              isLoading={groupDetailQuery.isLoading}
+            />
+          </TabsContent>
         </Tabs>
       </MainLayout>
     </>

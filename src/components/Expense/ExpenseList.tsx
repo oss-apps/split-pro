@@ -7,12 +7,15 @@ import React from 'react';
 
 import { CategoryIcon } from '~/components/ui/categoryIcons';
 import { type GroupRouter } from '~/server/api/routers/group';
+import { type UserRouter } from '~/server/api/routers/user';
 import { toUIString } from '~/utils/numbers';
 
 export const ExpenseList: React.FC<{
   userId: number;
-  expenses: inferRouterOutputs<GroupRouter>['getExpenses'];
-  contactId: string;
+  expenses:
+    | inferRouterOutputs<GroupRouter>['getExpenses']
+    | inferRouterOutputs<UserRouter>['getExpensesWithFriend'];
+  contactId: number;
   isLoading?: boolean;
 }> = ({ userId, expenses, contactId, isLoading }) => (
   <>

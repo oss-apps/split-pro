@@ -155,7 +155,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
             <div className="mx-4 mt-4 flex  flex-col gap-3">
               <ExpenseList
                 expenses={expenses.data ?? []}
-                contactId={_friendId.toString()}
+                contactId={_friendId}
                 isLoading={expenses.isLoading}
                 userId={user.id}
               />

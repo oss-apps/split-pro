@@ -3,6 +3,7 @@ import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
+import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 
@@ -254,6 +255,10 @@ export const groupRouter = createTRPCRouter({
         groupBalances: true,
       },
     });
+
+    if (group?.simplifyDebts) {
+      group.groupBalances = simplifyDebts(group.groupBalances);
+    }
 
     return group;
   }),

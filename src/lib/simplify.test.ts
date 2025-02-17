@@ -3,13 +3,43 @@ import { simplifyDebts } from './simplify';
 
 describe('simplifyDebts', () => {
   it('simplifies small graph', () => {
-    expect(new Set(simplifyDebts(smallGraph))).toEqual(new Set(smallGraphResult));
+    expect(simplifyDebts(smallGraph).toSorted(sortByIds)).toEqual(smallGraphResult);
   });
 
-  it('simplifies large graph', () => {
-    expect(new Set(simplifyDebts(largeGraph))).toEqual(new Set(largeGraphResult));
+  it('gets the same operation count as in the article', () => {
+    // depending on the edge traversal order, the result can be different, but the total amount and operation count should be the same
+    expect(simplifyDebts(largeGraph).filter((balance) => balance.amount > 0).length).toBe(
+      largeGraphResult.filter((balance) => balance.amount > 0).length,
+    );
+  });
+
+  it('preserves the total balance per user', () => {
+    const startingBalances = largeGraph.reduce(
+      (acc, balance) => {
+        acc[balance.userId] = (acc[balance.userId] ?? 0) + balance.amount;
+        return acc;
+      },
+      {} as Record<number, number>,
+    );
+
+    const userBalances = simplifyDebts(largeGraph).reduce(
+      (acc, balance) => {
+        acc[balance.userId] = (acc[balance.userId] ?? 0) + balance.amount;
+        return acc;
+      },
+      {} as Record<number, number>,
+    );
+
+    expect(startingBalances).toEqual(userBalances);
   });
 });
+
+const sortByIds = (a: GroupBalance, b: GroupBalance) => {
+  if (a.userId === b.userId) {
+    return a.firendId - b.firendId;
+  }
+  return a.userId - b.userId;
+};
 
 const edgeToGroupBalance = (edge: {
   userOne: number;
@@ -23,16 +53,16 @@ const edgeToGroupBalance = (edge: {
   };
   return [
     {
-      ...base,
       userId: edge.userOne,
       firendId: edge.userTwo,
       amount: edge.amount,
+      ...base,
     },
     {
-      ...base,
       userId: edge.userTwo,
       firendId: edge.userOne,
-      amount: -edge.amount,
+      amount: edge.amount === 0 ? 0 : -edge.amount,
+      ...base,
     },
   ];
 };
@@ -45,15 +75,16 @@ const smallGraph: GroupBalance[] = [
 ].flatMap(edgeToGroupBalance);
 
 const smallGraphResult: GroupBalance[] = [
-  { userOne: 0, userTwo: 2, amount: 30 },
+  { userOne: 0, userTwo: 1, amount: 0 },
   { userOne: 1, userTwo: 2, amount: 40 },
-  { userOne: 2, userTwo: 0, amount: 0 },
+  { userOne: 2, userTwo: 0, amount: -30 },
 ]
   .flatMap(edgeToGroupBalance)
   .map((resultBalance, idx) => ({
     ...resultBalance,
     updatedAt: smallGraph[idx]!.updatedAt,
-  }));
+  }))
+  .toSorted(sortByIds);
 
 // taken from https://medium.com/@mithunmk93/algorithm-behind-splitwises-debt-simplification-feature-8ac485e97688
 const largeGraph: GroupBalance[] = [
@@ -117,4 +148,5 @@ const largeGraphResult: GroupBalance[] = [
   .map((resultBalance, idx) => ({
     ...resultBalance,
     updatedAt: largeGraph[idx]!.updatedAt,
-  }));
+  }))
+  .toSorted(sortByIds);

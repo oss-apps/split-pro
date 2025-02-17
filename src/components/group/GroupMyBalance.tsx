@@ -84,19 +84,28 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
           <div className="text-gray-500">You are all settled up</div>
         ) : null}
 
-        {Object.entries(friendBalances).map(([friendId, balances]) => {
-          const friend = userMap[+friendId];
-          return (
-            <div key={friendId} className="text-sm text-gray-500">
-              {Object.entries(balances).map(([currency, amount]) => (
-                <div key={currency}>
-                  {amount > 0 ? `${friend?.name} owes you` : `You owe ${friend?.name}`}{' '}
-                  {toUIString(Math.abs(amount))} {currency}
-                </div>
-              ))}
-            </div>
-          );
-        })}
+        {Object.entries(friendBalances)
+          .slice(0, 2)
+          .map(([friendId, balances]) => {
+            const friend = userMap[+friendId];
+            return (
+              <div key={friendId} className="text-sm text-gray-500">
+                {Object.entries(balances).map(([currency, amount]) => (
+                  <div key={currency}>
+                    {amount > 0 ? `${friend?.name} owes you` : `You owe ${friend?.name}`}{' '}
+                    {toUIString(Math.abs(amount))} {currency}
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+
+        {Object.keys(friendBalances).length > 2 ? (
+          <div className="text-sm text-gray-500">
+            +{Object.keys(friendBalances).length - 2} balance
+            {Object.keys(friendBalances).length > 3 ? 's' : ''}...
+          </div>
+        ) : null}
       </div>
     </div>
   );

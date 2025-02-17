@@ -7,29 +7,48 @@ class CustomDinic extends Dinic {
   }
 }
 
-// Based on https://github.com/mithun-mohan/Algorithms-Java-Cookbook/blob/master/MaximumFlow/Dinics/SimplifyDebts.java
 export function simplifyDebts(groupBalances: GroupBalance[]): GroupBalance[] {
-  const dinic = new CustomDinic();
-  const visitedEdges = new Set<[number, number]>();
-
-  let graph = groupBalances.filter((balance) => balance.amount > 0);
+  const currencies = new Set(groupBalances.map((balance) => balance.currency));
   const nodes = new Set<number>();
   groupBalances.forEach((balance) => {
     nodes.add(balance.userId);
     nodes.add(balance.firendId);
   });
-  const nodeCount = nodes.size;
+  const result: GroupBalance[] = [];
+
+  for (const currency of currencies) {
+    const balances = groupBalances.filter((balance) => balance.currency === currency);
+    const simplified = simplifyDebtsForSingleCurrency(balances, Array.from(nodes.values()));
+    result.push(...simplified);
+  }
+
+  return result;
+}
+
+// Based on https://github.com/mithun-mohan/Algorithms-Java-Cookbook/blob/master/MaximumFlow/Dinics/SimplifyDebts.java
+function simplifyDebtsForSingleCurrency(
+  groupBalances: GroupBalance[],
+  nodes: number[],
+): GroupBalance[] {
+  const dinic = new CustomDinic();
+  const visitedEdges = new Set<[number, number]>();
+
+  let graph = groupBalances.filter((balance) => balance.amount > 0);
+
   const edgeCount = graph.length;
 
   while (visitedEdges.size < edgeCount) {
-    const { userId: source, firendId: sink } = graph.find(
+    const { userId, firendId } = graph.find(
       (edge) => !visitedEdges.has([edge.userId, edge.firendId]),
     )!;
 
-    dinic.init(source, sink, nodeCount);
+    const source = nodes.indexOf(userId);
+    const sink = nodes.indexOf(firendId);
+
+    dinic.init(source, sink, nodes.length);
 
     graph.forEach((edge) => {
-      dinic.addEdge(edge.userId, edge.firendId, edge.amount);
+      dinic.addEdge(nodes.indexOf(edge.userId), nodes.indexOf(edge.firendId), edge.amount);
     });
 
     const maxflow = dinic.maxflow(); // the method above gets all the edges with full capacity, but also calculates maxflow
@@ -38,8 +57,9 @@ export function simplifyDebts(groupBalances: GroupBalance[]): GroupBalance[] {
     graph = graph
       .map((balance) => {
         const flow =
-          usedEdges.find((edge) => edge.from === balance.userId && edge.to === balance.firendId)
-            ?.flow ?? 0;
+          usedEdges.find(
+            (edge) => nodes[edge.from] === balance.userId && nodes[edge.to] === balance.firendId,
+          )?.flow ?? 0;
         return {
           ...balance,
           amount: balance.amount - flow,
@@ -48,7 +68,9 @@ export function simplifyDebts(groupBalances: GroupBalance[]): GroupBalance[] {
       .filter((balance) => balance.amount > 0);
 
     graph.push({
-      ...groupBalances.find(({ userId, firendId }) => userId === source && firendId === sink)!,
+      ...groupBalances.find(
+        ({ userId, firendId }) => userId === nodes[source] && firendId === nodes[sink],
+      )!,
       amount: maxflow,
     });
 

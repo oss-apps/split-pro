@@ -3,26 +3,7 @@ import { GroupBalance } from '@prisma/client';
 
 class CustomDinic extends Dinic {
   public getFlows(): IDinicEdge[] {
-    const edgesWithFlow = this._edges.filter((edge) => edge.flow > 0);
-
-    return edgesWithFlow.filter((edge) => {
-      const queue = [edge.to];
-      const visited = new Set<number>();
-
-      while (queue.length > 0) {
-        const current = queue.shift()!;
-        if (current === this._sink) return true;
-        if (visited.has(current)) continue;
-        visited.add(current);
-
-        for (const e of edgesWithFlow) {
-          if (e.from === current) {
-            queue.push(e.to);
-          }
-        }
-      }
-      return false;
-    });
+    return this._edges.slice(0, this._edgesTot).filter((edge) => edge.flow > 0);
   }
 }
 
@@ -52,7 +33,9 @@ function simplifyDebtsForSingleCurrency(
   const dinic = new CustomDinic();
   const visitedEdges = new Set<[number, number]>();
 
-  let graph = groupBalances.filter((balance) => balance.amount > 0);
+  let graph = groupBalances
+    .filter((balance) => balance.amount > 0)
+    .map((balance) => ({ ...balance, amount: Math.round(100 * balance.amount) }));
 
   const edgeCount = graph.length;
 
@@ -96,7 +79,10 @@ function simplifyDebtsForSingleCurrency(
     visitedEdges.add([source, sink]);
   }
 
-  graph = getMirrorBalances(graph);
+  graph = getMirrorBalances(graph).map((balance) => ({
+    ...balance,
+    amount: balance.amount / 100,
+  }));
 
   groupBalances.forEach((balance) => {
     const found = graph.find(

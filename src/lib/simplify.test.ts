@@ -1,39 +1,6 @@
 import { GroupBalance } from '@prisma/client';
 import { simplifyDebts } from './simplify';
 
-describe('simplifyDebts', () => {
-  it('simplifies small graph', () => {
-    expect(simplifyDebts(smallGraph).toSorted(sortByIds)).toEqual(smallGraphResult);
-  });
-
-  it('gets the same operation count as in the article', () => {
-    // depending on the edge traversal order, the result can be different, but the total amount and operation count should be the same
-    expect(simplifyDebts(largeGraph).filter((balance) => balance.amount > 0).length).toBe(
-      largeGraphResult.filter((balance) => balance.amount > 0).length,
-    );
-  });
-
-  it('preserves the total balance per user', () => {
-    const startingBalances = largeGraph.reduce(
-      (acc, balance) => {
-        acc[balance.userId] = (acc[balance.userId] ?? 0) + balance.amount;
-        return acc;
-      },
-      {} as Record<number, number>,
-    );
-
-    const userBalances = simplifyDebts(largeGraph).reduce(
-      (acc, balance) => {
-        acc[balance.userId] = (acc[balance.userId] ?? 0) + balance.amount;
-        return acc;
-      },
-      {} as Record<number, number>,
-    );
-
-    expect(startingBalances).toEqual(userBalances);
-  });
-});
-
 const sortByIds = (a: GroupBalance, b: GroupBalance) => {
   if (a.userId === b.userId) {
     return a.firendId - b.firendId;
@@ -150,3 +117,65 @@ const largeGraphResult: GroupBalance[] = [
     updatedAt: largeGraph[idx]!.updatedAt,
   }))
   .toSorted(sortByIds);
+
+const largeGraph2: GroupBalance[] = [
+  { userOne: 0, userTwo: 1, amount: 8957.95 },
+  { userOne: 0, userTwo: 2, amount: 3280.43 },
+  { userOne: 0, userTwo: 3, amount: -1746.24 },
+  { userOne: 0, userTwo: 4, amount: 50.35 },
+  { userOne: 0, userTwo: 5, amount: -814.16 },
+
+  { userOne: 1, userTwo: 2, amount: -3245.6 },
+  { userOne: 1, userTwo: 3, amount: -115.02 },
+  { userOne: 1, userTwo: 4, amount: 1261.15 },
+  { userOne: 1, userTwo: 5, amount: 833.33 },
+
+  { userOne: 2, userTwo: 3, amount: -5191.67 },
+  { userOne: 2, userTwo: 4, amount: -4000.5 },
+  { userOne: 2, userTwo: 5, amount: -233.34 },
+
+  { userOne: 3, userTwo: 4, amount: 1572.84 },
+  { userOne: 3, userTwo: 5, amount: 158.33 },
+
+  { userOne: 4, userTwo: 5, amount: 129.16 },
+].flatMap(edgeToGroupBalance);
+
+describe('simplifyDebts', () => {
+  it('simplifies small graph', () => {
+    expect(simplifyDebts(smallGraph).toSorted(sortByIds)).toEqual(smallGraphResult);
+  });
+
+  it('gets the same operation count as in the article', () => {
+    // depending on the edge traversal order, the result can be different, but the total amount and operation count should be the same
+    expect(simplifyDebts(largeGraph).filter((balance) => balance.amount > 0).length).toBe(
+      largeGraphResult.filter((balance) => balance.amount > 0).length,
+    );
+  });
+
+  it('gets the optimal operation count', () => {
+    expect(simplifyDebts(largeGraph2).filter((balance) => balance.amount > 0).length).toBe(5);
+  });
+
+  it.each([{ graph: smallGraph }, { graph: largeGraph }, { graph: largeGraph2 }])(
+    'preserves the total balance per user',
+    () => {
+      const startingBalances = largeGraph.reduce(
+        (acc, balance) => {
+          acc[balance.userId] = (acc[balance.userId] ?? 0) + balance.amount;
+          return acc;
+        },
+        {} as Record<number, number>,
+      );
+
+      const userBalances = simplifyDebts(largeGraph).reduce(
+        (acc, balance) => {
+          acc[balance.userId] = (acc[balance.userId] ?? 0) + balance.amount;
+          return acc;
+        },
+        {} as Record<number, number>,
+      );
+
+      expect(startingBalances).toEqual(userBalances);
+    },
+  );
+});

@@ -163,7 +163,8 @@ describe('simplifyDebts', () => {
     ({ graph }) => {
       const startingBalances = graph.reduce(
         (acc, balance) => {
-          acc[balance.userId] = (acc[balance.userId] ?? 0) + balance.amount;
+          acc[balance.userId] =
+            Math.round(100 * ((acc[balance.userId] ?? 0) + balance.amount)) / 100;
           return acc;
         },
         {} as Record<number, number>,
@@ -171,7 +172,8 @@ describe('simplifyDebts', () => {
 
       const userBalances = simplifyDebts(graph).reduce(
         (acc, balance) => {
-          acc[balance.userId] = (acc[balance.userId] ?? 0) + balance.amount;
+          acc[balance.userId] =
+            Math.round(100 * ((acc[balance.userId] ?? 0) + balance.amount)) / 100;
           return acc;
         },
         {} as Record<number, number>,

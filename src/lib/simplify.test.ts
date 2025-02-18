@@ -99,25 +99,7 @@ const largeGraph: GroupBalance[] = getFullBalanceGraph(
   7,
 );
 
-const largeGraphResult: GroupBalance[] = getFullBalanceGraph(
-  [
-    { userOne: 1, userTwo: 2, amount: 10 },
-    { userOne: 1, userTwo: 6, amount: -10 },
-
-    { userOne: 2, userTwo: 5, amount: -40 },
-
-    { userOne: 3, userTwo: 4, amount: 40 },
-    { userOne: 3, userTwo: 6, amount: -30 },
-
-    { userOne: 4, userTwo: 5, amount: -20 },
-  ],
-  7,
-).map((resultBalance, idx) => ({
-  ...resultBalance,
-  updatedAt: largeGraph[idx]!.updatedAt,
-}));
-
-const largeGraph2: GroupBalance[] = getFullBalanceGraph(
+const denseGraph: GroupBalance[] = getFullBalanceGraph(
   [
     { userOne: 0, userTwo: 1, amount: 8957.95 },
     { userOne: 0, userTwo: 2, amount: 3280.43 },
@@ -147,18 +129,15 @@ describe('simplifyDebts', () => {
     expect(simplifyDebts(smallGraph).toSorted(sortByIds)).toEqual(smallGraphResult);
   });
 
-  it('gets the same operation count as in the article', () => {
-    // depending on the edge traversal order, the result can be different, but the total amount and operation count should be the same
-    expect(simplifyDebts(largeGraph).filter((balance) => balance.amount > 0).length).toBe(
-      largeGraphResult.filter((balance) => balance.amount > 0).length,
-    );
+  it.each([
+    { graph: smallGraph, expected: 2 },
+    { graph: largeGraph, expected: 3 },
+    { graph: denseGraph, expected: 5 },
+  ])('gets the optimal operation count', ({ graph, expected }) => {
+    expect(simplifyDebts(graph).filter((balance) => balance.amount > 0).length).toBe(expected);
   });
 
-  it('gets the optimal operation count', () => {
-    expect(simplifyDebts(largeGraph2).filter((balance) => balance.amount > 0).length).toBe(5);
-  });
-
-  it.each([{ graph: smallGraph }, { graph: largeGraph }, { graph: largeGraph2 }])(
+  it.each([{ graph: smallGraph }, { graph: largeGraph }, { graph: denseGraph }])(
     'preserves the total balance per user',
     ({ graph }) => {
       const startingBalances = graph.reduce(

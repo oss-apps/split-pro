@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@algorithm.ts/dinic':
-        specifier: ^4.0.4
-        version: 4.0.4
       '@aws-sdk/client-s3':
         specifier: ^3.515.0
         version: 3.817.0
@@ -257,12 +254,6 @@ importers:
         version: 5.1.6
 
 packages:
-
-  '@algorithm.ts/dinic@4.0.4':
-    resolution: {integrity: sha512-NH681jIFJNsAkDVWjtmu//LcBkVWGpx+ztdgl3Pdci32kxnH2HXUyMT53nVpowwXvXIzQvLo7hnAKE+qif5Rmw==}
-
-  '@algorithm.ts/queue@4.0.4':
-    resolution: {integrity: sha512-o0Q/3TUWz3GeX7sEyMNx5yaRJ3BA+C8u15CjhSrm+lYhDc666VPH2OC6Q8QqhD+5teNqx/L0iy3mmDVZbU8P5Q==}
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -7072,12 +7063,6 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
 snapshots:
-
-  '@algorithm.ts/dinic@4.0.4':
-    dependencies:
-      '@algorithm.ts/queue': 4.0.4
-
-  '@algorithm.ts/queue@4.0.4': {}
 
   '@alloc/quick-lru@5.2.0': {}
 

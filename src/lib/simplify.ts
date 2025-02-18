@@ -1,11 +1,4 @@
-import { Dinic, type IDinicEdge } from '@algorithm.ts/dinic';
 import { GroupBalance } from '@prisma/client';
-
-class CustomDinic extends Dinic {
-  public getFlows(): IDinicEdge[] {
-    return this._edges.slice(0, this._edgesTot).filter((edge) => edge.flow > 0);
-  }
-}
 
 export function simplifyDebts(groupBalances: GroupBalance[]): GroupBalance[] {
   const currencies = new Set(groupBalances.map((balance) => balance.currency));
@@ -25,80 +18,133 @@ export function simplifyDebts(groupBalances: GroupBalance[]): GroupBalance[] {
   return result;
 }
 
-// Based on https://github.com/mithun-mohan/Algorithms-Java-Cookbook/blob/master/MaximumFlow/Dinics/SimplifyDebts.java
 function simplifyDebtsForSingleCurrency(
   groupBalances: GroupBalance[],
   nodes: number[],
 ): GroupBalance[] {
-  const dinic = new CustomDinic();
-  const visitedEdges = new Set<[number, number]>();
+  const adjMatrix = new Array<number[]>(nodes.length)
+    .fill([])
+    .map(() => new Array<number>(nodes.length).fill(0));
 
-  let graph = groupBalances
-    .filter((balance) => balance.amount > 0)
-    .map((balance) => ({ ...balance, amount: Math.round(100 * balance.amount) }));
+  const nonResidualBalances = groupBalances.filter((balance) => balance.amount > 0);
 
-  const edgeCount = graph.length;
+  nonResidualBalances.forEach((balance) => {
+    const source = nodes.indexOf(balance.userId);
+    const sink = nodes.indexOf(balance.firendId);
+    adjMatrix[source]![sink] = balance.amount * 100;
+  });
 
-  while (visitedEdges.size < edgeCount) {
-    const { userId, firendId } = graph.find(
-      (edge) => !visitedEdges.has([edge.userId, edge.firendId]),
-    )!;
+  const simplified = minCashFlow(adjMatrix);
 
-    const source = nodes.indexOf(userId);
-    const sink = nodes.indexOf(firendId);
+  const result = getMirrorBalances(
+    simplified.flatMap((row, source) => {
+      const res: GroupBalance[] = [];
+      row.forEach((amount, sink) => {
+        const balance = groupBalances.find(
+          (balance) => balance.userId === nodes[source] && balance.firendId === nodes[sink],
+        )!;
 
-    dinic.init(source, sink, nodes.length);
+        if (amount === 0) {
+          return;
+        }
 
-    graph.forEach((edge) => {
-      dinic.addEdge(nodes.indexOf(edge.userId), nodes.indexOf(edge.firendId), edge.amount);
-    });
-
-    const maxflow = dinic.maxflow(); // the method above gets all the edges with full capacity, but also calculates maxflow
-    const usedEdges = dinic.getFlows();
-
-    graph = graph
-      .map((balance) => {
-        const flow =
-          usedEdges.find(
-            (edge) => nodes[edge.from] === balance.userId && nodes[edge.to] === balance.firendId,
-          )?.flow ?? 0;
-        return {
+        res.push({
           ...balance,
-          amount: balance.amount - flow,
-        };
-      })
-      .filter((balance) => balance.amount > 0);
-
-    graph.push({
-      ...groupBalances.find(
-        ({ userId, firendId }) => userId === nodes[source] && firendId === nodes[sink],
-      )!,
-      amount: maxflow,
-    });
-
-    visitedEdges.add([source, sink]);
-  }
-
-  graph = getMirrorBalances(graph).map((balance) => ({
-    ...balance,
-    amount: balance.amount / 100,
-  }));
+          amount: amount / 100,
+        });
+      });
+      return res;
+    }),
+  );
 
   groupBalances.forEach((balance) => {
-    const found = graph.find(
+    const found = result.find(
       (graphBalance) =>
         graphBalance.userId === balance.userId && graphBalance.firendId === balance.firendId,
     );
     if (!found) {
-      graph.push({ ...balance, amount: 0 });
+      result.push({ ...balance, amount: 0 });
     }
   });
 
-  return graph;
+  return result;
 }
 
-// Dinic operates on positive balances only, so we recreate the non-positive balances
-// at the end.
+// based on https://www.geeksforgeeks.org/minimize-cash-flow-among-given-set-friends-borrowed-money/
+const minCashFlow = (graph: number[][]): number[][] => {
+  const n = graph.length;
+
+  const amounts = new Array(n).fill(0);
+  for (let i = 0; i < n; ++i) {
+    for (let j = 0; j < n; ++j) {
+      const diff = graph[j]![i]! - graph[i]![j]!;
+      amounts[i] += diff;
+    }
+  }
+  return solveTransaction(amounts);
+};
+
+const solveTransaction = (amounts: number[]): number[][] => {
+  const [minQ, maxQ] = constructMinMaxQ(amounts);
+
+  const result = new Array<number[]>(amounts.length)
+    .fill([])
+    .map(() => new Array<number>(amounts.length).fill(0));
+
+  while (minQ.length > 0 && maxQ.length > 0) {
+    const maxCreditEntry = maxQ.pop()!;
+    const maxDebitEntry = minQ.pop()!;
+
+    const transaction_val = maxCreditEntry.value + maxDebitEntry.value;
+
+    let debtor = maxDebitEntry.key;
+    let creditor = maxCreditEntry.key;
+    let owed_amount;
+
+    if (transaction_val === 0) {
+      owed_amount = maxCreditEntry.value;
+    } else if (transaction_val < 0) {
+      owed_amount = maxCreditEntry.value;
+      maxDebitEntry.value = transaction_val;
+      minQ.push(maxDebitEntry);
+      minQ.sort(compareAsc);
+      minQ.reverse();
+    } else {
+      owed_amount = -maxDebitEntry.value;
+      maxCreditEntry.value = transaction_val;
+      maxQ.push(maxCreditEntry);
+      maxQ.sort(compareAsc);
+    }
+
+    result[debtor]![creditor] = owed_amount;
+  }
+
+  return result;
+};
+
+const compareAsc = (p1: Entry, p2: Entry): number => p1.value - p2.value;
+
+const constructMinMaxQ = (amounts: number[]): [Entry[], Entry[]] => {
+  const minQ: Entry[] = [];
+  const maxQ: Entry[] = [];
+  amounts.forEach((amount, index) => {
+    if (amount === 0) {
+      return;
+    }
+    if (amount > 0) {
+      maxQ.push({ key: index, value: amount });
+    } else {
+      minQ.push({ key: index, value: amount });
+    }
+  });
+
+  maxQ.sort(compareAsc);
+  minQ.sort(compareAsc);
+  minQ.reverse();
+
+  return [minQ, maxQ];
+};
+
 const getMirrorBalances = (groupBalances: GroupBalance[]): GroupBalance[] => {
   const result = [...groupBalances];
 
@@ -107,9 +153,14 @@ const getMirrorBalances = (groupBalances: GroupBalance[]): GroupBalance[] => {
       ...balance,
       userId: balance.firendId,
       firendId: balance.userId,
-      amount: -balance.amount,
+      amount: balance.amount > 0 ? -balance.amount : 0,
     });
   });
 
   return result;
 };
+
+interface Entry {
+  key: number;
+  value: number;
+}

@@ -1,5 +1,6 @@
 import { GroupBalance } from '@prisma/client';
 import { simplifyDebts } from './simplify';
+import { addHours } from 'date-fns';
 
 const sortByIds = (a: GroupBalance, b: GroupBalance) => {
   if (a.userId === b.userId) {
@@ -7,6 +8,8 @@ const sortByIds = (a: GroupBalance, b: GroupBalance) => {
   }
   return a.userId - b.userId;
 };
+
+let dateCounter = 0;
 
 const edgeToGroupBalance = (edge: {
   userOne: number;
@@ -16,7 +19,7 @@ const edgeToGroupBalance = (edge: {
   const base = {
     groupId: 0,
     currency: 'USD',
-    updatedAt: new Date(),
+    updatedAt: addHours(new Date(), dateCounter++),
   };
   return [
     {

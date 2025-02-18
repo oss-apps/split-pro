@@ -3,7 +3,26 @@ import { GroupBalance } from '@prisma/client';
 
 class CustomDinic extends Dinic {
   public getFlows(): IDinicEdge[] {
-    return this._edges.filter((edge) => edge.flow > 0);
+    const edgesWithFlow = this._edges.filter((edge) => edge.flow > 0);
+
+    return edgesWithFlow.filter((edge) => {
+      const queue = [edge.to];
+      const visited = new Set<number>();
+
+      while (queue.length > 0) {
+        const current = queue.shift()!;
+        if (current === this._sink) return true;
+        if (visited.has(current)) continue;
+        visited.add(current);
+
+        for (const e of edgesWithFlow) {
+          if (e.from === current) {
+            queue.push(e.to);
+          }
+        }
+      }
+      return false;
+    });
   }
 }
 

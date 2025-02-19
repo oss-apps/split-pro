@@ -296,7 +296,26 @@ export const groupRouter = createTRPCRouter({
 
   recalculateBalances: groupProcedure
     .input(z.object({ groupId: z.number() }))
-    .mutation(async ({ input }) => recalculateGroupBalances(input.groupId)),
+    .mutation(async ({ input, ctx }) => {
+      const group = await ctx.db.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+      });
+
+      if (!group) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
+      }
+
+      if (group.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only creator can recalculate balances',
+        });
+      }
+
+      return recalculateGroupBalances(input.groupId);
+    }),
 
   toggleSimplifyDebts: groupProcedure
     .input(z.object({ groupId: z.number() }))

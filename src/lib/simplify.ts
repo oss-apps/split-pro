@@ -1,4 +1,4 @@
-import { GroupBalance } from '@prisma/client';
+import type { GroupBalance } from '@prisma/client';
 
 export function simplifyDebts(groupBalances: GroupBalance[]): GroupBalance[] {
   const currencies = new Set(groupBalances.map((balance) => balance.currency));
@@ -74,11 +74,11 @@ function simplifyDebtsForSingleCurrency(
 const minCashFlow = (graph: number[][]): number[][] => {
   const n = graph.length;
 
-  const amounts = new Array(n).fill(0);
+  const amounts = new Array<number>(n).fill(0);
   for (let i = 0; i < n; ++i) {
     for (let j = 0; j < n; ++j) {
       const diff = graph[j]![i]! - graph[i]![j]!;
-      amounts[i] += diff;
+      amounts[i] = amounts[i]! + diff;
     }
   }
   return solveTransaction(amounts);
@@ -97,8 +97,8 @@ const solveTransaction = (amounts: number[]): number[][] => {
 
     const transaction_val = maxCreditEntry.value + maxDebitEntry.value;
 
-    let debtor = maxDebitEntry.key;
-    let creditor = maxCreditEntry.key;
+    const debtor = maxDebitEntry.key;
+    const creditor = maxCreditEntry.key;
     let owed_amount;
 
     if (transaction_val === 0) {

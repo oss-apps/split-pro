@@ -1,16 +1,13 @@
-import { GroupBalance, User } from '@prisma/client';
-import Link from 'next/link';
-import { UserAvatar } from '~/components/ui/avatar';
+import type { GroupBalance, User } from '@prisma/client';
 import clsx from 'clsx';
+import { UserAvatar } from '~/components/ui/avatar';
 import { toUIString } from '~/utils/numbers';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 
 interface UserWithBalance {
   user: User;
   total: Record<string, number>;
-  balances: {
-    [friendId: number]: Record<string, number>;
-  };
+  balances: Record<number, Record<string, number>>;
 }
 
 export const BalanceList: React.FC<{

@@ -194,12 +194,14 @@ const BalancePage: NextPageWithUser<{
                 <p className="font-semibold">Members</p>
                 <div className="mt-2 flex flex-col gap-2">
                   {groupDetailQuery.data?.groupUsers.map((groupUser) => (
-                    <div
-                      key={groupUser.userId}
-                      className={clsx('flex items-center gap-2 rounded-md py-1.5')}
-                    >
-                      <UserAvatar user={groupUser.user} />
-                      <p>{groupUser.user.name ?? groupUser.user.email}</p>
+                    <div key={groupUser.userId} className="flex items-center justify-between">
+                      <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
+                        <UserAvatar user={groupUser.user} />
+                        <p>{groupUser.user.name ?? groupUser.user.email}</p>
+                      </div>
+                      {groupUser.userId === groupDetailQuery.data?.userId && (
+                        <p className="text-sm text-gray-400">owner</p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -236,95 +238,91 @@ const BalancePage: NextPageWithUser<{
                     />
                   </div>
                   {isAdmin ? (
-                    <>
-                      <AlertDialog
-                        open={showDeleteTrigger}
-                        onOpenChange={(status) =>
-                          status !== showDeleteTrigger ? setShowDeleteTrigger(status) : null
-                        }
-                      >
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
-                            onClick={() => setShowDeleteTrigger(true)}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" /> Delete group
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent className="max-w-xs rounded-lg">
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              {canDelete ? 'Are you absolutely sure?' : ''}
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              {canDelete
-                                ? 'This action cannot be reversed'
-                                : "Can't delete the group until everyone settles up the balance"}
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            {canDelete ? (
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={onGroupDelete}
-                                disabled={deleteGroupMutation.isPending}
-                                loading={deleteGroupMutation.isPending}
-                              >
-                                Delete
-                              </Button>
-                            ) : null}
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </>
+                    <AlertDialog
+                      open={showDeleteTrigger}
+                      onOpenChange={(status) =>
+                        status !== showDeleteTrigger ? setShowDeleteTrigger(status) : null
+                      }
+                    >
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
+                          onClick={() => setShowDeleteTrigger(true)}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" /> Delete group
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="max-w-xs rounded-lg">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            {canDelete ? 'Are you absolutely sure?' : ''}
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            {canDelete
+                              ? 'This action cannot be reversed'
+                              : "Can't delete the group until everyone settles up the balance"}
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          {canDelete ? (
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={onGroupDelete}
+                              disabled={deleteGroupMutation.isPending}
+                              loading={deleteGroupMutation.isPending}
+                            >
+                              Delete
+                            </Button>
+                          ) : null}
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   ) : (
-                    <>
-                      <AlertDialog
-                        open={showLeaveTrigger}
-                        onOpenChange={(status) =>
-                          status !== showLeaveTrigger ? setShowLeaveTrigger(status) : null
-                        }
-                      >
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
-                            onClick={() => setShowLeaveTrigger(true)}
-                          >
-                            <DoorOpen className="mr-2 h-5 w-5" /> Leave group
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent className="max-w-xs rounded-lg">
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              {canLeave ? 'Are you absolutely sure?' : ''}
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              {canLeave
-                                ? 'This action cannot be reversed'
-                                : "Can't leave the group until your outstanding balance is settled"}
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            {canLeave ? (
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={onGroupLeave}
-                                disabled={leaveGroupMutation.isPending}
-                                loading={leaveGroupMutation.isPending}
-                              >
-                                Leave
-                              </Button>
-                            ) : null}
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </>
+                    <AlertDialog
+                      open={showLeaveTrigger}
+                      onOpenChange={(status) =>
+                        status !== showLeaveTrigger ? setShowLeaveTrigger(status) : null
+                      }
+                    >
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
+                          onClick={() => setShowLeaveTrigger(true)}
+                        >
+                          <DoorOpen className="mr-2 h-5 w-5" /> Leave group
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="max-w-xs rounded-lg">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            {canLeave ? 'Are you absolutely sure?' : ''}
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            {canLeave
+                              ? 'This action cannot be reversed'
+                              : "Can't leave the group until your outstanding balance is settled"}
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          {canLeave ? (
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={onGroupLeave}
+                              disabled={leaveGroupMutation.isPending}
+                              loading={leaveGroupMutation.isPending}
+                            >
+                              Leave
+                            </Button>
+                          ) : null}
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   )}
                 </div>
               </div>

@@ -6,6 +6,7 @@ import {
   BarChartHorizontal,
   Check,
   ChevronLeft,
+  Construction,
   DoorOpen,
   Info,
   Merge,
@@ -27,6 +28,16 @@ import AddMembers from '~/components/group/AddMembers';
 import GroupMyBalance from '~/components/group/GroupMyBalance';
 import NoMembers from '~/components/group/NoMembers';
 import MainLayout from '~/components/Layout/MainLayout';
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '~/components/ui/alert-dialog';
 import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
@@ -52,8 +63,12 @@ const BalancePage: NextPageWithUser<{
   const leaveGroupMutation = api.group.leaveGroup.useMutation();
   const toggleSimplifyDebtsMutation = api.group.toggleSimplifyDebts.useMutation();
   const updateGroupDetailsMutation = api.group.updateGroupDetails.useMutation();
+  const recalculateGroupBalancesMutation = api.group.recalculateBalances.useMutation();
 
   const [isInviteCopied, setIsInviteCopied] = useState(false);
+  const [showRecalculateBalancesTrigger, setShowRecalculateBalancesTrigger] = useState(false);
+  const [showDeleteTrigger, setShowDeleteTrigger] = useState(false);
+  const [showLeaveTrigger, setShowLeaveTrigger] = useState(false);
 
   async function inviteMembers() {
     if (!groupDetailQuery.data) return;
@@ -85,6 +100,23 @@ const BalancePage: NextPageWithUser<{
   const canLeave = !groupDetailQuery.data?.groupBalances.find(
     (b) => b.amount !== 0n && b.userId === user.id,
   );
+
+  function onRecalculateBalances() {
+    recalculateGroupBalancesMutation.mutate(
+      { groupId },
+      {
+        onSuccess: () => {
+          setShowRecalculateBalancesTrigger(false);
+          void groupDetailQuery.refetch();
+          toast.success('Balances recalculated successfully');
+        },
+        onError: () => {
+          setShowRecalculateBalancesTrigger(false);
+          toast.error('Something went wrong');
+        },
+      },
+    );
+  }
 
   function onGroupDelete() {
     deleteGroupMutation.mutate(
@@ -281,6 +313,50 @@ const BalancePage: NextPageWithUser<{
                       }}
                     />
                   </Label>
+                  {isAdmin && (
+                    <AlertDialog
+                      open={showRecalculateBalancesTrigger}
+                      onOpenChange={(status) =>
+                        status !== showRecalculateBalancesTrigger
+                          ? setShowRecalculateBalancesTrigger(status)
+                          : null
+                      }
+                    >
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="justify-start p-0 text-left text-primary hover:opacity-90"
+                          onClick={() => setShowRecalculateBalancesTrigger(true)}
+                        >
+                          <Construction className="mr-2 h-5 w-5" /> Recalculate balances
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="max-w-xs rounded-lg">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            If balances do not match expenses, you can recalculate them.
+                            <br />
+                            Note that it may take some time if the expense count is large.
+                            <br />
+                            Balances outside the group will not be affected.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={onRecalculateBalances}
+                            disabled={recalculateGroupBalancesMutation.isPending}
+                            loading={recalculateGroupBalancesMutation.isPending}
+                          >
+                            Proceed
+                          </Button>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
                   {isAdmin ? (
                     <SimpleConfirmationDialog
                       title={canDelete ? 'Are you absolutely sure?' : ''}

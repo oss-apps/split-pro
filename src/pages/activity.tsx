@@ -1,16 +1,15 @@
-import Head from 'next/head';
-import MainLayout from '~/components/Layout/MainLayout';
 import { SplitType } from '@prisma/client';
-import { api } from '~/utils/api';
 import { format } from 'date-fns';
-import { UserAvatar } from '~/components/ui/avatar';
-import { toUIString } from '~/utils/numbers';
-import Link from 'next/link';
-import { type NextPageWithUser } from '~/types';
 import { type User } from 'next-auth';
-import { BalanceSkeleton } from '~/components/ui/skeleton';
-import useEnableAfter from '~/hooks/useEnableAfter';
+import Head from 'next/head';
+import Link from 'next/link';
+import MainLayout from '~/components/Layout/MainLayout';
+import { UserAvatar } from '~/components/ui/avatar';
 import { LoadingSpinner } from '~/components/ui/spinner';
+import useEnableAfter from '~/hooks/useEnableAfter';
+import { type NextPageWithUser } from '~/types';
+import { api } from '~/utils/api';
+import { toUIString } from '~/utils/numbers';
 
 function getPaymentString(
   user: User,

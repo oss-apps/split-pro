@@ -1,34 +1,28 @@
-import Head from 'next/head';
-import MainLayout from '~/components/Layout/MainLayout';
+import { SplitType } from '@prisma/client';
 import Avatar from 'boring-avatars';
 import clsx from 'clsx';
-import { Button } from '~/components/ui/button';
-import { SplitType } from '@prisma/client';
-import { api } from '~/utils/api';
-import { useRouter } from 'next/router';
+import { format } from 'date-fns';
+import { motion } from 'framer-motion';
 import {
+  BarChartHorizontal,
   Check,
   ChevronLeft,
   DoorOpen,
+  Info,
   Share,
   Trash2,
   UserPlus,
-  BarChartHorizontal,
-  Info,
 } from 'lucide-react';
-import { AppDrawer } from '~/components/ui/drawer';
-import { UserAvatar } from '~/components/ui/avatar';
-import NoMembers from '~/components/group/NoMembers';
-import { format } from 'date-fns';
-import AddMembers from '~/components/group/AddMembers';
+import Head from 'next/head';
 import Image from 'next/image';
-import { toUIString } from '~/utils/numbers';
 import Link from 'next/link';
-import { CategoryIcon } from '~/components/ui/categoryIcons';
-import { env } from '~/env';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { type NextPageWithUser } from '~/types';
-import { motion } from 'framer-motion';
+import { toast } from 'sonner';
+import AddMembers from '~/components/group/AddMembers';
+import GroupMyBalance from '~/components/group/GroupMyBalance';
+import NoMembers from '~/components/group/NoMembers';
+import MainLayout from '~/components/Layout/MainLayout';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -39,8 +33,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '~/components/ui/alert-dialog';
-import { toast } from 'sonner';
-import GroupMyBalance from '~/components/group/GroupMyBalance';
+import { UserAvatar } from '~/components/ui/avatar';
+import { Button } from '~/components/ui/button';
+import { CategoryIcon } from '~/components/ui/categoryIcons';
+import { AppDrawer } from '~/components/ui/drawer';
+import { env } from '~/env';
+import { type NextPageWithUser } from '~/types';
+import { api } from '~/utils/api';
+import { toUIString } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;

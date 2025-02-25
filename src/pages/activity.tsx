@@ -53,7 +53,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout title="Activity">
-        <div className=" h-full px-4">
+        <div className="px-4">
           <div className="flex flex-col gap-4">
             {expensesQuery.isLoading ? (
               showProgress ? (
@@ -118,7 +118,6 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
               </>
             )}
           </div>
-          <div className="h-28"></div>
         </div>
       </MainLayout>
     </>

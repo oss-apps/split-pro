@@ -63,6 +63,7 @@ const BalancePage: NextPageWithUser = () => {
                     amount={amount}
                     isPositive={amount >= 0 ? true : false}
                     currency={currency}
+                    multiCurrency={multiCurrency}
                   />
                 );
               })
@@ -80,7 +81,8 @@ const GroupBalance: React.FC<{
   amount: number;
   isPositive: boolean;
   currency: string;
-}> = ({ name, amount, isPositive, currency, groupId }) => {
+  multiCurrency?: boolean;
+}> = ({ name, amount, isPositive, currency, groupId, multiCurrency }) => {
   return (
     <Link href={`/groups/${groupId}`}>
       <div className="flex items-center justify-between">
@@ -103,6 +105,7 @@ const GroupBalance: React.FC<{
               </div>
               <div className={`${isPositive ? 'text-emerald-500' : 'text-orange-600'} text-right`}>
                 {currency} {toUIString(amount)}
+                {multiCurrency ? '*' : ''}
               </div>
             </>
           )}

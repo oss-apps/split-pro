@@ -396,28 +396,28 @@ const BalancePage: NextPageWithUser<{
                 )}
               </Button>
             </div>
+            <Tabs defaultValue="expenses" className="px-2">
+              <TabsList className="mx-auto grid w-full max-w-96 grid-cols-2">
+                <TabsTrigger value="expenses">Expenses</TabsTrigger>
+                <TabsTrigger value="balances">Balances</TabsTrigger>
+              </TabsList>
+              <TabsContent value="expenses">
+                <ExpenseList
+                  userId={user.id}
+                  expenses={expensesQuery.data ?? []}
+                  contactId={groupId}
+                  isLoading={expensesQuery.isLoading}
+                />
+              </TabsContent>
+              <TabsContent value="balances">
+                <BalanceList
+                  balances={groupDetailQuery.data?.groupBalances ?? []}
+                  users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
+                />
+              </TabsContent>
+            </Tabs>
           </motion.div>
         )}
-        <Tabs defaultValue="expenses" className="px-2">
-          <TabsList className="mx-auto grid w-full max-w-96 grid-cols-2">
-            <TabsTrigger value="expenses">Expenses</TabsTrigger>
-            <TabsTrigger value="balances">Balances</TabsTrigger>
-          </TabsList>
-          <TabsContent value="expenses">
-            <ExpenseList
-              userId={user.id}
-              expenses={expensesQuery.data ?? []}
-              contactId={groupId.toString()}
-              isLoading={expensesQuery.isLoading}
-            />
-          </TabsContent>
-          <TabsContent value="balances">
-            <BalanceList
-              balances={groupDetailQuery.data?.groupBalances ?? []}
-              users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
-            />
-          </TabsContent>
-        </Tabs>
       </MainLayout>
     </>
   );

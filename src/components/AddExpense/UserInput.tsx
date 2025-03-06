@@ -59,6 +59,7 @@ export const UserInput: React.FC<{
         emailVerified: new Date(),
         image: null,
         currency: 'USD',
+        preferredLanguage: addFriendMutation.data?.preferredLanguage ?? 'en',
       });
     }
   };

@@ -15,6 +15,7 @@ import { DownloadCloud } from 'lucide-react';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { useRouter } from 'next/router';
 import { PaperClipIcon } from '@heroicons/react/24/solid';
+import { useTranslation } from 'react-i18next';
 
 const ImportSpliwisePage: NextPageWithUser = () => {
   const [usersWithBalance, setUsersWithBalance] = useState<Array<SplitwiseUser>>([]);
@@ -22,6 +23,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
   const [selectedUsers, setSelectedUsers] = useState<Record<string, boolean>>({});
   const [selectedGroups, setSelectedGroups] = useState<Record<string, boolean>>({});
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const { t } = useTranslation(['account_page', 'import_from_splitwise']);
 
   const router = useRouter();
 
@@ -73,7 +75,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
       console.log('Friends with outstanding balance', friendsWithOutStandingBalance);
     } catch (e) {
       console.error(e);
-      toast.error('Error importing file');
+      toast.error(t('import_from_splitwise:errors/import_failed'));
     }
   };
 
@@ -87,7 +89,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
       },
       {
         onSuccess: () => {
-          toast.success('Import successful');
+          toast.success(t('import_from_splitwise:messages/import_success'));
           router.push('/balances').catch((err) => console.error(err));
         },
       },
@@ -97,7 +99,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
   return (
     <>
       <Head>
-        <title>Import from splitwise</title>
+        <title>{t('account_page:ui/import_from_splitwise')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout hideAppBar={true}>
@@ -106,11 +108,11 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             <div className="flex gap-4">
               <Link href="/balances">
                 <Button variant="ghost" className="px-0 py-0 text-primary" size="sm">
-                  Cancel
+                  {t('import_from_splitwise:ui/cancel')}
                 </Button>
               </Link>
             </div>
-            <div className="font-medium">Import from splitwise</div>
+            <div className="font-medium">{t('account_page:ui/import_from_splitwise')}</div>
             <div className="flex gap-4">
               <Button
                 onClick={onImport}
@@ -119,7 +121,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                 size="sm"
                 disabled={importMutation.isLoading || !uploadedFile}
               >
-                Import
+                {t('import_from_splitwise:ui/import')}
               </Button>
             </div>
           </div>
@@ -128,10 +130,10 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               <div className="flex cursor-pointer px-3 py-[6px] ">
                 <div className="flex items-center border-r pr-4 ">
                   <PaperClipIcon className="mr-2 h-4 w-4" />{' '}
-                  <span className="hidden text-sm md:block">Choose file</span>
+                  <span className="hidden text-sm md:block">{t('import_from_splitwise:ui/choose_file')}</span>
                 </div>
                 <div className=" pl-4 text-gray-400  ">
-                  {uploadedFile ? uploadedFile.name : 'No file chosen'}
+                  {uploadedFile ? uploadedFile.name : t('import_from_splitwise:ui/no_file_chosen')}
                 </div>
               </div>
               <Input
@@ -148,17 +150,16 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               className="w-[100px]"
               size="sm"
             >
-              {importMutation.isLoading ? <LoadingSpinner /> : 'Import'}
+              {importMutation.isLoading ? <LoadingSpinner /> : t('import_from_splitwise:ui/import')}
             </Button>
           </div>
           <div className="mt-4 text-sm text-gray-400">
-            Note: It currently only supports importing friends and groups. It will not import
-            transactions. We are working on it.
+            {t('import_from_splitwise:ui/note')}
           </div>
 
           {uploadedFile ? (
             <>
-              <div className="mt-8 font-semibold">Friends ({usersWithBalance.length})</div>
+              <div className="mt-8 font-semibold">{t('import_from_splitwise:ui/friends')} ({usersWithBalance.length})</div>
               {usersWithBalance.length ? (
                 <div className="mt-4 flex flex-col gap-3">
                   {usersWithBalance.map((user, index) => (
@@ -196,7 +197,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                   ))}
                 </div>
               ) : null}
-              <div className="mt-8 font-semibold">Groups ({groups.length})</div>
+              <div className="mt-8 font-semibold">{t('import_from_splitwise:ui/groups')} ({groups.length})</div>
               {groups.length ? (
                 <div className="mt-4 flex flex-col gap-3">
                   {groups.map((group, index) => (
@@ -214,7 +215,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                           </div>
                         </div>
                         <div className="flex shrink-0 flex-wrap justify-end gap-1">
-                          {group.members.length} members
+                          {group.members.length} {t('import_from_splitwise:ui/members')}
                         </div>
                       </div>
                       {index !== groups.length - 1 ? <Separator className="mt-3" /> : null}
@@ -225,11 +226,11 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             </>
           ) : (
             <div className="mt-20 flex flex-col items-center justify-center gap-4">
-              Follow this link to export splitwise data
+              {t('import_from_splitwise:ui/follow_to_export_splitwise_data')}
               <Link href="https://export-splitwise.vercel.app/" target="_blank">
                 <Button>
                   <DownloadCloud className="mr-2 text-gray-800" />
-                  Export splitwise data
+                  {t('import_from_splitwise:ui/export_splitwise_data_button')}
                 </Button>
               </Link>
             </div>

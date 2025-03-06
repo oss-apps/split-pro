@@ -11,6 +11,7 @@ import {
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'react-i18next';
 
 interface MainLayoutProps {
   title?: React.ReactNode;
@@ -23,6 +24,7 @@ interface MainLayoutProps {
 const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, title }) => {
   const router = useRouter();
   const currentPath = router.pathname;
+  const { t } = useTranslation(['account_page']);
 
   return (
     <div className=" h-full w-full bg-background">
@@ -62,7 +64,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, 
             currentPath={currentPath}
           />
           <NavItemDesktop
-            title="Account"
+            title={t('account_page:ui/title')}
             Icon={SolidUserCircleIcon}
             link="/account"
             currentPath={currentPath}
@@ -101,7 +103,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, 
           currentPath={currentPath}
         />
         <NavItem
-          title="Account"
+          title={t('account_page:ui/title')}
           Icon={SolidUserCircleIcon}
           link="/account"
           currentPath={currentPath}

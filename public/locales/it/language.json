@@ -1,0 +1,14 @@
+{
+  "ui": {
+    "title": "Seleziona una lingua",
+    "save": "Salva",
+    "close": "Chiudi",
+    "languages": {
+      "it": "Italiano",
+      "en": "Inglese"
+    }
+  },
+  "messages": {
+    "language_changed": "Lingua cambiata con successo"
+  }
+}

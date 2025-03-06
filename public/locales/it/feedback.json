@@ -1,0 +1,16 @@
+{
+  "ui": {
+    "title": "Invia feedback",
+    "close": "Chiudi",
+    "submit": "Invia",
+    "placeholder": "Inserisci il tuo feedback"
+  },
+  "messages": {
+    "submit_success": "Feedback inviato",
+    "submit_error": "Invio del feedback fallito"
+  },
+  "errors": {
+    "feedback_required": "Il feedback è obbligatorio",
+    "feedback_min_length": "Il feedback deve contenere almeno 10 caratteri"
+  }
+}

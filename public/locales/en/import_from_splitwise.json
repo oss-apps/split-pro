@@ -1,0 +1,20 @@
+{
+  "ui": {
+    "choose_file": "Choose file",
+    "no_file_chosen": "No file chosen",
+    "note": "Note: It currently only supports importing friends and groups. It will not import\ntransactions. We are working on it.",
+    "friends": "Friends",
+    "groups": "Groups",
+    "members": "members",
+    "follow_to_export_splitwise_data": "Follow this link to export splitwise data",
+    "export_splitwise_data_button": "Export splitwise data",
+    "import": "Import",
+    "cancel": "Cancel"
+  },
+  "messages": {
+    "import_success": "Import successful"
+  },
+  "errors": {
+    "import_failed": "Error importing file"
+  }
+}

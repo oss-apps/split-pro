@@ -1,0 +1,26 @@
+{
+  "ui": {
+    "title": "Account",
+    "select_language": "Change language",
+    "notifications": {
+      "enable_notification": "Enable notification",
+      "disable_notification": "Disable notification"
+    },
+    "download_app": {
+      "title": "Download app",
+      "download_as_pwa": "You can download SplitPro as a PWA to your home screen.",
+      "using_ios": "If you are using iOS, checkout this",
+      "using_android": "If you are using Android, checkout this",
+      "video": "video",
+      "close": "Close"
+    },
+    "import_from_splitwise": "Import from Splitwise",
+    "download_splitpro_data": "Download SplitPro data",
+    "submit_feedback": "Submit feedback",
+    "write_review": "Write a review",
+    "star_on_github": "Star us on GitHub",
+    "support_us": "Sponsor us",
+    "follow_on_x": "Follow us on X",
+    "logout": "Logout"
+  }
+}

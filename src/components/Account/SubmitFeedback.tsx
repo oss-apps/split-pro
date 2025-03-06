@@ -8,16 +8,18 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
 import { toast } from 'sonner';
-
-const feedbackSchema = z.object({
-  feedback: z
-    .string({ required_error: 'Feedback is required' })
-    .min(10, { message: 'Feedback should be at least 10 characters' }),
-});
+import { useTranslation } from 'react-i18next';
 
 export const SubmitFeedback: React.FC = () => {
   const submitFeedbackMutation = api.user.submitFeedback.useMutation();
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const { t } = useTranslation(['account_page', 'feedback']);
+
+  const feedbackSchema = z.object({
+    feedback: z
+        .string({ required_error: t('feedback:errors/feedback_required') })
+        .min(10, { message: t('feedback:errors/feedback_min_length') }),
+  });
 
   const feedbackForm = useForm<z.infer<typeof feedbackSchema>>({
     resolver: zodResolver(feedbackSchema),
@@ -27,9 +29,9 @@ export const SubmitFeedback: React.FC = () => {
     try {
       await submitFeedbackMutation.mutateAsync({ feedback: values.feedback });
       feedbackForm.reset();
-      toast.success('Feedback submitted', { duration: 1500 });
+      toast.success(t('feedback:messages/submit_success'), { duration: 1500 });
     } catch (e) {
-      toast.error('Failed to submit feedback');
+      toast.error(t('feedback:messages/submit_error'));
     }
     setFeedbackOpen(false);
   }
@@ -40,7 +42,7 @@ export const SubmitFeedback: React.FC = () => {
         <div className="flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300 hover:text-foreground/80">
           <div className="flex items-center gap-4 text-[16px]">
             <MessageSquare className="h-5 w-5 text-green-500" />
-            Submit feedback
+            {t('account_page:ui/submit_feedback')}
           </div>
           <ChevronRight className="h-6x w-6 text-gray-500" />
         </div>
@@ -48,11 +50,11 @@ export const SubmitFeedback: React.FC = () => {
       open={feedbackOpen}
       onOpenChange={setFeedbackOpen}
       onClose={() => setFeedbackOpen(false)}
-      leftAction="Close"
-      title="Submit a feedback"
+      leftAction={t('feedback:ui/close')}
+      title={t('feedback:ui/title')}
       className="h-[70vh]"
       shouldCloseOnAction={false}
-      actionTitle="Submit"
+      actionTitle={t('feedback:ui/submit')}
       actionOnClick={async () => {
         await feedbackForm.handleSubmit(onGroupSubmit)();
       }}
@@ -72,7 +74,7 @@ export const SubmitFeedback: React.FC = () => {
                     <Textarea
                       className="text-lg placeholder:text-sm"
                       rows={5}
-                      placeholder="Enter your feedback"
+                      placeholder={t('feedback:ui/placeholder')}
                       {...field}
                     ></Textarea>
                   </FormControl>

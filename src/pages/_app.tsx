@@ -14,6 +14,9 @@ import { LoadingSpinner } from '~/components/ui/spinner';
 import { useEffect, useState } from 'react';
 import { useAddExpenseStore } from '~/store/addStore';
 import { useAppStore } from '~/store/appStore';
+import { useTranslation } from 'react-i18next';
+
+import '../i18n';
 
 const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });
 
@@ -21,6 +24,15 @@ const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const { i18n } = useTranslation();
+  const userQuery = api.user.me.useQuery(undefined, { enabled: !!session });
+  console.log(userQuery.data)
+  useEffect(() => {
+    if (userQuery.data?.preferredLanguage) {
+      void i18n.changeLanguage(userQuery.data.preferredLanguage);
+    }
+  }, [userQuery.data?.preferredLanguage, i18n]);
+
   return (
     <main className={clsx(poppins.className, 'h-full')}>
       <Head>

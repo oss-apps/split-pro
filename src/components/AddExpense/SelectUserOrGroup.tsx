@@ -53,6 +53,7 @@ export const SelectUserOrGroup: React.FC<{
         emailVerified: new Date(),
         image: null,
         currency: 'USD',
+        preferredLanguage: addFriendMutation.data?.preferredLanguage ?? 'en',
       });
       // add email to split pro
     }

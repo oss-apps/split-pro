@@ -26,7 +26,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   const { i18n } = useTranslation();
   const userQuery = api.user.me.useQuery(undefined, { enabled: !!session });
-  console.log(userQuery.data)
+
   useEffect(() => {
     if (userQuery.data?.preferredLanguage) {
       void i18n.changeLanguage(userQuery.data.preferredLanguage);

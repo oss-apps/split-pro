@@ -6,6 +6,7 @@ import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { toast } from 'sonner';
+import {useTranslation} from "react-i18next";
 
 const getImgHeightAndWidth = (file: File) => {
   return new Promise<{ width: number; height: number }>((resolve, reject) => {
@@ -24,6 +25,7 @@ const getImgHeightAndWidth = (file: File) => {
 export const UploadFile: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const { setFileUploading, setFileKey } = useAddExpenseStore((s) => s.actions);
+  const { t } = useTranslation('add_expense');
 
   const getUploadUrl = api.user.getUploadUrl.useMutation();
 
@@ -35,7 +37,8 @@ export const UploadFile: React.FC = () => {
     if (!file) return;
 
     if (file.size > FILE_SIZE_LIMIT) {
-      toast.error(`File should be less than ${FILE_SIZE_LIMIT / 1024 / 1024}MB`);
+
+      toast.error(`${t('ui/add_expense_details/upload_file/errors/less_than')} ${FILE_SIZE_LIMIT / 1024 / 1024}MB`);
       return;
     }
 
@@ -58,17 +61,17 @@ export const UploadFile: React.FC = () => {
       });
 
       if (!response.ok) {
-        toast.error('Failed to upload file');
+        toast.error(t('ui/add_expense_details/upload_file/errors/upload_failed'));
         return;
       }
 
-      toast.success('File uploaded successfully');
+      toast.success(t('ui/add_expense_details/upload_file/messages/upload_success'));
 
       setFileKey(key);
       console.log('Setting file key', key);
     } catch (error) {
       console.error('Error getting upload url:', error);
-      toast.error(`Error uploading file`);
+      toast.error(t('ui/add_expense_details/upload_file/errors/error_uploading'));
     }
 
     setFileUploading(false);

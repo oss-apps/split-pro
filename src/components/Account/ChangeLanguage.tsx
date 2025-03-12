@@ -8,7 +8,7 @@ import {z} from "zod"; // Importa l'API di tRPC
 
 export const ChangeLanguage: React.FC = () => {
     const updatePreferredLanguage = api.user.updatePreferredLanguage.useMutation();
-    const { t, i18n } = useTranslation(['account_page', 'language']);
+    const { t, i18n } = useTranslation('account_page');
     const [languageOpen, setLanguageOpen] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState<string>(i18n.language); // Lingua selezionata
     const [initialLanguage, setInitialLanguage] = useState<string>(i18n.language); // Lingua iniziale (al momento dell'apertura del drawer)
@@ -20,7 +20,7 @@ export const ChangeLanguage: React.FC = () => {
 
     // Funzione per ottenere il nome della lingua dal file di traduzione
     const getLanguageName = (languageCode: string): string => {
-        return t(`language:ui/languages/${languageCode}`) || languageCode;
+        return t(`ui/change_language_details/languages/${languageCode}`) || languageCode;
     };
 
     // Ripristina la lingua selezionata al momento dell'apertura del drawer
@@ -43,9 +43,9 @@ export const ChangeLanguage: React.FC = () => {
                 await i18n.changeLanguage(selectedLanguage);
                 await updatePreferredLanguage.mutateAsync({ language: selectedLanguage });
 
-                toast.success(t('language:messages/language_changed'));
+                toast.success(t('ui/change_language_details/messages/language_changed'));
             } catch (e) {
-                toast.error(t('language:messages/language_change_failed'));}
+                toast.error(t('ui/change_language_details/messages/language_change_failed'));}
         }
         setLanguageOpen(false);
     }
@@ -56,7 +56,7 @@ export const ChangeLanguage: React.FC = () => {
                 <div className="flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300 hover:text-foreground/80">
                     <div className="flex items-center gap-4 text-[16px]">
                         <Globe className="h-5 w-5 text-blue-500" />
-                        {t('account_page:ui/select_language')}
+                        {t('ui/change_language')}
                     </div>
                     <ChevronRight className="h-6 w-6 text-gray-500" />
                 </div>
@@ -64,11 +64,11 @@ export const ChangeLanguage: React.FC = () => {
             open={languageOpen}
             onOpenChange={setLanguageOpen}
             onClose={handleClose} // Usa handleClose per gestire la chiusura
-            leftAction={t('language:ui/close')}
-            title={t('language:ui/title')}
+            leftAction={t('ui/change_language_details/close')}
+            title={t('ui/change_language_details/title')}
             className="h-[70vh]"
             shouldCloseOnAction={false}
-            actionTitle={t('language:ui/confirm')} // Pulsante di conferma
+            actionTitle={t('ui/change_language_details/save')} // Pulsante di conferma
             actionOnClick={confirmLanguageChange} // Azione al clic su "Conferma"
         >
             <div className="mt-4 flex flex-col gap-2">

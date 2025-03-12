@@ -1,0 +1,21 @@
+{
+  "ui": {
+    "you_owe": "Hai pagato",
+    "you_lent": "Hai prestato",
+    "add_expense": "Aggiungi spesa",
+    "settle_up": "Salda",
+    "settle_up_details": {
+      "select_currency": "Seleziona la valuta",
+      "youre_paying": "Stai pagando",
+      "is_paying_you": "ti sta pagando",
+      "save": "Salva",
+      "back": "Indietro",
+      "errors": {
+        "saving_expense": "Errore durante il salvataggio della spesa"
+      }
+    },
+    "export": "Esporta",
+    "you_paid": "Hai pagato",
+    "user_paid": "ha pagato"
+  }
+}

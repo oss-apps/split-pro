@@ -1,0 +1,21 @@
+{
+  "ui": {
+    "you_owe": "You owe",
+    "you_lent": "You lent",
+    "add_expense": "Add expense",
+    "settle_up": "Settle up",
+    "settle_up_details": {
+      "select_currency": "Select currency",
+      "youre_paying": "You're paying",
+      "is_paying_you": "is paying you",
+      "save": "Save",
+      "back": "Back",
+      "errors": {
+        "saving_expense": "Error while saving expense"
+      }
+    },
+    "export": "Export",
+    "you_paid": "You paid",
+    "user_paid": "paid"
+  }
+}

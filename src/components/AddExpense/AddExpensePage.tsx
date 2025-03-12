@@ -19,92 +19,7 @@ import { CategoryIcons } from '../ui/categoryIcons';
 import Link from 'next/link';
 import { CURRENCIES } from '~/lib/currency';
 import { env } from '~/env';
-
-const categories = {
-  entertainment: {
-    name: 'Entertainment',
-    items: [
-      {
-        games: 'Games',
-        movies: 'Movies',
-        music: 'Music',
-        sports: 'Sports',
-        other: 'Entertainment',
-      },
-    ],
-  },
-  food: {
-    name: 'Food & Drinks',
-    items: [
-      {
-        diningOut: 'Dining Out',
-        groceries: 'Groceries',
-        liquor: 'Liquor',
-        other: 'Food & Drinks',
-      },
-    ],
-  },
-  home: {
-    name: 'Home',
-    items: [
-      {
-        electronics: 'Electronics',
-        furniture: 'Furniture',
-        supplies: 'Supplies',
-        maintenance: 'Maintenance',
-        mortgage: 'Mortgage',
-        pets: 'Pets',
-        rent: 'Rent',
-        services: 'Services',
-        other: 'Home',
-      },
-    ],
-  },
-  life: {
-    name: 'Life',
-    items: [
-      {
-        childcare: 'Childcare',
-        clothing: 'Clothing',
-        education: 'Education',
-        gifts: 'Gifts',
-        medical: 'Medical',
-        taxes: 'Taxes',
-        other: 'Life',
-      },
-    ],
-  },
-  travel: {
-    name: 'Travel',
-    items: [
-      {
-        bus: 'Bus',
-        train: 'Train',
-        car: 'Car',
-        fuel: 'Fuel',
-        parking: 'Parking',
-        plane: 'Plane',
-        taxi: 'Taxi',
-        other: 'Travel',
-      },
-    ],
-  },
-  utilities: {
-    name: 'Utilities',
-    items: [
-      {
-        cleaning: 'Cleaning',
-        electricity: 'Electricity',
-        gas: 'Gas',
-        internet: 'Internet',
-        trash: 'Trash',
-        phone: 'Phone',
-        water: 'Water',
-        other: 'Utilities',
-      },
-    ],
-  },
-};
+import {useTranslation} from "react-i18next";
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
@@ -112,6 +27,7 @@ export const AddOrEditExpensePage: React.FC<{
   expenseId?: string;
 }> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
   const [open, setOpen] = React.useState(false);
+  const { t } = useTranslation('add_expense');
 
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
@@ -221,6 +137,92 @@ export const AddOrEditExpensePage: React.FC<{
 
   const CategoryIcon = CategoryIcons[category] ?? Banknote;
 
+  const categories = {
+    entertainment: {
+      name: t('ui/categories/categories_list/entertainment/name'),
+      items: [
+        {
+          games: t('ui/categories/categories_list/entertainment/items/games'),
+          movies: t('ui/categories/categories_list/entertainment/items/movies'),
+          music: t('ui/categories/categories_list/entertainment/items/music'),
+          sports: t('ui/categories/categories_list/entertainment/items/sports'),
+          other: t('ui/categories/categories_list/entertainment/items/other'),
+        },
+      ],
+    },
+    food: {
+      name: t('ui/categories/categories_list/food/name'),
+      items: [
+        {
+          diningOut: t('ui/categories/categories_list/food/items/diningOut'),
+          groceries: t('ui/categories/categories_list/food/items/groceries'),
+          liquor: t('ui/categories/categories_list/food/items/liquor'),
+          other: t('ui/categories/categories_list/food/items/other'),
+        },
+      ],
+    },
+    home: {
+      name: t('ui/categories/categories_list/home/name'),
+      items: [
+        {
+          electronics: t('ui/categories/categories_list/home/items/electronics'),
+          furniture: t('ui/categories/categories_list/home/items/furniture'),
+          supplies: t('ui/categories/categories_list/home/items/supplies'),
+          maintenance: t('ui/categories/categories_list/home/items/maintenance'),
+          mortgage: t('ui/categories/categories_list/home/items/mortgage'),
+          pets: t('ui/categories/categories_list/home/items/pets'),
+          rent: t('ui/categories/categories_list/home/items/rent'),
+          services: t('ui/categories/categories_list/home/items/services'),
+          other: t('ui/categories/categories_list/home/items/other'),
+        },
+      ],
+    },
+    life: {
+      name: t('ui/categories/categories_list/life/name'),
+      items: [
+        {
+          childcare: t('ui/categories/categories_list/life/items/childcare'),
+          clothing: t('ui/categories/categories_list/life/items/clothing'),
+          education: t('ui/categories/categories_list/life/items/education'),
+          gifts: t('ui/categories/categories_list/life/items/gifts'),
+          medical: t('ui/categories/categories_list/life/items/medical'),
+          taxes: t('ui/categories/categories_list/life/items/taxes'),
+          other: t('ui/categories/categories_list/life/items/other'),
+        },
+      ],
+    },
+    travel: {
+      name: t('ui/categories/categories_list/travel/name'),
+      items: [
+        {
+          bus: t('ui/categories/categories_list/travel/items/bus'),
+          train: t('ui/categories/categories_list/travel/items/train'),
+          car: t('ui/categories/categories_list/travel/items/car'),
+          fuel: t('ui/categories/categories_list/travel/items/fuel'),
+          parking: t('ui/categories/categories_list/travel/items/parking'),
+          plane: t('ui/categories/categories_list/travel/items/plane'),
+          taxi: t('ui/categories/categories_list/travel/items/taxi'),
+          other: t('ui/categories/categories_list/travel/items/other'),
+        },
+      ],
+    },
+    utilities: {
+      name: t('ui/categories/categories_list/utilities/name'),
+      items: [
+        {
+          cleaning: t('ui/categories/categories_list/utilities/items/cleaning'),
+          electricity: t('ui/categories/categories_list/utilities/items/electricity'),
+          gas: t('ui/categories/categories_list/utilities/items/gas'),
+          internet: t('ui/categories/categories_list/utilities/items/internet'),
+          trash: t('ui/categories/categories_list/utilities/items/trash'),
+          phone: t('ui/categories/categories_list/utilities/items/phone'),
+          water: t('ui/categories/categories_list/utilities/items/water'),
+          other: t('ui/categories/categories_list/utilities/items/other'),
+        },
+      ],
+    },
+  };
+
   return (
     <>
       <div className="flex flex-col gap-4 px-4 py-2">
@@ -228,7 +230,7 @@ export const AddOrEditExpensePage: React.FC<{
           {participants.length === 1 ? (
             <Link href="/balances">
               <Button variant="ghost" className=" px-0 text-primary">
-                Cancel
+                {t('ui/add_expense_details/cancel')}
               </Button>
             </Link>
           ) : (
@@ -236,7 +238,7 @@ export const AddOrEditExpensePage: React.FC<{
               Cancel
             </Button>
           )}
-          <div className="text-center">Add new expense</div>
+          <div className="text-center">{t('ui/add_expense_details/add_new_expense')}</div>
           <Button
             variant="ghost"
             className=" px-0 text-primary"
@@ -249,7 +251,7 @@ export const AddOrEditExpensePage: React.FC<{
             }
             onClick={addExpense}
           >
-            Save
+            {t('ui/add_expense_details/save')}
           </Button>{' '}
         </div>
         <UserInput isEditing={!!expenseId} />
@@ -264,7 +266,7 @@ export const AddOrEditExpensePage: React.FC<{
                     <CategoryIcon size={20} />
                   </div>
                 }
-                title="Categories"
+                title={t('ui/categories/title')}
                 className="h-[70vh]"
                 shouldCloseOnAction
               >
@@ -303,7 +305,7 @@ export const AddOrEditExpensePage: React.FC<{
                 </div>
               </AppDrawer>
               <Input
-                placeholder="Enter description"
+                placeholder={t('ui/add_expense_details/description_placeholder')}
                 value={description}
                 onChange={(e) => setDescription(e.target.value.toString() ?? '')}
                 className="text-lg placeholder:text-sm"
@@ -317,7 +319,7 @@ export const AddOrEditExpensePage: React.FC<{
                   </div>
                 }
                 onTriggerClick={() => setOpen(true)}
-                title="Select currency"
+                title={t('ui/currency/title')}
                 className="h-[70vh]"
                 shouldCloseOnAction
                 open={open}
@@ -327,10 +329,10 @@ export const AddOrEditExpensePage: React.FC<{
               >
                 <div className="">
                   <Command className="h-[50vh]">
-                    <CommandInput className="text-lg" placeholder="Search currency" />
-                    <CommandEmpty>No currency found.</CommandEmpty>
+                    <CommandInput className="text-lg" placeholder={t('ui/currency/placeholder')}/>
+                    <CommandEmpty>{t('ui/currency/no_currency_found')}</CommandEmpty>
                     <CommandGroup className="h-full overflow-auto">
-                      {CURRENCIES.map((framework) => (
+                      {CURRENCIES(t).map((framework) => (
                         <CommandItem
                           key={`${framework.code}-${framework.name}`}
                           value={`${framework.code}-${framework.name}`}
@@ -364,7 +366,7 @@ export const AddOrEditExpensePage: React.FC<{
               </AppDrawer>
 
               <Input
-                placeholder="Enter amount"
+                placeholder={t('ui/add_expense_details/amount_placeholder')}
                 className="text-lg placeholder:text-sm"
                 type="text"
                 inputMode="decimal"
@@ -392,12 +394,12 @@ export const AddOrEditExpensePage: React.FC<{
                           <CalendarIcon className="mr-2 h-6 w-6 text-cyan-500" />
                           {expenseDate ? (
                             format(expenseDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? (
-                              'Today'
+                              t('ui/add_expense_details/today')
                             ) : (
                               format(expenseDate, 'MMM dd')
                             )
                           ) : (
-                            <span>Pick a date</span>
+                            <span>{t('ui/add_expense_details/pick_a_date')}</span>
                           )}
                         </Button>
                       </PopoverTrigger>
@@ -426,7 +428,7 @@ export const AddOrEditExpensePage: React.FC<{
                       }
                       onClick={() => addExpense()}
                     >
-                      Submit
+                      {t('ui/add_expense_details/submit')}
                     </Button>
                   </div>
                 </div>
@@ -444,7 +446,7 @@ export const AddOrEditExpensePage: React.FC<{
                 >
                   <div className="flex items-center gap-4">
                     <HeartHandshakeIcon className="h-5 w-5 text-pink-500" />
-                    Sponsor us
+                    {t('ui/add_expense_details/sponsor_us')}
                   </div>
                 </Button>
               </Link>

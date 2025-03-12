@@ -11,7 +11,7 @@ import { Toaster } from 'sonner';
 import '~/styles/globals.css';
 import { type NextPageWithUser } from '~/types';
 import { LoadingSpinner } from '~/components/ui/spinner';
-import { useEffect, useState } from 'react';
+import {Suspense, useEffect, useState} from 'react';
 import { useAddExpenseStore } from '~/store/addStore';
 import { useAppStore } from '~/store/appStore';
 import { useTranslation } from 'react-i18next';
@@ -25,7 +25,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, ...pageProps },
 }) => {
   const { i18n } = useTranslation();
-  const userQuery = api.user.me.useQuery(undefined, { enabled: !!session });
+  const userQuery = api.user.me.useQuery();
 
   useEffect(() => {
     if (userQuery.data?.preferredLanguage) {
@@ -78,11 +78,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <SessionProvider session={session}>
         <ThemeProvider attribute="class" defaultTheme="dark">
           <Toaster toastOptions={{ duration: 1500 }} />
-          {(Component as NextPageWithUser).auth ? (
-            <Auth pageProps={pageProps} Page={Component as NextPageWithUser}></Auth>
-          ) : (
-            <Component {...pageProps} />
-          )}{' '}
+          <Suspense fallback={<div>Loading translations...</div>}>
+            {(Component as NextPageWithUser).auth ? (
+              <Auth pageProps={pageProps} Page={Component as NextPageWithUser}></Auth>
+            ) : (
+              <Component {...pageProps} />
+            )}{' '}
+          </Suspense>
         </ThemeProvider>
       </SessionProvider>
     </main>
@@ -93,6 +95,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, pageProps }) => {
   const { status, data } = useSession({ required: true });
   const [showSpinner, setShowSpinner] = useState(false);
+  const { t, ready } = useTranslation();
 
   const { setCurrency } = useAddExpenseStore((s) => s.actions);
   const { setWebPushPublicKey } = useAppStore((s) => s.actions);
@@ -117,7 +120,7 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
     }
   }, [status, data?.user, setCurrency]);
 
-  if (status === 'loading') {
+  if (status === 'loading' || !ready) {
     return (
       <div className="flex h-full w-full items-center justify-center">
         {showSpinner ? <LoadingSpinner className="text-primary" /> : null}

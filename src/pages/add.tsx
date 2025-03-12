@@ -9,6 +9,7 @@ import { calculateSplitShareBasedOnAmount, useAddExpenseStore } from '~/store/ad
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { toFixedNumber, toInteger } from '~/utils/numbers';
+import {useTranslation} from "react-i18next";
 
 // 🧾
 
@@ -16,7 +17,8 @@ const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
 }> = ({ user, isStorageConfigured, enableSendingInvites }) => {
-  const {
+  const { t } = useTranslation('add_expense');
+    const {
     setCurrentUser,
     setGroup,
     setParticipants,
@@ -127,7 +129,7 @@ const AddPage: NextPageWithUser<{
   return (
     <>
       <Head>
-        <title>Add Expense</title>
+        <title>{t('ui/title')}</title>
       </Head>
       <MainLayout hideAppBar>
         {currentUser && (!_expenseId || expenseQuery.data) ? (

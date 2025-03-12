@@ -9,16 +9,18 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
 import { Button } from '../ui/button';
-
-const groupSchema = z.object({
-  name: z.string({ required_error: 'Name is required' }).min(1, { message: 'Name is required' }),
-});
+import {useTranslation} from "react-i18next";
 
 export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { t } = useTranslation('groups_page');
 
   const createGroup = api.group.create.useMutation(undefined);
   const utils = api.useUtils();
+
+  const groupSchema = z.object({
+      name: z.string({ required_error: t('errors/required') }).min(1, { message: t('errors/required') }),
+  });
 
   const groupForm = useForm<z.infer<typeof groupSchema>>({
     resolver: zodResolver(groupSchema),
@@ -49,11 +51,11 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
           if (openVal !== drawerOpen) setDrawerOpen(openVal);
         }}
         trigger={children}
-        leftAction="Cancel"
+        leftAction={t('ui/group_create/cancel')}
         leftActionOnClick={() => setDrawerOpen(false)}
-        title="Create a group"
+        title={t('ui/group_create/title')}
         className="h-[70vh]"
-        actionTitle="Submit"
+        actionTitle={t('ui/group_create/submit')}
         actionOnClick={async () => {
           await groupForm.handleSubmit(onGroupSubmit)();
         }}
@@ -76,7 +78,7 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormControl>
-                      <Input placeholder="Group name" className="w-full py-2 text-lg" {...field} />
+                      <Input placeholder={t('ui/group_create/placeholder')} className="w-full py-2 text-lg" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -2,9 +2,11 @@ import React from 'react';
 import { Button } from './ui/button';
 import { Download } from 'lucide-react';
 import { AppDrawer } from './ui/drawer';
+import {useTranslation} from "react-i18next";
 
 const InstallApp: React.FC = () => {
   const [isStandalone, setIsStandalone] = React.useState(false);
+  const { t } = useTranslation('balances_page');
 
   function isAppStandalone() {
     // For iOS
@@ -35,42 +37,38 @@ const InstallApp: React.FC = () => {
         trigger={
           <Button className="w-[250px]">
             <Download className="mr-2 h-5 w-5 text-black" />
-            Download App
+            {t('ui/download_app')}
           </Button>
         }
-        leftAction="Close"
-        title="Download App"
+        leftAction={t('ui/download_app_details/close')}
+        title={t('ui/download_app_details/title')}
         className="h-[70vh]"
         shouldCloseOnAction
       >
         <div className="flex flex-col gap-8">
-          <p>You can download SplitPro as a PWA to your home screen</p>
-
           <p>
-            If you are using iOS, checkout this{' '}
+            {t('ui/download_app_details/download_as_pwa')}
+            {t('ui/download_app_details/using_ios') + ' '}
             <a
               className="text-cyan-500 underline"
               href="https://youtube.com/shorts/MQHeLOjr350"
               target="_blank"
             >
-              video
+              {t('ui/download_app_details/video')}
             </a>
-          </p>
-
-          <p>
-            If you are using Android, checkout this{' '}
+            {t('ui/download_app_details/using_android') + ' '}
             <a
               className="text-cyan-500 underline"
               href="https://youtube.com/shorts/04n7oKGzgOs"
               target="_blank"
             >
-              Video
+              {t('ui/download_app_details/video')}
             </a>
           </p>
         </div>
       </AppDrawer>
 
-      <p>or</p>
+      <p>{t('ui/or')}</p>
     </>
   );
 };

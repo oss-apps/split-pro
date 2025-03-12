@@ -13,12 +13,12 @@ import { useTranslation } from 'react-i18next';
 export const SubmitFeedback: React.FC = () => {
   const submitFeedbackMutation = api.user.submitFeedback.useMutation();
   const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const { t } = useTranslation(['account_page', 'feedback']);
+  const { t } = useTranslation('account_page');
 
   const feedbackSchema = z.object({
     feedback: z
-        .string({ required_error: t('feedback:errors/feedback_required') })
-        .min(10, { message: t('feedback:errors/feedback_min_length') }),
+        .string({ required_error: t('ui/submit_feedback_details/errors/feedback_required') })
+        .min(10, { message: t('ui/submit_feedback_details/errors/feedback_min_length') }),
   });
 
   const feedbackForm = useForm<z.infer<typeof feedbackSchema>>({
@@ -29,9 +29,9 @@ export const SubmitFeedback: React.FC = () => {
     try {
       await submitFeedbackMutation.mutateAsync({ feedback: values.feedback });
       feedbackForm.reset();
-      toast.success(t('feedback:messages/submit_success'), { duration: 1500 });
+      toast.success(t('ui/submit_feedback_details/messages/submit_success'), { duration: 1500 });
     } catch (e) {
-      toast.error(t('feedback:messages/submit_error'));
+      toast.error(t('ui/submit_feedback_details/messages/submit_error'));
     }
     setFeedbackOpen(false);
   }
@@ -42,7 +42,7 @@ export const SubmitFeedback: React.FC = () => {
         <div className="flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300 hover:text-foreground/80">
           <div className="flex items-center gap-4 text-[16px]">
             <MessageSquare className="h-5 w-5 text-green-500" />
-            {t('account_page:ui/submit_feedback')}
+            {t('ui/submit_feedback')}
           </div>
           <ChevronRight className="h-6x w-6 text-gray-500" />
         </div>
@@ -50,11 +50,11 @@ export const SubmitFeedback: React.FC = () => {
       open={feedbackOpen}
       onOpenChange={setFeedbackOpen}
       onClose={() => setFeedbackOpen(false)}
-      leftAction={t('feedback:ui/close')}
-      title={t('feedback:ui/title')}
+      leftAction={t('ui/submit_feedback_details/close')}
+      title={t('ui/submit_feedback_details/title')}
       className="h-[70vh]"
       shouldCloseOnAction={false}
-      actionTitle={t('feedback:ui/submit')}
+      actionTitle={t('ui/submit_feedback_details/submit')}
       actionOnClick={async () => {
         await feedbackForm.handleSubmit(onGroupSubmit)();
       }}
@@ -74,7 +74,7 @@ export const SubmitFeedback: React.FC = () => {
                     <Textarea
                       className="text-lg placeholder:text-sm"
                       rows={5}
-                      placeholder={t('feedback:ui/placeholder')}
+                      placeholder={t('ui/submit_feedback_details/placeholder')}
                       {...field}
                     ></Textarea>
                   </FormControl>

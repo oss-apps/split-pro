@@ -1,12 +1,34 @@
 {
   "ui": {
     "title": "Account",
-    "select_language": "Change language",
+    "change_language": "Change language",
+    "change_language_details": {
+      "title": "Select a language",
+      "save": "Save",
+      "close": "Close",
+      "languages": {
+        "it": "Italian",
+        "en": "English"
+      },
+      "messages": {
+        "language_changed": "Language changed successfully"
+      }
+    },
     "notifications": {
       "enable_notification": "Enable notification",
-      "disable_notification": "Disable notification"
+      "disable_notification": "Disable notification",
+      "messages": {
+        "notification_granted": "You will receive notifications now"
+      },
+      "errors": {
+        "notification_not_supported": "Notification is not supported",
+        "subscribe_error": "Cannot subscribe to notification",
+        "unsubscribe_error": "Error unsubscribing notification",
+        "request_error": "Error requesting notification"
+      }
     },
-    "download_app": {
+    "download_app": "Download app",
+    "download_app_details": {
       "title": "Download app",
       "download_as_pwa": "You can download SplitPro as a PWA to your home screen.",
       "using_ios": "If you are using iOS, checkout this",
@@ -15,8 +37,40 @@
       "close": "Close"
     },
     "import_from_splitwise": "Import from Splitwise",
+    "import_from_splitwise_details": {
+      "choose_file": "Choose file",
+      "no_file_chosen": "No file chosen",
+      "note": "Note: It currently only supports importing friends and groups. It will not import\ntransactions. We are working on it.",
+      "friends": "Friends",
+      "groups": "Groups",
+      "members": "members",
+      "follow_to_export_splitwise_data": "Follow this link to export splitwise data",
+      "export_splitwise_data_button": "Export splitwise data",
+      "import": "Import",
+      "cancel": "Cancel",
+      "messages": {
+        "import_success": "Import successful"
+      },
+      "errors": {
+        "import_failed": "Error importing file"
+      }
+    },
     "download_splitpro_data": "Download SplitPro data",
     "submit_feedback": "Submit feedback",
+    "submit_feedback_details": {
+      "title": "Submit feedback",
+      "close": "Close",
+      "submit": "Submit",
+      "placeholder": "Enter your feedback"
+    },
+    "errors": {
+      "feedback_required": "Feedback is required",
+      "feedback_min_length": "Feedback should be at least 10 characters"
+    },
+    "messages": {
+      "submit_success": "Feedback submitted",
+      "submit_error": "Failed to submit feedback"
+    },
     "write_review": "Write a review",
     "star_on_github": "Star us on GitHub",
     "support_us": "Sponsor us",

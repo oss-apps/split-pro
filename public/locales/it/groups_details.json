@@ -1,0 +1,69 @@
+{
+  "ui": {
+    "title": "Saldi in sospesa del gruppo",
+    "no_members": {
+      "no_members": "Nessun membro nel gruppo ancora.",
+      "add_members": "Aggiungi membri",
+      "add_members_details": {
+        "title": "Aggiungi membri",
+        "placeholder": "Inserisci il nome o l'email",
+        "cancel": "Annulla",
+        "save": "Salva",
+        "warning": "Attenzione: non usare \"Invia invito\" se l'email non è valida. Usa, invece, \"Aggiungi a Split Pro\". Il tuo account verrà bloccato se questa funzione viene utilizzata in modo improprio",
+        "note": "Nota: l'invio di inviti è disabilitato per ora a causa dello spam",
+        "send_invite": "Invia invito",
+        "add_to_split_pro": "Aggiungi a Split Pro",
+        "errors": {
+          "valid_email": "Inserisci una mail valida"
+        }
+      },
+      "or": "oppure",
+      "invite_link": "Condividi il link d'invito",
+      "copied": "Copiato"
+    },
+    "group_statistics": {
+      "title": "Statistiche gruppo",
+      "total_expenses": "Spese totali",
+      "first_expense": "Prima spesa"
+    },
+    "group_info": {
+      "title": "Informazioni gruppo",
+      "members":"Membri",
+      "group_created": "Creazione gruppo",
+      "date_format": "dd MMM yyyy",
+      "actions": "Azioni",
+      "delete_group": "Elimina gruppo",
+      "delete_group_details": {
+        "title": "Sei sicuro di voler eliminare questo gruppo?",
+        "can_delete": "L'azione non sarà reversibile",
+        "cant_delete": "Non è possibile eliminare il gruppo finché tutti non saldano il saldo",
+        "cancel": "Annulla",
+        "delete": "Elimina"
+      },
+      "leave_group": "Abbandona gruppo",
+      "leave_group_details": {
+        "title": "Sei sicuro di voler abbandonare questo gruppo?",
+        "can_leave": "L'azione non sarà reversibile",
+        "cant_leave": "Non puoi lasciare il gruppo finché il saldo in sospeso non sarà saldato",
+        "cancel": "Annulla",
+        "leave": "Abbandona"
+      }
+    },
+    "add_expense": "Aggiungi spesa",
+    "add_members": "Aggiungi membri",
+    "copied": "Copiato",
+    "invite": "Invita",
+    "you_paid": "Hai pagato",
+    "user_paid": "ha pagato",
+    "you_lent": "Hai prestato",
+    "you_owe": "Devi"
+  },
+  "invite_message": {
+    "join_to": "Unisciti a",
+    "in_splitpro": "su Splitpro",
+    "text": "Unendoti al gruppo potrai aggiungere, gestire le spese e tenere traccia dei tuoi saldi"
+  },
+  "errors": {
+    "something_went_wrong": "Qualcosa è andato storto"
+  }
+}

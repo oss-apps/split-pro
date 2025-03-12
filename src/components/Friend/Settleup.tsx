@@ -10,12 +10,15 @@ import { ArrowRightIcon } from 'lucide-react';
 import { api } from '~/utils/api';
 import { toast } from 'sonner';
 import { toFixedNumber } from '~/utils/numbers';
+import {useTranslation} from "react-i18next";
 
 export const SettleUp: React.FC<{
   balances: Array<Balance>;
   friend: User;
   currentUser: NextUser;
 }> = ({ balances, friend, currentUser }) => {
+  const { t } = useTranslation('friend_details');
+
   const [balanceToSettle, setBallanceToSettle] = React.useState<Balance | undefined>(
     balances.length > 1 ? undefined : balances[0],
   );
@@ -40,7 +43,7 @@ export const SettleUp: React.FC<{
 
     addExpenseMutation.mutate(
       {
-        name: 'Settle up',
+        name: t('ui/settle_up'),
         currency: balanceToSettle.currency,
         amount: parseFloat(amount),
         splitType: SplitType.SETTLEMENT,
@@ -62,7 +65,7 @@ export const SettleUp: React.FC<{
           utils.user.invalidate().catch(console.error);
         },
         onError: (error) => {
-          toast.info('Error while saving expense');
+          toast.info(t('ui/settle_up_details/errors/saving_expense'));
         },
       },
     );
@@ -77,7 +80,7 @@ export const SettleUp: React.FC<{
             className="flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500 px-3  text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 focus-visible:outline-none lg:w-[180px] "
             disabled={!balances.length}
           >
-            Settle up
+              {t('ui/settle_up')}
           </Button>
         }
         disableTrigger={!balances?.length}
@@ -101,7 +104,7 @@ export const SettleUp: React.FC<{
                     className=" text-cyan-500 lg:hidden"
                     onClick={() => setBallanceToSettle(undefined)}
                   >
-                    Back
+                    {t('ui/settle_up_details/back')}
                   </Button>
                 ) : (
                   <DrawerClose>
@@ -111,7 +114,7 @@ export const SettleUp: React.FC<{
                       className=" text-cyan-500 lg:hidden"
                       onClick={() => (balances.length > 1 ? setBallanceToSettle(undefined) : null)}
                     >
-                      Back
+                      {t('ui/settle_up_details/back')}
                     </Button>
                   </DrawerClose>
                 )
@@ -120,7 +123,7 @@ export const SettleUp: React.FC<{
               )}
             </div>
             <div className="mb-2 mt-4 text-center">
-              {balanceToSettle ? 'Settle up' : 'Select currency'}
+              {balanceToSettle ? t('ui/settle_up') : t('ui/settle_up_details/select_currency')}
             </div>
             {balanceToSettle ? (
               <DrawerClose>
@@ -130,7 +133,7 @@ export const SettleUp: React.FC<{
                   className=" mx-auto text-cyan-500 lg:hidden"
                   onClick={() => saveExpense()}
                 >
-                  Save
+                  {t('ui/settle_up_details/save')}
                 </Button>
               </DrawerClose>
             ) : (
@@ -159,8 +162,8 @@ export const SettleUp: React.FC<{
                 </div>
                 <p className="mt-2 text-center text-sm text-gray-400">
                   {isCurrentUserPaying
-                    ? `You're paying ${friend.name ?? friend.email}`
-                    : `${friend.name ?? friend.email} is paying you`}
+                    ? `${t('ui/settle_up_details/youre_paying')} ${friend.name ?? friend.email}`
+                    : `${friend.name ?? friend.email} ${t('ui/settle_up_details/is_paying_you')}`}
                 </p>
               </div>
               <div className="mt-3 flex  items-center gap-2">
@@ -184,7 +187,7 @@ export const SettleUp: React.FC<{
                     variant="secondary"
                     onClick={() => setBallanceToSettle(undefined)}
                   >
-                    Back
+                    {t('ui/settle_up_details/back')}
                   </Button>
                 ) : (
                   <DrawerClose>
@@ -193,7 +196,7 @@ export const SettleUp: React.FC<{
                       variant="secondary"
                       onClick={() => (balances.length > 1 ? setBallanceToSettle(undefined) : null)}
                     >
-                      Back
+                      {t('ui/settle_up_details/back')}
                     </Button>
                   </DrawerClose>
                 )
@@ -204,7 +207,7 @@ export const SettleUp: React.FC<{
             {balanceToSettle ? (
               <DrawerClose>
                 <Button size="sm" className=" mx-auto " onClick={() => saveExpense()}>
-                  Save
+                  {t('ui/settle_up_details/save')}
                 </Button>
               </DrawerClose>
             ) : (

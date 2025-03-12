@@ -41,12 +41,14 @@ import {
 } from '~/components/ui/alert-dialog';
 import { toast } from 'sonner';
 import GroupMyBalance from '~/components/group/GroupMyBalance';
+import {useTranslation} from "react-i18next";
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
 }> = ({ user, enableSendingInvites }) => {
   const router = useRouter();
   const groupId = parseInt(router.query.groupId as string);
+  const { t } = useTranslation('groups_details');
 
   const groupDetailQuery = api.group.getGroupDetails.useQuery({ groupId });
   const groupTotalQuery = api.group.getGroupTotals.useQuery({ groupId });
@@ -66,8 +68,8 @@ const BalancePage: NextPageWithUser<{
     if (navigator.share) {
       navigator
         .share({
-          title: `Join to ${groupDetailQuery.data.name} in Splitpro`,
-          text: 'Join to the group and you can add, manage expenses, and track your balances',
+          title: `${t('invite_message/join_to')} ${groupDetailQuery.data.name} ${t('invite_message/in_splitpro')}`,
+          text: t('invite_message/text'),
           url: inviteLink,
         })
         .then(() => console.log('Successful share'))
@@ -99,7 +101,7 @@ const BalancePage: NextPageWithUser<{
         },
         onError: () => {
           setShowDeleteTrigger(false);
-          toast.error('Something went wrong');
+          toast.error(t('errors/something_went_wrong'));
         },
       },
     );
@@ -115,7 +117,7 @@ const BalancePage: NextPageWithUser<{
         },
         onError: () => {
           setShowLeaveTrigger(false);
-          toast.error('Something went wrong');
+          toast.error(t('errors/something_went_wrong'));
         },
       },
     );
@@ -126,7 +128,7 @@ const BalancePage: NextPageWithUser<{
   return (
     <>
       <Head>
-        <title>Group outstanding balances</title>
+        <title>{t('ui/title')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
@@ -147,12 +149,12 @@ const BalancePage: NextPageWithUser<{
         actions={
           <div className="flex gap-2">
             <AppDrawer
-              title="Group statistics"
+              title={t('ui/group_statistics/title')}
               trigger={<BarChartHorizontal className="h-6 w-6" />}
               className="h-[85vh]"
             >
               <div className="">
-                <p className="font-semibold">Total expenses</p>
+                <p className="font-semibold">{t('ui/group_statistics/total_expenses')}</p>
                 <div className="mt-2 flex flex-wrap gap-1">
                   {groupTotalQuery.data?.map((total, index, arr) => {
                     return total._sum.amount != null ? (
@@ -167,7 +169,7 @@ const BalancePage: NextPageWithUser<{
                 </div>
                 {expensesQuery?.data && expensesQuery?.data?.length > 0 && (
                   <div className="mt-8">
-                    <p className="font-semibold">First expense</p>
+                    <p className="font-semibold">{t('ui/group_statistics/first_expense')}</p>
                     <p>
                       {expensesQuery.data[expensesQuery.data.length - 1]?.createdAt
                         ? format(
@@ -181,12 +183,12 @@ const BalancePage: NextPageWithUser<{
               </div>
             </AppDrawer>
             <AppDrawer
-              title="Group info"
+              title={t('ui/group_info/title')}
               trigger={<Info className="h-6 w-6" />}
               className="h-[85vh]"
             >
               <div className="">
-                <p className="font-semibold">Members</p>
+                <p className="font-semibold">{t('ui/group_info/members')}</p>
                 <div className="mt-2 flex flex-col gap-2">
                   {groupDetailQuery.data?.groupUsers.map((groupUser) => (
                     <div
@@ -201,12 +203,12 @@ const BalancePage: NextPageWithUser<{
               </div>
               {groupDetailQuery?.data?.createdAt && (
                 <div className="mt-8">
-                  <p className="font-semibold ">Group created</p>
-                  <p>{format(groupDetailQuery.data?.createdAt, 'MMM dd, yyyy')}</p>
+                  <p className="font-semibold ">{t('ui/group_info/group_created')}</p>
+                  <p>{format(groupDetailQuery.data?.createdAt, t('ui/group_info/date_format'))}</p>
                 </div>
               )}
               <div className="mt-8">
-                <p className="font-semibold ">Actions</p>
+                <p className="font-semibold ">{t('ui/group_info/actions')}</p>
                 <div className="mt-2 flex flex-col gap-1">
                   {isAdmin ? (
                     <>
@@ -222,22 +224,22 @@ const BalancePage: NextPageWithUser<{
                             className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
                             onClick={() => setShowDeleteTrigger(true)}
                           >
-                            <Trash2 className="mr-2 h-4 w-4" /> Delete group
+                            <Trash2 className="mr-2 h-4 w-4" /> {t('ui/group_info/delete_group')}
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent className="max-w-xs rounded-lg">
                           <AlertDialogHeader>
                             <AlertDialogTitle>
-                              {canDelete ? 'Are you absolutely sure?' : ''}
+                              {canDelete ? t('ui/group_info/delete_group_details/title') : ''}
                             </AlertDialogTitle>
                             <AlertDialogDescription>
                               {canDelete
-                                ? 'This action cannot be reversed'
-                                : "Can't delete the group until everyone settles up the balance"}
+                                ? t('ui/group_info/delete_group_details/can_delete')
+                                : t('ui/group_info/delete_group_details/cant_delete')}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel>{t('ui/group_info/delete_group_details/cancel')}</AlertDialogCancel>
                             {canDelete ? (
                               <Button
                                 size="sm"
@@ -246,7 +248,7 @@ const BalancePage: NextPageWithUser<{
                                 disabled={deleteGroupMutation.isLoading}
                                 loading={deleteGroupMutation.isLoading}
                               >
-                                Delete
+                                {t('ui/group_info/delete_group_details/delete')}
                               </Button>
                             ) : null}
                           </AlertDialogFooter>
@@ -267,22 +269,22 @@ const BalancePage: NextPageWithUser<{
                             className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
                             onClick={() => setShowLeaveTrigger(true)}
                           >
-                            <DoorOpen className="mr-2 h-5 w-5" /> Leave group
+                            <DoorOpen className="mr-2 h-5 w-5" /> {t('ui/group_info/leave_group')}
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent className="max-w-xs rounded-lg">
                           <AlertDialogHeader>
                             <AlertDialogTitle>
-                              {canLeave ? 'Are you absolutely sure?' : ''}
+                              {canLeave ? t('ui/group_info/leave_group_details/title') : ''}
                             </AlertDialogTitle>
                             <AlertDialogDescription>
                               {canLeave
-                                ? 'This action cannot be reversed'
-                                : "Can't leave the group until your outstanding balance is settled"}
+                                ? t('ui/group_info/leave_group_details/can_leave')
+                                : t('ui/group_info/leave_group_details/cant_leave')}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel>{t('ui/group_info/leave_group_details/cancel')}</AlertDialogCancel>
                             {canLeave ? (
                               <Button
                                 size="sm"
@@ -291,7 +293,7 @@ const BalancePage: NextPageWithUser<{
                                 disabled={leaveGroupMutation.isLoading}
                                 loading={leaveGroupMutation.isLoading}
                               >
-                                Leave
+                                {t('ui/group_info/leave_group_details/leave')}
                               </Button>
                             ) : null}
                           </AlertDialogFooter>
@@ -340,7 +342,7 @@ const BalancePage: NextPageWithUser<{
             <div className=" mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4">
               <Link href={`/add?groupId=${groupId}`}>
                 <Button size="sm" className="gap-1 text-sm lg:w-[180px]">
-                  Add Expense
+                  {t('ui/add_expense')}
                 </Button>
               </Link>
               <Button size="sm" className="gap-1 text-sm" variant="secondary">
@@ -349,7 +351,7 @@ const BalancePage: NextPageWithUser<{
                     group={groupDetailQuery.data}
                     enableSendingInvites={enableSendingInvites}
                   >
-                    <UserPlus className="h-4 w-4 text-gray-400" /> Add members
+                    <UserPlus className="h-4 w-4 text-gray-400" /> {t('ui/add_members')}
                   </AddMembers>
                 ) : null}
               </Button>
@@ -361,11 +363,11 @@ const BalancePage: NextPageWithUser<{
               >
                 {isInviteCopied ? (
                   <>
-                    <Check className="h-4 w-4 text-gray-400" /> Copied
+                    <Check className="h-4 w-4 text-gray-400" /> {t('ui/copied')}
                   </>
                 ) : (
                   <>
-                    <Share className="h-4 w-4 text-gray-400" /> Invite
+                    <Share className="h-4 w-4 text-gray-400" /> {t('ui/invite')}
                   </>
                 )}
               </Button>
@@ -409,7 +411,9 @@ const BalancePage: NextPageWithUser<{
                     className={`flex text-center ${isSettlement ? 'text-sm text-gray-400' : 'text-xs text-gray-500'}`}
                   >
                     <span className="text-[10px]">{isSettlement ? '  🎉  ' : null}</span>
-                    {youPaid ? 'You' : e.paidByUser.name ?? e.paidByUser.email} paid {e.currency}{' '}
+                    {youPaid ? (t('ui/you_paid') + ' ' + e.currency + ' ') :
+                               (e.paidByUser.name + ' ' + t('ui/user_paid') + ' ' + e.currency + ' ')   ??
+                               (e.paidByUser.email + ' ' + t('ui/user_paid') + ' ' + e.currency + ' ')}
                     {toUIString(e.amount)}{' '}
                   </p>
                 </div>
@@ -419,7 +423,7 @@ const BalancePage: NextPageWithUser<{
                   <div
                     className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
                   >
-                    {youPaid ? 'You lent' : 'You owe'}
+                    {youPaid ? t('ui/you_lent') : t('ui/you_owe')}
                   </div>
                   <div className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}>
                     <span className="font-light ">{e.currency}</span>{' '}

@@ -3,6 +3,7 @@ import { GroupAvatar, UserAvatar } from '../ui/avatar';
 import { z } from 'zod';
 import { api } from '~/utils/api';
 import Router from 'next/router';
+import {useTranslation} from "react-i18next";
 
 export const UserInput: React.FC<{
   isEditing?: boolean;
@@ -19,6 +20,7 @@ export const UserInput: React.FC<{
   const participants = useAddExpenseStore((s) => s.participants);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
   const group = useAddExpenseStore((s) => s.group);
+  const { t } = useTranslation('add_expense');
 
   const addFriendMutation = api.user.inviteFriend.useMutation();
 
@@ -89,12 +91,12 @@ export const UserInput: React.FC<{
         type="email"
         placeholder={
           isEditing && !!group
-            ? 'Cannot change group while editing'
+            ? (t('ui/add_expense_details/user_input/cannot_change_group'))
             : group
-              ? 'Press delete to remove group'
+              ? (t('ui/add_expense_details/user_input/remove_group'))
               : participants.length > 1
-                ? 'Add more friends'
-                : 'Search friends, groups or add email'
+                ? (t('ui/add_expense_details/user_input/add_more_friends'))
+                : (t('ui/add_expense_details/user_input/search_friends'))
         }
         value={nameOrEmail}
         onChange={(e) => setNameOrEmail(e.target.value)}

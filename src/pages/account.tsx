@@ -77,33 +77,33 @@ const AccountPage: NextPageWithUser = ({ user }) => {
                   <div className="flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300 hover:text-foreground/80">
                     <div className="flex items-center gap-4">
                       <Download className="h-5 w-5 text-blue-500" />
-                      {t('ui/download_app/title')}
+                      {t('ui/download_app')}
                     </div>
                     <ChevronRight className="h-6x w-6 text-gray-500" />
                   </div>
                 }
-                leftAction={t('ui/download_app/close')}
-                title={t('ui/download_app/title')}
+                leftAction={t('ui/download_app_details/close')}
+                title={t('ui/download_app_details/title')}
                 className="h-[70vh]"
                 shouldCloseOnAction
             >
               <div className="flex flex-col gap-8">
-                <p>{t('ui/download_app/download_as_pwa')}<br/>
-                  {t('ui/download_app/using_ios')}{' '}
+                <p>{t('ui/download_app_details/download_as_pwa')}<br/>
+                  {t('ui/download_app_details/using_ios')}{' '}
                   <a
                       className="text-cyan-500 underline"
                       href="https://youtube.com/shorts/MQHeLOjr350"
                       target="_blank"
                   >
-                    {t('ui/download_app/video')}
+                    {t('ui/download_app_details/video')}
                   </a>.<br/>
-                  {t('ui/download_app/using_android')}{' '}
+                  {t('ui/download_app_details/using_android')}{' '}
                   <a
                       className="text-cyan-500 underline"
                       href="https://youtube.com/shorts/04n7oKGzgOs"
                       target="_blank"
                   >
-                    {t('ui/download_app/video')}
+                    {t('ui/download_app_details/video')}
                   </a>.
                 </p>
               </div>

@@ -11,8 +11,11 @@ import { type User } from 'next-auth';
 import { BalanceSkeleton } from '~/components/ui/skeleton';
 import useEnableAfter from '~/hooks/useEnableAfter';
 import { LoadingSpinner } from '~/components/ui/spinner';
+import {useTranslation} from "react-i18next";
+import {TFunction} from "i18next";
 
 function getPaymentString(
+  t: TFunction<string, undefined>,
   user: User,
   amount: number,
   paidBy: number,
@@ -21,21 +24,22 @@ function getPaymentString(
   currency: string,
   isDeleted?: boolean,
 ) {
+
   if (isDeleted) {
     return null;
   } else if (isSettlement) {
     return (
       <div className={`${user.id === paidBy ? ' text-emerald-500' : 'text-orange-500'} text-sm`}>
-        {user.id === paidBy ? 'You paid ' : 'You received '} {currency} {toUIString(amount)}
+        {user.id === paidBy ? t('ui/you_paid') + ' ' : t('ui/you_received') + ' '} {currency} {toUIString(amount)}
       </div>
     );
   } else {
     return (
       <div className={`${user.id === paidBy ? ' text-emerald-500' : 'text-orange-500'} text-sm`}>
         {user.id === paidBy
-          ? `You lent ${currency}
+          ? `${t('ui/you_lent')} ${currency}
         ${toUIString(Math.abs(expenseUserAmt))}`
-          : `You owe ${currency} ${toUIString(expenseUserAmt)}`}
+          : `${t('ui/you_owe')} ${currency} ${toUIString(expenseUserAmt)}`}
       </div>
     );
   }
@@ -44,14 +48,15 @@ function getPaymentString(
 const ActivityPage: NextPageWithUser = ({ user }) => {
   const expensesQuery = api.user.getAllExpenses.useQuery();
   const showProgress = useEnableAfter(350);
+  const { t } = useTranslation('activity_page');
 
   return (
     <>
       <Head>
-        <title>Activity</title>
+        <title>{t('ui/title')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainLayout title="Activity">
+      <MainLayout title={t('ui/title')}>
         <div className=" h-full px-4">
           <div className="flex flex-col gap-4">
             {expensesQuery.isLoading ? (
@@ -63,7 +68,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
             ) : (
               <>
                 {!expensesQuery.data?.length ? (
-                  <div className="mt-[30vh] text-center text-gray-400">No activities yet</div>
+                  <div className="mt-[30vh] text-center text-gray-400">{t('ui/no_activity')}</div>
                 ) : null}
                 {expensesQuery.data?.map((e) => (
                   <Link
@@ -77,35 +82,68 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                     <div>
                       {e.expense.deletedByUser ? (
                         <p className="text-red-500 opacity-70">
-                          <span className="  font-semibold ">
-                            {e.expense.deletedBy === user.id
-                              ? 'You'
-                              : e.expense.deletedByUser.name ?? e.expense.deletedByUser.email}
-                          </span>
-                          {' deleted the expense '}
+                          {e.expense.deletedBy === user.id ? (
+                              <>
+                                <span className="  font-semibold ">
+                                  {t('ui/you') + ' '}
+                                </span>
+                                {t('ui/you_deleted_expense') + ' '}
+                              </>
+                          ) : (
+                              <>
+                                <span className="  font-semibold ">
+                                  {e.expense.deletedByUser.name + ' '}
+                                </span>
+                                {t('ui/user_deleted_expense') + ' '}
+                              </>
+                          ) ?? (
+                              <>
+                                <span className="  font-semibold ">
+                                  {e.expense.deletedByUser.email + ' '}
+                                </span>
+                                {t('ui/user_deleted_expense') + ' '}
+                              </>
+                          )}
                           <span className=" font-semibold ">{e.expense.name}</span>
                         </p>
                       ) : (
                         <p className="text-gray-300">
-                          <span className="  font-semibold text-gray-300">
-                            {e.expense.paidBy === user.id
-                              ? 'You'
-                              : e.expense.paidByUser.name ?? e.expense.paidByUser.email}
-                          </span>
-                          {' paid for '}
+                          {e.expense.deletedBy === user.id ? (
+                              <>
+                                <span className="  font-semibold text-gray-300">
+                                  {t('ui/you') + ' '}
+                                </span>
+                                {t('ui/you_paid_for') + ' '}
+                              </>
+                          ) : (
+                              <>
+                                <span className="  font-semibold text-gray-300">
+                                  {e.expense.paidByUser.name + ' '}
+                                </span>
+                                {t('ui/user_paid_for') + ' '}
+                              </>
+                          ) ?? (
+                              <>
+                                <span className="  font-semibold text-gray-300">
+                                  {e.expense.paidByUser.email + ' '}
+                                </span>
+                                {t('ui/user_paid_for') + ' '}
+                              </>
+                          )}
                           <span className=" font-semibold text-gray-300">{e.expense.name}</span>
                         </p>
                       )}
 
                       <div>
                         {getPaymentString(
+                          t,
                           user,
                           e.expense.amount,
                           e.expense.paidBy,
                           e.amount,
                           e.expense.splitType === SplitType.SETTLEMENT,
                           e.expense.currency,
-                          !!e.expense.deletedBy,
+                          !!e.expense.deletedBy
                         )}
                       </div>
                       <p className="text-xs text-gray-500">

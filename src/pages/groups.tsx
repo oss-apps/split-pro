@@ -12,18 +12,20 @@ import { GroupAvatar } from '~/components/ui/avatar';
 import { toUIString } from '~/utils/numbers';
 import { motion } from 'framer-motion';
 import { type NextPageWithUser } from '~/types';
+import {useTranslation} from "react-i18next";
 
 const BalancePage: NextPageWithUser = () => {
   const groupQuery = api.group.getAllGroupsWithBalances.useQuery();
+  const { t } = useTranslation('groups_page');
 
   return (
     <>
       <Head>
-        <title>Groups</title>
+        <title>{t('ui/title')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
-        title="Groups"
+        title={t('ui/title')}
         actions={
           <CreateGroup>
             <PlusIcon className="h-6 w-6 text-primary" />
@@ -41,7 +43,7 @@ const BalancePage: NextPageWithUser = () => {
                 <CreateGroup>
                   <Button>
                     <PlusIcon className="mr-2 h-4 w-4" />
-                    Create Group
+                      {t('ui/group_create_btn')}
                   </Button>
                 </CreateGroup>
               </motion.div>
@@ -76,6 +78,8 @@ const GroupBalance: React.FC<{
   isPositive: boolean;
   currency: string;
 }> = ({ name, amount, isPositive, currency, groupId }) => {
+  const { t } = useTranslation('groups_page');
+
   return (
     <Link href={`/groups/${groupId}`}>
       <div className="flex items-center justify-between">
@@ -85,7 +89,7 @@ const GroupBalance: React.FC<{
         </div>
         <div>
           {amount === 0 ? (
-            <div className="text-sm text-gray-400">Settled up</div>
+            <div className="text-sm text-gray-400">{t('ui/settled_up')}</div>
           ) : (
             <>
               <div
@@ -94,7 +98,7 @@ const GroupBalance: React.FC<{
                   isPositive ? 'text-emerald-500' : 'text-orange-600',
                 )}
               >
-                {isPositive ? 'you lent' : 'you owe'}
+                {isPositive ? t('ui/you_lent') : t('ui/you_owe')}
               </div>
               <div className={`${isPositive ? 'text-emerald-500' : 'text-orange-600'} text-right`}>
                 {currency} {toUIString(amount)}

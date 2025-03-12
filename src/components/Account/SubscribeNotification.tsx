@@ -24,7 +24,7 @@ export const SubscribeNotification: React.FC = () => {
   const updatePushSubscription = api.user.updatePushNotification.useMutation();
   const [isSubscribed, setIsSubscribed] = useState(false);
   const webPushPublicKey = useAppStore((s) => s.webPushPublicKey);
-  const { t } = useTranslation(['account_page', 'notifications']);
+  const { t } = useTranslation('account_page');
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
@@ -48,11 +48,11 @@ export const SubscribeNotification: React.FC = () => {
     try {
       const result = await Notification.requestPermission();
       if (result === 'granted') {
-        toast.success(t('notifications:messages/notification_granted'));
+        toast.success(t('ui/notifications/messages/notification_granted'));
         navigator.serviceWorker.ready
           .then(async (reg) => {
             if (!webPushPublicKey) {
-              toast.error(t('notifications:errors/notification_not_supported'));
+              toast.error(t('ui/notifications/errors/notification_not_supported'));
               return;
             }
 
@@ -65,11 +65,11 @@ export const SubscribeNotification: React.FC = () => {
             updatePushSubscription.mutate({ subscription: JSON.stringify(sub) });
           })
           .catch((e) => {
-            toast.error(t('notifications:errors/subscribe_error'));
+            toast.error(t('ui/notifications/errors/subscribe_error'));
           });
       }
     } catch (e) {
-      toast.error(t('notifications:errors/request_error'));
+      toast.error(t('ui/notifications/errors/request_error'));
     }
   }
 
@@ -82,7 +82,7 @@ export const SubscribeNotification: React.FC = () => {
         setIsSubscribed(false);
       }
     } catch (e) {
-      toast.error(t('notifications:errors/unsubscribe_error'));
+      toast.error(t('ui/notifications/errors/unsubscribe_error'));
     }
   }
 
@@ -101,12 +101,12 @@ export const SubscribeNotification: React.FC = () => {
           {!isSubscribed ? (
             <>
               <Bell className="h-5 w-5 text-red-400" />
-              {t('account_page:ui/notifications/enable_notification')}
+              {t('ui/notifications/enable_notification')}
             </>
           ) : (
             <>
               <BellOff className="h-5 w-5 text-red-400" />
-              {t('account_page:ui/notifications/disable_notification')}
+              {t('ui/notifications/disable_notification')}
             </>
           )}
         </div>

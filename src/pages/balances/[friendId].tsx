@@ -16,9 +16,11 @@ import { type NextPageWithUser } from '~/types';
 import { motion } from 'framer-motion';
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
 import { Export } from '~/components/Friend/Export';
+import {useTranslation} from "react-i18next";
 
 const FriendPage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
+  const { t } = useTranslation(['balances_page', 'friend_details']);
   const { friendId } = router.query;
 
   const _friendId = parseInt(friendId as string);
@@ -43,7 +45,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
   return (
     <>
       <Head>
-        <title>Outstanding balances</title>
+        <title>{t('balances_page:ui/title')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
@@ -82,7 +84,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <div className=" text-orange-700">
                 {(youOwe?.length ?? 0) > 0 && (
                   <>
-                    You owe{' '}
+                    {t('friend_details:ui/you_owe') + ' '}
                     {youOwe?.map((b, index) => (
                       <span key={b.currency}>
                         <span className=" font-semibold tracking-wide">
@@ -98,7 +100,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <div className=" text-emerald-600">
                 {(youLent?.length ?? 0) > 0 && (
                   <>
-                    You lent{' '}
+                    {t('friend_details:ui/you_lent') + ' '}
                     {youLent?.map((b, index) => (
                       <span key={b.currency}>
                         <span className=" font-semibold tracking-wide">
@@ -126,7 +128,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   className="w-[150px] gap-1 text-sm lg:w-[180px]"
                   disabled
                 >
-                  Settle up
+                  {t('friend_details:ui/settle_up')}
                 </Button>
               )}
 
@@ -136,7 +138,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   variant="secondary"
                   className="w-[150px] gap-1 text-sm lg:w-[180px]"
                 >
-                  <PlusIcon className="h-4 w-4 text-gray-400" /> Add Expense
+                  <PlusIcon className="h-4 w-4 text-gray-400" /> {t('friend_details:ui/add_expense')}
                 </Button>
               </Link>
               <Export
@@ -193,7 +195,10 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                             {isSettlement ? '  🎉 ' : null}
                           </span>
                           <span>
-                            {youPaid ? 'You' : friendQuery.data?.name} paid {e.currency}{' '}
+                            {youPaid ? (t('friend_details:ui/you_paid') + ' ' + e.currency + ' ') :
+                                (friendQuery.data?.name  + ' ' + t('friend_details:ui/user_paid') + ' ' + e.currency + ' ')   ??
+                                (friendQuery.data?.email + ' ' + t('friend_details:ui/user_paid') + ' ' + e.currency + ' ')}
+
                             {toUIString(e.amount)}{' '}
                           </span>
                         </p>
@@ -204,7 +209,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                         <div
                           className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-700'}`}
                         >
-                          {youPaid ? 'You lent' : 'You owe'}
+                          {youPaid ? t('friend_details:ui/you_lent') : t('friend_details:ui/you_owe')}
                         </div>
                         <div
                           className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-700'}`}

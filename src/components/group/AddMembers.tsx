@@ -17,6 +17,7 @@ import { Input } from '../ui/input';
 import { z } from 'zod';
 import { env } from '~/env';
 import { isStorageConfigured } from '~/server/storage';
+import {useTranslation} from "react-i18next";
 
 const AddMembers: React.FC<{
   enableSendingInvites: boolean;
@@ -26,6 +27,7 @@ const AddMembers: React.FC<{
   const [open, setOpen] = useState(false);
   const [userIds, setUserIds] = useState<Record<number, boolean>>({});
   const [inputValue, setInputValue] = useState('');
+  const { t } = useTranslation('groups_details');
 
   const friendsQuery = api.user.getFriends.useQuery();
   const addMembersMutation = api.group.addMembers.useMutation();
@@ -101,12 +103,12 @@ const AddMembers: React.FC<{
         <div className="flex items-center justify-center gap-2 lg:w-[180px]">{children}</div>
       }
       onTriggerClick={() => setOpen(true)}
-      title="Add members"
-      leftAction="Cancel"
+      title={t('ui/no_members/add_members_details/title')}
+      leftAction={t('ui/no_members/add_members_details/cancel')}
       actionOnClick={() => onSave(userIds)}
       className="h-[85vh]"
       shouldCloseOnAction
-      actionTitle="Save"
+      actionTitle={t('ui/no_members/add_members_details/save')}
       open={open}
       onClose={() => setOpen(false)}
       onOpenChange={(state) => state !== open && setOpen(state)}
@@ -114,21 +116,20 @@ const AddMembers: React.FC<{
       <div className="">
         <Input
           className="mt-8 w-full text-lg"
-          placeholder="Enter name or email"
+          placeholder={t('ui/no_members/add_members_details/placeholder')}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />
         {!isEmail.success ? (
-          <p className="mt-4 text-red-500">Enter valid email</p>
+          <p className="mt-4 text-red-500">{t('ui/no_members/add_members_details/errors/valid_email')}</p>
         ) : (
           <div>
             {enableSendingInvites ? (
               <div className="mt-1 text-orange-600">
-                Warning: Don&apos;t use send invite if it&apos;s invalid email. use add to Split Pro
-                instead. Your account will be blocked if this feature is misused
+                {t('ui/no_members/add_members_details/warning')}
               </div>
             ) : (
-              <div>Note: sending invite is disabled for now because of spam</div>
+              <div>{t('ui/no_members/add_members_details/note')}</div>
             )}
 
             <div className="flex justify-center gap-4">
@@ -140,7 +141,7 @@ const AddMembers: React.FC<{
                   onClick={() => onAddEmailClick(true)}
                 >
                   <SendIcon className="mr-2 h-4 w-4" />
-                  {isEmail.success ? 'Send invite to user' : 'Enter valid email'}
+                  {isEmail.success ? t('ui/no_members/add_members_details/send_invite') : t('ui/no_members/add_members_details/errors/valid_email')}
                 </Button>
               )}
               <Button
@@ -150,7 +151,7 @@ const AddMembers: React.FC<{
                 onClick={() => onAddEmailClick(false)}
               >
                 <UserPlusIcon className="mr-2 h-4 w-4" />
-                {isEmail.success ? 'Add to Split Pro' : 'Enter valid email'}
+                {isEmail.success ? t('ui/no_members/add_members_details/add_to_split_pro') : t('ui/no_members/add_members_details/errors/valid_email')}
               </Button>
             </div>
           </div>

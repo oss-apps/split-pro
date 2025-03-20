@@ -17,6 +17,7 @@ import { motion } from 'framer-motion';
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
 import { Export } from '~/components/Friend/Export';
 import {useTranslation} from "react-i18next";
+import {env} from "~/env";
 
 const FriendPage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
@@ -171,7 +172,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   >
                     <div className="flex items-center gap-3 px-1">
                       <div className="text-xs text-gray-500">
-                        {format(e.expenseDate, 'MMM dd')
+                        {format(e.expenseDate, env.DATE_FORMAT_VARIANT_4 ?? 'MMM dd')
                           .split(' ')
                           .map((d) => (
                             <div className="text-center" key={d}>

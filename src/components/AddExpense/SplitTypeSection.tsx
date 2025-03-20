@@ -37,7 +37,7 @@ export const SplitTypeSection: React.FC = () => {
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
   const splitType = useAddExpenseStore((s) => s.splitType);
   const splitScreenOpen = useAddExpenseStore((s) => s.splitScreenOpen);
-  const { t } = useTranslation('add_expense');
+  const { t } = useTranslation('expense_add');
 
   const { setPaidBy, setSplitScreenOpen } = useAddExpenseStore((s) => s.actions);
 

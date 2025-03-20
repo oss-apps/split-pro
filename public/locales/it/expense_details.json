@@ -1,0 +1,23 @@
+{
+  "ui": {
+    "title": "Dettagli spesa",
+    "delete_expense_details": {
+      "title": "Sei sicuro di voler eliminare questa spesa?",
+      "text": "L'azione eliminerà definitivamente la spesa e non sarà reversibile",
+      "cancel": "Annulla",
+      "delete": "Elimina"
+    },
+    "edited_by": "Modificato da",
+    "deleted_by": "Eliminato da",
+    "added_by": "Aggiunto da",
+    "on": "il",
+    "image_detail": {
+      "alt": "Ricevuta della spesa",
+      "close": "Chiudi"
+    },
+    "you_paid": "Hai pagato",
+    "user_paid": "ha pagato",
+    "you_owe": "Devi",
+    "owes": "deve"
+  }
+}

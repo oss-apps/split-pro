@@ -16,7 +16,7 @@ import {useTranslation} from "react-i18next";
 export const SelectUserOrGroup: React.FC<{
   enableSendingInvites: boolean;
 }> = ({ enableSendingInvites }) => {
-  const { t } = useTranslation('add_expense');
+  const { t } = useTranslation('expense_add');
   const nameOrEmail = useAddExpenseStore((s) => s.nameOrEmail);
   const participants = useAddExpenseStore((s) => s.participants);
   const group = useAddExpenseStore((s) => s.group);

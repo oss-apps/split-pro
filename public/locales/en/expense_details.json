@@ -1,0 +1,23 @@
+{
+  "ui": {
+    "title": "Expense details",
+    "delete_expense_details": {
+      "title": "Are you absolutely sure?",
+      "text": "This action cannot be undone. This will permanently delete your expense.",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "edited_by": "Edited by",
+    "deleted_by": "Deleted by",
+    "added_by": "Added by",
+    "on": "on",
+    "image_details": {
+      "title": "Expense receipt",
+      "close": "Close"
+    },
+    "you_paid": "You paid",
+    "user_paid": "paid",
+    "you_owe": "You owe",
+    "owes": "owes"
+  }
+}

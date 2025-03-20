@@ -14,6 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '../ui/alert-dialog';
+import {useTranslation} from "react-i18next";
 
 export const DeleteExpense: React.FC<{
   expenseId: string;
@@ -21,6 +22,7 @@ export const DeleteExpense: React.FC<{
   groupId?: number;
 }> = ({ expenseId, friendId, groupId }) => {
   const router = useRouter();
+  const { t } = useTranslation('expense_details');
 
   const deleteExpenseMutation = api.user.deleteExpense.useMutation();
 
@@ -48,15 +50,15 @@ export const DeleteExpense: React.FC<{
         </AlertDialogTrigger>
         <AlertDialogContent className="max-w-xs rounded-lg">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>{t('ui/delete_expense_details/title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your expense.
+              {t('ui/delete_expense_details/text')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('ui/delete_expense_details/cancel')}</AlertDialogCancel>
             <AlertDialogAction size="sm" variant="destructive" onClick={onDeleteExpense}>
-              Delete
+              {t('ui/delete_expense_details/delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

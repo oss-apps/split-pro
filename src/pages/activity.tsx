@@ -13,6 +13,7 @@ import useEnableAfter from '~/hooks/useEnableAfter';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import {useTranslation} from "react-i18next";
 import {TFunction} from "i18next";
+import {env} from "~/env";
 
 function getPaymentString(
   t: TFunction<string, undefined>,
@@ -147,7 +148,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                         )}
                       </div>
                       <p className="text-xs text-gray-500">
-                        {format(e.expense.expenseDate, 'dd MMM')}
+                        {format(e.expense.expenseDate, env.DATE_FORMAT_VARIANT_3 ?? 'dd MMM')}
                       </p>
                     </div>
                   </Link>

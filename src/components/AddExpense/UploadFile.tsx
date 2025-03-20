@@ -25,7 +25,7 @@ const getImgHeightAndWidth = (file: File) => {
 export const UploadFile: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const { setFileUploading, setFileKey } = useAddExpenseStore((s) => s.actions);
-  const { t } = useTranslation('add_expense');
+  const { t } = useTranslation('expense_add');
 
   const getUploadUrl = api.user.getUploadUrl.useMutation();
 
@@ -71,7 +71,7 @@ export const UploadFile: React.FC = () => {
       console.log('Setting file key', key);
     } catch (error) {
       console.error('Error getting upload url:', error);
-      toast.error(t('ui/add_expense_details/upload_file/errors/error_uploading'));
+      toast.error(t('ui/add_expense_details/upload_file/errors/uploading_error'));
     }
 
     setFileUploading(false);

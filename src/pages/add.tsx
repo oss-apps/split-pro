@@ -17,7 +17,7 @@ const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
 }> = ({ user, isStorageConfigured, enableSendingInvites }) => {
-  const { t } = useTranslation('add_expense');
+  const { t } = useTranslation('expense_add');
     const {
     setCurrentUser,
     setGroup,

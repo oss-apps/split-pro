@@ -27,7 +27,7 @@ export const AddOrEditExpensePage: React.FC<{
   expenseId?: string;
 }> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
   const [open, setOpen] = React.useState(false);
-  const { t } = useTranslation('add_expense');
+  const { t } = useTranslation('expense_add');
 
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
@@ -393,10 +393,10 @@ export const AddOrEditExpensePage: React.FC<{
                         >
                           <CalendarIcon className="mr-2 h-6 w-6 text-cyan-500" />
                           {expenseDate ? (
-                            format(expenseDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? (
+                            format(expenseDate, env.DATE_FORMAT_VARIANT_1 ?? 'yyyy-MM-dd') === format(new Date(), env.DATE_FORMAT_VARIANT_1 ?? 'yyyy-MM-dd') ? (
                               t('ui/add_expense_details/today')
                             ) : (
-                              format(expenseDate, 'MMM dd')
+                              format(expenseDate, env.DATE_FORMAT_VARIANT_4 ?? 'MMM dd')
                             )
                           ) : (
                             <span>{t('ui/add_expense_details/pick_a_date')}</span>

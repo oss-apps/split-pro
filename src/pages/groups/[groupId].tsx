@@ -174,7 +174,7 @@ const BalancePage: NextPageWithUser<{
                       {expensesQuery.data[expensesQuery.data.length - 1]?.createdAt
                         ? format(
                             expensesQuery.data[expensesQuery.data.length - 1]!.createdAt,
-                            'MMM dd, yyyy',
+                              env.DATE_FORMAT_VARIANT_5 ?? 'MMM dd, yyyy',
                           )
                         : '--'}
                     </p>
@@ -390,7 +390,7 @@ const BalancePage: NextPageWithUser<{
             >
               <div className="flex items-center gap-4">
                 <div className="text-xs text-gray-500">
-                  {format(e.expenseDate, 'MMM dd')
+                  {format(e.expenseDate, env.DATE_FORMAT_VARIANT_4 ?? 'MMM dd')
                     .split(' ')
                     .map((d) => (
                       <div className="text-center" key={d}>
@@ -412,7 +412,7 @@ const BalancePage: NextPageWithUser<{
                   >
                     <span className="text-[10px]">{isSettlement ? '  🎉  ' : null}</span>
                     {youPaid ? (t('ui/you_paid') + ' ' + e.currency + ' ') :
-                               (e.paidByUser.name + ' ' + t('ui/user_paid') + ' ' + e.currency + ' ')   ??
+                               (e.paidByUser.name  + ' ' + t('ui/user_paid') + ' ' + e.currency + ' ')   ??
                                (e.paidByUser.email + ' ' + t('ui/user_paid') + ' ' + e.currency + ' ')}
                     {toUIString(e.amount)}{' '}
                   </p>

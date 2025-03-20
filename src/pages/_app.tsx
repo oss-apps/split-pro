@@ -24,15 +24,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
-  const { i18n } = useTranslation();
-  const userQuery = api.user.me.useQuery();
-
-  useEffect(() => {
-    if (userQuery.data?.preferredLanguage) {
-      void i18n.changeLanguage(userQuery.data.preferredLanguage);
-    }
-  }, [userQuery.data?.preferredLanguage, i18n]);
-
   return (
     <main className={clsx(poppins.className, 'h-full')}>
       <Head>
@@ -92,15 +83,18 @@ const MyApp: AppType<{ session: Session | null }> = ({
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, pageProps }) => {
-  const { status, data } = useSession({ required: true });
+const Auth: React.FC<{ Page: React.ComponentType<any>; pageProps: any }> = ({ Page, pageProps }) => {
+  const { status, data: sessionData } = useSession({ required: true });
   const [showSpinner, setShowSpinner] = useState(false);
-  const { t, ready } = useTranslation();
+  const { i18n } = useTranslation();
 
   const { setCurrency } = useAddExpenseStore((s) => s.actions);
   const { setWebPushPublicKey } = useAppStore((s) => s.actions);
 
   const { data: webPushPublicKey } = api.user.getWebPushPublicKey.useQuery();
+  const { data: userData, isLoading: isUserLoading } = api.user.me.useQuery(undefined, {
+    enabled: status === 'authenticated', // Esegui la query solo se l'utente è autenticato
+  });
 
   useEffect(() => {
     setTimeout(() => {
@@ -115,20 +109,21 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
   }, [webPushPublicKey, setWebPushPublicKey]);
 
   useEffect(() => {
-    if (status === 'authenticated') {
-      setCurrency(data.user.currency);
+    if (status === 'authenticated' && sessionData?.user) {
+      setCurrency(sessionData.user.currency);
+      void i18n.changeLanguage('it');
     }
-  }, [status, data?.user, setCurrency]);
+  }, [status, sessionData?.user, setCurrency, userData?.preferredLanguage, i18n]);
 
-  if (status === 'loading' || !ready) {
+  if (status === 'loading' || isUserLoading) {
     return (
-      <div className="flex h-full w-full items-center justify-center">
-        {showSpinner ? <LoadingSpinner className="text-primary" /> : null}
-      </div>
+        <div className="flex h-full w-full items-center justify-center">
+          {showSpinner ? <LoadingSpinner className="text-primary" /> : null}
+        </div>
     );
   }
 
-  return <Page user={data.user} {...pageProps} />;
+  return <Page user={sessionData?.user} {...pageProps} />;
 };
 
 export default api.withTRPC(MyApp);

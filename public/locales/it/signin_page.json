@@ -1,0 +1,17 @@
+{
+  "ui": {
+    "title": "Splitpro login",
+    "email_sent": "Abbiamo inviato un'e-mail con l'OTP. Controlla la tua posta in arrivo",
+    "submit": "Invia",
+    "email_placeholder": "Inserisci la tua email",
+    "sending": "Invio in corso...",
+    "send_magic_link": "Invia collegamento magico",
+    "trouble_loggin_in": "Problemi di accesso? Contatta",
+    "errors": {
+      "email_required": "L'email è obbligatoria",
+      "invalid_email": "Email non valida",
+      "otp_required": "Il codice OTP è obbligatorio",
+      "invalid_otp": "Codice OTP non valido"
+    }
+  }
+}

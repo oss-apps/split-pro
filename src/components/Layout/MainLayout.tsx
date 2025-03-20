@@ -24,7 +24,7 @@ interface MainLayoutProps {
 const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, title }) => {
   const router = useRouter();
   const currentPath = router.pathname;
-  const { t } = useTranslation(['account_page', 'activity_page', 'add_expense', 'balances_page', 'groups_page']);
+  const { t } = useTranslation(['account_page', 'activity_page', 'expense_add', 'balances_page', 'groups_page']);
 
   return (
     <div className=" h-full w-full bg-background">
@@ -52,7 +52,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, 
             currentPath={currentPath}
           />
           <NavItemDesktop
-            title={t('add_expense:ui/title')}
+            title={t('expense_add:ui/title')}
             Icon={SolidPlusCircleIcon}
             link="/add"
             currentPath={currentPath}
@@ -95,7 +95,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, 
           link="/groups"
           currentPath={currentPath}
         />
-        <NavItem title={t('add_expense:ui/title_mobile')} Icon={SolidPlusCircleIcon} link="/add" currentPath={currentPath} />
+        <NavItem title={t('expense_add:ui/title_mobile')} Icon={SolidPlusCircleIcon} link="/add" currentPath={currentPath} />
         <NavItem
           title={t('activity_page:ui/title')}
           Icon={SolidListBulletIcon}

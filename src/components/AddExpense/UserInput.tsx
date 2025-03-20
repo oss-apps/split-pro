@@ -20,7 +20,7 @@ export const UserInput: React.FC<{
   const participants = useAddExpenseStore((s) => s.participants);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
   const group = useAddExpenseStore((s) => s.group);
-  const { t } = useTranslation('add_expense');
+  const { t } = useTranslation('expense_add');
 
   const addFriendMutation = api.user.inviteFriend.useMutation();
 

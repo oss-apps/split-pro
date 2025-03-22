@@ -174,7 +174,7 @@ const BalancePage: NextPageWithUser<{
                       {expensesQuery.data[expensesQuery.data.length - 1]?.createdAt
                         ? format(
                             expensesQuery.data[expensesQuery.data.length - 1]!.createdAt,
-                              env.DATE_FORMAT_VARIANT_5 ?? 'MMM dd, yyyy',
+                              process.env.NEXT_PUBLIC_DATE_FORMAT_VARIANT_5 ?? 'MMM dd, yyyy',
                           )
                         : '--'}
                     </p>
@@ -204,7 +204,7 @@ const BalancePage: NextPageWithUser<{
               {groupDetailQuery?.data?.createdAt && (
                 <div className="mt-8">
                   <p className="font-semibold ">{t('ui/group_info/group_created')}</p>
-                  <p>{format(groupDetailQuery.data?.createdAt, t('ui/group_info/date_format'))}</p>
+                  <p>{format(groupDetailQuery.data?.createdAt, process.env.NEXT_PUBLIC_DATE_FORMAT_VARIANT_5 ?? 'MMM dd, yyyy')}</p>
                 </div>
               )}
               <div className="mt-8">
@@ -390,7 +390,7 @@ const BalancePage: NextPageWithUser<{
             >
               <div className="flex items-center gap-4">
                 <div className="text-xs text-gray-500">
-                  {format(e.expenseDate, env.DATE_FORMAT_VARIANT_4 ?? 'MMM dd')
+                  {format(e.expenseDate, process.env.NEXT_PUBLIC_DATE_FORMAT_VARIANT_4 ?? 'MMM dd')
                     .split(' ')
                     .map((d) => (
                       <div className="text-center" key={d}>

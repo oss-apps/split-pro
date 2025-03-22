@@ -148,7 +148,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                         )}
                       </div>
                       <p className="text-xs text-gray-500">
-                        {format(e.expense.expenseDate, env.DATE_FORMAT_VARIANT_3 ?? 'dd MMM')}
+                        {format(e.expense.expenseDate, process.env.NEXT_PUBLIC_DATE_FORMAT_VARIANT_3 ?? 'dd MMM')}
                       </p>
                     </div>
                   </Link>

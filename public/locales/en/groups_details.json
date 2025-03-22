@@ -30,7 +30,6 @@
       "title": "Group info",
       "members":"Members",
       "group_created": "Group created",
-      "date_format": "MMM dd, yyyy",
       "actions": "Actions",
       "delete_group": "Delete group",
       "delete_group_details": {

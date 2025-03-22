@@ -153,7 +153,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               {importMutation.isLoading ? <LoadingSpinner /> : t('ui/import_from_splitwise_details/import')}
             </Button>
           </div>
-          <div className="mt-4 text-sm text-gray-400">
+          <div className="mt-4 text-sm text-gray-400 text-justify">
             {t('ui/import_from_splitwise_details/note')}
           </div>
 
@@ -225,7 +225,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               ) : null}
             </>
           ) : (
-            <div className="mt-20 flex flex-col items-center justify-center gap-4">
+            <div className="mt-20 flex flex-col items-center justify-center gap-4 text-center">
               {t('ui/import_from_splitwise_details/follow_to_export_splitwise_data')}
               <Link href="https://export-splitwise.vercel.app/" target="_blank">
                 <Button>

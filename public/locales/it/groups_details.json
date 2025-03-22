@@ -30,7 +30,6 @@
       "title": "Informazioni gruppo",
       "members":"Membri",
       "group_created": "Creazione gruppo",
-      "date_format": "dd MMM yyyy",
       "actions": "Azioni",
       "delete_group": "Elimina gruppo",
       "delete_group_details": {
@@ -49,8 +48,8 @@
         "leave": "Abbandona"
       }
     },
-    "add_expense": "Aggiungi spesa",
-    "add_members": "Aggiungi membri",
+    "add_expense": "Nuova spesa",
+    "add_members": "Nuovi membri",
     "copied": "Copiato",
     "invite": "Invita",
     "you_paid": "Hai pagato",

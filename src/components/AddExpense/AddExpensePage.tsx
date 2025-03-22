@@ -393,10 +393,10 @@ export const AddOrEditExpensePage: React.FC<{
                         >
                           <CalendarIcon className="mr-2 h-6 w-6 text-cyan-500" />
                           {expenseDate ? (
-                            format(expenseDate, env.DATE_FORMAT_VARIANT_1 ?? 'yyyy-MM-dd') === format(new Date(), env.DATE_FORMAT_VARIANT_1 ?? 'yyyy-MM-dd') ? (
+                            format(expenseDate, process.env.NEXT_PUBLIC_DATE_FORMAT_VARIANT_1 ?? 'yyyy-MM-dd') === format(new Date(), process.env.NEXT_PUBLIC_DATE_FORMAT_VARIANT_1 ?? 'yyyy-MM-dd') ? (
                               t('ui/add_expense_details/today')
                             ) : (
-                              format(expenseDate, env.DATE_FORMAT_VARIANT_4 ?? 'MMM dd')
+                              format(expenseDate, process.env.NEXT_PUBLIC_DATE_FORMAT_VARIANT_4 ?? 'MMM dd')
                             )
                           ) : (
                             <span>{t('ui/add_expense_details/pick_a_date')}</span>

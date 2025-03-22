@@ -172,7 +172,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   >
                     <div className="flex items-center gap-3 px-1">
                       <div className="text-xs text-gray-500">
-                        {format(e.expenseDate, env.DATE_FORMAT_VARIANT_4 ?? 'MMM dd')
+                        {format(e.expenseDate, process.env.NEXT_PUBLIC_DATE_FORMAT_VARIANT_4 ?? 'MMM dd')
                           .split(' ')
                           .map((d) => (
                             <div className="text-center" key={d}>

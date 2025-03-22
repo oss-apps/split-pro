@@ -43,23 +43,23 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
               {expense.currency} {toUIString(expense.amount ?? 0)}
             </p>
             {!isSameDay(expense.expenseDate, expense.createdAt) ? (
-              <p className="text-sm text-gray-500">{format(expense.expenseDate, env.DATE_FORMAT_VARIANT_2 ?? 'dd MMM yyyy')}</p>
+              <p className="text-sm text-gray-500">{format(expense.expenseDate, process.env.NEXT_PUBLIC_DATE_FORMAT_VARIANT_2 ?? 'dd MMM yyyy')}</p>
             ) : null}
             {expense.updatedByUser ? (
               <p className=" text-sm text-gray-500">
                 {t('ui/edited_by') + ' '} {expense.updatedByUser?.name ?? expense.updatedByUser?.email} {t('ui/on') + ' '}
-                {format(expense.updatedAt, env.DATE_FORMAT_VARIANT_2 ?? 'dd MMM yyyy')}
+                {format(expense.updatedAt, process.env.NEXT_PUBLIC_DATE_FORMAT_VARIANT_2 ?? 'dd MMM yyyy')}
               </p>
             ) : null}
             {expense.deletedByUser ? (
               <p className=" text-sm text-orange-600">
                 {t('ui/deleted_by') + ' '} {expense.deletedByUser.name ?? expense.addedByUser.email} {t('ui/on') + ' '}
-                {format(expense.deletedAt ?? expense.createdAt, env.DATE_FORMAT_VARIANT_2 ?? 'dd MMM yyyy')}
+                {format(expense.deletedAt ?? expense.createdAt, process.env.NEXT_PUBLIC_DATE_FORMAT_VARIANT_2 ?? 'dd MMM yyyy')}
               </p>
             ) : (
               <p className=" text-sm text-gray-500">
                 {t('ui/added_by') + ' '} {expense.addedByUser.name ?? expense.addedByUser.email} {t('ui/on') + ' '}
-                {format(expense.createdAt, env.DATE_FORMAT_VARIANT_2 ?? 'dd MMM yyyy')}
+                {format(expense.createdAt, process.env.NEXT_PUBLIC_DATE_FORMAT_VARIANT_2 ?? 'dd MMM yyyy')}
               </p>
             )}
           </div>

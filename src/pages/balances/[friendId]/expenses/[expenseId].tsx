@@ -9,6 +9,7 @@ import { DeleteExpense } from '~/components/Expense/DeleteExpense';
 import { type NextPageWithUser } from '~/types';
 import { env } from '~/env';
 import { Button } from '~/components/ui/button';
+import {useTranslation} from "react-i18next";
 
 const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   user,
@@ -17,13 +18,14 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   const router = useRouter();
   const expenseId = router.query.expenseId as string;
   const friendId = parseInt(router.query.friendId as string);
+  const {t} = useTranslation('expense_details')
 
   const expenseQuery = api.user.getExpenseDetails.useQuery({ expenseId });
 
   return (
     <>
       <Head>
-        <title>Outstanding balances</title>
+        <title>{t('ui/title')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
@@ -32,7 +34,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
             <Link href={`/balances/${friendId}`}>
               <ChevronLeftIcon className="mr-1 h-6 w-6" />
             </Link>
-            <p className="text-[16px] font-normal">Expense details</p>
+            <p className="text-[16px] font-normal">{t('ui/title')}</p>
           </div>
         }
         actions={

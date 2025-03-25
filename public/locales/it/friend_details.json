@@ -14,6 +14,16 @@
         "saving_expense": "Errore durante il salvataggio della spesa"
       }
     },
+    "delete_details": {
+      "are_you_sure": "Sei sicuro?",
+      "cant_remove": "Impossibile rimuovere l'amico con saldi in sospeso. Prima devi saldare",
+      "want_to_continue": "Sei sicuro di voler rimuovere l'amico?",
+      "cancel": "Annulla",
+      "delete": "Rimuovi",
+      "errors": {
+        "failed_to_delete": "Impossibile eliminare l'utente"
+      }
+    },
     "export": "Esporta",
     "you_paid": "Hai pagato",
     "user_paid": "ha pagato"

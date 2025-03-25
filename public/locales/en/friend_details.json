@@ -14,6 +14,16 @@
         "saving_expense": "Error while saving expense"
       }
     },
+    "delete_details": {
+      "are_you_sure": "Are you absolutely sure?",
+      "cant_remove": "Can't remove friend with outstanding balances. Settle up first",
+      "want_to_continue": "Do you really want to continue",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "errors": {
+        "failed_to_delete": "Failed to delete user"
+      }
+    },
     "export": "Export",
     "you_paid": "You paid",
     "user_paid": "paid"

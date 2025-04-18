@@ -4,36 +4,35 @@ import { ChevronRight, Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { api } from '~/utils/api';
-import {z} from "zod"; // Importa l'API di tRPC
 
 export const ChangeLanguage: React.FC = () => {
     const updatePreferredLanguage = api.user.updatePreferredLanguage.useMutation();
     const { t, i18n } = useTranslation('account_page');
     const [languageOpen, setLanguageOpen] = useState(false);
-    const [selectedLanguage, setSelectedLanguage] = useState<string>(i18n.language); // Lingua selezionata
-    const [initialLanguage, setInitialLanguage] = useState<string>(i18n.language); // Lingua iniziale (al momento dell'apertura del drawer)
+    const [selectedLanguage, setSelectedLanguage] = useState<string>(i18n.language); // Selected language
+    const [initialLanguage, setInitialLanguage] = useState<string>(i18n.language); // Initial language (when opening the drawer)
 
-    // Ottieni le lingue supportate dalla configurazione di i18next e filtra "cimode"
+    // Get supported languages ​​from i18next configuration and filter "cimode"
     const supportedLanguages: string[] = (
         (i18n.options.supportedLngs as string[] || ['en', 'it'])
     ).filter((languageCode) => languageCode !== 'cimode');
 
-    // Funzione per ottenere il nome della lingua dal file di traduzione
+    // Function to get language name from translation file
     const getLanguageName = (languageCode: string): string => {
         return t(`ui/change_language_details/languages/${languageCode}`) || languageCode;
     };
 
-    // Ripristina la lingua selezionata al momento dell'apertura del drawer
+    // Restores the language selected when opening the drawer
     const handleClose = () => {
         setSelectedLanguage(initialLanguage); // Ripristina la lingua iniziale
         setLanguageOpen(false); // Chiudi il drawer
     };
 
-    // Aggiorna la lingua iniziale quando il drawer viene aperto
+    // Update the initial language when the drawer is opened
     useEffect(() => {
         if (languageOpen) {
-            setInitialLanguage(i18n.language); // Imposta la lingua iniziale
-            setSelectedLanguage(i18n.language); // Imposta la lingua selezionata
+            setInitialLanguage(i18n.language); // Set the initial language
+            setSelectedLanguage(i18n.language); // Set the selected language
         }
     }, [languageOpen, i18n.language]);
 
@@ -63,13 +62,13 @@ export const ChangeLanguage: React.FC = () => {
             }
             open={languageOpen}
             onOpenChange={setLanguageOpen}
-            onClose={handleClose} // Usa handleClose per gestire la chiusura
+            onClose={handleClose}
             leftAction={t('ui/change_language_details/close')}
             title={t('ui/change_language_details/title')}
             className="h-[70vh]"
             shouldCloseOnAction={false}
-            actionTitle={t('ui/change_language_details/save')} // Pulsante di conferma
-            actionOnClick={confirmLanguageChange} // Azione al clic su "Conferma"
+            actionTitle={t('ui/change_language_details/save')}
+            actionOnClick={confirmLanguageChange}
         >
             <div className="mt-4 flex flex-col gap-2">
                 {supportedLanguages.map((languageCode: string) => (
@@ -78,11 +77,11 @@ export const ChangeLanguage: React.FC = () => {
                         className={`flex items-center justify-between rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700 ${
                             selectedLanguage === languageCode ? 'bg-gray-100 dark:bg-gray-700' : ''
                         }`}
-                        onClick={() => setSelectedLanguage(languageCode)} // Imposta la lingua selezionata
+                        onClick={() => setSelectedLanguage(languageCode)}
                     >
                         <span>{getLanguageName(languageCode)}</span>
                         {selectedLanguage === languageCode && (
-                            <span className="text-sm text-green-500">✓</span> // Mostra un segno di spunta per la lingua selezionata
+                            <span className="text-sm text-green-500">✓</span>
                         )}
                     </button>
                 ))}

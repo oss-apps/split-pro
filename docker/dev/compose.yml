@@ -2,7 +2,7 @@ name: split-pro-dev
 
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:16
     container_name: splitpro-db-dev
     restart: always
     environment:
@@ -14,5 +14,20 @@ services:
     ports:
       - '54321:5432'
 
+  minio:
+    image: minio/minio
+    container_name: splitpro-storage-dev
+    ports:
+      - 9002:9002
+      - 9001:9001
+    volumes:
+      - minio:/data
+    environment:
+      MINIO_ROOT_USER: splitpro
+      MINIO_ROOT_PASSWORD: password
+    entrypoint: sh
+    command: -c 'mkdir -p /data/splitpro && minio server /data --console-address ":9001" --address ":9002"'
+
 volumes:
   database:
+  minio:

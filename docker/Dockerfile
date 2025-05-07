@@ -43,6 +43,14 @@ COPY --from=base  /app/node_modules/sharp ./node_modules/sharp
 RUN mkdir node_modules/.bin
 RUN ln -s /app/node_modules/prisma/build/index.js ./node_modules/.bin/prisma
 
+COPY --from=base  /app/node_modules/web-push ./node_modules/web-push
+COPY --from=base  /app/node_modules/.pnpm/web-push@3.6.7 ./node_modules/.pnpm/web-push@3.6.7
+# Required dependency for web-push
+COPY --from=base  /app/node_modules/.pnpm/minimist@1.2.8 ./node_modules/.pnpm/minimist@1.2.8
+
+# Symlink the web-push binary
+RUN ln -s /app/node_modules/web-push/src/cli.js ./node_modules/.bin/web-push
+
 # set this so it throws error where starting server
 ENV SKIP_ENV_VALIDATION="false"
 

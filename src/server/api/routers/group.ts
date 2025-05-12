@@ -274,12 +274,42 @@ export const groupRouter = createTRPCRouter({
   addMembers: groupProcedure
     .input(z.object({ userIds: z.array(z.number()) }))
     .mutation(async ({ input, ctx }) => {
-      console.log(input.userIds);
       const groupUsers = await ctx.db.groupUser.createMany({
         data: input.userIds.map((userId) => ({
           groupId: input.groupId,
           userId,
         })),
+      });
+
+      // get all group expenses
+      const groupExpenses = await db.expense.findMany({
+        include: {
+          expenseParticipants: true,
+        },
+        where: {
+          groupId: input.groupId,
+          deletedAt: null,
+        },
+      });
+
+      input.userIds.forEach(async (id) => {
+        // for safety filter out expenses where user is already a participant
+        const expenseMissingParticipant = groupExpenses
+          .filter((expense) => {
+            return expense.expenseParticipants.filter((p) => p.userId == id).length == 0;
+          })
+          .map((expense) => {
+            return {
+              expenseId: expense.id,
+              userId: id,
+              amount: 0,
+            };
+          });
+
+        // add to expenses if where necessary
+        if (expenseMissingParticipant.length > 0) {
+          await ctx.db.expenseParticipant.createMany({ data: expenseMissingParticipant });
+        }
       });
 
       return groupUsers;

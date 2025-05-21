@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { SplitType } from '@prisma/client';
 import { Download } from 'lucide-react';
 import { toUIString } from '~/utils/numbers';
+import {useTranslation} from "react-i18next";
 
 interface ExpenseParticipant {
   expenseId: string;
@@ -105,6 +106,7 @@ export const Export: React.FC<ExportCSVProps> = ({
       document.body.removeChild(link);
     }
   };
+  const { t } = useTranslation('friend_details');
 
   return (
     <Button
@@ -114,7 +116,7 @@ export const Export: React.FC<ExportCSVProps> = ({
       onClick={exportToCSV}
       disabled={disabled}
     >
-      <Download className="h-4 w-4 text-white" size={20} /> Export
+      <Download className="h-4 w-4 text-white" size={20} /> {t('ui/export')}
     </Button>
   );
 };

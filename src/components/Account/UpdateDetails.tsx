@@ -9,14 +9,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import { toast } from 'sonner';
-
-const detailsSchema = z.object({
-  name: z.string({ required_error: 'Name is required' }).min(1, { message: 'Name is required' }),
-});
+import { useTranslation } from 'react-i18next';
 
 export const UpdateDetails: React.FC<{ defaultName: string }> = ({ defaultName }) => {
   const updateDetailsMutation = api.user.updateUserDetail.useMutation();
   const [updateDetailsOpen, setUpdateDetailsOpen] = useState(false);
+  const { t } = useTranslation('account_details');
+
+  const detailsSchema = z.object({
+    name: z.string({ required_error: t('errors/name_required') }).min(1, { message: t('errors/name_required') }),
+  });
 
   const detailForm = useForm<z.infer<typeof detailsSchema>>({
     resolver: zodResolver(detailsSchema),
@@ -30,10 +32,10 @@ export const UpdateDetails: React.FC<{ defaultName: string }> = ({ defaultName }
   async function onGroupSubmit(values: z.infer<typeof detailsSchema>) {
     try {
       await updateDetailsMutation.mutateAsync({ name: values.name });
-      toast.success('Updated details', { duration: 1500 });
+      toast.success(t('messages/update_success'), { duration: 1500 });
       utils.user.me.refetch().catch(console.error);
     } catch (error) {
-      toast.error('Error in updating details');
+      toast.error(t('messages/update_error'));
 
       console.error(error);
     }
@@ -47,10 +49,10 @@ export const UpdateDetails: React.FC<{ defaultName: string }> = ({ defaultName }
       open={updateDetailsOpen}
       onClose={() => setUpdateDetailsOpen(false)}
       onOpenChange={(open) => setUpdateDetailsOpen(open)}
-      leftAction="Close"
-      title="Edit details"
+      leftAction={t('ui/close')}
+      title={t('ui/title')}
       className="h-[80vh]"
-      actionTitle="Save"
+      actionTitle={t('ui/save')}
       actionOnClick={async () => {
         await detailForm.handleSubmit(onGroupSubmit)();
       }}
@@ -67,7 +69,7 @@ export const UpdateDetails: React.FC<{ defaultName: string }> = ({ defaultName }
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormControl>
-                    <Input className="text-lg" placeholder="Enter your name" {...field} />
+                    <Input className="text-lg" placeholder={t('ui/placeholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

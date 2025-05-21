@@ -1,0 +1,21 @@
+{
+  "ui": {
+    "title": "Balances",
+    "text": "Check out SplitPro. It's an open source free alternative for Splitwise",
+    "you_owe": "You owe",
+    "you_get": "You get",
+    "you_get_single": "You get",
+    "download_app": "Download app",
+    "download_app_details": {
+      "title": "Download app",
+      "download_as_pwa": "You can download SplitPro as a PWA to your home screen.",
+      "using_ios": "If you are using iOS, checkout this",
+      "using_android": "If you are using Android, checkout this",
+      "video": "video",
+      "close": "Close"
+    },
+    "or": "or",
+    "add_expense": "Add expense",
+    "settled_up": "Settled up"
+  }
+}

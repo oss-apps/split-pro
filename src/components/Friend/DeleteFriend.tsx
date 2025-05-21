@@ -15,6 +15,7 @@ import {
   AlertDialogTrigger,
 } from '../ui/alert-dialog';
 import { toast } from 'sonner';
+import {useTranslation} from "react-i18next";
 
 export const DeleteFriend: React.FC<{
   friendId: number;
@@ -22,6 +23,7 @@ export const DeleteFriend: React.FC<{
 }> = ({ friendId, disabled }) => {
   const router = useRouter();
   const [showTrigger, setShowTrigger] = useState(false);
+  const { t } = useTranslation('friend_details')
 
   const deleteFriendMutation = api.user.deleteFriend.useMutation();
   const utils = api.useUtils();
@@ -30,7 +32,7 @@ export const DeleteFriend: React.FC<{
     try {
       await deleteFriendMutation.mutateAsync({ friendId });
     } catch (e) {
-      toast.error('Failed to delete user');
+      toast.error(t('ui/delete_details/errors/failed_to_delete'));
       return;
     }
     setShowTrigger(false);
@@ -52,15 +54,15 @@ export const DeleteFriend: React.FC<{
         </AlertDialogTrigger>
         <AlertDialogContent className="max-w-xs rounded-lg">
           <AlertDialogHeader>
-            <AlertDialogTitle>{disabled ? '' : 'Are you absolutely sure?'} </AlertDialogTitle>
+            <AlertDialogTitle>{disabled ? '' : t('ui/delete_details/are_you_sure')} </AlertDialogTitle>
             <AlertDialogDescription>
               {disabled
-                ? "Can't remove friend with outstanding balances. Settle up first"
-                : 'Do you really want to continue'}
+                ? t('ui/delete_details/cant_remove')
+                : t('ui/delete_details/want_to_continue')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('ui/delete_details/cancel')}</AlertDialogCancel>
             {!disabled ? (
               <Button
                 size="sm"
@@ -69,7 +71,7 @@ export const DeleteFriend: React.FC<{
                 disabled={deleteFriendMutation.isLoading}
                 loading={deleteFriendMutation.isLoading}
               >
-                Delete
+                {t('ui/delete_details/delete')}
               </Button>
             ) : null}
           </AlertDialogFooter>

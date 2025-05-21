@@ -1,6 +1,7 @@
 import { type GroupBalance, type User } from '@prisma/client';
 import React from 'react';
 import { toUIString } from '~/utils/numbers';
+import {useTranslation} from "react-i18next";
 
 type GroupMyBalanceProps = {
   userId: number;
@@ -9,7 +10,8 @@ type GroupMyBalanceProps = {
 };
 
 const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, users }) => {
-  const userMap = users.reduce(
+    const { t } = useTranslation('groups_details');
+    const userMap = users.reduce(
     (acc, user) => {
       acc[user.id] = user;
       return acc;
@@ -35,7 +37,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
       <div className="flex flex-col gap-2">
         {youLent.length > 0 ? (
           <div className="flex flex-wrap gap-1 text-emerald-500">
-            You lent
+              {t('ui/you_lent')}
             {youLent.map(([currency, amount], index, arr) => {
               return (
                 <>
@@ -51,7 +53,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
 
         {youOwe.length > 0 ? (
           <div className="text-orange-6000 flex flex-wrap gap-1 text-orange-600">
-            You owe
+              {t('ui/you_owe')}
             {youOwe.map(([currency, amount], index, arr) => {
               return (
                 <>

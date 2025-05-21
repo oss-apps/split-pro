@@ -15,7 +15,7 @@
     "postinstall": "prisma generate",
     "generate": "prisma generate",
     "lint": "next lint",
-    "start": "sleep 3 && pnpm prisma:prod && next start",
+    "start": "next start",
     "start-with-latest-migrations": "prisma migrate deploy && next start",
     "d": "pnpm dx && pnpm dev",
     "dx": "pnpm i && pnpm dx:up && pnpm db:dev",

@@ -39,6 +39,9 @@ export default function Home() {
         )}
       </Head>
       <main className="min-h-screen">
+        <div className="bg-destructive text-destructive-foreground py-2 text-center text-sm">
+          App is currently facing issues with cloud provider and we are on resolving it
+        </div>
         <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4   py-4 lg:px-0 lg:py-5">
           <div className="flex items-center gap-2">
             <p className="text-2xl font-medium">SplitPro</p>

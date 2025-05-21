@@ -39,10 +39,6 @@ export default function Home() {
         )}
       </Head>
       <main className="min-h-screen">
-        <div className="bg-destructive py-2 text-center text-sm text-destructive-foreground">
-          App is currently facing issues with cloud provider and we are on resolving it. Sorry for
-          the inconvenience
-        </div>
         <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4   py-4 lg:px-0 lg:py-5">
           <div className="flex items-center gap-2">
             <p className="text-2xl font-medium">SplitPro</p>
@@ -72,7 +68,7 @@ export default function Home() {
                 alternative to SplitWise
               </h2>
               <div className="mt-10 flex flex-col gap-6 lg:flex-row">
-                {/* <Link href="/auth/signin" className="mx-auto lg:mx-0">
+                <Link href="/auth/signin" className="mx-auto lg:mx-0">
                   <Button className="flex w-[200px] items-center gap-2 rounded-full">
                     Add Expense <ArrowRight size={15} />{' '}
                   </Button>
@@ -88,7 +84,7 @@ export default function Home() {
                   >
                     <Github size={15} /> Star us on github
                   </Button>
-                </Link> */}
+                </Link>
               </div>
               <div className=" mt-40"></div>
             </div>

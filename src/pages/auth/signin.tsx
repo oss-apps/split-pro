@@ -59,13 +59,13 @@ const providerSvgs = {
     </svg>
   ),
   authentik: (
-    <svg 
-	  xmlns="http://www.w3.org/2000/svg"
-	  viewBox="0 0 25 25" 
-	  className="h-4 w-4  fill-primary-foreground"
-	>
-		<path d="M13.96 9.01h-0.84V7.492h-1.234v3.663H5.722c0.34 0.517 0.538 0.982 0.538 1.152 0 0.46 -1.445 3.059 -3.197 3.059C0.8 15.427 -0.745 12.8 0.372 10.855a3.062 3.062 0 0 1 2.691 -1.606c1.04 0 1.971 0.915 2.557 1.755V6.577a3.773 3.773 0 0 1 3.77 -3.769h10.84C22.31 2.808 24 4.5 24 6.577v10.845a3.773 3.773 0 0 1 -3.77 3.769h-1.6V17.5h-7.64v3.692h-1.6a3.773 3.773 0 0 1 -3.77 -3.769v-3.41h12.114v-6.52h-1.59v0.893h-0.84v-0.893H13.96v1.516Zm-9.956 1.845c-0.662 -0.703 -1.578 -0.544 -2.209 0 -2.105 2.054 1.338 5.553 3.302 1.447a5.395 5.395 0 0 0 -1.093 -1.447Z"/>
-	</svg>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 25 25"
+      className="h-4 w-4  fill-primary-foreground"
+    >
+      <path d="M13.96 9.01h-0.84V7.492h-1.234v3.663H5.722c0.34 0.517 0.538 0.982 0.538 1.152 0 0.46 -1.445 3.059 -3.197 3.059C0.8 15.427 -0.745 12.8 0.372 10.855a3.062 3.062 0 0 1 2.691 -1.606c1.04 0 1.971 0.915 2.557 1.755V6.577a3.773 3.773 0 0 1 3.77 -3.769h10.84C22.31 2.808 24 4.5 24 6.577v10.845a3.773 3.773 0 0 1 -3.77 3.769h-1.6V17.5h-7.64v3.692h-1.6a3.773 3.773 0 0 1 -3.77 -3.769v-3.41h12.114v-6.52h-1.59v0.893h-0.84v-0.893H13.96v1.516Zm-9.956 1.845c-0.662 -0.703 -1.578 -0.544 -2.209 0 -2.105 2.054 1.338 5.553 3.302 1.447a5.395 5.395 0 0 0 -1.093 -1.447Z" />
+    </svg>
   ),
 };
 
@@ -112,107 +112,10 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
           <div className="mb-10 flex items-center gap-4">
             <p className="text-3xl text-primary">SplitPro</p>
           </div>
-          {providers
-            .filter((provider) => provider.id !== 'email')
-            .map((provider) => (
-              <Button
-                className="mx-auto flex w-[300px] items-center gap-3 bg-white hover:bg-gray-100 focus:bg-gray-100"
-                onClick={() => signIn(provider.id)}
-                key={provider.id}
-              >
-                {providerSvgs[provider.id as keyof typeof providerSvgs]}
-                Continue with {provider.name}
-              </Button>
-            ))}
-          {providers && providers.length === 2 && (
-            <div className="mt-6 flex w-[300px]  items-center justify-between gap-2">
-              <p className=" z-10 ml-[150px] -translate-x-1/2 bg-background px-4 text-sm">or</p>
-              <div className="absolute h-[1px] w-[300px]  bg-gradient-to-r from-zinc-800 via-zinc-300 to-zinc-800"></div>
-            </div>
-          )}
-          {providers.find((provider) => provider.id === 'email') ? (
-            emailStatus === 'success' ? (
-              <>
-                <p className="mt-6 w-[300px] text-center text-sm">
-                  We have sent an email with the OTP. Please check your inbox
-                </p>
-                <Form {...otpForm}>
-                  <form onSubmit={otpForm.handleSubmit(onOTPSubmit)} className="mt-6 space-y-8">
-                    <FormField
-                      control={otpForm.control}
-                      name="otp"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <InputOTP
-                              className="w-[300px]"
-                              maxLength={5}
-                              pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
-                              inputMode="text"
-                              {...field}
-                            >
-                              <InputOTPGroup>
-                                <InputOTPSlot className="w-[60px]" index={0} />
-                                <InputOTPSlot className="w-[60px]" index={1} />
-                                <InputOTPSlot className="w-[60px]" index={2} />
-                                <InputOTPSlot className="w-[60px]" index={3} />
-                                <InputOTPSlot className="w-[60px]" index={4} />
-                              </InputOTPGroup>
-                            </InputOTP>
-                          </FormControl>
-
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <Button className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100">
-                      Submit
-                    </Button>
-                  </form>
-                </Form>
-              </>
-            ) : (
-              <>
-                <Form {...emailForm}>
-                  <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="mt-6 space-y-8">
-                    <FormField
-                      control={emailForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter your email"
-                              className=" w-[300px] text-lg"
-                              type="email"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormDescription />
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <Button
-                      className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
-                      type="submit"
-                      disabled={emailStatus === 'sending'}
-                    >
-                      {emailStatus === 'sending' ? 'Sending...' : 'Send magic link'}
-                    </Button>
-                  </form>
-                </Form>
-              </>
-            )
-          ) : null}
-          <p className="mt-6 w-[300px] text-center text-sm text-muted-foreground">
-            Trouble logging in? contact
-            <br />
-            <a className="underline" href={'mailto:' + feedbackEmail}>
-              {feedbackEmail ?? ''}
-            </a>
-          </p>
+          <div className="bg-destructive px-4 py-2 text-center text-sm text-destructive-foreground">
+            App is currently facing issues with cloud provider and we are on resolving it. Sorry for
+            the inconvenience
+          </div>
         </div>
       </main>
     </>

@@ -1,6 +1,3 @@
-import Head from 'next/head';
-import Link from 'next/link';
-import { Button } from '~/components/ui/button';
 import {
   ArrowRight,
   Banknote,
@@ -13,9 +10,12 @@ import {
   Split,
   Users,
 } from 'lucide-react';
+import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
+
 import { BackgroundGradient } from '~/components/ui/background-gradient';
-import { env } from '~/env';
+import { Button } from '~/components/ui/button';
 
 export default function Home() {
   return (

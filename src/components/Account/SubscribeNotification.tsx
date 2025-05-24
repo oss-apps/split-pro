@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Button } from '../ui/button';
-import { toast } from 'sonner';
-import { env } from '~/env';
 import { Bell, BellOff, ChevronRight } from 'lucide-react';
-import { api } from '~/utils/api';
+import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+
 import { useAppStore } from '~/store/appStore';
+import { api } from '~/utils/api';
+
+import { Button } from '../ui/button';
 
 const base64ToUint8Array = (base64: string) => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4);

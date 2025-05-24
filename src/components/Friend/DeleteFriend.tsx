@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { Button } from '../ui/button';
 import { Trash2 } from 'lucide-react';
-import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+import { toast } from 'sonner';
+
+import { api } from '~/utils/api';
+
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -14,7 +15,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '../ui/alert-dialog';
-import { toast } from 'sonner';
+import { Button } from '../ui/button';
 
 export const DeleteFriend: React.FC<{
   friendId: number;

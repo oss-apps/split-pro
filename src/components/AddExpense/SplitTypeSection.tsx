@@ -1,11 +1,13 @@
-import { type Participant, useAddExpenseStore } from '~/store/addStore';
-import { AppDrawer, Drawer, DrawerClose } from '../ui/drawer';
-import { UserAvatar } from '../ui/avatar';
-import { BarChart2, Check, DollarSign, Equal, Percent, Plus, X } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Input } from '../ui/input';
-import { useState } from 'react';
 import { SplitType } from '@prisma/client';
+import { BarChart2, Check, DollarSign, Equal, Percent, Plus, X } from 'lucide-react';
+import { useState } from 'react';
+
+import { type Participant, useAddExpenseStore } from '~/store/addStore';
+
+import { UserAvatar } from '../ui/avatar';
+import { AppDrawer, DrawerClose } from '../ui/drawer';
+import { Input } from '../ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
 export const SplitTypeSection: React.FC = () => {
   const paidBy = useAddExpenseStore((s) => s.paidBy);
@@ -24,7 +26,7 @@ export const SplitTypeSection: React.FC = () => {
         trigger={
           <p className="overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16.5px] text-cyan-500 lg:max-w-48">
             {
-              (currentUser?.id === paidBy?.id ? 'you' : paidBy?.name ?? paidBy?.email)?.split(
+              (currentUser?.id === paidBy?.id ? 'you' : (paidBy?.name ?? paidBy?.email))?.split(
                 ' ',
               )[0]
             }

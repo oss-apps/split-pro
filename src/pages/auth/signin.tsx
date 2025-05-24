@@ -1,35 +1,26 @@
 'use client';
-import { type ClientSafeProvider, getProviders, signIn } from 'next-auth/react';
-import Head from 'next/head';
-import { Button } from '~/components/ui/button';
-import Image from 'next/image';
-import { type GetServerSideProps } from 'next';
-import { getServerAuthSession } from '~/server/auth';
-import { useState } from 'react';
-import { Input } from '~/components/ui/input';
-import { env } from '~/env';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type NextPage } from 'next';
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
+import { type GetServerSideProps, type NextPage } from 'next';
+import Head from 'next/head';
+import { type ClientSafeProvider, getProviders, signIn } from 'next-auth/react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+import { Button } from '~/components/ui/button';
 import {
   Form,
   FormControl,
   FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '~/components/ui/form';
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-} from '~/components/ui/input-otp';
-import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
-import type { NextPageWithUser } from '~/types';
-import AddPage from '~/pages/add';
+import { Input } from '~/components/ui/input';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '~/components/ui/input-otp';
+import { env } from '~/env';
+import { getServerAuthSession } from '~/server/auth';
 
 const emailSchema = z.object({
   email: z.string({ required_error: 'Email is required' }).email({ message: 'Invalid email' }),

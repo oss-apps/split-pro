@@ -1,11 +1,13 @@
+import { ImagePlus, Image as ImageUploaded } from 'lucide-react';
 import React, { useState } from 'react';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { type File, FileUp, ImagePlus, Image as ImageUploaded } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
-import { FILE_SIZE_LIMIT } from '~/lib/constants';
-import { toast } from 'sonner';
+
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 
 const getImgHeightAndWidth = (file: File) => {
   return new Promise<{ width: number; height: number }>((resolve, reject) => {

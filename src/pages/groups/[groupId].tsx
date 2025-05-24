@@ -19,6 +19,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { toast } from 'sonner';
+
 import AddMembers from '~/components/group/AddMembers';
 import GroupMyBalance from '~/components/group/GroupMyBalance';
 import NoMembers from '~/components/group/NoMembers';
@@ -377,7 +378,7 @@ const BalancePage: NextPageWithUser<{
           const yourExpense = e.expenseParticipants.find((p) => p.userId === user.id);
           const isSettlement = e.splitType === SplitType.SETTLEMENT;
           const yourExpenseAmount = youPaid
-            ? yourExpense?.amount ?? 0
+            ? (yourExpense?.amount ?? 0)
             : -(yourExpense?.amount ?? 0);
 
           return (
@@ -409,7 +410,7 @@ const BalancePage: NextPageWithUser<{
                     className={`flex text-center ${isSettlement ? 'text-sm text-gray-400' : 'text-xs text-gray-500'}`}
                   >
                     <span className="text-[10px]">{isSettlement ? '  🎉  ' : null}</span>
-                    {youPaid ? 'You' : e.paidByUser.name ?? e.paidByUser.email} paid {e.currency}{' '}
+                    {youPaid ? 'You' : (e.paidByUser.name ?? e.paidByUser.email)} paid {e.currency}{' '}
                     {toUIString(e.amount)}{' '}
                   </p>
                 </div>

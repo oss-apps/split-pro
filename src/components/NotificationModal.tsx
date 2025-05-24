@@ -1,8 +1,10 @@
+import { Bell } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { env } from '~/env';
-import { Bell, BellOff, ChevronRight } from 'lucide-react';
+
+import { useAppStore } from '~/store/appStore';
 import { api } from '~/utils/api';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,7 +15,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from './ui/alert-dialog';
-import { useAppStore } from '~/store/appStore';
 
 const base64ToUint8Array = (base64: string) => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4);

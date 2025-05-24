@@ -1,8 +1,10 @@
-import { useAddExpenseStore } from '~/store/addStore';
-import { GroupAvatar, UserAvatar } from '../ui/avatar';
-import { z } from 'zod';
-import { api } from '~/utils/api';
 import Router from 'next/router';
+import { z } from 'zod';
+
+import { useAddExpenseStore } from '~/store/addStore';
+import { api } from '~/utils/api';
+
+import { GroupAvatar, UserAvatar } from '../ui/avatar';
 
 export const UserInput: React.FC<{
   isEditing?: boolean;

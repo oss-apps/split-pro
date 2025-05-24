@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import Head from 'next/head';
 import Link from 'next/link';
+
 import { CreateGroup } from '~/components/group/CreateGroup';
 import MainLayout from '~/components/Layout/MainLayout';
 import { GroupAvatar } from '~/components/ui/avatar';

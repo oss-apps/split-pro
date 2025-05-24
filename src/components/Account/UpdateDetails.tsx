@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
-import { AppDrawer } from '../ui/drawer';
-import { ChevronRight, MessageSquare, Pencil } from 'lucide-react';
-import { api } from '~/utils/api';
-import { Textarea } from '../ui/textarea';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Pencil } from 'lucide-react';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+
+import { api } from '~/utils/api';
+
+import { AppDrawer } from '../ui/drawer';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
-import { toast } from 'sonner';
 
 const detailsSchema = z.object({
   name: z.string({ required_error: 'Name is required' }).min(1, { message: 'Name is required' }),

@@ -1,14 +1,14 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { type GetServerSidePropsContext } from 'next';
-import { getServerSession, type DefaultSession, type NextAuthOptions } from 'next-auth';
-import { Adapter, AdapterUser } from 'next-auth/adapters';
-import DiscordProvider from 'next-auth/providers/discord';
-import GoogleProvider from 'next-auth/providers/google';
-import EmailProvider from 'next-auth/providers/email';
+import { type DefaultSession, type NextAuthOptions, getServerSession } from 'next-auth';
+import { type Adapter, type AdapterUser } from 'next-auth/adapters';
 import AuthentikProvider from 'next-auth/providers/authentik';
+import EmailProvider from 'next-auth/providers/email';
+import GoogleProvider from 'next-auth/providers/google';
 
 import { env } from '~/env';
 import { db } from '~/server/db';
+
 import { sendSignUpEmail } from './mailer';
 
 /**
@@ -34,27 +34,28 @@ declare module 'next-auth' {
 }
 
 const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapter => {
-  const prismaAdapter = PrismaAdapter(...args)
+  const prismaAdapter = PrismaAdapter(...args);
 
   return {
     ...prismaAdapter,
     createUser: async (user: Omit<AdapterUser, 'id'>): Promise<AdapterUser> => {
-      const prismaCreateUser = prismaAdapter.createUser
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const prismaCreateUser = prismaAdapter.createUser;
 
       if (env.INVITE_ONLY) {
-        throw new Error("This instance is Invite Only")
+        throw new Error('This instance is Invite Only');
       }
 
       if (!prismaCreateUser) {
         // This should never happen but typing says it's possible.
-        throw new Error("Prisma Adapter lacks User Creation")
+        throw new Error('Prisma Adapter lacks User Creation');
       }
 
-      return prismaCreateUser(user)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+      return prismaCreateUser(user);
     },
-  }
-}
-
+  };
+};
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -175,11 +176,11 @@ function getProviders() {
         clientId: env.AUTHENTIK_ID,
         clientSecret: env.AUTHENTIK_SECRET,
         issuer: env.AUTHENTIK_ISSUER,
-		allowDangerousEmailAccountLinking: true,
-      })
+        allowDangerousEmailAccountLinking: true,
+      }),
     );
   }
-  
+
   return providersList;
 }
 

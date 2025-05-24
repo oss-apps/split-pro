@@ -1,7 +1,9 @@
 import { type Balance, type User } from '@prisma/client';
-import { UserAvatar } from '../ui/avatar';
 import clsx from 'clsx';
+
 import { toUIString } from '~/utils/numbers';
+
+import { UserAvatar } from '../ui/avatar';
 
 export const FriendBalance: React.FC<{ user: User; balance: Balance }> = ({ user, balance }) => {
   const isPositive = balance.amount > 0;

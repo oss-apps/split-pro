@@ -57,4 +57,3 @@ services:
 
 volumes:
   database:
-

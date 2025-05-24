@@ -1,14 +1,15 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import Avatar from 'boring-avatars';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
 import { AppDrawer } from '~/components/ui/drawer';
 import { Input } from '~/components/ui/input';
 import { api } from '~/utils/api';
-import { useRouter } from 'next/router';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
-import { Button } from '../ui/button';
 
 const groupSchema = z.object({
   name: z.string({ required_error: 'Name is required' }).min(1, { message: 'Name is required' }),

@@ -26,8 +26,8 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"],
-    },
+      "~/*": ["./src/*"]
+    }
   },
   "include": [
     ".eslintrc.cjs",
@@ -37,7 +37,7 @@
     "**/*.jsx",
     "**/*.cjs",
     "**/*.js",
-    ".next/types/**/*.ts",
+    ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "public"],
+  "exclude": ["node_modules", "public"]
 }

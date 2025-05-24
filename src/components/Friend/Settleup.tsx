@@ -1,15 +1,17 @@
-import React from 'react';
-import { Button } from '../ui/button';
-import { AppDrawer, Drawer, DrawerClose, DrawerContent, DrawerTrigger } from '../ui/drawer';
-import { type User, type Balance, SplitType } from '@prisma/client';
-import { type User as NextUser } from 'next-auth';
-import { FriendBalance } from './FirendBalance';
-import { Input } from '../ui/input';
-import { UserAvatar } from '../ui/avatar';
+import { type Balance, SplitType, type User } from '@prisma/client';
 import { ArrowRightIcon } from 'lucide-react';
-import { api } from '~/utils/api';
+import { type User as NextUser } from 'next-auth';
+import React from 'react';
 import { toast } from 'sonner';
+
+import { api } from '~/utils/api';
 import { toFixedNumber } from '~/utils/numbers';
+
+import { FriendBalance } from './FirendBalance';
+import { UserAvatar } from '../ui/avatar';
+import { Button } from '../ui/button';
+import { AppDrawer, DrawerClose } from '../ui/drawer';
+import { Input } from '../ui/input';
 
 export const SettleUp: React.FC<{
   balances: Array<Balance>;

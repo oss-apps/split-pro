@@ -1,5 +1,6 @@
 import { type NextPage } from 'next';
 import Link from 'next/link';
+
 import { env } from '~/env';
 
 const Privacy: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {

@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
+import {
+  ListBulletIcon as SolidListBulletIcon,
+  PlusCircleIcon as SolidPlusCircleIcon,
+  ChartPieIcon as SolidScaleIcon,
+  UserCircleIcon as SolidUserCircleIcon,
+  UserGroupIcon as SolidUserGroupIcon,
+} from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 import { type LucideIcon } from 'lucide-react';
-import React from 'react';
-import {
-  ChartPieIcon as SolidScaleIcon,
-  UserGroupIcon as SolidUserGroupIcon,
-  PlusCircleIcon as SolidPlusCircleIcon,
-  UserCircleIcon as SolidUserCircleIcon,
-  ListBulletIcon as SolidListBulletIcon,
-} from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import React from 'react';
 
 interface MainLayoutProps {
   title?: React.ReactNode;

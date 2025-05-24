@@ -1,21 +1,22 @@
-import Head from 'next/head';
-import MainLayout from '~/components/Layout/MainLayout';
 import { SplitType } from '@prisma/client';
-import { api } from '~/utils/api';
-import { UserAvatar } from '~/components/ui/avatar';
-import Link from 'next/link';
-import { ChevronLeftIcon, PlusIcon, Trash, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
-import { Separator } from '~/components/ui/separator';
-import { Button } from '~/components/ui/button';
-import { SettleUp } from '~/components/Friend/Settleup';
-import { toUIString } from '~/utils/numbers';
-import { CategoryIcon } from '~/components/ui/categoryIcons';
-import { useRouter } from 'next/router';
-import { type NextPageWithUser } from '~/types';
 import { motion } from 'framer-motion';
+import { ChevronLeftIcon, PlusIcon } from 'lucide-react';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
 import { Export } from '~/components/Friend/Export';
+import { SettleUp } from '~/components/Friend/Settleup';
+import MainLayout from '~/components/Layout/MainLayout';
+import { UserAvatar } from '~/components/ui/avatar';
+import { Button } from '~/components/ui/button';
+import { CategoryIcon } from '~/components/ui/categoryIcons';
+import { Separator } from '~/components/ui/separator';
+import { type NextPageWithUser } from '~/types';
+import { api } from '~/utils/api';
+import { toUIString } from '~/utils/numbers';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
   const router = useRouter();

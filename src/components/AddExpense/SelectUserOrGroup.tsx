@@ -1,16 +1,17 @@
-import { api } from '~/utils/api';
-import { GroupAvatar, UserAvatar } from '../ui/avatar';
-import { useAddExpenseStore } from '~/store/addStore';
-import { z } from 'zod';
-import { Button } from '../ui/button';
-import { UserPlusIcon } from '@heroicons/react/24/solid';
 import { CheckIcon } from '@heroicons/react/24/outline';
+import { UserPlusIcon } from '@heroicons/react/24/solid';
 import { type Group, type GroupUser, type User } from '@prisma/client';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import { SendIcon } from 'lucide-react';
-import { env } from '~/env';
+import Image from 'next/image';
 import React from 'react';
+import { z } from 'zod';
+
+import { useAddExpenseStore } from '~/store/addStore';
+import { api } from '~/utils/api';
+
+import { GroupAvatar, UserAvatar } from '../ui/avatar';
+import { Button } from '../ui/button';
 
 export const SelectUserOrGroup: React.FC<{
   enableSendingInvites: boolean;

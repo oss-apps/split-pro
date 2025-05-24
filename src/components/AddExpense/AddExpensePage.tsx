@@ -1,24 +1,25 @@
+import { format } from 'date-fns';
+import { Banknote, CalendarIcon, Check, HeartHandshakeIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+
+import { CURRENCIES } from '~/lib/currency';
+import { cn } from '~/lib/utils';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
-import { UserInput } from './UserInput';
+
 import { SelectUserOrGroup } from './SelectUserOrGroup';
-import { AppDrawer, DrawerClose } from '../ui/drawer';
-import { Button } from '../ui/button';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../ui/command';
-import { Banknote, CalendarIcon, Check, HeartHandshakeIcon } from 'lucide-react';
-import { Input } from '../ui/input';
 import { SplitTypeSection } from './SplitTypeSection';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { cn } from '~/lib/utils';
-import { format } from 'date-fns';
-import { Calendar } from '../ui/calendar';
 import UploadFile from './UploadFile';
+import { UserInput } from './UserInput';
+import { Button } from '../ui/button';
+import { Calendar } from '../ui/calendar';
 import { CategoryIcons } from '../ui/categoryIcons';
-import Link from 'next/link';
-import { CURRENCIES } from '~/lib/currency';
-import { env } from '~/env';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../ui/command';
+import { AppDrawer, DrawerClose } from '../ui/drawer';
+import { Input } from '../ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 const categories = {
   entertainment: {
@@ -111,7 +112,7 @@ export const AddOrEditExpensePage: React.FC<{
   enableSendingInvites: boolean;
   expenseId?: string;
 }> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
@@ -135,7 +136,7 @@ export const AddOrEditExpensePage: React.FC<{
     setExpenseDate,
   } = useAddExpenseStore((s) => s.actions);
 
-  useEffect(() => () => resetState(), []);
+  useEffect(() => () => resetState(), [resetState]);
 
   const addExpenseMutation = api.user.addOrEditExpense.useMutation();
   const addGroupExpenseMutation = api.group.addOrEditExpense.useMutation();
@@ -276,7 +277,7 @@ export const AddOrEditExpensePage: React.FC<{
                       <div key={categoryName} className="mb-8">
                         <h3 className="mb-4 text-lg font-semibold">{categoryDetails.name}</h3>
                         <div className="flex flex-wrap justify-between gap-2">
-                          {categoryDetails.items.map((item, index) =>
+                          {categoryDetails.items.map((item) =>
                             Object.entries(item).map(([key, value]) => {
                               const Icon =
                                 CategoryIcons[key] ?? CategoryIcons[categoryName] ?? Banknote;

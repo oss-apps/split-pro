@@ -53,7 +53,7 @@ export async function sendSignUpEmail(email: string, token: string, url: string)
 
 export async function sendInviteEmail(email: string, name: string) {
   if (!env.ENABLE_SENDING_INVITES) {
-    throw new Error("Sending invites is not enabled")
+    throw new Error('Sending invites is not enabled');
   }
 
   const { host } = new URL(env.NEXTAUTH_URL);

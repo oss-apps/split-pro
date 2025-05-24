@@ -25,7 +25,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-      
+
+      - name: Check code formatting
+        run: pnpm prettier --check .
+
       - name: Run lint
         run: pnpm lint
-

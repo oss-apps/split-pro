@@ -34,27 +34,26 @@ declare module 'next-auth' {
 }
 
 const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapter => {
-  const prismaAdapter = PrismaAdapter(...args)
+  const prismaAdapter = PrismaAdapter(...args);
 
   return {
     ...prismaAdapter,
     createUser: async (user: Omit<AdapterUser, 'id'>): Promise<AdapterUser> => {
-      const prismaCreateUser = prismaAdapter.createUser
+      const prismaCreateUser = prismaAdapter.createUser;
 
       if (env.INVITE_ONLY) {
-        throw new Error("This instance is Invite Only")
+        throw new Error('This instance is Invite Only');
       }
 
       if (!prismaCreateUser) {
         // This should never happen but typing says it's possible.
-        throw new Error("Prisma Adapter lacks User Creation")
+        throw new Error('Prisma Adapter lacks User Creation');
       }
 
-      return prismaCreateUser(user)
+      return prismaCreateUser(user);
     },
-  }
-}
-
+  };
+};
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -175,11 +174,11 @@ function getProviders() {
         clientId: env.AUTHENTIK_ID,
         clientSecret: env.AUTHENTIK_SECRET,
         issuer: env.AUTHENTIK_ISSUER,
-		allowDangerousEmailAccountLinking: true,
-      })
+        allowDangerousEmailAccountLinking: true,
+      }),
     );
   }
-  
+
   return providersList;
 }
 

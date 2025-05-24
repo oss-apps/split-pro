@@ -1,10 +1,11 @@
-import React from 'react';
-import { Button } from './ui/button';
 import { Download } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+import { Button } from './ui/button';
 import { AppDrawer } from './ui/drawer';
 
 const InstallApp: React.FC = () => {
-  const [isStandalone, setIsStandalone] = React.useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   function isAppStandalone() {
     // For iOS
@@ -19,7 +20,7 @@ const InstallApp: React.FC = () => {
     return false;
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isAppStandalone()) {
       setIsStandalone(true);
     }

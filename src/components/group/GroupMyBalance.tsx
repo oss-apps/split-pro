@@ -1,5 +1,6 @@
 import { type GroupBalance, type User } from '@prisma/client';
 import React from 'react';
+
 import { toUIString } from '~/utils/numbers';
 
 type GroupMyBalanceProps = {

@@ -1,8 +1,9 @@
-import React from 'react';
-import { Button } from '../ui/button';
 import { Trash2 } from 'lucide-react';
-import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
+import React from 'react';
+
+import { api } from '~/utils/api';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,6 +15,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '../ui/alert-dialog';
+import { Button } from '../ui/button';
 
 export const DeleteExpense: React.FC<{
   expenseId: string;

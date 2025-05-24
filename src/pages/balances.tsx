@@ -1,20 +1,20 @@
-import Head from 'next/head';
-import MainLayout from '~/components/Layout/MainLayout';
-import clsx from 'clsx';
-import { Button } from '~/components/ui/button';
 import { ArrowUpOnSquareIcon } from '@heroicons/react/24/outline';
 import { type User } from '@prisma/client';
-import { api } from '~/utils/api';
-import Link from 'next/link';
-import { toUIString } from '~/utils/numbers';
+import clsx from 'clsx';
 import { PlusIcon } from 'lucide-react';
-import { UserAvatar } from '~/components/ui/avatar';
+import Head from 'next/head';
+import Link from 'next/link';
+
 import InstallApp from '~/components/InstallApp';
-import { type NextPageWithUser } from '~/types';
-import useEnableAfter from '~/hooks/useEnableAfter';
-import { LoadingSpinner } from '~/components/ui/spinner';
+import MainLayout from '~/components/Layout/MainLayout';
 import { NotificationModal } from '~/components/NotificationModal';
-import { GetServerSideProps } from 'next';
+import { UserAvatar } from '~/components/ui/avatar';
+import { Button } from '~/components/ui/button';
+import { LoadingSpinner } from '~/components/ui/spinner';
+import useEnableAfter from '~/hooks/useEnableAfter';
+import { type NextPageWithUser } from '~/types';
+import { api } from '~/utils/api';
+import { toUIString } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser = () => {
   function shareWithFriends() {

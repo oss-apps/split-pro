@@ -1,14 +1,14 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { type GetServerSidePropsContext } from 'next';
-import { getServerSession, type DefaultSession, type NextAuthOptions } from 'next-auth';
+import { type DefaultSession, type NextAuthOptions, getServerSession } from 'next-auth';
 import { type Adapter, type AdapterUser } from 'next-auth/adapters';
-import DiscordProvider from 'next-auth/providers/discord';
-import GoogleProvider from 'next-auth/providers/google';
-import EmailProvider from 'next-auth/providers/email';
 import AuthentikProvider from 'next-auth/providers/authentik';
+import EmailProvider from 'next-auth/providers/email';
+import GoogleProvider from 'next-auth/providers/google';
 
 import { env } from '~/env';
 import { db } from '~/server/db';
+
 import { sendSignUpEmail } from './mailer';
 
 /**

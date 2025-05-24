@@ -1,14 +1,15 @@
+import { ChevronLeftIcon, PencilIcon } from 'lucide-react';
 import Head from 'next/head';
-import MainLayout from '~/components/Layout/MainLayout';
-import { api } from '~/utils/api';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { ChevronLeftIcon, PencilIcon, Trash, Trash2 } from 'lucide-react';
-import ExpenseDetails from '~/components/Expense/ExpensePage';
+
 import { DeleteExpense } from '~/components/Expense/DeleteExpense';
-import { type NextPageWithUser } from '~/types';
-import { env } from '~/env';
+import ExpenseDetails from '~/components/Expense/ExpensePage';
+import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
+import { env } from '~/env';
+import { type NextPageWithUser } from '~/types';
+import { api } from '~/utils/api';
 
 const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   user,

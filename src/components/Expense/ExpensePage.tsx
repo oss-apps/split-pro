@@ -1,15 +1,16 @@
-import { type ExpenseParticipant, type Expense, type User } from '@prisma/client';
-import { type User as NextUser } from 'next-auth';
+import { type Expense, type ExpenseParticipant, type User } from '@prisma/client';
 import { format, isSameDay } from 'date-fns';
-import React from 'react';
-import { toUIString } from '~/utils/numbers';
-import { UserAvatar } from '../ui/avatar';
-import Image from 'next/image';
-import { AppDrawer, Drawer, DrawerContent, DrawerTrigger } from '../ui/drawer';
-import { Separator } from '../ui/separator';
-import { CategoryIcons } from '../ui/categoryIcons';
 import { Banknote } from 'lucide-react';
-import { env } from '~/env';
+import Image from 'next/image';
+import { type User as NextUser } from 'next-auth';
+import React from 'react';
+
+import { toUIString } from '~/utils/numbers';
+
+import { UserAvatar } from '../ui/avatar';
+import { CategoryIcons } from '../ui/categoryIcons';
+import { AppDrawer } from '../ui/drawer';
+import { Separator } from '../ui/separator';
 
 type ExpenseDetailsProps = {
   user: NextUser;

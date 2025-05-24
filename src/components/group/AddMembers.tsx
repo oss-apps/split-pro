@@ -1,22 +1,16 @@
-import React, { useState } from 'react';
-import { Button } from '~/components/ui/button';
-import { InformationCircleIcon, UserPlusIcon } from '@heroicons/react/24/solid';
-import { api } from '~/utils/api';
-import {
-  AppDrawer,
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerTrigger,
-} from '~/components/ui/drawer';
-import clsx from 'clsx';
-import { UserAvatar } from '../ui/avatar';
+import { UserPlusIcon } from '@heroicons/react/24/solid';
 import { type Group, type GroupUser } from '@prisma/client';
-import { CheckIcon, SendIcon, UserPlus } from 'lucide-react';
-import { Input } from '../ui/input';
+import clsx from 'clsx';
+import { CheckIcon, SendIcon } from 'lucide-react';
+import React, { useState } from 'react';
 import { z } from 'zod';
-import { env } from '~/env';
-import { isStorageConfigured } from '~/server/storage';
+
+import { Button } from '~/components/ui/button';
+import { AppDrawer } from '~/components/ui/drawer';
+import { api } from '~/utils/api';
+
+import { UserAvatar } from '../ui/avatar';
+import { Input } from '../ui/input';
 
 const AddMembers: React.FC<{
   enableSendingInvites: boolean;

@@ -1,8 +1,9 @@
 import { SplitType } from '@prisma/client';
 import { format } from 'date-fns';
-import { type User } from 'next-auth';
 import Head from 'next/head';
 import Link from 'next/link';
+import { type User } from 'next-auth';
+
 import MainLayout from '~/components/Layout/MainLayout';
 import { UserAvatar } from '~/components/ui/avatar';
 import { LoadingSpinner } from '~/components/ui/spinner';

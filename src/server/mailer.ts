@@ -1,6 +1,8 @@
 import { type User } from 'next-auth';
 import nodemailer, { type Transporter } from 'nodemailer';
+
 import { env } from '~/env';
+
 import { sendToDiscord } from './service-notification';
 
 let transporter: Transporter;

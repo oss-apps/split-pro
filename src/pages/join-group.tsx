@@ -1,4 +1,5 @@
 import { type GetServerSideProps } from 'next';
+
 import { joinGroup } from '~/server/api/services/splitService';
 import { getServerAuthSession } from '~/server/auth';
 

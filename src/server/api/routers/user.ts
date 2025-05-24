@@ -1,7 +1,17 @@
-import { type Balance, SplitType } from '@prisma/client';
-import { boolean, z } from 'zod';
+import { randomUUID } from 'crypto';
+
+import { SplitType } from '@prisma/client';
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
+
+import { env } from '~/env';
+import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
+import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
+import { getDocumentUploadUrl } from '~/server/storage';
+import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
+
 import {
   addUserExpense,
   deleteExpense,
@@ -11,15 +21,6 @@ import {
   importGroupFromSplitwise,
   importUserBalanceFromSplitWise,
 } from '../services/splitService';
-import { TRPCError } from '@trpc/server';
-import { randomUUID } from 'crypto';
-import { getDocumentUploadUrl } from '~/server/storage';
-import { FILE_SIZE_LIMIT } from '~/lib/constants';
-import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
-import { pushNotification } from '~/server/notification';
-import { toFixedNumber, toUIString } from '~/utils/numbers';
-import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
-import { env } from '~/env';
 
 export const userRouter = createTRPCRouter({
   me: protectedProcedure.query(async ({ ctx }) => {

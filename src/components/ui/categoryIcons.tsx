@@ -20,6 +20,7 @@ import {
   Home,
   type LucideIcon,
   Music,
+  Paintbrush,
   ParkingCircle,
   Phone,
   Pizza,
@@ -32,17 +33,13 @@ import {
   Sprout,
   Stethoscope,
   TrainFront,
+  Trash,
   Trophy,
   Utensils,
-  UtilityPole,
   Wine,
-  Zap,
-  type LucideProps,
-  Paintbrush,
-  Trash,
   Wrench,
+  Zap,
 } from 'lucide-react';
-import { type ForwardRefExoticComponent } from 'react';
 
 export const CategoryIcons: Record<string, LucideIcon> = {
   games: Gamepad2,

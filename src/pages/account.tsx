@@ -1,10 +1,4 @@
-import Head from 'next/head';
-import MainLayout from '~/components/Layout/MainLayout';
-import { Button } from '~/components/ui/button';
-import Link from 'next/link';
-import { UserAvatar } from '~/components/ui/avatar';
 import {
-  Bell,
   ChevronRight,
   Download,
   DownloadCloud,
@@ -13,17 +7,21 @@ import {
   HeartHandshakeIcon,
   Star,
 } from 'lucide-react';
+import Head from 'next/head';
+import Link from 'next/link';
 import { signOut } from 'next-auth/react';
-import { AppDrawer } from '~/components/ui/drawer';
-import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
-import { UpdateDetails } from '~/components/Account/UpdateDetails';
-import { api } from '~/utils/api';
-import { type NextPageWithUser } from '~/types';
-import { toast } from 'sonner';
-import { env } from '~/env';
-import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
 import { useState } from 'react';
+
+import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
+import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
+import { UpdateDetails } from '~/components/Account/UpdateDetails';
+import MainLayout from '~/components/Layout/MainLayout';
+import { UserAvatar } from '~/components/ui/avatar';
+import { Button } from '~/components/ui/button';
+import { AppDrawer } from '~/components/ui/drawer';
 import { LoadingSpinner } from '~/components/ui/spinner';
+import { type NextPageWithUser } from '~/types';
+import { api } from '~/utils/api';
 
 const AccountPage: NextPageWithUser = ({ user }) => {
   const userQuery = api.user.me.useQuery();

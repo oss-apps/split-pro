@@ -1,19 +1,19 @@
-import { type Session } from 'next-auth';
-import { SessionProvider, useSession } from 'next-auth/react';
+import clsx from 'clsx';
 import { type AppType } from 'next/app';
 import { Poppins } from 'next/font/google';
-import { ThemeProvider } from '~/components/theme-provider';
-import { api } from '~/utils/api';
-import clsx from 'clsx';
 import Head from 'next/head';
+import { type Session } from 'next-auth';
+import { SessionProvider, useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
 
+import { ThemeProvider } from '~/components/theme-provider';
 import '~/styles/globals.css';
-import { type NextPageWithUser } from '~/types';
 import { LoadingSpinner } from '~/components/ui/spinner';
-import { useEffect, useState } from 'react';
 import { useAddExpenseStore } from '~/store/addStore';
 import { useAppStore } from '~/store/appStore';
+import { type NextPageWithUser } from '~/types';
+import { api } from '~/utils/api';
 
 const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });
 

@@ -1,20 +1,19 @@
-import { type GetServerSideProps, type NextPage } from 'next';
-import Head from 'next/head';
-import { type User } from '@prisma/client';
-import { Input } from '~/components/ui/input';
-import { toast } from 'sonner';
-import { useState } from 'react';
-import { type SplitwiseGroup, type NextPageWithUser, type SplitwiseUser } from '~/types';
-import { api } from '~/utils/api';
-import { Button } from '~/components/ui/button';
-import MainLayout from '~/components/Layout/MainLayout';
-import { Separator } from '~/components/ui/separator';
-import Link from 'next/link';
-import { Checkbox } from '~/components/ui/checkbox';
-import { DownloadCloud } from 'lucide-react';
-import { LoadingSpinner } from '~/components/ui/spinner';
-import { useRouter } from 'next/router';
 import { PaperClipIcon } from '@heroicons/react/24/solid';
+import { DownloadCloud } from 'lucide-react';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import { toast } from 'sonner';
+
+import MainLayout from '~/components/Layout/MainLayout';
+import { Button } from '~/components/ui/button';
+import { Checkbox } from '~/components/ui/checkbox';
+import { Input } from '~/components/ui/input';
+import { Separator } from '~/components/ui/separator';
+import { LoadingSpinner } from '~/components/ui/spinner';
+import { type NextPageWithUser, type SplitwiseGroup, type SplitwiseUser } from '~/types';
+import { api } from '~/utils/api';
 
 const ImportSpliwisePage: NextPageWithUser = () => {
   const [usersWithBalance, setUsersWithBalance] = useState<Array<SplitwiseUser>>([]);

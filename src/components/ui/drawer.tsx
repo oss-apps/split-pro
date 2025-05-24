@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
 
-import { cn } from '~/lib/utils';
-import { Button } from './button';
+import { useIsClient } from '~/hooks/useIsClient';
 import useMediaQuery from '~/hooks/useMediaQuery';
+import { cn } from '~/lib/utils';
+
+import { Button } from './button';
 import {
   Dialog,
   DialogClose,
@@ -13,7 +15,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './dialog';
-import { useIsClient } from '~/hooks/useIsClient';
 
 const Drawer = ({
   shouldScaleBackground = true,

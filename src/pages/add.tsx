@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
+
 import { AddOrEditExpensePage } from '~/components/AddExpense/AddExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
 import { env } from '~/env';
@@ -8,7 +9,7 @@ import { isStorageConfigured } from '~/server/storage';
 import { calculateSplitShareBasedOnAmount, useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
-import { toFixedNumber, toInteger } from '~/utils/numbers';
+import { toFixedNumber } from '~/utils/numbers';
 
 // 🧾
 

@@ -7,11 +7,11 @@
  * need to use are documented accordingly near the end.
  */
 
-import { initTRPC, TRPCError } from '@trpc/server';
+import { TRPCError, initTRPC } from '@trpc/server';
 import { type CreateNextContextOptions } from '@trpc/server/adapters/next';
 import { type Session } from 'next-auth';
 import superjson from 'superjson';
-import { z, ZodError } from 'zod';
+import { ZodError, z } from 'zod';
 
 import { getServerAuthSession } from '~/server/auth';
 import { db } from '~/server/db';

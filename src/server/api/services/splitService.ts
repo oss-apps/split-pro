@@ -1,8 +1,10 @@
 import { type SplitType, type User } from '@prisma/client';
 import { nanoid } from 'nanoid';
+
 import { db } from '~/server/db';
 import { type SplitwiseGroup, type SplitwiseUser } from '~/types';
 import { toFixedNumber, toInteger } from '~/utils/numbers';
+
 import { sendExpensePushNotification } from './notificationService';
 
 export async function joinGroup(userId: number, publicGroupId: string) {

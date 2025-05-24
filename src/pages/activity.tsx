@@ -1,16 +1,15 @@
-import Head from 'next/head';
-import MainLayout from '~/components/Layout/MainLayout';
 import { SplitType } from '@prisma/client';
-import { api } from '~/utils/api';
 import { format } from 'date-fns';
-import { UserAvatar } from '~/components/ui/avatar';
-import { toUIString } from '~/utils/numbers';
-import Link from 'next/link';
-import { type NextPageWithUser } from '~/types';
 import { type User } from 'next-auth';
-import { BalanceSkeleton } from '~/components/ui/skeleton';
-import useEnableAfter from '~/hooks/useEnableAfter';
+import Head from 'next/head';
+import Link from 'next/link';
+import MainLayout from '~/components/Layout/MainLayout';
+import { UserAvatar } from '~/components/ui/avatar';
 import { LoadingSpinner } from '~/components/ui/spinner';
+import useEnableAfter from '~/hooks/useEnableAfter';
+import { type NextPageWithUser } from '~/types';
+import { api } from '~/utils/api';
+import { toUIString } from '~/utils/numbers';
 
 function getPaymentString(
   user: User,
@@ -23,6 +22,8 @@ function getPaymentString(
 ) {
   if (isDeleted) {
     return null;
+  } else if (expenseUserAmt === 0) {
+    return <div className="text-sm text-gray-400">Not involved</div>;
   } else if (isSettlement) {
     return (
       <div className={`${user.id === paidBy ? ' text-emerald-500' : 'text-orange-500'} text-sm`}>
@@ -52,7 +53,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout title="Activity">
-        <div className=" h-full px-4">
+        <div className="px-4">
           <div className="flex flex-col gap-4">
             {expensesQuery.isLoading ? (
               showProgress ? (
@@ -117,7 +118,6 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
               </>
             )}
           </div>
-          <div className="h-28"></div>
         </div>
       </MainLayout>
     </>

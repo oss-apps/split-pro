@@ -108,16 +108,18 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
         </p>
       </div>
       <div className="ml-14 mt-4 flex flex-col gap-4 px-6">
-        {expense.expenseParticipants.map((p) => (
-          <div key={p.userId} className="flex items-center gap-2 text-sm text-gray-500">
-            <UserAvatar user={p.user} size={25} />
-            <p>
-              {user.id === p.userId ? 'You Owe' : `${p.user.name ?? p.user.email} owes`}{' '}
-              {expense.currency}{' '}
-              {toUIString((expense.paidBy === p.userId ? expense.amount ?? 0 : 0) - p.amount)}
-            </p>
-          </div>
-        ))}
+        {expense.expenseParticipants
+          .filter((p) => (expense.paidBy === p.userId ? expense.amount ?? 0 : 0) !== p.amount)
+          .map((p) => (
+            <div key={p.userId} className="flex items-center gap-2 text-sm text-gray-500">
+              <UserAvatar user={p.user} size={25} />
+              <p>
+                {user.id === p.userId ? 'You Owe' : `${p.user.name ?? p.user.email} owes`}{' '}
+                {expense.currency}{' '}
+                {toUIString((expense.paidBy === p.userId ? expense.amount ?? 0 : 0) - p.amount)}
+              </p>
+            </div>
+          ))}
       </div>
     </div>
   );

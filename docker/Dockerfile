@@ -1,7 +1,7 @@
 FROM node:18.18.0-alpine AS base
 ENV SKIP_ENV_VALIDATION="true"
 ENV DOCKER_OUTPUT=1
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN apk add --no-cache libc6-compat
 RUN apk update

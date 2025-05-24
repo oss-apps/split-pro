@@ -39,6 +39,7 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
   return {
     ...prismaAdapter,
     createUser: async (user: Omit<AdapterUser, 'id'>): Promise<AdapterUser> => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const prismaCreateUser = prismaAdapter.createUser;
 
       if (env.INVITE_ONLY) {
@@ -50,6 +51,7 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
         throw new Error('Prisma Adapter lacks User Creation');
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
       return prismaCreateUser(user);
     },
   };

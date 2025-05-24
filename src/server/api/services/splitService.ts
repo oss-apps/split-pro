@@ -798,6 +798,74 @@ export async function getCompleteGroupDetails(userId: number) {
   return groups;
 }
 
+export async function recalculateGroupBalances(groupId: number) {
+  const groupExpenses = await db.expense.findMany({
+    where: {
+      groupId,
+      deletedAt: null,
+    },
+    include: {
+      expenseParticipants: true,
+    },
+  });
+
+  const operations = [];
+
+  operations.push(
+    db.groupBalance.updateMany({
+      where: {
+        groupId,
+      },
+      data: {
+        amount: 0,
+      },
+    }),
+  );
+
+  for (const groupExpense of groupExpenses) {
+    for (const participant of groupExpense.expenseParticipants) {
+      if (participant.userId === groupExpense.paidBy) {
+        continue;
+      }
+
+      operations.push(
+        db.groupBalance.update({
+          where: {
+            groupId_currency_firendId_userId: {
+              groupId,
+              currency: groupExpense.currency,
+              userId: groupExpense.paidBy,
+              firendId: participant.userId,
+            },
+          },
+          data: {
+            amount: {
+              increment: -participant.amount,
+            },
+          },
+        }),
+        db.groupBalance.update({
+          where: {
+            groupId_currency_firendId_userId: {
+              groupId,
+              currency: groupExpense.currency,
+              userId: participant.userId,
+              firendId: groupExpense.paidBy,
+            },
+          },
+          data: {
+            amount: {
+              increment: participant.amount,
+            },
+          },
+        }),
+      );
+    }
+  }
+
+  await db.$transaction(operations);
+}
+
 export async function importUserBalanceFromSplitWise(
   currentUserId: number,
   splitWiseUsers: SplitwiseUser[],

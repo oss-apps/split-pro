@@ -1,46 +1,38 @@
-import Head from 'next/head';
-import MainLayout from '~/components/Layout/MainLayout';
+import { SplitType } from '@prisma/client';
 import Avatar from 'boring-avatars';
 import clsx from 'clsx';
-import { Button } from '~/components/ui/button';
-import { SplitType } from '@prisma/client';
-import { api } from '~/utils/api';
-import { useRouter } from 'next/router';
+import { format } from 'date-fns';
+import { motion } from 'framer-motion';
 import {
+  BarChartHorizontal,
   Check,
   ChevronLeft,
+  Construction,
   DoorOpen,
+  Info,
   Share,
   Trash2,
   UserPlus,
-  BarChartHorizontal,
-  Info,
 } from 'lucide-react';
-import { AppDrawer } from '~/components/ui/drawer';
-import { UserAvatar } from '~/components/ui/avatar';
-import NoMembers from '~/components/group/NoMembers';
-import { format } from 'date-fns';
-import AddMembers from '~/components/group/AddMembers';
+import Head from 'next/head';
 import Image from 'next/image';
-import { toUIString } from '~/utils/numbers';
 import Link from 'next/link';
-import { CategoryIcon } from '~/components/ui/categoryIcons';
-import { env } from '~/env';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { type NextPageWithUser } from '~/types';
-import { motion } from 'framer-motion';
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '~/components/ui/alert-dialog';
 import { toast } from 'sonner';
+import AddMembers from '~/components/group/AddMembers';
 import GroupMyBalance from '~/components/group/GroupMyBalance';
+import NoMembers from '~/components/group/NoMembers';
+import MainLayout from '~/components/Layout/MainLayout';
+import { UserAvatar } from '~/components/ui/avatar';
+import { Button } from '~/components/ui/button';
+import { CategoryIcon } from '~/components/ui/categoryIcons';
+import { AppDrawer } from '~/components/ui/drawer';
+import { SimpleConfirmationDialog } from '~/components/ui/SimpleConfirmationDialog';
+import { env } from '~/env';
+import { type NextPageWithUser } from '~/types';
+import { api } from '~/utils/api';
+import { toUIString } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
@@ -53,10 +45,9 @@ const BalancePage: NextPageWithUser<{
   const expensesQuery = api.group.getExpenses.useQuery({ groupId });
   const deleteGroupMutation = api.group.delete.useMutation();
   const leaveGroupMutation = api.group.leaveGroup.useMutation();
+  const recalculateGroupBalancesMutation = api.group.recalculateBalances.useMutation();
 
   const [isInviteCopied, setIsInviteCopied] = useState(false);
-  const [showDeleteTrigger, setShowDeleteTrigger] = useState(false);
-  const [showLeaveTrigger, setShowLeaveTrigger] = useState(false);
 
   async function inviteMembers() {
     if (!groupDetailQuery.data) return;
@@ -89,16 +80,29 @@ const BalancePage: NextPageWithUser<{
     (b) => b.amount !== 0 && b.userId === user.id,
   );
 
+  function onRecalculateBalances() {
+    recalculateGroupBalancesMutation.mutate(
+      { groupId },
+      {
+        onSuccess: () => {
+          void groupDetailQuery.refetch();
+          toast.success('Balances recalculated successfully');
+        },
+        onError: () => {
+          toast.error('Something went wrong');
+        },
+      },
+    );
+  }
+
   function onGroupDelete() {
     deleteGroupMutation.mutate(
       { groupId },
       {
         onSuccess: () => {
           router.replace('/groups').catch(console.error);
-          setShowDeleteTrigger(false);
         },
         onError: () => {
-          setShowDeleteTrigger(false);
           toast.error('Something went wrong');
         },
       },
@@ -111,10 +115,8 @@ const BalancePage: NextPageWithUser<{
       {
         onSuccess: () => {
           router.replace('/groups').catch(console.error);
-          setShowLeaveTrigger(false);
         },
         onError: () => {
-          setShowLeaveTrigger(false);
           toast.error('Something went wrong');
         },
       },
@@ -189,12 +191,14 @@ const BalancePage: NextPageWithUser<{
                 <p className="font-semibold">Members</p>
                 <div className="mt-2 flex flex-col gap-2">
                   {groupDetailQuery.data?.groupUsers.map((groupUser) => (
-                    <div
-                      key={groupUser.userId}
-                      className={clsx('flex items-center gap-2 rounded-md py-1.5')}
-                    >
-                      <UserAvatar user={groupUser.user} />
-                      <p>{groupUser.user.name ?? groupUser.user.email}</p>
+                    <div key={groupUser.userId} className="flex items-center justify-between">
+                      <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
+                        <UserAvatar user={groupUser.user} />
+                        <p>{groupUser.user.name ?? groupUser.user.email}</p>
+                      </div>
+                      {groupUser.userId === groupDetailQuery.data?.userId && (
+                        <p className="text-sm text-gray-400">owner</p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -208,96 +212,60 @@ const BalancePage: NextPageWithUser<{
               <div className="mt-8">
                 <p className="font-semibold ">Actions</p>
                 <div className="mt-2 flex flex-col gap-1">
+                  {isAdmin && (
+                    <SimpleConfirmationDialog
+                      title="Are you sure?"
+                      description="If balances do not match expenses, you can recalculate them. Note that it may take some time if the expense count is large. Balances outside the group will not be affected."
+                      hasPermission
+                      onConfirm={onRecalculateBalances}
+                      loading={recalculateGroupBalancesMutation.isLoading}
+                      variant="default"
+                    >
+                      <Button variant="ghost" className="justify-start p-0 text-left text-primary">
+                        <Construction className="mr-2 h-5 w-5" /> Recalculate balances
+                      </Button>
+                    </SimpleConfirmationDialog>
+                  )}
                   {isAdmin ? (
-                    <>
-                      <AlertDialog
-                        open={showDeleteTrigger}
-                        onOpenChange={(status) =>
-                          status !== showDeleteTrigger ? setShowDeleteTrigger(status) : null
-                        }
+                    <SimpleConfirmationDialog
+                      title={canDelete ? 'Are you absolutely sure?' : ''}
+                      description={
+                        canDelete
+                          ? 'This action cannot be reversed'
+                          : "Can't delete the group until everyone settles up the balance"
+                      }
+                      hasPermission={canDelete}
+                      onConfirm={onGroupDelete}
+                      loading={deleteGroupMutation.isLoading}
+                      variant="destructive"
+                    >
+                      <Button
+                        variant="ghost"
+                        className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
                       >
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
-                            onClick={() => setShowDeleteTrigger(true)}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" /> Delete group
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent className="max-w-xs rounded-lg">
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              {canDelete ? 'Are you absolutely sure?' : ''}
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              {canDelete
-                                ? 'This action cannot be reversed'
-                                : "Can't delete the group until everyone settles up the balance"}
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            {canDelete ? (
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={onGroupDelete}
-                                disabled={deleteGroupMutation.isLoading}
-                                loading={deleteGroupMutation.isLoading}
-                              >
-                                Delete
-                              </Button>
-                            ) : null}
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </>
+                        <Trash2 className="mr-2 h-4 w-4" /> Delete group
+                      </Button>
+                    </SimpleConfirmationDialog>
                   ) : (
-                    <>
-                      <AlertDialog
-                        open={showLeaveTrigger}
-                        onOpenChange={(status) =>
-                          status !== showLeaveTrigger ? setShowLeaveTrigger(status) : null
-                        }
+                    <SimpleConfirmationDialog
+                      title={canLeave ? 'Are you absolutely sure?' : ''}
+                      description={
+                        canLeave
+                          ? 'This action cannot be reversed'
+                          : "Can't leave the group until your outstanding balance is settled"
+                      }
+                      hasPermission={canLeave}
+                      onConfirm={onGroupLeave}
+                      loading={leaveGroupMutation.isLoading}
+                      variant="destructive"
+                    >
+                      <Button
+                        variant="ghost"
+                        className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
                       >
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
-                            onClick={() => setShowLeaveTrigger(true)}
-                          >
-                            <DoorOpen className="mr-2 h-5 w-5" /> Leave group
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent className="max-w-xs rounded-lg">
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              {canLeave ? 'Are you absolutely sure?' : ''}
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              {canLeave
-                                ? 'This action cannot be reversed'
-                                : "Can't leave the group until your outstanding balance is settled"}
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            {canLeave ? (
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={onGroupLeave}
-                                disabled={leaveGroupMutation.isLoading}
-                                loading={leaveGroupMutation.isLoading}
-                              >
-                                Leave
-                              </Button>
-                            ) : null}
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </>
+                        <DoorOpen className="mr-2 h-5 w-5" /> Leave group
+                      </Button>
+                    </SimpleConfirmationDialog>
                   )}
                 </div>
               </div>

@@ -1,29 +1,26 @@
-FROM node:20.11.1-alpine AS base
+FROM node:18.18.0-alpine AS base
 ENV SKIP_ENV_VALIDATION="true"
 ENV DOCKER_OUTPUT=1
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN apk add --no-cache libc6-compat
 RUN apk update
 
 WORKDIR /app
-RUN npm i -g pnpm@8.9
-RUN ls
-COPY package.json pnpm-lock.yaml ./
+RUN corepack enable
+COPY package.json pnpm-lock.yaml prisma/ ./
 
 RUN pnpm install
 
 COPY . .
-RUN pnpm generate
 RUN pnpm build
 
-FROM node:20-alpine3.19 as release
+FROM node:18-alpine3.19 AS release
 WORKDIR /app
-RUN npm i -g pnpm@8.9
+RUN corepack enable
 
 RUN apk add --no-cache libc6-compat
 RUN apk update
-
 
 COPY --from=base /app/next.config.js .
 COPY --from=base /app/package.json .
@@ -46,6 +43,6 @@ RUN ln -s /app/node_modules/prisma/build/index.js ./node_modules/.bin/prisma
 # set this so it throws error where starting server
 ENV SKIP_ENV_VALIDATION="false"
 
-COPY  ./docker/start.sh ./start.sh
+COPY ./docker/start.sh ./start.sh
 
 CMD ["sh", "start.sh"]

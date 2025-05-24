@@ -82,7 +82,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                           <span className="  font-semibold ">
                             {e.expense.deletedBy === user.id
                               ? 'You'
-                              : e.expense.deletedByUser.name ?? e.expense.deletedByUser.email}
+                              : (e.expense.deletedByUser.name ?? e.expense.deletedByUser.email)}
                           </span>
                           {' deleted the expense '}
                           <span className=" font-semibold ">{e.expense.name}</span>
@@ -92,7 +92,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                           <span className="  font-semibold text-gray-300">
                             {e.expense.paidBy === user.id
                               ? 'You'
-                              : e.expense.paidByUser.name ?? e.expense.paidByUser.email}
+                              : (e.expense.paidByUser.name ?? e.expense.paidByUser.email)}
                           </span>
                           {' paid for '}
                           <span className=" font-semibold text-gray-300">{e.expense.name}</span>

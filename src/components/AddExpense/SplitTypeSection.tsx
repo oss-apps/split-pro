@@ -26,7 +26,7 @@ export const SplitTypeSection: React.FC = () => {
         trigger={
           <p className="overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16.5px] text-cyan-500 lg:max-w-48">
             {
-              (currentUser?.id === paidBy?.id ? 'you' : paidBy?.name ?? paidBy?.email)?.split(
+              (currentUser?.id === paidBy?.id ? 'you' : (paidBy?.name ?? paidBy?.email))?.split(
                 ' ',
               )[0]
             }

@@ -196,7 +196,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
                 onClick={leftActionOnClick}
                 asChild
               >
-                {shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined ? (
+                {(shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined) ? (
                   <DialogClose>{leftAction}</DialogClose>
                 ) : (
                   leftAction
@@ -249,7 +249,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
                 onClick={leftActionOnClick}
                 asChild
               >
-                {shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined ? (
+                {(shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined) ? (
                   <DrawerClose>{leftAction}</DrawerClose>
                 ) : (
                   leftAction

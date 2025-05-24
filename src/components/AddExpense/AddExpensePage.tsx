@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { UserInput } from './UserInput';
@@ -134,6 +134,8 @@ export const AddOrEditExpensePage: React.FC<{
     setSplitScreenOpen,
     setExpenseDate,
   } = useAddExpenseStore((s) => s.actions);
+
+  useEffect(() => () => resetState(), []);
 
   const addExpenseMutation = api.user.addOrEditExpense.useMutation();
   const addGroupExpenseMutation = api.group.addOrEditExpense.useMutation();

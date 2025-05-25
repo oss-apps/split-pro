@@ -43,6 +43,6 @@ RUN ln -s /app/node_modules/prisma/build/index.js ./node_modules/.bin/prisma
 # set this so it throws error where starting server
 ENV SKIP_ENV_VALIDATION="false"
 
-COPY ./docker/start.sh ./start.sh
+COPY ./start.sh ./start.sh
 
 CMD ["sh", "start.sh"]

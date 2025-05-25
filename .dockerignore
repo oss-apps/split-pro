@@ -55,3 +55,5 @@ prisma/seed.ts
 
 creds
 package-lock.json
+docker/
+.github/

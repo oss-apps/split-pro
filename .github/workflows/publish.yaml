@@ -3,12 +3,12 @@ name: Publish Docker
 on:
   push:
     tags:
-      - "*"
+      - '*'
   workflow_dispatch:
     inputs:
       branch:
-        description: "Branch to run the action on"
-        default: "main"
+        description: 'Branch to run the action on'
+        default: 'main'
         required: true
 
 jobs:

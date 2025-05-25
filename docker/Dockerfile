@@ -1,4 +1,4 @@
-FROM node:18.18.0-alpine AS base
+FROM node:22.16.0-alpine AS base
 ENV SKIP_ENV_VALIDATION="true"
 ENV DOCKER_OUTPUT=1
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -15,7 +15,7 @@ RUN pnpm install
 COPY . .
 RUN pnpm build
 
-FROM node:18-alpine3.19 AS release
+FROM node:22-alpine3.19 AS release
 WORKDIR /app
 RUN corepack enable
 

@@ -1,30 +1,38 @@
-FROM node:22.16.0-alpine AS base
+ARG ALPINE_VERSION=3.21
+ARG NODE_VERSION=22.16.0
+
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS base
+
 ENV SKIP_ENV_VALIDATION="true"
 ENV DOCKER_OUTPUT=1
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN apk add --no-cache libc6-compat
-RUN apk update
+RUN apk update \
+    && apk add --no-cache libc6-compat \
+    && ln -s /usr/lib/libssl.so.3 /lib/libssl.so.3
 
 WORKDIR /app
-RUN corepack enable
-COPY package.json pnpm-lock.yaml prisma/ ./
+RUN npm i -g corepack@latest && corepack enable
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml prisma/ ./
 
 RUN pnpm install
 
 COPY . .
 RUN pnpm build
 
-FROM node:22-alpine3.19 AS release
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS release
 WORKDIR /app
-RUN corepack enable
 
-RUN apk add --no-cache libc6-compat
-RUN apk update
+RUN apk update \
+    && apk add --no-cache libc6-compat \
+    && rm -rf /var/lib/apt/lists/* \
+	&& rm -rf /var/cache/apk/* \
+    && ln -s /usr/lib/libssl.so.3 /lib/libssl.so.3
 
 COPY --from=base /app/next.config.js .
 COPY --from=base /app/package.json .
 COPY --from=base /app/pnpm-lock.yaml .
+COPY --from=base /app/pnpm-workspace.yaml .
 
 COPY --from=base  /app/.next/standalone ./
 COPY --from=base  /app/.next/static ./.next/static
@@ -36,12 +44,14 @@ COPY --from=base  /app/node_modules/prisma ./node_modules/prisma
 COPY --from=base  /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=base  /app/node_modules/sharp ./node_modules/sharp
 
-# Symlink the prisma binary
-RUN mkdir node_modules/.bin
-RUN ln -s /app/node_modules/prisma/build/index.js ./node_modules/.bin/prisma
+RUN npm i -g corepack@latest \
+    && corepack enable \
+    && mkdir node_modules/.bin \
+    && ln -s /app/node_modules/prisma/build/index.js ./node_modules/.bin/prisma
 
 # set this so it throws error where starting server
 ENV SKIP_ENV_VALIDATION="false"
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 COPY ./start.sh ./start.sh
 

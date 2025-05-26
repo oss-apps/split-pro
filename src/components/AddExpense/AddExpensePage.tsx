@@ -8,6 +8,7 @@ import { CURRENCIES } from '~/lib/currency';
 import { cn } from '~/lib/utils';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
+import { toSafeBigInt } from '~/utils/numbers';
 
 import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { SplitTypeSection } from './SplitTypeSection';
@@ -147,7 +148,7 @@ export const AddOrEditExpensePage: React.FC<{
   function onUpdateAmount(amt: string) {
     const _amt = amt.replace(',', '.');
     setAmountStr(_amt);
-    setAmount(Number(_amt) || 0);
+    setAmount(toSafeBigInt(_amt));
   }
 
   function addExpense() {
@@ -172,7 +173,7 @@ export const AddOrEditExpensePage: React.FC<{
           splitType,
           participants: participants.map((p) => ({
             userId: p.id,
-            amount: p.amount ?? 0,
+            amount: p.amount ?? 0n,
           })),
           paidBy: paidBy.id,
           category,
@@ -201,7 +202,7 @@ export const AddOrEditExpensePage: React.FC<{
           splitType,
           participants: participants.map((p) => ({
             userId: p.id,
-            amount: p.amount ?? 0,
+            amount: p.amount ?? 0n,
           })),
           paidBy: paidBy.id,
           category,

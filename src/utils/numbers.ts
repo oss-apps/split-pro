@@ -2,6 +2,9 @@ export function toSafeBigInt(num: number | string) {
   if (typeof num === 'number') {
     return BigInt(Math.round(num * 100));
   } else if (typeof num === 'string') {
+    if (num.trim() === '') {
+      return 0n;
+    }
     const parsed = parseFloat(num);
     if (isNaN(parsed)) {
       throw new Error(`Invalid number string: ${num}`);

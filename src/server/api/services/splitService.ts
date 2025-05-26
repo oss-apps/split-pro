@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid';
 
 import { db } from '~/server/db';
 import { type SplitwiseGroup, type SplitwiseUser } from '~/types';
-import { toFixedNumber, toInteger } from '~/utils/numbers';
+import { toSafeBigInt } from '~/utils/numbers';
 
 import { sendExpensePushNotification } from './notificationService';
 
@@ -33,17 +33,15 @@ export async function createGroupExpense(
   paidBy: number,
   name: string,
   category: string,
-  amount: number,
+  amount: bigint,
   splitType: SplitType,
   currency: string,
-  participants: { userId: number; amount: number }[],
+  participants: { userId: number; amount: bigint }[],
   currentUserId: number,
   expenseDate: Date,
   fileKey?: string,
 ) {
   const operations = [];
-
-  const modifiedAmount = toInteger(amount);
 
   // Create expense operation
   operations.push(
@@ -53,14 +51,11 @@ export async function createGroupExpense(
         paidBy,
         name,
         category,
-        amount: modifiedAmount,
+        amount,
         splitType,
         currency,
         expenseParticipants: {
-          create: participants.map((participant) => ({
-            userId: participant.userId,
-            amount: toInteger(participant.amount),
-          })),
+          create: participants,
         },
         fileKey,
         addedBy: currentUserId,
@@ -90,7 +85,7 @@ export async function createGroupExpense(
         },
         update: {
           amount: {
-            increment: -toInteger(participant.amount),
+            increment: -participant.amount,
           },
         },
         create: {
@@ -98,7 +93,7 @@ export async function createGroupExpense(
           currency,
           userId: paidBy,
           firendId: participant.userId,
-          amount: -toInteger(participant.amount),
+          amount: -participant.amount,
         },
       }),
     );
@@ -116,7 +111,7 @@ export async function createGroupExpense(
         },
         update: {
           amount: {
-            increment: toInteger(participant.amount),
+            increment: participant.amount,
           },
         },
         create: {
@@ -124,7 +119,7 @@ export async function createGroupExpense(
           currency,
           userId: participant.userId,
           firendId: paidBy,
-          amount: toInteger(participant.amount), // Negative because it's the opposite balance
+          amount: participant.amount, // Negative because it's the opposite balance
         },
       }),
     );
@@ -141,14 +136,14 @@ export async function createGroupExpense(
         },
         update: {
           amount: {
-            increment: -toInteger(participant.amount),
+            increment: -participant.amount,
           },
         },
         create: {
           userId: paidBy,
           currency,
           friendId: participant.userId,
-          amount: -toInteger(participant.amount),
+          amount: -participant.amount,
         },
       }),
     );
@@ -165,14 +160,14 @@ export async function createGroupExpense(
         },
         update: {
           amount: {
-            increment: toInteger(participant.amount),
+            increment: participant.amount,
           },
         },
         create: {
           userId: participant.userId,
           currency,
           friendId: paidBy,
-          amount: toInteger(participant.amount), // Negative because it's the opposite balance
+          amount: participant.amount, // Negative because it's the opposite balance
         },
       }),
     );
@@ -195,10 +190,10 @@ export async function addUserExpense(
   paidBy: number,
   name: string,
   category: string,
-  amount: number,
+  amount: bigint,
   splitType: SplitType,
   currency: string,
-  participants: { userId: number; amount: number }[],
+  participants: { userId: number; amount: bigint }[],
   currentUserId: number,
   expenseDate: Date,
   fileKey?: string,
@@ -212,14 +207,11 @@ export async function addUserExpense(
         paidBy,
         name,
         category,
-        amount: toInteger(amount),
+        amount,
         splitType,
         currency,
         expenseParticipants: {
-          create: participants.map((participant) => ({
-            userId: participant.userId,
-            amount: toInteger(participant.amount),
-          })),
+          create: participants,
         },
         fileKey,
         addedBy: currentUserId,
@@ -246,14 +238,14 @@ export async function addUserExpense(
         },
         update: {
           amount: {
-            increment: -toInteger(participant.amount),
+            increment: -participant.amount,
           },
         },
         create: {
           userId: paidBy,
           currency,
           friendId: participant.userId,
-          amount: -toInteger(participant.amount),
+          amount: -participant.amount,
         },
       }),
     );
@@ -270,14 +262,14 @@ export async function addUserExpense(
         },
         update: {
           amount: {
-            increment: toInteger(participant.amount),
+            increment: participant.amount,
           },
         },
         create: {
           userId: participant.userId,
           currency,
           friendId: paidBy,
-          amount: toInteger(participant.amount), // Negative because it's the opposite balance
+          amount: participant.amount, // Negative because it's the opposite balance
         },
       }),
     );
@@ -437,10 +429,10 @@ export async function editExpense(
   paidBy: number,
   name: string,
   category: string,
-  amount: number,
+  amount: bigint,
   splitType: SplitType,
   currency: string,
-  participants: { userId: number; amount: number }[],
+  participants: { userId: number; amount: bigint }[],
   currentUserId: number,
   expenseDate: Date,
   fileKey?: string,
@@ -555,14 +547,11 @@ export async function editExpense(
         paidBy,
         name,
         category,
-        amount: toInteger(amount),
+        amount,
         splitType,
         currency,
         expenseParticipants: {
-          create: participants.map((participant) => ({
-            userId: participant.userId,
-            amount: toInteger(participant.amount),
-          })),
+          create: participants,
         },
         fileKey,
         expenseDate,
@@ -590,11 +579,11 @@ export async function editExpense(
           userId: paidBy,
           currency,
           friendId: participant.userId,
-          amount: -toInteger(participant.amount),
+          amount: -participant.amount,
         },
         update: {
           amount: {
-            increment: -toInteger(participant.amount),
+            increment: -participant.amount,
           },
         },
       }),
@@ -613,11 +602,11 @@ export async function editExpense(
           userId: participant.userId,
           currency,
           friendId: paidBy,
-          amount: toInteger(participant.amount),
+          amount: participant.amount,
         },
         update: {
           amount: {
-            increment: toInteger(participant.amount),
+            increment: participant.amount,
           },
         },
       }),
@@ -636,7 +625,7 @@ export async function editExpense(
             },
           },
           create: {
-            amount: -toInteger(participant.amount),
+            amount: -participant.amount,
             groupId: expense.groupId,
             currency,
             userId: paidBy,
@@ -644,7 +633,7 @@ export async function editExpense(
           },
           update: {
             amount: {
-              increment: -toInteger(participant.amount),
+              increment: -participant.amount,
             },
           },
         }),
@@ -661,7 +650,7 @@ export async function editExpense(
             },
           },
           create: {
-            amount: toInteger(participant.amount),
+            amount: participant.amount,
             groupId: expense.groupId,
             currency,
             userId: participant.userId,
@@ -669,7 +658,7 @@ export async function editExpense(
           },
           update: {
             amount: {
-              increment: toInteger(participant.amount),
+              increment: participant.amount,
             },
           },
         }),
@@ -758,11 +747,10 @@ export async function getCompleteFriendsDetails(userId: number) {
         };
       }
 
-      if (balance.amount !== 0) {
+      if (balance.amount !== 0n) {
         acc[friendId]?.balances.push({
           currency: balance.currency,
-          amount:
-            balance.amount > 0 ? toFixedNumber(balance.amount) : toFixedNumber(balance.amount),
+          amount: balance.amount,
         });
       }
 
@@ -774,7 +762,7 @@ export async function getCompleteFriendsDetails(userId: number) {
         id: number;
         email?: string | null;
         name?: string | null;
-        balances: { currency: string; amount: number }[];
+        balances: { currency: string; amount: bigint }[];
       }
     >,
   );
@@ -826,7 +814,7 @@ export async function importUserBalanceFromSplitWise(
     }
 
     for (const balance of user.balance) {
-      const amount = toInteger(parseFloat(balance.amount));
+      const amount = toSafeBigInt(balance.amount);
       const currency = balance.currency_code;
       const existingBalance = await db.balance.findUnique({
         where: {

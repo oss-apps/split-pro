@@ -8,10 +8,7 @@ ENV DOCKER_OUTPUT=1
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
-RUN apk update \
-    && apk add --no-cache libc6-compat \
-    && ln -s /usr/lib/libssl.so.3 /lib/libssl.so.3
-# ^Fix for issue in alpine. Fixed in Prisma 6
+RUN apk update && apk add --no-cache libc6-compat
 
 WORKDIR /app
 RUN npm i -g corepack@latest && corepack enable
@@ -31,9 +28,7 @@ WORKDIR /app
 RUN apk update \
     && apk add --no-cache libc6-compat \
     && rm -rf /var/lib/apt/lists/* \
-	&& rm -rf /var/cache/apk/* \
-    && ln -s /usr/lib/libssl.so.3 /lib/libssl.so.3
-# ^Fix for issue in alpine. Fixed in Prisma 6
+	&& rm -rf /var/cache/apk/*
 
 COPY --from=base /app/next.config.js .
 COPY --from=base /app/package.json .

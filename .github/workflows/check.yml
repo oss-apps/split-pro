@@ -38,4 +38,4 @@ jobs:
         run: pnpm lint
 
       - name: Run build
-        run: pnpm build
+        run: pnpm build --no-lint

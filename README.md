@@ -63,7 +63,7 @@ _That's when I decided to work on this_
 
 ### Prerequisites
 
-- Node.js (Version: >=18.x)
+- Node.js (Version: >=22.x)
 - PostgreSQL
 - pnpm (recommended)
 

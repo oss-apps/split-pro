@@ -10,7 +10,7 @@ import { GroupAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
-import { toUIString } from '~/utils/numbers';
+import { BigMath, toUIString } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser = () => {
   const groupQuery = api.group.getAllGroupsWithBalances.useQuery();
@@ -48,14 +48,14 @@ const BalancePage: NextPageWithUser = () => {
               groupQuery.data?.map((g) => {
                 const [currency, amount] = Object.entries(g.balances).reduce(
                   (acc, balance) => {
-                    if (Math.abs(balance[1]) > Math.abs(acc[1])) {
+                    if (BigMath.abs(balance[1]) > BigMath.abs(acc[1])) {
                       return balance;
                     }
                     return acc;
                   },
-                  [g.defaultCurrency, 0],
+                  [g.defaultCurrency, 0n],
                 );
-                const multiCurrency = Object.values(g.balances).filter((b) => b !== 0).length > 1;
+                const multiCurrency = Object.values(g.balances).filter((b) => b !== 0n).length > 1;
                 return (
                   <GroupBalance
                     key={g.id}
@@ -79,7 +79,7 @@ const BalancePage: NextPageWithUser = () => {
 const GroupBalance: React.FC<{
   groupId: number;
   name: string;
-  amount: number;
+  amount: bigint;
   isPositive: boolean;
   currency: string;
   multiCurrency?: boolean;
@@ -92,7 +92,7 @@ const GroupBalance: React.FC<{
           <div className=" text-foreground">{name}</div>
         </div>
         <div>
-          {amount === 0 ? (
+          {amount === 0n ? (
             <div className="text-sm text-gray-400">Settled up</div>
           ) : (
             <>

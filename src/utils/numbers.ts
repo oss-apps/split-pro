@@ -17,7 +17,7 @@ export function toSafeBigInt(num: number | string) {
   }
 }
 
-export function toUIString(num: bigint) {
+export function toUIString(num = 0n) {
   const absNum = BigMath.abs(num);
   return `${absNum.toString().slice(0, -2) || '0'}.${absNum.toString().slice(-2).padStart(2, '0')}`;
 }

@@ -1,3 +1,4 @@
+import { SplitType } from '@prisma/client';
 import Avatar from 'boring-avatars';
 import clsx from 'clsx';
 import { format } from 'date-fns';
@@ -14,6 +15,7 @@ import {
   UserPlus,
 } from 'lucide-react';
 import Head from 'next/head';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { Fragment, useState } from 'react';
@@ -37,6 +39,7 @@ import {
 } from '~/components/ui/alert-dialog';
 import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
+import { CategoryIcon } from '~/components/ui/categoryIcons';
 import { AppDrawer } from '~/components/ui/drawer';
 import { Switch } from '~/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
@@ -88,9 +91,9 @@ const BalancePage: NextPageWithUser<{
   const isAdmin = groupDetailQuery.data?.userId === user.id;
   const canDelete =
     groupDetailQuery.data?.userId === user.id &&
-    !groupDetailQuery.data?.groupBalances.find((b) => b.amount !== 0);
+    !groupDetailQuery.data?.groupBalances.find((b) => b.amount !== 0n);
   const canLeave = !groupDetailQuery.data?.groupBalances.find(
-    (b) => b.amount !== 0 && b.userId === user.id,
+    (b) => b.amount !== 0n && b.userId === user.id,
   );
 
   function onGroupDelete() {
@@ -418,6 +421,81 @@ const BalancePage: NextPageWithUser<{
             </Tabs>
           </motion.div>
         )}
+        {expensesQuery.data?.map((e) => {
+          const youPaid = e.paidBy === user.id;
+          const yourExpense = e.expenseParticipants.find((p) => p.userId === user.id);
+          const isSettlement = e.splitType === SplitType.SETTLEMENT;
+          const yourExpenseAmount = youPaid
+            ? (yourExpense?.amount ?? 0n)
+            : -(yourExpense?.amount ?? 0n);
+
+          return (
+            <Link
+              href={`/groups/${groupId}/expenses/${e.id}`}
+              key={e.id}
+              className="flex items-center justify-between px-2 py-2"
+            >
+              <div className="flex items-center gap-4">
+                <div className="text-xs text-gray-500">
+                  {format(e.expenseDate, 'MMM dd')
+                    .split(' ')
+                    .map((d) => (
+                      <div className="text-center" key={d}>
+                        {d}
+                      </div>
+                    ))}
+                </div>
+                <div>
+                  <CategoryIcon category={e.category} className="h-5 w-5 text-gray-400" />
+                </div>
+                <div>
+                  {!isSettlement ? (
+                    <p className=" max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">
+                      {e.name}
+                    </p>
+                  ) : null}
+                  <p
+                    className={`flex text-center ${isSettlement ? 'text-sm text-gray-400' : 'text-xs text-gray-500'}`}
+                  >
+                    <span className="text-[10px]">{isSettlement ? '  🎉  ' : null}</span>
+                    {youPaid ? 'You' : (e.paidByUser.name ?? e.paidByUser.email)} paid {e.currency}{' '}
+                    {toUIString(e.amount)}{' '}
+                  </p>
+                </div>
+              </div>
+              {isSettlement ? null : (
+                <div className="min-w-10 shrink-0">
+                  {youPaid || yourExpenseAmount !== 0n ? (
+                    <>
+                      <div
+                        className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
+                      >
+                        {youPaid ? 'You lent' : 'You owe'}
+                      </div>
+                      <div
+                        className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
+                      >
+                        <span className="font-light ">{e.currency}</span>{' '}
+                        {toUIString(yourExpenseAmount)}
+                      </div>
+                    </>
+                  ) : (
+                    <div>
+                      <p className="text-xs text-gray-400">Not involved</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </Link>
+          );
+        })}
+        {expensesQuery.data?.length === 0 &&
+        !groupDetailQuery.isLoading &&
+        groupDetailQuery.data?.groupUsers.length !== 1 ? (
+          <div className="mt-20 flex flex-col items-center justify-center ">
+            <Image src="/add_expense.svg" alt="Empty" width={200} height={200} className="mb-4" />
+          </div>
+        ) : null}
       </MainLayout>
     </>
   );

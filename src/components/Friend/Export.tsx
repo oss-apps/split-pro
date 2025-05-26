@@ -1,4 +1,4 @@
-import { SplitType } from '@prisma/client';
+import { type Expense, type ExpenseParticipant, SplitType } from '@prisma/client';
 import { format } from 'date-fns';
 import { Download } from 'lucide-react';
 import React from 'react';
@@ -6,33 +6,8 @@ import React from 'react';
 import { Button } from '~/components/ui/button';
 import { toUIString } from '~/utils/numbers';
 
-interface ExpenseParticipant {
-  expenseId: string;
-  userId: number;
-  amount: number;
-}
-
-interface Expense {
-  id: string;
-  paidBy: number;
-  addedBy: number;
-  name: string;
-  category: string;
-  amount: number;
-  splitType: SplitType;
-  expenseDate: Date;
-  createdAt: Date;
-  updatedAt: Date;
-  currency: string;
-  fileKey: string | null;
-  groupId: number | null;
-  deletedAt: Date | null;
-  deletedBy: number | null;
-  expenseParticipants: ExpenseParticipant[];
-}
-
 interface ExportCSVProps {
-  expenses: Expense[];
+  expenses: Array<Expense & { expenseParticipants: ExpenseParticipant[] }>;
   fileName: string;
   currentUserId: number;
   friendName: string;
@@ -75,13 +50,13 @@ export const Export: React.FC<ExportCSVProps> = ({
         expense.paidBy === currentUserId ? 'You' : friendName,
         expense.name,
         expense.category,
-        toUIString(expense?.amount ?? 0),
+        toUIString(expense?.amount),
         expense.splitType,
         format(new Date(expense.expenseDate), 'yyyy-MM-dd HH:mm:ss'),
         expense.currency,
-        youPaid && !isSettlement ? toUIString(yourExpense?.amount ?? 0) : 0,
-        !youPaid && !isSettlement ? toUIString(yourExpense?.amount ?? 0) : 0,
-        isSettlement ? toUIString(yourExpense?.amount ?? 0) : 0,
+        youPaid && !isSettlement ? toUIString(yourExpense?.amount) : 0n,
+        !youPaid && !isSettlement ? toUIString(yourExpense?.amount) : 0n,
+        isSettlement ? toUIString(yourExpense?.amount) : 0n,
       ];
     });
 

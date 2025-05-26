@@ -2,7 +2,7 @@ import { SplitType } from '@prisma/client';
 
 import { db } from '~/server/db';
 import { pushNotification } from '~/server/notification';
-import { toFixedNumber } from '~/utils/numbers';
+import { toUIString } from '~/utils/numbers';
 
 export async function sendExpensePushNotification(expenseId: string) {
   const expense = await db.expense.findUnique({
@@ -73,16 +73,16 @@ export async function sendExpensePushNotification(expenseId: string) {
     : expense.updatedByUser
       ? {
           title: `${expense.updatedByUser.name ?? expense.updatedByUser.email}`,
-          message: `Updated ${expense.name} ${expense.currency} ${toFixedNumber(expense.amount)}`,
+          message: `Updated ${expense.name} ${expense.currency} ${toUIString(expense.amount)}`,
         }
       : expense.splitType === SplitType.SETTLEMENT
         ? {
             title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
-            message: `${expense.paidByUser.name ?? expense.paidByUser.email} settled up ${expense.currency} ${toFixedNumber(expense.amount)}`,
+            message: `${expense.paidByUser.name ?? expense.paidByUser.email} settled up ${expense.currency} ${toUIString(expense.amount)}`,
           }
         : {
             title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
-            message: `${expense.paidByUser.name ?? expense.paidByUser.email} paid  ${expense.currency} ${toFixedNumber(expense.amount)} for ${expense.name}`,
+            message: `${expense.paidByUser.name ?? expense.paidByUser.email} paid  ${expense.currency} ${toUIString(expense.amount)} for ${expense.name}`,
           };
 
   const pushNotifications = subscriptions.map((s) => pushNotification(s.subscription, pushData));

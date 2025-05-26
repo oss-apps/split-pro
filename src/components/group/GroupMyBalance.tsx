@@ -1,7 +1,7 @@
 import { type GroupBalance, type User } from '@prisma/client';
 import React from 'react';
 
-import { toUIString } from '~/utils/numbers';
+import { BigMath, toUIString } from '~/utils/numbers';
 
 type GroupMyBalanceProps = {
   userId: number;
@@ -20,26 +20,26 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
 
   const friendBalances = groupBalances.reduce(
     (acc, balance) => {
-      if (balance.userId === userId && Math.abs(balance.amount) > 0) {
+      if (balance.userId === userId && BigMath.abs(balance.amount) > 0) {
         if (!acc[balance.firendId]) {
           acc[balance.firendId] = {};
         }
         const friendBalance = acc[balance.firendId]!;
-        friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0) + balance.amount;
+        friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0n) + balance.amount;
       }
       return acc;
     },
-    {} as Record<number, Record<string, number>>,
+    {} as Record<number, Record<string, bigint>>,
   );
 
   const cumulatedBalances = Object.values(friendBalances).reduce(
     (acc, balances) => {
       Object.entries(balances).forEach(([currency, amount]) => {
-        acc[currency] = (acc[currency] ?? 0) + amount;
+        acc[currency] = (acc[currency] ?? 0n) + amount;
       });
       return acc;
     },
-    {} as Record<string, number>,
+    {} as Record<string, bigint>,
   );
 
   const youLent = Object.entries(cumulatedBalances).filter(([_, amount]) => amount > 0);
@@ -93,7 +93,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
                 {Object.entries(balances).map(([currency, amount]) => (
                   <div key={currency}>
                     {amount > 0 ? `${friend?.name} owes you` : `You owe ${friend?.name}`}{' '}
-                    {toUIString(Math.abs(amount))} {currency}
+                    {toUIString(amount)} {currency}
                   </div>
                 ))}
               </div>

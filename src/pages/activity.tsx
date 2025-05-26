@@ -10,20 +10,20 @@ import { LoadingSpinner } from '~/components/ui/spinner';
 import useEnableAfter from '~/hooks/useEnableAfter';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
-import { toUIString } from '~/utils/numbers';
+import { BigMath, toUIString } from '~/utils/numbers';
 
 function getPaymentString(
   user: User,
-  amount: number,
+  amount: bigint,
   paidBy: number,
-  expenseUserAmt: number,
+  expenseUserAmt: bigint,
   isSettlement: boolean,
   currency: string,
   isDeleted?: boolean,
 ) {
   if (isDeleted) {
     return null;
-  } else if (expenseUserAmt === 0) {
+  } else if (expenseUserAmt === 0n) {
     return <div className="text-sm text-gray-400">Not involved</div>;
   } else if (isSettlement) {
     return (
@@ -36,7 +36,7 @@ function getPaymentString(
       <div className={`${user.id === paidBy ? ' text-emerald-500' : 'text-orange-500'} text-sm`}>
         {user.id === paidBy
           ? `You lent ${currency}
-        ${toUIString(Math.abs(expenseUserAmt))}`
+        ${toUIString(BigMath.abs(expenseUserAmt))}`
           : `You owe ${currency} ${toUIString(expenseUserAmt)}`}
       </div>
     );

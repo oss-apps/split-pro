@@ -6,6 +6,7 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS base
 ENV SKIP_ENV_VALIDATION="true"
 ENV DOCKER_OUTPUT=1
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 RUN apk update \
     && apk add --no-cache libc6-compat \
@@ -18,9 +19,12 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml prisma/ ./
 RUN pnpm install
 
 COPY . .
+
 RUN pnpm build
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS release
+
+ENV NODE_ENV=production
 WORKDIR /app
 
 RUN apk update \

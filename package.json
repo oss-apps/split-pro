@@ -55,7 +55,7 @@
     "input-otp": "^1.2.3",
     "lucide-react": "^0.312.0",
     "nanoid": "^5.0.6",
-    "next": "^15.2.4",
+    "next": "^14.2.26",
     "next-auth": "^4.24.5",
     "next-pwa": "^5.6.0",
     "next-themes": "^0.2.1",
@@ -80,7 +80,7 @@
   "devDependencies": {
     "@types/eslint": "^8.44.7",
     "@types/next-pwa": "^5.6.9",
-    "@types/node": "^18.17.0",
+    "@types/node": "^22.15.21",
     "@types/nodemailer": "^6.4.15",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
@@ -107,5 +107,5 @@
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
-  "packageManager": "pnpm@8.9.2"
+  "packageManager": "pnpm@10.11.0"
 }

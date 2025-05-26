@@ -53,7 +53,6 @@ jobs:
           GIT_SHA="$(git rev-parse HEAD)"
 
           docker build \
-            -f ./docker/Dockerfile \
             --progress=plain \
             -t "ossapps/splitpro-$BUILD_PLATFORM:latest" \
             -t "ossapps/splitpro-$BUILD_PLATFORM:$GIT_SHA" \

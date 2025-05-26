@@ -1,25 +1,33 @@
-# .env
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+.git
+.github
+docker
+.next
 
-# dependencies
-/node_modules
-/.pnp
+node_modules
+.pnp
 .pnp.js
 
-# testing
-/coverage
+prisma/db.sqlite
+prisma/db.sqlite-journal
+prisma/seed.ts
 
-# database
-/prisma/db.sqlite
-/prisma/db.sqlite-journal
+public/workbox-*.js
+public/workbox-*.js.map
+public/sw.js
+public/sw.js.map
+public/worker-*.js
 
-# next.js
-/.next/
-/out/
+.gitignore
+.nvmrc
+.prettierignore
+CODE_OF_CONDUCT.md
+components.json
+CONTRIBUTING.md
+Dockerfile
+LICENSE
 next-env.d.ts
-
-# production
-/build
+prettier.config.js
+README.md
 
 # misc
 .DS_Store
@@ -38,20 +46,7 @@ yarn-error.log*
 .env.example
 .env*.local
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 
-**/public/workbox-*.js
-**/public/workbox-*.js.map
-**/public/sw.js
-**/public/sw.js.map
-**/public/worker-*.js
-src/server/random.code-workspace
-
-prisma/seed.ts
-
 creds
-package-lock.json

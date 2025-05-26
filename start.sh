@@ -4,7 +4,7 @@ set -x
 
 echo "Deploying prisma migrations"
 
-pnpx prisma migrate deploy --schema ./prisma/schema.prisma
+pnpx prisma@6 migrate deploy --schema ./prisma/schema.prisma
 
 echo "Starting web server"
 

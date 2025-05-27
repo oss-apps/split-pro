@@ -2,17 +2,19 @@ import { type Group, SplitType, type User } from '@prisma/client';
 import Router from 'next/router';
 import { create } from 'zustand';
 
-import { BigMath, toSafeBigInt } from '~/utils/numbers';
+import { BigMath } from '~/utils/numbers';
 
-export type Participant = User & { amount?: bigint; splitShare?: bigint };
+export type Participant = User & { amount?: bigint };
+type SplitShares = Record<number, Record<SplitType, bigint | undefined>>;
 
-interface AddExpenseState {
+export interface AddExpenseState {
   amount: bigint;
   amountStr: string;
   currentUser: User | undefined;
   splitType: SplitType;
   group: Group | undefined;
-  participants: Array<Participant>;
+  participants: Participant[];
+  splitShares: SplitShares;
   description: string;
   currency: string;
   category: string;
@@ -30,7 +32,8 @@ interface AddExpenseState {
     setSplitType: (splitType: SplitType) => void;
     setGroup: (group: Group | undefined) => void;
     addOrUpdateParticipant: (user: Participant) => void;
-    setParticipants: (participants: Array<Participant>) => void;
+    setSplitShare: (splitType: SplitType, userId: number, share: bigint) => void;
+    setParticipants: (participants: User[]) => void;
     removeParticipant: (userId: number) => void;
     removeLastParticipant: () => void;
     setCurrency: (currency: string) => void;
@@ -51,8 +54,16 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   amount: 0n,
   amountStr: '',
   splitType: SplitType.EQUAL,
-  group: undefined,
   participants: [],
+  group: undefined,
+  splitShares: {
+    [SplitType.EQUAL]: {},
+    [SplitType.PERCENTAGE]: {},
+    [SplitType.SHARE]: {},
+    [SplitType.EXACT]: {},
+    [SplitType.ADJUSTMENT]: {},
+    [SplitType.SETTLEMENT]: {},
+  },
   currency: 'USD',
   category: 'general',
   nameOrEmail: '',
@@ -72,6 +83,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
           amount,
           s.participants,
           s.splitType,
+          s.splitShares,
           s.paidBy,
         );
 
@@ -82,39 +94,64 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
       set((state) => {
         return {
           splitType,
-          ...calculateSplitShareBasedOnAmount(
+          ...calculateParticipantSplit(
             state.amount,
             state.participants,
             splitType,
+            state.splitShares,
             state.paidBy,
           ),
         };
       }),
+    setSplitShare: (splitType, userId, share) =>
+      // @ts-expect-error TS expects us to use all split types, but we only use one at a time
+      set((state) => ({
+        splitShares: {
+          ...state.splitShares,
+          [userId]: {
+            ...state.splitShares[userId],
+            [splitType]: share,
+          },
+        },
+      })),
     setGroup: (group) => {
       set({ group });
     },
     addOrUpdateParticipant: (user) =>
       set((state) => {
         const participants = [...state.participants];
+        const splitShares = { ...state.splitShares };
         const userIndex = participants.findIndex((p) => p.id === user.id);
         if (userIndex !== -1) {
           participants[userIndex] = user;
+          splitShares[user.id] = initSplitShares();
         } else {
-          participants.push({ ...user, splitShare: state.splitType === SplitType.EQUAL ? 1n : 0n });
+          participants.push({ ...user });
         }
-        return {
-          ...calculateParticipantSplit(state.amount, participants, state.splitType, state.paidBy),
-        };
+        return calculateParticipantSplit(
+          state.amount,
+          participants,
+          state.splitType,
+          splitShares,
+          state.paidBy,
+        );
       }),
-    setParticipants: (_participants) =>
+    setParticipants: (participants) =>
       set((state) => {
-        const participants = _participants.map((p) => ({
-          splitShare: state.splitType === SplitType.EQUAL ? 1n : 0n,
-          ...p,
-        }));
+        const splitShares = participants.reduce((res, p) => {
+          res[p.id] = initSplitShares();
+          return res;
+        }, {} as SplitShares);
         return {
           splitType: SplitType.EQUAL,
-          ...calculateParticipantSplit(state.amount, participants, SplitType.EQUAL, state.paidBy),
+          splitShares,
+          ...calculateParticipantSplit(
+            state.amount,
+            participants,
+            SplitType.EQUAL,
+            splitShares,
+            state.paidBy,
+          ),
         };
       }),
     removeLastParticipant: () => {
@@ -125,16 +162,19 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
 
         Router.push(`${currentPath}?${searchParams.toString()}`).catch(console.error);
 
-        if (state.participants.length === 1) return {};
+        if (state.participants.length <= 1) return {};
         const newParticipants = [...state.participants];
-        newParticipants.pop();
+        const { id } = newParticipants.pop()!;
+        const { [id]: _, ...rest } = state.splitShares;
         return {
           ...calculateParticipantSplit(
             state.amount,
             newParticipants,
             state.splitType,
+            rest,
             state.paidBy,
           ),
+          splitShares: rest,
         };
       });
     },
@@ -147,13 +187,16 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         Router.push(`${currentPath}?${searchParams.toString()}`).catch(console.error);
 
         const newParticipants = state.participants.filter((p) => p.id !== userId);
+        const { [userId]: _, ...rest } = state.splitShares;
         return {
           ...calculateParticipantSplit(
             state.amount,
             newParticipants,
             state.splitType,
+            rest,
             state.paidBy,
           ),
+          splitShares: rest,
         };
       });
     },
@@ -163,7 +206,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     setPaidBy: (paidBy) =>
       set((s) => ({
         paidBy,
-        ...calculateParticipantSplit(s.amount, s.participants, s.splitType, paidBy),
+        ...calculateParticipantSplit(s.amount, s.participants, s.splitType, s.splitShares, paidBy),
       })),
     setCurrentUser: (currentUser) =>
       set((s) => {
@@ -188,6 +231,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         splitType: SplitType.EQUAL,
         group: undefined,
         amountStr: '',
+        splitShares: s.currentUser ? { [s.currentUser.id]: initSplitShares() } : {},
       }));
     },
     setSplitScreenOpen: (splitScreenOpen) => set({ splitScreenOpen }),
@@ -197,58 +241,61 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
 
 export function calculateParticipantSplit(
   amount: bigint,
-  participants: Array<Participant>,
+  participants: Participant[],
   splitType: SplitType,
-  paidBy?: User,
+  splitShares: SplitShares,
+  paidBy?: Participant,
 ) {
   let canSplitScreenClosed = true;
   if (amount === 0n) return { participants, canSplitScreenClosed };
 
   let updatedParticipants = participants;
 
+  const getSplitShare = (p: User) => splitShares[p.id]?.[splitType];
+
   switch (splitType) {
     case SplitType.EQUAL:
-      const totalParticipants = participants.filter((p) => p.splitShare !== 0n).length;
+      const totalParticipants = participants.filter((p) => getSplitShare(p) !== 0n).length;
       updatedParticipants = participants.map((p) => ({
         ...p,
-        amount: p.splitShare === 0n ? 0n : amount / BigInt(totalParticipants),
+        amount: getSplitShare(p) === 0n ? 0n : amount / BigInt(totalParticipants),
       }));
-      canSplitScreenClosed = !!updatedParticipants.find((p) => p.splitShare);
+      canSplitScreenClosed = !!Object.values(splitShares).find((p) => p[SplitType.EQUAL] !== 0n);
       break;
     case SplitType.PERCENTAGE:
       updatedParticipants = participants.map((p) => ({
         ...p,
-        amount: ((p.splitShare ?? 0n) * amount) / 10000n,
+        amount: ((getSplitShare(p) ?? 0n) * amount) / 10000n,
       }));
 
       canSplitScreenClosed =
-        100 - participants.reduce((acc, p) => acc + (Number(p.splitShare) ?? 0), 0) === 0;
+        100 - participants.reduce((acc, p) => acc + Number(getSplitShare(p) ?? 0n), 0) === 0;
       break;
     case SplitType.SHARE:
-      const totalShare = participants.reduce((acc, p) => acc + (Number(p.splitShare) ?? 0), 0);
+      const totalShare = participants.reduce((acc, p) => acc + Number(getSplitShare(p) ?? 0n), 0);
       updatedParticipants = participants.map((p) => ({
         ...p,
-        amount: ((p.splitShare ?? 0n) * amount) / BigInt(Math.round(totalShare)),
+        amount: ((getSplitShare(p) ?? 0n) * amount) / BigInt(Math.round(totalShare)),
       }));
       break;
     case SplitType.EXACT:
-      const totalSplitShare = participants.reduce((acc, p) => acc + (p.splitShare ?? 0n), 0n);
+      const totalSplitShare = participants.reduce((acc, p) => acc + (getSplitShare(p) ?? 0n), 0n);
 
       // ? Look into this logic
       const epsilon = 1n;
       canSplitScreenClosed = BigMath.abs(amount - totalSplitShare) < epsilon;
 
-      updatedParticipants = participants.map((p) => ({ ...p, amount: BigInt(p.splitShare ?? 0) }));
+      updatedParticipants = participants.map((p) => ({ ...p, amount: getSplitShare(p) }));
       break;
     case SplitType.ADJUSTMENT:
-      const totalAdjustment = participants.reduce((acc, p) => acc + (p.splitShare ?? 0n), 0n);
+      const totalAdjustment = participants.reduce((acc, p) => acc + (getSplitShare(p) ?? 0n), 0n);
       if (totalAdjustment > amount) {
         canSplitScreenClosed = false;
       }
       const remainingAmountShare = (amount - totalAdjustment) / BigInt(participants.length);
       updatedParticipants = participants.map((p) => ({
         ...p,
-        amount: remainingAmountShare + (p.splitShare ?? 0n),
+        amount: remainingAmountShare + (getSplitShare(p) ?? 0n),
       }));
       break;
   }
@@ -265,90 +312,6 @@ export function calculateParticipantSplit(
   return { participants: updatedParticipants, canSplitScreenClosed };
 }
 
-export function calculateSplitShareBasedOnAmount(
-  amount: bigint,
-  participants: Array<Participant>,
-  splitType: SplitType,
-  paidBy?: User,
-) {
-  let updatedParticipants = [...participants];
-
-  switch (splitType) {
-    case SplitType.EQUAL:
-      // For equal split, split share should be amount/participants or 0 if amount is 0
-      updatedParticipants = participants.map((p) => ({
-        ...p,
-        splitShare: (paidBy?.id === p.id ? (p.amount ?? 0n) - amount : p.amount) === 0n ? 0n : 1n,
-      }));
-      break;
-
-    case SplitType.PERCENTAGE:
-      // Convert amounts back to percentages
-      updatedParticipants = participants.map((p) => ({
-        ...p,
-        splitShare:
-          amount === 0n
-            ? 0n
-            : paidBy?.id !== p.id
-              ? (BigMath.abs(p.amount ?? 0n) * 10000n) / amount
-              : (BigMath.abs(amount - (p.amount ?? 0n)) * 10000n) / amount,
-      }));
-      break;
-
-    case SplitType.SHARE:
-      const numAmount = Number(amount) / 100;
-      const numParticipants = participants.map((p) => ({
-        ...p,
-        amount: Number(p.amount ?? 0) / 100,
-      }));
-      const shares = numParticipants.map((p) =>
-        p.id === paidBy?.id
-          ? Math.abs(numAmount - (p.amount ?? 0)) / numAmount
-          : Math.abs(p.amount ?? 0) / numAmount,
-      );
-
-      // Find the minimum share value
-      const minShare = Math.min(...shares);
-
-      // Calculate multiplier to make minimum share equal to 1
-      const multiplier = minShare !== 0 ? 1 / minShare : 1;
-
-      updatedParticipants = numParticipants.map((p) => ({
-        ...p,
-        splitShare: toSafeBigInt(
-          (amount === 0n
-            ? 0
-            : paidBy?.id !== p.id
-              ? Math.abs(p.amount ?? 0) / numAmount
-              : Math.abs(numAmount - (p.amount ?? 0)) / numAmount) * multiplier,
-        ),
-        amount: toSafeBigInt(p.amount),
-      }));
-      break;
-
-    case SplitType.EXACT:
-      // For exact, split share is the absolute amount
-      updatedParticipants = participants.map((p) => ({
-        ...p,
-        splitShare:
-          paidBy?.id !== p.id
-            ? BigMath.abs(p.amount ?? 0n)
-            : BigMath.abs(amount - (p.amount ?? 0n)),
-      }));
-      break;
-
-    case SplitType.ADJUSTMENT:
-      // For adjustment, split share is the difference from equal share
-      const equalShare = amount / BigInt(participants.length);
-      updatedParticipants = participants.map((p) => ({
-        ...p,
-        splitShare:
-          paidBy?.id !== p.id
-            ? equalShare + (p.amount ?? 0n)
-            : amount - equalShare - (p.amount ?? 0n),
-      }));
-      break;
-  }
-
-  return { participants: updatedParticipants };
-}
+const initSplitShares = (): Record<SplitType, undefined> =>
+  // @ts-expect-error TS enums/string coersion *eyeroll*
+  Object.fromEntries(Object.values(SplitType).map((type) => [type, undefined]));

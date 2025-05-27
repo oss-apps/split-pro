@@ -10,9 +10,9 @@ import {
   Plus,
   X,
 } from 'lucide-react';
-import { useCallback, useMemo } from 'react';
+import { type ChangeEvent, useCallback, useMemo } from 'react';
 
-import { type Participant, useAddExpenseStore } from '~/store/addStore';
+import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/store/addStore';
 import { removeTrailingZeros, toSafeBigInt, toUIString } from '~/utils/numbers';
 
 import { UserAvatar } from '../ui/avatar';
@@ -117,24 +117,23 @@ interface SplitSectionPropsBase {
   iconComponent: LucideIcon;
   prefix: string;
   isBoolean?: boolean;
-  fmtSummartyText: (amount: bigint, currency: string, participants: Participant[]) => string;
+  fmtSummartyText: (
+    amount: bigint,
+    currency: string,
+    participants: AddExpenseState['participants'],
+    splitShares: AddExpenseState['splitShares'],
+  ) => string;
 }
 
 interface BooleanSplitSectionProps extends SplitSectionPropsBase {
   isBoolean: true;
-  onChange: (participant: Participant, addOrUpdateParticipant: (p: Participant) => void) => void;
   fmtShareText: null;
   step: null;
 }
 
 interface NumericSplitSectionProps extends SplitSectionPropsBase {
   isBoolean: false;
-  onChange: (
-    participant: Participant,
-    addOrUpdateParticipant: (p: Participant) => void,
-    value?: string,
-  ) => void;
-  fmtShareText: (amount: bigint, participant: Participant) => string;
+  fmtShareText: (share: bigint) => string;
   step?: number;
 }
 
@@ -148,12 +147,11 @@ const splitProps: SplitSectionProps[] = [
     iconComponent: Equal,
     prefix: '',
     isBoolean: true,
-    fmtSummartyText: (amount, currency, participants) => {
-      const totalParticipants = participants.filter((p) => p.splitShare !== 0n).length;
+    fmtSummartyText: (amount, currency, participants, splitShares) => {
+      const totalParticipants = participants.filter(
+        (p) => splitShares[p.id]?.[SplitType.EQUAL] !== 0n,
+      ).length;
       return `${currency} ${totalParticipants > 0 ? toUIString(amount / BigInt(totalParticipants)) : 0} per person`;
-    },
-    onChange: (participant, addOrUpdateParticipant) => {
-      addOrUpdateParticipant({ ...participant, splitShare: participant.splitShare ? 0n : 1n });
     },
     fmtShareText: null,
     step: null,
@@ -163,56 +161,44 @@ const splitProps: SplitSectionProps[] = [
     iconComponent: Percent,
     prefix: '%',
     isBoolean: false,
-    fmtSummartyText: (amount, currency, participants) => {
+    fmtSummartyText: (amount, currency, participants, splitShares) => {
       const remainingPercentage =
-        10000n - participants.reduce((acc, p) => acc + (p.splitShare ?? 0n), 0n);
+        10000n -
+        participants.reduce(
+          (acc, p) => acc + (splitShares[p.id]?.[SplitType.PERCENTAGE] ?? 0n),
+          0n,
+        );
       return `Remaining ${toUIString(remainingPercentage)}%`;
     },
-    onChange: (participant, addOrUpdateParticipant, value) => {
-      if (value === undefined || value === '') {
-        addOrUpdateParticipant({ ...participant, splitShare: 0n });
-      } else {
-        addOrUpdateParticipant({ ...participant, splitShare: toSafeBigInt(value) });
-      }
-    },
-    fmtShareText: (_amount, participant) => (Number(participant.splitShare) / 100).toString(),
+    fmtShareText: (share) => (Number(share) / 100).toString(),
   },
   {
     splitType: SplitType.EXACT,
     iconComponent: DollarSign,
     prefix: CURRENCY_TOKEN,
     isBoolean: false,
-    fmtSummartyText: (amount, currency, participants) => {
-      const totalAmount = participants.reduce((acc, p) => acc + (p.splitShare ?? 0n), 0n);
+    fmtSummartyText: (amount, currency, participants, splitShares) => {
+      const totalAmount = participants.reduce(
+        (acc, p) => acc + (splitShares[p.id]?.[SplitType.EXACT] ?? 0n),
+        0n,
+      );
       return `Remaining ${currency} ${toUIString(amount - totalAmount)}`;
     },
-    onChange: (participant, addOrUpdateParticipant, value) => {
-      if (value === undefined || value === '') {
-        addOrUpdateParticipant({ ...participant, splitShare: 0n });
-      } else {
-        addOrUpdateParticipant({ ...participant, splitShare: toSafeBigInt(value) });
-      }
-    },
-    fmtShareText: (amount, participant) =>
-      removeTrailingZeros(toUIString(participant.splitShare ?? 0n)),
+    fmtShareText: (share) => removeTrailingZeros(toUIString(share)),
   },
   {
     splitType: SplitType.SHARE,
     iconComponent: BarChart2,
     prefix: 'Share(s)',
     isBoolean: false,
-    fmtSummartyText: (_amount, _currency, participants) => {
-      const totalShares = participants.reduce((acc, p) => acc + (p.splitShare ?? 0n), 0n);
+    fmtSummartyText: (_amount, _currency, participants, splitShares) => {
+      const totalShares = participants.reduce(
+        (acc, p) => acc + (splitShares[p.id]?.[SplitType.SHARE] ?? 0n),
+        0n,
+      );
       return `Total shares ${Number(totalShares) / 100}`;
     },
-    onChange: (participant, addOrUpdateParticipant, value) => {
-      if (value === undefined || value === '') {
-        addOrUpdateParticipant({ ...participant, splitShare: 0n });
-      } else {
-        addOrUpdateParticipant({ ...participant, splitShare: toSafeBigInt(value) });
-      }
-    },
-    fmtShareText: (_amount, participant) => (Number(participant.splitShare) / 100).toString(),
+    fmtShareText: (share) => (Number(share) / 100).toString(),
     step: 1,
   },
   {
@@ -223,22 +209,15 @@ const splitProps: SplitSectionProps[] = [
     fmtSummartyText: () => {
       return ``;
     },
-    onChange: (participant, addOrUpdateParticipant, value) => {
-      if (value === undefined || value === '') {
-        addOrUpdateParticipant({ ...participant, splitShare: 0n });
-      } else {
-        addOrUpdateParticipant({ ...participant, splitShare: toSafeBigInt(value) });
-      }
-    },
-    fmtShareText: (_amount, participant) => removeTrailingZeros(toUIString(participant.splitShare)),
+    fmtShareText: (share) => removeTrailingZeros(toUIString(share)),
   },
 ];
 
 const SplitSection: React.FC<SplitSectionProps> = ({
+  splitType,
   prefix,
   isBoolean,
   fmtSummartyText,
-  onChange,
   fmtShareText,
   step,
 }) => {
@@ -246,21 +225,42 @@ const SplitSection: React.FC<SplitSectionProps> = ({
   const currency = useAddExpenseStore((s) => s.currency);
   const amount = useAddExpenseStore((s) => s.amount);
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
-  const { addOrUpdateParticipant } = useAddExpenseStore((s) => s.actions);
+  const splitShares = useAddExpenseStore((s) => s.splitShares);
+  const { setSplitShare } = useAddExpenseStore((s) => s.actions);
 
   const summaryText = useMemo(
-    () => fmtSummartyText(amount, currency, participants),
-    [amount, currency, participants, fmtSummartyText],
+    () => fmtSummartyText(amount, currency, participants, splitShares),
+    [amount, currency, participants, fmtSummartyText, splitShares],
+  );
+  const allSelected = useMemo(
+    () => participants.every((p) => splitShares[p.id]?.[splitType] !== 0n),
+    [participants, splitShares, splitType],
   );
 
   const selectAll = useCallback(() => {
-    const allSelected = participants.every((p) => p.splitShare !== 0n);
     participants.forEach((p) => {
-      addOrUpdateParticipant({ ...p, splitShare: allSelected ? 0n : 1n });
+      setSplitShare(splitType, p.id, allSelected ? 0n : 1n);
     });
-  }, [participants, addOrUpdateParticipant]);
+  }, [participants, setSplitShare, splitType, allSelected]);
 
-  const allSelected = useMemo(() => participants.every((p) => p.splitShare !== 0n), [participants]);
+  const onToggleBoolean = useCallback(
+    (userId: number) => {
+      setSplitShare(splitType, userId, splitShares[userId]?.[splitType] === 0n ? 1n : 0n);
+    },
+    [setSplitShare, splitType, splitShares],
+  );
+
+  const onChangeInput = useCallback(
+    (e: ChangeEvent<HTMLInputElement>, userId: number) => {
+      const value = e.target.value;
+      setSplitShare(
+        splitType,
+        userId,
+        value === undefined || value === '' ? 0n : toSafeBigInt(value),
+      );
+    },
+    [setSplitShare, splitType],
+  );
 
   return (
     <div className="relative mt-4 flex flex-col gap-6 px-2">
@@ -280,34 +280,37 @@ const SplitSection: React.FC<SplitSectionProps> = ({
           </button>
         </div>
       )}
-      {participants.map((p) => (
-        <div
-          key={p.id}
-          className={clsx('flex items-center justify-between', isBoolean && 'cursor-pointer')}
-          onClick={isBoolean ? () => onChange(p, addOrUpdateParticipant) : undefined}
-        >
-          <UserAndAmount user={p} currency={currency} />
-          {isBoolean ? (
-            p.splitShare !== 0n ? (
-              <Check className="h-6 w-6 text-cyan-500" />
-            ) : null
-          ) : (
-            <div className="flex items-center gap-1">
-              <p className="text-xs">{prefix.replace(CURRENCY_TOKEN, currency)}</p>
-              <Input
-                type="number"
-                value={fmtShareText(amount, p)}
-                inputMode="decimal"
-                className="ml-2 w-20 text-lg"
-                placeholder="0"
-                min={0}
-                step={step ?? 0.01}
-                onChange={(e) => onChange(p, addOrUpdateParticipant, e.target.value)}
-              />
-            </div>
-          )}
-        </div>
-      ))}
+      {participants.map((p) => {
+        const share = splitShares[p.id]?.[splitType];
+        return (
+          <div
+            key={p.id}
+            className={clsx('flex items-center justify-between', isBoolean && 'cursor-pointer')}
+            onClick={isBoolean ? () => onToggleBoolean(p.id) : undefined}
+          >
+            <UserAndAmount user={p} currency={currency} />
+            {isBoolean ? (
+              share !== 0n ? (
+                <Check className="h-6 w-6 text-cyan-500" />
+              ) : null
+            ) : (
+              <div className="flex items-center gap-1">
+                <p className="text-xs">{prefix.replace(CURRENCY_TOKEN, currency)}</p>
+                <Input
+                  type="number"
+                  value={share ? fmtShareText(share) : ''}
+                  inputMode="decimal"
+                  className="ml-2 w-20 text-lg"
+                  placeholder="0"
+                  min={0}
+                  step={step ?? 0.01}
+                  onChange={(e) => onChangeInput(e, p.id)}
+                />
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };

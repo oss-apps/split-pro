@@ -6,7 +6,7 @@ import { AddOrEditExpensePage } from '~/components/AddExpense/AddExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
 import { env } from '~/env';
 import { isStorageConfigured } from '~/server/storage';
-import { calculateSplitShareBasedOnAmount, useAddExpenseStore } from '~/store/addStore';
+import { useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 
@@ -86,15 +86,10 @@ const AddPage: NextPageWithUser<{
     if (_expenseId && expenseQuery.data) {
       expenseQuery.data.group && setGroup(expenseQuery.data.group);
       setParticipants(
-        calculateSplitShareBasedOnAmount(
-          expenseQuery.data.amount,
-          expenseQuery.data.expenseParticipants.map((ep) => ({
-            ...ep.user,
-            amount: ep.amount,
-          })),
-          expenseQuery.data.splitType,
-          expenseQuery.data.paidByUser,
-        ).participants,
+        expenseQuery.data.expenseParticipants.map((ep) => ({
+          ...ep.user,
+          amount: ep.amount,
+        })),
       );
       setCurrency(expenseQuery.data.currency);
       setAmountStr(expenseQuery.data.amount.toString());

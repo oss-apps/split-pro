@@ -86,14 +86,6 @@ export const SplitTypeSection: React.FC = () => {
   );
 };
 
-const splitIcon: Record<Omit<SplitType, SplitType.SETTLEMENT>, React.FC> = {
-  [SplitType.EQUAL]: Equal,
-  [SplitType.PERCENTAGE]: Percent,
-  [SplitType.EXACT]: DollarSign,
-  [SplitType.SHARE]: BarChart2,
-  [SplitType.ADJUSTMENT]: Plus,
-};
-
 const SplitExpenseForm: React.FC = () => {
   const splitType = useAddExpenseStore((s) => s.splitType);
   const { setSplitType } = useAddExpenseStore((s) => s.actions);
@@ -110,24 +102,8 @@ const SplitExpenseForm: React.FC = () => {
             <Icon className="h-5 w-5" />
           </TabsTrigger>
         ))}
-        {/* Uncomment the following lines if you want to add more split types */}
-        {/* <TabsTrigger className="text-xs" value={SplitType.EQUAL}>
-          <Equal className="h-5 w-5" />
-        </TabsTrigger>
-        <TabsTrigger className="text-xs" value={SplitType.PERCENTAGE}>
-          <Percent className="h-5 w-5" />
-        </TabsTrigger>
-        <TabsTrigger className="text-xs" value={SplitType.EXACT}>
-          <DollarSign className="h-5 w-5" />
-        </TabsTrigger>
-        <TabsTrigger className="text-xs" value={SplitType.SHARE}>
-          <BarChart2 className="h-5 w-5" />
-        </TabsTrigger>
-        <TabsTrigger className="text-xs" value={SplitType.ADJUSTMENT}>
-          <Plus className="h-5 w-5" />
-        </TabsTrigger> */}
       </TabsList>
-      {splitProps.map(({ iconComponent: _iconComponent, ...props }) => (
+      {splitProps.map((props) => (
         <TabsContent key={props.splitType} value={props.splitType}>
           <SplitSection {...props} />
         </TabsContent>
@@ -136,12 +112,22 @@ const SplitExpenseForm: React.FC = () => {
   );
 };
 
-interface SplitSectionProps {
+interface SplitSectionPropsBase {
   splitType: SplitType;
   iconComponent: LucideIcon;
   prefix: string;
   isBoolean?: boolean;
   fmtSummartyText: (amount: bigint, currency: string, participants: Participant[]) => string;
+}
+
+interface BooleanSplitSectionProps extends SplitSectionPropsBase {
+  isBoolean: true;
+  onChange: (participant: Participant, addOrUpdateParticipant: (p: Participant) => void) => void;
+  fmtShareText: null;
+}
+
+interface NumericSplitSectionProps extends SplitSectionPropsBase {
+  isBoolean: false;
   onChange: (
     participant: Participant,
     addOrUpdateParticipant: (p: Participant) => void,
@@ -149,6 +135,8 @@ interface SplitSectionProps {
   ) => void;
   fmtShareText: (amount: bigint, participant: Participant) => string;
 }
+
+type SplitSectionProps = BooleanSplitSectionProps | NumericSplitSectionProps;
 
 const CURRENCY_TOKEN = '__CURRENCY__';
 
@@ -165,7 +153,7 @@ const splitProps: SplitSectionProps[] = [
     onChange: (participant, addOrUpdateParticipant) => {
       addOrUpdateParticipant({ ...participant, splitShare: participant.splitShare ? 0n : 1n });
     },
-    fmtShareText: (_amount, _participant) => '',
+    fmtShareText: null,
   },
   {
     splitType: SplitType.PERCENTAGE,
@@ -242,10 +230,9 @@ const splitProps: SplitSectionProps[] = [
   },
 ];
 
-const SplitSection: React.FC<Omit<SplitSectionProps, 'iconComponent'>> = ({
-  splitType,
+const SplitSection: React.FC<SplitSectionProps> = ({
   prefix,
-  isBoolean = false,
+  isBoolean,
   fmtSummartyText,
   onChange,
   fmtShareText,
@@ -292,7 +279,7 @@ const SplitSection: React.FC<Omit<SplitSectionProps, 'iconComponent'>> = ({
         <div
           key={p.id}
           className={clsx('flex items-center justify-between', isBoolean && 'cursor-pointer')}
-          onClick={isBoolean ? () => onChange(p, addOrUpdateParticipant, undefined) : undefined}
+          onClick={isBoolean ? () => onChange(p, addOrUpdateParticipant) : undefined}
         >
           <UserAndAmount user={p} currency={currency} />
           {isBoolean ? (

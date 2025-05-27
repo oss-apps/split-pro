@@ -2,7 +2,7 @@ import { type Group, SplitType, type User } from '@prisma/client';
 import Router from 'next/router';
 import { create } from 'zustand';
 
-import { BigMath } from '~/utils/numbers';
+import { BigMath, toSafeBigInt } from '~/utils/numbers';
 
 export type Participant = User & { amount?: bigint; splitShare?: bigint };
 
@@ -228,7 +228,7 @@ export function calculateParticipantSplit(
       const totalShare = participants.reduce((acc, p) => acc + (Number(p.splitShare) ?? 0), 0);
       updatedParticipants = participants.map((p) => ({
         ...p,
-        amount: (BigInt(p.splitShare ?? 0) * amount) / BigInt(totalShare),
+        amount: ((p.splitShare ?? 0n) * amount) / BigInt(Math.round(totalShare)),
       }));
       break;
     case SplitType.EXACT:
@@ -236,7 +236,7 @@ export function calculateParticipantSplit(
 
       // ? Look into this logic
       const epsilon = 1n;
-      canSplitScreenClosed = BigMath.abs(amount - BigInt(totalSplitShare)) < epsilon;
+      canSplitScreenClosed = BigMath.abs(amount - totalSplitShare) < epsilon;
 
       updatedParticipants = participants.map((p) => ({ ...p, amount: BigInt(p.splitShare ?? 0) }));
       break;
@@ -248,7 +248,7 @@ export function calculateParticipantSplit(
       const remainingAmountShare = (amount - totalAdjustment) / BigInt(participants.length);
       updatedParticipants = participants.map((p) => ({
         ...p,
-        amount: BigInt(remainingAmountShare + (p.splitShare ?? 0n)),
+        amount: remainingAmountShare + (p.splitShare ?? 0n),
       }));
       break;
   }
@@ -273,8 +273,6 @@ export function calculateSplitShareBasedOnAmount(
 ) {
   let updatedParticipants = [...participants];
 
-  console.log('calculateSplitShareBasedOnAmount', amount, participants, splitType);
-
   switch (splitType) {
     case SplitType.EQUAL:
       // For equal split, split share should be amount/participants or 0 if amount is 0
@@ -298,8 +296,11 @@ export function calculateSplitShareBasedOnAmount(
       break;
 
     case SplitType.SHARE:
-      const numAmount = Number(amount);
-      const numParticipants = participants.map((p) => ({ ...p, amount: Number(p.amount ?? 0) }));
+      const numAmount = Number(amount) / 100;
+      const numParticipants = participants.map((p) => ({
+        ...p,
+        amount: Number(p.amount ?? 0) / 100,
+      }));
       const shares = numParticipants.map((p) =>
         p.id === paidBy?.id
           ? Math.abs(numAmount - (p.amount ?? 0)) / numAmount
@@ -314,14 +315,14 @@ export function calculateSplitShareBasedOnAmount(
 
       updatedParticipants = numParticipants.map((p) => ({
         ...p,
-        splitShare: BigInt(
+        splitShare: toSafeBigInt(
           (amount === 0n
             ? 0
             : paidBy?.id !== p.id
               ? Math.abs(p.amount ?? 0) / numAmount
               : Math.abs(numAmount - (p.amount ?? 0)) / numAmount) * multiplier,
         ),
-        amount: BigInt(p.amount),
+        amount: toSafeBigInt(p.amount),
       }));
       break;
 

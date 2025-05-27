@@ -10,8 +10,6 @@ import { calculateSplitShareBasedOnAmount, useAddExpenseStore } from '~/store/ad
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 
-// 🧾
-
 const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
@@ -86,20 +84,6 @@ const AddPage: NextPageWithUser<{
 
   useEffect(() => {
     if (_expenseId && expenseQuery.data) {
-      console.log(
-        'expenseQuery.data 123',
-        expenseQuery.data.expenseParticipants,
-        expenseQuery.data.splitType,
-        calculateSplitShareBasedOnAmount(
-          expenseQuery.data.amount,
-          expenseQuery.data.expenseParticipants.map((ep) => ({
-            ...ep.user,
-            amount: ep.amount,
-          })),
-          expenseQuery.data.splitType,
-          expenseQuery.data.paidByUser,
-        ).participants,
-      );
       expenseQuery.data.group && setGroup(expenseQuery.data.group);
       setParticipants(
         calculateSplitShareBasedOnAmount(

@@ -147,7 +147,8 @@ const SplitEqualSection: React.FC = () => {
       <div className="flex items-center">
         <div className="mb-2 flex flex-grow justify-center">
           <div className={`${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'}`}>
-            {currency} {toUIString(amount / BigInt(totalParticipants))} per person
+            {currency} {totalParticipants > 0 ? toUIString(amount / BigInt(totalParticipants)) : 0}{' '}
+            per person
           </div>
         </div>
       </div>
@@ -189,7 +190,7 @@ const SplitByPercentageSection: React.FC = () => {
   const [splitShareValue, setSplitShareValue] = useState(
     participants.reduce(
       (acc, p) => {
-        acc[p.id] = p.splitShare?.toString();
+        acc[p.id] = (Number(p.splitShare) / 100).toString();
         return acc;
       },
       {} as Record<string, string | undefined>,
@@ -245,7 +246,7 @@ const SplitByAmountSection: React.FC = () => {
   const [splitShareValue, setSplitShareValue] = useState(
     participants.reduce(
       (acc, p) => {
-        acc[p.id] = p.splitShare?.toString() ?? '';
+        acc[p.id] = toUIString(p.splitShare);
         return acc;
       },
       {} as Record<string, string | undefined>,
@@ -302,7 +303,7 @@ const SplitByShareSection: React.FC = () => {
   const [splitShareValue, setSplitShareValue] = useState(
     participants.reduce(
       (acc, p) => {
-        acc[p.id] = p.splitShare?.toString();
+        acc[p.id] = (Number(p.splitShare) / 100).toString();
         return acc;
       },
       {} as Record<string, string | undefined>,

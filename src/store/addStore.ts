@@ -286,14 +286,15 @@ export function calculateSplitShareBasedOnAmount(
 
     case SplitType.PERCENTAGE:
       // Convert amounts back to percentages
+      debugger;
       updatedParticipants = participants.map((p) => ({
         ...p,
         splitShare:
           amount === 0n
             ? 0n
             : paidBy?.id !== p.id
-              ? (BigMath.abs(p.amount ?? 0n) / amount) * 10000n
-              : (BigMath.abs(amount - (p.amount ?? 0n)) / amount) * 10000n,
+              ? (BigMath.abs(p.amount ?? 0n) * 10000n) / amount
+              : (BigMath.abs(amount - (p.amount ?? 0n)) * 10000n) / amount,
       }));
       break;
 

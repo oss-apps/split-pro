@@ -124,6 +124,8 @@ interface BooleanSplitSectionProps extends SplitSectionPropsBase {
   isBoolean: true;
   onChange: (participant: Participant, addOrUpdateParticipant: (p: Participant) => void) => void;
   fmtShareText: null;
+  positiveOnly: null;
+  step: null;
 }
 
 interface NumericSplitSectionProps extends SplitSectionPropsBase {
@@ -134,6 +136,8 @@ interface NumericSplitSectionProps extends SplitSectionPropsBase {
     value?: string,
   ) => void;
   fmtShareText: (amount: bigint, participant: Participant) => string;
+  positiveOnly?: boolean;
+  step?: number;
 }
 
 type SplitSectionProps = BooleanSplitSectionProps | NumericSplitSectionProps;
@@ -154,6 +158,8 @@ const splitProps: SplitSectionProps[] = [
       addOrUpdateParticipant({ ...participant, splitShare: participant.splitShare ? 0n : 1n });
     },
     fmtShareText: null,
+    positiveOnly: null,
+    step: null,
   },
   {
     splitType: SplitType.PERCENTAGE,
@@ -173,6 +179,7 @@ const splitProps: SplitSectionProps[] = [
       }
     },
     fmtShareText: (_amount, participant) => (Number(participant.splitShare) / 100).toString(),
+    positiveOnly: true,
   },
   {
     splitType: SplitType.EXACT,
@@ -192,6 +199,7 @@ const splitProps: SplitSectionProps[] = [
     },
     fmtShareText: (amount, participant) =>
       removeTrailingZeros(toUIString(participant.splitShare ?? 0n)),
+    positiveOnly: true,
   },
   {
     splitType: SplitType.SHARE,
@@ -200,16 +208,18 @@ const splitProps: SplitSectionProps[] = [
     isBoolean: false,
     fmtSummartyText: (_amount, _currency, participants) => {
       const totalShares = participants.reduce((acc, p) => acc + (p.splitShare ?? 0n), 0n);
-      return `Total shares ${Number(totalShares)}`;
+      return `Total shares ${Number(totalShares) / 100}`;
     },
     onChange: (participant, addOrUpdateParticipant, value) => {
       if (value === undefined || value === '') {
         addOrUpdateParticipant({ ...participant, splitShare: 0n });
       } else {
-        addOrUpdateParticipant({ ...participant, splitShare: toSafeBigInt(value) / 100n });
+        addOrUpdateParticipant({ ...participant, splitShare: toSafeBigInt(value) });
       }
     },
-    fmtShareText: (_amount, participant) => Number(participant.splitShare).toString(),
+    fmtShareText: (_amount, participant) => (Number(participant.splitShare) / 100).toString(),
+    positiveOnly: true,
+    step: 1,
   },
   {
     splitType: SplitType.ADJUSTMENT,
@@ -237,6 +247,8 @@ const SplitSection: React.FC<SplitSectionProps> = ({
   fmtSummartyText,
   onChange,
   fmtShareText,
+  positiveOnly,
+  step,
 }) => {
   const participants = useAddExpenseStore((s) => s.participants);
   const currency = useAddExpenseStore((s) => s.currency);
@@ -295,6 +307,9 @@ const SplitSection: React.FC<SplitSectionProps> = ({
                 value={fmtShareText(amount, p)}
                 inputMode="decimal"
                 className="ml-2 w-20 text-lg"
+                placeholder="0"
+                min={positiveOnly ? 0 : undefined}
+                step={step ?? 0.01}
                 onChange={(e) => onChange(p, addOrUpdateParticipant, e.target.value)}
               />
             </div>

@@ -286,7 +286,6 @@ export function calculateSplitShareBasedOnAmount(
 
     case SplitType.PERCENTAGE:
       // Convert amounts back to percentages
-      debugger;
       updatedParticipants = participants.map((p) => ({
         ...p,
         splitShare:

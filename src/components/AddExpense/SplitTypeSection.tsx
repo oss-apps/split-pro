@@ -13,7 +13,7 @@ import {
 import { useCallback, useMemo } from 'react';
 
 import { type Participant, useAddExpenseStore } from '~/store/addStore';
-import { toSafeBigInt, toUIString } from '~/utils/numbers';
+import { removeTrailingZeros, toSafeBigInt, toUIString } from '~/utils/numbers';
 
 import { UserAvatar } from '../ui/avatar';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
@@ -169,6 +169,7 @@ const splitProps: SplitSectionProps[] = [
       if (value === undefined || value === '') {
         addOrUpdateParticipant({ ...participant, splitShare: 0n });
       } else {
+        debugger;
         addOrUpdateParticipant({ ...participant, splitShare: toSafeBigInt(value) });
       }
     },
@@ -190,7 +191,8 @@ const splitProps: SplitSectionProps[] = [
         addOrUpdateParticipant({ ...participant, splitShare: toSafeBigInt(value) });
       }
     },
-    fmtShareText: (amount, participant) => toUIString(participant.splitShare ?? 0n),
+    fmtShareText: (amount, participant) =>
+      removeTrailingZeros(toUIString(participant.splitShare ?? 0n)),
   },
   {
     splitType: SplitType.SHARE,
@@ -199,16 +201,17 @@ const splitProps: SplitSectionProps[] = [
     isBoolean: false,
     fmtSummartyText: (_amount, _currency, participants) => {
       const totalShares = participants.reduce((acc, p) => acc + (p.splitShare ?? 0n), 0n);
-      return `Total shares ${toUIString(totalShares)}`;
+      return `Total shares ${Number(totalShares)}`;
     },
     onChange: (participant, addOrUpdateParticipant, value) => {
       if (value === undefined || value === '') {
         addOrUpdateParticipant({ ...participant, splitShare: 0n });
       } else {
-        addOrUpdateParticipant({ ...participant, splitShare: toSafeBigInt(value) });
+        debugger;
+        addOrUpdateParticipant({ ...participant, splitShare: toSafeBigInt(value) / 100n });
       }
     },
-    fmtShareText: (_amount, participant) => (Number(participant.splitShare) / 100).toString(),
+    fmtShareText: (_amount, participant) => Number(participant.splitShare).toString(),
   },
   {
     splitType: SplitType.ADJUSTMENT,
@@ -226,7 +229,7 @@ const splitProps: SplitSectionProps[] = [
         addOrUpdateParticipant({ ...participant, splitShare: toSafeBigInt(value) });
       }
     },
-    fmtShareText: (_amount, participant) => participant.splitShare?.toString() ?? '',
+    fmtShareText: (_amount, participant) => removeTrailingZeros(toUIString(participant.splitShare)),
   },
 ];
 

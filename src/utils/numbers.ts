@@ -25,6 +25,13 @@ export function toUIString(num = 0n) {
   return `${absNum.toString().slice(0, -2) || '0'}.${absNum.toString().slice(-2).padStart(2, '0')}`;
 }
 
+export function removeTrailingZeros(num: string) {
+  if (num.includes('.')) {
+    return num.replace(/\.?0+$/, '');
+  }
+  return num;
+}
+
 export const BigMath = {
   abs(x: bigint) {
     return x < 0n ? -x : x;

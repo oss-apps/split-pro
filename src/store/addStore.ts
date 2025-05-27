@@ -218,7 +218,7 @@ export function calculateParticipantSplit(
     case SplitType.PERCENTAGE:
       updatedParticipants = participants.map((p) => ({
         ...p,
-        amount: (BigInt(p.splitShare ?? 0) * amount) / 100n,
+        amount: ((p.splitShare ?? 0n) * amount) / 10000n,
       }));
 
       canSplitScreenClosed =
@@ -298,27 +298,30 @@ export function calculateSplitShareBasedOnAmount(
       break;
 
     case SplitType.SHARE:
-      // Convert amounts back to shares
-      const shares = participants.map((p) =>
+      const numAmount = Number(amount);
+      const numParticipants = participants.map((p) => ({ ...p, amount: Number(p.amount ?? 0) }));
+      const shares = numParticipants.map((p) =>
         p.id === paidBy?.id
-          ? BigMath.abs(amount - (p.amount ?? 0n)) / amount
-          : BigMath.abs(p.amount ?? 0n) / amount,
+          ? Math.abs(numAmount - (p.amount ?? 0)) / numAmount
+          : Math.abs(p.amount ?? 0) / numAmount,
       );
 
       // Find the minimum share value
-      const minShare = BigMath.min(...shares);
+      const minShare = Math.min(...shares);
 
       // Calculate multiplier to make minimum share equal to 1
-      const multiplier = minShare !== 0n ? 1n / minShare : 1n;
+      const multiplier = minShare !== 0 ? 1 / minShare : 1;
 
-      updatedParticipants = participants.map((p) => ({
+      updatedParticipants = numParticipants.map((p) => ({
         ...p,
-        splitShare:
+        splitShare: BigInt(
           (amount === 0n
-            ? 0n
+            ? 0
             : paidBy?.id !== p.id
-              ? BigMath.abs((p.amount ?? 0n) / amount)
-              : BigMath.abs(amount - (p.amount ?? 0n) / amount)) * multiplier,
+              ? Math.abs(p.amount ?? 0) / numAmount
+              : Math.abs(numAmount - (p.amount ?? 0)) / numAmount) * multiplier,
+        ),
+        amount: BigInt(p.amount),
       }));
       break;
 

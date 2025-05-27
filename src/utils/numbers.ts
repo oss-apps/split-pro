@@ -20,9 +20,9 @@ export function toSafeBigInt(num: number | string) {
   }
 }
 
-export function toUIString(num = 0n) {
-  const absNum = BigMath.abs(num);
-  return `${absNum.toString().slice(0, -2) || '0'}.${absNum.toString().slice(-2).padStart(2, '0')}`;
+export function toUIString(num = 0n, signed = false) {
+  num = signed ? num : BigMath.abs(num);
+  return `${num.toString().slice(0, -2) || '0'}.${num.toString().slice(-2).padStart(2, '0')}`;
 }
 
 export function removeTrailingZeros(num: string) {

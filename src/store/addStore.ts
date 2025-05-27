@@ -104,16 +104,25 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         };
       }),
     setSplitShare: (splitType, userId, share) =>
-      // @ts-expect-error TS expects us to use all split types, but we only use one at a time
-      set((state) => ({
-        splitShares: {
+      set((state) => {
+        const splitShares = {
           ...state.splitShares,
           [userId]: {
             ...state.splitShares[userId],
             [splitType]: share,
           },
-        },
-      })),
+        } as SplitShares;
+        return {
+          ...calculateParticipantSplit(
+            state.amount,
+            state.participants,
+            state.splitType,
+            splitShares,
+            state.paidBy,
+          ),
+          splitShares,
+        };
+      }),
     setGroup: (group) => {
       set({ group });
     },
@@ -273,9 +282,13 @@ export function calculateParticipantSplit(
       break;
     case SplitType.SHARE:
       const totalShare = participants.reduce((acc, p) => acc + Number(getSplitShare(p) ?? 0n), 0);
+      canSplitScreenClosed = totalShare > 0;
       updatedParticipants = participants.map((p) => ({
         ...p,
-        amount: ((getSplitShare(p) ?? 0n) * amount) / BigInt(Math.round(totalShare)),
+        amount:
+          (getSplitShare(p) ?? 0n) === 0n
+            ? 0n
+            : ((getSplitShare(p) ?? 0n) * amount) / BigInt(Math.round(totalShare)),
       }));
       break;
     case SplitType.EXACT:
@@ -301,7 +314,6 @@ export function calculateParticipantSplit(
   }
 
   // ! Implement penny splitting logic
-
   updatedParticipants = updatedParticipants.map((p) => {
     if (p.id === paidBy?.id) {
       return { ...p, amount: -(p.amount ?? 0n) + amount };

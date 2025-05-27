@@ -168,7 +168,7 @@ const splitProps: SplitSectionProps[] = [
           (acc, p) => acc + (splitShares[p.id]?.[SplitType.PERCENTAGE] ?? 0n),
           0n,
         );
-      return `Remaining ${toUIString(remainingPercentage)}%`;
+      return `Remaining ${toUIString(remainingPercentage, true)}%`;
     },
     fmtShareText: (share) => (Number(share) / 100).toString(),
   },
@@ -182,7 +182,7 @@ const splitProps: SplitSectionProps[] = [
         (acc, p) => acc + (splitShares[p.id]?.[SplitType.EXACT] ?? 0n),
         0n,
       );
-      return `Remaining ${currency} ${toUIString(amount - totalAmount)}`;
+      return `Remaining ${currency} ${toUIString(amount - totalAmount, true)}`;
     },
     fmtShareText: (share) => removeTrailingZeros(toUIString(share)),
   },

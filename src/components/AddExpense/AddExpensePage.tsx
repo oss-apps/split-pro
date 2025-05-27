@@ -371,7 +371,7 @@ export const AddOrEditExpensePage: React.FC<{
               <Input
                 placeholder="Enter amount"
                 className="text-lg placeholder:text-sm"
-                type="text"
+                type="number"
                 inputMode="decimal"
                 value={amtStr}
                 onChange={(e) => onUpdateAmount(e.target.value)}

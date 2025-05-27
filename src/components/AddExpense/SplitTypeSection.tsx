@@ -169,7 +169,6 @@ const splitProps: SplitSectionProps[] = [
       if (value === undefined || value === '') {
         addOrUpdateParticipant({ ...participant, splitShare: 0n });
       } else {
-        debugger;
         addOrUpdateParticipant({ ...participant, splitShare: toSafeBigInt(value) });
       }
     },
@@ -207,7 +206,6 @@ const splitProps: SplitSectionProps[] = [
       if (value === undefined || value === '') {
         addOrUpdateParticipant({ ...participant, splitShare: 0n });
       } else {
-        debugger;
         addOrUpdateParticipant({ ...participant, splitShare: toSafeBigInt(value) / 100n });
       }
     },

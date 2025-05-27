@@ -124,7 +124,6 @@ interface BooleanSplitSectionProps extends SplitSectionPropsBase {
   isBoolean: true;
   onChange: (participant: Participant, addOrUpdateParticipant: (p: Participant) => void) => void;
   fmtShareText: null;
-  positiveOnly: null;
   step: null;
 }
 
@@ -136,7 +135,6 @@ interface NumericSplitSectionProps extends SplitSectionPropsBase {
     value?: string,
   ) => void;
   fmtShareText: (amount: bigint, participant: Participant) => string;
-  positiveOnly?: boolean;
   step?: number;
 }
 
@@ -158,7 +156,6 @@ const splitProps: SplitSectionProps[] = [
       addOrUpdateParticipant({ ...participant, splitShare: participant.splitShare ? 0n : 1n });
     },
     fmtShareText: null,
-    positiveOnly: null,
     step: null,
   },
   {
@@ -179,7 +176,6 @@ const splitProps: SplitSectionProps[] = [
       }
     },
     fmtShareText: (_amount, participant) => (Number(participant.splitShare) / 100).toString(),
-    positiveOnly: true,
   },
   {
     splitType: SplitType.EXACT,
@@ -199,7 +195,6 @@ const splitProps: SplitSectionProps[] = [
     },
     fmtShareText: (amount, participant) =>
       removeTrailingZeros(toUIString(participant.splitShare ?? 0n)),
-    positiveOnly: true,
   },
   {
     splitType: SplitType.SHARE,
@@ -218,7 +213,6 @@ const splitProps: SplitSectionProps[] = [
       }
     },
     fmtShareText: (_amount, participant) => (Number(participant.splitShare) / 100).toString(),
-    positiveOnly: true,
     step: 1,
   },
   {
@@ -226,9 +220,8 @@ const splitProps: SplitSectionProps[] = [
     iconComponent: Plus,
     prefix: CURRENCY_TOKEN,
     isBoolean: false,
-    fmtSummartyText: (amount, currency, participants) => {
-      const totalAdjustment = participants.reduce((acc, p) => acc + (p.splitShare ?? 0n), 0n);
-      return `Remaining to split equally ${currency} ${toUIString(amount - totalAdjustment)}`;
+    fmtSummartyText: () => {
+      return ``;
     },
     onChange: (participant, addOrUpdateParticipant, value) => {
       if (value === undefined || value === '') {
@@ -247,7 +240,6 @@ const SplitSection: React.FC<SplitSectionProps> = ({
   fmtSummartyText,
   onChange,
   fmtShareText,
-  positiveOnly,
   step,
 }) => {
   const participants = useAddExpenseStore((s) => s.participants);
@@ -308,7 +300,7 @@ const SplitSection: React.FC<SplitSectionProps> = ({
                 inputMode="decimal"
                 className="ml-2 w-20 text-lg"
                 placeholder="0"
-                min={positiveOnly ? 0 : undefined}
+                min={0}
                 step={step ?? 0.01}
                 onChange={(e) => onChange(p, addOrUpdateParticipant, e.target.value)}
               />

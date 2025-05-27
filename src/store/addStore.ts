@@ -339,14 +339,13 @@ export function calculateSplitShareBasedOnAmount(
 
     case SplitType.ADJUSTMENT:
       // For adjustment, split share is the difference from equal share
+      const equalShare = amount / BigInt(participants.length);
       updatedParticipants = participants.map((p) => ({
         ...p,
         splitShare:
-          amount === 0n
-            ? 0n
-            : paidBy?.id !== p.id
-              ? BigMath.abs(p.amount ?? 0n)
-              : BigMath.abs(amount - (p.amount ?? 0n)),
+          paidBy?.id !== p.id
+            ? equalShare + (p.amount ?? 0n)
+            : amount - equalShare - (p.amount ?? 0n),
       }));
       break;
   }

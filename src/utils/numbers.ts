@@ -1,3 +1,5 @@
+import { CURRENCIES, type CurrencyCode } from '~/lib/currency';
+
 export function toSafeBigInt(num: number | string) {
   if (typeof num === 'number') {
     return BigInt(Math.round(num * 100));
@@ -7,6 +9,7 @@ export function toSafeBigInt(num: number | string) {
     }
     const parsed = parseFloat(num);
     if (isNaN(parsed)) {
+      // ! Do not throw an error here, as this is a common case when parsing user input
       throw new Error(`Invalid number string: ${num}`);
     }
     const num_unified_decimal = num.replace(',', '.');
@@ -20,9 +23,25 @@ export function toSafeBigInt(num: number | string) {
   }
 }
 
-export function toUIString(num = 0n, signed = false) {
-  num = signed ? num : BigMath.abs(num);
-  return `${num.toString().slice(0, -2) || '0'}.${num.toString().slice(-2).padStart(2, '0')}`;
+export function toUIString(num = 0n, signed = false, currencyCode: CurrencyCode = 'USD') {
+  const { decimalDigits } = CURRENCIES[currencyCode];
+  const maxDecimals = 10n ** BigInt(decimalDigits);
+  const decimalPart = num % 100n;
+  const wholePart = BigMath.abs(num) / 100n;
+  const res =
+    wholePart.toLocaleString(undefined, {
+      maximumFractionDigits: 0,
+    }) +
+    (decimalDigits > 0
+      ? (Number(decimalPart) / Number(maxDecimals))
+          .toLocaleString(undefined, {
+            minimumFractionDigits: decimalDigits,
+            maximumFractionDigits: decimalDigits,
+            signDisplay: 'never',
+          })
+          .slice(1) // Remove leading '0.'
+      : '');
+  return (signed && num < 0n && parseFloat(res) !== 0 ? '-' : '') + res;
 }
 
 export function removeTrailingZeros(num: string) {

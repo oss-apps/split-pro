@@ -1,6 +1,7 @@
-import { GroupBalance } from '@prisma/client';
-import { simplifyDebts } from './simplify';
+import { type GroupBalance } from '@prisma/client';
 import { addHours } from 'date-fns';
+
+import { simplifyDebts } from './simplify';
 
 type MinimalEdge = {
   userOne: number;
@@ -39,7 +40,10 @@ const edgeToGroupBalance = (edge: MinimalEdge): [GroupBalance, GroupBalance] => 
   ];
 };
 
-const padWithZeroBalances = (balances: GroupBalance[], userCount: number): GroupBalance[] => {
+const padWithZeroBalances: (balances: GroupBalance[], userCount: number) => GroupBalance[] = (
+  balances,
+  userCount,
+) => {
   const result = [...balances];
   for (let userId = 0; userId < userCount; userId++) {
     for (let friendId = userId + 1; friendId < userCount; friendId++) {
@@ -56,7 +60,9 @@ const padWithZeroBalances = (balances: GroupBalance[], userCount: number): Group
 };
 
 const getFullBalanceGraph = (edges: MinimalEdge[], userCount: number): GroupBalance[] => {
-  return padWithZeroBalances(edges.flatMap(edgeToGroupBalance), userCount).toSorted(sortByIds);
+  const arr = padWithZeroBalances(edges.flatMap(edgeToGroupBalance), userCount);
+  arr.sort(sortByIds);
+  return arr;
 };
 
 // taken from https://www.geeksforgeeks.org/minimize-cash-flow-among-given-set-friends-borrowed-money/
@@ -126,7 +132,9 @@ const denseGraph: GroupBalance[] = getFullBalanceGraph(
 
 describe('simplifyDebts', () => {
   it('simplifies small graph', () => {
-    expect(simplifyDebts(smallGraph).toSorted(sortByIds)).toEqual(smallGraphResult);
+    const result = simplifyDebts(smallGraph);
+    result.sort(sortByIds);
+    expect(result).toEqual(smallGraphResult);
   });
 
   it.each([

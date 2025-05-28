@@ -1,7 +1,9 @@
 import type { GroupBalance, User } from '@prisma/client';
 import clsx from 'clsx';
+
 import { UserAvatar } from '~/components/ui/avatar';
 import { toUIString } from '~/utils/numbers';
+
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 
 interface UserWithBalance {

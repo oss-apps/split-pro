@@ -83,6 +83,9 @@ importers:
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.1
+      clsx:
+        specifier: ^2.1.0
+        version: 2.1.1
       cmdk:
         specifier: ^0.2.0
         version: 0.2.1(@types/react@18.3.22)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -198,9 +201,6 @@ importers:
       babel-loader:
         specifier: ^9.1.3
         version: 9.2.1(@babel/core@7.27.1)(webpack@5.99.9)
-      clsx:
-        specifier: ^2.1.0
-        version: 2.1.1
       eslint:
         specifier: ^8.56.0
         version: 8.57.1

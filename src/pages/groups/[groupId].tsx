@@ -1,4 +1,3 @@
-import { SplitType } from '@prisma/client';
 import Avatar from 'boring-avatars';
 import clsx from 'clsx';
 import { format } from 'date-fns';
@@ -9,17 +8,19 @@ import {
   ChevronLeft,
   DoorOpen,
   Info,
+  Merge,
   Share,
   Trash2,
   UserPlus,
 } from 'lucide-react';
 import Head from 'next/head';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { toast } from 'sonner';
 
+import { BalanceList } from '~/components/Expense/BalanceList';
+import { ExpenseList } from '~/components/Expense/ExpenseList';
 import AddMembers from '~/components/group/AddMembers';
 import GroupMyBalance from '~/components/group/GroupMyBalance';
 import NoMembers from '~/components/group/NoMembers';
@@ -36,8 +37,9 @@ import {
 } from '~/components/ui/alert-dialog';
 import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
-import { CategoryIcon } from '~/components/ui/categoryIcons';
 import { AppDrawer } from '~/components/ui/drawer';
+import { Switch } from '~/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { env } from '~/env';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
@@ -54,6 +56,7 @@ const BalancePage: NextPageWithUser<{
   const expensesQuery = api.group.getExpenses.useQuery({ groupId });
   const deleteGroupMutation = api.group.delete.useMutation();
   const leaveGroupMutation = api.group.leaveGroup.useMutation();
+  const toggleSimplifyDebtsMutation = api.group.toggleSimplifyDebts.useMutation();
 
   const [isInviteCopied, setIsInviteCopied] = useState(false);
   const [showDeleteTrigger, setShowDeleteTrigger] = useState(false);
@@ -85,7 +88,7 @@ const BalancePage: NextPageWithUser<{
   const isAdmin = groupDetailQuery.data?.userId === user.id;
   const canDelete =
     groupDetailQuery.data?.userId === user.id &&
-    !groupDetailQuery.data.groupBalances.find((b) => b.amount !== 0);
+    !groupDetailQuery.data?.groupBalances.find((b) => b.amount !== 0);
   const canLeave = !groupDetailQuery.data?.groupBalances.find(
     (b) => b.amount !== 0 && b.userId === user.id,
   );
@@ -157,12 +160,12 @@ const BalancePage: NextPageWithUser<{
                 <div className="mt-2 flex flex-wrap gap-1">
                   {groupTotalQuery.data?.map((total, index, arr) => {
                     return total._sum.amount != null ? (
-                      <>
-                        <div key={total.currency} className="flex flex-wrap gap-1">
+                      <Fragment key={total.currency}>
+                        <div className="flex flex-wrap gap-1">
                           {total.currency} {toUIString(total._sum.amount)}
                         </div>
                         {index < arr.length - 1 ? <span>+</span> : null}
-                      </>
+                      </Fragment>
                     ) : null;
                   })}
                 </div>
@@ -209,6 +212,28 @@ const BalancePage: NextPageWithUser<{
               <div className="mt-8">
                 <p className="font-semibold ">Actions</p>
                 <div className="mt-2 flex flex-col gap-1">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="simplify-debts" className="flex items-center">
+                      <Merge className="mr-2 h-4 w-4" /> Simplify debts
+                    </label>
+                    <Switch
+                      id="simplify-debts"
+                      checked={groupDetailQuery.data?.simplifyDebts ?? false}
+                      onCheckedChange={() => {
+                        toggleSimplifyDebtsMutation.mutate(
+                          { groupId },
+                          {
+                            onSuccess: () => {
+                              void groupDetailQuery.refetch();
+                            },
+                            onError: () => {
+                              toast.error('Failed to update setting');
+                            },
+                          },
+                        );
+                      }}
+                    />
+                  </div>
                   {isAdmin ? (
                     <>
                       <AlertDialog
@@ -371,83 +396,28 @@ const BalancePage: NextPageWithUser<{
                 )}
               </Button>
             </div>
+            <Tabs defaultValue="expenses" className="px-2">
+              <TabsList className="mx-auto grid w-full max-w-96 grid-cols-2">
+                <TabsTrigger value="expenses">Expenses</TabsTrigger>
+                <TabsTrigger value="balances">Balances</TabsTrigger>
+              </TabsList>
+              <TabsContent value="expenses">
+                <ExpenseList
+                  userId={user.id}
+                  expenses={expensesQuery.data ?? []}
+                  contactId={groupId}
+                  isLoading={expensesQuery.isLoading}
+                />
+              </TabsContent>
+              <TabsContent value="balances">
+                <BalanceList
+                  balances={groupDetailQuery.data?.groupBalances ?? []}
+                  users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
+                />
+              </TabsContent>
+            </Tabs>
           </motion.div>
         )}
-        {expensesQuery.data?.map((e) => {
-          const youPaid = e.paidBy === user.id;
-          const yourExpense = e.expenseParticipants.find((p) => p.userId === user.id);
-          const isSettlement = e.splitType === SplitType.SETTLEMENT;
-          const yourExpenseAmount = youPaid
-            ? (yourExpense?.amount ?? 0)
-            : -(yourExpense?.amount ?? 0);
-
-          return (
-            <Link
-              href={`/groups/${groupId}/expenses/${e.id}`}
-              key={e.id}
-              className="flex items-center justify-between px-2 py-2"
-            >
-              <div className="flex items-center gap-4">
-                <div className="text-xs text-gray-500">
-                  {format(e.expenseDate, 'MMM dd')
-                    .split(' ')
-                    .map((d) => (
-                      <div className="text-center" key={d}>
-                        {d}
-                      </div>
-                    ))}
-                </div>
-                <div>
-                  <CategoryIcon category={e.category} className="h-5 w-5 text-gray-400" />
-                </div>
-                <div>
-                  {!isSettlement ? (
-                    <p className=" max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">
-                      {e.name}
-                    </p>
-                  ) : null}
-                  <p
-                    className={`flex text-center ${isSettlement ? 'text-sm text-gray-400' : 'text-xs text-gray-500'}`}
-                  >
-                    <span className="text-[10px]">{isSettlement ? '  🎉  ' : null}</span>
-                    {youPaid ? 'You' : (e.paidByUser.name ?? e.paidByUser.email)} paid {e.currency}{' '}
-                    {toUIString(e.amount)}{' '}
-                  </p>
-                </div>
-              </div>
-              {isSettlement ? null : (
-                <div className="min-w-10 shrink-0">
-                  {youPaid || yourExpenseAmount !== 0 ? (
-                    <>
-                      <div
-                        className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
-                      >
-                        {youPaid ? 'You lent' : 'You owe'}
-                      </div>
-                      <div
-                        className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
-                      >
-                        <span className="font-light ">{e.currency}</span>{' '}
-                        {toUIString(yourExpenseAmount)}
-                      </div>
-                    </>
-                  ) : (
-                    <div>
-                      <p className="text-xs text-gray-400">Not involved</p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </Link>
-          );
-        })}
-        {expensesQuery.data?.length === 0 &&
-        !groupDetailQuery.isLoading &&
-        groupDetailQuery.data?.groupUsers.length !== 1 ? (
-          <div className="mt-20 flex flex-col items-center justify-center ">
-            <Image src="/add_expense.svg" alt="Empty" width={200} height={200} className="mb-4" />
-          </div>
-        ) : null}
       </MainLayout>
     </>
   );

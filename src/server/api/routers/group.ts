@@ -3,6 +3,7 @@ import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
+import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 
@@ -255,6 +256,10 @@ export const groupRouter = createTRPCRouter({
       },
     });
 
+    if (group?.simplifyDebts) {
+      group.groupBalances = simplifyDebts(group.groupBalances);
+    }
+
     return group;
   }),
 
@@ -285,6 +290,47 @@ export const groupRouter = createTRPCRouter({
       });
 
       return groupUsers;
+    }),
+
+  toggleSimplifyDebts: groupProcedure
+    .input(z.object({ groupId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const group = await ctx.db.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+      });
+
+      if (!group) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
+      }
+
+      const isInGroup = await ctx.db.groupUser.findFirst({
+        where: {
+          groupId: input.groupId,
+          userId: ctx.session.user.id,
+        },
+      });
+
+      if (!isInGroup) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only group members can toggle Simplify Debts',
+        });
+      }
+
+      const simplifyDebts = !group.simplifyDebts;
+
+      await ctx.db.group.update({
+        where: {
+          id: input.groupId,
+        },
+        data: {
+          simplifyDebts,
+        },
+      });
+
+      return simplifyDebts;
     }),
 
   leaveGroup: groupProcedure
@@ -353,3 +399,5 @@ export const groupRouter = createTRPCRouter({
       return group;
     }),
 });
+
+export type GroupRouter = typeof groupRouter;

@@ -1,15 +1,16 @@
 import { format } from 'date-fns';
-import { Banknote, CalendarIcon, Check, HeartHandshakeIcon } from 'lucide-react';
+import { Banknote, CalendarIcon, HeartHandshakeIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { CURRENCIES } from '~/lib/currency';
+import { type CurrencyCode } from '~/lib/currency';
 import { cn } from '~/lib/utils';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { toSafeBigInt } from '~/utils/numbers';
 
+import { CurrencyPicker } from './CurrencyPicker';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { SplitTypeSection } from './SplitTypeSection';
 import UploadFile from './UploadFile';
@@ -17,7 +18,6 @@ import { UserInput } from './UserInput';
 import { Button } from '../ui/button';
 import { Calendar } from '../ui/calendar';
 import { CategoryIcons } from '../ui/categoryIcons';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../ui/command';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
@@ -142,6 +142,16 @@ export const AddOrEditExpensePage: React.FC<{
   const addExpenseMutation = api.user.addOrEditExpense.useMutation();
   const addGroupExpenseMutation = api.group.addOrEditExpense.useMutation();
   const updateProfile = api.user.updateUserDetail.useMutation();
+
+  const onCurrencyPick = useCallback(
+    (currency: CurrencyCode) => {
+      updateProfile.mutate({ currency });
+
+      setCurrency(currency);
+      setOpen(false);
+    },
+    [setCurrency, updateProfile],
+  );
 
   const router = useRouter();
 
@@ -330,42 +340,7 @@ export const AddOrEditExpensePage: React.FC<{
                   if (openVal !== open) setOpen(openVal);
                 }}
               >
-                <div className="">
-                  <Command className="h-[50vh]">
-                    <CommandInput className="text-lg" placeholder="Search currency" />
-                    <CommandEmpty>No currency found.</CommandEmpty>
-                    <CommandGroup className="h-full overflow-auto">
-                      {CURRENCIES.map((framework) => (
-                        <CommandItem
-                          key={`${framework.code}-${framework.name}`}
-                          value={`${framework.code}-${framework.name}`}
-                          onSelect={(currentValue) => {
-                            const _currency = currentValue.split('-')[0]?.toUpperCase() ?? 'USD';
-                            updateProfile.mutate({ currency: _currency });
-
-                            setCurrency(_currency);
-                            setOpen(false);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              'mr-2 h-4 w-4',
-                              `${framework.code}-${framework.name.toLowerCase()}`.startsWith(
-                                currency,
-                              )
-                                ? 'opacity-100'
-                                : 'opacity-0',
-                            )}
-                          />
-                          <div className="flex gap-2">
-                            <p>{framework.name}</p>
-                            <p className=" text-muted-foreground">{framework.code}</p>
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </Command>
-                </div>
+                <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
               </AppDrawer>
 
               <Input

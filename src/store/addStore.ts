@@ -2,6 +2,7 @@ import { type Group, SplitType, type User } from '@prisma/client';
 import Router from 'next/router';
 import { create } from 'zustand';
 
+import { type CurrencyCode } from '~/lib/currency';
 import { shuffleArray } from '~/utils/array';
 import { BigMath } from '~/utils/numbers';
 
@@ -17,7 +18,7 @@ export interface AddExpenseState {
   participants: Participant[];
   splitShares: SplitShares;
   description: string;
-  currency: string;
+  currency: CurrencyCode;
   category: string;
   nameOrEmail: string;
   paidBy: User | undefined;
@@ -37,7 +38,7 @@ export interface AddExpenseState {
     setParticipants: (participants: User[]) => void;
     removeParticipant: (userId: number) => void;
     removeLastParticipant: () => void;
-    setCurrency: (currency: string) => void;
+    setCurrency: (currency: CurrencyCode) => void;
     setCategory: (category: string) => void;
     setNameOrEmail: (nameOrEmail: string) => void;
     setPaidBy: (user: User) => void;

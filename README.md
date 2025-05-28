@@ -57,7 +57,7 @@ All numbers are stored in the DB as `BigInt` data, with no floats what so ever, 
 
 #### How are leftover pennies handled?
 
-In case of an expense that cannot be split evenly, the leftover amounts are distributed randomly across participants. The assignment is as equal as possible, in the context of a single expense (similiar to Splitwise).
+In case of an expense that cannot be split evenly, the leftover amounts are distributed randomly across participants. The assignment is as equal as possible, in the context of a single expense (similar to Splitwise).
 
 ## Tech stack
 

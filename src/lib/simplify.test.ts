@@ -6,7 +6,7 @@ import { simplifyDebts } from './simplify';
 type MinimalEdge = {
   userOne: number;
   userTwo: number;
-  amount: number;
+  amount: bigint;
 };
 
 const sortByIds = (a: GroupBalance, b: GroupBalance) => {
@@ -34,7 +34,7 @@ const edgeToGroupBalance = (edge: MinimalEdge): [GroupBalance, GroupBalance] => 
     {
       userId: edge.userTwo,
       firendId: edge.userOne,
-      amount: edge.amount === 0 ? 0 : -edge.amount,
+      amount: edge.amount === 0n ? 0n : -edge.amount,
       ...base,
     },
   ];
@@ -52,7 +52,7 @@ const padWithZeroBalances: (balances: GroupBalance[], userCount: number) => Grou
       );
 
       if (!found) {
-        result.push(...edgeToGroupBalance({ userOne: userId, userTwo: friendId, amount: 0 }));
+        result.push(...edgeToGroupBalance({ userOne: userId, userTwo: friendId, amount: 0n }));
       }
     }
   }
@@ -68,17 +68,17 @@ const getFullBalanceGraph = (edges: MinimalEdge[], userCount: number): GroupBala
 // taken from https://www.geeksforgeeks.org/minimize-cash-flow-among-given-set-friends-borrowed-money/
 const smallGraph: GroupBalance[] = getFullBalanceGraph(
   [
-    { userOne: 0, userTwo: 1, amount: 10 },
-    { userOne: 1, userTwo: 2, amount: 50 },
-    { userOne: 2, userTwo: 0, amount: -20 },
+    { userOne: 0, userTwo: 1, amount: 1000n },
+    { userOne: 1, userTwo: 2, amount: 5000n },
+    { userOne: 2, userTwo: 0, amount: -2000n },
   ],
   3,
 );
 
 const smallGraphResult: GroupBalance[] = getFullBalanceGraph(
   [
-    { userOne: 1, userTwo: 2, amount: 40 },
-    { userOne: 2, userTwo: 0, amount: -30 },
+    { userOne: 1, userTwo: 2, amount: 4000n },
+    { userOne: 2, userTwo: 0, amount: -3000n },
   ],
   3,
 ).map((resultBalance, idx) => ({
@@ -89,43 +89,43 @@ const smallGraphResult: GroupBalance[] = getFullBalanceGraph(
 // taken from https://medium.com/@mithunmk93/algorithm-behind-splitwises-debt-simplification-feature-8ac485e97688
 const largeGraph: GroupBalance[] = getFullBalanceGraph(
   [
-    { userOne: 1, userTwo: 2, amount: 40 },
-    { userOne: 1, userTwo: 5, amount: -10 },
-    { userOne: 1, userTwo: 6, amount: -30 },
+    { userOne: 1, userTwo: 2, amount: 4000n },
+    { userOne: 1, userTwo: 5, amount: -1000n },
+    { userOne: 1, userTwo: 6, amount: -3000n },
 
-    { userOne: 2, userTwo: 3, amount: 20 },
-    { userOne: 2, userTwo: 5, amount: -30 },
+    { userOne: 2, userTwo: 3, amount: 2000n },
+    { userOne: 2, userTwo: 5, amount: -3000n },
 
-    { userOne: 3, userTwo: 4, amount: 50 },
-    { userOne: 3, userTwo: 5, amount: -10 },
-    { userOne: 3, userTwo: 6, amount: -10 },
+    { userOne: 3, userTwo: 4, amount: 5000n },
+    { userOne: 3, userTwo: 5, amount: -1000n },
+    { userOne: 3, userTwo: 6, amount: -1000n },
 
-    { userOne: 4, userTwo: 5, amount: -10 },
+    { userOne: 4, userTwo: 5, amount: -1000n },
   ],
   7,
 );
 
 const denseGraph: GroupBalance[] = getFullBalanceGraph(
   [
-    { userOne: 0, userTwo: 1, amount: 8957.95 },
-    { userOne: 0, userTwo: 2, amount: 3280.43 },
-    { userOne: 0, userTwo: 3, amount: -1746.24 },
-    { userOne: 0, userTwo: 4, amount: 50.35 },
-    { userOne: 0, userTwo: 5, amount: -814.16 },
+    { userOne: 0, userTwo: 1, amount: 895795n },
+    { userOne: 0, userTwo: 2, amount: 328043n },
+    { userOne: 0, userTwo: 3, amount: -174624n },
+    { userOne: 0, userTwo: 4, amount: 5035n },
+    { userOne: 0, userTwo: 5, amount: -81416n },
 
-    { userOne: 1, userTwo: 2, amount: -3245.6 },
-    { userOne: 1, userTwo: 3, amount: -115.02 },
-    { userOne: 1, userTwo: 4, amount: 1261.15 },
-    { userOne: 1, userTwo: 5, amount: 833.33 },
+    { userOne: 1, userTwo: 2, amount: -324560n },
+    { userOne: 1, userTwo: 3, amount: -11502n },
+    { userOne: 1, userTwo: 4, amount: 126115n },
+    { userOne: 1, userTwo: 5, amount: 83333n },
 
-    { userOne: 2, userTwo: 3, amount: -5191.67 },
-    { userOne: 2, userTwo: 4, amount: -4000.5 },
-    { userOne: 2, userTwo: 5, amount: -233.34 },
+    { userOne: 2, userTwo: 3, amount: -519167n },
+    { userOne: 2, userTwo: 4, amount: -400050n },
+    { userOne: 2, userTwo: 5, amount: -23334n },
 
-    { userOne: 3, userTwo: 4, amount: 1572.84 },
-    { userOne: 3, userTwo: 5, amount: 158.33 },
+    { userOne: 3, userTwo: 4, amount: 157284n },
+    { userOne: 3, userTwo: 5, amount: 15833n },
 
-    { userOne: 4, userTwo: 5, amount: 129.16 },
+    { userOne: 4, userTwo: 5, amount: 12916n },
   ],
   6,
 );
@@ -150,20 +150,18 @@ describe('simplifyDebts', () => {
     ({ graph }) => {
       const startingBalances = graph.reduce(
         (acc, balance) => {
-          acc[balance.userId] =
-            Math.round(100 * ((acc[balance.userId] ?? 0) + balance.amount)) / 100;
+          acc[balance.userId] = (acc[balance.userId] ?? 0n) + balance.amount;
           return acc;
         },
-        {} as Record<number, number>,
+        {} as Record<number, bigint>,
       );
 
       const userBalances = simplifyDebts(graph).reduce(
         (acc, balance) => {
-          acc[balance.userId] =
-            Math.round(100 * ((acc[balance.userId] ?? 0) + balance.amount)) / 100;
+          acc[balance.userId] = (acc[balance.userId] ?? 0n) + balance.amount;
           return acc;
         },
-        {} as Record<number, number>,
+        {} as Record<number, bigint>,
       );
 
       expect(startingBalances).toEqual(userBalances);

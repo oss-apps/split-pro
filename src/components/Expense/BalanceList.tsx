@@ -2,14 +2,14 @@ import type { GroupBalance, User } from '@prisma/client';
 import clsx from 'clsx';
 
 import { UserAvatar } from '~/components/ui/avatar';
-import { toUIString } from '~/utils/numbers';
+import { BigMath, toUIString } from '~/utils/numbers';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 
 interface UserWithBalance {
   user: User;
-  total: Record<string, number>;
-  balances: Record<number, Record<string, number>>;
+  total: Record<string, bigint>;
+  balances: Record<number, Record<string, bigint>>;
 }
 
 export const BalanceList: React.FC<{
@@ -25,25 +25,25 @@ export const BalanceList: React.FC<{
   );
 
   balances
-    .filter(({ amount }) => Math.abs(amount) > 0)
+    .filter(({ amount }) => BigMath.abs(amount) > 0)
     .forEach((balance) => {
       if (!userMap[balance.userId]!.balances[balance.firendId]) {
         userMap[balance.userId]!.balances[balance.firendId] = {};
       }
       const friendBalance = userMap[balance.userId]!.balances[balance.firendId]!;
-      friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0) + balance.amount;
+      friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0n) + balance.amount;
 
       userMap[balance.userId]!.total[balance.currency] =
-        (userMap[balance.userId]!.total[balance.currency] ?? 0) + balance.amount;
+        (userMap[balance.userId]!.total[balance.currency] ?? 0n) + balance.amount;
     });
 
   return (
     <Accordion type="multiple">
       {Object.values(userMap).map(({ user, total, balances }) => {
-        let totalAmount: [string, number] = ['', 0];
+        let totalAmount: [string, bigint] = ['', 0n];
 
         Object.entries(total).forEach(([currency, amount]) => {
-          if (Math.abs(amount) > Math.abs(totalAmount[1])) {
+          if (BigMath.abs(amount) > BigMath.abs(totalAmount[1])) {
             totalAmount = [currency, amount];
           }
         });
@@ -55,7 +55,7 @@ export const BalanceList: React.FC<{
                 <UserAvatar user={user} />
                 <div className="text-foreground">
                   {user.name ?? user.email}
-                  {Object.values(total).every((amount) => amount === 0) ? (
+                  {Object.values(total).every((amount) => amount === 0n) ? (
                     <span className="text-gray-400"> is settled up</span>
                   ) : (
                     <>

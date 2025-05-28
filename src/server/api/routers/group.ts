@@ -52,7 +52,6 @@ export const groupRouter = createTRPCRouter({
   }),
 
   getAllGroupsWithBalances: protectedProcedure.query(async ({ ctx }) => {
-    const time = Date.now();
     const groups = await ctx.db.groupUser.findMany({
       where: {
         userId: ctx.session.user.id,
@@ -281,7 +280,6 @@ export const groupRouter = createTRPCRouter({
   addMembers: groupProcedure
     .input(z.object({ userIds: z.array(z.number()) }))
     .mutation(async ({ input, ctx }) => {
-      console.log(input.userIds);
       const groupUsers = await ctx.db.groupUser.createMany({
         data: input.userIds.map((userId) => ({
           groupId: input.groupId,

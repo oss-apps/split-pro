@@ -22,16 +22,16 @@ function simplifyDebtsForSingleCurrency(
   groupBalances: GroupBalance[],
   nodes: number[],
 ): GroupBalance[] {
-  const adjMatrix = new Array<number[]>(nodes.length)
+  const adjMatrix = new Array<bigint[]>(nodes.length)
     .fill([])
-    .map(() => new Array<number>(nodes.length).fill(0));
+    .map(() => new Array<bigint>(nodes.length).fill(0n));
 
   const nonResidualBalances = groupBalances.filter((balance) => balance.amount > 0);
 
   nonResidualBalances.forEach((balance) => {
     const source = nodes.indexOf(balance.userId);
     const sink = nodes.indexOf(balance.firendId);
-    adjMatrix[source]![sink] = balance.amount * 100;
+    adjMatrix[source]![sink] = balance.amount;
   });
 
   const simplified = minCashFlow(adjMatrix);
@@ -44,13 +44,13 @@ function simplifyDebtsForSingleCurrency(
           (balance) => balance.userId === nodes[source] && balance.firendId === nodes[sink],
         )!;
 
-        if (amount === 0) {
+        if (amount === 0n) {
           return;
         }
 
         res.push({
           ...balance,
-          amount: amount / 100,
+          amount,
         });
       });
       return res;
@@ -63,7 +63,7 @@ function simplifyDebtsForSingleCurrency(
         graphBalance.userId === balance.userId && graphBalance.firendId === balance.firendId,
     );
     if (!found) {
-      result.push({ ...balance, amount: 0 });
+      result.push({ ...balance, amount: 0n });
     }
   });
 
@@ -71,10 +71,10 @@ function simplifyDebtsForSingleCurrency(
 }
 
 // based on https://www.geeksforgeeks.org/minimize-cash-flow-among-given-set-friends-borrowed-money/
-const minCashFlow = (graph: number[][]): number[][] => {
+const minCashFlow = (graph: bigint[][]): bigint[][] => {
   const n = graph.length;
 
-  const amounts = new Array<number>(n).fill(0);
+  const amounts = new Array<bigint>(n).fill(0n);
   for (let i = 0; i < n; ++i) {
     for (let j = 0; j < n; ++j) {
       const diff = graph[j]![i]! - graph[i]![j]!;
@@ -84,12 +84,12 @@ const minCashFlow = (graph: number[][]): number[][] => {
   return solveTransaction(amounts);
 };
 
-const solveTransaction = (amounts: number[]): number[][] => {
+const solveTransaction = (amounts: bigint[]): bigint[][] => {
   const [minQ, maxQ] = constructMinMaxQ(amounts);
 
-  const result = new Array<number[]>(amounts.length)
+  const result = new Array<bigint[]>(amounts.length)
     .fill([])
-    .map(() => new Array<number>(amounts.length).fill(0));
+    .map(() => new Array<bigint>(amounts.length).fill(0n));
 
   while (minQ.length > 0 && maxQ.length > 0) {
     const maxCreditEntry = maxQ.pop()!;
@@ -101,7 +101,7 @@ const solveTransaction = (amounts: number[]): number[][] => {
     const creditor = maxCreditEntry.key;
     let owed_amount;
 
-    if (transaction_val === 0) {
+    if (transaction_val === 0n) {
       owed_amount = maxCreditEntry.value;
     } else if (transaction_val < 0) {
       owed_amount = maxCreditEntry.value;
@@ -122,13 +122,13 @@ const solveTransaction = (amounts: number[]): number[][] => {
   return result;
 };
 
-const compareAsc = (p1: Entry, p2: Entry): number => p1.value - p2.value;
+const compareAsc = (p1: Entry, p2: Entry): number => Number(p1.value - p2.value);
 
-const constructMinMaxQ = (amounts: number[]): [Entry[], Entry[]] => {
+const constructMinMaxQ = (amounts: bigint[]): [Entry[], Entry[]] => {
   const minQ: Entry[] = [];
   const maxQ: Entry[] = [];
   amounts.forEach((amount, index) => {
-    if (amount === 0) {
+    if (amount === 0n) {
       return;
     }
     if (amount > 0) {
@@ -153,7 +153,7 @@ const getMirrorBalances = (groupBalances: GroupBalance[]): GroupBalance[] => {
       ...balance,
       userId: balance.firendId,
       firendId: balance.userId,
-      amount: balance.amount > 0 ? -balance.amount : 0,
+      amount: balance.amount > 0 ? -balance.amount : 0n,
     });
   });
 
@@ -162,5 +162,5 @@ const getMirrorBalances = (groupBalances: GroupBalance[]): GroupBalance[] => {
 
 interface Entry {
   key: number;
-  value: number;
+  value: bigint;
 }

@@ -23,7 +23,9 @@ export const ExpenseList: React.FC<{
       const youPaid = e.paidBy === userId;
       const yourExpense = e.expenseParticipants.find((p) => p.userId === userId);
       const isSettlement = e.splitType === SplitType.SETTLEMENT;
-      const yourExpenseAmount = youPaid ? (yourExpense?.amount ?? 0) : -(yourExpense?.amount ?? 0);
+      const yourExpenseAmount = youPaid
+        ? (yourExpense?.amount ?? 0n)
+        : -(yourExpense?.amount ?? 0n);
 
       return (
         <Link
@@ -59,7 +61,7 @@ export const ExpenseList: React.FC<{
           </div>
           {isSettlement ? null : (
             <div className="min-w-10 shrink-0">
-              {youPaid || yourExpenseAmount !== 0 ? (
+              {youPaid || yourExpenseAmount !== 0n ? (
                 <>
                   <div
                     className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}

@@ -49,6 +49,16 @@ I managed to find a good app [spliit.app](https://spliit.app/) by [Sebastien Cas
 
 _That's when I decided to work on this_
 
+## FAQ
+
+#### How numerically stable is the internal logic?
+
+All numbers are stored in the DB as `BigInt` data, with no floats what so ever, safeguarding your expences from rounding errors or lack of precision. This holds true for currencies with large nominal values that might outgrow the safe range of JS number type.
+
+#### How are leftover pennies handled?
+
+In case of an expense that cannot be split evenly, the leftover amounts are distributed randomly across participants. The assignment is as equal as possible, in the context of a single expense (similiar to Splitwise).
+
 ## Tech stack
 
 - [NextJS](https://nextjs.org/)

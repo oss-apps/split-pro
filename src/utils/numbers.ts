@@ -9,8 +9,7 @@ export function toSafeBigInt(num: number | string) {
     }
     const parsed = parseFloat(num);
     if (isNaN(parsed)) {
-      // ! Do not throw an error here, as this is a common case when parsing user input
-      throw new Error(`Invalid number string: ${num}`);
+      return 0n;
     }
     const num_unified_decimal = num.replace(',', '.');
     const parts = num_unified_decimal.split('.');
@@ -19,7 +18,7 @@ export function toSafeBigInt(num: number | string) {
 
     return whole * 100n + fraction;
   } else {
-    throw new Error(`Unsupported type: ${typeof num}`);
+    return 0n;
   }
 }
 

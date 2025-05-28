@@ -52,7 +52,6 @@ export const groupRouter = createTRPCRouter({
   }),
 
   getAllGroupsWithBalances: protectedProcedure.query(async ({ ctx }) => {
-    const time = Date.now();
     const groups = await ctx.db.groupUser.findMany({
       where: {
         userId: ctx.session.user.id,
@@ -81,10 +80,10 @@ export const groupRouter = createTRPCRouter({
     });
 
     const groupsWithBalances = sortedGroupsByLatestExpense.map((g) => {
-      const balances: Record<string, number> = {};
+      const balances: Record<string, bigint> = {};
 
       for (const balance of g.group.groupBalances) {
-        balances[balance.currency] = (balances[balance.currency] ?? 0) + balance.amount;
+        balances[balance.currency] = (balances[balance.currency] ?? 0n) + balance.amount;
       }
 
       return {
@@ -125,7 +124,7 @@ export const groupRouter = createTRPCRouter({
         paidBy: z.number(),
         name: z.string(),
         category: z.string(),
-        amount: z.number(),
+        amount: z.bigint(),
         splitType: z.enum([
           SplitType.ADJUSTMENT,
           SplitType.EQUAL,
@@ -135,7 +134,7 @@ export const groupRouter = createTRPCRouter({
           SplitType.SETTLEMENT,
         ]),
         currency: z.string(),
-        participants: z.array(z.object({ userId: z.number(), amount: z.number() })),
+        participants: z.array(z.object({ userId: z.number(), amount: z.bigint() })),
         fileKey: z.string().optional(),
         expenseDate: z.date().optional(),
         expenseId: z.string().optional(),
@@ -281,7 +280,6 @@ export const groupRouter = createTRPCRouter({
   addMembers: groupProcedure
     .input(z.object({ userIds: z.array(z.number()) }))
     .mutation(async ({ input, ctx }) => {
-      console.log(input.userIds);
       const groupUsers = await ctx.db.groupUser.createMany({
         data: input.userIds.map((userId) => ({
           groupId: input.groupId,
@@ -381,7 +379,7 @@ export const groupRouter = createTRPCRouter({
         throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Only creator can delete the group' });
       }
 
-      const balanceWithNonZero = group?.groupBalances.find((b) => b.amount !== 0);
+      const balanceWithNonZero = group?.groupBalances.find((b) => b.amount !== 0n);
 
       if (balanceWithNonZero) {
         throw new TRPCError({

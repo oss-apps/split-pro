@@ -77,7 +77,7 @@ model Balance {
     userId                Int
     currency              String
     friendId              Int
-    amount                Int
+    amount                BigInt
     createdAt             DateTime @default(now())
     updatedAt             DateTime @updatedAt
     importedFromSplitwise Boolean  @default(false)
@@ -117,7 +117,7 @@ model GroupBalance {
     currency  String
     userId    Int
     firendId  Int
-    amount    Int
+    amount    BigInt
     updatedAt DateTime @updatedAt
     group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
     user      User     @relation(name: "GroupUserBalance", fields: [userId], references: [id], onDelete: Cascade)
@@ -141,7 +141,7 @@ model Expense {
     addedBy             Int
     name                String
     category            String
-    amount              Int
+    amount              BigInt
     splitType           SplitType            @default(EQUAL)
     expenseDate         DateTime             @default(now())
     createdAt           DateTime             @default(now())
@@ -167,7 +167,7 @@ model Expense {
 model ExpenseParticipant {
     expenseId String
     userId    Int
-    amount    Int
+    amount    BigInt
     user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
     expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
 

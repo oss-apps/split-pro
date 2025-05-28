@@ -84,6 +84,8 @@ const config = {
       },
     ],
     'import/no-named-as-default': 'off',
+    'no-console': ['warn', { allow: ['info', 'warn', 'error', 'debug', 'trace'] }],
+    'no-debugger': 'warn',
   },
 };
 

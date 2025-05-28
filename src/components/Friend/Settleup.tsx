@@ -1,11 +1,11 @@
 import { type Balance, SplitType, type User } from '@prisma/client';
 import { ArrowRightIcon } from 'lucide-react';
 import { type User as NextUser } from 'next-auth';
-import React from 'react';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
 
 import { api } from '~/utils/api';
-import { toFixedNumber } from '~/utils/numbers';
+import { BigMath, toSafeBigInt, toUIString } from '~/utils/numbers';
 
 import { FriendBalance } from './FirendBalance';
 import { UserAvatar } from '../ui/avatar';
@@ -18,18 +18,18 @@ export const SettleUp: React.FC<{
   friend: User;
   currentUser: NextUser;
 }> = ({ balances, friend, currentUser }) => {
-  const [balanceToSettle, setBallanceToSettle] = React.useState<Balance | undefined>(
+  const [balanceToSettle, setBalanceToSettle] = useState<Balance | undefined>(
     balances.length > 1 ? undefined : balances[0],
   );
-  const [amount, setAmount] = React.useState<string>(
-    balances.length > 1 ? '' : toFixedNumber(Math.abs(balances[0]?.amount ?? 0)).toString(),
+  const [amount, setAmount] = useState<string>(
+    balances.length > 1 ? '' : toUIString(BigMath.abs(balances[0]?.amount ?? 0n)),
   );
 
   const isCurrentUserPaying = (balanceToSettle?.amount ?? 0) < 0;
 
   function onSelectBalance(balance: Balance) {
-    setBallanceToSettle(balance);
-    setAmount(toFixedNumber(Math.abs(balance.amount)).toString());
+    setBalanceToSettle(balance);
+    setAmount(toUIString(BigMath.abs(balance.amount)));
   }
 
   const addExpenseMutation = api.user.addOrEditExpense.useMutation();
@@ -44,16 +44,16 @@ export const SettleUp: React.FC<{
       {
         name: 'Settle up',
         currency: balanceToSettle.currency,
-        amount: parseFloat(amount),
+        amount: toSafeBigInt(amount),
         splitType: SplitType.SETTLEMENT,
         participants: [
           {
             userId: currentUser.id,
-            amount: isCurrentUserPaying ? parseFloat(amount) : -parseFloat(amount),
+            amount: isCurrentUserPaying ? toSafeBigInt(amount) : -toSafeBigInt(amount),
           },
           {
             userId: friend.id,
-            amount: isCurrentUserPaying ? -parseFloat(amount) : parseFloat(amount),
+            amount: isCurrentUserPaying ? -toSafeBigInt(amount) : toSafeBigInt(amount),
           },
         ],
         paidBy: isCurrentUserPaying ? currentUser.id : friend.id,
@@ -64,7 +64,8 @@ export const SettleUp: React.FC<{
           utils.user.invalidate().catch(console.error);
         },
         onError: (error) => {
-          toast.info('Error while saving expense');
+          console.error('Error while saving expense:', error);
+          toast.error('Error while saving expense');
         },
       },
     );
@@ -85,7 +86,7 @@ export const SettleUp: React.FC<{
         disableTrigger={!balances?.length}
         leftAction={''}
         leftActionOnClick={() => {
-          setBallanceToSettle(undefined);
+          setBalanceToSettle(undefined);
         }}
         title=""
         className="h-[70vh]"
@@ -101,7 +102,7 @@ export const SettleUp: React.FC<{
                     size="sm"
                     variant="ghost"
                     className=" text-cyan-500 lg:hidden"
-                    onClick={() => setBallanceToSettle(undefined)}
+                    onClick={() => setBalanceToSettle(undefined)}
                   >
                     Back
                   </Button>
@@ -111,7 +112,7 @@ export const SettleUp: React.FC<{
                       size="sm"
                       variant="ghost"
                       className=" text-cyan-500 lg:hidden"
-                      onClick={() => (balances.length > 1 ? setBallanceToSettle(undefined) : null)}
+                      onClick={() => (balances.length > 1 ? setBalanceToSettle(undefined) : null)}
                     >
                       Back
                     </Button>
@@ -184,7 +185,7 @@ export const SettleUp: React.FC<{
                   <Button
                     size="sm"
                     variant="secondary"
-                    onClick={() => setBallanceToSettle(undefined)}
+                    onClick={() => setBalanceToSettle(undefined)}
                   >
                     Back
                   </Button>
@@ -193,7 +194,7 @@ export const SettleUp: React.FC<{
                     <Button
                       size="sm"
                       variant="secondary"
-                      onClick={() => (balances.length > 1 ? setBallanceToSettle(undefined) : null)}
+                      onClick={() => (balances.length > 1 ? setBalanceToSettle(undefined) : null)}
                     >
                       Back
                     </Button>

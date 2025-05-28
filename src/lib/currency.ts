@@ -1,5 +1,5 @@
-export const CURRENCIES = [
-  {
+export const CURRENCIES = {
+  USD: {
     name: 'US Dollar',
     symbol: '$',
     symbolNative: '$',
@@ -8,7 +8,7 @@ export const CURRENCIES = [
     code: 'USD',
     namePlural: 'US dollars',
   },
-  {
+  CAD: {
     name: 'Canadian Dollar',
     symbol: 'CA$',
     symbolNative: '$',
@@ -17,7 +17,7 @@ export const CURRENCIES = [
     code: 'CAD',
     namePlural: 'Canadian dollars',
   },
-  {
+  EUR: {
     name: 'Euro',
     symbol: '€',
     symbolNative: '€',
@@ -26,7 +26,7 @@ export const CURRENCIES = [
     code: 'EUR',
     namePlural: 'euros',
   },
-  {
+  AED: {
     name: 'United Arab Emirates Dirham',
     symbol: 'AED',
     symbolNative: 'د.إ.‏',
@@ -35,7 +35,7 @@ export const CURRENCIES = [
     code: 'AED',
     namePlural: 'UAE dirhams',
   },
-  {
+  AFN: {
     name: 'Afghan Afghani',
     symbol: 'Af',
     symbolNative: '؋',
@@ -44,7 +44,7 @@ export const CURRENCIES = [
     code: 'AFN',
     namePlural: 'Afghan Afghanis',
   },
-  {
+  ALL: {
     name: 'Albanian Lek',
     symbol: 'ALL',
     symbolNative: 'Lek',
@@ -53,7 +53,7 @@ export const CURRENCIES = [
     code: 'ALL',
     namePlural: 'Albanian lekë',
   },
-  {
+  AMD: {
     name: 'Armenian Dram',
     symbol: 'AMD',
     symbolNative: 'դր.',
@@ -62,7 +62,7 @@ export const CURRENCIES = [
     code: 'AMD',
     namePlural: 'Armenian drams',
   },
-  {
+  ARS: {
     name: 'Argentine Peso',
     symbol: 'AR$',
     symbolNative: '$',
@@ -71,7 +71,7 @@ export const CURRENCIES = [
     code: 'ARS',
     namePlural: 'Argentine pesos',
   },
-  {
+  AUD: {
     name: 'Australian Dollar',
     symbol: 'AU$',
     symbolNative: '$',
@@ -80,7 +80,7 @@ export const CURRENCIES = [
     code: 'AUD',
     namePlural: 'Australian dollars',
   },
-  {
+  AZN: {
     name: 'Azerbaijani Manat',
     symbol: 'man.',
     symbolNative: 'ман.',
@@ -89,7 +89,7 @@ export const CURRENCIES = [
     code: 'AZN',
     namePlural: 'Azerbaijani manats',
   },
-  {
+  BAM: {
     name: 'Bosnia-Herzegovina Convertible Mark',
     symbol: 'KM',
     symbolNative: 'KM',
@@ -98,7 +98,7 @@ export const CURRENCIES = [
     code: 'BAM',
     namePlural: 'Bosnia-Herzegovina convertible marks',
   },
-  {
+  BDT: {
     name: 'Bangladeshi Taka',
     symbol: 'Tk',
     symbolNative: '৳',
@@ -107,7 +107,7 @@ export const CURRENCIES = [
     code: 'BDT',
     namePlural: 'Bangladeshi takas',
   },
-  {
+  BGN: {
     name: 'Bulgarian Lev',
     symbol: 'BGN',
     symbolNative: 'лв.',
@@ -116,7 +116,7 @@ export const CURRENCIES = [
     code: 'BGN',
     namePlural: 'Bulgarian leva',
   },
-  {
+  BHD: {
     name: 'Bahraini Dinar',
     symbol: 'BD',
     symbolNative: 'د.ب.‏',
@@ -125,7 +125,7 @@ export const CURRENCIES = [
     code: 'BHD',
     namePlural: 'Bahraini dinars',
   },
-  {
+  BIF: {
     name: 'Burundian Franc',
     symbol: 'FBu',
     symbolNative: 'FBu',
@@ -134,7 +134,7 @@ export const CURRENCIES = [
     code: 'BIF',
     namePlural: 'Burundian francs',
   },
-  {
+  BND: {
     name: 'Brunei Dollar',
     symbol: 'BN$',
     symbolNative: '$',
@@ -143,7 +143,7 @@ export const CURRENCIES = [
     code: 'BND',
     namePlural: 'Brunei dollars',
   },
-  {
+  BOB: {
     name: 'Bolivian Boliviano',
     symbol: 'Bs',
     symbolNative: 'Bs',
@@ -152,7 +152,7 @@ export const CURRENCIES = [
     code: 'BOB',
     namePlural: 'Bolivian bolivianos',
   },
-  {
+  BRL: {
     name: 'Brazilian Real',
     symbol: 'R$',
     symbolNative: 'R$',
@@ -161,7 +161,7 @@ export const CURRENCIES = [
     code: 'BRL',
     namePlural: 'Brazilian reals',
   },
-  {
+  BWP: {
     name: 'Botswanan Pula',
     symbol: 'BWP',
     symbolNative: 'P',
@@ -170,7 +170,7 @@ export const CURRENCIES = [
     code: 'BWP',
     namePlural: 'Botswanan pulas',
   },
-  {
+  BYN: {
     name: 'Belarusian Ruble',
     symbol: 'Br',
     symbolNative: 'руб.',
@@ -179,7 +179,7 @@ export const CURRENCIES = [
     code: 'BYN',
     namePlural: 'Belarusian rubles',
   },
-  {
+  BZD: {
     name: 'Belize Dollar',
     symbol: 'BZ$',
     symbolNative: '$',
@@ -188,7 +188,7 @@ export const CURRENCIES = [
     code: 'BZD',
     namePlural: 'Belize dollars',
   },
-  {
+  CDF: {
     name: 'Congolese Franc',
     symbol: 'CDF',
     symbolNative: 'FrCD',
@@ -197,7 +197,7 @@ export const CURRENCIES = [
     code: 'CDF',
     namePlural: 'Congolese francs',
   },
-  {
+  CHF: {
     name: 'Swiss Franc',
     symbol: 'CHF',
     symbolNative: 'CHF',
@@ -206,7 +206,7 @@ export const CURRENCIES = [
     code: 'CHF',
     namePlural: 'Swiss francs',
   },
-  {
+  CLP: {
     name: 'Chilean Peso',
     symbol: 'CL$',
     symbolNative: '$',
@@ -215,7 +215,7 @@ export const CURRENCIES = [
     code: 'CLP',
     namePlural: 'Chilean pesos',
   },
-  {
+  CNY: {
     name: 'Chinese Yuan',
     symbol: 'CN¥',
     symbolNative: 'CN¥',
@@ -224,7 +224,7 @@ export const CURRENCIES = [
     code: 'CNY',
     namePlural: 'Chinese yuan',
   },
-  {
+  COP: {
     name: 'Colombian Peso',
     symbol: 'CO$',
     symbolNative: '$',
@@ -233,7 +233,7 @@ export const CURRENCIES = [
     code: 'COP',
     namePlural: 'Colombian pesos',
   },
-  {
+  CRC: {
     name: 'Costa Rican Colón',
     symbol: '₡',
     symbolNative: '₡',
@@ -242,7 +242,7 @@ export const CURRENCIES = [
     code: 'CRC',
     namePlural: 'Costa Rican colóns',
   },
-  {
+  CVE: {
     name: 'Cape Verdean Escudo',
     symbol: 'CV$',
     symbolNative: 'CV$',
@@ -251,7 +251,7 @@ export const CURRENCIES = [
     code: 'CVE',
     namePlural: 'Cape Verdean escudos',
   },
-  {
+  CZK: {
     name: 'Czech Republic Koruna',
     symbol: 'Kč',
     symbolNative: 'Kč',
@@ -260,7 +260,7 @@ export const CURRENCIES = [
     code: 'CZK',
     namePlural: 'Czech Republic korunas',
   },
-  {
+  DJF: {
     name: 'Djiboutian Franc',
     symbol: 'Fdj',
     symbolNative: 'Fdj',
@@ -269,7 +269,7 @@ export const CURRENCIES = [
     code: 'DJF',
     namePlural: 'Djiboutian francs',
   },
-  {
+  DKK: {
     name: 'Danish Krone',
     symbol: 'Dkr',
     symbolNative: 'kr',
@@ -278,7 +278,7 @@ export const CURRENCIES = [
     code: 'DKK',
     namePlural: 'Danish kroner',
   },
-  {
+  DOP: {
     name: 'Dominican Peso',
     symbol: 'RD$',
     symbolNative: 'RD$',
@@ -287,7 +287,7 @@ export const CURRENCIES = [
     code: 'DOP',
     namePlural: 'Dominican pesos',
   },
-  {
+  DZD: {
     name: 'Algerian Dinar',
     symbol: 'DA',
     symbolNative: 'د.ج.‏',
@@ -296,7 +296,7 @@ export const CURRENCIES = [
     code: 'DZD',
     namePlural: 'Algerian dinars',
   },
-  {
+  EEK: {
     name: 'Estonian Kroon',
     symbol: 'Ekr',
     symbolNative: 'kr',
@@ -305,7 +305,7 @@ export const CURRENCIES = [
     code: 'EEK',
     namePlural: 'Estonian kroons',
   },
-  {
+  EGP: {
     name: 'Egyptian Pound',
     symbol: 'EGP',
     symbolNative: 'ج.م.‏',
@@ -314,7 +314,7 @@ export const CURRENCIES = [
     code: 'EGP',
     namePlural: 'Egyptian pounds',
   },
-  {
+  ERN: {
     name: 'Eritrean Nakfa',
     symbol: 'Nfk',
     symbolNative: 'Nfk',
@@ -323,7 +323,7 @@ export const CURRENCIES = [
     code: 'ERN',
     namePlural: 'Eritrean nakfas',
   },
-  {
+  ETB: {
     name: 'Ethiopian Birr',
     symbol: 'Br',
     symbolNative: 'Br',
@@ -332,7 +332,7 @@ export const CURRENCIES = [
     code: 'ETB',
     namePlural: 'Ethiopian birrs',
   },
-  {
+  GBP: {
     name: 'British Pound Sterling',
     symbol: '£',
     symbolNative: '£',
@@ -341,7 +341,7 @@ export const CURRENCIES = [
     code: 'GBP',
     namePlural: 'British pounds sterling',
   },
-  {
+  GEL: {
     name: 'Georgian Lari',
     symbol: 'GEL',
     symbolNative: 'GEL',
@@ -350,7 +350,7 @@ export const CURRENCIES = [
     code: 'GEL',
     namePlural: 'Georgian laris',
   },
-  {
+  GHS: {
     name: 'Ghanaian Cedi',
     symbol: 'GH₵',
     symbolNative: 'GH₵',
@@ -359,7 +359,7 @@ export const CURRENCIES = [
     code: 'GHS',
     namePlural: 'Ghanaian cedis',
   },
-  {
+  GNF: {
     name: 'Guinean Franc',
     symbol: 'FG',
     symbolNative: 'FG',
@@ -368,7 +368,7 @@ export const CURRENCIES = [
     code: 'GNF',
     namePlural: 'Guinean francs',
   },
-  {
+  GTQ: {
     name: 'Guatemalan Quetzal',
     symbol: 'GTQ',
     symbolNative: 'Q',
@@ -377,7 +377,7 @@ export const CURRENCIES = [
     code: 'GTQ',
     namePlural: 'Guatemalan quetzals',
   },
-  {
+  HKD: {
     name: 'Hong Kong Dollar',
     symbol: 'HK$',
     symbolNative: '$',
@@ -386,7 +386,7 @@ export const CURRENCIES = [
     code: 'HKD',
     namePlural: 'Hong Kong dollars',
   },
-  {
+  HNL: {
     name: 'Honduran Lempira',
     symbol: 'HNL',
     symbolNative: 'L',
@@ -395,7 +395,7 @@ export const CURRENCIES = [
     code: 'HNL',
     namePlural: 'Honduran lempiras',
   },
-  {
+  HRK: {
     name: 'Croatian Kuna',
     symbol: 'kn',
     symbolNative: 'kn',
@@ -404,7 +404,7 @@ export const CURRENCIES = [
     code: 'HRK',
     namePlural: 'Croatian kunas',
   },
-  {
+  HUF: {
     name: 'Hungarian Forint',
     symbol: 'Ft',
     symbolNative: 'Ft',
@@ -413,7 +413,7 @@ export const CURRENCIES = [
     code: 'HUF',
     namePlural: 'Hungarian forints',
   },
-  {
+  IDR: {
     name: 'Indonesian Rupiah',
     symbol: 'Rp',
     symbolNative: 'Rp',
@@ -422,7 +422,7 @@ export const CURRENCIES = [
     code: 'IDR',
     namePlural: 'Indonesian rupiahs',
   },
-  {
+  ILS: {
     name: 'Israeli New Sheqel',
     symbol: '₪',
     symbolNative: '₪',
@@ -431,7 +431,7 @@ export const CURRENCIES = [
     code: 'ILS',
     namePlural: 'Israeli new sheqels',
   },
-  {
+  INR: {
     name: 'Indian Rupee',
     symbol: '₹',
     symbolNative: '₹',
@@ -440,7 +440,7 @@ export const CURRENCIES = [
     code: 'INR',
     namePlural: 'Indian rupees',
   },
-  {
+  IQD: {
     name: 'Iraqi Dinar',
     symbol: 'IQD',
     symbolNative: 'د.ع.‏',
@@ -449,7 +449,7 @@ export const CURRENCIES = [
     code: 'IQD',
     namePlural: 'Iraqi dinars',
   },
-  {
+  IRR: {
     name: 'Iranian Rial',
     symbol: 'IRR',
     symbolNative: '﷼',
@@ -458,7 +458,7 @@ export const CURRENCIES = [
     code: 'IRR',
     namePlural: 'Iranian rials',
   },
-  {
+  ISK: {
     name: 'Icelandic Króna',
     symbol: 'Ikr',
     symbolNative: 'kr',
@@ -467,7 +467,7 @@ export const CURRENCIES = [
     code: 'ISK',
     namePlural: 'Icelandic krónur',
   },
-  {
+  JMD: {
     name: 'Jamaican Dollar',
     symbol: 'J$',
     symbolNative: '$',
@@ -476,7 +476,7 @@ export const CURRENCIES = [
     code: 'JMD',
     namePlural: 'Jamaican dollars',
   },
-  {
+  JOD: {
     name: 'Jordanian Dinar',
     symbol: 'JD',
     symbolNative: 'د.أ.‏',
@@ -485,7 +485,7 @@ export const CURRENCIES = [
     code: 'JOD',
     namePlural: 'Jordanian dinars',
   },
-  {
+  JPY: {
     name: 'Japanese Yen',
     symbol: '¥',
     symbolNative: '￥',
@@ -494,7 +494,7 @@ export const CURRENCIES = [
     code: 'JPY',
     namePlural: 'Japanese yen',
   },
-  {
+  KES: {
     name: 'Kenyan Shilling',
     symbol: 'Ksh',
     symbolNative: 'Ksh',
@@ -503,7 +503,7 @@ export const CURRENCIES = [
     code: 'KES',
     namePlural: 'Kenyan shillings',
   },
-  {
+  KHR: {
     name: 'Cambodian Riel',
     symbol: 'KHR',
     symbolNative: '៛',
@@ -512,7 +512,7 @@ export const CURRENCIES = [
     code: 'KHR',
     namePlural: 'Cambodian riels',
   },
-  {
+  KMF: {
     name: 'Comorian Franc',
     symbol: 'CF',
     symbolNative: 'FC',
@@ -521,7 +521,7 @@ export const CURRENCIES = [
     code: 'KMF',
     namePlural: 'Comorian francs',
   },
-  {
+  KRW: {
     name: 'South Korean Won',
     symbol: '₩',
     symbolNative: '₩',
@@ -530,7 +530,7 @@ export const CURRENCIES = [
     code: 'KRW',
     namePlural: 'South Korean won',
   },
-  {
+  KWD: {
     name: 'Kuwaiti Dinar',
     symbol: 'KD',
     symbolNative: 'د.ك.‏',
@@ -539,7 +539,7 @@ export const CURRENCIES = [
     code: 'KWD',
     namePlural: 'Kuwaiti dinars',
   },
-  {
+  KZT: {
     name: 'Kazakhstani Tenge',
     symbol: 'KZT',
     symbolNative: 'тңг.',
@@ -548,7 +548,7 @@ export const CURRENCIES = [
     code: 'KZT',
     namePlural: 'Kazakhstani tenges',
   },
-  {
+  LBP: {
     name: 'Lebanese Pound',
     symbol: 'LB£',
     symbolNative: 'ل.ل.‏',
@@ -557,7 +557,7 @@ export const CURRENCIES = [
     code: 'LBP',
     namePlural: 'Lebanese pounds',
   },
-  {
+  LKR: {
     name: 'Sri Lankan Rupee',
     symbol: 'SLRs',
     symbolNative: 'SL Re',
@@ -566,7 +566,7 @@ export const CURRENCIES = [
     code: 'LKR',
     namePlural: 'Sri Lankan rupees',
   },
-  {
+  LTL: {
     name: 'Lithuanian Litas',
     symbol: 'Lt',
     symbolNative: 'Lt',
@@ -575,7 +575,7 @@ export const CURRENCIES = [
     code: 'LTL',
     namePlural: 'Lithuanian litai',
   },
-  {
+  LVL: {
     name: 'Latvian Lats',
     symbol: 'Ls',
     symbolNative: 'Ls',
@@ -584,7 +584,7 @@ export const CURRENCIES = [
     code: 'LVL',
     namePlural: 'Latvian lati',
   },
-  {
+  LYD: {
     name: 'Libyan Dinar',
     symbol: 'LD',
     symbolNative: 'د.ل.‏',
@@ -593,7 +593,7 @@ export const CURRENCIES = [
     code: 'LYD',
     namePlural: 'Libyan dinars',
   },
-  {
+  MAD: {
     name: 'Moroccan Dirham',
     symbol: 'MAD',
     symbolNative: 'د.م.‏',
@@ -602,7 +602,7 @@ export const CURRENCIES = [
     code: 'MAD',
     namePlural: 'Moroccan dirhams',
   },
-  {
+  MDL: {
     name: 'Moldovan Leu',
     symbol: 'MDL',
     symbolNative: 'MDL',
@@ -611,7 +611,7 @@ export const CURRENCIES = [
     code: 'MDL',
     namePlural: 'Moldovan lei',
   },
-  {
+  MGA: {
     name: 'Malagasy Ariary',
     symbol: 'MGA',
     symbolNative: 'MGA',
@@ -620,7 +620,7 @@ export const CURRENCIES = [
     code: 'MGA',
     namePlural: 'Malagasy Ariaries',
   },
-  {
+  MKD: {
     name: 'Macedonian Denar',
     symbol: 'MKD',
     symbolNative: 'MKD',
@@ -629,7 +629,7 @@ export const CURRENCIES = [
     code: 'MKD',
     namePlural: 'Macedonian denari',
   },
-  {
+  MMK: {
     name: 'Myanma Kyat',
     symbol: 'MMK',
     symbolNative: 'K',
@@ -638,7 +638,7 @@ export const CURRENCIES = [
     code: 'MMK',
     namePlural: 'Myanma kyats',
   },
-  {
+  MOP: {
     name: 'Macanese Pataca',
     symbol: 'MOP$',
     symbolNative: 'MOP$',
@@ -647,7 +647,7 @@ export const CURRENCIES = [
     code: 'MOP',
     namePlural: 'Macanese patacas',
   },
-  {
+  MUR: {
     name: 'Mauritian Rupee',
     symbol: 'MURs',
     symbolNative: 'MURs',
@@ -656,7 +656,7 @@ export const CURRENCIES = [
     code: 'MUR',
     namePlural: 'Mauritian rupees',
   },
-  {
+  MXN: {
     name: 'Mexican Peso',
     symbol: 'MX$',
     symbolNative: '$',
@@ -665,7 +665,7 @@ export const CURRENCIES = [
     code: 'MXN',
     namePlural: 'Mexican pesos',
   },
-  {
+  MYR: {
     name: 'Malaysian Ringgit',
     symbol: 'RM',
     symbolNative: 'RM',
@@ -674,7 +674,7 @@ export const CURRENCIES = [
     code: 'MYR',
     namePlural: 'Malaysian ringgits',
   },
-  {
+  MZN: {
     name: 'Mozambican Metical',
     symbol: 'MTn',
     symbolNative: 'MTn',
@@ -683,7 +683,7 @@ export const CURRENCIES = [
     code: 'MZN',
     namePlural: 'Mozambican meticals',
   },
-  {
+  NAD: {
     name: 'Namibian Dollar',
     symbol: 'N$',
     symbolNative: 'N$',
@@ -692,7 +692,7 @@ export const CURRENCIES = [
     code: 'NAD',
     namePlural: 'Namibian dollars',
   },
-  {
+  NGN: {
     name: 'Nigerian Naira',
     symbol: '₦',
     symbolNative: '₦',
@@ -701,7 +701,7 @@ export const CURRENCIES = [
     code: 'NGN',
     namePlural: 'Nigerian nairas',
   },
-  {
+  NIO: {
     name: 'Nicaraguan Córdoba',
     symbol: 'C$',
     symbolNative: 'C$',
@@ -710,7 +710,7 @@ export const CURRENCIES = [
     code: 'NIO',
     namePlural: 'Nicaraguan córdobas',
   },
-  {
+  NOK: {
     name: 'Norwegian Krone',
     symbol: 'Nkr',
     symbolNative: 'kr',
@@ -719,7 +719,7 @@ export const CURRENCIES = [
     code: 'NOK',
     namePlural: 'Norwegian kroner',
   },
-  {
+  NPR: {
     name: 'Nepalese Rupee',
     symbol: 'NPRs',
     symbolNative: 'नेरू',
@@ -728,7 +728,7 @@ export const CURRENCIES = [
     code: 'NPR',
     namePlural: 'Nepalese rupees',
   },
-  {
+  NZD: {
     name: 'New Zealand Dollar',
     symbol: 'NZ$',
     symbolNative: '$',
@@ -737,7 +737,7 @@ export const CURRENCIES = [
     code: 'NZD',
     namePlural: 'New Zealand dollars',
   },
-  {
+  OMR: {
     name: 'Omani Rial',
     symbol: 'OMR',
     symbolNative: 'ر.ع.‏',
@@ -746,7 +746,7 @@ export const CURRENCIES = [
     code: 'OMR',
     namePlural: 'Omani rials',
   },
-  {
+  PAB: {
     name: 'Panamanian Balboa',
     symbol: 'B/.',
     symbolNative: 'B/.',
@@ -755,7 +755,7 @@ export const CURRENCIES = [
     code: 'PAB',
     namePlural: 'Panamanian balboas',
   },
-  {
+  PEN: {
     name: 'Peruvian Nuevo Sol',
     symbol: 'S/.',
     symbolNative: 'S/.',
@@ -764,7 +764,7 @@ export const CURRENCIES = [
     code: 'PEN',
     namePlural: 'Peruvian nuevos soles',
   },
-  {
+  PHP: {
     name: 'Philippine Peso',
     symbol: '₱',
     symbolNative: '₱',
@@ -773,7 +773,7 @@ export const CURRENCIES = [
     code: 'PHP',
     namePlural: 'Philippine pesos',
   },
-  {
+  PKR: {
     name: 'Pakistani Rupee',
     symbol: 'PKRs',
     symbolNative: '₨',
@@ -782,7 +782,7 @@ export const CURRENCIES = [
     code: 'PKR',
     namePlural: 'Pakistani rupees',
   },
-  {
+  PLN: {
     name: 'Polish Zloty',
     symbol: 'zł',
     symbolNative: 'zł',
@@ -791,7 +791,7 @@ export const CURRENCIES = [
     code: 'PLN',
     namePlural: 'Polish zlotys',
   },
-  {
+  PYG: {
     name: 'Paraguayan Guarani',
     symbol: '₲',
     symbolNative: '₲',
@@ -800,7 +800,7 @@ export const CURRENCIES = [
     code: 'PYG',
     namePlural: 'Paraguayan guaranis',
   },
-  {
+  QAR: {
     name: 'Qatari Rial',
     symbol: 'QR',
     symbolNative: 'ر.ق.‏',
@@ -809,7 +809,7 @@ export const CURRENCIES = [
     code: 'QAR',
     namePlural: 'Qatari rials',
   },
-  {
+  RON: {
     name: 'Romanian Leu',
     symbol: 'RON',
     symbolNative: 'RON',
@@ -818,7 +818,7 @@ export const CURRENCIES = [
     code: 'RON',
     namePlural: 'Romanian lei',
   },
-  {
+  RSD: {
     name: 'Serbian Dinar',
     symbol: 'din.',
     symbolNative: 'дин.',
@@ -827,7 +827,7 @@ export const CURRENCIES = [
     code: 'RSD',
     namePlural: 'Serbian dinars',
   },
-  {
+  RUB: {
     name: 'Russian Ruble',
     symbol: 'RUB',
     symbolNative: '₽.',
@@ -836,7 +836,7 @@ export const CURRENCIES = [
     code: 'RUB',
     namePlural: 'Russian rubles',
   },
-  {
+  RWF: {
     name: 'Rwandan Franc',
     symbol: 'RWF',
     symbolNative: 'FR',
@@ -845,7 +845,7 @@ export const CURRENCIES = [
     code: 'RWF',
     namePlural: 'Rwandan francs',
   },
-  {
+  SAR: {
     name: 'Saudi Riyal',
     symbol: 'SR',
     symbolNative: 'ر.س.‏',
@@ -854,7 +854,7 @@ export const CURRENCIES = [
     code: 'SAR',
     namePlural: 'Saudi riyals',
   },
-  {
+  SDG: {
     name: 'Sudanese Pound',
     symbol: 'SDG',
     symbolNative: 'SDG',
@@ -863,7 +863,7 @@ export const CURRENCIES = [
     code: 'SDG',
     namePlural: 'Sudanese pounds',
   },
-  {
+  SEK: {
     name: 'Swedish Krona',
     symbol: 'Skr',
     symbolNative: 'kr',
@@ -872,7 +872,7 @@ export const CURRENCIES = [
     code: 'SEK',
     namePlural: 'Swedish kronor',
   },
-  {
+  SGD: {
     name: 'Singapore Dollar',
     symbol: 'S$',
     symbolNative: '$',
@@ -881,7 +881,7 @@ export const CURRENCIES = [
     code: 'SGD',
     namePlural: 'Singapore dollars',
   },
-  {
+  SOS: {
     name: 'Somali Shilling',
     symbol: 'Ssh',
     symbolNative: 'Ssh',
@@ -890,7 +890,7 @@ export const CURRENCIES = [
     code: 'SOS',
     namePlural: 'Somali shillings',
   },
-  {
+  SYP: {
     name: 'Syrian Pound',
     symbol: 'SY£',
     symbolNative: 'ل.س.‏',
@@ -899,7 +899,7 @@ export const CURRENCIES = [
     code: 'SYP',
     namePlural: 'Syrian pounds',
   },
-  {
+  THB: {
     name: 'Thai Baht',
     symbol: '฿',
     symbolNative: '฿',
@@ -908,7 +908,7 @@ export const CURRENCIES = [
     code: 'THB',
     namePlural: 'Thai baht',
   },
-  {
+  TND: {
     name: 'Tunisian Dinar',
     symbol: 'DT',
     symbolNative: 'د.ت.‏',
@@ -917,7 +917,7 @@ export const CURRENCIES = [
     code: 'TND',
     namePlural: 'Tunisian dinars',
   },
-  {
+  TOP: {
     name: 'Tongan Paʻanga',
     symbol: 'T$',
     symbolNative: 'T$',
@@ -926,7 +926,7 @@ export const CURRENCIES = [
     code: 'TOP',
     namePlural: 'Tongan paʻanga',
   },
-  {
+  TRY: {
     name: 'Turkish Lira',
     symbol: 'TL',
     symbolNative: 'TL',
@@ -935,7 +935,7 @@ export const CURRENCIES = [
     code: 'TRY',
     namePlural: 'Turkish Lira',
   },
-  {
+  TTD: {
     name: 'Trinidad and Tobago Dollar',
     symbol: 'TT$',
     symbolNative: '$',
@@ -944,7 +944,7 @@ export const CURRENCIES = [
     code: 'TTD',
     namePlural: 'Trinidad and Tobago dollars',
   },
-  {
+  TWD: {
     name: 'New Taiwan Dollar',
     symbol: 'NT$',
     symbolNative: 'NT$',
@@ -953,7 +953,7 @@ export const CURRENCIES = [
     code: 'TWD',
     namePlural: 'New Taiwan dollars',
   },
-  {
+  TZS: {
     name: 'Tanzanian Shilling',
     symbol: 'TSh',
     symbolNative: 'TSh',
@@ -962,7 +962,7 @@ export const CURRENCIES = [
     code: 'TZS',
     namePlural: 'Tanzanian shillings',
   },
-  {
+  UAH: {
     name: 'Ukrainian Hryvnia',
     symbol: '₴',
     symbolNative: '₴',
@@ -971,7 +971,7 @@ export const CURRENCIES = [
     code: 'UAH',
     namePlural: 'Ukrainian hryvnias',
   },
-  {
+  UGX: {
     name: 'Ugandan Shilling',
     symbol: 'USh',
     symbolNative: 'USh',
@@ -980,7 +980,7 @@ export const CURRENCIES = [
     code: 'UGX',
     namePlural: 'Ugandan shillings',
   },
-  {
+  UYU: {
     name: 'Uruguayan Peso',
     symbol: '$U',
     symbolNative: '$',
@@ -989,7 +989,7 @@ export const CURRENCIES = [
     code: 'UYU',
     namePlural: 'Uruguayan pesos',
   },
-  {
+  UZS: {
     name: 'Uzbekistan Som',
     symbol: 'UZS',
     symbolNative: 'UZS',
@@ -998,7 +998,7 @@ export const CURRENCIES = [
     code: 'UZS',
     namePlural: 'Uzbekistan som',
   },
-  {
+  VEF: {
     name: 'Venezuelan Bolívar',
     symbol: 'Bs.F.',
     symbolNative: 'Bs.F.',
@@ -1007,7 +1007,7 @@ export const CURRENCIES = [
     code: 'VEF',
     namePlural: 'Venezuelan bolívars',
   },
-  {
+  VND: {
     name: 'Vietnamese Dong',
     symbol: '₫',
     symbolNative: '₫',
@@ -1016,7 +1016,7 @@ export const CURRENCIES = [
     code: 'VND',
     namePlural: 'Vietnamese dong',
   },
-  {
+  XAF: {
     name: 'CFA Franc BEAC',
     symbol: 'FCFA',
     symbolNative: 'FCFA',
@@ -1025,7 +1025,7 @@ export const CURRENCIES = [
     code: 'XAF',
     namePlural: 'CFA francs BEAC',
   },
-  {
+  XOF: {
     name: 'CFA Franc BCEAO',
     symbol: 'CFA',
     symbolNative: 'CFA',
@@ -1034,7 +1034,7 @@ export const CURRENCIES = [
     code: 'XOF',
     namePlural: 'CFA francs BCEAO',
   },
-  {
+  YER: {
     name: 'Yemeni Rial',
     symbol: 'YR',
     symbolNative: 'ر.ي.‏',
@@ -1043,7 +1043,7 @@ export const CURRENCIES = [
     code: 'YER',
     namePlural: 'Yemeni rials',
   },
-  {
+  ZAR: {
     name: 'South African Rand',
     symbol: 'R',
     symbolNative: 'R',
@@ -1052,7 +1052,7 @@ export const CURRENCIES = [
     code: 'ZAR',
     namePlural: 'South African rand',
   },
-  {
+  ZMK: {
     name: 'Zambian Kwacha',
     symbol: 'ZK',
     symbolNative: 'ZK',
@@ -1061,7 +1061,7 @@ export const CURRENCIES = [
     code: 'ZMK',
     namePlural: 'Zambian kwachas',
   },
-  {
+  ZWL: {
     name: 'Zimbabwean Dollar',
     symbol: 'ZWL$',
     symbolNative: 'ZWL$',
@@ -1070,4 +1070,6 @@ export const CURRENCIES = [
     code: 'ZWL',
     namePlural: 'Zimbabwean Dollar',
   },
-];
+};
+
+export type CurrencyCode = keyof typeof CURRENCIES;

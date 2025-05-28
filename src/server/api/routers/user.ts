@@ -11,6 +11,7 @@ import { db } from '~/server/db';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
 import { getDocumentUploadUrl } from '~/server/storage';
 import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
+import { BigMath } from '~/utils/numbers';
 
 import {
   addUserExpense,
@@ -49,7 +50,7 @@ export const userRouter = createTRPCRouter({
           } else {
             const existingItem = acc[existing];
             if (existingItem) {
-              if (Math.abs(existingItem.amount) > Math.abs(current.amount)) {
+              if (BigMath.abs(existingItem.amount) > BigMath.abs(current.amount)) {
                 acc[existing] = { ...existingItem, hasMore: true };
               } else {
                 acc[existing] = { ...current, hasMore: true };
@@ -60,7 +61,7 @@ export const userRouter = createTRPCRouter({
         },
         [] as ((typeof balancesRaw)[number] & { hasMore?: boolean })[],
       )
-      .sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount));
+      .sort((a, b) => Number(BigMath.abs(b.amount) - BigMath.abs(a.amount)));
 
     const cumulatedBalances = await db.balance.groupBy({
       by: ['currency'],
@@ -72,8 +73,8 @@ export const userRouter = createTRPCRouter({
       },
     });
 
-    const youOwe: Array<{ currency: string; amount: number }> = [];
-    const youGet: Array<{ currency: string; amount: number }> = [];
+    const youOwe: Array<{ currency: string; amount: bigint }> = [];
+    const youGet: Array<{ currency: string; amount: bigint }> = [];
 
     for (const b of cumulatedBalances) {
       const sumAmount = b._sum.amount;
@@ -147,7 +148,7 @@ export const userRouter = createTRPCRouter({
         paidBy: z.number(),
         name: z.string(),
         category: z.string(),
-        amount: z.number(),
+        amount: z.bigint(),
         splitType: z.enum([
           SplitType.ADJUSTMENT,
           SplitType.EQUAL,
@@ -157,7 +158,7 @@ export const userRouter = createTRPCRouter({
           SplitType.SETTLEMENT,
         ]),
         currency: z.string(),
-        participants: z.array(z.object({ userId: z.number(), amount: z.number() })),
+        participants: z.array(z.object({ userId: z.number(), amount: z.bigint() })),
         fileKey: z.string().optional(),
         expenseDate: z.date().optional(),
         expenseId: z.string().optional(),

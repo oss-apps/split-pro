@@ -1,17 +1,15 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { AddOrEditExpensePage } from '~/components/AddExpense/AddExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
 import { env } from '~/env';
+import { type CurrencyCode } from '~/lib/currency';
 import { isStorageConfigured } from '~/server/storage';
-import { calculateSplitShareBasedOnAmount, useAddExpenseStore } from '~/store/addStore';
+import { useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
-import { toFixedNumber } from '~/utils/numbers';
-
-// 🧾
 
 const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;
@@ -87,37 +85,18 @@ const AddPage: NextPageWithUser<{
 
   useEffect(() => {
     if (_expenseId && expenseQuery.data) {
-      console.log(
-        'expenseQuery.data 123',
-        expenseQuery.data.expenseParticipants,
-        expenseQuery.data.splitType,
-        calculateSplitShareBasedOnAmount(
-          toFixedNumber(expenseQuery.data.amount),
-          expenseQuery.data.expenseParticipants.map((ep) => ({
-            ...ep.user,
-            amount: toFixedNumber(ep.amount),
-          })),
-          expenseQuery.data.splitType,
-          expenseQuery.data.paidByUser,
-        ).participants,
-      );
       expenseQuery.data.group && setGroup(expenseQuery.data.group);
       setParticipants(
-        calculateSplitShareBasedOnAmount(
-          toFixedNumber(expenseQuery.data.amount),
-          expenseQuery.data.expenseParticipants.map((ep) => ({
-            ...ep.user,
-            amount: toFixedNumber(ep.amount),
-          })),
-          expenseQuery.data.splitType,
-          expenseQuery.data.paidByUser,
-        ).participants,
+        expenseQuery.data.expenseParticipants.map((ep) => ({
+          ...ep.user,
+          amount: ep.amount,
+        })),
       );
-      setCurrency(expenseQuery.data.currency);
-      setAmountStr(toFixedNumber(expenseQuery.data.amount).toString());
+      setCurrency(expenseQuery.data.currency as CurrencyCode);
+      setAmountStr(expenseQuery.data.amount.toString());
       setDescription(expenseQuery.data.name);
       setPaidBy(expenseQuery.data.paidByUser);
-      setAmount(toFixedNumber(expenseQuery.data.amount));
+      setAmount(expenseQuery.data.amount);
       setSplitType(expenseQuery.data.splitType);
       useAddExpenseStore.setState({ showFriends: false });
       setExpenseDate(expenseQuery.data.expenseDate);

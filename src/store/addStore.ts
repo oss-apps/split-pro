@@ -2,6 +2,7 @@ import { type Group, SplitType, type User } from '@prisma/client';
 import Router from 'next/router';
 import { create } from 'zustand';
 
+import { shuffleArray } from '~/utils/array';
 import { BigMath } from '~/utils/numbers';
 
 export type Participant = User & { amount?: bigint };
@@ -276,9 +277,8 @@ export function calculateParticipantSplit(
         ...p,
         amount: ((getSplitShare(p) ?? 0n) * amount) / 10000n,
       }));
-
       canSplitScreenClosed =
-        100 - participants.reduce((acc, p) => acc + Number(getSplitShare(p) ?? 0n), 0) === 0;
+        100 - participants.reduce((acc, p) => acc + Number(getSplitShare(p) ?? 0n) / 100, 0) === 0;
       break;
     case SplitType.SHARE:
       const totalShare = participants.reduce((acc, p) => acc + Number(getSplitShare(p) ?? 0n), 0);
@@ -294,9 +294,7 @@ export function calculateParticipantSplit(
     case SplitType.EXACT:
       const totalSplitShare = participants.reduce((acc, p) => acc + (getSplitShare(p) ?? 0n), 0n);
 
-      // ? Look into this logic
-      const epsilon = 1n;
-      canSplitScreenClosed = BigMath.abs(amount - totalSplitShare) < epsilon;
+      canSplitScreenClosed = amount === totalSplitShare;
 
       updatedParticipants = participants.map((p) => ({ ...p, amount: getSplitShare(p) }));
       break;
@@ -313,13 +311,26 @@ export function calculateParticipantSplit(
       break;
   }
 
-  // ! Implement penny splitting logic
   updatedParticipants = updatedParticipants.map((p) => {
     if (p.id === paidBy?.id) {
       return { ...p, amount: -(p.amount ?? 0n) + amount };
     }
     return { ...p, amount: -(p.amount ?? 0n) };
   });
+
+  let penniesLeft = updatedParticipants.reduce((acc, p) => acc + (p.amount ?? 0n), 0n);
+  const participantsToPick = updatedParticipants.filter((p) => p.amount);
+
+  if (participantsToPick.length > 0) {
+    shuffleArray(participantsToPick);
+    let i = 0;
+    while (penniesLeft !== 0n) {
+      const p = participantsToPick[i % participantsToPick.length]!;
+      p.amount! -= BigMath.sign(penniesLeft);
+      penniesLeft -= BigMath.sign(penniesLeft);
+      i++;
+    }
+  }
 
   return { participants: updatedParticipants, canSplitScreenClosed };
 }

@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { AddOrEditExpensePage } from '~/components/AddExpense/AddExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
 import { env } from '~/env';
+import { type CurrencyCode } from '~/lib/currency';
 import { isStorageConfigured } from '~/server/storage';
 import { useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
@@ -91,7 +92,7 @@ const AddPage: NextPageWithUser<{
           amount: ep.amount,
         })),
       );
-      setCurrency(expenseQuery.data.currency);
+      setCurrency(expenseQuery.data.currency as CurrencyCode);
       setAmountStr(expenseQuery.data.amount.toString());
       setDescription(expenseQuery.data.name);
       setPaidBy(expenseQuery.data.paidByUser);

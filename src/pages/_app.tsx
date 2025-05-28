@@ -10,6 +10,7 @@ import { Toaster } from 'sonner';
 import { ThemeProvider } from '~/components/theme-provider';
 import '~/styles/globals.css';
 import { LoadingSpinner } from '~/components/ui/spinner';
+import { type CurrencyCode } from '~/lib/currency';
 import { useAddExpenseStore } from '~/store/addStore';
 import { useAppStore } from '~/store/appStore';
 import { type NextPageWithUser } from '~/types';
@@ -101,7 +102,7 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
 
   useEffect(() => {
     if (status === 'authenticated') {
-      setCurrency(data.user.currency);
+      setCurrency(data.user.currency as CurrencyCode);
     }
   }, [status, data?.user, setCurrency]);
 

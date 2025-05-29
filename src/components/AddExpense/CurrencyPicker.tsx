@@ -1,9 +1,10 @@
-import { CommandEmpty, CommandGroup, CommandInput, CommandItem } from 'cmdk';
-import { Check, Command } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { memo, useCallback } from 'react';
 
 import { CURRENCIES, type CurrencyCode } from '~/lib/currency';
 import { cn } from '~/lib/utils';
+
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../ui/command';
 
 function CurrencyPickerInner({
   currentCurrency,

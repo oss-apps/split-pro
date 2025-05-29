@@ -287,6 +287,39 @@ export const groupRouter = createTRPCRouter({
         })),
       });
 
+      // get all group expenses
+      const groupExpenses = await db.expense.findMany({
+        include: {
+          expenseParticipants: true,
+        },
+        where: {
+          groupId: input.groupId,
+          deletedAt: null,
+        },
+      });
+
+      const expenseMissingParticipant = input.userIds
+        .map((id) => {
+          // for safety filter out expenses where user is already a participant
+          return groupExpenses
+            .filter((expense) => {
+              return expense.expenseParticipants.filter((p) => p.userId == id).length == 0;
+            })
+            .map((expense) => {
+              return {
+                expenseId: expense.id,
+                userId: id,
+                amount: 0,
+              };
+            });
+        })
+        .reduce((acc, current) => acc.concat(current), []);
+
+      // add to expenses if where necessary
+      if (expenseMissingParticipant.length > 0) {
+        await ctx.db.expenseParticipant.createMany({ data: expenseMissingParticipant });
+      }
+
       return groupUsers;
     }),
 

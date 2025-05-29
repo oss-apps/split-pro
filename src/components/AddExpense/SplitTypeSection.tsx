@@ -90,12 +90,15 @@ const SplitExpenseForm: React.FC = () => {
   const splitType = useAddExpenseStore((s) => s.splitType);
   const { setSplitType } = useAddExpenseStore((s) => s.actions);
 
+  const onTabChange = useCallback(
+    (value: string) => {
+      setSplitType(value as SplitType);
+    },
+    [setSplitType],
+  );
+
   return (
-    <Tabs
-      value={splitType}
-      className="mx-auto mt-5 w-full"
-      onValueChange={(v) => setSplitType(v as SplitType)}
-    >
+    <Tabs value={splitType} className="mx-auto mt-5 w-full" onValueChange={onTabChange}>
       <TabsList className="w-full justify-between">
         {splitProps.map(({ splitType, iconComponent: Icon }) => (
           <TabsTrigger key={splitType} value={splitType} className="text-xs">

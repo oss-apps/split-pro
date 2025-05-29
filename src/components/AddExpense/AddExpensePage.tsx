@@ -125,6 +125,7 @@ export const AddOrEditExpensePage: React.FC<{
   const isFileUploading = useAddExpenseStore((s) => s.isFileUploading);
   const amtStr = useAddExpenseStore((s) => s.amountStr);
   const expenseDate = useAddExpenseStore((s) => s.expenseDate);
+  const isExpenseSettled = useAddExpenseStore((s) => s.canSplitScreenClosed);
 
   const {
     setCurrency,
@@ -408,7 +409,8 @@ export const AddOrEditExpensePage: React.FC<{
                         addGroupExpenseMutation.isLoading ||
                         !amount ||
                         description === '' ||
-                        isFileUploading
+                        isFileUploading ||
+                        !isExpenseSettled
                       }
                       onClick={() => addExpense()}
                     >

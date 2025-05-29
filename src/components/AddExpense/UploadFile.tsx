@@ -61,6 +61,8 @@ export const UploadFile: React.FC = () => {
 
       if (!response.ok) {
         toast.error('Failed to upload file');
+        console.error('Failed to upload file:', response.statusText);
+        setFile(null);
         return;
       }
 
@@ -71,28 +73,26 @@ export const UploadFile: React.FC = () => {
     } catch (error) {
       console.error('Error getting upload url:', error);
       toast.error(`Error uploading file`);
+    } finally {
+      setFileUploading(false);
     }
-
-    setFileUploading(false);
   };
 
   return (
-    <div>
-      <Label htmlFor="picture">
-        {file ? (
-          <ImageUploaded className="h-6 w-6 text-primary" />
-        ) : (
-          <ImagePlus className="h-6 w-6 text-gray-300" />
-        )}
-        <Input
-          onChange={handleFileChange}
-          id="picture"
-          type="file"
-          accept="image/*"
-          className="hidden"
-        />
-      </Label>
-    </div>
+    <Label htmlFor="picture" className="cursor-pointer">
+      {file ? (
+        <ImageUploaded className="h-6 w-6 text-primary" />
+      ) : (
+        <ImagePlus className="h-6 w-6 text-gray-300" />
+      )}
+      <Input
+        onChange={handleFileChange}
+        id="picture"
+        type="file"
+        accept="image/*"
+        className="hidden"
+      />
+    </Label>
   );
 };
 

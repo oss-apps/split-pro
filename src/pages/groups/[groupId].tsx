@@ -354,7 +354,9 @@ const BalancePage: NextPageWithUser<{
       >
         {groupDetailQuery.isLoading ? null : groupDetailQuery.data?.groupUsers.length === 1 &&
           !expensesQuery.data?.length ? (
-          <NoMembers group={groupDetailQuery.data} enableSendingInvites={enableSendingInvites} />
+          <div className="h-[85vh]">
+            <NoMembers group={groupDetailQuery.data} enableSendingInvites={enableSendingInvites} />
+          </div>
         ) : (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="mb-4 px-4">

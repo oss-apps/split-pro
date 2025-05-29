@@ -1,6 +1,6 @@
 import { type Group, type GroupUser } from '@prisma/client';
 import { Share, UserPlus } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
 
@@ -10,7 +10,7 @@ const NoMembers: React.FC<{
   group: Group & { groupUsers: Array<GroupUser> };
   enableSendingInvites: boolean;
 }> = ({ group, enableSendingInvites }) => {
-  const [isCopied, setIsCopied] = React.useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   async function copyToClipboard() {
     const inviteLink = `${window.location.origin}/join-group?groupId=${group.publicId}`;
@@ -22,7 +22,7 @@ const NoMembers: React.FC<{
   }
 
   return (
-    <div className=" mt-[50%] flex flex-col items-center justify-center gap-4">
+    <div className="flex h-full flex-col items-center justify-center gap-4">
       <p className="mb-4 text-center text-gray-500">No members in the group yet.</p>
       <Button className="w-[200px]">
         <AddMembers group={group} enableSendingInvites={enableSendingInvites}>

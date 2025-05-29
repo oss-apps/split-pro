@@ -212,7 +212,7 @@ export const AddOrEditExpensePage: React.FC<{
           <SelectUserOrGroup enableSendingInvites={enableSendingInvites} />
         ) : (
           <>
-            <div className="mt-10 flex gap-2">
+            <div className="mt-4 flex gap-2 sm:mt-10">
               <CategoryPicker category={category} onCategoryPick={setCategory} />
               <Input
                 placeholder="Enter description"
@@ -233,73 +233,72 @@ export const AddOrEditExpensePage: React.FC<{
                 onChange={(e) => onUpdateAmount(e.target.value)}
               />
             </div>
-            {!amount || description === '' ? (
-              <div className="h-[180px]"></div>
-            ) : (
-              <div className="h-[180px]">
-                <SplitTypeSection />
+            <div className="h-[180px]">
+              {amount && description !== '' && (
+                <>
+                  <SplitTypeSection />
 
-                <div className="mt-4 flex  items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className={cn(
-                            ' justify-start px-0 text-left font-normal',
-                            !expenseDate && 'text-muted-foreground',
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-6 w-6 text-cyan-500" />
-                          {expenseDate ? (
-                            format(expenseDate, 'yyyy-MM-dd') ===
-                            format(new Date(), 'yyyy-MM-dd') ? (
-                              'Today'
+                  <div className="mt-4 flex items-center  justify-between sm:mt-10">
+                    <div className="flex flex-wrap items-center gap-4">
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            className={cn(
+                              'justify-start px-0 text-left font-normal',
+                              !expenseDate && 'text-muted-foreground',
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-6 w-6 text-primary" />
+                            {expenseDate ? (
+                              format(expenseDate, 'yyyy-MM-dd') ===
+                              format(new Date(), 'yyyy-MM-dd') ? (
+                                'Today'
+                              ) : (
+                                format(expenseDate, 'MMM dd')
+                              )
                             ) : (
-                              format(expenseDate, 'MMM dd')
-                            )
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={expenseDate}
-                          onSelect={setExpenseDate}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                              <span>Pick a date</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={expenseDate}
+                            onSelect={setExpenseDate}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      {isStorageConfigured ? <UploadFile /> : null}
+                      <Button
+                        className=" min-w-[100px]"
+                        size="sm"
+                        loading={
+                          addExpenseMutation.isLoading ||
+                          addGroupExpenseMutation.isLoading ||
+                          isFileUploading
+                        }
+                        disabled={
+                          addExpenseMutation.isLoading ||
+                          addGroupExpenseMutation.isLoading ||
+                          !amount ||
+                          description === '' ||
+                          isFileUploading ||
+                          !isExpenseSettled
+                        }
+                        onClick={() => addExpense()}
+                      >
+                        Submit
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    {isStorageConfigured ? <UploadFile /> : null}
-
-                    <Button
-                      className=" min-w-[100px]"
-                      size="sm"
-                      loading={
-                        addExpenseMutation.isLoading ||
-                        addGroupExpenseMutation.isLoading ||
-                        isFileUploading
-                      }
-                      disabled={
-                        addExpenseMutation.isLoading ||
-                        addGroupExpenseMutation.isLoading ||
-                        !amount ||
-                        description === '' ||
-                        isFileUploading ||
-                        !isExpenseSettled
-                      }
-                      onClick={() => addExpense()}
-                    >
-                      Submit
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
+                </>
+              )}
+            </div>
             <div className=" flex w-full justify-center">
               <Link
                 href="https://github.com/sponsors/KMKoushik"

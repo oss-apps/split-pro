@@ -31,7 +31,7 @@ export const SplitTypeSection: React.FC = () => {
   const { setPaidBy, setSplitScreenOpen } = useAddExpenseStore((s) => s.actions);
 
   return (
-    <div className="mt-4 flex items-center justify-center text-[16px] text-gray-400">
+    <div className="flex items-center justify-center text-[16px] text-gray-400 sm:mt-4">
       <p className="text-[16px]">Paid by </p>
       <AppDrawer
         trigger={
@@ -90,12 +90,15 @@ const SplitExpenseForm: React.FC = () => {
   const splitType = useAddExpenseStore((s) => s.splitType);
   const { setSplitType } = useAddExpenseStore((s) => s.actions);
 
+  const onTabChange = useCallback(
+    (value: string) => {
+      setSplitType(value as SplitType);
+    },
+    [setSplitType],
+  );
+
   return (
-    <Tabs
-      value={splitType}
-      className="mx-auto mt-5 w-full"
-      onValueChange={(v) => setSplitType(v as SplitType)}
-    >
+    <Tabs value={splitType} className="mx-auto mt-5 w-full" onValueChange={onTabChange}>
       <TabsList className="w-full justify-between">
         {splitProps.map(({ splitType, iconComponent: Icon }) => (
           <TabsTrigger key={splitType} value={splitType} className="text-xs">

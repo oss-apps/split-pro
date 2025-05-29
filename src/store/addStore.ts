@@ -80,31 +80,22 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   expenseDate: undefined,
   actions: {
     setAmount: (amount) =>
-      set((s) => {
-        const { participants, canSplitScreenClosed } = calculateParticipantSplit(
-          amount,
-          s.participants,
-          s.splitType,
-          s.splitShares,
-          s.paidBy,
-        );
-
-        return { amount, participants, canSplitScreenClosed };
-      }),
+      set((s) => ({
+        amount,
+        ...calculateParticipantSplit(amount, s.participants, s.splitType, s.splitShares, s.paidBy),
+      })),
     setAmountStr: (amountStr) => set({ amountStr }),
     setSplitType: (splitType) =>
-      set((state) => {
-        return {
+      set((state) => ({
+        splitType,
+        ...calculateParticipantSplit(
+          state.amount,
+          state.participants,
           splitType,
-          ...calculateParticipantSplit(
-            state.amount,
-            state.participants,
-            splitType,
-            state.splitShares,
-            state.paidBy,
-          ),
-        };
-      }),
+          state.splitShares,
+          state.paidBy,
+        ),
+      })),
     setSplitShare: (splitType, userId, share) =>
       set((state) => {
         const splitShares = {

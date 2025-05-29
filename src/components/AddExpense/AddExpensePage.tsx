@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { Banknote, CalendarIcon, HeartHandshakeIcon } from 'lucide-react';
+import { CalendarIcon, HeartHandshakeIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -10,6 +10,7 @@ import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { toSafeBigInt } from '~/utils/numbers';
 
+import { CategoryPicker } from './CategoryPicker';
 import { CurrencyPicker } from './CurrencyPicker';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { SplitTypeSection } from './SplitTypeSection';
@@ -17,96 +18,8 @@ import UploadFile from './UploadFile';
 import { UserInput } from './UserInput';
 import { Button } from '../ui/button';
 import { Calendar } from '../ui/calendar';
-import { CategoryIcons } from '../ui/categoryIcons';
-import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-
-const categories = {
-  entertainment: {
-    name: 'Entertainment',
-    items: [
-      {
-        games: 'Games',
-        movies: 'Movies',
-        music: 'Music',
-        sports: 'Sports',
-        other: 'Entertainment',
-      },
-    ],
-  },
-  food: {
-    name: 'Food & Drinks',
-    items: [
-      {
-        diningOut: 'Dining Out',
-        groceries: 'Groceries',
-        liquor: 'Liquor',
-        other: 'Food & Drinks',
-      },
-    ],
-  },
-  home: {
-    name: 'Home',
-    items: [
-      {
-        electronics: 'Electronics',
-        furniture: 'Furniture',
-        supplies: 'Supplies',
-        maintenance: 'Maintenance',
-        mortgage: 'Mortgage',
-        pets: 'Pets',
-        rent: 'Rent',
-        services: 'Services',
-        other: 'Home',
-      },
-    ],
-  },
-  life: {
-    name: 'Life',
-    items: [
-      {
-        childcare: 'Childcare',
-        clothing: 'Clothing',
-        education: 'Education',
-        gifts: 'Gifts',
-        medical: 'Medical',
-        taxes: 'Taxes',
-        other: 'Life',
-      },
-    ],
-  },
-  travel: {
-    name: 'Travel',
-    items: [
-      {
-        bus: 'Bus',
-        train: 'Train',
-        car: 'Car',
-        fuel: 'Fuel',
-        parking: 'Parking',
-        plane: 'Plane',
-        taxi: 'Taxi',
-        other: 'Travel',
-      },
-    ],
-  },
-  utilities: {
-    name: 'Utilities',
-    items: [
-      {
-        cleaning: 'Cleaning',
-        electricity: 'Electricity',
-        gas: 'Gas',
-        internet: 'Internet',
-        trash: 'Trash',
-        phone: 'Phone',
-        water: 'Water',
-        other: 'Utilities',
-      },
-    ],
-  },
-};
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
@@ -125,6 +38,10 @@ export const AddOrEditExpensePage: React.FC<{
   const isFileUploading = useAddExpenseStore((s) => s.isFileUploading);
   const amtStr = useAddExpenseStore((s) => s.amountStr);
   const expenseDate = useAddExpenseStore((s) => s.expenseDate);
+  const isExpenseSettled = useAddExpenseStore((s) => s.canSplitScreenClosed);
+  const paidBy = useAddExpenseStore((s) => s.paidBy);
+  const splitType = useAddExpenseStore((s) => s.splitType);
+  const fileKey = useAddExpenseStore((s) => s.fileKey);
 
   const {
     setCurrency,
@@ -150,25 +67,26 @@ export const AddOrEditExpensePage: React.FC<{
       setCurrency(currency);
       setOpen(false);
     },
-    [setCurrency, updateProfile],
+    [setCurrency, updateProfile, setOpen],
   );
 
   const router = useRouter();
 
-  function onUpdateAmount(amt: string) {
-    const _amt = amt.replace(',', '.');
-    setAmountStr(_amt);
-    setAmount(toSafeBigInt(_amt));
-  }
+  const onUpdateAmount = useCallback(
+    (amt: string) => {
+      const _amt = amt.replace(',', '.');
+      setAmountStr(_amt);
+      setAmount(toSafeBigInt(_amt));
+    },
+    [setAmount, setAmountStr],
+  );
 
-  function addExpense() {
-    const { group, paidBy, splitType, fileKey, canSplitScreenClosed } =
-      useAddExpenseStore.getState();
+  const addExpense = useCallback(() => {
     if (!paidBy) {
       return;
     }
 
-    if (!canSplitScreenClosed) {
+    if (!isExpenseSettled) {
       setSplitScreenOpen(true);
       return;
     }
@@ -231,9 +149,32 @@ export const AddOrEditExpensePage: React.FC<{
         },
       );
     }
-  }
+  }, [
+    setSplitScreenOpen,
+    addGroupExpenseMutation,
+    description,
+    currency,
+    amount,
+    participants,
+    category,
+    expenseDate,
+    expenseId,
+    router,
+    resetState,
+    addExpenseMutation,
+    group,
+    paidBy,
+    splitType,
+    fileKey,
+    isExpenseSettled,
+  ]);
 
-  const CategoryIcon = CategoryIcons[category] ?? Banknote;
+  const handleDescriptionChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setDescription(e.target.value.toString() ?? '');
+    },
+    [setDescription],
+  );
 
   return (
     <>
@@ -271,78 +212,18 @@ export const AddOrEditExpensePage: React.FC<{
           <SelectUserOrGroup enableSendingInvites={enableSendingInvites} />
         ) : (
           <>
-            <div className="mt-10 flex gap-2">
-              <AppDrawer
-                trigger={
-                  <div className="flex w-[70px] justify-center rounded-lg border py-2">
-                    <CategoryIcon size={20} />
-                  </div>
-                }
-                title="Categories"
-                className="h-[70vh]"
-                shouldCloseOnAction
-              >
-                <div className="">
-                  {Object.entries(categories).map(([categoryName, categoryDetails]) => {
-                    return (
-                      <div key={categoryName} className="mb-8">
-                        <h3 className="mb-4 text-lg font-semibold">{categoryDetails.name}</h3>
-                        <div className="flex flex-wrap justify-between gap-2">
-                          {categoryDetails.items.map((item) =>
-                            Object.entries(item).map(([key, value]) => {
-                              const Icon =
-                                CategoryIcons[key] ?? CategoryIcons[categoryName] ?? Banknote;
-                              return (
-                                <DrawerClose key={key}>
-                                  <Button
-                                    variant="ghost"
-                                    className="flex w-[75px] flex-col gap-1 py-8 text-center"
-                                    onClick={() => {
-                                      setCategory(key === 'other' ? categoryName : key);
-                                    }}
-                                  >
-                                    <span className="block text-2xl">
-                                      <Icon />
-                                    </span>
-                                    <span className="block text-xs capitalize">{value}</span>
-                                  </Button>
-                                </DrawerClose>
-                              );
-                            }),
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </AppDrawer>
+            <div className="mt-4 flex gap-2 sm:mt-10">
+              <CategoryPicker category={category} onCategoryPick={setCategory} />
               <Input
                 placeholder="Enter description"
                 value={description}
-                onChange={(e) => setDescription(e.target.value.toString() ?? '')}
+                onChange={handleDescriptionChange}
                 className="text-lg placeholder:text-sm"
                 autoFocus
               />
             </div>
             <div className="flex gap-2">
-              <AppDrawer
-                trigger={
-                  <div className="flex w-[70px] justify-center rounded-lg border py-2  text-center text-base">
-                    {currency ?? 'USD'}
-                  </div>
-                }
-                onTriggerClick={() => setOpen(true)}
-                title="Select currency"
-                className="h-[70vh]"
-                shouldCloseOnAction
-                open={open}
-                onOpenChange={(openVal) => {
-                  if (openVal !== open) setOpen(openVal);
-                }}
-              >
-                <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
-              </AppDrawer>
-
+              <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
               <Input
                 placeholder="Enter amount"
                 className="text-lg placeholder:text-sm"
@@ -352,72 +233,72 @@ export const AddOrEditExpensePage: React.FC<{
                 onChange={(e) => onUpdateAmount(e.target.value)}
               />
             </div>
-            {!amount || description === '' ? (
-              <div className="h-[180px]"></div>
-            ) : (
-              <div className="h-[180px]">
-                <SplitTypeSection />
+            <div className="h-[180px]">
+              {amount && description !== '' && (
+                <>
+                  <SplitTypeSection />
 
-                <div className="mt-4 flex  items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className={cn(
-                            ' justify-start px-0 text-left font-normal',
-                            !expenseDate && 'text-muted-foreground',
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-6 w-6 text-cyan-500" />
-                          {expenseDate ? (
-                            format(expenseDate, 'yyyy-MM-dd') ===
-                            format(new Date(), 'yyyy-MM-dd') ? (
-                              'Today'
+                  <div className="mt-4 flex items-center  justify-between sm:mt-10">
+                    <div className="flex flex-wrap items-center gap-4">
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            className={cn(
+                              'justify-start px-0 text-left font-normal',
+                              !expenseDate && 'text-muted-foreground',
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-6 w-6 text-primary" />
+                            {expenseDate ? (
+                              format(expenseDate, 'yyyy-MM-dd') ===
+                              format(new Date(), 'yyyy-MM-dd') ? (
+                                'Today'
+                              ) : (
+                                format(expenseDate, 'MMM dd')
+                              )
                             ) : (
-                              format(expenseDate, 'MMM dd')
-                            )
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={expenseDate}
-                          onSelect={setExpenseDate}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                              <span>Pick a date</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={expenseDate}
+                            onSelect={setExpenseDate}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      {isStorageConfigured ? <UploadFile /> : null}
+                      <Button
+                        className=" min-w-[100px]"
+                        size="sm"
+                        loading={
+                          addExpenseMutation.isLoading ||
+                          addGroupExpenseMutation.isLoading ||
+                          isFileUploading
+                        }
+                        disabled={
+                          addExpenseMutation.isLoading ||
+                          addGroupExpenseMutation.isLoading ||
+                          !amount ||
+                          description === '' ||
+                          isFileUploading ||
+                          !isExpenseSettled
+                        }
+                        onClick={() => addExpense()}
+                      >
+                        Submit
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    {isStorageConfigured ? <UploadFile /> : null}
-
-                    <Button
-                      className=" min-w-[100px]"
-                      size="sm"
-                      loading={
-                        addExpenseMutation.isLoading ||
-                        addGroupExpenseMutation.isLoading ||
-                        isFileUploading
-                      }
-                      disabled={
-                        addExpenseMutation.isLoading ||
-                        addGroupExpenseMutation.isLoading ||
-                        !amount ||
-                        description === '' ||
-                        isFileUploading
-                      }
-                      onClick={() => addExpense()}
-                    >
-                      Submit
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
+                </>
+              )}
+            </div>
             <div className=" flex w-full justify-center">
               <Link
                 href="https://github.com/sponsors/KMKoushik"

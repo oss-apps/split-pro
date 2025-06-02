@@ -67,8 +67,8 @@ export const DeleteFriend: React.FC<{
                 size="sm"
                 variant="destructive"
                 onClick={onDeleteFriend}
-                disabled={deleteFriendMutation.isLoading}
-                loading={deleteFriendMutation.isLoading}
+                disabled={deleteFriendMutation.isPending}
+                loading={deleteFriendMutation.isPending}
               >
                 Delete
               </Button>

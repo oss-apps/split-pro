@@ -56,7 +56,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
       <MainLayout title="Activity">
         <div className="px-4">
           <div className="flex flex-col gap-4">
-            {expensesQuery.isLoading ? (
+            {expensesQuery.isPending ? (
               showProgress ? (
                 <div className="mt-10 flex justify-center">
                   <LoadingSpinner className="text-primary" />

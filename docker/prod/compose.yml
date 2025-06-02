@@ -3,12 +3,13 @@ name: split-pro-prod
 services:
   postgres:
     image: postgres:16
-    container_name: splitpro-db-prod
+    container_name: ${POSTGRES_CONTAINER_NAME:-splitpro-db}
     restart: always
     environment:
       - POSTGRES_USER=${POSTGRES_USER:?err}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?err}
       - POSTGRES_DB=${POSTGRES_DB:?err}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER}']
       interval: 10s

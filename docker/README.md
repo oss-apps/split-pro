@@ -16,7 +16,8 @@ This setup includes PostgreSQL and the Splitpro application.
 1. Download the Docker Compose file from the Splitpro repository: [compose.yml](https://github.com/oss-apps/split-pro/blob/main/docker/prod/compose.yml)
 2. Navigate to the directory containing the `compose.yml` file.
 3. Create a `.env` file in the same directory. Copy the contents of `.env.example`
-4. Run the following command to start the containers:
+4. Adjust the variables to your deployment
+5. Run the following command to start the containers:
 
 ```
 docker-compose --env-file ./.env up -d
@@ -24,7 +25,7 @@ docker-compose --env-file ./.env up -d
 
 This will start the PostgreSQL database and the Splitpro application containers.
 
-5. Access the Splitpro application by visiting `http://localhost:3000` in your web browser.
+6. Access the Splitpro application by visiting `http://localhost:3000` in your web browser.
 
 ## Option 2: Standalone Docker Container
 

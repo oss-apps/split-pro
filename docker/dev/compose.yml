@@ -3,16 +3,17 @@ name: split-pro-dev
 services:
   postgres:
     image: postgres:16
-    container_name: splitpro-db-dev
+    container_name: ${POSTGRES_CONTAINER_NAME:-splitpro-db}
     restart: always
     environment:
-      - POSTGRES_USER=splitpro
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=splitpro
+      - POSTGRES_USER=${POSTGRES_USER:-splitpro}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - POSTGRES_DB=${POSTGRES_DB:-splitpro}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
     volumes:
       - database:/var/lib/postgresql/data
     ports:
-      - '54321:5432'
+      - '${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}'
 
   minio:
     image: minio/minio

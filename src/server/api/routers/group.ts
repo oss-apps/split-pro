@@ -363,6 +363,35 @@ export const groupRouter = createTRPCRouter({
       return groupUser;
     }),
 
+  updateGroupDetails: groupProcedure
+    .input(z.object({ name: z.string().min(1), groupId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const group = await ctx.db.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+      });
+
+      if (!group) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
+      }
+
+      if (group.userId !== ctx.session.user.id) {
+        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Only creator can update the group' });
+      }
+
+      const updatedGroup = await ctx.db.group.update({
+        where: {
+          id: input.groupId,
+        },
+        data: {
+          name: input.name,
+        },
+      });
+
+      return updatedGroup;
+    }),
+
   delete: groupProcedure
     .input(z.object({ groupId: z.number() }))
     .mutation(async ({ input, ctx }) => {

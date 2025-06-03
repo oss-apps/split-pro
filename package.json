@@ -62,6 +62,7 @@
     "next-auth": "^4.24.5",
     "next-pwa": "^5.6.0",
     "next-themes": "^0.2.1",
+    "nextjs-cors": "^2.2.0",
     "nextra": "^2.13.4",
     "nextra-theme-blog": "^2.13.4",
     "nodemailer": "^6.9.8",
@@ -73,6 +74,7 @@
     "sharp": "0.32.6",
     "sonner": "^1.4.0",
     "superjson": "^2.2.1",
+    "swagger-ui-react": "^5.22.0",
     "trpc-to-openapi": "^2.3.1",
     "vaul": "^0.8.9",
     "web-push": "^3.6.7",
@@ -87,6 +89,7 @@
     "@types/nodemailer": "^6.4.15",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
+    "@types/swagger-ui-react": "^5.18.0",
     "@types/web-push": "^3.6.3",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
@@ -115,6 +118,9 @@
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
+  },
+  "scarfSettings": {
+    "enabled": false
   },
   "packageManager": "pnpm@10.11.0"
 }

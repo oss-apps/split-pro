@@ -14,7 +14,6 @@ import {
   UserPlus,
 } from 'lucide-react';
 import Head from 'next/head';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { Fragment, useState } from 'react';
@@ -386,13 +385,6 @@ const BalancePage: NextPageWithUser<{
             </Tabs>
           </motion.div>
         )}
-        {expensesQuery.data?.length === 0 &&
-        !groupDetailQuery.isPending &&
-        groupDetailQuery.data?.groupUsers.length !== 1 ? (
-          <div className="mt-20 flex flex-col items-center justify-center ">
-            <Image src="/add_expense.svg" alt="Empty" width={200} height={200} className="mb-4" />
-          </div>
-        ) : null}
       </MainLayout>
     </>
   );

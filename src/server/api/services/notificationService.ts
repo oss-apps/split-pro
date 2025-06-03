@@ -26,6 +26,7 @@ export async function sendExpensePushNotification(expenseId: string) {
       expenseParticipants: {
         select: {
           userId: true,
+          amount: true,
         },
       },
       paidByUser: {
@@ -69,25 +70,30 @@ export async function sendExpensePushNotification(expenseId: string) {
     },
   });
 
-  const pushData = expense.deletedBy
-    ? {
-        title: `${expense.deletedByUser?.name ?? expense.deletedByUser?.email}`,
-        message: `Deleted ${expense.name}`,
-      }
-    : expense.updatedByUser
+  const pushData = {
+    ...(expense.deletedBy
       ? {
-          title: `${expense.updatedByUser.name ?? expense.updatedByUser.email}`,
-          message: `Updated ${expense.name} ${expense.currency} ${toUIString(expense.amount)}`,
+          title: `${expense.deletedByUser?.name ?? expense.deletedByUser?.email}`,
+          message: `Deleted ${expense.name}`,
         }
-      : expense.splitType === SplitType.SETTLEMENT
+      : expense.updatedByUser
         ? {
-            title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
-            message: `${expense.paidByUser.name ?? expense.paidByUser.email} settled up ${expense.currency} ${toUIString(expense.amount)}`,
+            title: `${expense.updatedByUser.name ?? expense.updatedByUser.email}`,
+            message: `Updated ${expense.name} ${expense.currency} ${toUIString(expense.amount)}`,
           }
-        : {
-            title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
-            message: `${expense.paidByUser.name ?? expense.paidByUser.email} paid  ${expense.currency} ${toUIString(expense.amount)} for ${expense.name}`,
-          };
+        : expense.splitType === SplitType.SETTLEMENT
+          ? {
+              title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
+              message: `${expense.paidByUser.name ?? expense.paidByUser.email} settled up ${expense.currency} ${toUIString(expense.amount)}`,
+            }
+          : {
+              title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
+              message: `${expense.paidByUser.name ?? expense.paidByUser.email} paid  ${expense.currency} ${toUIString(expense.amount)} for ${expense.name}`,
+            }),
+    data: {
+      url: `/expenses/${expenseId}`,
+    },
+  };
 
   const pushNotifications = subscriptions.map((s) => pushNotification(s.subscription, pushData));
 

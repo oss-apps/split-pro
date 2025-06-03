@@ -20,6 +20,7 @@ import { useRouter } from 'next/router';
 import React, { Fragment, useState } from 'react';
 import { toast } from 'sonner';
 
+import { UpdateName } from '~/components/Account/UpdateDetails';
 import { BalanceList } from '~/components/Expense/BalanceList';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
 import AddMembers from '~/components/group/AddMembers';
@@ -50,6 +51,7 @@ const BalancePage: NextPageWithUser<{
   const deleteGroupMutation = api.group.delete.useMutation();
   const leaveGroupMutation = api.group.leaveGroup.useMutation();
   const toggleSimplifyDebtsMutation = api.group.toggleSimplifyDebts.useMutation();
+  const updateGroupDetailsMutation = api.group.updateGroupDetails.useMutation();
 
   const [isInviteCopied, setIsInviteCopied] = useState(false);
 
@@ -176,8 +178,33 @@ const BalancePage: NextPageWithUser<{
               trigger={<Info className="h-6 w-6" />}
               className="h-[85vh]"
             >
-              <div className="">
-                <p className="font-semibold">Members</p>
+              <>
+                <div className="flex items-center justify-between">
+                  <div className="text-xl font-semibold text-primary">
+                    {groupDetailQuery.data?.name ?? ''}
+                  </div>
+                  {isAdmin && (
+                    <UpdateName
+                      className="mr-2 size-5"
+                      defaultName={groupDetailQuery.data?.name ?? ''}
+                      onNameSubmit={async (values) => {
+                        try {
+                          await updateGroupDetailsMutation.mutateAsync({
+                            groupId,
+                            name: values.name,
+                          });
+                          toast.success('Updated group name', { duration: 1500 });
+                          await groupDetailQuery.refetch();
+                        } catch (error) {
+                          toast.error('Error in updating group name');
+                          console.error(error);
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+
+                <p className="mt-5 font-semibold">Members</p>
                 <div className="mt-2 flex flex-col gap-2">
                   {groupDetailQuery.data?.groupUsers.map((groupUser) => (
                     <div key={groupUser.userId} className="flex items-center justify-between">
@@ -191,7 +218,7 @@ const BalancePage: NextPageWithUser<{
                     </div>
                   ))}
                 </div>
-              </div>
+              </>
               {groupDetailQuery?.data?.createdAt && (
                 <div className="mt-8">
                   <p className="font-semibold ">Group created</p>
@@ -200,10 +227,10 @@ const BalancePage: NextPageWithUser<{
               )}
               <div className="mt-8">
                 <p className="font-semibold ">Actions</p>
-                <div className="mt-2 flex flex-col gap-1">
+                <div className="child:h-7 mt-2 flex flex-col">
                   <Label className="flex cursor-pointer items-center justify-between">
                     <p className="flex items-center">
-                      <Merge className="mr-2 h-4 w-4" /> Simplify debts
+                      <Merge className="mr-2 size-4" /> Simplify debts
                     </p>
                     <Switch
                       id="simplify-debts"
@@ -240,7 +267,7 @@ const BalancePage: NextPageWithUser<{
                         variant="ghost"
                         className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
                       >
-                        <Trash2 className="mr-2 h-4 w-4" /> Delete group
+                        <Trash2 className="mr-2 size-4" /> Delete group
                       </Button>
                     </SimpleConfirmationDialog>
                   ) : (
@@ -316,7 +343,7 @@ const BalancePage: NextPageWithUser<{
                     group={groupDetailQuery.data}
                     enableSendingInvites={enableSendingInvites}
                   >
-                    <UserPlus className="h-4 w-4 text-gray-400" /> Add members
+                    <UserPlus className="size-4 text-gray-400" /> Add members
                   </AddMembers>
                 ) : null}
               </Button>
@@ -328,11 +355,11 @@ const BalancePage: NextPageWithUser<{
               >
                 {isInviteCopied ? (
                   <>
-                    <Check className="h-4 w-4 text-gray-400" /> Copied
+                    <Check className="size-4 text-gray-400" /> Copied
                   </>
                 ) : (
                   <>
-                    <Share className="h-4 w-4 text-gray-400" /> Invite
+                    <Share className="size-4 text-gray-400" /> Invite
                   </>
                 )}
               </Button>

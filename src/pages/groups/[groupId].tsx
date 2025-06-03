@@ -29,6 +29,7 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
+import { Label } from '~/components/ui/label';
 import { SimpleConfirmationDialog } from '~/components/ui/SimpleConfirmationDialog';
 import { Switch } from '~/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
@@ -200,10 +201,10 @@ const BalancePage: NextPageWithUser<{
               <div className="mt-8">
                 <p className="font-semibold ">Actions</p>
                 <div className="mt-2 flex flex-col gap-1">
-                  <div className="flex items-center justify-between">
-                    <label htmlFor="simplify-debts" className="flex items-center">
+                  <Label className="flex cursor-pointer items-center justify-between">
+                    <p className="flex items-center">
                       <Merge className="mr-2 h-4 w-4" /> Simplify debts
-                    </label>
+                    </p>
                     <Switch
                       id="simplify-debts"
                       checked={groupDetailQuery.data?.simplifyDebts ?? false}
@@ -221,7 +222,7 @@ const BalancePage: NextPageWithUser<{
                         );
                       }}
                     />
-                  </div>
+                  </Label>
                   {isAdmin ? (
                     <SimpleConfirmationDialog
                       title={canDelete ? 'Are you absolutely sure?' : ''}

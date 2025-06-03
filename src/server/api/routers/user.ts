@@ -10,7 +10,13 @@ import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
 import { getDocumentUploadUrl } from '~/server/storage';
-import { SessionUserSchema, SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
+import {
+  ExpenseSchema,
+  SessionUserSchema,
+  SplitwiseGroupSchema,
+  SplitwiseUserSchema,
+  UserSchema,
+} from '~/types';
 import { BigMath } from '~/utils/numbers';
 
 import {
@@ -111,32 +117,54 @@ export const userRouter = createTRPCRouter({
       return { balances, cumulatedBalances, youOwe, youGet };
     }),
 
-  getFriends: protectedProcedure.query(async ({ ctx }) => {
-    const balanceWithFriends = await db.balance.findMany({
-      where: {
-        userId: ctx.session.user.id,
+  getFriends: protectedProcedure
+    .meta({
+      openapi: {
+        method: 'GET',
+        path: '/friends',
+        description: 'Get all friends of the current user based on existing balances',
+        protect: true,
+        tags: ['users'],
       },
-      select: {
-        friendId: true,
-      },
-      distinct: ['friendId'],
-    });
-
-    const friendsIds = balanceWithFriends.map((f) => f.friendId);
-
-    const friends = await db.user.findMany({
-      where: {
-        id: {
-          in: friendsIds,
+    })
+    .input(z.object({}))
+    .output(z.array(UserSchema))
+    .query(async ({ ctx }) => {
+      const balanceWithFriends = await db.balance.findMany({
+        where: {
+          userId: ctx.session.user.id,
         },
-      },
-    });
+        select: {
+          friendId: true,
+        },
+        distinct: ['friendId'],
+      });
 
-    return friends;
-  }),
+      const friendsIds = balanceWithFriends.map((f) => f.friendId);
+
+      const friends = await db.user.findMany({
+        where: {
+          id: {
+            in: friendsIds,
+          },
+        },
+      });
+
+      return friends;
+    }),
 
   inviteFriend: protectedProcedure
+    .meta({
+      openapi: {
+        method: 'POST',
+        path: '/invite-friend',
+        description: 'Invite a friend by email',
+        protect: true,
+        tags: ['users'],
+      },
+    })
     .input(z.object({ email: z.string(), sendInviteEmail: z.boolean().optional() }))
+    .output(UserSchema)
     .mutation(async ({ input, ctx: { session } }) => {
       const friend = await db.user.findUnique({
         where: {
@@ -166,27 +194,17 @@ export const userRouter = createTRPCRouter({
     }),
 
   addOrEditExpense: protectedProcedure
-    .input(
-      z.object({
-        paidBy: z.number(),
-        name: z.string(),
-        category: z.string(),
-        amount: z.bigint(),
-        splitType: z.enum([
-          SplitType.ADJUSTMENT,
-          SplitType.EQUAL,
-          SplitType.PERCENTAGE,
-          SplitType.SHARE,
-          SplitType.EXACT,
-          SplitType.SETTLEMENT,
-        ]),
-        currency: z.string(),
-        participants: z.array(z.object({ userId: z.number(), amount: z.bigint() })),
-        fileKey: z.string().optional(),
-        expenseDate: z.date().optional(),
-        expenseId: z.string().optional(),
-      }),
-    )
+    .meta({
+      openapi: {
+        method: 'POST',
+        path: '/expense',
+        description: 'Add or edit an expense',
+        protect: true,
+        tags: ['expenses'],
+      },
+    })
+    .input(ExpenseSchema)
+    .output(z.object({ id: z.string() }).optional())
     .mutation(async ({ input, ctx }) => {
       if (input.expenseId) {
         const expenseParticipant = await db.expenseParticipant.findUnique({

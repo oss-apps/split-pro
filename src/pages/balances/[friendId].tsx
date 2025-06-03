@@ -72,9 +72,9 @@ const FriendPage: NextPageWithUser = ({ user }) => {
           </div>
         }
       >
-        {balances.isLoading ||
-        expenses.isLoading ||
-        friendQuery.isLoading ||
+        {balances.isPending ||
+        expenses.isPending ||
+        friendQuery.isPending ||
         !friendQuery.data ? null : (
           <motion.div className="mb-28" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="mx-4 flex flex-wrap gap-2">
@@ -156,7 +156,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <ExpenseList
                 expenses={expenses.data ?? []}
                 contactId={_friendId}
-                isLoading={expenses.isLoading}
+                isLoading={expenses.isPending}
                 userId={user.id}
               />
             </div>

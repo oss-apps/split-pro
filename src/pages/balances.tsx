@@ -101,7 +101,7 @@ const BalancePage: NextPageWithUser = () => {
           </div>
 
           <div className="mt-5 flex flex-col gap-8 px-4 pb-36">
-            {balanceQuery.isLoading ? (
+            {balanceQuery.isPending ? (
               showProgress ? (
                 <div className="flex h-full w-full items-center justify-center">
                   <LoadingSpinner className="text-primary" />
@@ -121,7 +121,7 @@ const BalancePage: NextPageWithUser = () => {
               />
             ))}
 
-            {!balanceQuery.isLoading && !balanceQuery.data?.balances.length ? (
+            {!balanceQuery.isPending && !balanceQuery.data?.balances.length ? (
               <div className="mt-[40vh] flex -translate-y-[130%] flex-col items-center justify-center gap-6">
                 <InstallApp />
 

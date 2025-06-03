@@ -116,7 +116,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                 variant="ghost"
                 className="px-0 py-0 text-primary"
                 size="sm"
-                disabled={importMutation.isLoading || !uploadedFile}
+                disabled={importMutation.isPending || !uploadedFile}
               >
                 Import
               </Button>
@@ -143,11 +143,11 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             </label>
             <Button
               onClick={onImport}
-              disabled={!uploadedFile || importMutation.isLoading}
+              disabled={!uploadedFile || importMutation.isPending}
               className="w-[100px]"
               size="sm"
             >
-              {importMutation.isLoading ? <LoadingSpinner /> : 'Import'}
+              {importMutation.isPending ? <LoadingSpinner /> : 'Import'}
             </Button>
           </div>
           <div className="mt-4 text-sm text-gray-400">

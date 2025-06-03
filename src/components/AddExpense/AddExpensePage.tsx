@@ -196,8 +196,8 @@ export const AddOrEditExpensePage: React.FC<{
             variant="ghost"
             className=" px-0 text-primary"
             disabled={
-              addExpenseMutation.isLoading ||
-              addGroupExpenseMutation.isLoading ||
+              addExpenseMutation.isPending ||
+              addGroupExpenseMutation.isPending ||
               !amount ||
               description === '' ||
               isFileUploading
@@ -278,13 +278,13 @@ export const AddOrEditExpensePage: React.FC<{
                         className=" min-w-[100px]"
                         size="sm"
                         loading={
-                          addExpenseMutation.isLoading ||
-                          addGroupExpenseMutation.isLoading ||
+                          addExpenseMutation.isPending ||
+                          addGroupExpenseMutation.isPending ||
                           isFileUploading
                         }
                         disabled={
-                          addExpenseMutation.isLoading ||
-                          addGroupExpenseMutation.isLoading ||
+                          addExpenseMutation.isPending ||
+                          addGroupExpenseMutation.isPending ||
                           !amount ||
                           description === '' ||
                           isFileUploading ||

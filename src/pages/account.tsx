@@ -59,7 +59,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
               </div>
             </div>
             <div>
-              {!userQuery.isLoading ? (
+              {!userQuery.isPending ? (
                 <UpdateDetails defaultName={userQuery.data?.name ?? ''} />
               ) : null}
             </div>

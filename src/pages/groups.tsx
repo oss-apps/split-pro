@@ -31,7 +31,7 @@ const BalancePage: NextPageWithUser = () => {
       >
         <div className="mt-2">
           <div className="mt-5 flex flex-col gap-8 px-4 pb-36">
-            {groupQuery.isLoading ? null : groupQuery.data?.length === 0 ? (
+            {groupQuery.isPending ? null : groupQuery.data?.length === 0 ? (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

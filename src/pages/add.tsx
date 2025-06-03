@@ -63,7 +63,7 @@ const AddPage: NextPageWithUser<{
 
   useEffect(() => {
     // Set group
-    if (groupId && !groupQuery.isLoading && groupQuery.data && currentUser) {
+    if (groupId && !groupQuery.isPending && groupQuery.data && currentUser) {
       setGroup(groupQuery.data);
 
       setParticipants([
@@ -73,7 +73,7 @@ const AddPage: NextPageWithUser<{
       useAddExpenseStore.setState({ showFriends: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupId, groupQuery.isLoading, groupQuery.data, currentUser]);
+  }, [groupId, groupQuery.isPending, groupQuery.data, currentUser]);
 
   useEffect(() => {
     if (friendId && currentUser && friendQuery.data) {
@@ -81,7 +81,7 @@ const AddPage: NextPageWithUser<{
       useAddExpenseStore.setState({ showFriends: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [friendId, friendQuery.isLoading, friendQuery.data, currentUser]);
+  }, [friendId, friendQuery.isPending, friendQuery.data, currentUser]);
 
   useEffect(() => {
     if (_expenseId && expenseQuery.data) {

@@ -270,8 +270,8 @@ const BalancePage: NextPageWithUser<{
                                 size="sm"
                                 variant="destructive"
                                 onClick={onGroupDelete}
-                                disabled={deleteGroupMutation.isLoading}
-                                loading={deleteGroupMutation.isLoading}
+                                disabled={deleteGroupMutation.isPending}
+                                loading={deleteGroupMutation.isPending}
                               >
                                 Delete
                               </Button>
@@ -315,8 +315,8 @@ const BalancePage: NextPageWithUser<{
                                 size="sm"
                                 variant="destructive"
                                 onClick={onGroupLeave}
-                                disabled={leaveGroupMutation.isLoading}
-                                loading={leaveGroupMutation.isLoading}
+                                disabled={leaveGroupMutation.isPending}
+                                loading={leaveGroupMutation.isPending}
                               >
                                 Leave
                               </Button>
@@ -352,7 +352,7 @@ const BalancePage: NextPageWithUser<{
           </div>
         }
       >
-        {groupDetailQuery.isLoading ? null : groupDetailQuery.data?.groupUsers.length === 1 &&
+        {groupDetailQuery.isPending ? null : groupDetailQuery.data?.groupUsers.length === 1 &&
           !expensesQuery.data?.length ? (
           <div className="h-[85vh]">
             <NoMembers group={groupDetailQuery.data} enableSendingInvites={enableSendingInvites} />
@@ -409,7 +409,7 @@ const BalancePage: NextPageWithUser<{
                   userId={user.id}
                   expenses={expensesQuery.data ?? []}
                   contactId={groupId}
-                  isLoading={expensesQuery.isLoading}
+                  isLoading={expensesQuery.isPending}
                 />
               </TabsContent>
               <TabsContent value="balances">
@@ -422,7 +422,7 @@ const BalancePage: NextPageWithUser<{
           </motion.div>
         )}
         {expensesQuery.data?.length === 0 &&
-        !groupDetailQuery.isLoading &&
+        !groupDetailQuery.isPending &&
         groupDetailQuery.data?.groupUsers.length !== 1 ? (
           <div className="mt-20 flex flex-col items-center justify-center ">
             <Image src="/add_expense.svg" alt="Empty" width={200} height={200} className="mb-4" />

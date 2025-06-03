@@ -58,3 +58,11 @@ export const SplitwiseGroupSchema = z.object({
   name: z.string(),
   members: z.array(SplitwiseUserSchema),
 });
+
+export const SessionUserSchema = z.object({
+  id: z.number(),
+  currency: z.string(),
+  email: z.string().email().nullable().optional(),
+  name: z.string().nullable().optional(),
+  image: z.string().nullable().optional(),
+});

@@ -10,7 +10,7 @@ import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
 import { getDocumentUploadUrl } from '~/server/storage';
-import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
+import { SessionUserSchema, SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
 import { BigMath } from '~/utils/numbers';
 
 import {
@@ -24,69 +24,92 @@ import {
 } from '../services/splitService';
 
 export const userRouter = createTRPCRouter({
-  me: protectedProcedure.query(async ({ ctx }) => {
-    return ctx.session.user;
-  }),
+  me: protectedProcedure
+    .meta({
+      openapi: {
+        method: 'GET',
+        path: '/me',
+        description: 'Returns current user info',
+        protect: true,
+        tags: ['users'],
+      },
+    })
+    .input(z.object({}))
+    .output(SessionUserSchema)
+    .query(async ({ ctx }) => {
+      return ctx.session.user;
+    }),
 
-  getBalances: protectedProcedure.query(async ({ ctx }) => {
-    const balancesRaw = await db.balance.findMany({
-      where: {
-        userId: ctx.session.user.id,
-      },
-      orderBy: {
-        amount: 'desc',
-      },
-      include: {
-        friend: true,
-      },
-    });
+  getBalances: protectedProcedure
+    // .meta({
+    //   openapi: {
+    //     method: 'GET',
+    //     path: '/balances',
+    //     description: 'Get all balances for the current user',
+    //     protect: true,
+    //     tags: ['balances'],
+    //   },
+    // })
+    .input(z.object({}))
+    .query(async ({ ctx }) => {
+      const balancesRaw = await db.balance.findMany({
+        where: {
+          userId: ctx.session.user.id,
+        },
+        orderBy: {
+          amount: 'desc',
+        },
+        include: {
+          friend: true,
+        },
+      });
 
-    const balances = balancesRaw
-      .reduce(
-        (acc, current) => {
-          const existing = acc.findIndex((item) => item.friendId === current.friendId);
-          if (existing === -1) {
-            acc.push(current);
-          } else {
-            const existingItem = acc[existing];
-            if (existingItem) {
-              if (BigMath.abs(existingItem.amount) > BigMath.abs(current.amount)) {
-                acc[existing] = { ...existingItem, hasMore: true };
-              } else {
-                acc[existing] = { ...current, hasMore: true };
+      const balances = balancesRaw
+        .reduce(
+          (acc, current) => {
+            const existing = acc.findIndex((item) => item.friendId === current.friendId);
+            if (existing === -1) {
+              acc.push(current);
+            } else {
+              const existingItem = acc[existing];
+              if (existingItem) {
+                if (BigMath.abs(existingItem.amount) > BigMath.abs(current.amount)) {
+                  acc[existing] = { ...existingItem, hasMore: true };
+                } else {
+                  acc[existing] = { ...current, hasMore: true };
+                }
               }
             }
-          }
-          return acc;
+            return acc;
+          },
+          [] as ((typeof balancesRaw)[number] & { hasMore?: boolean })[],
+        )
+        .sort((a, b) => Number(BigMath.abs(b.amount) - BigMath.abs(a.amount)));
+
+      const cumulatedBalances = await db.balance.groupBy({
+        by: ['currency'],
+        _sum: {
+          amount: true,
         },
-        [] as ((typeof balancesRaw)[number] & { hasMore?: boolean })[],
-      )
-      .sort((a, b) => Number(BigMath.abs(b.amount) - BigMath.abs(a.amount)));
+        where: {
+          userId: ctx.session.user.id,
+        },
+      });
 
-    const cumulatedBalances = await db.balance.groupBy({
-      by: ['currency'],
-      _sum: {
-        amount: true,
-      },
-      where: {
-        userId: ctx.session.user.id,
-      },
-    });
+      const youOwe: Array<{ currency: string; amount: bigint }> = [];
+      const youGet: Array<{ currency: string; amount: bigint }> = [];
 
-    const youOwe: Array<{ currency: string; amount: bigint }> = [];
-    const youGet: Array<{ currency: string; amount: bigint }> = [];
-
-    for (const b of cumulatedBalances) {
-      const sumAmount = b._sum.amount;
-      if (sumAmount && sumAmount > 0) {
-        youGet.push({ currency: b.currency, amount: sumAmount ?? 0 });
-      } else if (sumAmount && sumAmount < 0) {
-        youOwe.push({ currency: b.currency, amount: sumAmount ?? 0 });
+      for (const b of cumulatedBalances) {
+        const sumAmount = b._sum.amount;
+        if (sumAmount && sumAmount > 0) {
+          youGet.push({ currency: b.currency, amount: sumAmount ?? 0 });
+        } else if (sumAmount && sumAmount < 0) {
+          youOwe.push({ currency: b.currency, amount: sumAmount ?? 0 });
+        }
       }
-    }
 
-    return { balances, cumulatedBalances, youOwe, youGet };
-  }),
+      return { balances, cumulatedBalances, youOwe, youGet };
+    }),
 
   getFriends: protectedProcedure.query(async ({ ctx }) => {
     const balanceWithFriends = await db.balance.findMany({

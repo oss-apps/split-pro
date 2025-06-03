@@ -54,13 +54,17 @@ export async function sendExpensePushNotification(expenseId: string) {
   }
 
   const participants = expense.deletedBy
-    ? expense.expenseParticipants.map((p) => p.userId).filter((e) => e !== expense.deletedBy)
-    : expense.expenseParticipants.map((p) => p.userId).filter((e) => e !== expense.addedBy);
+    ? expense.expenseParticipants.filter(
+        ({ userId, amount }) => userId !== expense.deletedBy && amount !== 0n,
+      )
+    : expense.expenseParticipants.filter(
+        ({ userId, amount }) => userId !== expense.addedBy && amount !== 0n,
+      );
 
   const subscriptions = await db.pushNotification.findMany({
     where: {
       userId: {
-        in: participants,
+        in: participants.map((p) => p.userId),
       },
     },
   });

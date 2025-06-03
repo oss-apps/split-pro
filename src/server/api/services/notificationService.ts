@@ -26,6 +26,7 @@ export async function sendExpensePushNotification(expenseId: string) {
       expenseParticipants: {
         select: {
           userId: true,
+          amount: true,
         },
       },
       paidByUser: {
@@ -54,36 +55,45 @@ export async function sendExpensePushNotification(expenseId: string) {
   }
 
   const participants = expense.deletedBy
-    ? expense.expenseParticipants.map((p) => p.userId).filter((e) => e !== expense.deletedBy)
-    : expense.expenseParticipants.map((p) => p.userId).filter((e) => e !== expense.addedBy);
+    ? expense.expenseParticipants.filter(
+        ({ userId, amount }) => userId !== expense.deletedBy && amount !== 0n,
+      )
+    : expense.expenseParticipants.filter(
+        ({ userId, amount }) => userId !== expense.addedBy && amount !== 0n,
+      );
 
   const subscriptions = await db.pushNotification.findMany({
     where: {
       userId: {
-        in: participants,
+        in: participants.map((p) => p.userId),
       },
     },
   });
 
-  const pushData = expense.deletedBy
-    ? {
-        title: `${expense.deletedByUser?.name ?? expense.deletedByUser?.email}`,
-        message: `Deleted ${expense.name}`,
-      }
-    : expense.updatedByUser
+  const pushData = {
+    ...(expense.deletedBy
       ? {
-          title: `${expense.updatedByUser.name ?? expense.updatedByUser.email}`,
-          message: `Updated ${expense.name} ${expense.currency} ${toUIString(expense.amount)}`,
+          title: `${expense.deletedByUser?.name ?? expense.deletedByUser?.email}`,
+          message: `Deleted ${expense.name}`,
         }
-      : expense.splitType === SplitType.SETTLEMENT
+      : expense.updatedByUser
         ? {
-            title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
-            message: `${expense.paidByUser.name ?? expense.paidByUser.email} settled up ${expense.currency} ${toUIString(expense.amount)}`,
+            title: `${expense.updatedByUser.name ?? expense.updatedByUser.email}`,
+            message: `Updated ${expense.name} ${expense.currency} ${toUIString(expense.amount)}`,
           }
-        : {
-            title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
-            message: `${expense.paidByUser.name ?? expense.paidByUser.email} paid  ${expense.currency} ${toUIString(expense.amount)} for ${expense.name}`,
-          };
+        : expense.splitType === SplitType.SETTLEMENT
+          ? {
+              title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
+              message: `${expense.paidByUser.name ?? expense.paidByUser.email} settled up ${expense.currency} ${toUIString(expense.amount)}`,
+            }
+          : {
+              title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
+              message: `${expense.paidByUser.name ?? expense.paidByUser.email} paid  ${expense.currency} ${toUIString(expense.amount)} for ${expense.name}`,
+            }),
+    data: {
+      url: `/expenses/${expenseId}`,
+    },
+  };
 
   const pushNotifications = subscriptions.map((s) => pushNotification(s.subscription, pushData));
 

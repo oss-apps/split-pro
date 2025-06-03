@@ -21,6 +21,9 @@ self.addEventListener('notificationclick', function (event) {
     self.clients
       .matchAll({ type: 'window', includeUncontrolled: true })
       .then(function (clientList) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const url = (event.notification.data?.url as string) ?? '/';
+
         if (clientList.length > 0) {
           let client = clientList[0];
           for (const _client of clientList) {
@@ -29,9 +32,10 @@ self.addEventListener('notificationclick', function (event) {
             }
           }
 
+          client!.url = url;
           return client?.focus();
         }
-        return self.clients?.openWindow('/');
+        return self.clients?.openWindow(url);
       }),
   );
 });

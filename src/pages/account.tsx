@@ -11,10 +11,11 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
-import { UpdateDetails } from '~/components/Account/UpdateDetails';
+import { UpdateName } from '~/components/Account/UpdateDetails';
 import MainLayout from '~/components/Layout/MainLayout';
 import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
@@ -26,6 +27,7 @@ import { api } from '~/utils/api';
 const AccountPage: NextPageWithUser = ({ user }) => {
   const userQuery = api.user.me.useQuery();
   const downloadQuery = api.user.downloadData.useMutation();
+  const updateDetailsMutation = api.user.updateUserDetail.useMutation();
 
   const [downloading, setDownloading] = useState(false);
 
@@ -40,6 +42,20 @@ const AccountPage: NextPageWithUser = ({ user }) => {
     link.click();
     URL.revokeObjectURL(url);
     setDownloading(false);
+  }
+
+  const utils = api.useUtils();
+
+  async function onNameUpdate(values: { name: string }) {
+    try {
+      await updateDetailsMutation.mutateAsync({ name: values.name });
+      toast.success('Updated details', { duration: 1500 });
+      utils.user.me.refetch().catch(console.error);
+    } catch (error) {
+      toast.error('Error in updating details');
+
+      console.error(error);
+    }
   }
 
   return (
@@ -58,11 +74,13 @@ const AccountPage: NextPageWithUser = ({ user }) => {
                 <div className="text-sm text-gray-500">{user.email}</div>
               </div>
             </div>
-            <div>
-              {!userQuery.isPending ? (
-                <UpdateDetails defaultName={userQuery.data?.name ?? ''} />
-              ) : null}
-            </div>
+            {!userQuery.isPending && (
+              <UpdateName
+                className="size-5"
+                defaultName={userQuery.data?.name ?? ''}
+                onNameSubmit={onNameUpdate}
+              />
+            )}
           </div>
           <div className="mt-8 flex flex-col gap-4">
             <Link href="https://twitter.com/KM_Koushik_" target="_blank">

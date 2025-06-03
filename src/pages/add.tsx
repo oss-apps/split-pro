@@ -10,6 +10,7 @@ import { isStorageConfigured } from '~/server/storage';
 import { useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
+import { toUIString } from '~/utils/numbers';
 
 const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;
@@ -93,7 +94,7 @@ const AddPage: NextPageWithUser<{
         })),
       );
       setCurrency(expenseQuery.data.currency as CurrencyCode);
-      setAmountStr(expenseQuery.data.amount.toString());
+      setAmountStr(toUIString(expenseQuery.data.amount));
       setDescription(expenseQuery.data.name);
       setPaidBy(expenseQuery.data.paidByUser);
       setAmount(expenseQuery.data.amount);

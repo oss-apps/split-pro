@@ -26,8 +26,6 @@ export const AddOrEditExpensePage: React.FC<{
   enableSendingInvites: boolean;
   expenseId?: string;
 }> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
-  const [open, setOpen] = useState(false);
-
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
   const participants = useAddExpenseStore((s) => s.participants);
@@ -65,9 +63,8 @@ export const AddOrEditExpensePage: React.FC<{
       updateProfile.mutate({ currency });
 
       setCurrency(currency);
-      setOpen(false);
     },
-    [setCurrency, updateProfile, setOpen],
+    [setCurrency, updateProfile],
   );
 
   const router = useRouter();

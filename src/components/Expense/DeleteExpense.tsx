@@ -4,18 +4,8 @@ import React from 'react';
 
 import { api } from '~/utils/api';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '../ui/alert-dialog';
 import { Button } from '../ui/button';
+import { SimpleConfirmationDialog } from '../ui/SimpleConfirmationDialog';
 
 export const DeleteExpense: React.FC<{
   expenseId: string;
@@ -41,28 +31,17 @@ export const DeleteExpense: React.FC<{
   };
 
   return (
-    <div>
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <Button variant="ghost">
-            <Trash2 className="text-red-400" size={23} />
-          </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent className="max-w-xs rounded-lg">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your expense.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction size="sm" variant="destructive" onClick={onDeleteExpense}>
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+    <SimpleConfirmationDialog
+      title="Are you absolutely sure?"
+      description="This action cannot be undone. This will permanently delete your expense."
+      hasPermission
+      onConfirm={onDeleteExpense}
+      loading={deleteExpenseMutation.isPending}
+      variant="destructive"
+    >
+      <Button variant="ghost">
+        <Trash2 className="text-red-400" size={23} />
+      </Button>
+    </SimpleConfirmationDialog>
   );
 };

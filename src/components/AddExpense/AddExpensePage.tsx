@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { CalendarIcon, HeartHandshakeIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { type CurrencyCode } from '~/lib/currency';
 import { cn } from '~/lib/utils';

@@ -9,6 +9,7 @@ import { CategoryIcon } from '~/components/ui/categoryIcons';
 import { type GroupRouter } from '~/server/api/routers/group';
 import { type UserRouter } from '~/server/api/routers/user';
 import { toUIString } from '~/utils/numbers';
+import { displayName } from '~/utils/strings';
 
 export const ExpenseList: React.FC<{
   userId: number;
@@ -54,8 +55,7 @@ export const ExpenseList: React.FC<{
                 className={`flex text-center ${isSettlement ? 'text-sm text-gray-400' : 'text-xs text-gray-500'}`}
               >
                 <span className="text-[10px]">{isSettlement ? '  🎉  ' : null}</span>
-                {youPaid ? 'You' : (e.paidByUser.name ?? e.paidByUser.email)} paid {e.currency}{' '}
-                {toUIString(e.amount)}{' '}
+                {displayName(e.paidByUser, userId)} paid {e.currency} {toUIString(e.amount)}
               </p>
             </div>
           </div>

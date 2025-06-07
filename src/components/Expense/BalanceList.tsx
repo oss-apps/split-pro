@@ -6,7 +6,9 @@ import { useMemo } from 'react';
 import { UserAvatar } from '~/components/ui/avatar';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
+import { displayName } from '~/utils/strings';
 
+import { GroupSettleUp } from '../Friend/GroupSettleup';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 
 interface UserWithBalance {
@@ -16,9 +18,9 @@ interface UserWithBalance {
 }
 
 export const BalanceList: React.FC<{
-  balances: GroupBalance[];
+  groupBalances: GroupBalance[];
   users: User[];
-}> = ({ balances, users }) => {
+}> = ({ groupBalances, users }) => {
   const userQuery = api.user.me.useQuery();
 
   const userMap = useMemo(() => {
@@ -29,7 +31,7 @@ export const BalanceList: React.FC<{
       },
       {} as Record<number, UserWithBalance>,
     );
-    balances
+    groupBalances
       .filter(({ amount }) => BigMath.abs(amount) > 0)
       .forEach((balance) => {
         if (!res[balance.userId]!.balances[balance.firendId]) {
@@ -43,7 +45,7 @@ export const BalanceList: React.FC<{
       });
 
     return res;
-  }, [balances, users]);
+  }, [groupBalances, users]);
 
   return (
     <>
@@ -62,19 +64,19 @@ export const BalanceList: React.FC<{
           });
 
           return (
-            <AccordionItem key={user.id} value={user.name ?? user.email!}>
+            <AccordionItem key={user.id} value={displayName(user)}>
               <AccordionTrigger className="hover:no-underline">
                 <div className="flex items-center gap-3">
                   <UserAvatar user={user} />
                   <div className="text-foreground">
-                    {user.id === userQuery.data?.id ? 'You' : (user.name ?? user.email)}
+                    {displayName(user, userQuery.data?.id)}
                     {Object.values(total).every((amount) => amount === 0n) ? (
                       <span className="text-gray-400"> is settled up</span>
                     ) : (
                       <>
                         <span className="text-gray-400">
                           {' '}
-                          {totalAmount[1] > 0 ? 'receive' : 'owe'}
+                          {totalAmount[1] > 0 ? 'get' : 'owe'}
                           {user.id === userQuery.data?.id ? '' : 's'}{' '}
                         </span>
                         <span
@@ -97,29 +99,38 @@ export const BalanceList: React.FC<{
                   return (
                     <>
                       {Object.entries(perFriendBalances).map(([currency, amount]) => (
-                        <div
-                          key={friendId}
-                          className="mb-4 ml-5 flex cursor-pointer items-center gap-3 text-sm"
+                        <GroupSettleUp
+                          key={friendId + currency}
+                          friend={friend}
+                          user={user}
+                          amount={amount}
+                          currency={currency}
+                          groupId={groupBalances[0]!.groupId}
                         >
-                          <UserAvatar user={friend} size={20} />
-                          <div className="text-foreground">
-                            {friend.name ?? friend.email}
-                            <span className="text-gray-400">
-                              {' '}
-                              {amount > 0 ? 'owes' : 'gets back'}{' '}
-                            </span>
-                            <span
-                              className={clsx(
-                                'text-right',
-                                amount > 0 ? 'text-emerald-500' : 'text-orange-600',
-                              )}
-                            >
-                              {toUIString(amount)} {currency}
-                            </span>
-                            <span className="text-gray-400"> {amount > 0 ? 'to' : 'from'} </span>
-                            <span className="text-foreground">{user.name ?? user.email}</span>
+                          <div className="mb-4 ml-5 flex cursor-pointer items-center gap-3 text-sm">
+                            <UserAvatar user={friend} size={20} />
+                            <div className="text-foreground">
+                              {displayName(friend, userQuery.data?.id)}
+                              <span className="text-gray-400">
+                                {' '}
+                                {amount < 0 ? 'get' : 'owe'}
+                                {friend.id === userQuery.data?.id ? '' : 's'}{' '}
+                              </span>
+                              <span
+                                className={clsx(
+                                  'text-right',
+                                  amount > 0 ? 'text-emerald-500' : 'text-orange-600',
+                                )}
+                              >
+                                {toUIString(amount)} {currency}
+                              </span>
+                              <span className="text-gray-400"> {amount > 0 ? 'to' : 'from'} </span>
+                              <span className="text-foreground">
+                                {displayName(user, userQuery.data?.id)}
+                              </span>
+                            </div>
                           </div>
-                        </div>
+                        </GroupSettleUp>
                       ))}
                     </>
                   );

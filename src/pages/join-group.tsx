@@ -13,25 +13,30 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     query: { groupId },
   } = context;
 
-  if (!session || !groupId) {
+  if (!session || !groupId || Array.isArray(groupId)) {
     return {
       redirect: {
         destination: '/',
         permanent: false,
       },
     };
+  } else {
+    try {
+      await joinGroup(session.user.id, groupId);
+      return {
+        redirect: {
+          destination: `/groups/${groupId}`,
+          permanent: false,
+        },
+      };
+    } catch (e) {
+      console.error(e);
+      return {
+        redirect: {
+          destination: '/groups',
+          permanent: false,
+        },
+      };
+    }
   }
-
-  try {
-    await joinGroup(session.user.id, groupId as string);
-  } catch (e) {
-    console.log(e);
-  }
-
-  return {
-    redirect: {
-      destination: '/groups',
-      permanent: false,
-    },
-  };
 };

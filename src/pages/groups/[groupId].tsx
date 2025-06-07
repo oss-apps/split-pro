@@ -66,8 +66,8 @@ const BalancePage: NextPageWithUser<{
           text: 'Join to the group and you can add, manage expenses, and track your balances',
           url: inviteLink,
         })
-        .then(() => console.log('Successful share'))
-        .catch((error) => console.log('Error sharing', error));
+        .then(() => console.info('Successful share'))
+        .catch((error) => console.error('Error sharing', error));
     } else {
       await navigator.clipboard.writeText(inviteLink);
       setIsInviteCopied(true);
@@ -112,8 +112,6 @@ const BalancePage: NextPageWithUser<{
       },
     );
   }
-
-  console.log('expensesQuery.data', expensesQuery.data);
 
   return (
     <>
@@ -378,7 +376,7 @@ const BalancePage: NextPageWithUser<{
               </TabsContent>
               <TabsContent value="balances">
                 <BalanceList
-                  balances={groupDetailQuery.data?.groupBalances ?? []}
+                  groupBalances={groupDetailQuery.data?.groupBalances ?? []}
                   users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
                 />
               </TabsContent>

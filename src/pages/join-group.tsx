@@ -1,4 +1,5 @@
 import { type GetServerSideProps } from 'next';
+import { toast } from 'sonner';
 
 import { joinGroup } from '~/server/api/services/splitService';
 import { getServerAuthSession } from '~/server/auth';
@@ -13,7 +14,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     query: { groupId },
   } = context;
 
-  if (!session || !groupId || Array.isArray(groupId)) {
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  } else if (!groupId || Array.isArray(groupId)) {
+    toast.warning('Could not find group');
     return {
       redirect: {
         destination: '/',

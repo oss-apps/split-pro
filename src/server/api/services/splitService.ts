@@ -30,7 +30,8 @@ export async function joinGroup(userId: number, publicGroupId: string) {
 }
 
 export async function getFriends(userId: number) {
-  return db.$queryRawTyped(getFriendIds(userId));
+  const res = await db.$queryRawTyped(getFriendIds(userId));
+  return res.map((r) => r.friendId);
 }
 
 export async function getGroups(userId: number) {
@@ -48,7 +49,37 @@ export async function getGroups(userId: number) {
   });
 }
 
+export async function getGroupMemberIds(groupId: number | null) {
+  if (!groupId) {
+    return [];
+  }
+
+  const members = await db.groupUser.findMany({
+    where: {
+      groupId,
+    },
+    select: {
+      userId: true,
+    },
+  });
+
+  return members.map((m) => m.userId);
+}
+
+export async function isSettledUpInGroup(userId: number, groupId: number | null = null) {
+  const friendIds = await (!groupId ? getFriends(userId) : getGroupMemberIds(groupId));
+  const balances = await Promise.all(
+    friendIds.map((friendId) => getBalances(userId, friendId, groupId)),
+  );
+
+  return balances.every((b) => Object.values(b).every((amount) => amount === 0n));
+}
+
 export async function getBalances(userId: number, friendId: number, groupId: number | null = null) {
+  if (userId === friendId) {
+    return {};
+  }
+
   const [balancesPlus, balancesMinus] = await Promise.all([
     db.$queryRawTyped(getOneSidedBalance(userId, friendId, groupId)),
     db.$queryRawTyped(getOneSidedBalance(friendId, userId, groupId)),

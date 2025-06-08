@@ -7,7 +7,7 @@ import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 
-import { createGroupExpense, editExpense } from '../services/splitService';
+import { createGroupExpense, editExpense, isSettledUpInGroup } from '../services/splitService';
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
@@ -336,17 +336,9 @@ export const groupRouter = createTRPCRouter({
   leaveGroup: groupProcedure
     .input(z.object({ groupId: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      const nonZeroBalance = await ctx.db.groupBalance.findFirst({
-        where: {
-          groupId: input.groupId,
-          userId: ctx.session.user.id,
-          amount: {
-            not: 0,
-          },
-        },
-      });
+      const canLeave = await isSettledUpInGroup(ctx.session.user.id, input.groupId);
 
-      if (nonZeroBalance) {
+      if (!canLeave) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'You have a non-zero balance in this group',

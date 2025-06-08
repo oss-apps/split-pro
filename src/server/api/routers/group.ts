@@ -1,5 +1,5 @@
 import { SplitType } from '@prisma/client';
-import { getGroupsWithBalances } from '@prisma/client/sql';
+import { getGroupsWithBalances, getAllBalancesForGroup } from '@prisma/client/sql';
 import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
@@ -9,6 +9,8 @@ import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/a
 import { db } from '~/server/db';
 
 import { createGroupExpense, editExpense } from '../services/splitService';
+import { BalanceSkeleton } from '~/components/ui/skeleton';
+import GroupMyBalance from '~/components/group/GroupMyBalance';
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
@@ -241,15 +243,30 @@ export const groupRouter = createTRPCRouter({
             user: true,
           },
         },
-        groupBalances: true,
       },
     });
 
-    if (group?.simplifyDebts) {
-      group.groupBalances = simplifyDebts(group.groupBalances);
+    let balances = await ctx.db.$queryRawTyped(getAllBalancesForGroup(input.groupId));
+
+    let reverseBalances = balances.map((b) => {
+      return {
+        borrowedBy: b.paidBy,
+        paidBy: b.borrowedBy,
+        currency: b.currency,
+        amount: b.amount != null ? -b.amount : 0n,
+      };
+    });
+
+    const groupWithBalances = {
+      ...group,
+      groupBalances: balances.concat(reverseBalances),
+    };
+
+    if (groupWithBalances?.simplifyDebts) {
+      groupWithBalances.groupBalances = simplifyDebts(groupWithBalances.groupBalances);
     }
 
-    return group;
+    return groupWithBalances;
   }),
 
   getGroupTotals: groupProcedure.query(async ({ input, ctx }) => {

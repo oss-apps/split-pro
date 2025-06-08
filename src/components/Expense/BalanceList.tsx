@@ -5,6 +5,7 @@ import { UserAvatar } from '~/components/ui/avatar';
 import { BigMath, toUIString } from '~/utils/numbers';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
+import { getAllBalancesForGroup } from '@prisma/client/sql';
 
 interface UserWithBalance {
   user: User;
@@ -13,7 +14,7 @@ interface UserWithBalance {
 }
 
 export const BalanceList: React.FC<{
-  balances: GroupBalance[];
+  balances: getAllBalancesForGroup.Result[];
   users: User[];
 }> = ({ balances, users }) => {
   const userMap = users.reduce(
@@ -25,16 +26,18 @@ export const BalanceList: React.FC<{
   );
 
   balances
-    .filter(({ amount }) => BigMath.abs(amount) > 0)
+    .filter(({ amount }) => amount != null && BigMath.abs(amount) > 0)
     .forEach((balance) => {
-      if (!userMap[balance.userId]!.balances[balance.firendId]) {
-        userMap[balance.userId]!.balances[balance.firendId] = {};
+      if (!userMap[balance.paidBy]!.balances[balance.borrowedBy]) {
+        userMap[balance.paidBy]!.balances[balance.borrowedBy] = {};
       }
-      const friendBalance = userMap[balance.userId]!.balances[balance.firendId]!;
-      friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0n) + balance.amount;
+      const friendBalance = userMap[balance.paidBy]!.balances[balance.borrowedBy]!;
+      friendBalance[balance.currency] =
+        (friendBalance[balance.currency] ?? 0n) + (balance.amount != null ? balance.amount : 0n);
 
-      userMap[balance.userId]!.total[balance.currency] =
-        (userMap[balance.userId]!.total[balance.currency] ?? 0n) + balance.amount;
+      userMap[balance.paidBy]!.total[balance.currency] =
+        (userMap[balance.paidBy]!.total[balance.currency] ?? 0n) +
+        (balance.amount != null ? balance.amount : 0n);
     });
 
   return (

@@ -1,13 +1,15 @@
-import type { GroupBalance } from '@prisma/client';
+import { getAllBalancesForGroup } from '@prisma/client/sql';
 
-export function simplifyDebts(groupBalances: GroupBalance[]): GroupBalance[] {
+export function simplifyDebts(
+  groupBalances: getAllBalancesForGroup.Result[],
+): getAllBalancesForGroup.Result[] {
   const currencies = new Set(groupBalances.map((balance) => balance.currency));
   const nodes = new Set<number>();
   groupBalances.forEach((balance) => {
-    nodes.add(balance.userId);
-    nodes.add(balance.firendId);
+    nodes.add(balance.paidBy);
+    nodes.add(balance.borrowedBy);
   });
-  const result: GroupBalance[] = [];
+  const result: getAllBalancesForGroup.Result[] = [];
 
   for (const currency of currencies) {
     const balances = groupBalances.filter((balance) => balance.currency === currency);
@@ -19,29 +21,31 @@ export function simplifyDebts(groupBalances: GroupBalance[]): GroupBalance[] {
 }
 
 function simplifyDebtsForSingleCurrency(
-  groupBalances: GroupBalance[],
+  groupBalances: getAllBalancesForGroup.Result[],
   nodes: number[],
-): GroupBalance[] {
+): getAllBalancesForGroup.Result[] {
   const adjMatrix = new Array<bigint[]>(nodes.length)
     .fill([])
     .map(() => new Array<bigint>(nodes.length).fill(0n));
 
-  const nonResidualBalances = groupBalances.filter((balance) => balance.amount > 0);
+  const nonResidualBalances = groupBalances.filter(
+    (balance) => balance.amount != null && balance.amount > 0,
+  );
 
   nonResidualBalances.forEach((balance) => {
-    const source = nodes.indexOf(balance.userId);
-    const sink = nodes.indexOf(balance.firendId);
-    adjMatrix[source]![sink] = balance.amount;
+    const source = nodes.indexOf(balance.paidBy);
+    const sink = nodes.indexOf(balance.borrowedBy);
+    adjMatrix[source]![sink] = balance.amount != null ? balance.amount : 0n;
   });
 
   const simplified = minCashFlow(adjMatrix);
 
   const result = getMirrorBalances(
     simplified.flatMap((row, source) => {
-      const res: GroupBalance[] = [];
+      const res: getAllBalancesForGroup.Result[] = [];
       row.forEach((amount, sink) => {
         const balance = groupBalances.find(
-          (balance) => balance.userId === nodes[source] && balance.firendId === nodes[sink],
+          (balance) => balance.paidBy === nodes[source] && balance.borrowedBy === nodes[sink],
         )!;
 
         if (amount === 0n) {
@@ -60,7 +64,7 @@ function simplifyDebtsForSingleCurrency(
   groupBalances.forEach((balance) => {
     const found = result.find(
       (graphBalance) =>
-        graphBalance.userId === balance.userId && graphBalance.firendId === balance.firendId,
+        graphBalance.paidBy === balance.paidBy && graphBalance.borrowedBy === balance.borrowedBy,
     );
     if (!found) {
       result.push({ ...balance, amount: 0n });
@@ -145,15 +149,17 @@ const constructMinMaxQ = (amounts: bigint[]): [Entry[], Entry[]] => {
   return [minQ, maxQ];
 };
 
-const getMirrorBalances = (groupBalances: GroupBalance[]): GroupBalance[] => {
+const getMirrorBalances = (
+  groupBalances: getAllBalancesForGroup.Result[],
+): getAllBalancesForGroup.Result[] => {
   const result = [...groupBalances];
 
   groupBalances.forEach((balance) => {
     result.push({
       ...balance,
-      userId: balance.firendId,
-      firendId: balance.userId,
-      amount: balance.amount > 0 ? -balance.amount : 0n,
+      paidBy: balance.borrowedBy,
+      borrowedBy: balance.paidBy,
+      amount: balance.amount != null && balance.amount > 0 ? -balance.amount : 0n,
     });
   });
 

@@ -1,7 +1,6 @@
 import { randomUUID } from 'crypto';
 
 import { SplitType } from '@prisma/client';
-import { getOneSidedBalance } from '@prisma/client/sql';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
@@ -18,8 +17,10 @@ import {
   addUserExpense,
   deleteExpense,
   editExpense,
+  getBalances,
   getCompleteFriendsDetails,
   getCompleteGroupDetails,
+  getFriends,
   importGroupFromSplitwise,
   importUserBalanceFromSplitWise,
 } from '../services/splitService';
@@ -112,6 +113,8 @@ export const userRouter = createTRPCRouter({
 
     return friends;
   }),
+
+  _getFriends: protectedProcedure.query(async ({ ctx }) => getFriends(ctx.session.user.id)),
 
   inviteFriend: protectedProcedure
     .input(z.object({ email: z.string(), sendInviteEmail: z.boolean().optional() }))
@@ -291,24 +294,7 @@ export const userRouter = createTRPCRouter({
 
   _getBalancesWithFriend: protectedProcedure
     .input(z.object({ friendId: z.number() }))
-    .query(async ({ input, ctx }) => {
-      const [balancesPlus, balancesMinus] = await Promise.all([
-        db.$queryRawTyped(getOneSidedBalance(ctx.session.user.id, input.friendId, null)),
-        db.$queryRawTyped(getOneSidedBalance(input.friendId, ctx.session.user.id, null)),
-      ]);
-
-      const balances = Object.fromEntries(balancesPlus.map((b) => [b.currency, b.amount ?? 0n]));
-
-      balancesMinus.forEach((b) => {
-        if (b.currency in balances) {
-          balances[b.currency]! -= b.amount ?? 0n;
-        } else {
-          balances[b.currency] = -(b.amount ?? 0n);
-        }
-      });
-
-      return balances;
-    }),
+    .query(async ({ input, ctx }) => getBalances(ctx.session.user.id, input.friendId)),
 
   getExpenseDetails: protectedProcedure
     .input(z.object({ expenseId: z.string() }))

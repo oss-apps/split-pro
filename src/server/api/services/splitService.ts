@@ -1,4 +1,5 @@
 import { type SplitType, type User } from '@prisma/client';
+import { getFriendIds, getOneSidedBalance } from '@prisma/client/sql';
 import { nanoid } from 'nanoid';
 
 import { db } from '~/server/db';
@@ -26,6 +27,44 @@ export async function joinGroup(userId: number, publicGroupId: string) {
   });
 
   return group;
+}
+
+export async function getFriends(userId: number) {
+  return db.$queryRawTyped(getFriendIds(userId));
+}
+
+export async function getGroups(userId: number) {
+  return db.group.findMany({
+    where: {
+      groupUsers: {
+        some: {
+          userId,
+        },
+      },
+    },
+    include: {
+      groupUsers: true,
+    },
+  });
+}
+
+export async function getBalances(userId: number, friendId: number, groupId: number | null = null) {
+  const [balancesPlus, balancesMinus] = await Promise.all([
+    db.$queryRawTyped(getOneSidedBalance(userId, friendId, groupId)),
+    db.$queryRawTyped(getOneSidedBalance(friendId, userId, groupId)),
+  ]);
+
+  const balances = Object.fromEntries(balancesPlus.map((b) => [b.currency, b.amount ?? 0n]));
+
+  balancesMinus.forEach((b) => {
+    if (b.currency in balances) {
+      balances[b.currency]! -= b.amount ?? 0n;
+    } else {
+      balances[b.currency] = -(b.amount ?? 0n);
+    }
+  });
+
+  return Object.fromEntries(Object.entries(balances).filter(([_, amount]) => amount !== 0n));
 }
 
 export async function createGroupExpense(

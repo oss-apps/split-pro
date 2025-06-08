@@ -1,4 +1,5 @@
 import { SplitType } from '@prisma/client';
+import { getGroupsWithBalances } from '@prisma/client/sql';
 import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
@@ -52,43 +53,32 @@ export const groupRouter = createTRPCRouter({
   }),
 
   getAllGroupsWithBalances: protectedProcedure.query(async ({ ctx }) => {
-    const groups = await ctx.db.groupUser.findMany({
-      where: {
-        userId: ctx.session.user.id,
-      },
-      include: {
-        group: {
-          include: {
-            groupBalances: {
-              where: { userId: ctx.session.user.id },
-            },
-            expenses: {
-              orderBy: {
-                createdAt: 'desc',
-              },
-              take: 1,
-            },
-          },
-        },
-      },
-    });
+    const groupBalances = await ctx.db.$queryRawTyped(getGroupsWithBalances(ctx.session.user.id));
 
-    const sortedGroupsByLatestExpense = groups.sort((a, b) => {
-      const aDate = a.group.expenses[0]?.createdAt ?? new Date(0);
-      const bDate = b.group.expenses[0]?.createdAt ?? new Date(0);
-      return bDate.getTime() - aDate.getTime();
-    });
+    const _groups = groupBalances
+      .map((b) => {
+        return {
+          id: b.id,
+          name: b.name,
+        };
+      })
+      .filter((obj, index, self) => index === self.findIndex((t) => t.id === obj.id));
 
-    const groupsWithBalances = sortedGroupsByLatestExpense.map((g) => {
-      const balances: Record<string, bigint> = {};
-
-      for (const balance of g.group.groupBalances) {
-        balances[balance.currency] = (balances[balance.currency] ?? 0n) + balance.amount;
-      }
+    const groupsWithBalances = _groups.map((group) => {
+      const balancesForGroup: Record<string, bigint> = {};
+      groupBalances
+        .filter((b) => {
+          return b.id == group.id;
+        })
+        .forEach((b) => {
+          if (b.currency != null && b.balance != null) {
+            balancesForGroup[b.currency] = b.balance;
+          }
+        });
 
       return {
-        ...g.group,
-        balances,
+        ...group,
+        balances: balancesForGroup,
       };
     });
 

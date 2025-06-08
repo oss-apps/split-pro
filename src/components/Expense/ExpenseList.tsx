@@ -21,6 +21,7 @@ export const ExpenseList: React.FC<{
 }> = ({ userId, expenses, contactId, isLoading }) => (
   <>
     {expenses.map((e) => {
+      const isGroup = !!e.groupId;
       const youPaid = e.paidBy === userId;
       const yourExpense = e.expenseParticipants.find((p) => p.userId === userId);
       const isSettlement = e.splitType === SplitType.SETTLEMENT;
@@ -30,7 +31,7 @@ export const ExpenseList: React.FC<{
 
       return (
         <Link
-          href={`/groups/${contactId}/expenses/${e.id}`}
+          href={`/${isGroup ? 'groups' : 'balances'}/${contactId}/expenses/${e.id}`}
           key={e.id}
           className="flex items-center justify-between py-2"
         >

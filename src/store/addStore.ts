@@ -35,7 +35,7 @@ export interface AddExpenseState {
     setGroup: (group: Group | undefined) => void;
     addOrUpdateParticipant: (user: Participant) => void;
     setSplitShare: (splitType: SplitType, userId: number, share: bigint) => void;
-    setParticipants: (participants: User[]) => void;
+    setParticipants: (participants: User[], splitType?: SplitType) => void;
     removeParticipant: (userId: number) => void;
     removeLastParticipant: () => void;
     setCurrency: (currency: CurrencyCode) => void;
@@ -138,19 +138,30 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
           state.paidBy,
         );
       }),
-    setParticipants: (participants) =>
+    setParticipants: (participants, splitType) =>
       set((state) => {
         const splitShares = participants.reduce((res, p) => {
           res[p.id] = initSplitShares();
           return res;
         }, {} as SplitShares);
+        if (splitType) {
+          calculateSplitShareBasedOnAmount(
+            state.amount,
+            participants,
+            splitType,
+            splitShares,
+            state.paidBy,
+          );
+        } else {
+          splitType = SplitType.EQUAL;
+        }
         return {
-          splitType: SplitType.EQUAL,
+          splitType,
           splitShares,
           ...calculateParticipantSplit(
             state.amount,
             participants,
-            SplitType.EQUAL,
+            splitType,
             splitShares,
             state.paidBy,
           ),
@@ -330,3 +341,85 @@ export function calculateParticipantSplit(
 const initSplitShares = (): Record<SplitType, undefined> =>
   // @ts-expect-error TS enums/string coersion *eyeroll*
   Object.fromEntries(Object.values(SplitType).map((type) => [type, undefined]));
+
+export function calculateSplitShareBasedOnAmount(
+  amount: bigint,
+  participants: Participant[],
+  splitType: SplitType,
+  splitShares: SplitShares,
+  paidBy?: User,
+) {
+  switch (splitType) {
+    case SplitType.EQUAL:
+      participants.forEach((p) => {
+        splitShares[p.id]![splitType] = p.amount === 0n ? 0n : 1n;
+      });
+
+      break;
+
+    case SplitType.PERCENTAGE:
+      participants.forEach((p) => {
+        splitShares[p.id]![splitType] =
+          amount === 0n
+            ? 0n
+            : paidBy?.id !== p.id
+              ? (BigMath.abs(p.amount ?? 0n) * 10000n) / amount / 100n
+              : (BigMath.abs(amount - (p.amount ?? 0n)) * 10000n) / amount / 100n;
+      });
+
+      break;
+
+    case SplitType.SHARE:
+      const amountNum = Number(amount);
+      const shares = participants.map((p) =>
+        p.id === paidBy?.id
+          ? Math.abs(amountNum - (Number(p.amount) ?? 0)) / amountNum
+          : Math.abs(Number(p.amount) ?? 0) / amountNum,
+      );
+
+      const minShare = Math.min(...shares);
+
+      const multiplier = minShare !== 0 ? 1 / minShare : 1;
+
+      participants.forEach((p) => {
+        splitShares[p.id]![splitType] =
+          amount === 0n
+            ? 0n
+            : BigInt(
+                Math.round(
+                  (Math.abs(
+                    paidBy?.id !== p.id
+                      ? (Number(p.amount) ?? 0)
+                      : amountNum - (Number(p.amount) ?? 0),
+                  ) /
+                    amountNum) *
+                    multiplier,
+                ),
+              ) * 100n;
+      });
+
+      break;
+
+    case SplitType.EXACT:
+      participants.forEach((p) => {
+        splitShares[p.id]![splitType] =
+          paidBy?.id !== p.id
+            ? BigMath.abs(p.amount ?? 0n)
+            : BigMath.abs(amount - (p.amount ?? 0n));
+      });
+
+      break;
+
+    case SplitType.ADJUSTMENT:
+      const equalShare = amount / BigInt(participants.length);
+
+      participants.forEach((p) => {
+        splitShares[p.id]![splitType] =
+          paidBy?.id !== p.id
+            ? BigMath.abs(p.amount ?? 0n) - equalShare
+            : BigMath.abs(amount - (p.amount ?? 0n)) - equalShare;
+      });
+
+      break;
+  }
+}

@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { CalendarIcon, HeartHandshakeIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 
 import { type CurrencyCode } from '~/lib/currency';
 import { cn } from '~/lib/utils';
@@ -51,8 +51,6 @@ export const AddOrEditExpensePage: React.FC<{
     setSplitScreenOpen,
     setExpenseDate,
   } = useAddExpenseStore((s) => s.actions);
-
-  useEffect(() => () => resetState(), [resetState]);
 
   const addExpenseMutation = api.user.addOrEditExpense.useMutation();
   const addGroupExpenseMutation = api.group.addOrEditExpense.useMutation();

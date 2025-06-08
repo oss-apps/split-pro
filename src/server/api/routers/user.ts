@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 
 import { SplitType } from '@prisma/client';
+import { getOneSidedBalance } from '@prisma/client/sql';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
@@ -283,6 +284,27 @@ export const userRouter = createTRPCRouter({
             not: 0,
           },
         },
+      });
+
+      return balances;
+    }),
+
+  _getBalancesWithFriend: protectedProcedure
+    .input(z.object({ friendId: z.number() }))
+    .query(async ({ input, ctx }) => {
+      const [balancesPlus, balancesMinus] = await Promise.all([
+        db.$queryRawTyped(getOneSidedBalance(ctx.session.user.id, input.friendId, null)),
+        db.$queryRawTyped(getOneSidedBalance(input.friendId, ctx.session.user.id, null)),
+      ]);
+
+      const balances = Object.fromEntries(balancesPlus.map((b) => [b.currency, b.amount ?? 0n]));
+
+      balancesMinus.forEach((b) => {
+        if (b.currency in balances) {
+          balances[b.currency]! -= b.amount ?? 0n;
+        } else {
+          balances[b.currency] = -(b.amount ?? 0n);
+        }
       });
 
       return balances;

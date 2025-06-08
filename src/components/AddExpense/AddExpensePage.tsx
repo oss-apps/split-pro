@@ -227,6 +227,7 @@ export const AddOrEditExpensePage: React.FC<{
                 type="number"
                 inputMode="decimal"
                 value={amtStr}
+                min="0"
                 onChange={(e) => onUpdateAmount(e.target.value)}
               />
             </div>

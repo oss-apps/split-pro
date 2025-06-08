@@ -94,7 +94,7 @@ const AddPage: NextPageWithUser<{
         })),
       );
       setCurrency(expenseQuery.data.currency as CurrencyCode);
-      setAmountStr(toUIString(expenseQuery.data.amount));
+      setAmountStr((Number(expenseQuery.data.amount) / 100).toString());
       setDescription(expenseQuery.data.name);
       setPaidBy(expenseQuery.data.paidByUser);
       setAmount(expenseQuery.data.amount);

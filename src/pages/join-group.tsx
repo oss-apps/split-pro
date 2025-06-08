@@ -3,10 +3,15 @@ import { toast } from 'sonner';
 
 import { joinGroup } from '~/server/api/services/splitService';
 import { getServerAuthSession } from '~/server/auth';
+import { NextPageWithUser } from '~/types';
 
-export default function Home() {
-  return <>hello</>;
-}
+const Home: NextPageWithUser = ({}) => {
+  return <div />;
+};
+
+Home.auth = true;
+
+export default Home;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);
@@ -17,7 +22,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (!session) {
     return {
       redirect: {
-        destination: '/',
+        destination: `/auth/signin?callbackUrl=${encodeURIComponent(context.resolvedUrl)}`,
         permanent: false,
       },
     };
@@ -25,16 +30,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     toast.warning('Could not find group');
     return {
       redirect: {
-        destination: '/',
+        destination: '/groups',
         permanent: false,
       },
     };
   } else {
     try {
-      await joinGroup(session.user.id, groupId);
+      const { id } = await joinGroup(session.user.id, groupId);
       return {
         redirect: {
-          destination: `/groups/${groupId}`,
+          destination: `/groups/${id}`,
           permanent: false,
         },
       };

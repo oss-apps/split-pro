@@ -55,6 +55,10 @@ model User {
     associatedGroups    GroupUser[]
     expenseParticipants ExpenseParticipant[]
     expenseNotes        ExpenseNote[]
+    userBalances        Balance[]            @relation("UserBalance")
+    friendBalances      Balance[]            @relation("FriendBalance")
+    groupUserBalances   GroupBalance[]       @relation("GroupUserBalance")
+    groupFriendBalances GroupBalance[]       @relation("GroupFriendBalance")
     paidExpenses        Expense[]            @relation("PaidByUser")
     addedExpenses       Expense[]            @relation("AddedByUser")
     deletedExpenses     Expense[]            @relation("DeletedByUser")
@@ -69,6 +73,20 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
+model Balance {
+    userId                Int
+    currency              String
+    friendId              Int
+    amount                BigInt
+    createdAt             DateTime @default(now())
+    updatedAt             DateTime @updatedAt
+    importedFromSplitwise Boolean  @default(false)
+    user                  User     @relation(name: "UserBalance", fields: [userId], references: [id], onDelete: Cascade)
+    friend                User     @relation(name: "FriendBalance", fields: [friendId], references: [id], onDelete: Cascade)
+
+    @@id([userId, currency, friendId])
+}
+
 model Group {
     id               Int            @id @default(autoincrement())
     publicId         String         @unique
@@ -81,6 +99,7 @@ model Group {
     createdBy        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
     groupUsers       GroupUser[]
     expenses         Expense[]
+    groupBalances    GroupBalance[]
     simplifyDebts    Boolean        @default(false)
 }
 
@@ -91,6 +110,20 @@ model GroupUser {
     group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
     @@id([groupId, userId])
+}
+
+model GroupBalance {
+    groupId   Int
+    currency  String
+    userId    Int
+    firendId  Int
+    amount    BigInt
+    updatedAt DateTime @updatedAt
+    group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+    user      User     @relation(name: "GroupUserBalance", fields: [userId], references: [id], onDelete: Cascade)
+    friend    User     @relation(name: "GroupFriendBalance", fields: [firendId], references: [id], onDelete: Cascade)
+
+    @@id([groupId, currency, firendId, userId])
 }
 
 enum SplitType {

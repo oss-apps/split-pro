@@ -324,7 +324,12 @@ const BalancePage: NextPageWithUser<{
             <div className="mb-4 px-4">
               <GroupMyBalance
                 userId={user.id}
-                groupBalances={groupDetailQuery.data?.groupBalances ?? []}
+                groupBalances={
+                  groupDetailQuery.data?.groupBalances.map(({ firendId, ...b }) => ({
+                    ...b,
+                    friendId: firendId,
+                  })) ?? []
+                }
                 users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
               />
             </div>
@@ -376,7 +381,12 @@ const BalancePage: NextPageWithUser<{
               </TabsContent>
               <TabsContent value="balances">
                 <BalanceList
-                  groupBalances={groupDetailQuery.data?.groupBalances ?? []}
+                  groupBalances={
+                    groupDetailQuery.data?.groupBalances.map(({ firendId, ...b }) => ({
+                      ...b,
+                      friendId: firendId,
+                    })) ?? []
+                  }
                   users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
                 />
               </TabsContent>

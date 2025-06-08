@@ -256,7 +256,9 @@ export const groupRouter = createTRPCRouter({
     });
 
     if (group?.simplifyDebts) {
-      group.groupBalances = simplifyDebts(group.groupBalances);
+      group.groupBalances = simplifyDebts(
+        group.groupBalances.map(({ firendId, ...b }) => ({ ...b, friendId: firendId })),
+      ).map(({ friendId, ...b }) => ({ ...b, firendId: friendId, updatedAt: new Date() }));
     }
 
     return group;

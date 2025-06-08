@@ -56,6 +56,7 @@ export const BalanceList: React.FC<{
       <Accordion type="multiple">
         {Object.values(userMap).map(({ user, total, balances }) => {
           let totalAmount: [string, bigint] = ['', 0n];
+          const isCurrentUser = userQuery.data?.id === user.id;
 
           Object.entries(total).forEach(([currency, amount]) => {
             if (BigMath.abs(amount) > BigMath.abs(totalAmount[1])) {
@@ -71,13 +72,16 @@ export const BalanceList: React.FC<{
                   <div className="text-foreground">
                     {displayName(user, userQuery.data?.id)}
                     {Object.values(total).every((amount) => amount === 0n) ? (
-                      <span className="text-gray-400"> is settled up</span>
+                      <span className="text-gray-400">
+                        {' '}
+                        {isCurrentUser ? 'are' : 'is'} settled up
+                      </span>
                     ) : (
                       <>
                         <span className="text-gray-400">
                           {' '}
                           {totalAmount[1] > 0 ? 'get' : 'owe'}
-                          {user.id === userQuery.data?.id ? '' : 's'}{' '}
+                          {isCurrentUser ? '' : 's'}{' '}
                         </span>
                         <span
                           className={clsx(

@@ -12,7 +12,7 @@ import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import useEnableAfter from '~/hooks/useEnableAfter';
-import { type NextPageWithUser } from '~/types';
+import { type NextPageWithUser } from '~/types/next.types';
 import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 

@@ -21,7 +21,7 @@ import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { LoadingSpinner } from '~/components/ui/spinner';
-import { type NextPageWithUser } from '~/types';
+import { type NextPageWithUser } from '~/types/next.types';
 import { api } from '~/utils/api';
 
 const AccountPage: NextPageWithUser = ({ user }) => {

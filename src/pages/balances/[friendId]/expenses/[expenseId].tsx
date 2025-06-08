@@ -8,7 +8,7 @@ import ExpenseDetails from '~/components/Expense/ExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
 import { env } from '~/env';
-import { type NextPageWithUser } from '~/types';
+import { type NextPageWithUser } from '~/types/next.types';
 import { api } from '~/utils/api';
 
 const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({

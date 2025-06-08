@@ -8,7 +8,7 @@ import { CreateGroup } from '~/components/group/CreateGroup';
 import MainLayout from '~/components/Layout/MainLayout';
 import { GroupAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
-import { type NextPageWithUser } from '~/types';
+import { type NextPageWithUser } from '~/types/next.types';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
 

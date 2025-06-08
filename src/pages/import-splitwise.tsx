@@ -12,7 +12,8 @@ import { Checkbox } from '~/components/ui/checkbox';
 import { Input } from '~/components/ui/input';
 import { Separator } from '~/components/ui/separator';
 import { LoadingSpinner } from '~/components/ui/spinner';
-import { type NextPageWithUser, type SplitwiseGroup, type SplitwiseUser } from '~/types';
+import { type NextPageWithUser } from '~/types/next.types';
+import { type SplitwiseGroup, type SplitwiseUser } from '~/types/splitwise.types';
 import { api } from '~/utils/api';
 
 const ImportSpliwisePage: NextPageWithUser = () => {

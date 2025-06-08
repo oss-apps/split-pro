@@ -2,7 +2,7 @@ import { type SplitType, type User } from '@prisma/client';
 import { nanoid } from 'nanoid';
 
 import { db } from '~/server/db';
-import { type SplitwiseGroup, type SplitwiseUser } from '~/types';
+import { type SplitwiseGroup, type SplitwiseUser } from '~/types/splitwise.types';
 import { toSafeBigInt } from '~/utils/numbers';
 
 import { sendExpensePushNotification } from './notificationService';

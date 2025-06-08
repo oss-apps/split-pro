@@ -13,7 +13,7 @@ import { LoadingSpinner } from '~/components/ui/spinner';
 import { type CurrencyCode } from '~/lib/currency';
 import { useAddExpenseStore } from '~/store/addStore';
 import { useAppStore } from '~/store/appStore';
-import { type NextPageWithUser } from '~/types';
+import { type NextPageWithUser } from '~/types/next.types';
 import { api } from '~/utils/api';
 
 const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });

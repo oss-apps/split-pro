@@ -8,7 +8,7 @@ import { env } from '~/env';
 import { type CurrencyCode } from '~/lib/currency';
 import { isStorageConfigured } from '~/server/storage';
 import { useAddExpenseStore } from '~/store/addStore';
-import { type NextPageWithUser } from '~/types';
+import { type NextPageWithUser } from '~/types/next.types';
 import { api } from '~/utils/api';
 
 const AddPage: NextPageWithUser<{

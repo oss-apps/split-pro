@@ -1,9 +1,10 @@
-import type { GroupBalance, User } from '@prisma/client';
+import type { User } from '@prisma/client';
 import clsx from 'clsx';
 import { Info } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { UserAvatar } from '~/components/ui/avatar';
+import { type GroupBalance } from '~/types/balance.types';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
 import { displayName } from '~/utils/strings';
@@ -34,10 +35,10 @@ export const BalanceList: React.FC<{
     groupBalances
       .filter(({ amount }) => BigMath.abs(amount) > 0)
       .forEach((balance) => {
-        if (!res[balance.userId]!.balances[balance.firendId]) {
-          res[balance.userId]!.balances[balance.firendId] = {};
+        if (!res[balance.userId]!.balances[balance.friendId]) {
+          res[balance.userId]!.balances[balance.friendId] = {};
         }
-        const friendBalance = res[balance.userId]!.balances[balance.firendId]!;
+        const friendBalance = res[balance.userId]!.balances[balance.friendId]!;
         friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0n) + balance.amount;
 
         res[balance.userId]!.total[balance.currency] =

@@ -8,7 +8,7 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { UserAvatar } from '~/components/ui/avatar';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import useEnableAfter from '~/hooks/useEnableAfter';
-import { type NextPageWithUser } from '~/types';
+import { type NextPageWithUser } from '~/types/next.types';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
 

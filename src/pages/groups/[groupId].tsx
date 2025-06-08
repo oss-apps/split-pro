@@ -34,7 +34,7 @@ import { SimpleConfirmationDialog } from '~/components/ui/SimpleConfirmationDial
 import { Switch } from '~/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { env } from '~/env';
-import { type NextPageWithUser } from '~/types';
+import { type NextPageWithUser } from '~/types/next.types';
 import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 

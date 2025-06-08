@@ -1,4 +1,4 @@
-import { type PushMessage } from '~/types';
+import { type PushMessage } from '~/types/next.types';
 
 declare let self: ServiceWorkerGlobalScope;
 

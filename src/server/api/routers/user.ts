@@ -10,7 +10,7 @@ import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
 import { getDocumentUploadUrl } from '~/server/storage';
-import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
+import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types/splitwise.types';
 import { BigMath } from '~/utils/numbers';
 
 import {

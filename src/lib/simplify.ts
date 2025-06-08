@@ -1,11 +1,11 @@
-import type { GroupBalance } from '@prisma/client';
+import { type GroupBalance } from '~/types/balance.types';
 
 export function simplifyDebts(groupBalances: GroupBalance[]): GroupBalance[] {
   const currencies = new Set(groupBalances.map((balance) => balance.currency));
   const nodes = new Set<number>();
   groupBalances.forEach((balance) => {
     nodes.add(balance.userId);
-    nodes.add(balance.firendId);
+    nodes.add(balance.friendId);
   });
   const result: GroupBalance[] = [];
 
@@ -30,7 +30,7 @@ function simplifyDebtsForSingleCurrency(
 
   nonResidualBalances.forEach((balance) => {
     const source = nodes.indexOf(balance.userId);
-    const sink = nodes.indexOf(balance.firendId);
+    const sink = nodes.indexOf(balance.friendId);
     adjMatrix[source]![sink] = balance.amount;
   });
 
@@ -41,7 +41,7 @@ function simplifyDebtsForSingleCurrency(
       const res: GroupBalance[] = [];
       row.forEach((amount, sink) => {
         const balance = groupBalances.find(
-          (balance) => balance.userId === nodes[source] && balance.firendId === nodes[sink],
+          (balance) => balance.userId === nodes[source] && balance.friendId === nodes[sink],
         )!;
 
         if (amount === 0n) {
@@ -60,7 +60,7 @@ function simplifyDebtsForSingleCurrency(
   groupBalances.forEach((balance) => {
     const found = result.find(
       (graphBalance) =>
-        graphBalance.userId === balance.userId && graphBalance.firendId === balance.firendId,
+        graphBalance.userId === balance.userId && graphBalance.friendId === balance.friendId,
     );
     if (!found) {
       result.push({ ...balance, amount: 0n });
@@ -151,8 +151,8 @@ const getMirrorBalances = (groupBalances: GroupBalance[]): GroupBalance[] => {
   groupBalances.forEach((balance) => {
     result.push({
       ...balance,
-      userId: balance.firendId,
-      firendId: balance.userId,
+      userId: balance.friendId,
+      friendId: balance.userId,
       amount: balance.amount > 0 ? -balance.amount : 0n,
     });
   });

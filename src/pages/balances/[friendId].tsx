@@ -12,7 +12,7 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
-import { type NextPageWithUser } from '~/types';
+import { type NextPageWithUser } from '~/types/next.types';
 import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 

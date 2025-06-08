@@ -1,5 +1,6 @@
-import { type GroupBalance } from '@prisma/client';
 import { addHours } from 'date-fns';
+
+import { type GroupBalance } from '~/types/balance.types';
 
 import { simplifyDebts } from './simplify';
 
@@ -11,7 +12,7 @@ type MinimalEdge = {
 
 const sortByIds = (a: GroupBalance, b: GroupBalance) => {
   if (a.userId === b.userId) {
-    return a.firendId - b.firendId;
+    return a.friendId - b.friendId;
   }
   return a.userId - b.userId;
 };
@@ -27,13 +28,13 @@ const edgeToGroupBalance = (edge: MinimalEdge): [GroupBalance, GroupBalance] => 
   return [
     {
       userId: edge.userOne,
-      firendId: edge.userTwo,
+      friendId: edge.userTwo,
       amount: edge.amount,
       ...base,
     },
     {
       userId: edge.userTwo,
-      firendId: edge.userOne,
+      friendId: edge.userOne,
       amount: edge.amount === 0n ? 0n : -edge.amount,
       ...base,
     },
@@ -48,7 +49,7 @@ const padWithZeroBalances: (balances: GroupBalance[], userCount: number) => Grou
   for (let userId = 0; userId < userCount; userId++) {
     for (let friendId = userId + 1; friendId < userCount; friendId++) {
       const found = balances.find(
-        (balance) => balance.userId === userId && balance.firendId === friendId,
+        (balance) => balance.userId === userId && balance.friendId === friendId,
       );
 
       if (!found) {
@@ -81,10 +82,7 @@ const smallGraphResult: GroupBalance[] = getFullBalanceGraph(
     { userOne: 2, userTwo: 0, amount: -3000n },
   ],
   3,
-).map((resultBalance, idx) => ({
-  ...resultBalance,
-  updatedAt: smallGraph[idx]!.updatedAt,
-}));
+);
 
 // taken from https://medium.com/@mithunmk93/algorithm-behind-splitwises-debt-simplification-feature-8ac485e97688
 const largeGraph: GroupBalance[] = getFullBalanceGraph(

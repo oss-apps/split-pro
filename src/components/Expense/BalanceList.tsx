@@ -1,5 +1,5 @@
 import type { User } from '@prisma/client';
-import { getAllBalancesForGroup } from '@prisma/client/sql';
+import { getAllBalancesForGroup } from '~/prisma/client/sql';
 import clsx from 'clsx';
 import { Info } from 'lucide-react';
 import { useMemo } from 'react';

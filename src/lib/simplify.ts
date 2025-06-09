@@ -1,4 +1,4 @@
-import { getAllBalancesForGroup } from '@prisma/client/sql';
+import { getAllBalancesForGroup } from '~/prisma/client/sql';
 
 export function simplifyDebts(
   groupBalances: getAllBalancesForGroup.Result[],

@@ -1,5 +1,5 @@
 import { SplitType } from '@prisma/client';
-import { getAllBalancesForGroup, getGroupsWithBalances } from '@prisma/client/sql';
+import { getAllBalancesForGroup, getGroupsWithBalances } from '~/prisma/client/sql';
 import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';

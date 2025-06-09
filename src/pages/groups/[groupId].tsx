@@ -237,7 +237,7 @@ const BalancePage: NextPageWithUser<{
                         isAdmin &&
                         (() => {
                           const canLeave = !groupDetailQuery.data?.groupBalances.find(
-                            (b) => b.amount !== 0n && b.userId === groupUser.userId,
+                            (b) => b.amount !== 0n && b.paidBy === groupUser.userId,
                           );
 
                           return (

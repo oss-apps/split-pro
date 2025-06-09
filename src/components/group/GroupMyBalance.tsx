@@ -21,12 +21,13 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
 
   const friendBalances = groupBalances.reduce(
     (acc, balance) => {
-      if (balance.paidBy === userId && (balance.amount != null && BigMath.abs(balance.amount) > 0)) {
+      if (balance.paidBy === userId && balance.amount != null && BigMath.abs(balance.amount) > 0) {
         if (!acc[balance.borrowedBy]) {
           acc[balance.borrowedBy] = {};
         }
         const friendBalance = acc[balance.borrowedBy]!;
-        friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0n) + (balance.amount ?? 0n);
+        friendBalance[balance.currency] =
+          (friendBalance[balance.currency] ?? 0n) + (balance.amount ?? 0n);
       }
       return acc;
     },

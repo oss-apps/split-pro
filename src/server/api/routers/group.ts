@@ -244,7 +244,7 @@ export const groupRouter = createTRPCRouter({
       },
     });
 
-    const balances = (await ctx.db.$queryRawTyped(getAllBalancesForGroup(input.groupId)));
+    const balances = await ctx.db.$queryRawTyped(getAllBalancesForGroup(input.groupId));
 
     const reverseBalances = balances.map((b) => {
       return {
@@ -257,7 +257,7 @@ export const groupRouter = createTRPCRouter({
 
     const groupWithBalances = {
       ...group,
-      groupBalances: balances.concat(reverseBalances)
+      groupBalances: balances.concat(reverseBalances),
     };
 
     if (groupWithBalances?.simplifyDebts) {

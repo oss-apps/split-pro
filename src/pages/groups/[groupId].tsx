@@ -375,7 +375,7 @@ const BalancePage: NextPageWithUser<{
                 />
               </TabsContent>
               <TabsContent value="balances">
-                  <BalanceList
+                <BalanceList
                   groupId={groupId}
                   groupBalances={groupDetailQuery.data?.groupBalances ?? []}
                   users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}

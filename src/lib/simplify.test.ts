@@ -1,5 +1,4 @@
-import { type GroupBalance } from '@prisma/client';
-import { addHours } from 'date-fns';
+import { type getAllBalancesForGroup } from '~/prisma/client/sql';
 
 import { simplifyDebts } from './simplify';
 
@@ -9,38 +8,35 @@ type MinimalEdge = {
   amount: bigint;
 };
 
-const sortByIds = (a: GroupBalance, b: GroupBalance) => {
-  if (a.userId === b.userId) {
-    return a.firendId - b.firendId;
+const sortByIds = (a: getAllBalancesForGroup.Result, b: getAllBalancesForGroup.Result) => {
+  if (a.paidBy === b.paidBy) {
+    return a.borrowedBy - b.borrowedBy;
   }
-  return a.userId - b.userId;
+  return a.paidBy - b.paidBy;
 };
 
-let dateCounter = 0;
-
-const edgeToGroupBalance = (edge: MinimalEdge): [GroupBalance, GroupBalance] => {
+const edgeToGroupBalance = (edge: MinimalEdge): [getAllBalancesForGroup.Result, getAllBalancesForGroup.Result] => {
   const base = {
     groupId: 0,
     currency: 'USD',
-    updatedAt: addHours(new Date(), dateCounter++),
   };
   return [
     {
-      userId: edge.userOne,
-      firendId: edge.userTwo,
+      paidBy: edge.userOne,
+      borrowedBy: edge.userTwo,
       amount: edge.amount,
       ...base,
     },
     {
-      userId: edge.userTwo,
-      firendId: edge.userOne,
+      paidBy: edge.userTwo,
+      borrowedBy: edge.userOne,
       amount: edge.amount === 0n ? 0n : -edge.amount,
       ...base,
     },
   ];
 };
 
-const padWithZeroBalances: (balances: GroupBalance[], userCount: number) => GroupBalance[] = (
+const padWithZeroBalances: (balances: getAllBalancesForGroup.Result[], userCount: number) => getAllBalancesForGroup.Result[] = (
   balances,
   userCount,
 ) => {
@@ -48,7 +44,7 @@ const padWithZeroBalances: (balances: GroupBalance[], userCount: number) => Grou
   for (let userId = 0; userId < userCount; userId++) {
     for (let friendId = userId + 1; friendId < userCount; friendId++) {
       const found = balances.find(
-        (balance) => balance.userId === userId && balance.firendId === friendId,
+        (balance) => balance.paidBy === userId && balance.borrowedBy === friendId,
       );
 
       if (!found) {
@@ -59,14 +55,14 @@ const padWithZeroBalances: (balances: GroupBalance[], userCount: number) => Grou
   return result;
 };
 
-const getFullBalanceGraph = (edges: MinimalEdge[], userCount: number): GroupBalance[] => {
+const getFullBalanceGraph = (edges: MinimalEdge[], userCount: number): getAllBalancesForGroup.Result[] => {
   const arr = padWithZeroBalances(edges.flatMap(edgeToGroupBalance), userCount);
   arr.sort(sortByIds);
   return arr;
 };
 
 // taken from https://www.geeksforgeeks.org/minimize-cash-flow-among-given-set-friends-borrowed-money/
-const smallGraph: GroupBalance[] = getFullBalanceGraph(
+const smallGraph: getAllBalancesForGroup.Result[] = getFullBalanceGraph(
   [
     { userOne: 0, userTwo: 1, amount: 1000n },
     { userOne: 1, userTwo: 2, amount: 5000n },
@@ -75,19 +71,16 @@ const smallGraph: GroupBalance[] = getFullBalanceGraph(
   3,
 );
 
-const smallGraphResult: GroupBalance[] = getFullBalanceGraph(
+const smallGraphResult: getAllBalancesForGroup.Result[] = getFullBalanceGraph(
   [
     { userOne: 1, userTwo: 2, amount: 4000n },
     { userOne: 2, userTwo: 0, amount: -3000n },
   ],
   3,
-).map((resultBalance, idx) => ({
-  ...resultBalance,
-  updatedAt: smallGraph[idx]!.updatedAt,
-}));
+)
 
 // taken from https://medium.com/@mithunmk93/algorithm-behind-splitwises-debt-simplification-feature-8ac485e97688
-const largeGraph: GroupBalance[] = getFullBalanceGraph(
+const largeGraph: getAllBalancesForGroup.Result[] = getFullBalanceGraph(
   [
     { userOne: 1, userTwo: 2, amount: 4000n },
     { userOne: 1, userTwo: 5, amount: -1000n },
@@ -105,7 +98,7 @@ const largeGraph: GroupBalance[] = getFullBalanceGraph(
   7,
 );
 
-const denseGraph: GroupBalance[] = getFullBalanceGraph(
+const denseGraph: getAllBalancesForGroup.Result[] = getFullBalanceGraph(
   [
     { userOne: 0, userTwo: 1, amount: 895795n },
     { userOne: 0, userTwo: 2, amount: 328043n },
@@ -142,7 +135,7 @@ describe('simplifyDebts', () => {
     { graph: largeGraph, expected: 3 },
     { graph: denseGraph, expected: 5 },
   ])('gets the optimal operation count', ({ graph, expected }) => {
-    expect(simplifyDebts(graph).filter((balance) => balance.amount > 0).length).toBe(expected);
+    expect(simplifyDebts(graph).filter((balance) => (balance.amount ?? 0n) > 0).length).toBe(expected);
   });
 
   it.each([{ graph: smallGraph }, { graph: largeGraph }, { graph: denseGraph }])(
@@ -150,7 +143,7 @@ describe('simplifyDebts', () => {
     ({ graph }) => {
       const startingBalances = graph.reduce(
         (acc, balance) => {
-          acc[balance.userId] = (acc[balance.userId] ?? 0n) + balance.amount;
+          acc[balance.paidBy] = (acc[balance.paidBy] ?? 0n) + (balance.amount ?? 0n);
           return acc;
         },
         {} as Record<number, bigint>,
@@ -158,7 +151,7 @@ describe('simplifyDebts', () => {
 
       const userBalances = simplifyDebts(graph).reduce(
         (acc, balance) => {
-          acc[balance.userId] = (acc[balance.userId] ?? 0n) + balance.amount;
+          acc[balance.paidBy] = (acc[balance.paidBy] ?? 0n) + (balance.amount ?? 0n);
           return acc;
         },
         {} as Record<number, bigint>,

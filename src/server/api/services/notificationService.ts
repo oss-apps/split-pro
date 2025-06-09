@@ -1,5 +1,4 @@
-import { SplitType } from '@prisma/client';
-
+import { SplitType } from '~/prisma/client';
 import { db } from '~/server/db';
 import { pushNotification } from '~/server/notification';
 import { toUIString } from '~/utils/numbers';

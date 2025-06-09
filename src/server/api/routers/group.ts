@@ -1,10 +1,10 @@
-import { SplitType } from '@prisma/client';
-import { getAllBalancesForGroup, getGroupsWithBalances } from '@prisma/client/sql';
 import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
 import { simplifyDebts } from '~/lib/simplify';
+import { SplitType } from '~/prisma/client';
+import { getAllBalancesForGroup, getGroupsWithBalances } from '~/prisma/client/sql';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 

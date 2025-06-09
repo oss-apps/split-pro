@@ -1,8 +1,8 @@
-import { type Group, type GroupUser } from '@prisma/client';
 import { Share, UserPlus } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
+import { type Group, type GroupUser } from '~/prisma/client';
 
 import AddMembers from './AddMembers';
 

@@ -1,5 +1,4 @@
 import { UserPlusIcon } from '@heroicons/react/24/solid';
-import { type Group, type GroupUser } from '@prisma/client';
 import clsx from 'clsx';
 import { CheckIcon, SendIcon } from 'lucide-react';
 import React, { useState } from 'react';
@@ -7,6 +6,7 @@ import { z } from 'zod';
 
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
+import { type Group, type GroupUser } from '~/prisma/client';
 import { api } from '~/utils/api';
 
 import { UserAvatar } from '../ui/avatar';

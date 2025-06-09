@@ -1,5 +1,4 @@
 import { ArrowUpOnSquareIcon } from '@heroicons/react/24/outline';
-import { type User } from '@prisma/client';
 import clsx from 'clsx';
 import { PlusIcon } from 'lucide-react';
 import Head from 'next/head';
@@ -12,6 +11,7 @@ import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import useEnableAfter from '~/hooks/useEnableAfter';
+import { type User } from '~/prisma/client';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';

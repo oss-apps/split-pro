@@ -1,4 +1,3 @@
-import { SplitType } from '@prisma/client';
 import { format } from 'date-fns';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -8,6 +7,7 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { UserAvatar } from '~/components/ui/avatar';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import useEnableAfter from '~/hooks/useEnableAfter';
+import { SplitType } from '~/prisma/client';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';

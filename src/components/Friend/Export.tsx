@@ -1,9 +1,9 @@
-import { type Expense, type ExpenseParticipant, SplitType } from '@prisma/client';
 import { format } from 'date-fns';
 import { Download } from 'lucide-react';
 import React from 'react';
 
 import { Button } from '~/components/ui/button';
+import { type Expense, type ExpenseParticipant, SplitType } from '~/prisma/client';
 import { toUIString } from '~/utils/numbers';
 
 interface ExportCSVProps {

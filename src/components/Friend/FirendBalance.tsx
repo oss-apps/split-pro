@@ -1,6 +1,6 @@
-import { type Balance, type User } from '@prisma/client';
 import clsx from 'clsx';
 
+import { type Balance, type User } from '~/prisma/client';
 import { toUIString } from '~/utils/numbers';
 
 import { UserAvatar } from '../ui/avatar';

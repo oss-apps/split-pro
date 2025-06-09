@@ -1,12 +1,12 @@
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { UserPlusIcon } from '@heroicons/react/24/solid';
-import { type Group, type GroupUser, type User } from '@prisma/client';
 import { motion } from 'framer-motion';
 import { SendIcon } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 import { z } from 'zod';
 
+import { type Group, type GroupUser, type User } from '~/prisma/client';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 

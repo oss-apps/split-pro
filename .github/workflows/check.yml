@@ -42,6 +42,7 @@ jobs:
         run: pnpm install
 
       - name: generate typedSQL types
+        run: pnpm db:dev
         run: pnpm generate --sql
 
       - name: Check code formatting

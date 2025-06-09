@@ -35,7 +35,7 @@ function simplifyDebtsForSingleCurrency(
   nonResidualBalances.forEach((balance) => {
     const source = nodes.indexOf(balance.paidBy);
     const sink = nodes.indexOf(balance.borrowedBy);
-    adjMatrix[source]![sink] = balance.amount != null ? balance.amount : 0n;
+    adjMatrix[source]![sink] = balance.amount ?? 0n;
   });
 
   const simplified = minCashFlow(adjMatrix);

@@ -1,5 +1,5 @@
 import { SplitType } from '@prisma/client';
-import { getGroupsWithBalances, getAllBalancesForGroup } from '@prisma/client/sql';
+import { getAllBalancesForGroup, getGroupsWithBalances } from '@prisma/client/sql';
 import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
@@ -9,8 +9,6 @@ import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/a
 import { db } from '~/server/db';
 
 import { createGroupExpense, editExpense } from '../services/splitService';
-import { BalanceSkeleton } from '~/components/ui/skeleton';
-import GroupMyBalance from '~/components/group/GroupMyBalance';
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
@@ -246,9 +244,9 @@ export const groupRouter = createTRPCRouter({
       },
     });
 
-    let balances = await ctx.db.$queryRawTyped(getAllBalancesForGroup(input.groupId));
+    const balances = await ctx.db.$queryRawTyped(getAllBalancesForGroup(input.groupId));
 
-    let reverseBalances = balances.map((b) => {
+    const reverseBalances = balances.map((b) => {
       return {
         borrowedBy: b.paidBy,
         paidBy: b.borrowedBy,

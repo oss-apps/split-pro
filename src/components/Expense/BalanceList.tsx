@@ -1,4 +1,5 @@
 import type { User } from '@prisma/client';
+import { getAllBalancesForGroup } from '@prisma/client/sql';
 import clsx from 'clsx';
 import { Info } from 'lucide-react';
 import { useMemo } from 'react';
@@ -10,7 +11,6 @@ import { displayName } from '~/utils/strings';
 
 import { GroupSettleUp } from '../Friend/GroupSettleup';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
-import { getAllBalancesForGroup } from '@prisma/client/sql';
 
 interface UserWithBalance {
   user: User;
@@ -40,11 +40,10 @@ export const BalanceList: React.FC<{
         }
         const friendBalance = res[balance.paidBy]!.balances[balance.borrowedBy]!;
         friendBalance[balance.currency] =
-          (friendBalance[balance.currency] ?? 0n) + (balance.amount != null ? balance.amount : 0n);
+          (friendBalance[balance.currency] ?? 0n) + (balance.amount ?? 0n);
 
         res[balance.paidBy]!.total[balance.currency] =
-          (res[balance.paidBy]!.total[balance.currency] ?? 0n) +
-          (balance.amount != null ? balance.amount : 0n);
+          (res[balance.paidBy]!.total[balance.currency] ?? 0n) + (balance.amount ?? 0n);
       });
 
     return res;

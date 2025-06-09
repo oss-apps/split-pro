@@ -352,6 +352,22 @@ export const groupRouter = createTRPCRouter({
         });
       }
 
+      const group = await ctx.db.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+      });
+      if (!group) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
+      }
+
+      if (group.userId !== ctx.session.user.id && userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only group creator can remove someone from the group',
+        });
+      }
+
       const groupUser = await ctx.db.groupUser.delete({
         where: {
           groupId_userId: {

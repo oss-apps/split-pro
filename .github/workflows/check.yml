@@ -42,8 +42,9 @@ jobs:
         run: pnpm install
 
       - name: generate typedSQL types
-        run: pnpm db:dev
-        run: pnpm generate --sql
+        run: |
+          pnpm db:dev
+          pnpm generate --sql
 
       - name: Check code formatting
         run: pnpm prettier --check .

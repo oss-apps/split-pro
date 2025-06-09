@@ -82,7 +82,7 @@ const BalancePage: NextPageWithUser<{
     groupDetailQuery.data?.userId === user.id &&
     !groupDetailQuery.data?.groupBalances.find((b) => b.amount !== 0n);
   const canLeave = !groupDetailQuery.data?.groupBalances.find(
-    (b) => b.amount !== 0n && b.userId === user.id,
+    (b) => b.amount !== 0n && b.paidBy === user.id,
   );
 
   function onGroupDelete() {
@@ -375,7 +375,8 @@ const BalancePage: NextPageWithUser<{
                 />
               </TabsContent>
               <TabsContent value="balances">
-                <BalanceList
+                  <BalanceList
+                  groupId={groupId}
                   groupBalances={groupDetailQuery.data?.groupBalances ?? []}
                   users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
                 />

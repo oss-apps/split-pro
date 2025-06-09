@@ -231,7 +231,7 @@ export const groupRouter = createTRPCRouter({
     }),
 
   getGroupDetails: groupProcedure.query(async ({ input, ctx }) => {
-    const group = await ctx.db.group.findUnique({
+    const group = await ctx.db.group.findUniqueOrThrow({
       where: {
         id: input.groupId,
       },
@@ -244,20 +244,20 @@ export const groupRouter = createTRPCRouter({
       },
     });
 
-    const balances = await ctx.db.$queryRawTyped(getAllBalancesForGroup(input.groupId));
+    const balances = (await ctx.db.$queryRawTyped(getAllBalancesForGroup(input.groupId)));
 
     const reverseBalances = balances.map((b) => {
       return {
+        ...b,
         borrowedBy: b.paidBy,
         paidBy: b.borrowedBy,
-        currency: b.currency,
         amount: b.amount != null ? -b.amount : 0n,
       };
     });
 
     const groupWithBalances = {
       ...group,
-      groupBalances: balances.concat(reverseBalances),
+      groupBalances: balances.concat(reverseBalances)
     };
 
     if (groupWithBalances?.simplifyDebts) {

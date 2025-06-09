@@ -1,8 +1,8 @@
-import type { User } from '@prisma/client';
 import clsx from 'clsx';
 import { Info } from 'lucide-react';
 import { useMemo } from 'react';
 
+import type { User } from '@prisma/client';
 import { UserAvatar } from '~/components/ui/avatar';
 import { type getAllBalancesForGroup } from '~/prisma/client/sql';
 import { api } from '~/utils/api';
@@ -19,9 +19,10 @@ interface UserWithBalance {
 }
 
 export const BalanceList: React.FC<{
+  groupId: number;
   groupBalances: getAllBalancesForGroup.Result[];
   users: User[];
-}> = ({ groupBalances, users }) => {
+}> = ({groupId, groupBalances, users }) => {
   const userQuery = api.user.me.useQuery();
 
   const userMap = useMemo(() => {
@@ -105,39 +106,40 @@ export const BalanceList: React.FC<{
                   return (
                     <>
                       {Object.entries(perFriendBalances).map(([currency, amount]) => (
-                        <GroupSettleUp
-                          key={friendId + currency}
-                          friend={friend}
-                          user={user}
-                          amount={amount}
-                          currency={currency}
-                          groupId={groupBalances[0]!.groupId}
-                        >
-                          <div className="mb-4 ml-5 flex cursor-pointer items-center gap-3 text-sm">
-                            <UserAvatar user={friend} size={20} />
-                            <div className="text-foreground">
-                              {displayName(friend, userQuery.data?.id)}
-                              <span className="text-gray-400">
-                                {' '}
-                                {amount < 0 ? 'get' : 'owe'}
-                                {friend.id === userQuery.data?.id ? '' : 's'}{' '}
-                              </span>
-                              <span
-                                className={clsx(
-                                  'text-right',
-                                  amount > 0 ? 'text-emerald-500' : 'text-orange-600',
-                                )}
-                              >
-                                {toUIString(amount)} {currency}
-                              </span>
-                              <span className="text-gray-400"> {amount > 0 ? 'to' : 'from'} </span>
-                              <span className="text-foreground">
-                                {displayName(user, userQuery.data?.id)}
-                              </span>
+                          <GroupSettleUp
+                            key={friendId + currency}
+                            friend={friend}
+                            user={user}
+                            amount={amount}
+                            currency={currency}
+                            groupId={groupId}
+                          >
+                            <div className="mb-4 ml-5 flex cursor-pointer items-center gap-3 text-sm">
+                              <UserAvatar user={friend} size={20} />
+                              <div className="text-foreground">
+                                {displayName(friend, userQuery.data?.id)}
+                                <span className="text-gray-400">
+                                  {' '}
+                                  {amount < 0 ? 'get' : 'owe'}
+                                  {friend.id === userQuery.data?.id ? '' : 's'}{' '}
+                                </span>
+                                <span
+                                  className={clsx(
+                                    'text-right',
+                                    amount > 0 ? 'text-emerald-500' : 'text-orange-600',
+                                  )}
+                                >
+                                  {toUIString(amount)} {currency}
+                                </span>
+                                <span className="text-gray-400"> {amount > 0 ? 'to' : 'from'} </span>
+                                <span className="text-foreground">
+                                  {displayName(user, userQuery.data?.id)}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        </GroupSettleUp>
-                      ))}
+                          </GroupSettleUp>
+                        )
+                      )}
                     </>
                   );
                 })}

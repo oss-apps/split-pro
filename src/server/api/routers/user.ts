@@ -1,11 +1,11 @@
 import { randomUUID } from 'crypto';
 
+import { SplitType } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { env } from '~/env';
 import { FILE_SIZE_LIMIT } from '~/lib/constants';
-import { SplitType } from '~/prisma/client';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';

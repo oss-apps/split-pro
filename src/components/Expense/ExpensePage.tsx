@@ -1,10 +1,10 @@
+import { type Expense, type ExpenseParticipant, type User } from '@prisma/client';
 import { format, isSameDay } from 'date-fns';
 import { Banknote } from 'lucide-react';
 import Image from 'next/image';
 import { type User as NextUser } from 'next-auth';
 import React from 'react';
 
-import { type Expense, type ExpenseParticipant, type User } from '~/prisma/client';
 import { toUIString } from '~/utils/numbers';
 
 import { UserAvatar } from '../ui/avatar';

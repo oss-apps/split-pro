@@ -1,8 +1,8 @@
+import { type Group, SplitType, type User } from '@prisma/client';
 import Router from 'next/router';
 import { create } from 'zustand';
 
 import { type CurrencyCode } from '~/lib/currency';
-import { type Group, SplitType, type User } from '~/prisma/client';
 import { shuffleArray } from '~/utils/array';
 import { BigMath } from '~/utils/numbers';
 

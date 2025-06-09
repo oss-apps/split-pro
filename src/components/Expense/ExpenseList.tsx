@@ -1,3 +1,4 @@
+import { SplitType } from '@prisma/client';
 import { type inferRouterOutputs } from '@trpc/server';
 import { format } from 'date-fns';
 import Image from 'next/image';
@@ -5,7 +6,6 @@ import Link from 'next/link';
 import React from 'react';
 
 import { CategoryIcon } from '~/components/ui/categoryIcons';
-import { SplitType } from '~/prisma/client';
 import { type GroupRouter } from '~/server/api/routers/group';
 import { type UserRouter } from '~/server/api/routers/user';
 import { toUIString } from '~/utils/numbers';

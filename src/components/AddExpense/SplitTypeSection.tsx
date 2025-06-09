@@ -1,3 +1,4 @@
+import { SplitType } from '@prisma/client';
 import clsx from 'clsx';
 import {
   BarChart2,
@@ -11,7 +12,6 @@ import {
 } from 'lucide-react';
 import { type ChangeEvent, useCallback, useMemo } from 'react';
 
-import { SplitType } from '~/prisma/client';
 import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/store/addStore';
 import { removeTrailingZeros, toSafeBigInt, toUIString } from '~/utils/numbers';
 

@@ -1,9 +1,9 @@
+import { type Balance, SplitType, type User } from '@prisma/client';
 import { ArrowRightIcon } from 'lucide-react';
 import { type User as NextUser } from 'next-auth';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
-import { type Balance, SplitType, type User } from '~/prisma/client';
 import { api } from '~/utils/api';
 import { BigMath, toSafeBigInt, toUIString } from '~/utils/numbers';
 

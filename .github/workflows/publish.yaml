@@ -44,20 +44,25 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
+      
       - name: Build the docker image
         env:
           BUILD_PLATFORM: ${{ matrix.os == 'warp-ubuntu-latest-arm64-2x' && 'arm64' || 'amd64' }}
         run: |
           APP_VERSION="$(git name-rev --tags --name-only $(git rev-parse HEAD) | head -n 1 | sed 's/\^0//')"
           GIT_SHA="$(git rev-parse HEAD)"
+          if [[ "$APP_VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            CHANNEL=latest
+          else
+            CHANNEL=next
+          fi
 
           docker build \
             --progress=plain \
-            -t "ossapps/splitpro-$BUILD_PLATFORM:latest" \
+            -t "ossapps/splitpro-$BUILD_PLATFORM:$CHANNEL" \
             -t "ossapps/splitpro-$BUILD_PLATFORM:$GIT_SHA" \
             -t "ossapps/splitpro-$BUILD_PLATFORM:$APP_VERSION" \
-            -t "ghcr.io/oss-apps/splitpro-$BUILD_PLATFORM:latest" \
+            -t "ghcr.io/oss-apps/splitpro-$BUILD_PLATFORM:$CHANNEL" \
             -t "ghcr.io/oss-apps/splitpro-$BUILD_PLATFORM:$GIT_SHA" \
             -t "ghcr.io/oss-apps/splitpro-$BUILD_PLATFORM:$APP_VERSION" \
             .
@@ -101,11 +106,16 @@ jobs:
         run: |
           APP_VERSION="$(git name-rev --tags --name-only $(git rev-parse HEAD) | head -n 1 | sed 's/\^0//')"
           GIT_SHA="$(git rev-parse HEAD)"
+          if [[ "$APP_VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            CHANNEL=latest
+          else
+            CHANNEL=next
+          fi
 
           docker manifest create \
-            ossapps/splitpro:latest \
-            --amend ossapps/splitpro-amd64:latest \
-            --amend ossapps/splitpro-arm64:latest \
+            ossapps/splitpro:$CHANNEL \
+            --amend ossapps/splitpro-amd64:$CHANNEL \
+            --amend ossapps/splitpro-arm64:$CHANNEL \
 
           docker manifest create \
             ossapps/splitpro:$GIT_SHA \
@@ -117,7 +127,7 @@ jobs:
             --amend ossapps/splitpro-amd64:$APP_VERSION \
             --amend ossapps/splitpro-arm64:$APP_VERSION \
 
-          docker manifest push ossapps/splitpro:latest
+          docker manifest push ossapps/splitpro:$CHANNEL
           docker manifest push ossapps/splitpro:$GIT_SHA
           docker manifest push ossapps/splitpro:$APP_VERSION
 
@@ -125,11 +135,16 @@ jobs:
         run: |
           APP_VERSION="$(git name-rev --tags --name-only $(git rev-parse HEAD) | head -n 1 | sed 's/\^0//')"
           GIT_SHA="$(git rev-parse HEAD)"
+          if [[ "$APP_VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            CHANNEL=latest
+          else
+            CHANNEL=next
+          fi
 
           docker manifest create \
-            ghcr.io/oss-apps/splitpro:latest \
-            --amend ghcr.io/oss-apps/splitpro-amd64:latest \
-            --amend ghcr.io/oss-apps/splitpro-arm64:latest \
+            ghcr.io/oss-apps/splitpro:$CHANNEL \
+            --amend ghcr.io/oss-apps/splitpro-amd64:$CHANNEL \
+            --amend ghcr.io/oss-apps/splitpro-arm64:$CHANNEL \
 
           docker manifest create \
             ghcr.io/oss-apps/splitpro:$GIT_SHA \
@@ -141,6 +156,6 @@ jobs:
             --amend ghcr.io/oss-apps/splitpro-amd64:$APP_VERSION \
             --amend ghcr.io/oss-apps/splitpro-arm64:$APP_VERSION \
 
-          docker manifest push ghcr.io/oss-apps/splitpro:latest
+          docker manifest push ghcr.io/oss-apps/splitpro:$CHANNEL
           docker manifest push ghcr.io/oss-apps/splitpro:$GIT_SHA
           docker manifest push ghcr.io/oss-apps/splitpro:$APP_VERSION

@@ -68,6 +68,9 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),
+    defaultValues: {
+      email: '',
+    },
   });
 
   const otpForm = useForm<z.infer<typeof otpSchema>>({
@@ -215,11 +218,12 @@ export default Home;
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);
   const providers = await getProviders();
+  const { callbackUrl } = context.query;
 
   if (session) {
     return {
       redirect: {
-        destination: '/balances',
+        destination: callbackUrl && !Array.isArray(callbackUrl) ? callbackUrl : '/balances',
         permanent: false,
       },
     };

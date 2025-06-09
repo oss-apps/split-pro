@@ -1,8 +1,8 @@
-import { SplitType, type User } from '@prisma/client';
 import { ArrowRightIcon } from 'lucide-react';
 import React, { type ReactNode, useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
+import { SplitType, type User } from '@prisma/client';
 import { api } from '~/utils/api';
 import { BigMath, toSafeBigInt } from '~/utils/numbers';
 import { displayName } from '~/utils/strings';

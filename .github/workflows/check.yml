@@ -9,6 +9,19 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SKIP_ENV_VALIDATION: true
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/postgres"
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
       - name: Checkout
@@ -27,6 +40,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+
+      - name: generate typedSQL types
+        run: pnpm generate --sql
 
       - name: Check code formatting
         run: pnpm prettier --check .

@@ -15,7 +15,9 @@ const sortByIds = (a: getAllBalancesForGroup.Result, b: getAllBalancesForGroup.R
   return a.paidBy - b.paidBy;
 };
 
-const edgeToGroupBalance = (edge: MinimalEdge): [getAllBalancesForGroup.Result, getAllBalancesForGroup.Result] => {
+const edgeToGroupBalance = (
+  edge: MinimalEdge,
+): [getAllBalancesForGroup.Result, getAllBalancesForGroup.Result] => {
   const base = {
     groupId: 0,
     currency: 'USD',
@@ -36,10 +38,10 @@ const edgeToGroupBalance = (edge: MinimalEdge): [getAllBalancesForGroup.Result, 
   ];
 };
 
-const padWithZeroBalances: (balances: getAllBalancesForGroup.Result[], userCount: number) => getAllBalancesForGroup.Result[] = (
-  balances,
-  userCount,
-) => {
+const padWithZeroBalances: (
+  balances: getAllBalancesForGroup.Result[],
+  userCount: number,
+) => getAllBalancesForGroup.Result[] = (balances, userCount) => {
   const result = [...balances];
   for (let userId = 0; userId < userCount; userId++) {
     for (let friendId = userId + 1; friendId < userCount; friendId++) {
@@ -55,7 +57,10 @@ const padWithZeroBalances: (balances: getAllBalancesForGroup.Result[], userCount
   return result;
 };
 
-const getFullBalanceGraph = (edges: MinimalEdge[], userCount: number): getAllBalancesForGroup.Result[] => {
+const getFullBalanceGraph = (
+  edges: MinimalEdge[],
+  userCount: number,
+): getAllBalancesForGroup.Result[] => {
   const arr = padWithZeroBalances(edges.flatMap(edgeToGroupBalance), userCount);
   arr.sort(sortByIds);
   return arr;
@@ -77,7 +82,7 @@ const smallGraphResult: getAllBalancesForGroup.Result[] = getFullBalanceGraph(
     { userOne: 2, userTwo: 0, amount: -3000n },
   ],
   3,
-)
+);
 
 // taken from https://medium.com/@mithunmk93/algorithm-behind-splitwises-debt-simplification-feature-8ac485e97688
 const largeGraph: getAllBalancesForGroup.Result[] = getFullBalanceGraph(
@@ -135,7 +140,9 @@ describe('simplifyDebts', () => {
     { graph: largeGraph, expected: 3 },
     { graph: denseGraph, expected: 5 },
   ])('gets the optimal operation count', ({ graph, expected }) => {
-    expect(simplifyDebts(graph).filter((balance) => (balance.amount ?? 0n) > 0).length).toBe(expected);
+    expect(simplifyDebts(graph).filter((balance) => (balance.amount ?? 0n) > 0).length).toBe(
+      expected,
+    );
   });
 
   it.each([{ graph: smallGraph }, { graph: largeGraph }, { graph: denseGraph }])(

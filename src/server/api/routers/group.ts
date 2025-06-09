@@ -7,7 +7,11 @@ import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 
-import { createGroupExpense, editExpense } from '../services/splitService';
+import {
+  createGroupExpense,
+  editExpense,
+  recalculateGroupBalances,
+} from '../services/splitService';
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
@@ -288,6 +292,29 @@ export const groupRouter = createTRPCRouter({
       });
 
       return groupUsers;
+    }),
+
+  recalculateBalances: groupProcedure
+    .input(z.object({ groupId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const group = await ctx.db.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+      });
+
+      if (!group) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
+      }
+
+      if (group.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only creator can recalculate balances',
+        });
+      }
+
+      return recalculateGroupBalances(input.groupId);
     }),
 
   toggleSimplifyDebts: groupProcedure

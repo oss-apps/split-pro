@@ -6,6 +6,7 @@ import {
   BarChartHorizontal,
   Check,
   ChevronLeft,
+  Construction,
   DoorOpen,
   Info,
   Merge,
@@ -52,6 +53,7 @@ const BalancePage: NextPageWithUser<{
   const leaveGroupMutation = api.group.leaveGroup.useMutation();
   const toggleSimplifyDebtsMutation = api.group.toggleSimplifyDebts.useMutation();
   const updateGroupDetailsMutation = api.group.updateGroupDetails.useMutation();
+  const recalculateGroupBalancesMutation = api.group.recalculateBalances.useMutation();
 
   const [isInviteCopied, setIsInviteCopied] = useState(false);
 
@@ -85,6 +87,21 @@ const BalancePage: NextPageWithUser<{
   const canLeave = !groupDetailQuery.data?.groupBalances.find(
     (b) => b.amount !== 0n && b.userId === user.id,
   );
+
+  function onRecalculateBalances() {
+    recalculateGroupBalancesMutation.mutate(
+      { groupId },
+      {
+        onSuccess: () => {
+          void groupDetailQuery.refetch();
+          toast.success('Balances recalculated successfully');
+        },
+        onError: () => {
+          toast.error('Something went wrong');
+        },
+      },
+    );
+  }
 
   function onGroupDelete() {
     deleteGroupMutation.mutate(
@@ -281,6 +298,20 @@ const BalancePage: NextPageWithUser<{
                       }}
                     />
                   </Label>
+                  {isAdmin && (
+                    <SimpleConfirmationDialog
+                      title="Are you sure?"
+                      description="If balances do not match expenses, you can recalculate them. Note that it may take some time if the expense count is large. Balances outside the group will not be affected."
+                      hasPermission
+                      onConfirm={onRecalculateBalances}
+                      loading={recalculateGroupBalancesMutation.isPending}
+                      variant="default"
+                    >
+                      <Button variant="ghost" className="justify-start p-0 text-left text-primary">
+                        <Construction className="mr-2 h-5 w-5" /> Recalculate balances
+                      </Button>
+                    </SimpleConfirmationDialog>
+                  )}
                   {isAdmin ? (
                     <SimpleConfirmationDialog
                       title={canDelete ? 'Are you absolutely sure?' : ''}

@@ -12,6 +12,7 @@ import {
   Share,
   Trash2,
   UserPlus,
+  X,
 } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -99,12 +100,16 @@ const BalancePage: NextPageWithUser<{
     );
   }
 
-  function onGroupLeave() {
+  function onGroupLeave(userId?: number) {
     leaveGroupMutation.mutate(
-      { groupId },
+      { groupId, userId },
       {
         onSuccess: () => {
-          router.replace('/groups').catch(console.error);
+          if (!userId) {
+            router.replace('/groups').catch(console.error);
+          } else {
+            groupDetailQuery.refetch().catch(console.error);
+          }
         },
         onError: () => {
           toast.error('Something went wrong');
@@ -209,8 +214,37 @@ const BalancePage: NextPageWithUser<{
                         <UserAvatar user={groupUser.user} />
                         <p>{groupUser.user.name ?? groupUser.user.email}</p>
                       </div>
-                      {groupUser.userId === groupDetailQuery.data?.userId && (
+                      {groupUser.userId === groupDetailQuery.data?.userId ? (
                         <p className="text-sm text-gray-400">owner</p>
+                      ) : (
+                        isAdmin &&
+                        (() => {
+                          const canLeave = !groupDetailQuery.data?.groupBalances.find(
+                            (b) => b.amount !== 0n && b.userId === groupUser.userId,
+                          );
+
+                          return (
+                            <SimpleConfirmationDialog
+                              title={canLeave ? 'Are you absolutely sure?' : ''}
+                              description={
+                                canLeave
+                                  ? 'You are about to remove this member from the group'
+                                  : "Can't remove member until their outstanding balance is settled"
+                              }
+                              hasPermission={canLeave}
+                              onConfirm={() => onGroupLeave(groupUser.userId)}
+                              loading={leaveGroupMutation.isPending}
+                              variant="destructive"
+                            >
+                              <Button
+                                variant="ghost"
+                                className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
+                              >
+                                <X className="mr-2 h-5 w-5" />
+                              </Button>
+                            </SimpleConfirmationDialog>
+                          );
+                        })()
                       )}
                     </div>
                   ))}

@@ -6,12 +6,14 @@ import {
   BarChartHorizontal,
   Check,
   ChevronLeft,
+  Construction,
   DoorOpen,
   Info,
   Merge,
   Share,
   Trash2,
   UserPlus,
+  X,
 } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -51,6 +53,7 @@ const BalancePage: NextPageWithUser<{
   const leaveGroupMutation = api.group.leaveGroup.useMutation();
   const toggleSimplifyDebtsMutation = api.group.toggleSimplifyDebts.useMutation();
   const updateGroupDetailsMutation = api.group.updateGroupDetails.useMutation();
+  const recalculateGroupBalancesMutation = api.group.recalculateBalances.useMutation();
 
   const [isInviteCopied, setIsInviteCopied] = useState(false);
 
@@ -85,6 +88,21 @@ const BalancePage: NextPageWithUser<{
     (b) => b.amount !== 0n && b.paidBy === user.id,
   );
 
+  function onRecalculateBalances() {
+    recalculateGroupBalancesMutation.mutate(
+      { groupId },
+      {
+        onSuccess: () => {
+          void groupDetailQuery.refetch();
+          toast.success('Balances recalculated successfully');
+        },
+        onError: () => {
+          toast.error('Something went wrong');
+        },
+      },
+    );
+  }
+
   function onGroupDelete() {
     deleteGroupMutation.mutate(
       { groupId },
@@ -99,12 +117,16 @@ const BalancePage: NextPageWithUser<{
     );
   }
 
-  function onGroupLeave() {
+  function onGroupLeave(userId?: number) {
     leaveGroupMutation.mutate(
-      { groupId },
+      { groupId, userId },
       {
         onSuccess: () => {
-          router.replace('/groups').catch(console.error);
+          if (!userId) {
+            router.replace('/groups').catch(console.error);
+          } else {
+            groupDetailQuery.refetch().catch(console.error);
+          }
         },
         onError: () => {
           toast.error('Something went wrong');
@@ -209,8 +231,37 @@ const BalancePage: NextPageWithUser<{
                         <UserAvatar user={groupUser.user} />
                         <p>{groupUser.user.name ?? groupUser.user.email}</p>
                       </div>
-                      {groupUser.userId === groupDetailQuery.data?.userId && (
+                      {groupUser.userId === groupDetailQuery.data?.userId ? (
                         <p className="text-sm text-gray-400">owner</p>
+                      ) : (
+                        isAdmin &&
+                        (() => {
+                          const canLeave = !groupDetailQuery.data?.groupBalances.find(
+                            (b) => b.amount !== 0n && b.userId === groupUser.userId,
+                          );
+
+                          return (
+                            <SimpleConfirmationDialog
+                              title={canLeave ? 'Are you absolutely sure?' : ''}
+                              description={
+                                canLeave
+                                  ? 'You are about to remove this member from the group'
+                                  : "Can't remove member until their outstanding balance is settled"
+                              }
+                              hasPermission={canLeave}
+                              onConfirm={() => onGroupLeave(groupUser.userId)}
+                              loading={leaveGroupMutation.isPending}
+                              variant="destructive"
+                            >
+                              <Button
+                                variant="ghost"
+                                className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
+                              >
+                                <X className="mr-2 h-5 w-5" />
+                              </Button>
+                            </SimpleConfirmationDialog>
+                          );
+                        })()
                       )}
                     </div>
                   ))}
@@ -247,6 +298,20 @@ const BalancePage: NextPageWithUser<{
                       }}
                     />
                   </Label>
+                  {isAdmin && (
+                    <SimpleConfirmationDialog
+                      title="Are you sure?"
+                      description="If balances do not match expenses, you can recalculate them. Note that it may take some time if the expense count is large. Balances outside the group will not be affected."
+                      hasPermission
+                      onConfirm={onRecalculateBalances}
+                      loading={recalculateGroupBalancesMutation.isPending}
+                      variant="default"
+                    >
+                      <Button variant="ghost" className="justify-start p-0 text-left text-primary">
+                        <Construction className="mr-2 h-5 w-5" /> Recalculate balances
+                      </Button>
+                    </SimpleConfirmationDialog>
+                  )}
                   {isAdmin ? (
                     <SimpleConfirmationDialog
                       title={canDelete ? 'Are you absolutely sure?' : ''}

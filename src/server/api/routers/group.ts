@@ -8,7 +8,11 @@ import { getAllBalancesForGroup, getGroupsWithBalances } from '~/prisma/client/s
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 
-import { createGroupExpense, editExpense } from '../services/splitService';
+import {
+  createGroupExpense,
+  editExpense,
+  recalculateGroupBalances,
+} from '../services/splitService';
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
@@ -295,6 +299,29 @@ export const groupRouter = createTRPCRouter({
       return groupUsers;
     }),
 
+  recalculateBalances: groupProcedure
+    .input(z.object({ groupId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const group = await ctx.db.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+      });
+
+      if (!group) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
+      }
+
+      if (group.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only creator can recalculate balances',
+        });
+      }
+
+      return recalculateGroupBalances(input.groupId);
+    }),
+
   toggleSimplifyDebts: groupProcedure
     .input(z.object({ groupId: z.number() }))
     .mutation(async ({ input, ctx }) => {
@@ -337,12 +364,13 @@ export const groupRouter = createTRPCRouter({
     }),
 
   leaveGroup: groupProcedure
-    .input(z.object({ groupId: z.number() }))
+    .input(z.object({ groupId: z.number(), userId: z.number().optional() }))
     .mutation(async ({ input, ctx }) => {
+      const userId = input.userId ?? ctx.session.user.id;
       const nonZeroBalance = await ctx.db.groupBalance.findFirst({
         where: {
           groupId: input.groupId,
-          userId: ctx.session.user.id,
+          userId,
           amount: {
             not: 0,
           },
@@ -352,7 +380,23 @@ export const groupRouter = createTRPCRouter({
       if (nonZeroBalance) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: 'You have a non-zero balance in this group',
+          message: 'User has a non-zero balance in this group',
+        });
+      }
+
+      const group = await ctx.db.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+      });
+      if (!group) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
+      }
+
+      if (group.userId !== ctx.session.user.id && userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only group creator can remove someone from the group',
         });
       }
 
@@ -360,7 +404,7 @@ export const groupRouter = createTRPCRouter({
         where: {
           groupId_userId: {
             groupId: input.groupId,
-            userId: ctx.session.user.id,
+            userId,
           },
         },
       });

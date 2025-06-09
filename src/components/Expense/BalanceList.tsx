@@ -1,10 +1,10 @@
 import type { User } from '@prisma/client';
-import { getAllBalancesForGroup } from '~/prisma/client/sql';
 import clsx from 'clsx';
 import { Info } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { UserAvatar } from '~/components/ui/avatar';
+import { type getAllBalancesForGroup } from '~/prisma/client/sql';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
 import { displayName } from '~/utils/strings';

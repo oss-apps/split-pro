@@ -1,6 +1,6 @@
-import { type SplitType, type User } from '@prisma/client';
 import { nanoid } from 'nanoid';
 
+import { type SplitType, type User } from '@prisma/client';
 import { db } from '~/server/db';
 import { type SplitwiseGroup, type SplitwiseUser } from '~/types';
 import { toSafeBigInt } from '~/utils/numbers';

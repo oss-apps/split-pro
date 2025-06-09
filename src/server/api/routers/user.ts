@@ -1,9 +1,9 @@
 import { randomUUID } from 'crypto';
 
-import { SplitType } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
+import { SplitType } from '@prisma/client';
 import { env } from '~/env';
 import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';

@@ -4,7 +4,7 @@ import React, { type ReactNode, useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
 import { api } from '~/utils/api';
-import { toSafeBigInt, toUIString } from '~/utils/numbers';
+import { BigMath, toSafeBigInt } from '~/utils/numbers';
 import { displayName } from '~/utils/strings';
 
 import { UserAvatar } from '../ui/avatar';
@@ -20,7 +20,7 @@ export const GroupSettleUp: React.FC<{
   children: ReactNode;
   groupId: number;
 }> = ({ amount, currency, friend, user, children, groupId }) => {
-  const [amountStr, setAmountStr] = useState(toUIString(amount));
+  const [amountStr, setAmountStr] = useState((Number(BigMath.abs(amount)) / 100).toString());
 
   const addExpenseMutation = api.group.addOrEditExpense.useMutation();
   const utils = api.useUtils();

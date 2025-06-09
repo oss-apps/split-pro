@@ -105,68 +105,60 @@ const AddMembers: React.FC<{
       onClose={() => setOpen(false)}
       onOpenChange={(state) => state !== open && setOpen(state)}
     >
-      <div className="">
-        <Input
-          className="mt-8 w-full text-lg"
-          placeholder="Enter name or email"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-        />
-        {!isEmail.success ? (
-          <p className="mt-4 text-red-500">Enter valid email</p>
-        ) : (
-          <div>
-            {enableSendingInvites ? (
-              <div className="mt-1 text-orange-600">
-                Warning: Don&apos;t use send invite if it&apos;s invalid email. use add to Split Pro
-                instead. Your account will be blocked if this feature is misused
-              </div>
-            ) : (
-              <div>Note: sending invite is disabled for now because of spam</div>
-            )}
-
-            <div className="flex justify-center gap-4">
-              {enableSendingInvites && (
-                <Button
-                  className="mt-4 w-full text-cyan-500"
-                  variant="outline"
-                  disabled={!isEmail.success}
-                  onClick={() => onAddEmailClick(true)}
-                >
-                  <SendIcon className="mr-2 h-4 w-4" />
-                  {isEmail.success ? 'Send invite to user' : 'Enter valid email'}
-                </Button>
-              )}
-              <Button
-                className="mt-4 w-full text-cyan-500"
-                variant="outline"
-                disabled={!isEmail.success}
-                onClick={() => onAddEmailClick(false)}
-              >
-                <UserPlusIcon className="mr-2 h-4 w-4" />
-                {isEmail.success ? 'Add to Split Pro' : 'Enter valid email'}
-              </Button>
-            </div>
+      <Input
+        className="mt-8 w-full text-lg"
+        placeholder="Search friends or add email"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+      />
+      <div>
+        {enableSendingInvites ? (
+          <div className="mt-1 text-orange-600">
+            Warning: Don&apos;t use send invite if it&apos;s invalid email. use add to Split Pro
+            instead. Your account will be blocked if this feature is misused
           </div>
+        ) : (
+          <div>Note: sending invites is disabled for now because of spam</div>
         )}
-        <div className="mt-4 flex flex-col gap-4">
-          {filteredUsers?.map((friend) => (
+
+        <div className="flex justify-center gap-4">
+          {enableSendingInvites && (
             <Button
-              variant="ghost"
-              key={friend.id}
-              className="flex items-center justify-between px-0 focus:text-foreground"
-              onClick={() => onUserSelect(friend.id)}
+              className="mt-4 w-full text-cyan-500"
+              variant="outline"
+              disabled={!isEmail.success}
+              onClick={() => onAddEmailClick(true)}
             >
-              <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
-                <UserAvatar user={friend} />
-                <p>{friend.name ?? friend.email}</p>
-              </div>
-              <div>
-                {userIds[friend.id] ? <CheckIcon className="h-4 w-4 text-primary" /> : null}
-              </div>
+              <SendIcon className="mr-2 h-4 w-4" />
+              {isEmail.success ? 'Send invite to user' : 'Enter valid email'}
             </Button>
-          ))}
+          )}
+          <Button
+            className="mt-4 w-full text-cyan-500"
+            variant="outline"
+            disabled={!isEmail.success}
+            onClick={() => onAddEmailClick(false)}
+          >
+            <UserPlusIcon className="mr-2 h-4 w-4" />
+            {isEmail.success ? 'Add to Split Pro' : 'Enter valid email'}
+          </Button>
         </div>
+      </div>
+      <div className="mt-4 flex flex-col gap-4">
+        {filteredUsers?.map((friend) => (
+          <Button
+            variant="ghost"
+            key={friend.id}
+            className="flex items-center justify-between px-0 focus:text-foreground"
+            onClick={() => onUserSelect(friend.id)}
+          >
+            <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
+              <UserAvatar user={friend} />
+              <p>{friend.name ?? friend.email}</p>
+            </div>
+            <div>{userIds[friend.id] ? <CheckIcon className="h-4 w-4 text-primary" /> : null}</div>
+          </Button>
+        ))}
       </div>
     </AppDrawer>
   );

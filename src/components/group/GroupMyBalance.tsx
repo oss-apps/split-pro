@@ -1,7 +1,7 @@
+import { type User } from '@prisma/client';
+import { type getAllBalancesForGroup } from '@prisma/client/sql';
 import React from 'react';
 
-import { type User } from '@prisma/client';
-import { type getAllBalancesForGroup } from '~/prisma/client/sql';
 import { BigMath, toUIString } from '~/utils/numbers';
 
 type GroupMyBalanceProps = {

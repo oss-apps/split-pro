@@ -1,4 +1,4 @@
-import { type getAllBalancesForGroup } from '~/prisma/client/sql';
+import { type getAllBalancesForGroup } from '@prisma/client/sql';
 
 import { simplifyDebts } from './simplify';
 

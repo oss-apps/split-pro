@@ -57,49 +57,55 @@ async function createGroups() {
     });
     console.log('Group created and users added');
 
-    return group
+    return group;
   }
 }
 
 async function createExpenses(group, users) {
-    for (let i = 0; i < 100000; i++) {
-      const amount = BigInt(randomInt(1000, 10000))
-      const expense = await prisma.expense.create({
-        data: {
-          name: `Expense ${i}`,
-          paidBy: users[0].id,
-          addedBy: users[0].id,
-          category: "general",
-          currency: "USD",
-          amount: amount,
-          groupId: group.id,
-          splitType: SplitType.EQUAL,
-        }
-      });
+  for (let i = 0; i < 100000; i++) {
+    const amount = BigInt(randomInt(1000, 10000));
+    const expense = await prisma.expense.create({
+      data: {
+        name: `Expense ${i}`,
+        paidBy: users[0].id,
+        addedBy: users[0].id,
+        category: 'general',
+        currency: 'USD',
+        amount: amount,
+        groupId: group.id,
+        splitType: SplitType.EQUAL,
+      },
+    });
 
-      await prisma.expenseParticipant.createMany({
-        data: [{
+    await prisma.expenseParticipant.createMany({
+      data: [
+        {
           expenseId: expense.id,
           userId: users[0].id,
-          amount: amount
-        }, {
+          amount: amount,
+        },
+        {
           expenseId: expense.id,
           userId: users[1].id,
-          amount: -amount/BigInt(5)
-        }, {
+          amount: -amount / BigInt(5),
+        },
+        {
           expenseId: expense.id,
           userId: users[2].id,
-          amount:-amount/BigInt(5)
-        }, {
+          amount: -amount / BigInt(5),
+        },
+        {
           expenseId: expense.id,
           userId: users[3].id,
-          amount: -amount/BigInt(5)
-        }, {
+          amount: -amount / BigInt(5),
+        },
+        {
           expenseId: expense.id,
           userId: users[4].id,
-          amount: -amount/BigInt(5)
-        }]
-      });
+          amount: -amount / BigInt(5),
+        },
+      ],
+    });
   }
   console.log('Expenses added');
 }

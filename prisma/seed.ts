@@ -1,4 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, SplitType } from '@prisma/client';
+import { randomInt } from 'crypto';
 
 const prisma = new PrismaClient();
 
@@ -55,12 +56,58 @@ async function createGroups() {
       data: users.map((u) => ({ groupId: group.id, userId: u.id })),
     });
     console.log('Group created and users added');
+
+    return group
   }
 }
 
+async function createExpenses(group, users) {
+    for (let i = 0; i < 100000; i++) {
+      const amount = BigInt(randomInt(1000, 10000))
+      const expense = await prisma.expense.create({
+        data: {
+          name: `Expense ${i}`,
+          paidBy: users[0].id,
+          addedBy: users[0].id,
+          category: "general",
+          currency: "USD",
+          amount: amount,
+          groupId: group.id,
+          splitType: SplitType.EQUAL,
+        }
+      });
+
+      await prisma.expenseParticipant.createMany({
+        data: [{
+          expenseId: expense.id,
+          userId: users[0].id,
+          amount: amount
+        }, {
+          expenseId: expense.id,
+          userId: users[1].id,
+          amount: -amount/BigInt(5)
+        }, {
+          expenseId: expense.id,
+          userId: users[2].id,
+          amount:-amount/BigInt(5)
+        }, {
+          expenseId: expense.id,
+          userId: users[3].id,
+          amount: -amount/BigInt(5)
+        }, {
+          expenseId: expense.id,
+          userId: users[4].id,
+          amount: -amount/BigInt(5)
+        }]
+      });
+  }
+  console.log('Expenses added');
+}
+
 async function main() {
-  await createUsers();
-  await createGroups();
+  const users = await createUsers();
+  const group = await createGroups();
+  await createExpenses(group, users);
 }
 
 main()

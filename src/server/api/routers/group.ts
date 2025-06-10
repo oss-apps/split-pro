@@ -205,6 +205,7 @@ export const groupRouter = createTRPCRouter({
           paidByUser: true,
           deletedByUser: true,
         },
+        take: 100,
       });
 
       return expenses;

@@ -310,6 +310,34 @@ export const userRouter = createTRPCRouter({
         },
       });
 
+      if (expense?.groupId) {
+        const missingGroupMembers = await db.group.findUnique({
+          where: {
+            id: expense.groupId,
+          },
+          include: {
+            groupUsers: {
+              include: {
+                user: true,
+              },
+              where: {
+                userId: {
+                  notIn: expense.expenseParticipants.map((ep) => ep.userId),
+                },
+              },
+            },
+          },
+        });
+        missingGroupMembers?.groupUsers.forEach((gu) => {
+          expense.expenseParticipants.push({
+            userId: gu.user.id,
+            expenseId: expense.id,
+            user: gu.user,
+            amount: 0n,
+          });
+        });
+      }
+
       return expense;
     }),
 

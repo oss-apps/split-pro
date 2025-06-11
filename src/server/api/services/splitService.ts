@@ -44,9 +44,6 @@ export async function createGroupExpense(
   const operations = [];
 
   const nonZeroParticipants = participants.filter((p) => p.amount !== 0n);
-  if (nonZeroParticipants.length === 0) {
-    throw new Error('At least one participant must have a non-zero amount');
-  }
 
   // Create expense operation
   operations.push(
@@ -206,10 +203,6 @@ export async function addUserExpense(
   const operations = [];
 
   const nonZeroParticipants = participants.filter((p) => p.amount !== 0n);
-
-  if (nonZeroParticipants.length === 0) {
-    throw new Error('At least one participant must have a non-zero amount');
-  }
 
   // Create expense operation
   operations.push(
@@ -449,9 +442,6 @@ export async function editExpense(
   fileKey?: string,
 ) {
   const nonZeroParticipants = participants.filter((p) => p.amount !== 0n);
-  if (nonZeroParticipants.length === 0) {
-    throw new Error('At least one participant must have a non-zero amount');
-  }
 
   const expense = await db.expense.findUnique({
     where: { id: expenseId },
@@ -468,7 +458,7 @@ export async function editExpense(
 
   // First reverse all existing balances
   for (const participant of expense.expenseParticipants) {
-    if (participant.userId === expense.paidBy) {
+    if (participant.userId === expense.paidBy || participant.amount === 0n) {
       continue;
     }
 

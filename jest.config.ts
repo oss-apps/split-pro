@@ -6,6 +6,12 @@
 import type { Config } from 'jest';
 import nextJest from 'next/jest.js';
 
+// @ts-expect-error we are extending BigInt prototype for JSON serialization
+BigInt.prototype.toJSON = function () {
+  // Custom JSON serialization for BigInt to avoid errors in Jest
+  return this.toString();
+};
+
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
   dir: './',

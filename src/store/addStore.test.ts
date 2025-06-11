@@ -1,17 +1,16 @@
 import { SplitType, type User } from '@prisma/client';
 
-import { type Participant, calculateParticipantSplit, initSplitShares } from './addStore';
+import {
+  type Participant,
+  calculateParticipantSplit,
+  calculateSplitShareBasedOnAmount,
+  initSplitShares,
+} from './addStore';
 
 // Mock dependencies
 jest.mock('~/utils/array', () => ({
   shuffleArray: jest.fn(<T>(arr: T[]): T[] => arr), // No shuffling for predictable tests
 }));
-
-// @ts-expect-error we are extending BigInt prototype for JSON serialization
-BigInt.prototype.toJSON = function () {
-  // Custom JSON serialization for BigInt to avoid errors in Jest
-  return this.toString();
-};
 
 // Create mock users for testing
 const createMockUser = (id: number, name: string, email: string): User => ({
@@ -439,6 +438,517 @@ describe('calculateParticipantSplit', () => {
       const totalAmount = result.participants.reduce((sum, p) => sum + (p.amount ?? 0n), 0n);
 
       expect(totalAmount).toBe(0n);
+    });
+  });
+});
+
+describe('calculateSplitShareBasedOnAmount', () => {
+  describe('SplitType.EQUAL', () => {
+    it('should set equal shares for participants with non-zero amounts', () => {
+      const participants = createParticipants([user1, user2, user3], [5000n, 5000n, 0n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(10000n, participants, SplitType.EQUAL, splitShares, user1);
+
+      expect(splitShares[user1.id]![SplitType.EQUAL]).toBe(1n);
+      expect(splitShares[user2.id]![SplitType.EQUAL]).toBe(1n);
+      expect(splitShares[user3.id]![SplitType.EQUAL]).toBe(0n); // Zero amount
+    });
+
+    it('should set zero shares for participants with zero amounts', () => {
+      const participants = createParticipants([user1, user2, user3], [0n, 0n, 0n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(10000n, participants, SplitType.EQUAL, splitShares, user1);
+
+      expect(splitShares[user1.id]![SplitType.EQUAL]).toBe(0n);
+      expect(splitShares[user2.id]![SplitType.EQUAL]).toBe(0n);
+      expect(splitShares[user3.id]![SplitType.EQUAL]).toBe(0n);
+    });
+  });
+
+  describe('SplitType.PERCENTAGE', () => {
+    it('should calculate percentage shares for regular participants', () => {
+      const participants = createParticipants([user1, user2, user3], [-3000n, -2000n, -5000n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(10000n, participants, SplitType.PERCENTAGE, splitShares);
+
+      expect(splitShares[user1.id]![SplitType.PERCENTAGE]).toBe(3000n); // 30%
+      expect(splitShares[user2.id]![SplitType.PERCENTAGE]).toBe(2000n); // 20%
+      expect(splitShares[user3.id]![SplitType.PERCENTAGE]).toBe(5000n); // 50%
+    });
+
+    it('should calculate percentage shares when payer is specified', () => {
+      const participants = createParticipants([user1, user2, user3], [8000n, -3000n, -5000n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(
+        10000n,
+        participants,
+        SplitType.PERCENTAGE,
+        splitShares,
+        user1,
+      );
+
+      // user1 is payer: paid 10000n but their amount is 8000n, so they owe 2000n (20%)
+      expect(splitShares[user1.id]![SplitType.PERCENTAGE]).toBe(2000n); // 20%
+      expect(splitShares[user2.id]![SplitType.PERCENTAGE]).toBe(3000n); // 30%
+      expect(splitShares[user3.id]![SplitType.PERCENTAGE]).toBe(5000n); // 50%
+    });
+
+    it('should handle zero amount', () => {
+      const participants = createParticipants([user1, user2, user3], [-3000n, -2000n, -5000n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(0n, participants, SplitType.PERCENTAGE, splitShares);
+
+      expect(splitShares[user1.id]![SplitType.PERCENTAGE]).toBe(0n);
+      expect(splitShares[user2.id]![SplitType.PERCENTAGE]).toBe(0n);
+      expect(splitShares[user3.id]![SplitType.PERCENTAGE]).toBe(0n);
+    });
+  });
+
+  describe('SplitType.SHARE', () => {
+    it('should calculate share values based on participant amounts', () => {
+      const participants = createParticipants([user1, user2, user3], [-6000n, -3000n, -3000n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(12000n, participants, SplitType.SHARE, splitShares);
+
+      // Shares should be proportional: 6000:3000:3000 = 2:1:1
+      // Multiplied by 100 and normalized
+      expect(splitShares[user1.id]![SplitType.SHARE]).toBe(200n); // 2 shares * 100
+      expect(splitShares[user2.id]![SplitType.SHARE]).toBe(100n); // 1 share * 100
+      expect(splitShares[user3.id]![SplitType.SHARE]).toBe(100n); // 1 share * 100
+    });
+
+    it('should handle payer in share calculation', () => {
+      const participants = createParticipants([user1, user2, user3], [6000n, -3000n, -3000n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(12000n, participants, SplitType.SHARE, splitShares, user1);
+
+      // user1 is payer: paid 12000n but their amount is 6000n, so they owe 6000n
+      // Shares: 6000:3000:3000 = 2:1:1
+      expect(splitShares[user1.id]![SplitType.SHARE]).toBe(200n);
+      expect(splitShares[user2.id]![SplitType.SHARE]).toBe(100n);
+      expect(splitShares[user3.id]![SplitType.SHARE]).toBe(100n);
+    });
+
+    it('should handle zero amount', () => {
+      const participants = createParticipants([user1, user2, user3], [-6000n, -3000n, -3000n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(0n, participants, SplitType.SHARE, splitShares);
+
+      expect(splitShares[user1.id]![SplitType.SHARE]).toBe(0n);
+      expect(splitShares[user2.id]![SplitType.SHARE]).toBe(0n);
+      expect(splitShares[user3.id]![SplitType.SHARE]).toBe(0n);
+    });
+  });
+
+  describe('SplitType.EXACT', () => {
+    it('should set exact amounts for regular participants', () => {
+      const participants = createParticipants([user1, user2, user3], [-4000n, -3000n, -3000n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(10000n, participants, SplitType.EXACT, splitShares);
+
+      expect(splitShares[user1.id]![SplitType.EXACT]).toBe(4000n);
+      expect(splitShares[user2.id]![SplitType.EXACT]).toBe(3000n);
+      expect(splitShares[user3.id]![SplitType.EXACT]).toBe(3000n);
+    });
+
+    it('should handle payer in exact calculation', () => {
+      const participants = createParticipants([user1, user2, user3], [6000n, -3000n, -3000n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(10000n, participants, SplitType.EXACT, splitShares, user1);
+
+      // user1 is payer: paid 10000n but their amount is 6000n, so they owe 4000n
+      expect(splitShares[user1.id]![SplitType.EXACT]).toBe(4000n);
+      expect(splitShares[user2.id]![SplitType.EXACT]).toBe(3000n);
+      expect(splitShares[user3.id]![SplitType.EXACT]).toBe(3000n);
+    });
+
+    it('should handle zero amounts', () => {
+      const participants = createParticipants([user1, user2, user3], [0n, 0n, 0n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(10000n, participants, SplitType.EXACT, splitShares);
+
+      expect(splitShares[user1.id]![SplitType.EXACT]).toBe(0n);
+      expect(splitShares[user2.id]![SplitType.EXACT]).toBe(0n);
+      expect(splitShares[user3.id]![SplitType.EXACT]).toBe(0n);
+    });
+  });
+
+  describe('SplitType.ADJUSTMENT', () => {
+    it('should handle payer in adjustment calculation', () => {
+      const participants = createParticipants([user1, user2, user3], [-9500n, -4500n, -5000n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(
+        15000n,
+        participants,
+        SplitType.ADJUSTMENT,
+        splitShares,
+        user1,
+      );
+
+      expect(splitShares[user1.id]![SplitType.ADJUSTMENT]).toBe(1000n);
+      expect(splitShares[user2.id]![SplitType.ADJUSTMENT]).toBe(0n);
+      expect(splitShares[user3.id]![SplitType.ADJUSTMENT]).toBe(500n);
+    });
+
+    it('should handle participants with zero amounts', () => {
+      const participants = createParticipants([user1, user2, user3], [0n, -5000n, 0n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(5000n, participants, SplitType.ADJUSTMENT, splitShares);
+
+      // Only user2 has non-zero amount, so equal share = 5000n / 1 = 5000n
+      // user2 owes 5000n vs 5000n = 0n adjustment
+      expect(splitShares[user1.id]![SplitType.ADJUSTMENT]).toBe(-5000n); // 0 - 5000n
+      expect(splitShares[user2.id]![SplitType.ADJUSTMENT]).toBe(0n); // 5000n - 5000n
+      expect(splitShares[user3.id]![SplitType.ADJUSTMENT]).toBe(-5000n); // 0 - 5000n
+    });
+  });
+
+  describe('Edge cases', () => {
+    it('should handle empty participants array', () => {
+      const participants: Participant[] = [];
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+
+      calculateSplitShareBasedOnAmount(10000n, participants, SplitType.EQUAL, splitShares);
+
+      // Should not throw an error and splitShares should remain empty
+      expect(Object.keys(splitShares)).toHaveLength(0);
+    });
+
+    it('should handle undefined paidBy', () => {
+      const participants = createParticipants([user1, user2], [-5000n, -5000n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(
+        10000n,
+        participants,
+        SplitType.PERCENTAGE,
+        splitShares,
+        undefined,
+      );
+
+      expect(splitShares[user1.id]![SplitType.PERCENTAGE]).toBe(5000n);
+      expect(splitShares[user2.id]![SplitType.PERCENTAGE]).toBe(5000n);
+    });
+
+    it('should handle all split types with same data', () => {
+      const participants = createParticipants([user1, user2], [-6000n, -4000n]);
+
+      Object.values(SplitType).forEach((splitType) => {
+        if (splitType === SplitType.SETTLEMENT) return; // Skip settlement as it's not implemented
+
+        const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+        participants.forEach((p) => {
+          splitShares[p.id] = initSplitShares();
+        });
+
+        // Should not throw for any split type
+        expect(() => {
+          calculateSplitShareBasedOnAmount(10000n, participants, splitType, splitShares);
+        }).not.toThrow();
+      });
+    });
+  });
+});
+
+// Integration tests for function reversibility
+describe('Function Reversibility Tests', () => {
+  describe('calculateParticipantSplit -> calculateSplitShareBasedOnAmount', () => {
+    it('should properly reverse EQUAL split', () => {
+      const participants = createParticipants([user1, user2, user3]);
+      const originalShares = [1n, 1n, 1n];
+      const splitShares = createSplitShares(participants, SplitType.EQUAL, originalShares);
+
+      // Apply split calculation
+      const splitResult = calculateParticipantSplit(
+        15000n,
+        participants,
+        SplitType.EQUAL,
+        splitShares,
+        user1,
+      );
+
+      // Reverse the calculation
+      const reversedShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        reversedShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(
+        15000n,
+        splitResult.participants,
+        SplitType.EQUAL,
+        reversedShares,
+        user1,
+      );
+
+      // Check if we got back the original shares
+      expect(reversedShares[user1.id]![SplitType.EQUAL]).toBe(originalShares[0]);
+      expect(reversedShares[user2.id]![SplitType.EQUAL]).toBe(originalShares[1]);
+      expect(reversedShares[user3.id]![SplitType.EQUAL]).toBe(originalShares[2]);
+    });
+
+    it('should properly reverse PERCENTAGE split', () => {
+      const participants = createParticipants([user1, user2, user3]);
+      const originalShares = [5000n, 3000n, 2000n]; // 50%, 30%, 20%
+      const splitShares = createSplitShares(participants, SplitType.PERCENTAGE, originalShares);
+
+      // Apply split calculation
+      const splitResult = calculateParticipantSplit(
+        20000n,
+        participants,
+        SplitType.PERCENTAGE,
+        splitShares,
+        user1,
+      );
+
+      // Reverse the calculation
+      const reversedShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        reversedShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(
+        20000n,
+        splitResult.participants,
+        SplitType.PERCENTAGE,
+        reversedShares,
+        user1,
+      );
+
+      // Check if we got back the original percentage shares
+      expect(reversedShares[user1.id]![SplitType.PERCENTAGE]).toBe(originalShares[0]);
+      expect(reversedShares[user2.id]![SplitType.PERCENTAGE]).toBe(originalShares[1]);
+      expect(reversedShares[user3.id]![SplitType.PERCENTAGE]).toBe(originalShares[2]);
+    });
+
+    it('should properly reverse SHARE split', () => {
+      const participants = createParticipants([user1, user2, user3]);
+      const originalShares = [400n, 200n, 200n]; // 2:1:1 ratio
+      const splitShares = createSplitShares(participants, SplitType.SHARE, originalShares);
+
+      // Apply split calculation
+      const splitResult = calculateParticipantSplit(
+        16000n,
+        participants,
+        SplitType.SHARE,
+        splitShares,
+        user1,
+      );
+
+      // Reverse the calculation
+      const reversedShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        reversedShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(
+        16000n,
+        splitResult.participants,
+        SplitType.SHARE,
+        reversedShares,
+        user1,
+      );
+
+      // Check if we got back proportional shares (should maintain the 2:1:1 ratio)
+      const ratio1 = Number(reversedShares[user1.id]![SplitType.SHARE]) / Number(originalShares[0]);
+      const ratio2 = Number(reversedShares[user2.id]![SplitType.SHARE]) / Number(originalShares[1]);
+      const ratio3 = Number(reversedShares[user3.id]![SplitType.SHARE]) / Number(originalShares[2]);
+
+      // All ratios should be approximately equal (accounting for rounding)
+      expect(Math.abs(ratio1 - ratio2)).toBeLessThan(0.1);
+      expect(Math.abs(ratio2 - ratio3)).toBeLessThan(0.1);
+    });
+
+    it('should properly reverse EXACT split', () => {
+      const participants = createParticipants([user1, user2, user3]);
+      const originalShares = [6000n, 4000n, 2000n];
+      const splitShares = createSplitShares(participants, SplitType.EXACT, originalShares);
+
+      // Apply split calculation
+      const splitResult = calculateParticipantSplit(
+        12000n,
+        participants,
+        SplitType.EXACT,
+        splitShares,
+        user1,
+      );
+
+      // Reverse the calculation
+      const reversedShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        reversedShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(
+        12000n,
+        splitResult.participants,
+        SplitType.EXACT,
+        reversedShares,
+        user1,
+      );
+
+      // Check if we got back the original exact amounts
+      expect(reversedShares[user1.id]![SplitType.EXACT]).toBe(originalShares[0]);
+      expect(reversedShares[user2.id]![SplitType.EXACT]).toBe(originalShares[1]);
+      expect(reversedShares[user3.id]![SplitType.EXACT]).toBe(originalShares[2]);
+    });
+
+    it('should handle ADJUSTMENT split reversal (known to have bugs)', () => {
+      const participants = createParticipants([user1, user2, user3]);
+      const originalShares = [1000n, 0n, 500n]; // Various adjustments
+      const splitShares = createSplitShares(participants, SplitType.ADJUSTMENT, originalShares);
+
+      // Apply split calculation
+      const splitResult = calculateParticipantSplit(
+        12300n,
+        participants,
+        SplitType.ADJUSTMENT,
+        splitShares,
+        user1,
+      );
+
+      // Reverse the calculation
+      const reversedShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        reversedShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(
+        12300n,
+        splitResult.participants,
+        SplitType.ADJUSTMENT,
+        reversedShares,
+        user1,
+      );
+
+      expect(reversedShares[user1.id]![SplitType.ADJUSTMENT]).toBe(originalShares[0]);
+      expect(reversedShares[user2.id]![SplitType.ADJUSTMENT]).toBe(originalShares[1]);
+      expect(reversedShares[user3.id]![SplitType.ADJUSTMENT]).toBe(originalShares[2]);
+    });
+
+    it('should handle edge case with zero amounts', () => {
+      const participants = createParticipants([user1, user2, user3]);
+      const originalShares = [1n, 1n, 0n]; // One participant excluded
+      const splitShares = createSplitShares(participants, SplitType.EQUAL, originalShares);
+
+      // Apply split calculation
+      const splitResult = calculateParticipantSplit(
+        10000n,
+        participants,
+        SplitType.EQUAL,
+        splitShares,
+        user1,
+      );
+
+      // Reverse the calculation
+      const reversedShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        reversedShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(
+        10000n,
+        splitResult.participants,
+        SplitType.EQUAL,
+        reversedShares,
+        user1,
+      );
+
+      // Check if we preserved the zero share
+      expect(reversedShares[user1.id]![SplitType.EQUAL]).toBe(originalShares[0]);
+      expect(reversedShares[user2.id]![SplitType.EQUAL]).toBe(originalShares[1]);
+      expect(reversedShares[user3.id]![SplitType.EQUAL]).toBe(originalShares[2]);
+    });
+
+    it('should handle external payer scenario', () => {
+      const participants = createParticipants([user1, user2, user3]);
+      const originalShares = [1n, 1n, 1n];
+      const splitShares = createSplitShares(participants, SplitType.EQUAL, originalShares);
+      const externalPayer = createMockUser(4, 'External', 'external@example.com');
+
+      // Apply split calculation with external payer
+      const splitResult = calculateParticipantSplit(
+        15000n,
+        participants,
+        SplitType.EQUAL,
+        splitShares,
+        externalPayer,
+      );
+
+      // Reverse the calculation
+      const reversedShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        reversedShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(
+        15000n,
+        splitResult.participants,
+        SplitType.EQUAL,
+        reversedShares,
+        externalPayer,
+      );
+
+      // With external payer, all participants have 0 amounts due to balance adjustment
+      // So reversed shares should all be 0
+      expect(reversedShares[user1.id]![SplitType.EQUAL]).toBe(0n);
+      expect(reversedShares[user2.id]![SplitType.EQUAL]).toBe(0n);
+      expect(reversedShares[user3.id]![SplitType.EQUAL]).toBe(0n);
     });
   });
 });

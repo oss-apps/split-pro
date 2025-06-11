@@ -338,7 +338,7 @@ export function calculateParticipantSplit(
   return { participants: updatedParticipants, canSplitScreenClosed };
 }
 
-const initSplitShares = (): Record<SplitType, undefined> =>
+export const initSplitShares = (): Record<SplitType, undefined> =>
   // @ts-expect-error TS enums/string coersion *eyeroll*
   Object.fromEntries(Object.values(SplitType).map((type) => [type, undefined]));
 
@@ -411,13 +411,21 @@ export function calculateSplitShareBasedOnAmount(
       break;
 
     case SplitType.ADJUSTMENT:
-      const equalShare = amount / BigInt(participants.length);
+      const minAmount = BigMath.min(
+        ...participants
+          .filter(({ amount }) => amount !== 0n)
+          .map((p) =>
+            p.id === paidBy?.id
+              ? BigMath.abs(amount - (p.amount ?? 0n))
+              : BigMath.abs(p.amount ?? 0n),
+          ),
+      );
 
       participants.forEach((p) => {
         splitShares[p.id]![splitType] =
           paidBy?.id !== p.id
-            ? BigMath.abs(p.amount ?? 0n) - equalShare
-            : BigMath.abs(amount - (p.amount ?? 0n)) - equalShare;
+            ? BigMath.abs(p.amount ?? 0n) - minAmount
+            : amount - BigMath.abs(p.amount ?? 0n) - minAmount;
       });
 
       break;

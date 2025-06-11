@@ -122,7 +122,6 @@ export const userRouter = createTRPCRouter({
       });
 
       if (friend) {
-        console.log('Friend already exists so skipping this step');
         return friend;
       }
 
@@ -174,8 +173,6 @@ export const userRouter = createTRPCRouter({
             },
           },
         });
-
-        console.log('expenseParticipant', expenseParticipant);
 
         if (!expenseParticipant) {
           throw new TRPCError({
@@ -310,6 +307,34 @@ export const userRouter = createTRPCRouter({
         },
       });
 
+      if (expense?.groupId) {
+        const missingGroupMembers = await db.group.findUnique({
+          where: {
+            id: expense.groupId,
+          },
+          include: {
+            groupUsers: {
+              include: {
+                user: true,
+              },
+              where: {
+                userId: {
+                  notIn: expense.expenseParticipants.map((ep) => ep.userId),
+                },
+              },
+            },
+          },
+        });
+        missingGroupMembers?.groupUsers.forEach((gu) => {
+          expense.expenseParticipants.push({
+            userId: gu.user.id,
+            expenseId: expense.id,
+            user: gu.user,
+            amount: 0n,
+          });
+        });
+      }
+
       return expense;
     }),
 
@@ -390,7 +415,6 @@ export const userRouter = createTRPCRouter({
 
       try {
         const fileUrl = await getDocumentUploadUrl(key, input.fileType, input.fileSize);
-        console.log('fileUrl', fileUrl, key);
         return { fileUrl, key };
       } catch (e) {
         console.error('Error getting upload url:', e);
@@ -410,16 +434,12 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      console.log('expenseParticipant', expenseParticipant);
-
       if (!expenseParticipant) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'You are not the participant of the expense',
         });
       }
-
-      console.log('Deleting expense', input.expenseId);
 
       await deleteExpense(input.expenseId, ctx.session.user.id);
     }),
@@ -520,7 +540,7 @@ export const userRouter = createTRPCRouter({
       await importGroupFromSplitwise(ctx.session.user.id, input.groups);
     }),
 
-  getWebPushPublicKey: protectedProcedure.query(async ({ ctx }) => {
+  getWebPushPublicKey: protectedProcedure.query(async ({}) => {
     return env.WEB_PUSH_PUBLIC_KEY ?? '';
   }),
 });

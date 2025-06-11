@@ -35,7 +35,7 @@ export interface AddExpenseState {
     setGroup: (group: Group | undefined) => void;
     addOrUpdateParticipant: (user: Participant) => void;
     setSplitShare: (splitType: SplitType, userId: number, share: bigint) => void;
-    setParticipants: (participants: User[], splitType?: SplitType) => void;
+    setParticipants: (participants: Participant[], splitType?: SplitType) => void;
     removeParticipant: (userId: number) => void;
     removeLastParticipant: () => void;
     setCurrency: (currency: CurrencyCode) => void;
@@ -264,7 +264,7 @@ export function calculateParticipantSplit(
 
   let updatedParticipants = participants;
 
-  const getSplitShare = (p: User) => splitShares[p.id]?.[splitType];
+  const getSplitShare = (p: Participant) => splitShares[p.id]?.[splitType];
 
   switch (splitType) {
     case SplitType.EQUAL:

@@ -43,6 +43,11 @@ export async function createGroupExpense(
 ) {
   const operations = [];
 
+  const nonZeroParticipants = participants.filter((p) => p.amount !== 0n);
+  if (nonZeroParticipants.length === 0) {
+    throw new Error('At least one participant must have a non-zero amount');
+  }
+
   // Create expense operation
   operations.push(
     db.expense.create({
@@ -55,7 +60,7 @@ export async function createGroupExpense(
         splitType,
         currency,
         expenseParticipants: {
-          create: participants,
+          create: nonZeroParticipants,
         },
         fileKey,
         addedBy: currentUserId,
@@ -65,7 +70,7 @@ export async function createGroupExpense(
   );
 
   // Update group balances and overall balances operations
-  participants.forEach((participant) => {
+  nonZeroParticipants.forEach((participant) => {
     if (participant.userId === paidBy) {
       return;
     }
@@ -177,7 +182,7 @@ export async function createGroupExpense(
   const result = await db.$transaction(operations);
   await updateGroupExpenseForIfBalanceIsZero(
     paidBy,
-    participants.map((p) => p.userId),
+    nonZeroParticipants.map((p) => p.userId),
     currency,
   );
   if (result[0]) {
@@ -200,6 +205,12 @@ export async function addUserExpense(
 ) {
   const operations = [];
 
+  const nonZeroParticipants = participants.filter((p) => p.amount !== 0n);
+
+  if (nonZeroParticipants.length === 0) {
+    throw new Error('At least one participant must have a non-zero amount');
+  }
+
   // Create expense operation
   operations.push(
     db.expense.create({
@@ -211,7 +222,7 @@ export async function addUserExpense(
         splitType,
         currency,
         expenseParticipants: {
-          create: participants,
+          create: nonZeroParticipants,
         },
         fileKey,
         addedBy: currentUserId,
@@ -221,7 +232,7 @@ export async function addUserExpense(
   );
 
   // Update group balances and overall balances operations
-  participants.forEach((participant) => {
+  nonZeroParticipants.forEach((participant) => {
     // Update payer's balance towards the participant
     if (participant.userId === paidBy) {
       return;
@@ -279,7 +290,7 @@ export async function addUserExpense(
   const result = await db.$transaction(operations);
   await updateGroupExpenseForIfBalanceIsZero(
     paidBy,
-    participants.map((p) => p.userId),
+    nonZeroParticipants.map((p) => p.userId),
     currency,
   );
   if (result[0]) {
@@ -437,6 +448,11 @@ export async function editExpense(
   expenseDate: Date,
   fileKey?: string,
 ) {
+  const nonZeroParticipants = participants.filter((p) => p.amount !== 0n);
+  if (nonZeroParticipants.length === 0) {
+    throw new Error('At least one participant must have a non-zero amount');
+  }
+
   const expense = await db.expense.findUnique({
     where: { id: expenseId },
     include: {
@@ -561,7 +577,7 @@ export async function editExpense(
   );
 
   // Add new balances
-  participants.forEach((participant) => {
+  nonZeroParticipants.forEach((participant) => {
     if (participant.userId === paidBy) {
       return;
     }
@@ -669,7 +685,7 @@ export async function editExpense(
   await db.$transaction(operations);
   await updateGroupExpenseForIfBalanceIsZero(
     paidBy,
-    participants.map((p) => p.userId),
+    nonZeroParticipants.map((p) => p.userId),
     currency,
   );
   sendExpensePushNotification(expenseId).catch(console.error);

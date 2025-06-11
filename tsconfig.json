@@ -39,5 +39,5 @@
     "**/*.js",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "public"]
+  "exclude": ["node_modules", "public", "prisma/seed.ts"]
 }

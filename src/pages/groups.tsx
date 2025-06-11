@@ -46,15 +46,10 @@ const BalancePage: NextPageWithUser = () => {
               </motion.div>
             ) : (
               groupQuery.data?.map((g) => {
-                const [currency, amount] = Object.entries(g.balances).reduce(
-                  (acc, balance) => {
-                    if (BigMath.abs(balance[1]) > BigMath.abs(acc[1])) {
-                      return balance;
-                    }
-                    return acc;
-                  },
-                  [g.defaultCurrency, 0n],
-                );
+                const [currency, amount] = Object.entries(g.balances).reduce((first, second) => {
+                  return BigMath.abs(second[1]) > BigMath.abs(first[1]) ? second : first;
+                });
+
                 const multiCurrency = Object.values(g.balances).filter((b) => b !== 0n).length > 1;
                 return (
                   <GroupBalance
@@ -62,7 +57,7 @@ const BalancePage: NextPageWithUser = () => {
                     groupId={g.id}
                     name={g.name}
                     amount={amount}
-                    isPositive={amount >= 0 ? true : false}
+                    isPositive={amount >= 0}
                     currency={currency}
                     multiCurrency={multiCurrency}
                   />

@@ -46,7 +46,7 @@
     "framer-motion": "^11.0.3",
     "geist": "^1.2.1",
     "input-otp": "^1.2.3",
-    "lucide-react": "^0.312.0",
+    "lucide-react": "^0.514.0",
     "nanoid": "^5.0.6",
     "next": "15.3.3",
     "next-auth": "^4.24.5",

@@ -4,7 +4,7 @@ import { memo, useCallback } from 'react';
 import { CURRENCIES, type CurrencyCode } from '~/lib/currency';
 import { cn } from '~/lib/utils';
 
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../ui/command';
+import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '../ui/command';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 
 function CurrencyPickerInner({
@@ -35,8 +35,8 @@ function CurrencyPickerInner({
     >
       <Command className="h-[50vh]">
         <CommandInput className="text-lg" placeholder="Search currency" />
-        <CommandEmpty>No currency found.</CommandEmpty>
-        <CommandGroup className="h-full overflow-auto">
+        <CommandList>
+          <CommandEmpty>No currency found.</CommandEmpty>
           {Object.values(CURRENCIES).map((framework) => (
             <CommandItem
               key={`${framework.code}-${framework.name}`}
@@ -59,7 +59,7 @@ function CurrencyPickerInner({
               </DrawerClose>
             </CommandItem>
           ))}
-        </CommandGroup>
+        </CommandList>
       </Command>
     </AppDrawer>
   );

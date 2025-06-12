@@ -39,24 +39,23 @@ export default function Home() {
         )}
       </Head>
       <main className="min-h-screen">
-        <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4   py-4 lg:px-0 lg:py-5">
+        <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4 py-4 lg:px-0 lg:py-5">
           <div className="flex items-center gap-2">
             <p className="text-2xl font-medium">SplitPro</p>
           </div>
           <div className="flex items-center gap-8">
-            <Link href="/blog/need-for-splitwise-alternative">Why?</Link>
             <Link href="/terms">Terms</Link>
             <Link href="/privacy">Privacy</Link>
           </div>
         </nav>
-        <div className="mx-auto mt-20 flex w-full items-start justify-center  gap-16 px-4 lg:max-w-5xl lg:px-0 ">
+        <div className="mx-auto mt-20 flex w-full items-start justify-center gap-16 px-4 lg:max-w-5xl lg:px-0">
           <div>
-            <div className=" mb-32 text-center lg:mb-0 lg:h-[70vh] lg:text-left">
-              <h1 className="max-w-3xl text-center text-2xl font-semibold leading-loose text-gray-100 lg:text-left lg:text-5xl lg:leading-16">
+            <div className="mb-32 text-center lg:mb-0 lg:h-[70vh] lg:text-left">
+              <h1 className="max-w-3xl text-center text-2xl leading-loose font-semibold text-gray-100 lg:text-left lg:text-5xl lg:leading-16">
                 Split Expenses with your friends for{' '}
-                <span className="font-bold text-primary">free</span>.
+                <span className="text-primary font-bold">free</span>.
               </h1>
-              <h2 className="mt-5  text-gray-300  lg:mt-8 lg:text-lg">
+              <h2 className="mt-5 text-gray-300 lg:mt-8 lg:text-lg">
                 An{' '}
                 <a
                   className="text-primary hover:underline"
@@ -86,18 +85,18 @@ export default function Home() {
                   </Button>
                 </Link>
               </div>
-              <div className=" mt-40"></div>
+              <div className="mt-40"></div>
             </div>
-            <div className="mb-20 mt-8 flex justify-center lg:hidden">
+            <div className="mt-8 mb-20 flex justify-center lg:hidden">
               <MobileScreenShot />
             </div>
-            <div className=" flex flex-col gap-20 text-center lg:text-left">
+            <div className="flex flex-col gap-20 text-center lg:text-left">
               <p className="text-2xl">Features</p>
 
               <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Users className="h-6 w-6 text-primary" />
+                    <Users className="text-primary size-6" />
                     <p className="text-lg font-medium">Groups and Friends</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
@@ -108,7 +107,7 @@ export default function Home() {
 
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Banknote className="h-6 w-6 text-primary" />
+                    <Banknote className="text-primary h-6 w-6" />
                     <p className="text-lg font-medium">Multiple currencies</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
@@ -120,7 +119,7 @@ export default function Home() {
               <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Split className="h-6 w-6 text-primary" />
+                    <Split className="text-primary h-6 w-6" />
                     <p className="text-lg font-medium">Unequal Split</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
@@ -130,7 +129,7 @@ export default function Home() {
 
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Globe className="h-6 w-6 text-primary" />
+                    <Globe className="text-primary h-6 w-6" />
                     <p className="text-lg font-medium">PWA support</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
@@ -143,7 +142,7 @@ export default function Home() {
               <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <FileUp className="h-6 w-6 text-primary" />
+                    <FileUp className="text-primary h-6 w-6" />
                     <p className="text-lg font-medium">Upload Receipts</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
@@ -153,7 +152,7 @@ export default function Home() {
 
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <GitFork className="h-6 w-6 text-primary" />
+                    <GitFork className="text-primary h-6 w-6" />
                     <p className="text-lg font-medium">Open source</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
@@ -164,7 +163,7 @@ export default function Home() {
               <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Import className="h-6 w-6 text-primary" />
+                    <Import className="text-primary h-6 w-6" />
                     <p className="text-lg font-medium">Import from splitwise</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
@@ -174,7 +173,7 @@ export default function Home() {
                 </div>
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Bell className="h-6 w-6 text-primary" />
+                    <Bell className="text-primary h-6 w-6" />
                     <p className="text-lg font-medium">Push notification</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
@@ -185,7 +184,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mb-20 mt-24 flex flex-col gap-8 text-center lg:text-left">
+            <div className="mt-24 mb-20 flex flex-col gap-8 text-center lg:text-left">
               <a
                 href="https://www.producthunt.com/posts/splitpro?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-splitpro"
                 target="_blank"
@@ -200,7 +199,7 @@ export default function Home() {
               </a>
               <div>
                 Built by{' '}
-                <a className=" text-primary" href="https://koushik.dev" target="_blank">
+                <a className="text-primary" href="https://koushik.dev" target="_blank">
                   KM Koushik
                 </a>
                 {/* <p className="text-gray-400">
@@ -235,7 +234,7 @@ const MobileScreenShot = () => {
     <BackgroundGradient>
       <Image
         src="/hero.webp"
-        className=" rounded-[22px] border bg-background"
+        className="bg-background rounded-[22px] border"
         width={300}
         height={550}
         alt="hero"

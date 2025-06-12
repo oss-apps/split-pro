@@ -10,8 +10,6 @@ await import('./src/env.js');
 /** @type {import("next").NextConfig} */
 
 import pwa from 'next-pwa';
-// @ts-ignore
-import nextra from 'nextra';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
 const withPwa = pwa({
@@ -31,7 +29,6 @@ const config = {
     locales: ['en'],
     defaultLocale: 'en',
   },
-  transpilePackages: ['geist'],
   images: {
     remotePatterns: [
       {
@@ -46,10 +43,5 @@ const config = {
   },
 };
 
-const withNextra = nextra({
-  theme: 'nextra-theme-blog',
-  themeConfig: './theme.config.jsx',
-});
-
 // @ts-ignore
-export default withNextra(withPwa(config));
+export default withPwa(config);

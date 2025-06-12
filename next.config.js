@@ -1,23 +1,13 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
  */
 await import('./src/env.js');
 
+import { PHASE_DEVELOPMENT_SERVER, PHASE_PRODUCTION_BUILD } from 'next/constants.js';
+
 /** @type {import("next").NextConfig} */
-
-import pwa from 'next-pwa';
-
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-const withPwa = pwa({
-  dest: 'public',
-  // disable: process.env.NODE_ENV === 'development',
-});
-
-const config = {
+const nextConfig = {
   reactStrictMode: true,
   output: process.env.DOCKER_OUTPUT ? 'standalone' : undefined,
   /**
@@ -43,5 +33,16 @@ const config = {
   },
 };
 
-// @ts-ignore
-export default withPwa(config);
+// @ts-expect-error We don't need to type this function
+const nextConfigFunction = async (phase) => {
+  if (phase === PHASE_DEVELOPMENT_SERVER || phase === PHASE_PRODUCTION_BUILD) {
+    const withPWA = (await import('@ducanh2912/next-pwa')).default({
+      dest: 'public',
+      disable: process.env.NODE_ENV === 'development',
+    });
+    return withPWA(nextConfig);
+  }
+  return nextConfig;
+};
+
+export default nextConfigFunction;

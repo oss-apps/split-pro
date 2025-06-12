@@ -78,7 +78,7 @@ export const SelectUserOrGroup: React.FC<{
   }
 
   return (
-    <div className="mt-1 ">
+    <div className="mt-1">
       <div>
         <div>
           {enableSendingInvites ? (
@@ -117,7 +117,7 @@ export const SelectUserOrGroup: React.FC<{
       <div className="mt-2">
         {filteredFriends?.length ? (
           <>
-            <div className=" font-normal text-gray-500">Friends</div>
+            <div className="font-normal text-gray-500">Friends</div>
             {filteredFriends.map((f) => {
               const isExisting = participants.some((p) => p.id === f.id);
 
@@ -140,7 +140,7 @@ export const SelectUserOrGroup: React.FC<{
                   </div>
                   {participants.some((p) => p.id === f.id) ? (
                     <div>
-                      <CheckIcon className="h-4 w-4 text-primary" />
+                      <CheckIcon className="text-primary h-4 w-4" />
                     </div>
                   ) : null}
                 </button>

@@ -81,7 +81,7 @@ export const UploadFile: React.FC = () => {
   return (
     <Label htmlFor="picture" className="cursor-pointer">
       {file ? (
-        <ImageUploaded className="h-6 w-6 text-primary" />
+        <ImageUploaded className="text-primary h-6 w-6" />
       ) : (
         <ImagePlus className="h-6 w-6 text-gray-300" />
       )}

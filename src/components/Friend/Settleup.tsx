@@ -76,7 +76,7 @@ export const SettleUp: React.FC<{
       trigger={
         <Button
           size="sm"
-          className="focus-visible:outline-hidden flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500  px-3 text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 lg:w-[180px] "
+          className="flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500 px-3 text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 focus-visible:outline-hidden lg:w-[180px]"
           disabled={!balances.length}
         >
           Settle up
@@ -99,7 +99,7 @@ export const SettleUp: React.FC<{
               <Button
                 size="sm"
                 variant="ghost"
-                className=" text-cyan-500 lg:hidden"
+                className="text-cyan-500 lg:hidden"
                 onClick={() => setBalanceToSettle(undefined)}
               >
                 Back
@@ -109,7 +109,7 @@ export const SettleUp: React.FC<{
                 <Button
                   size="sm"
                   variant="ghost"
-                  className=" text-cyan-500 lg:hidden"
+                  className="text-cyan-500 lg:hidden"
                   onClick={() => (balances.length > 1 ? setBalanceToSettle(undefined) : null)}
                 >
                   Back
@@ -117,7 +117,7 @@ export const SettleUp: React.FC<{
               </DrawerClose>
             ))}
         </div>
-        <div className="mb-2 mt-4 text-center">
+        <div className="mt-4 mb-2 text-center">
           {balanceToSettle ? 'Settle up' : 'Select currency'}
         </div>
         {balanceToSettle && (
@@ -125,7 +125,7 @@ export const SettleUp: React.FC<{
             <Button
               size="sm"
               variant="ghost"
-              className=" mx-auto text-cyan-500 lg:hidden"
+              className="mx-auto text-cyan-500 lg:hidden"
               onClick={() => saveExpense()}
             >
               Save
@@ -159,13 +159,13 @@ export const SettleUp: React.FC<{
                 : `${friend.name ?? friend.email} is paying you`}
             </p>
           </div>
-          <div className="mt-3 flex  items-center gap-2">
+          <div className="mt-3 flex items-center gap-2">
             <p className="text-lg">{balanceToSettle.currency}</p>
             <Input
               type="number"
               value={amount}
               inputMode="decimal"
-              className="mx-auto  w-[150px] text-lg"
+              className="mx-auto w-[150px] text-lg"
               onChange={(e) => setAmount(e.target.value)}
             />
           </div>
@@ -192,7 +192,7 @@ export const SettleUp: React.FC<{
         </div>
         {balanceToSettle && (
           <DrawerClose>
-            <Button size="sm" className=" mx-auto " onClick={() => saveExpense()}>
+            <Button size="sm" className="mx-auto" onClick={() => saveExpense()}>
               Save
             </Button>
           </DrawerClose>

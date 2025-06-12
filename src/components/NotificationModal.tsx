@@ -100,7 +100,7 @@ export const NotificationModal: React.FC = () => {
 
   return (
     <AlertDialog open={modalOpen}>
-      <AlertDialogContent className=" rounded-lg">
+      <AlertDialogContent className="rounded-lg">
         <AlertDialogHeader>
           <AlertDialogTitle>Enable notifications</AlertDialogTitle>
           <AlertDialogDescription>

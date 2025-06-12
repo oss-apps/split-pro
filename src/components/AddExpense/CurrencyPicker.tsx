@@ -25,7 +25,7 @@ function CurrencyPickerInner({
   return (
     <AppDrawer
       trigger={
-        <div className="flex w-[70px] justify-center rounded-lg border py-2  text-center text-base">
+        <div className="flex w-[70px] justify-center rounded-lg border py-2 text-center text-base">
           {currentCurrency}
         </div>
       }
@@ -54,7 +54,7 @@ function CurrencyPickerInner({
                 />
                 <div className="flex gap-2">
                   <p>{framework.name}</p>
-                  <p className=" text-muted-foreground">{framework.code}</p>
+                  <p className="text-muted-foreground">{framework.code}</p>
                 </div>
               </DrawerClose>
             </CommandItem>

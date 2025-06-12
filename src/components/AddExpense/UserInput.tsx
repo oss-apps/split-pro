@@ -100,7 +100,7 @@ export const UserInput: React.FC<{
         value={nameOrEmail}
         onChange={(e) => setNameOrEmail(e.target.value)}
         onKeyDown={handleKeyDown}
-        className="outline-hidden min-w-[100px] grow bg-transparent placeholder:text-sm focus:ring-0"
+        className="min-w-[100px] grow bg-transparent outline-hidden placeholder:text-sm focus:ring-0"
         autoFocus
         disabled={isEditing && !!group}
       />

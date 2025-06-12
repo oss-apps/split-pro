@@ -85,20 +85,20 @@ export const GroupSettleUp: React.FC<{
             {displayName(sender)} pays {displayName(receiver)}
           </p>
         </div>
-        <div className="mt-3 flex  items-center gap-2">
+        <div className="mt-3 flex items-center gap-2">
           <p className="text-lg">{currency}</p>
           <Input
             type="number"
             value={amountStr}
             inputMode="decimal"
-            className="mx-auto  w-[150px] text-lg"
+            className="mx-auto w-[150px] text-lg"
             onChange={(e) => setAmountStr(e.target.value)}
           />
         </div>
       </div>
       <div className="mt-8 hidden items-center justify-center gap-4 px-2 lg:flex">
         <DrawerClose>
-          <Button size="sm" className=" mx-auto " onClick={() => saveExpense()}>
+          <Button size="sm" className="mx-auto" onClick={() => saveExpense()}>
             Save
           </Button>
         </DrawerClose>

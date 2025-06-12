@@ -50,7 +50,7 @@ export const ExpenseList: React.FC<{
             </div>
             <div>
               {!isSettlement ? (
-                <p className=" max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">{e.name}</p>
+                <p className="max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">{e.name}</p>
               ) : null}
               <p
                 className={`flex text-center ${isSettlement ? 'text-sm text-gray-400' : 'text-xs text-gray-500'}`}
@@ -70,8 +70,7 @@ export const ExpenseList: React.FC<{
                     {youPaid ? 'You lent' : 'You owe'}
                   </div>
                   <div className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}>
-                    <span className="font-light ">{e.currency}</span>{' '}
-                    {toUIString(yourExpenseAmount)}
+                    <span className="font-light">{e.currency}</span> {toUIString(yourExpenseAmount)}
                   </div>
                 </>
               ) : (
@@ -85,7 +84,7 @@ export const ExpenseList: React.FC<{
       );
     })}
     {expenses.length === 0 && !isLoading ? (
-      <div className="mt-20 flex flex-col items-center justify-center ">
+      <div className="mt-20 flex flex-col items-center justify-center">
         <Image src="/add_expense.svg" alt="Empty" width={200} height={200} className="mb-4" />
       </div>
     ) : null}

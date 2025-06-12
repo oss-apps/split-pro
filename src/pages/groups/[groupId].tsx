@@ -199,7 +199,7 @@ const BalancePage: NextPageWithUser<{
             >
               <>
                 <div className="flex items-center justify-between">
-                  <div className="text-xl font-semibold text-primary">
+                  <div className="text-primary text-xl font-semibold">
                     {groupDetailQuery.data?.name ?? ''}
                   </div>
                   {isAdmin && (
@@ -269,12 +269,12 @@ const BalancePage: NextPageWithUser<{
               </>
               {groupDetailQuery?.data?.createdAt && (
                 <div className="mt-8">
-                  <p className="font-semibold ">Group created</p>
+                  <p className="font-semibold">Group created</p>
                   <p>{format(groupDetailQuery.data?.createdAt, 'MMM dd, yyyy')}</p>
                 </div>
               )}
               <div className="mt-8">
-                <p className="font-semibold ">Actions</p>
+                <p className="font-semibold">Actions</p>
                 <div className="child:h-7 mt-2 flex flex-col">
                   <Label className="flex cursor-pointer items-center justify-between">
                     <p className="flex items-center">
@@ -307,7 +307,7 @@ const BalancePage: NextPageWithUser<{
                       loading={recalculateGroupBalancesMutation.isPending}
                       variant="default"
                     >
-                      <Button variant="ghost" className="justify-start p-0 text-left text-primary">
+                      <Button variant="ghost" className="text-primary justify-start p-0 text-left">
                         <Construction className="mr-2 h-5 w-5" /> Recalculate balances
                       </Button>
                     </SimpleConfirmationDialog>
@@ -393,7 +393,7 @@ const BalancePage: NextPageWithUser<{
                 users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
               />
             </div>
-            <div className=" mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4">
+            <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4">
               <Link href={`/add?groupId=${groupId}`}>
                 <Button size="sm" className="gap-1 text-sm lg:w-[180px]">
                   Add Expense

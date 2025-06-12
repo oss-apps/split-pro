@@ -96,7 +96,7 @@
   }
 
   button:not([disabled]),
-  [role="button"]:not([disabled]) {
+  [role='button']:not([disabled]) {
     cursor: pointer;
   }
 }
@@ -163,18 +163,17 @@
   --ring: hsl(221 39% 11%);
 }
 
-
 @layer base {
   * {
     @apply border-border;
   }
   body {
-    @apply h-full bg-background text-foreground;
+    @apply bg-background text-foreground h-full;
   }
 }
 
 html {
-  @apply h-full bg-background;
+  @apply bg-background h-full;
 }
 
 body {

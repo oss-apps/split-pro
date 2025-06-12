@@ -62,7 +62,6 @@
     "react-dom": "19.1.0",
     "react-hook-form": "^7.50.1",
     "resend": "^3.2.0",
-    "sharp": "0.32.6",
     "sonner": "^1.4.0",
     "superjson": "^2.2.1",
     "vaul": "^0.8.9",

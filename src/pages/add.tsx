@@ -91,6 +91,11 @@ const AddPage: NextPageWithUser<{
     }
 
     expenseQuery.data.group && setGroup(expenseQuery.data.group);
+    setPaidBy(expenseQuery.data.paidByUser);
+    setCurrency(expenseQuery.data.currency as CurrencyCode);
+    setAmountStr((Number(expenseQuery.data.amount) / 100).toString());
+    setDescription(expenseQuery.data.name);
+    setAmount(expenseQuery.data.amount);
     setParticipants(
       expenseQuery.data.expenseParticipants.map((ep) => ({
         ...ep.user,
@@ -98,11 +103,6 @@ const AddPage: NextPageWithUser<{
       })),
       expenseQuery.data.splitType,
     );
-    setCurrency(expenseQuery.data.currency as CurrencyCode);
-    setAmountStr((Number(expenseQuery.data.amount) / 100).toString());
-    setDescription(expenseQuery.data.name);
-    setPaidBy(expenseQuery.data.paidByUser);
-    setAmount(expenseQuery.data.amount);
     useAddExpenseStore.setState({ showFriends: false });
     setExpenseDate(expenseQuery.data.expenseDate);
     // eslint-disable-next-line react-hooks/exhaustive-deps

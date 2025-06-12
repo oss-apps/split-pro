@@ -389,7 +389,7 @@ export function calculateSplitShareBasedOnAmount(
                 Math.round(
                   (Math.abs(
                     paidBy?.id !== p.id
-                      ? Number(p.amount) ?? 0
+                      ? (Number(p.amount) ?? 0)
                       : amountNum - (Number(p.amount) ?? 0),
                   ) /
                     amountNum) *
@@ -403,7 +403,9 @@ export function calculateSplitShareBasedOnAmount(
     case SplitType.EXACT:
       participants.forEach((p) => {
         splitShares[p.id]![splitType] =
-          paidBy?.id !== p.id ? BigMath.abs(p.amount ?? 0n) : amount - BigMath.abs(p.amount ?? 0n);
+          paidBy?.id !== p.id
+            ? BigMath.abs(p.amount ?? 0n)
+            : BigMath.abs(amount - (p.amount ?? 0n));
       });
 
       break;

@@ -61,10 +61,9 @@
     "react-day-picker": "^9.7.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.50.1",
-    "resend": "^3.2.0",
     "sonner": "^1.4.0",
     "superjson": "^2.2.1",
-    "vaul": "^0.8.9",
+    "vaul": "^1.1.2",
     "web-push": "^3.6.7",
     "zod": "^3.22.4",
     "zustand": "^4.5.0"

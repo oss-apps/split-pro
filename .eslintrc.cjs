@@ -4,6 +4,7 @@ const config = {
   parserOptions: {
     project: true,
     sourceType: 'module',
+    warnOnUnsupportedTypeScriptVersion: false,
   },
   plugins: ['@typescript-eslint', 'import', 'unused-imports'],
   extends: [
@@ -35,6 +36,7 @@ const config = {
     ],
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/require-await': 'off',
+    '@typescript-eslint/prefer-promise-reject-errors': 'off',
     '@typescript-eslint/no-misused-promises': [
       'error',
       {

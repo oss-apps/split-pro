@@ -90,7 +90,9 @@ const AddPage: NextPageWithUser<{
       return;
     }
 
-    expenseQuery.data.group && setGroup(expenseQuery.data.group);
+    if (expenseQuery.data.group) {
+      setGroup(expenseQuery.data.group);
+    }
     setPaidBy(expenseQuery.data.paidByUser);
     setCurrency(expenseQuery.data.currency as CurrencyCode);
     setAmountStr((Number(expenseQuery.data.amount) / 100).toString());

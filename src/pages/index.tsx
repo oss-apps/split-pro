@@ -52,7 +52,7 @@ export default function Home() {
         <div className="mx-auto mt-20 flex w-full items-start justify-center  gap-16 px-4 lg:max-w-5xl lg:px-0 ">
           <div>
             <div className=" mb-32 text-center lg:mb-0 lg:h-[70vh] lg:text-left">
-              <h1 className="max-w-3xl text-center text-2xl font-semibold leading-loose text-gray-100 lg:text-left lg:text-5xl lg:leading-[4rem]">
+              <h1 className="max-w-3xl text-center text-2xl font-semibold leading-loose text-gray-100 lg:text-left lg:text-5xl lg:leading-16">
                 Split Expenses with your friends for{' '}
                 <span className="font-bold text-primary">free</span>.
               </h1>

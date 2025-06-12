@@ -76,7 +76,7 @@ export const SettleUp: React.FC<{
       trigger={
         <Button
           size="sm"
-          className="flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500 px-3  text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 focus-visible:outline-none lg:w-[180px] "
+          className="focus-visible:outline-hidden flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500  px-3 text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 lg:w-[180px] "
           disabled={!balances.length}
         >
           Settle up

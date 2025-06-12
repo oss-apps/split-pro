@@ -121,7 +121,7 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
           {providers && providers.length === 2 && (
             <div className="mt-6 flex w-[300px]  items-center justify-between gap-2">
               <p className=" z-10 ml-[150px] -translate-x-1/2 bg-background px-4 text-sm">or</p>
-              <div className="absolute h-[1px] w-[300px]  bg-gradient-to-r from-zinc-800 via-zinc-300 to-zinc-800"></div>
+              <div className="absolute h-px w-[300px]  bg-linear-to-r from-zinc-800 via-zinc-300 to-zinc-800"></div>
             </div>
           )}
           {providers.find((provider) => provider.id === 'email') ? (

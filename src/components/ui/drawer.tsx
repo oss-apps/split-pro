@@ -51,7 +51,7 @@ const DrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border border-gray-800 bg-background focus:outline-none',
+        'fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border border-gray-800 bg-background focus:outline-hidden',
         className,
       )}
       {...props}
@@ -233,7 +233,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
   return (
     <Drawer open={open} onOpenChange={onOpenChange} dismissible={dismissible} onClose={onClose}>
       <DrawerTrigger
-        className="flex items-center justify-center gap-2 text-center text-sm focus:outline-none focus:ring-0"
+        className="flex items-center justify-center gap-2 text-center text-sm focus:outline-hidden focus:ring-0"
         onClick={onTriggerClick}
         asChild
       >

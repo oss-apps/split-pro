@@ -25,11 +25,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, 
   const currentPath = router.pathname;
 
   return (
-    <div className=" h-full w-full bg-background">
+    <div className=" bg-background h-full w-full">
       <div
         vaul-drawer-wrapper=""
         className={clsx(
-          'mx-auto flex h-full w-full flex-col bg-background lg:max-w-3xl lg:flex-row',
+          'bg-background mx-auto flex h-full w-full flex-col lg:max-w-3xl lg:flex-row',
           hideAppBar ? '' : '',
         )}
       >
@@ -80,7 +80,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, 
         </div>
       </div>
 
-      <nav className="fixed bottom-0 flex w-full justify-between border-t  bg-opacity-80 px-2 pb-4 shadow-sm backdrop-blur-lg lg:hidden">
+      <nav className="shadow-xs fixed bottom-0 flex w-full justify-between  border-t bg-opacity-80 px-2 pb-4 backdrop-blur-lg lg:hidden">
         <NavItem
           title="Balances"
           Icon={SolidScaleIcon}

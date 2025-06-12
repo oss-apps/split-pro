@@ -267,7 +267,7 @@ const SplitSection: React.FC<SplitSectionProps> = ({
 
   return (
     <div className="relative mt-4 flex flex-col gap-6 px-2">
-      <div className="mb-2 flex flex-grow justify-center">
+      <div className="mb-2 flex grow justify-center">
         <div className={`${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'}`}>
           {summaryText}
         </div>

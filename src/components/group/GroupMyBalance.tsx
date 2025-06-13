@@ -21,9 +21,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
   const friendBalances = groupBalances.reduce(
     (acc, balance) => {
       if (balance.userId === userId && BigMath.abs(balance.amount) > 0) {
-        if (!acc[balance.firendId]) {
-          acc[balance.firendId] = {};
-        }
+        acc[balance.firendId] ??= {};
         const friendBalance = acc[balance.firendId]!;
         friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0n) + balance.amount;
       }

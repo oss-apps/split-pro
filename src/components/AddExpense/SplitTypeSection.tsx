@@ -35,7 +35,7 @@ export const SplitTypeSection: React.FC = () => {
       <p className="text-[16px]">Paid by </p>
       <AppDrawer
         trigger={
-          <p className="overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16.5px] text-cyan-500 lg:max-w-48">
+          <p className="overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
             {
               (currentUser?.id === paidBy?.id ? 'you' : (paidBy?.name ?? paidBy?.email))?.split(
                 ' ',
@@ -67,7 +67,7 @@ export const SplitTypeSection: React.FC = () => {
       <p>and </p>
       <AppDrawer
         trigger={
-          <div className=" max-w-32 overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16.5px] text-cyan-500 lg:max-w-48">
+          <div className="max-w-32 overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
             {splitType === SplitType.EQUAL ? 'split equally' : `split unequally`}
           </div>
         }
@@ -267,15 +267,15 @@ const SplitSection: React.FC<SplitSectionProps> = ({
 
   return (
     <div className="relative mt-4 flex flex-col gap-6 px-2">
-      <div className="mb-2 flex flex-grow justify-center">
+      <div className="mb-2 flex grow justify-center">
         <div className={`${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'}`}>
           {summaryText}
         </div>
       </div>
       {isBoolean && (
-        <div className="absolute right-0 top-0">
+        <div className="absolute top-0 right-0">
           <button
-            className="flex items-center gap-1 whitespace-nowrap rounded-md border px-2 py-0.5"
+            className="flex items-center gap-1 rounded-md border px-2 py-0.5 whitespace-nowrap"
             onClick={selectAll}
           >
             {allSelected ? <X className="h-4 w-4" /> : <Check className="h-4 w-4" />}

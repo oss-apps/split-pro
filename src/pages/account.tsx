@@ -86,7 +86,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             <Link href="https://twitter.com/KM_Koushik_" target="_blank">
               <Button
                 variant="ghost"
-                className="text-md w-full justify-between px-0 hover:text-foreground/80"
+                className="text-md hover:text-foreground/80 w-full justify-between px-0"
               >
                 <div className="flex items-center gap-4">
                   <svg
@@ -115,7 +115,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             <Link href="https://github.com/oss-apps/split-pro" target="_blank">
               <Button
                 variant="ghost"
-                className="text-md w-full justify-between px-0 hover:text-foreground/80"
+                className="text-md hover:text-foreground/80 w-full justify-between px-0"
               >
                 <div className="flex items-center gap-4">
                   <Github className="h-5 w-5 text-gray-200" />
@@ -127,7 +127,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             <Link href="https://github.com/sponsors/KMKoushik" target="_blank">
               <Button
                 variant="ghost"
-                className="text-md w-full justify-between px-0 hover:text-foreground/80"
+                className="text-md hover:text-foreground/80 w-full justify-between px-0"
               >
                 <div className="flex items-center gap-4">
                   <HeartHandshakeIcon className="h-5 w-5 text-pink-600" />
@@ -141,7 +141,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             <Link href="https://www.producthunt.com/products/splitpro/reviews/new" target="_blank">
               <Button
                 variant="ghost"
-                className="text-md w-full justify-between px-0 hover:text-foreground/80"
+                className="text-md hover:text-foreground/80 w-full justify-between px-0"
               >
                 <div className="flex items-center gap-4">
                   <Star className="h-5 w-5 text-yellow-400" />
@@ -152,7 +152,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             </Link>
             <AppDrawer
               trigger={
-                <div className="flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300 hover:text-foreground/80">
+                <div className="hover:text-foreground/80 flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300">
                   <div className="flex items-center gap-4">
                     <Download className="h-5 w-5 text-blue-500" />
                     Download App
@@ -193,7 +193,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             </AppDrawer>
             <Button
               variant="ghost"
-              className="text-md w-full justify-between px-0 hover:text-foreground/80"
+              className="text-md hover:text-foreground/80 w-full justify-between px-0"
               onClick={downloadData}
               disabled={downloading}
             >
@@ -210,7 +210,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             <Link href="/import-splitwise">
               <Button
                 variant="ghost"
-                className="text-md w-full justify-between px-0 hover:text-foreground/80"
+                className="text-md hover:text-foreground/80 w-full justify-between px-0"
               >
                 <div className="flex items-center gap-4">
                   <DownloadCloud className="h-5 w-5 text-violet-500" />
@@ -224,7 +224,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
           <div className="mt-2 flex justify-center">
             <Button
               variant="ghost"
-              className="text-orange-600 hover:text-orange-600/90 "
+              className="text-orange-600 hover:text-orange-600/90"
               onClick={() => signOut()}
             >
               Logout

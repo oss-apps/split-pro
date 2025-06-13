@@ -104,7 +104,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
           <div className="flex items-center justify-between">
             <div className="flex gap-4">
               <Link href="/balances">
-                <Button variant="ghost" className="px-0 py-0 text-primary" size="sm">
+                <Button variant="ghost" className="text-primary px-0 py-0" size="sm">
                   Cancel
                 </Button>
               </Link>
@@ -114,7 +114,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               <Button
                 onClick={onImport}
                 variant="ghost"
-                className="px-0 py-0 text-primary"
+                className="text-primary px-0 py-0"
                 size="sm"
                 disabled={importMutation.isPending || !uploadedFile}
               >
@@ -124,12 +124,12 @@ const ImportSpliwisePage: NextPageWithUser = () => {
           </div>
           <div className="mt-4 flex items-center gap-4">
             <label htmlFor="splitwise-json" className="w-full cursor-pointer rounded border">
-              <div className="flex cursor-pointer px-3 py-[6px] ">
-                <div className="flex items-center border-r pr-4 ">
+              <div className="flex cursor-pointer px-3 py-[6px]">
+                <div className="flex items-center border-r pr-4">
                   <PaperClipIcon className="mr-2 h-4 w-4" />{' '}
                   <span className="hidden text-sm md:block">Choose file</span>
                 </div>
-                <div className=" pl-4 text-gray-400  ">
+                <div className="pl-4 text-gray-400">
                   {uploadedFile ? uploadedFile.name : 'No file chosen'}
                 </div>
               </div>
@@ -162,7 +162,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                 <div className="mt-4 flex flex-col gap-3">
                   {usersWithBalance.map((user, index) => (
                     <div key={user.id} className="">
-                      <div key={user.id} className="flex  items-center  justify-between gap-4">
+                      <div key={user.id} className="flex items-center justify-between gap-4">
                         <div className="flex shrink-0 items-center gap-2">
                           <Checkbox
                             checked={selectedUsers[user.id]}
@@ -170,7 +170,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                               setSelectedUsers({ ...selectedUsers, [user.id]: checked });
                             }}
                           />
-                          <div className="flex ">
+                          <div className="flex">
                             <p>{`${user.first_name}${user.last_name ? ' ' + user.last_name : ''}`}</p>
                           </div>
                         </div>

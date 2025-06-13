@@ -44,7 +44,7 @@ const BalancePage: NextPageWithUser = () => {
         actions={
           typeof window !== 'undefined' && !!window.navigator?.share ? (
             <Button variant="ghost" onClick={shareWithFriends}>
-              <ArrowUpOnSquareIcon className="h-6 w-6 " />
+              <ArrowUpOnSquareIcon className="h-6 w-6" />
             </Button>
           ) : (
             <div className="h-6 w-10" />
@@ -55,7 +55,7 @@ const BalancePage: NextPageWithUser = () => {
         <div className="">
           <div className="mx-4 flex items-stretch justify-between gap-4">
             {balanceQuery.data?.youOwe.length ? (
-              <div className="w-1/2  rounded-2xl border px-2 py-2">
+              <div className="w-1/2 rounded-2xl border px-2 py-2">
                 {/* <ArrowLeftCircleIcon className=" h-6 w-6 rotate-45 transform text-gray-600" /> */}
                 <div className="mt-2 px-1">
                   <div className="flex items-center justify-center gap-2 text-center">
@@ -63,7 +63,7 @@ const BalancePage: NextPageWithUser = () => {
                     <p className="text-sm">You owe</p>
                   </div>
                 </div>
-                <div className="mb-2 mt-4 flex flex-wrap justify-center gap-1">
+                <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
                   {balanceQuery.data?.youOwe.map((b, index) => (
                     <span key={b.currency} className="flex gap-1">
                       <span className="text-orange-600">
@@ -78,16 +78,16 @@ const BalancePage: NextPageWithUser = () => {
               </div>
             ) : null}
             {balanceQuery.data?.youGet.length ? (
-              <div className="w-1/2 rounded-2xl border  px-2 py-2 ">
-                <div className="mt-2 flex flex-col justify-center bg-opacity-40 px-1">
+              <div className="w-1/2 rounded-2xl border px-2 py-2">
+                <div className="bg-opacity-40 mt-2 flex flex-col justify-center px-1">
                   <div className="flex items-center justify-center gap-2">
                     <p className="text-sm">You get</p>
                   </div>
                 </div>
-                <div className="mb-2 mt-4 flex flex-wrap justify-center gap-1">
+                <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
                   {balanceQuery.data?.youGet.map((b, index) => (
                     <span key={b.currency} className="flex gap-1">
-                      <p className=" text-emerald-500">
+                      <p className="text-emerald-500">
                         {b.currency.toUpperCase()} {toUIString(b.amount)}
                       </p>{' '}
                       {index !== balanceQuery.data.youGet.length - 1 ? (
@@ -152,7 +152,7 @@ const FriendBalance: React.FC<{
     <Link className="flex items-center justify-between" href={`/balances/${id}`}>
       <div className="flex items-center gap-3">
         <UserAvatar user={friend} />
-        <div className=" text-foreground">{friend.name ?? friend.email}</div>
+        <div className="text-foreground">{friend.name ?? friend.email}</div>
       </div>
       {amount === 0n ? (
         <div>

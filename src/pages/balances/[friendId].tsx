@@ -78,13 +78,13 @@ const FriendPage: NextPageWithUser = ({ user }) => {
         !friendQuery.data ? null : (
           <motion.div className="mb-28" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="mx-4 flex flex-wrap gap-2">
-              <div className=" text-orange-700">
+              <div className="text-orange-700">
                 {(youOwe?.length ?? 0) > 0 && (
                   <>
                     You owe{' '}
                     {youOwe?.map((b, index) => (
                       <span key={b.currency}>
-                        <span className=" font-semibold tracking-wide">
+                        <span className="font-semibold tracking-wide">
                           {b.currency} {toUIString(b.amount)}
                         </span>
                         {youOwe.length - 1 === index ? '' : ' + '}
@@ -94,13 +94,13 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 )}
               </div>
               <div>{(youOwe?.length ?? 0) > 0 && (youLent?.length ?? 0) > 0 ? '+' : null}</div>
-              <div className=" text-emerald-600">
+              <div className="text-emerald-600">
                 {(youLent?.length ?? 0) > 0 && (
                   <>
                     You lent{' '}
                     {youLent?.map((b, index) => (
                       <span key={b.currency}>
-                        <span className=" font-semibold tracking-wide">
+                        <span className="font-semibold tracking-wide">
                           {b.currency} {toUIString(b.amount)}
                         </span>
                         {youLent.length - 1 === index ? '' : ' + '}
@@ -110,7 +110,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 )}
               </div>
             </div>
-            <div className="mb-4 mt-6 flex justify-center gap-2 px-2 ">
+            <div className="mt-6 mb-4 flex justify-center gap-2 px-2">
               {balances.data ? (
                 <SettleUp
                   balances={balances.data}
@@ -152,7 +152,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               </Button> */}
             </div>
             <Separator className="px-4" />
-            <div className="mx-4 mt-4 flex  flex-col gap-3">
+            <div className="mx-4 mt-4 flex flex-col gap-3">
               <ExpenseList
                 expenses={expenses.data ?? []}
                 contactId={_friendId}

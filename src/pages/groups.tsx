@@ -25,7 +25,7 @@ const BalancePage: NextPageWithUser = () => {
         title="Groups"
         actions={
           <CreateGroup>
-            <PlusIcon className="h-6 w-6 text-primary" />
+            <PlusIcon className="text-primary h-6 w-6" />
           </CreateGroup>
         }
       >
@@ -89,7 +89,7 @@ const GroupBalance: React.FC<{
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <GroupAvatar name={name} size={40} />
-          <div className=" text-foreground">{name}</div>
+          <div className="text-foreground">{name}</div>
         </div>
         <div>
           {amount === 0n ? (

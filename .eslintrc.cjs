@@ -4,14 +4,15 @@ const config = {
   parserOptions: {
     project: true,
     sourceType: 'module',
+    warnOnUnsupportedTypeScriptVersion: false,
   },
   plugins: ['@typescript-eslint', 'import', 'unused-imports'],
   extends: [
     'next/core-web-vitals',
     'plugin:@typescript-eslint/recommended-type-checked',
     'plugin:@typescript-eslint/stylistic-type-checked',
-    'plugin:import/recommended',
-    'plugin:import/typescript',
+    'plugin:import-x/recommended',
+    'plugin:import-x/typescript',
   ],
   settings: {
     'import/resolver': {
@@ -35,6 +36,7 @@ const config = {
     ],
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/require-await': 'off',
+    '@typescript-eslint/prefer-promise-reject-errors': 'off',
     '@typescript-eslint/no-misused-promises': [
       'error',
       {

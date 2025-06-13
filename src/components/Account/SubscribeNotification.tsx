@@ -93,7 +93,7 @@ export const SubscribeNotification: React.FC = () => {
     <>
       <Button
         variant="ghost"
-        className="text-md w-full justify-between px-0 hover:text-foreground/80"
+        className="text-md hover:text-foreground/80 w-full justify-between px-0"
         onClick={isSubscribed ? unSubscribeNotification : onRequestNotification}
       >
         <div className="flex items-center gap-4">

@@ -12,7 +12,7 @@ export const FriendBalance: React.FC<{ user: User; balance: Balance }> = ({ user
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
         <UserAvatar user={user} size={30} />
-        <div className=" text-foreground">{user.name}</div>
+        <div className="text-foreground">{user.name}</div>
       </div>
       <div>
         <div

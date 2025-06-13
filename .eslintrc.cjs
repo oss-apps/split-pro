@@ -11,8 +11,8 @@ const config = {
     'next/core-web-vitals',
     'plugin:@typescript-eslint/recommended-type-checked',
     'plugin:@typescript-eslint/stylistic-type-checked',
-    'plugin:import/recommended',
-    'plugin:import/typescript',
+    'plugin:import-x/recommended',
+    'plugin:import-x/typescript',
   ],
   settings: {
     'import/resolver': {

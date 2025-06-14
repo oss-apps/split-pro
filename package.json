@@ -99,9 +99,14 @@
   },
   "packageManager": "pnpm@10.11.0",
   "pnpm": {
-    "overrides": {
-      "@types/react": "19.1.8",
-      "@types/react-dom": "19.1.6"
-    }
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "@tailwindcss/oxide",
+      "esbuild",
+      "prisma",
+      "sharp",
+      "unrs-resolver"
+    ]
   }
 }

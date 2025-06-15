@@ -14,7 +14,7 @@ import { Input } from '../ui/input';
 
 const AddMembers: React.FC<{
   enableSendingInvites: boolean;
-  group: Group & { groupUsers: Array<GroupUser> };
+  group: Group & { groupUsers: GroupUser[] };
   children: React.ReactNode;
 }> = ({ group, children, enableSendingInvites }) => {
   const [open, setOpen] = useState(false);
@@ -55,7 +55,7 @@ const AddMembers: React.FC<{
 
     setInputValue('');
 
-    if (users.length === 0) {
+    if (0 === users.length) {
       return;
     }
 

@@ -75,7 +75,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, 
             </div>
           ) : null}
           {children}
-          <div className="h-28 lg:h-0"></div>
+          <div className="h-28 lg:h-0" />
         </div>
       </div>
 
@@ -110,12 +110,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, 
   );
 };
 
-type NavItemProps = {
+interface NavItemProps {
   title: string;
   Icon: LucideIcon;
   link: string;
   currentPath?: string;
-};
+}
 
 const NavItem: React.FC<NavItemProps> = ({ title, Icon, link, currentPath }) => {
   const isActive = currentPath?.startsWith(link);

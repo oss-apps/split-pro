@@ -62,7 +62,7 @@ export const ExpenseList: React.FC<{
           </div>
           {isSettlement ? null : (
             <div className="min-w-10 shrink-0">
-              {youPaid || yourExpenseAmount !== 0n ? (
+              {youPaid || 0n !== yourExpenseAmount ? (
                 <>
                   <div
                     className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
@@ -83,7 +83,7 @@ export const ExpenseList: React.FC<{
         </Link>
       );
     })}
-    {expenses.length === 0 && !isLoading ? (
+    { 0 === expenses.length && !isLoading ? (
       <div className="mt-20 flex flex-col items-center justify-center">
         <Image src="/add_expense.svg" alt="Empty" width={200} height={200} className="mb-4" />
       </div>

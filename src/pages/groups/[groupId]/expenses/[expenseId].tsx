@@ -35,7 +35,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
               <ChevronLeftIcon className="mr-1 h-6 w-6" />
             </Link>
             <p className="w-full text-center text-[16px] font-normal">Expense details</p>
-            <div></div>
+            <div />
           </div>
         }
         actions={

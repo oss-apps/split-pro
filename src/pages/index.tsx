@@ -24,11 +24,11 @@ export default function Home() {
         <title>SplitPro: Split Expenses with your friends for free</title>
         <meta name="description" content="SplitPro: Split Expenses with your friends for free" />
         <link rel="icon" href="/favicon.ico" />
-        {process.env.NODE_ENV === 'production' && (
+        { 'production' === process.env.NODE_ENV && (
           <>
-            <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+            <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js" />
             <noscript>
-              <img
+              <Image
                 src="https://queue.simpleanalyticscdn.com/noscript.gif"
                 alt=""
                 referrerPolicy="no-referrer-when-downgrade"
@@ -60,6 +60,7 @@ export default function Home() {
                   className="text-primary hover:underline"
                   href="https://github.com/oss-apps/split-pro"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   open source
                 </a>{' '}
@@ -84,7 +85,7 @@ export default function Home() {
                   </Button>
                 </Link>
               </div>
-              <div className="mt-40"></div>
+              <div className="mt-40" />
             </div>
             <div className="mt-8 mb-20 flex justify-center lg:hidden">
               <MobileScreenShot />
@@ -187,8 +188,9 @@ export default function Home() {
               <a
                 href="https://www.producthunt.com/posts/splitpro?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-splitpro"
                 target="_blank"
+                rel="noreferrer"
               >
-                <img
+                <Image
                   src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=444717&theme=light"
                   alt="Splitpro - Free&#0032;drop&#0032;in&#0032;replacement&#0032;&#0032;to&#0032;Splitwise&#0058;&#0032;Fully&#0032;Open&#0032;source | Product Hunt"
                   className="mx-auto h-[47px] w-[200px] lg:mx-0"
@@ -198,7 +200,12 @@ export default function Home() {
               </a>
               <div>
                 Built by{' '}
-                <a className="text-primary" href="https://koushik.dev" target="_blank">
+                <a
+                  className="text-primary"
+                  href="https://koushik.dev"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   KM Koushik
                 </a>
                 {/* <p className="text-gray-400">
@@ -206,13 +213,19 @@ export default function Home() {
                 </p> */}
               </div>
               <div className="flex justify-center gap-4 lg:justify-start">
-                <a className="text-primary" href="https://twitter.com/KM_Koushik_" target="_blank">
+                <a
+                  className="text-primary"
+                  href="https://twitter.com/KM_Koushik_"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   Twitter
                 </a>
                 <a
                   className="text-primary"
                   href="https://github.com/oss-apps/split-pro"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   Github
                 </a>

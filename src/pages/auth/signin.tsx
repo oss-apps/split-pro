@@ -107,7 +107,7 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
             <p className="text-primary text-3xl">SplitPro</p>
           </div>
           {providers
-            .filter((provider) => provider.id !== 'email')
+            .filter((provider) => 'email' !== provider.id)
             .map((provider) => (
               <Button
                 className="mx-auto flex w-[300px] items-center gap-3 bg-white hover:bg-gray-100 focus:bg-gray-100"
@@ -118,14 +118,14 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
                 Continue with {provider.name}
               </Button>
             ))}
-          {providers && providers.length === 2 && (
+          {providers && 2 === providers.length && (
             <div className="mt-6 flex w-[300px] items-center justify-between gap-2">
               <p className="bg-background z-10 ml-[150px] -translate-x-1/2 px-4 text-sm">or</p>
-              <div className="absolute h-px w-[300px] bg-linear-to-r from-zinc-800 via-zinc-300 to-zinc-800"></div>
+              <div className="absolute h-px w-[300px] bg-linear-to-r from-zinc-800 via-zinc-300 to-zinc-800" />
             </div>
           )}
-          {providers.find((provider) => provider.id === 'email') ? (
-            emailStatus === 'success' ? (
+          {providers.find((provider) => 'email' === provider.id) ? (
+            'success' === emailStatus ? (
               <>
                 <p className="mt-6 w-[300px] text-center text-sm">
                   We have sent an email with the OTP. Please check your inbox
@@ -191,9 +191,9 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
                     <Button
                       className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
                       type="submit"
-                      disabled={emailStatus === 'sending'}
+                      disabled={ 'sending' === emailStatus }
                     >
-                      {emailStatus === 'sending' ? 'Sending...' : 'Send magic link'}
+                      { 'sending' === emailStatus ? 'Sending...' : 'Send magic link'}
                     </Button>
                   </form>
                 </Form>

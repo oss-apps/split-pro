@@ -15,7 +15,7 @@ export const env = createEnv({
         'You forgot to change the default URL',
       ),
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-    NEXTAUTH_SECRET: process.env.NODE_ENV === 'production' ? z.string() : z.string().optional(),
+    NEXTAUTH_SECRET: 'production' === process.env.NODE_ENV ? z.string() : z.string().optional(),
     NEXTAUTH_URL: z.preprocess(
       // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
       // Since NextAuth.js automatically uses the VERCEL_URL if present.
@@ -70,8 +70,8 @@ export const env = createEnv({
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     NEXTAUTH_URL_INTERNAL: process.env.NEXTAUTH_URL_INTERNAL ?? process.env.NEXTAUTH_URL,
-    ENABLE_SENDING_INVITES: process.env.ENABLE_SENDING_INVITES === 'true',
-    INVITE_ONLY: process.env.INVITE_ONLY === 'true',
+    ENABLE_SENDING_INVITES: 'true' === process.env.ENABLE_SENDING_INVITES,
+    INVITE_ONLY: 'true' === process.env.INVITE_ONLY,
     FROM_EMAIL: process.env.FROM_EMAIL,
     EMAIL_SERVER_HOST: process.env.EMAIL_SERVER_HOST,
     EMAIL_SERVER_PORT: process.env.EMAIL_SERVER_PORT,

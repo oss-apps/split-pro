@@ -39,7 +39,7 @@ export const NotificationModal: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+    if ('undefined' !== typeof window && 'serviceWorker' in navigator) {
       // run only in browser
       navigator.serviceWorker.ready
         .then((reg) => {
@@ -65,7 +65,7 @@ export const NotificationModal: React.FC = () => {
   async function onRequestNotification() {
     try {
       const result = await Notification.requestPermission();
-      if (result === 'granted') {
+      if ('granted' === result) {
         toast.success('You will receive notifications now');
         navigator.serviceWorker.ready
           .then(async (reg) => {

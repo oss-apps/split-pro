@@ -174,6 +174,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
                     className="text-cyan-500 underline"
                     href="https://youtube.com/shorts/MQHeLOjr350"
                     target="_blank"
+                    rel="noreferrer"
                   >
                     video
                   </a>
@@ -185,6 +186,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
                     className="text-cyan-500 underline"
                     href="https://youtube.com/shorts/04n7oKGzgOs"
                     target="_blank"
+                    rel="noreferrer"
                   >
                     Video
                   </a>

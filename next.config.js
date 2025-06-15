@@ -1,10 +1,10 @@
+import { PHASE_DEVELOPMENT_SERVER, PHASE_PRODUCTION_BUILD } from 'next/constants.js';
+
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
  */
 await import('./src/env.js');
-
-import { PHASE_DEVELOPMENT_SERVER, PHASE_PRODUCTION_BUILD } from 'next/constants.js';
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
@@ -38,7 +38,7 @@ const nextConfigFunction = async (phase) => {
   if (phase === PHASE_DEVELOPMENT_SERVER || phase === PHASE_PRODUCTION_BUILD) {
     const withPWA = (await import('@ducanh2912/next-pwa')).default({
       dest: 'public',
-      disable: process.env.NODE_ENV === 'development',
+      disable: 'development' === process.env.NODE_ENV,
     });
     return withPWA(nextConfig);
   }

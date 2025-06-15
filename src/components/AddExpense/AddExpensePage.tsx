@@ -176,7 +176,7 @@ export const AddOrEditExpensePage: React.FC<{
       router
         .push((group ? '/groups/' + group.id : '') + '/expenses/' + expenseId)
         .catch(console.error);
-    } else if (participants.length === 1) {
+    } else if (1 === participants.length) {
       router.push('/balances').catch(console.error);
     } else {
       resetState();
@@ -198,7 +198,7 @@ export const AddOrEditExpensePage: React.FC<{
               addExpenseMutation.isPending ||
               addGroupExpenseMutation.isPending ||
               !amount ||
-              description === '' ||
+              '' === description ||
               isFileUploading
             }
             onClick={addExpense}
@@ -207,7 +207,7 @@ export const AddOrEditExpensePage: React.FC<{
           </Button>{' '}
         </div>
         <UserInput isEditing={!!expenseId} />
-        {showFriends || (participants.length === 1 && !group) ? (
+        {showFriends || (1 === participants.length && !group) ? (
           <SelectUserOrGroup enableSendingInvites={enableSendingInvites} />
         ) : (
           <>
@@ -234,7 +234,7 @@ export const AddOrEditExpensePage: React.FC<{
               />
             </div>
             <div className="h-[180px]">
-              {amount && description !== '' ? (
+              {amount && '' !== description ? (
                 <>
                   <SplitTypeSection />
 
@@ -285,7 +285,7 @@ export const AddOrEditExpensePage: React.FC<{
                           addExpenseMutation.isPending ||
                           addGroupExpenseMutation.isPending ||
                           !amount ||
-                          description === '' ||
+                          '' === description ||
                           isFileUploading ||
                           !isExpenseSettled
                         }

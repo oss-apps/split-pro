@@ -23,7 +23,7 @@ function getPaymentString(
 ) {
   if (isDeleted) {
     return null;
-  } else if (expenseUserAmt === 0n) {
+  } else if (0n === expenseUserAmt) {
     return <div className="text-sm text-gray-400">Not involved</div>;
   } else if (isSettlement) {
     return (

@@ -27,7 +27,7 @@ export const UserInput: React.FC<{
   const isEmail = z.string().email().safeParse(nameOrEmail);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && nameOrEmail === '') {
+    if ('Backspace' === e.key && '' === nameOrEmail) {
       if (group) {
         const currentPath = window.location.pathname;
         const searchParams = new URLSearchParams(window.location.search);
@@ -43,7 +43,7 @@ export const UserInput: React.FC<{
       } else {
         removeLastParticipant(); // Assuming deleteUser is the function you want to call
       }
-    } else if (e.key === 'Enter' && isEmail.success) {
+    } else if ('Enter' === e.key && isEmail.success) {
       addFriendMutation.mutate(
         { email: nameOrEmail.toLowerCase() },
         {
@@ -93,7 +93,7 @@ export const UserInput: React.FC<{
             ? 'Cannot change group while editing'
             : group
               ? 'Press delete to remove group'
-              : participants.length > 1
+              : 1 < participants.length
                 ? 'Add more friends'
                 : 'Search friends, groups or add email'
         }

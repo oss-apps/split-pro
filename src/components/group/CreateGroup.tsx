@@ -47,7 +47,7 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
       <AppDrawer
         open={drawerOpen}
         onOpenChange={(openVal) => {
-          if (openVal !== drawerOpen) setDrawerOpen(openVal);
+          if (openVal !== drawerOpen) {setDrawerOpen(openVal);}
         }}
         trigger={children}
         leftAction="Cancel"

@@ -8,7 +8,7 @@ import { sendToDiscord } from './service-notification';
 let transporter: Transporter;
 
 const getTransporter = () => {
-  if (transporter) return transporter;
+  if (transporter) {return transporter;}
 
   const host = env.EMAIL_SERVER_HOST;
   const port = parseInt(env.EMAIL_SERVER_PORT ?? '');
@@ -21,14 +21,14 @@ const getTransporter = () => {
 
   const transport = {
     host,
-    secure: port === 465,
+    secure: 465 === port ,
     port,
     auth: {
       user,
       pass,
     },
     tls: {
-      rejectUnauthorized: env.NODE_ENV !== 'development',
+      rejectUnauthorized: 'development' !== env.NODE_ENV,
     },
   };
 
@@ -41,7 +41,7 @@ export async function sendSignUpEmail(email: string, token: string, url: string)
 
   console.log(env.NODE_ENV);
 
-  if (env.NODE_ENV === 'development') {
+  if ('development' === env.NODE_ENV) {
     console.log('Sign in link : ', email, url, token);
     return true;
   }
@@ -60,7 +60,7 @@ export async function sendInviteEmail(email: string, name: string) {
 
   const { host } = new URL(env.NEXTAUTH_URL);
 
-  if (env.NODE_ENV === 'development') {
+  if ('development' === env.NODE_ENV) {
     console.log('Sending invite email', email, name);
     return;
   }
@@ -75,7 +75,7 @@ export async function sendInviteEmail(email: string, name: string) {
 export async function sendFeedbackEmail(feedback: string, user: User) {
   console.log('Received feedback from: ', user.email, 'Feedback: ', feedback);
 
-  if (!env.FEEDBACK_EMAIL) return;
+  if (!env.FEEDBACK_EMAIL) {return;}
 
   const subject = `Feedback received on SplitPro from ${user.name}`;
   const text = `Feedback created by ${user.name} :\n\nFeedback: ${feedback}\n\nemail: ${user.email}`;

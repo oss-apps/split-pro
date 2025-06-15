@@ -42,7 +42,7 @@ const BalancePage: NextPageWithUser = () => {
       <MainLayout
         title="Balances"
         actions={
-          typeof window !== 'undefined' && !!window.navigator?.share ? (
+          'undefined' !== typeof window && !!window.navigator?.share ? (
             <Button variant="ghost" onClick={shareWithFriends}>
               <ArrowUpOnSquareIcon className="h-6 w-6" />
             </Button>
@@ -115,7 +115,7 @@ const BalancePage: NextPageWithUser = () => {
                 id={b.friend.id}
                 friend={b.friend}
                 amount={b.amount}
-                isPositive={b.amount > 0}
+                isPositive={ 0 < b.amount}
                 currency={b.currency}
                 hasMore={b.hasMore}
               />
@@ -154,7 +154,7 @@ const FriendBalance: React.FC<{
         <UserAvatar user={friend} />
         <div className="text-foreground">{friend.name ?? friend.email}</div>
       </div>
-      {amount === 0n ? (
+      { 0n === amount ? (
         <div>
           <p className="text-xs">Settled up</p>
         </div>

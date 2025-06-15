@@ -31,7 +31,7 @@ const BalancePage: NextPageWithUser = () => {
       >
         <div className="mt-2">
           <div className="mt-5 flex flex-col gap-8 px-4 pb-36">
-            {groupQuery.isPending ? null : groupQuery.data?.length === 0 ? (
+            {groupQuery.isPending ? null : 0 === groupQuery.data?.length ? (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -55,14 +55,14 @@ const BalancePage: NextPageWithUser = () => {
                   },
                   [g.defaultCurrency, 0n],
                 );
-                const multiCurrency = Object.values(g.balances).filter((b) => b !== 0n).length > 1;
+                const multiCurrency = 1 < Object.values(g.balances).filter((b) => b !== 0n).length;
                 return (
                   <GroupBalance
                     key={g.id}
                     groupId={g.id}
                     name={g.name}
                     amount={amount}
-                    isPositive={amount >= 0 ? true : false}
+                    isPositive={ 0 <= amount ? true : false}
                     currency={currency}
                     multiCurrency={multiCurrency}
                   />
@@ -92,7 +92,7 @@ const GroupBalance: React.FC<{
           <div className="text-foreground">{name}</div>
         </div>
         <div>
-          {amount === 0n ? (
+          { 0n === amount ? (
             <div className="text-sm text-gray-400">Settled up</div>
           ) : (
             <>

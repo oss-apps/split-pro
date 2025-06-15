@@ -14,18 +14,18 @@ import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
 
 export const SettleUp: React.FC<{
-  balances: Array<Balance>;
+  balances: Balance[];
   friend: User;
   currentUser: NextUser;
 }> = ({ balances, friend, currentUser }) => {
   const [balanceToSettle, setBalanceToSettle] = useState<Balance | undefined>(
-    balances.length > 1 ? undefined : balances[0],
+    1 < balances.length ? undefined : balances[0],
   );
   const [amount, setAmount] = useState<string>(
-    balances.length > 1 ? '' : toUIString(BigMath.abs(balances[0]?.amount ?? 0n)),
+    1 < balances.length ? '' : toUIString(BigMath.abs(balances[0]?.amount ?? 0n)),
   );
 
-  const isCurrentUserPaying = (balanceToSettle?.amount ?? 0) < 0;
+  const isCurrentUserPaying = 0 > (balanceToSettle?.amount ?? 0);
 
   function onSelectBalance(balance: Balance) {
     setBalanceToSettle(balance);
@@ -95,7 +95,7 @@ export const SettleUp: React.FC<{
       <div className="flex items-center justify-between px-2">
         <div>
           {balanceToSettle &&
-            (balances.length > 1 ? (
+            (1 < balances.length ? (
               <Button
                 size="sm"
                 variant="ghost"
@@ -110,7 +110,7 @@ export const SettleUp: React.FC<{
                   size="sm"
                   variant="ghost"
                   className="text-cyan-500 lg:hidden"
-                  onClick={() => (balances.length > 1 ? setBalanceToSettle(undefined) : null)}
+                  onClick={() => (1 < balances.length ? setBalanceToSettle(undefined) : null)}
                 >
                   Back
                 </Button>
@@ -174,7 +174,7 @@ export const SettleUp: React.FC<{
       <div className="mt-8 hidden items-center justify-center gap-4 px-2 lg:flex">
         <div>
           {balanceToSettle &&
-            (balances.length > 1 ? (
+            (1 < balances.length ? (
               <Button size="sm" variant="secondary" onClick={() => setBalanceToSettle(undefined)}>
                 Back
               </Button>
@@ -183,7 +183,7 @@ export const SettleUp: React.FC<{
                 <Button
                   size="sm"
                   variant="secondary"
-                  onClick={() => (balances.length > 1 ? setBalanceToSettle(undefined) : null)}
+                  onClick={() => (1 < balances.length ? setBalanceToSettle(undefined) : null)}
                 >
                   Back
                 </Button>

@@ -25,11 +25,11 @@ export const GroupSettleUp: React.FC<{
   const addExpenseMutation = api.group.addOrEditExpense.useMutation();
   const utils = api.useUtils();
 
-  const sender = amount < 0 ? user : friend;
-  const receiver = amount < 0 ? friend : user;
+  const sender = 0 > amount ? user : friend;
+  const receiver = 0 > amount ? friend : user;
 
   const saveExpense = useCallback(() => {
-    if (toSafeBigInt(amountStr) === 0n) {
+    if (0n === toSafeBigInt(amountStr)) {
       return;
     }
 

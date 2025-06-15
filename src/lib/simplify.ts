@@ -26,7 +26,7 @@ function simplifyDebtsForSingleCurrency(
     .fill([])
     .map(() => new Array<bigint>(nodes.length).fill(0n));
 
-  const nonResidualBalances = groupBalances.filter((balance) => balance.amount > 0);
+  const nonResidualBalances = groupBalances.filter((balance) => 0 < balance.amount);
 
   nonResidualBalances.forEach((balance) => {
     const source = nodes.indexOf(balance.userId);
@@ -44,7 +44,7 @@ function simplifyDebtsForSingleCurrency(
           (balance) => balance.userId === nodes[source] && balance.firendId === nodes[sink],
         )!;
 
-        if (amount === 0n) {
+        if (0n === amount) {
           return;
         }
 
@@ -91,7 +91,7 @@ const solveTransaction = (amounts: bigint[]): bigint[][] => {
     .fill([])
     .map(() => new Array<bigint>(amounts.length).fill(0n));
 
-  while (minQ.length > 0 && maxQ.length > 0) {
+  while (0 < minQ.length && 0 < maxQ.length) {
     const maxCreditEntry = maxQ.pop()!;
     const maxDebitEntry = minQ.pop()!;
 
@@ -101,9 +101,9 @@ const solveTransaction = (amounts: bigint[]): bigint[][] => {
     const creditor = maxCreditEntry.key;
     let owed_amount;
 
-    if (transaction_val === 0n) {
+    if (0n === transaction_val) {
       owed_amount = maxCreditEntry.value;
-    } else if (transaction_val < 0) {
+    } else if (0 > transaction_val) {
       owed_amount = maxCreditEntry.value;
       maxDebitEntry.value = transaction_val;
       minQ.push(maxDebitEntry);
@@ -128,10 +128,10 @@ const constructMinMaxQ = (amounts: bigint[]): [Entry[], Entry[]] => {
   const minQ: Entry[] = [];
   const maxQ: Entry[] = [];
   amounts.forEach((amount, index) => {
-    if (amount === 0n) {
+    if (0n === amount) {
       return;
     }
-    if (amount > 0) {
+    if (0 < amount) {
       maxQ.push({ key: index, value: amount });
     } else {
       minQ.push({ key: index, value: amount });
@@ -153,7 +153,7 @@ const getMirrorBalances = (groupBalances: GroupBalance[]): GroupBalance[] => {
       ...balance,
       userId: balance.firendId,
       firendId: balance.userId,
-      amount: balance.amount > 0 ? -balance.amount : 0n,
+      amount: 0 < balance.amount ? -balance.amount : 0n,
     });
   });
 

@@ -12,7 +12,7 @@ import { CategoryIcons } from '../ui/categoryIcons';
 import { AppDrawer } from '../ui/drawer';
 import { Separator } from '../ui/separator';
 
-type ExpenseDetailsProps = {
+interface ExpenseDetailsProps {
   user: NextUser;
   expense: Expense & {
     expenseParticipants: Array<ExpenseParticipant & { user: User }>;
@@ -22,7 +22,7 @@ type ExpenseDetailsProps = {
     updatedByUser: User | null;
   };
   storagePublicUrl?: string;
-};
+}
 
 const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
   const youPaid = expense.paidBy === user.id;

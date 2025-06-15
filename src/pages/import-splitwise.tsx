@@ -29,16 +29,16 @@ const ImportSpliwisePage: NextPageWithUser = () => {
 
     const file = files?.[0];
 
-    if (!file) return;
+    if (!file) {return;}
 
     setUploadedFile(file);
 
     try {
       const json = JSON.parse(await file.text()) as Record<string, unknown>;
-      const friendsWithOutStandingBalance: Array<SplitwiseUser> = [];
-      for (const friend of json.friends as Array<Record<string, unknown>>) {
-        const balance = friend.balance as Array<{ currency_code: string; amount: string }>;
-        if (balance.length && friend.registration_status === 'confirmed') {
+      const friendsWithOutStandingBalance: SplitwiseUser[] = [];
+      for (const friend of json.friends as Record<string, unknown>[]) {
+        const balance = friend.balance as { currency_code: string; amount: string }[];
+        if (balance.length && 'confirmed' === friend.registration_status) {
           friendsWithOutStandingBalance.push(friend as SplitwiseUser);
         }
       }
@@ -54,8 +54,8 @@ const ImportSpliwisePage: NextPageWithUser = () => {
         ),
       );
 
-      const _groups = (json.groups as Array<SplitwiseGroup>).filter(
-        (g) => g.members.length > 0 && g.id !== 0,
+      const _groups = (json.groups as SplitwiseGroup[]).filter(
+        (g) => 0 < g.members.length && 0 !== g.id,
       );
 
       setGroups(_groups);
@@ -99,7 +99,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
         <title>Import from splitwise</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainLayout hideAppBar={true}>
+      <MainLayout hideAppBar>
         <div className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex gap-4">
@@ -178,7 +178,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                           {user.balance.map((b, index) => (
                             <span
                               key={b.currency_code}
-                              className={`text-sm ${Number(b.amount) > 0 ? 'text-green-500' : 'text-orange-600'}`}
+                              className={`text-sm ${ 0 < Number(b.amount) ? 'text-green-500' : 'text-orange-600'}`}
                             >
                               {b.currency_code} {Math.abs(Number(b.amount)).toFixed(2)}
                               <span className="text-xs text-gray-300">

@@ -43,7 +43,7 @@ export async function createGroupExpense(
 ) {
   const operations = [];
 
-  const nonZeroParticipants = participants.filter((p) => p.amount !== 0n);
+  const nonZeroParticipants = participants.filter((p) => 0n !== p.amount);
 
   // Create expense operation
   operations.push(
@@ -202,7 +202,7 @@ export async function addUserExpense(
 ) {
   const operations = [];
 
-  const nonZeroParticipants = participants.filter((p) => p.amount !== 0n);
+  const nonZeroParticipants = participants.filter((p) => 0n !== p.amount);
 
   // Create expense operation
   operations.push(
@@ -441,7 +441,7 @@ export async function editExpense(
   expenseDate: Date,
   fileKey?: string,
 ) {
-  const nonZeroParticipants = participants.filter((p) => p.amount !== 0n);
+  const nonZeroParticipants = participants.filter((p) => 0n !== p.amount);
 
   const expense = await db.expense.findUnique({
     where: { id: expenseId },
@@ -458,7 +458,7 @@ export async function editExpense(
 
   // First reverse all existing balances
   for (const participant of expense.expenseParticipants) {
-    if (participant.userId === expense.paidBy || participant.amount === 0n) {
+    if (participant.userId === expense.paidBy || 0n === participant.amount) {
       continue;
     }
 
@@ -684,7 +684,7 @@ export async function editExpense(
 
 async function updateGroupExpenseForIfBalanceIsZero(
   userId: number,
-  friendIds: Array<number>,
+  friendIds: number[],
   currency: string,
 ) {
   const balances = await db.balance.findMany({
@@ -748,7 +748,7 @@ export async function getCompleteFriendsDetails(userId: number) {
         name: balance.friend.name,
       };
 
-      if (balance.amount !== 0n) {
+      if (0n !== balance.amount) {
         acc[friendId]?.balances.push({
           currency: balance.currency,
           amount: balance.amount,
@@ -954,7 +954,7 @@ export async function importUserBalanceFromSplitWise(
   await db.$transaction(operations);
 }
 
-async function createUsersFromSplitwise(users: Array<SplitwiseUser>) {
+async function createUsersFromSplitwise(users: SplitwiseUser[]) {
   const userEmails = users.map((u) => u.email);
 
   const existingUsers = await db.user.findMany({
@@ -993,7 +993,7 @@ async function createUsersFromSplitwise(users: Array<SplitwiseUser>) {
 
 export async function importGroupFromSplitwise(
   currentUserId: number,
-  splitWiseGroups: Array<SplitwiseGroup>,
+  splitWiseGroups: SplitwiseGroup[],
 ) {
   const splitwiseUserMap: Record<string, SplitwiseUser> = {};
 

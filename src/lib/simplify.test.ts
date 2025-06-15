@@ -3,11 +3,11 @@ import { addHours } from 'date-fns';
 
 import { simplifyDebts } from './simplify';
 
-type MinimalEdge = {
+interface MinimalEdge {
   userOne: number;
   userTwo: number;
   amount: bigint;
-};
+}
 
 const sortByIds = (a: GroupBalance, b: GroupBalance) => {
   if (a.userId === b.userId) {
@@ -34,7 +34,7 @@ const edgeToGroupBalance = (edge: MinimalEdge): [GroupBalance, GroupBalance] => 
     {
       userId: edge.userTwo,
       firendId: edge.userOne,
-      amount: edge.amount === 0n ? 0n : -edge.amount,
+      amount: 0n === edge.amount ? 0n : -edge.amount,
       ...base,
     },
   ];
@@ -142,7 +142,7 @@ describe('simplifyDebts', () => {
     { graph: largeGraph, expected: 3 },
     { graph: denseGraph, expected: 5 },
   ])('gets the optimal operation count', ({ graph, expected }) => {
-    expect(simplifyDebts(graph).filter((balance) => balance.amount > 0).length).toBe(expected);
+    expect(simplifyDebts(graph).filter((balance) => 0 < balance.amount).length).toBe(expected);
   });
 
   it.each([{ graph: smallGraph }, { graph: largeGraph }, { graph: denseGraph }])(

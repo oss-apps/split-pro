@@ -110,7 +110,7 @@ export {
   DrawerDescription,
 };
 
-type AppDrawerProps = {
+interface AppDrawerProps {
   children: React.ReactNode;
   trigger: React.ReactNode;
   disableTrigger?: boolean;
@@ -128,7 +128,7 @@ type AppDrawerProps = {
   dismissible?: boolean;
   actionDisabled?: boolean;
   onClose?: () => void;
-};
+}
 
 export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
   const {
@@ -156,10 +156,10 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const localOnOpenChange = (_open: boolean) => {
-    if (onOpenChange && open !== _open) onOpenChange(_open);
+    if (onOpenChange && open !== _open) {onOpenChange(_open);}
   };
 
-  if (!isClient) return null;
+  if (!isClient) {return null;}
 
   if (isDesktop) {
     return (
@@ -178,7 +178,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
         <DialogContent
           className=""
           onInteractOutside={(e) => {
-            if (dismissible === false) {
+            if (false === dismissible) {
               e.preventDefault();
             }
           }}
@@ -256,7 +256,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
                 )}
               </Button>
             ) : (
-              <div className="w-10"></div>
+              <div className="w-10" />
             )}
             <p>{title}</p>
             {actionTitle ? (

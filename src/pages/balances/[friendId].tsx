@@ -36,8 +36,8 @@ const FriendPage: NextPageWithUser = ({ user }) => {
     { enabled: !!_friendId },
   );
 
-  const youLent = balances.data?.filter((b) => b.amount > 0);
-  const youOwe = balances.data?.filter((b) => b.amount < 0);
+  const youLent = balances.data?.filter((b) => 0 < b.amount);
+  const youOwe = balances.data?.filter((b) => 0 > b.amount);
 
   return (
     <>
@@ -57,7 +57,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
         actions={
           <DeleteFriend
             friendId={_friendId}
-            disabled={!(youLent?.length === 0 && youOwe?.length === 0)}
+            disabled={!(0 === youLent?.length && 0 === youOwe?.length)}
           />
         }
         header={
@@ -79,7 +79,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
           <motion.div className="mb-28" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="mx-4 flex flex-wrap gap-2">
               <div className="text-orange-700">
-                {(youOwe?.length ?? 0) > 0 && (
+                { 0 < (youOwe?.length ?? 0) && (
                   <>
                     You owe{' '}
                     {youOwe?.map((b, index) => (
@@ -93,9 +93,9 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   </>
                 )}
               </div>
-              <div>{(youOwe?.length ?? 0) > 0 && (youLent?.length ?? 0) > 0 ? '+' : null}</div>
+              <div>{ 0 < (youOwe?.length ?? 0) && 0 < (youLent?.length ?? 0) ? '+' : null}</div>
               <div className="text-emerald-600">
-                {(youLent?.length ?? 0) > 0 && (
+                { 0 < (youLent?.length ?? 0) && (
                   <>
                     You lent{' '}
                     {youLent?.map((b, index) => (
@@ -144,7 +144,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 currentUserId={user.id}
                 friendName={friendQuery.data?.name ?? ''}
                 friendId={friendQuery.data?.id ?? ''}
-                disabled={!expenses.data || expenses.data.length === 0}
+                disabled={!expenses.data || 0 === expenses.data.length}
               />
               {/* <Button size="sm" className="gap-1 text-sm lg:w-[180px]" variant="secondary">
                 <Bell className="h-4 w-4 text-gray-400" />

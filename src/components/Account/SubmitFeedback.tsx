@@ -76,7 +76,7 @@ export const SubmitFeedback: React.FC = () => {
                       rows={5}
                       placeholder="Enter your feedback"
                       {...field}
-                    ></Textarea>
+                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -58,7 +58,7 @@ const BalancePage: NextPageWithUser<{
   const [isInviteCopied, setIsInviteCopied] = useState(false);
 
   async function inviteMembers() {
-    if (!groupDetailQuery.data) return;
+    if (!groupDetailQuery.data) {return;}
     const inviteLink =
       window.location.origin + '/join-group?groupId=' + groupDetailQuery.data.publicId;
 
@@ -83,9 +83,9 @@ const BalancePage: NextPageWithUser<{
   const isAdmin = groupDetailQuery.data?.userId === user.id;
   const canDelete =
     groupDetailQuery.data?.userId === user.id &&
-    !groupDetailQuery.data?.groupBalances.find((b) => b.amount !== 0n);
+    !groupDetailQuery.data?.groupBalances.find((b) => 0n !== b.amount);
   const canLeave = !groupDetailQuery.data?.groupBalances.find(
-    (b) => b.amount !== 0n && b.userId === user.id,
+    (b) => 0n !== b.amount && b.userId === user.id,
   );
 
   function onRecalculateBalances() {
@@ -167,7 +167,7 @@ const BalancePage: NextPageWithUser<{
                 <p className="font-semibold">Total expenses</p>
                 <div className="mt-2 flex flex-wrap gap-1">
                   {groupTotalQuery.data?.map((total, index, arr) => {
-                    return total._sum.amount != null ? (
+                    return null != total._sum.amount ? (
                       <Fragment key={total.currency}>
                         <div className="flex flex-wrap gap-1">
                           {total.currency} {toUIString(total._sum.amount)}
@@ -177,7 +177,7 @@ const BalancePage: NextPageWithUser<{
                     ) : null;
                   })}
                 </div>
-                {expensesQuery?.data && expensesQuery?.data?.length > 0 && (
+                {expensesQuery?.data && 0 < expensesQuery?.data?.length && (
                   <div className="mt-8">
                     <p className="font-semibold">First expense</p>
                     <p>
@@ -237,7 +237,7 @@ const BalancePage: NextPageWithUser<{
                         isAdmin &&
                         (() => {
                           const canLeave = !groupDetailQuery.data?.groupBalances.find(
-                            (b) => b.amount !== 0n && b.userId === groupUser.userId,
+                            (b) => 0n !== b.amount && b.userId === groupUser.userId,
                           );
 
                           return (
@@ -379,7 +379,7 @@ const BalancePage: NextPageWithUser<{
           </div>
         }
       >
-        {groupDetailQuery.isPending ? null : groupDetailQuery.data?.groupUsers.length === 1 &&
+        {groupDetailQuery.isPending ? null : 1 === groupDetailQuery.data?.groupUsers.length &&
           !expensesQuery.data?.length ? (
           <div className="h-[85vh]">
             <NoMembers group={groupDetailQuery.data} enableSendingInvites={enableSendingInvites} />

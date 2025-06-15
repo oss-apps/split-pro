@@ -34,7 +34,7 @@ export const UploadFile: React.FC = () => {
 
     const file = files?.[0];
 
-    if (!file) return;
+    if (!file) {return;}
 
     if (file.size > FILE_SIZE_LIMIT) {
       toast.error(`File should be less than ${FILE_SIZE_LIMIT / 1024 / 1024}MB`);

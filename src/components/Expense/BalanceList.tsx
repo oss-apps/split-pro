@@ -1,7 +1,7 @@
 import type { GroupBalance, User } from '@prisma/client';
 import clsx from 'clsx';
 import { Info } from 'lucide-react';
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 
 import { UserAvatar } from '~/components/ui/avatar';
 import { api } from '~/utils/api';
@@ -32,7 +32,7 @@ export const BalanceList: React.FC<{
       {} as Record<number, UserWithBalance>,
     );
     groupBalances
-      .filter(({ amount }) => BigMath.abs(amount) > 0)
+      .filter(({ amount }) => 0 < BigMath.abs(amount))
       .forEach((balance) => {
         if (!res[balance.userId]!.balances[balance.firendId]) {
           res[balance.userId]!.balances[balance.firendId] = {};
@@ -71,7 +71,7 @@ export const BalanceList: React.FC<{
                   <UserAvatar user={user} />
                   <div className="text-foreground">
                     {displayName(user, userQuery.data?.id)}
-                    {Object.values(total).every((amount) => amount === 0n) ? (
+                    {Object.values(total).every((amount) => 0n === amount) ? (
                       <span className="text-gray-400">
                         {' '}
                         {isCurrentUser ? 'are' : 'is'} settled up
@@ -80,13 +80,13 @@ export const BalanceList: React.FC<{
                       <>
                         <span className="text-gray-400">
                           {' '}
-                          {totalAmount[1] > 0 ? 'get' : 'owe'}
+                          { 0 < totalAmount[1] ? 'get' : 'owe'}
                           {isCurrentUser ? '' : 's'}{' '}
                         </span>
                         <span
                           className={clsx(
                             'text-right',
-                            totalAmount[1] > 0 ? 'text-emerald-500' : 'text-orange-600',
+                            0 < totalAmount[1] ? 'text-emerald-500' : 'text-orange-600',
                           )}
                         >
                           {toUIString(totalAmount[1])} {totalAmount[0]}
@@ -101,7 +101,7 @@ export const BalanceList: React.FC<{
                   const friend = userMap[+friendId]!.user;
 
                   return (
-                    <>
+                    <Fragment key={friendId}>
                       {Object.entries(perFriendBalances).map(([currency, amount]) => (
                         <GroupSettleUp
                           key={friendId + currency}
@@ -117,18 +117,18 @@ export const BalanceList: React.FC<{
                               {displayName(friend, userQuery.data?.id)}
                               <span className="text-gray-400">
                                 {' '}
-                                {amount < 0 ? 'get' : 'owe'}
+                                { 0 > amount ? 'get' : 'owe'}
                                 {friend.id === userQuery.data?.id ? '' : 's'}{' '}
                               </span>
                               <span
                                 className={clsx(
                                   'text-right',
-                                  amount > 0 ? 'text-emerald-500' : 'text-orange-600',
+                                  0 < amount ? 'text-emerald-500' : 'text-orange-600',
                                 )}
                               >
                                 {toUIString(amount)} {currency}
                               </span>
-                              <span className="text-gray-400"> {amount > 0 ? 'to' : 'from'} </span>
+                              <span className="text-gray-400"> { 0 < amount ? 'to' : 'from'} </span>
                               <span className="text-foreground">
                                 {displayName(user, userQuery.data?.id)}
                               </span>
@@ -136,7 +136,7 @@ export const BalanceList: React.FC<{
                           </div>
                         </GroupSettleUp>
                       ))}
-                    </>
+                    </Fragment>
                   );
                 })}
               </AccordionContent>

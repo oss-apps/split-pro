@@ -69,7 +69,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
         ),
       );
 
-      console.log('Friends with outstanding balance', friendsWithOutStandingBalance);
+      
     } catch (e) {
       console.error(e);
       toast.error('Error importing file');

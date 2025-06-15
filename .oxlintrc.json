@@ -29,13 +29,13 @@
         "allowSeparatedGroups": true
       }
     ],
-    "no-console": ["warn", { "allow": ["info", "warn", "error", "debug", "trace"] }]
   },
   "overrides": [
     {
       "files": ["**/*.jsx", "**/*.tsx"],
       "rules": {
-        "react-in-jsx-scope": "off"
+        "react-in-jsx-scope": "off",
+        "no-console": ["warn", { "allow": ["info", "warn", "error", "debug", "trace"] }]
       }
     }
   ],

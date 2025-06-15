@@ -44,7 +44,7 @@ export const UploadFile: React.FC = () => {
     setFile(file);
 
     const { height, width } = await getImgHeightAndWidth(file);
-    console.log('height:', height, 'width:', width);
+    
 
     setFileUploading(true);
     try {
@@ -69,7 +69,7 @@ export const UploadFile: React.FC = () => {
       toast.success('File uploaded successfully');
 
       setFileKey(key);
-      console.log('Setting file key', key);
+      
     } catch (error) {
       console.error('Error getting upload url:', error);
       toast.error(`Error uploading file`);

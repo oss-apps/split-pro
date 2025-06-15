@@ -85,7 +85,7 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
 
   async function onOTPSubmit(values: z.infer<typeof otpSchema>) {
     const email = emailForm.getValues().email;
-    console.log('email', email);
+    
 
     const callbackUrl = window.location.origin;
 

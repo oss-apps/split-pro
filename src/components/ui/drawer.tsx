@@ -167,7 +167,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
         <DialogTrigger
           className="cursor-pointer focus:ring-0"
           onClick={(e) => {
-            console.log('button clicked');
+            
             onTriggerClick?.(e);
           }}
           disabled={disableTrigger}

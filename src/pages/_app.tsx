@@ -78,7 +78,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, pageProps }) => {
   const { status, data } = useSession({ required: true });
   const [showSpinner, setShowSpinner] = useState(false);

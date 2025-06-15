@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-optional-chain */
 import {
   ListBulletIcon as SolidListBulletIcon,
   PlusCircleIcon as SolidPlusCircleIcon,

@@ -13,4 +13,16 @@ export default tseslint.config(
       },
     },
   },
+  {
+    rules: {
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        {
+          checksVoidReturn: { attributes: false },
+        },
+      ],
+      '@typescript-eslint/require-await': 'warn',
+      '@typescript-eslint/prefer-promise-reject-errors': 'warn',
+    },
+  },
 );

@@ -12,4 +12,6 @@ export const db =
     log: 'development' === env.NODE_ENV ? ['error', 'warn'] : ['error'],
   });
 
-if ('production' !== env.NODE_ENV) {globalForPrisma.prisma = db;}
+if ('production' !== env.NODE_ENV) {
+  globalForPrisma.prisma = db;
+}

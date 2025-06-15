@@ -46,7 +46,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
   return (
     <div className="flex gap-2">
       <div className="flex flex-col gap-2">
-        { 0 < youLent.length ? (
+        {0 < youLent.length ? (
           <div className="flex flex-wrap gap-1 text-emerald-500">
             You lent
             {youLent.map(([currency, amount], index, arr) => {
@@ -62,7 +62,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
           </div>
         ) : null}
 
-        { 0 < youOwe.length ? (
+        {0 < youOwe.length ? (
           <div className="text-orange-6000 flex flex-wrap gap-1 text-orange-600">
             You owe
             {youOwe.map(([currency, amount], index, arr) => {
@@ -78,7 +78,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
           </div>
         ) : null}
 
-        { 0 === youLent.length && 0 === youOwe.length ? (
+        {0 === youLent.length && 0 === youOwe.length ? (
           <div className="text-gray-500">You are all settled up</div>
         ) : null}
 
@@ -90,7 +90,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
               <div key={friendId} className="text-sm text-gray-500">
                 {Object.entries(balances).map(([currency, amount]) => (
                   <div key={currency}>
-                    { 0 < amount ? `${friend?.name} owes you` : `You owe ${friend?.name}`}{' '}
+                    {0 < amount ? `${friend?.name} owes you` : `You owe ${friend?.name}`}{' '}
                     {toUIString(amount)} {currency}
                   </div>
                 ))}
@@ -98,10 +98,10 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
             );
           })}
 
-        { 2 < Object.keys(friendBalances).length ? (
+        {2 < Object.keys(friendBalances).length ? (
           <div className="text-sm text-gray-500">
             +{Object.keys(friendBalances).length - 2} balance
-            { 3 < Object.keys(friendBalances).length ? 's' : ''}...
+            {3 < Object.keys(friendBalances).length ? 's' : ''}...
           </div>
         ) : null}
       </div>

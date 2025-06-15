@@ -4,7 +4,10 @@ import { z } from 'zod';
 
 export type NextPageWithUser<T = {}> = NextPage<{ user: User } & T> & { auth: boolean };
 
-export interface PushMessage { title: string; message: string }
+export interface PushMessage {
+  title: string;
+  message: string;
+}
 
 export interface SplitwisePicture {
   small: string;

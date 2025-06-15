@@ -56,10 +56,10 @@ export async function sendExpensePushNotification(expenseId: string) {
 
   const participants = expense.deletedBy
     ? expense.expenseParticipants.filter(
-        ({ userId, amount }) => userId !== expense.deletedBy && 0n !== amount ,
+        ({ userId, amount }) => userId !== expense.deletedBy && 0n !== amount,
       )
     : expense.expenseParticipants.filter(
-        ({ userId, amount }) => userId !== expense.addedBy && 0n !== amount ,
+        ({ userId, amount }) => userId !== expense.addedBy && 0n !== amount,
       );
 
   const subscriptions = await db.pushNotification.findMany({

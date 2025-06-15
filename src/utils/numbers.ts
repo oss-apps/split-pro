@@ -31,7 +31,7 @@ export function toUIString(num = 0n, signed = false, currencyCode: CurrencyCode 
     wholePart.toLocaleString(undefined, {
       maximumFractionDigits: 0,
     }) +
-    (0 < decimalDigits 
+    (0 < decimalDigits
       ? (Number(decimalPart) / Number(maxDecimals))
           .toLocaleString(undefined, {
             minimumFractionDigits: decimalDigits,
@@ -55,7 +55,9 @@ export const BigMath = {
     return 0n > x ? -x : x;
   },
   sign(x: bigint) {
-    if (0n === x) {return 0n;}
+    if (0n === x) {
+      return 0n;
+    }
     return 0n > x ? -1n : 1n;
   },
   pow(base: bigint, exponent: bigint) {
@@ -66,7 +68,9 @@ export const BigMath = {
       return 0n;
     } else {
       let value = values[0]!;
-      for (const v of values) {if (v < value) value = v;}
+      for (const v of values) {
+        if (v < value) value = v;
+      }
       return value;
     }
   },
@@ -75,7 +79,9 @@ export const BigMath = {
       return 0n;
     } else {
       let value = values[0]!;
-      for (const v of values) {if (v > value) value = v;}
+      for (const v of values) {
+        if (v > value) value = v;
+      }
       return value;
     }
   },

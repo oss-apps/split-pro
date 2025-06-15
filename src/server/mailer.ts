@@ -8,7 +8,9 @@ import { sendToDiscord } from './service-notification';
 let transporter: Transporter;
 
 const getTransporter = () => {
-  if (transporter) {return transporter;}
+  if (transporter) {
+    return transporter;
+  }
 
   const host = env.EMAIL_SERVER_HOST;
   const port = parseInt(env.EMAIL_SERVER_PORT ?? '');
@@ -21,7 +23,7 @@ const getTransporter = () => {
 
   const transport = {
     host,
-    secure: 465 === port ,
+    secure: 465 === port,
     port,
     auth: {
       user,
@@ -75,7 +77,9 @@ export async function sendInviteEmail(email: string, name: string) {
 export async function sendFeedbackEmail(feedback: string, user: User) {
   console.log('Received feedback from: ', user.email, 'Feedback: ', feedback);
 
-  if (!env.FEEDBACK_EMAIL) {return;}
+  if (!env.FEEDBACK_EMAIL) {
+    return;
+  }
 
   const subject = `Feedback received on SplitPro from ${user.name}`;
   const text = `Feedback created by ${user.name} :\n\nFeedback: ${feedback}\n\nemail: ${user.email}`;

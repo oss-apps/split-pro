@@ -83,7 +83,7 @@ export const ExpenseList: React.FC<{
         </Link>
       );
     })}
-    { 0 === expenses.length && !isLoading ? (
+    {0 === expenses.length && !isLoading ? (
       <div className="mt-20 flex flex-col items-center justify-center">
         <Image src="/add_expense.svg" alt="Empty" width={200} height={200} className="mb-4" />
       </div>

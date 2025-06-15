@@ -170,7 +170,7 @@ export const SelectUserOrGroup: React.FC<{
           </>
         ) : null}
 
-        { 0 === filteredFriends?.length && 0 === filteredGroups?.length ? (
+        {0 === filteredFriends?.length && 0 === filteredGroups?.length ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

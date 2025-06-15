@@ -24,7 +24,7 @@ export default function Home() {
         <title>SplitPro: Split Expenses with your friends for free</title>
         <meta name="description" content="SplitPro: Split Expenses with your friends for free" />
         <link rel="icon" href="/favicon.ico" />
-        { 'production' === process.env.NODE_ENV && (
+        {'production' === process.env.NODE_ENV && (
           <>
             <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js" />
             <noscript>

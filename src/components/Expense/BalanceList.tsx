@@ -80,7 +80,7 @@ export const BalanceList: React.FC<{
                       <>
                         <span className="text-gray-400">
                           {' '}
-                          { 0 < totalAmount[1] ? 'get' : 'owe'}
+                          {0 < totalAmount[1] ? 'get' : 'owe'}
                           {isCurrentUser ? '' : 's'}{' '}
                         </span>
                         <span
@@ -117,7 +117,7 @@ export const BalanceList: React.FC<{
                               {displayName(friend, userQuery.data?.id)}
                               <span className="text-gray-400">
                                 {' '}
-                                { 0 > amount ? 'get' : 'owe'}
+                                {0 > amount ? 'get' : 'owe'}
                                 {friend.id === userQuery.data?.id ? '' : 's'}{' '}
                               </span>
                               <span
@@ -128,7 +128,7 @@ export const BalanceList: React.FC<{
                               >
                                 {toUIString(amount)} {currency}
                               </span>
-                              <span className="text-gray-400"> { 0 < amount ? 'to' : 'from'} </span>
+                              <span className="text-gray-400"> {0 < amount ? 'to' : 'from'} </span>
                               <span className="text-foreground">
                                 {displayName(user, userQuery.data?.id)}
                               </span>

@@ -58,7 +58,9 @@ const BalancePage: NextPageWithUser<{
   const [isInviteCopied, setIsInviteCopied] = useState(false);
 
   async function inviteMembers() {
-    if (!groupDetailQuery.data) {return;}
+    if (!groupDetailQuery.data) {
+      return;
+    }
     const inviteLink =
       window.location.origin + '/join-group?groupId=' + groupDetailQuery.data.publicId;
 

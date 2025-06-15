@@ -35,7 +35,6 @@ export const UserInput: React.FC<{
         Router.push(`${currentPath}?${searchParams.toString()}`).catch(console.error);
 
         setGroup(undefined);
-        
 
         if (currentUser) {
           setParticipants([currentUser]);

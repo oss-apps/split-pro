@@ -29,7 +29,9 @@ const ImportSpliwisePage: NextPageWithUser = () => {
 
     const file = files?.[0];
 
-    if (!file) {return;}
+    if (!file) {
+      return;
+    }
 
     setUploadedFile(file);
 
@@ -68,8 +70,6 @@ const ImportSpliwisePage: NextPageWithUser = () => {
           {} as Record<string, boolean>,
         ),
       );
-
-      
     } catch (e) {
       console.error(e);
       toast.error('Error importing file');
@@ -178,7 +178,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                           {user.balance.map((b, index) => (
                             <span
                               key={b.currency_code}
-                              className={`text-sm ${ 0 < Number(b.amount) ? 'text-green-500' : 'text-orange-600'}`}
+                              className={`text-sm ${0 < Number(b.amount) ? 'text-green-500' : 'text-orange-600'}`}
                             >
                               {b.currency_code} {Math.abs(Number(b.amount)).toFixed(2)}
                               <span className="text-xs text-gray-300">

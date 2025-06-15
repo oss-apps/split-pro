@@ -85,7 +85,6 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
 
   async function onOTPSubmit(values: z.infer<typeof otpSchema>) {
     const email = emailForm.getValues().email;
-    
 
     const callbackUrl = window.location.origin;
 
@@ -191,9 +190,9 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
                     <Button
                       className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
                       type="submit"
-                      disabled={ 'sending' === emailStatus }
+                      disabled={'sending' === emailStatus}
                     >
-                      { 'sending' === emailStatus ? 'Sending...' : 'Send magic link'}
+                      {'sending' === emailStatus ? 'Sending...' : 'Send magic link'}
                     </Button>
                   </form>
                 </Form>

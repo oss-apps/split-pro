@@ -3,7 +3,9 @@ import { type PushMessage } from '~/types';
 declare let self: ServiceWorkerGlobalScope;
 
 self.addEventListener('push', function (event) {
-  if (!event) {return;}
+  if (!event) {
+    return;
+  }
   const data = JSON.parse(event?.data?.text() ?? '{}') as PushMessage;
   event.waitUntil(
     self.registration.showNotification(data.title, {
@@ -14,7 +16,9 @@ self.addEventListener('push', function (event) {
 });
 
 self.addEventListener('notificationclick', function (event) {
-  if (!event) {return;}
+  if (!event) {
+    return;
+  }
 
   event.notification.close();
   event.waitUntil(

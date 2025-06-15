@@ -689,7 +689,9 @@ describe('calculateSplitShareBasedOnAmount', () => {
       const participants = createParticipants([user1, user2], [-6000n, -4000n]);
 
       Object.values(SplitType).forEach((splitType) => {
-        if (splitType === SplitType.SETTLEMENT) {return;} // Skip settlement as it's not implemented
+        if (splitType === SplitType.SETTLEMENT) {
+          return;
+        } // Skip settlement as it's not implemented
 
         const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
         participants.forEach((p) => {

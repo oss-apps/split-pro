@@ -62,7 +62,7 @@ const BalancePage: NextPageWithUser = () => {
                     groupId={g.id}
                     name={g.name}
                     amount={amount}
-                    isPositive={ 0 <= amount ? true : false}
+                    isPositive={0 <= amount ? true : false}
                     currency={currency}
                     multiCurrency={multiCurrency}
                   />
@@ -92,7 +92,7 @@ const GroupBalance: React.FC<{
           <div className="text-foreground">{name}</div>
         </div>
         <div>
-          { 0n === amount ? (
+          {0n === amount ? (
             <div className="text-sm text-gray-400">Settled up</div>
           ) : (
             <>

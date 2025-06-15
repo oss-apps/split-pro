@@ -154,7 +154,7 @@ const splitProps: SplitSectionProps[] = [
       const totalParticipants = participants.filter(
         (p) => 0n !== splitShares[p.id]?.[SplitType.EQUAL],
       ).length;
-      return `${currency} ${ 0 < totalParticipants ? toUIString(amount / BigInt(totalParticipants)) : 0} per person`;
+      return `${currency} ${0 < totalParticipants ? toUIString(amount / BigInt(totalParticipants)) : 0} per person`;
     },
     fmtShareText: null,
     step: null,
@@ -333,7 +333,7 @@ export const UserAndAmount: React.FC<{ user: Participant; currency: string }> = 
       <div className="flex flex-col items-start">
         <p>{user.name ?? user.email}</p>
         <p className={`'text-gray-400' text-sm text-gray-400`}>
-          { 0n < (shareAmount ?? 0n) ? '-' : ''} {currency} {toUIString(shareAmount)}
+          {0n < (shareAmount ?? 0n) ? '-' : ''} {currency} {toUIString(shareAmount)}
         </p>
       </div>
     </div>

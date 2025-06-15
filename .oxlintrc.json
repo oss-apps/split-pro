@@ -28,7 +28,7 @@
         "memberSyntaxSortOrder": ["none", "all", "multiple", "single"],
         "allowSeparatedGroups": true
       }
-    ],
+    ]
   },
   "overrides": [
     {

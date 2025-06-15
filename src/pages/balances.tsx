@@ -115,7 +115,7 @@ const BalancePage: NextPageWithUser = () => {
                 id={b.friend.id}
                 friend={b.friend}
                 amount={b.amount}
-                isPositive={ 0 < b.amount}
+                isPositive={0 < b.amount}
                 currency={b.currency}
                 hasMore={b.hasMore}
               />
@@ -154,7 +154,7 @@ const FriendBalance: React.FC<{
         <UserAvatar user={friend} />
         <div className="text-foreground">{friend.name ?? friend.email}</div>
       </div>
-      { 0n === amount ? (
+      {0n === amount ? (
         <div>
           <p className="text-xs">Settled up</p>
         </div>

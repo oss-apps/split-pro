@@ -156,10 +156,14 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const localOnOpenChange = (_open: boolean) => {
-    if (onOpenChange && open !== _open) {onOpenChange(_open);}
+    if (onOpenChange && open !== _open) {
+      onOpenChange(_open);
+    }
   };
 
-  if (!isClient) {return null;}
+  if (!isClient) {
+    return null;
+  }
 
   if (isDesktop) {
     return (
@@ -167,7 +171,6 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
         <DialogTrigger
           className="cursor-pointer focus:ring-0"
           onClick={(e) => {
-            
             onTriggerClick?.(e);
           }}
           disabled={disableTrigger}

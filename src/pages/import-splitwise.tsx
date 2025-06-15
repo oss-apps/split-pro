@@ -41,7 +41,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
       for (const friend of json.friends as Record<string, unknown>[]) {
         const balance = friend.balance as { currency_code: string; amount: string }[];
         if (balance.length && 'confirmed' === friend.registration_status) {
-          friendsWithOutStandingBalance.push(friend as SplitwiseUser);
+          friendsWithOutStandingBalance.push(friend as unknown as SplitwiseUser);
         }
       }
 

@@ -39,7 +39,7 @@ const AddPage: NextPageWithUser<{
       email: user.email ?? null,
       image: user.image ?? null,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const router = useRouter();
@@ -74,7 +74,7 @@ const AddPage: NextPageWithUser<{
       ]);
       useAddExpenseStore.setState({ showFriends: false });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [groupId, groupQuery.isPending, groupQuery.data, currentUser]);
 
   useEffect(() => {
@@ -82,7 +82,7 @@ const AddPage: NextPageWithUser<{
       setParticipants([currentUser, friendQuery.data]);
       useAddExpenseStore.setState({ showFriends: false });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [friendId, friendQuery.isPending, friendQuery.data, currentUser]);
 
   useEffect(() => {
@@ -90,7 +90,9 @@ const AddPage: NextPageWithUser<{
       return;
     }
 
-    expenseQuery.data.group && setGroup(expenseQuery.data.group);
+    if (expenseQuery.data.group) {
+      setGroup(expenseQuery.data.group);
+    }
     setPaidBy(expenseQuery.data.paidByUser);
     setCurrency(expenseQuery.data.currency as CurrencyCode);
     setAmountStr((Number(expenseQuery.data.amount) / 100).toString());
@@ -105,7 +107,7 @@ const AddPage: NextPageWithUser<{
     );
     useAddExpenseStore.setState({ showFriends: false });
     setExpenseDate(expenseQuery.data.expenseDate);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [_expenseId, expenseQuery.data]);
 
   return (

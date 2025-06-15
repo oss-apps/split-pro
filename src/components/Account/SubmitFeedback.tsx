@@ -39,7 +39,7 @@ export const SubmitFeedback: React.FC = () => {
   return (
     <AppDrawer
       trigger={
-        <div className="flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300 hover:text-foreground/80">
+        <div className="hover:text-foreground/80 flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300">
           <div className="flex items-center gap-4 text-[16px]">
             <MessageSquare className="h-5 w-5 text-green-500" />
             Submit feedback
@@ -76,7 +76,7 @@ export const SubmitFeedback: React.FC = () => {
                       rows={5}
                       placeholder="Enter your feedback"
                       {...field}
-                    ></Textarea>
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -82,7 +82,7 @@ export const authOptions: NextAuthOptions = {
   events: {
     createUser: async ({ user }) => {
       // Check if the user's name is empty
-      if ((!user.name || user.name.trim() === '') && user.email) {
+      if ((!user.name || '' === user.name.trim()) && user.email) {
         // Define the logic to update the user's name here
         const updatedName = user.email.split('@')[0];
 
@@ -194,7 +194,7 @@ export function validateAuthEnv() {
   console.log('Validating auth env');
   if (!process.env.SKIP_ENV_VALIDATION) {
     const providers = getProviders();
-    if (providers.length === 0) {
+    if (0 === providers.length) {
       throw new Error(
         'No authentication providers are configured, at least one is required. Learn more here: https://github.com/oss-apps/split-pro?tab=readme-ov-file#setting-up-the-environment',
       );

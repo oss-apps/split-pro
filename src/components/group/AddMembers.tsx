@@ -14,7 +14,7 @@ import { Input } from '../ui/input';
 
 const AddMembers: React.FC<{
   enableSendingInvites: boolean;
-  group: Group & { groupUsers: Array<GroupUser> };
+  group: Group & { groupUsers: GroupUser[] };
   children: React.ReactNode;
 }> = ({ group, children, enableSendingInvites }) => {
   const [open, setOpen] = useState(false);
@@ -55,7 +55,7 @@ const AddMembers: React.FC<{
 
     setInputValue('');
 
-    if (users.length === 0) {
+    if (0 === users.length) {
       return;
     }
 
@@ -149,14 +149,14 @@ const AddMembers: React.FC<{
           <Button
             variant="ghost"
             key={friend.id}
-            className="flex items-center justify-between px-0 focus:text-foreground"
+            className="focus:text-foreground flex items-center justify-between px-0"
             onClick={() => onUserSelect(friend.id)}
           >
             <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
               <UserAvatar user={friend} />
               <p>{friend.name ?? friend.email}</p>
             </div>
-            <div>{userIds[friend.id] ? <CheckIcon className="h-4 w-4 text-primary" /> : null}</div>
+            <div>{userIds[friend.id] ? <CheckIcon className="text-primary h-4 w-4" /> : null}</div>
           </Button>
         ))}
       </div>

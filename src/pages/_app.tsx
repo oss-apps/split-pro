@@ -68,7 +68,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <ThemeProvider attribute="class" defaultTheme="dark">
           <Toaster toastOptions={{ duration: 1500 }} />
           {(Component as NextPageWithUser).auth ? (
-            <Auth pageProps={pageProps} Page={Component as NextPageWithUser}></Auth>
+            <Auth pageProps={pageProps} Page={Component as NextPageWithUser} />
           ) : (
             <Component {...pageProps} />
           )}{' '}
@@ -78,7 +78,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, pageProps }) => {
   const { status, data } = useSession({ required: true });
   const [showSpinner, setShowSpinner] = useState(false);
@@ -101,12 +100,12 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
   }, [webPushPublicKey, setWebPushPublicKey]);
 
   useEffect(() => {
-    if (status === 'authenticated') {
+    if ('authenticated' === status) {
       setCurrency(data.user.currency as CurrencyCode);
     }
   }, [status, data?.user, setCurrency]);
 
-  if (status === 'loading') {
+  if ('loading' === status) {
     return (
       <div className="flex h-full w-full items-center justify-center">
         {showSpinner ? <LoadingSpinner className="text-primary" /> : null}

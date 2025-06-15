@@ -34,7 +34,9 @@ export const UploadFile: React.FC = () => {
 
     const file = files?.[0];
 
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     if (file.size > FILE_SIZE_LIMIT) {
       toast.error(`File should be less than ${FILE_SIZE_LIMIT / 1024 / 1024}MB`);
@@ -43,8 +45,7 @@ export const UploadFile: React.FC = () => {
 
     setFile(file);
 
-    const { height, width } = await getImgHeightAndWidth(file);
-    console.log('height:', height, 'width:', width);
+    await getImgHeightAndWidth(file);
 
     setFileUploading(true);
     try {
@@ -69,7 +70,6 @@ export const UploadFile: React.FC = () => {
       toast.success('File uploaded successfully');
 
       setFileKey(key);
-      console.log('Setting file key', key);
     } catch (error) {
       console.error('Error getting upload url:', error);
       toast.error(`Error uploading file`);
@@ -81,7 +81,7 @@ export const UploadFile: React.FC = () => {
   return (
     <Label htmlFor="picture" className="cursor-pointer">
       {file ? (
-        <ImageUploaded className="h-6 w-6 text-primary" />
+        <ImageUploaded className="text-primary h-6 w-6" />
       ) : (
         <ImagePlus className="h-6 w-6 text-gray-300" />
       )}

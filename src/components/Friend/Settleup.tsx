@@ -14,18 +14,18 @@ import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
 
 export const SettleUp: React.FC<{
-  balances: Array<Balance>;
+  balances: Balance[];
   friend: User;
   currentUser: NextUser;
 }> = ({ balances, friend, currentUser }) => {
   const [balanceToSettle, setBalanceToSettle] = useState<Balance | undefined>(
-    balances.length > 1 ? undefined : balances[0],
+    1 < balances.length ? undefined : balances[0],
   );
   const [amount, setAmount] = useState<string>(
-    balances.length > 1 ? '' : toUIString(BigMath.abs(balances[0]?.amount ?? 0n)),
+    1 < balances.length ? '' : toUIString(BigMath.abs(balances[0]?.amount ?? 0n)),
   );
 
-  const isCurrentUserPaying = (balanceToSettle?.amount ?? 0) < 0;
+  const isCurrentUserPaying = 0 > (balanceToSettle?.amount ?? 0);
 
   function onSelectBalance(balance: Balance) {
     setBalanceToSettle(balance);
@@ -76,7 +76,7 @@ export const SettleUp: React.FC<{
       trigger={
         <Button
           size="sm"
-          className="flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500 px-3  text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 focus-visible:outline-none lg:w-[180px] "
+          className="flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500 px-3 text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 focus-visible:outline-hidden lg:w-[180px]"
           disabled={!balances.length}
         >
           Settle up
@@ -95,11 +95,11 @@ export const SettleUp: React.FC<{
       <div className="flex items-center justify-between px-2">
         <div>
           {balanceToSettle &&
-            (balances.length > 1 ? (
+            (1 < balances.length ? (
               <Button
                 size="sm"
                 variant="ghost"
-                className=" text-cyan-500 lg:hidden"
+                className="text-cyan-500 lg:hidden"
                 onClick={() => setBalanceToSettle(undefined)}
               >
                 Back
@@ -109,15 +109,15 @@ export const SettleUp: React.FC<{
                 <Button
                   size="sm"
                   variant="ghost"
-                  className=" text-cyan-500 lg:hidden"
-                  onClick={() => (balances.length > 1 ? setBalanceToSettle(undefined) : null)}
+                  className="text-cyan-500 lg:hidden"
+                  onClick={() => (1 < balances.length ? setBalanceToSettle(undefined) : null)}
                 >
                   Back
                 </Button>
               </DrawerClose>
             ))}
         </div>
-        <div className="mb-2 mt-4 text-center">
+        <div className="mt-4 mb-2 text-center">
           {balanceToSettle ? 'Settle up' : 'Select currency'}
         </div>
         {balanceToSettle && (
@@ -125,7 +125,7 @@ export const SettleUp: React.FC<{
             <Button
               size="sm"
               variant="ghost"
-              className=" mx-auto text-cyan-500 lg:hidden"
+              className="mx-auto text-cyan-500 lg:hidden"
               onClick={() => saveExpense()}
             >
               Save
@@ -159,13 +159,13 @@ export const SettleUp: React.FC<{
                 : `${friend.name ?? friend.email} is paying you`}
             </p>
           </div>
-          <div className="mt-3 flex  items-center gap-2">
+          <div className="mt-3 flex items-center gap-2">
             <p className="text-lg">{balanceToSettle.currency}</p>
             <Input
               type="number"
               value={amount}
               inputMode="decimal"
-              className="mx-auto  w-[150px] text-lg"
+              className="mx-auto w-[150px] text-lg"
               onChange={(e) => setAmount(e.target.value)}
             />
           </div>
@@ -174,7 +174,7 @@ export const SettleUp: React.FC<{
       <div className="mt-8 hidden items-center justify-center gap-4 px-2 lg:flex">
         <div>
           {balanceToSettle &&
-            (balances.length > 1 ? (
+            (1 < balances.length ? (
               <Button size="sm" variant="secondary" onClick={() => setBalanceToSettle(undefined)}>
                 Back
               </Button>
@@ -183,7 +183,7 @@ export const SettleUp: React.FC<{
                 <Button
                   size="sm"
                   variant="secondary"
-                  onClick={() => (balances.length > 1 ? setBalanceToSettle(undefined) : null)}
+                  onClick={() => (1 < balances.length ? setBalanceToSettle(undefined) : null)}
                 >
                   Back
                 </Button>
@@ -192,7 +192,7 @@ export const SettleUp: React.FC<{
         </div>
         {balanceToSettle && (
           <DrawerClose>
-            <Button size="sm" className=" mx-auto " onClick={() => saveExpense()}>
+            <Button size="sm" className="mx-auto" onClick={() => saveExpense()}>
               Save
             </Button>
           </DrawerClose>

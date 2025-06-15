@@ -4,7 +4,7 @@
  * more details here: https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation
  */
 export async function register() {
-  if (process.env.NEXT_RUNTIME === 'nodejs') {
+  if ('nodejs' === process.env.NEXT_RUNTIME) {
     console.log('Registering instrumentation');
     const { validateAuthEnv } = await import('./server/auth');
     validateAuthEnv();

@@ -6,13 +6,13 @@ import { toUIString } from '~/utils/numbers';
 import { UserAvatar } from '../ui/avatar';
 
 export const FriendBalance: React.FC<{ user: User; balance: Balance }> = ({ user, balance }) => {
-  const isPositive = balance.amount > 0;
+  const isPositive = 0 < balance.amount;
 
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
         <UserAvatar user={user} size={30} />
-        <div className=" text-foreground">{user.name}</div>
+        <div className="text-foreground">{user.name}</div>
       </div>
       <div>
         <div

@@ -7,7 +7,7 @@ import { Button } from '~/components/ui/button';
 import { toUIString } from '~/utils/numbers';
 
 interface ExportCSVProps {
-  expenses: Array<Expense & { expenseParticipants: ExpenseParticipant[] }>;
+  expenses: (Expense & { expenseParticipants: ExpenseParticipant[] })[];
   fileName: string;
   currentUserId: number;
   friendName: string;
@@ -64,7 +64,7 @@ export const Export: React.FC<ExportCSVProps> = ({
       csvHeaders,
       ...csvData.map((row) =>
         row
-          .map((cell) => (typeof cell === 'string' && cell.includes(',') ? `"${cell}"` : cell))
+          .map((cell) => ('string' === typeof cell && cell.includes(',') ? `"${cell}"` : cell))
           .join(','),
       ),
     ].join('\n');

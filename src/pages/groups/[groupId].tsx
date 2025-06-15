@@ -58,7 +58,9 @@ const BalancePage: NextPageWithUser<{
   const [isInviteCopied, setIsInviteCopied] = useState(false);
 
   async function inviteMembers() {
-    if (!groupDetailQuery.data) return;
+    if (!groupDetailQuery.data) {
+      return;
+    }
     const inviteLink =
       window.location.origin + '/join-group?groupId=' + groupDetailQuery.data.publicId;
 
@@ -83,9 +85,9 @@ const BalancePage: NextPageWithUser<{
   const isAdmin = groupDetailQuery.data?.userId === user.id;
   const canDelete =
     groupDetailQuery.data?.userId === user.id &&
-    !groupDetailQuery.data?.groupBalances.find((b) => b.amount !== 0n);
+    !groupDetailQuery.data?.groupBalances.find((b) => 0n !== b.amount);
   const canLeave = !groupDetailQuery.data?.groupBalances.find(
-    (b) => b.amount !== 0n && b.userId === user.id,
+    (b) => 0n !== b.amount && b.userId === user.id,
   );
 
   function onRecalculateBalances() {
@@ -167,7 +169,7 @@ const BalancePage: NextPageWithUser<{
                 <p className="font-semibold">Total expenses</p>
                 <div className="mt-2 flex flex-wrap gap-1">
                   {groupTotalQuery.data?.map((total, index, arr) => {
-                    return total._sum.amount != null ? (
+                    return null != total._sum.amount ? (
                       <Fragment key={total.currency}>
                         <div className="flex flex-wrap gap-1">
                           {total.currency} {toUIString(total._sum.amount)}
@@ -177,7 +179,7 @@ const BalancePage: NextPageWithUser<{
                     ) : null;
                   })}
                 </div>
-                {expensesQuery?.data && expensesQuery?.data?.length > 0 && (
+                {expensesQuery?.data && 0 < expensesQuery?.data?.length && (
                   <div className="mt-8">
                     <p className="font-semibold">First expense</p>
                     <p>
@@ -199,7 +201,7 @@ const BalancePage: NextPageWithUser<{
             >
               <>
                 <div className="flex items-center justify-between">
-                  <div className="text-xl font-semibold text-primary">
+                  <div className="text-primary text-xl font-semibold">
                     {groupDetailQuery.data?.name ?? ''}
                   </div>
                   {isAdmin && (
@@ -237,7 +239,7 @@ const BalancePage: NextPageWithUser<{
                         isAdmin &&
                         (() => {
                           const canLeave = !groupDetailQuery.data?.groupBalances.find(
-                            (b) => b.amount !== 0n && b.userId === groupUser.userId,
+                            (b) => 0n !== b.amount && b.userId === groupUser.userId,
                           );
 
                           return (
@@ -269,12 +271,12 @@ const BalancePage: NextPageWithUser<{
               </>
               {groupDetailQuery?.data?.createdAt && (
                 <div className="mt-8">
-                  <p className="font-semibold ">Group created</p>
+                  <p className="font-semibold">Group created</p>
                   <p>{format(groupDetailQuery.data?.createdAt, 'MMM dd, yyyy')}</p>
                 </div>
               )}
               <div className="mt-8">
-                <p className="font-semibold ">Actions</p>
+                <p className="font-semibold">Actions</p>
                 <div className="child:h-7 mt-2 flex flex-col">
                   <Label className="flex cursor-pointer items-center justify-between">
                     <p className="flex items-center">
@@ -307,7 +309,7 @@ const BalancePage: NextPageWithUser<{
                       loading={recalculateGroupBalancesMutation.isPending}
                       variant="default"
                     >
-                      <Button variant="ghost" className="justify-start p-0 text-left text-primary">
+                      <Button variant="ghost" className="text-primary justify-start p-0 text-left">
                         <Construction className="mr-2 h-5 w-5" /> Recalculate balances
                       </Button>
                     </SimpleConfirmationDialog>
@@ -379,7 +381,7 @@ const BalancePage: NextPageWithUser<{
           </div>
         }
       >
-        {groupDetailQuery.isPending ? null : groupDetailQuery.data?.groupUsers.length === 1 &&
+        {groupDetailQuery.isPending ? null : 1 === groupDetailQuery.data?.groupUsers.length &&
           !expensesQuery.data?.length ? (
           <div className="h-[85vh]">
             <NoMembers group={groupDetailQuery.data} enableSendingInvites={enableSendingInvites} />
@@ -393,7 +395,7 @@ const BalancePage: NextPageWithUser<{
                 users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
               />
             </div>
-            <div className=" mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4">
+            <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4">
               <Link href={`/add?groupId=${groupId}`}>
                 <Button size="sm" className="gap-1 text-sm lg:w-[180px]">
                   Add Expense

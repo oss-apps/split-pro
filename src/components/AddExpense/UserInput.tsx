@@ -27,7 +27,7 @@ export const UserInput: React.FC<{
   const isEmail = z.string().email().safeParse(nameOrEmail);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && nameOrEmail === '') {
+    if ('Backspace' === e.key && '' === nameOrEmail) {
       if (group) {
         const currentPath = window.location.pathname;
         const searchParams = new URLSearchParams(window.location.search);
@@ -35,7 +35,6 @@ export const UserInput: React.FC<{
         Router.push(`${currentPath}?${searchParams.toString()}`).catch(console.error);
 
         setGroup(undefined);
-        console.log('set Remove called 1', group);
 
         if (currentUser) {
           setParticipants([currentUser]);
@@ -43,7 +42,7 @@ export const UserInput: React.FC<{
       } else {
         removeLastParticipant(); // Assuming deleteUser is the function you want to call
       }
-    } else if (e.key === 'Enter' && isEmail.success) {
+    } else if ('Enter' === e.key && isEmail.success) {
       addFriendMutation.mutate(
         { email: nameOrEmail.toLowerCase() },
         {
@@ -93,14 +92,14 @@ export const UserInput: React.FC<{
             ? 'Cannot change group while editing'
             : group
               ? 'Press delete to remove group'
-              : participants.length > 1
+              : 1 < participants.length
                 ? 'Add more friends'
                 : 'Search friends, groups or add email'
         }
         value={nameOrEmail}
         onChange={(e) => setNameOrEmail(e.target.value)}
         onKeyDown={handleKeyDown}
-        className="min-w-[100px] flex-grow bg-transparent outline-none placeholder:text-sm focus:ring-0"
+        className="min-w-[100px] grow bg-transparent outline-hidden placeholder:text-sm focus:ring-0"
         autoFocus
         disabled={isEditing && !!group}
       />

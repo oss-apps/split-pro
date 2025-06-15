@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-optional-chain */
 import {
   ListBulletIcon as SolidListBulletIcon,
   PlusCircleIcon as SolidPlusCircleIcon,
@@ -25,17 +24,17 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, 
   const currentPath = router.pathname;
 
   return (
-    <div className=" h-full w-full bg-background">
+    <div className="bg-background h-full w-full">
       <div
         vaul-drawer-wrapper=""
         className={clsx(
-          'mx-auto flex h-full w-full flex-col bg-background lg:max-w-3xl lg:flex-row',
+          'bg-background mx-auto flex h-full w-full flex-col lg:max-w-3xl lg:flex-row',
           hideAppBar ? '' : '',
         )}
       >
-        <nav className="item-center -ml-[170px]  hidden w-[170px] px-4 py-4  lg:flex lg:flex-col lg:gap-2 ">
-          <Link href="/balances" className="mb-8 flex items-center gap-2 ">
-            <span className="text-xl font-medium  ">SplitPro</span>
+        <nav className="item-center -ml-[170px] hidden w-[170px] px-4 py-4 lg:flex lg:flex-col lg:gap-2">
+          <Link href="/balances" className="mb-8 flex items-center gap-2">
+            <span className="text-xl font-medium">SplitPro</span>
           </Link>
           <NavItemDesktop
             title="Balances"
@@ -76,11 +75,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, 
             </div>
           ) : null}
           {children}
-          <div className="h-28 lg:h-0"></div>
+          <div className="h-28 lg:h-0" />
         </div>
       </div>
 
-      <nav className="fixed bottom-0 flex w-full justify-between border-t  bg-opacity-80 px-2 pb-4 shadow-sm backdrop-blur-lg lg:hidden">
+      <nav className="bg-opacity-80 fixed bottom-0 flex w-full justify-between border-t px-2 pb-4 shadow-xs backdrop-blur-lg lg:hidden">
         <NavItem
           title="Balances"
           Icon={SolidScaleIcon}
@@ -111,12 +110,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, 
   );
 };
 
-type NavItemProps = {
+interface NavItemProps {
   title: string;
   Icon: LucideIcon;
   link: string;
   currentPath?: string;
-};
+}
 
 const NavItem: React.FC<NavItemProps> = ({ title, Icon, link, currentPath }) => {
   const isActive = currentPath?.startsWith(link);
@@ -138,7 +137,7 @@ const NavItemDesktop: React.FC<NavItemProps> = ({ title, Icon, link, currentPath
   const isActive = currentPath?.startsWith(link);
 
   return (
-    <Link href={link} className={clsx(' flex w-[150px]  items-center gap-2 py-4')}>
+    <Link href={link} className={clsx('flex w-[150px] items-center gap-2 py-4')}>
       <Icon className={clsx('h-7 w-7', isActive ? 'text-cyan-500' : 'text-gray-600')} />
       <span className={clsx('', isActive ? 'font-medium text-cyan-500' : 'text-gray-500')}>
         {title}

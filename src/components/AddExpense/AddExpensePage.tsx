@@ -176,7 +176,7 @@ export const AddOrEditExpensePage: React.FC<{
       router
         .push((group ? '/groups/' + group.id : '') + '/expenses/' + expenseId)
         .catch(console.error);
-    } else if (participants.length === 1) {
+    } else if (1 === participants.length) {
       router.push('/balances').catch(console.error);
     } else {
       resetState();
@@ -187,18 +187,18 @@ export const AddOrEditExpensePage: React.FC<{
     <>
       <div className="flex flex-col gap-4 px-4 py-2">
         <div className="flex items-center justify-between">
-          <Button variant="ghost" className=" px-0 text-primary" onClick={onCancel}>
+          <Button variant="ghost" className="text-primary px-0" onClick={onCancel}>
             Cancel
           </Button>
           <div className="text-center">Add new expense</div>
           <Button
             variant="ghost"
-            className=" px-0 text-primary"
+            className="text-primary px-0"
             disabled={
               addExpenseMutation.isPending ||
               addGroupExpenseMutation.isPending ||
               !amount ||
-              description === '' ||
+              '' === description ||
               isFileUploading
             }
             onClick={addExpense}
@@ -207,7 +207,7 @@ export const AddOrEditExpensePage: React.FC<{
           </Button>{' '}
         </div>
         <UserInput isEditing={!!expenseId} />
-        {showFriends || (participants.length === 1 && !group) ? (
+        {showFriends || (1 === participants.length && !group) ? (
           <SelectUserOrGroup enableSendingInvites={enableSendingInvites} />
         ) : (
           <>
@@ -234,11 +234,11 @@ export const AddOrEditExpensePage: React.FC<{
               />
             </div>
             <div className="h-[180px]">
-              {amount && description !== '' && (
+              {amount && '' !== description ? (
                 <>
                   <SplitTypeSection />
 
-                  <div className="mt-4 flex items-center  justify-between sm:mt-10">
+                  <div className="mt-4 flex items-center justify-between sm:mt-10">
                     <div className="flex flex-wrap items-center gap-4">
                       <Popover>
                         <PopoverTrigger asChild>
@@ -249,7 +249,7 @@ export const AddOrEditExpensePage: React.FC<{
                               !expenseDate && 'text-muted-foreground',
                             )}
                           >
-                            <CalendarIcon className="mr-2 h-6 w-6 text-primary" />
+                            <CalendarIcon className="text-primary mr-2 h-6 w-6" />
                             {expenseDate ? (
                               format(expenseDate, 'yyyy-MM-dd') ===
                               format(new Date(), 'yyyy-MM-dd') ? (
@@ -267,7 +267,6 @@ export const AddOrEditExpensePage: React.FC<{
                             mode="single"
                             selected={expenseDate}
                             onSelect={setExpenseDate}
-                            initialFocus
                           />
                         </PopoverContent>
                       </Popover>
@@ -275,7 +274,7 @@ export const AddOrEditExpensePage: React.FC<{
                     <div className="flex items-center gap-4">
                       {isStorageConfigured ? <UploadFile /> : null}
                       <Button
-                        className=" min-w-[100px]"
+                        className="min-w-[100px]"
                         size="sm"
                         loading={
                           addExpenseMutation.isPending ||
@@ -286,7 +285,7 @@ export const AddOrEditExpensePage: React.FC<{
                           addExpenseMutation.isPending ||
                           addGroupExpenseMutation.isPending ||
                           !amount ||
-                          description === '' ||
+                          '' === description ||
                           isFileUploading ||
                           !isExpenseSettled
                         }
@@ -297,9 +296,9 @@ export const AddOrEditExpensePage: React.FC<{
                     </div>
                   </div>
                 </>
-              )}
+              ) : null}
             </div>
-            <div className=" flex w-full justify-center">
+            <div className="flex w-full justify-center">
               <Link
                 href="https://github.com/sponsors/KMKoushik"
                 target="_blank"
@@ -307,7 +306,7 @@ export const AddOrEditExpensePage: React.FC<{
               >
                 <Button
                   variant="outline"
-                  className="text-md  justify-between rounded-full border-pink-500 hover:text-foreground/80"
+                  className="text-md hover:text-foreground/80 justify-between rounded-full border-pink-500"
                 >
                   <div className="flex items-center gap-4">
                     <HeartHandshakeIcon className="h-5 w-5 text-pink-500" />

@@ -7,7 +7,7 @@ import { Button } from '~/components/ui/button';
 import AddMembers from './AddMembers';
 
 const NoMembers: React.FC<{
-  group: Group & { groupUsers: Array<GroupUser> };
+  group: Group & { groupUsers: GroupUser[] };
   enableSendingInvites: boolean;
 }> = ({ group, enableSendingInvites }) => {
   const [isCopied, setIsCopied] = useState(false);
@@ -26,7 +26,7 @@ const NoMembers: React.FC<{
       <p className="mb-4 text-center text-gray-500">No members in the group yet.</p>
       <Button className="w-[200px]">
         <AddMembers group={group} enableSendingInvites={enableSendingInvites}>
-          <UserPlus className="h-5 w-5 text-primary-foreground" />
+          <UserPlus className="text-primary-foreground h-5 w-5" />
           <p>Add Members</p>
         </AddMembers>
       </Button>

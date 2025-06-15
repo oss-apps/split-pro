@@ -36,7 +36,7 @@ export const CategoryPicker: React.FC<{
                         variant="ghost"
                         className="flex w-[75px] flex-col gap-1 py-8 text-center"
                         onClick={() => {
-                          onCategoryPick(key === 'other' ? categoryName : key);
+                          onCategoryPick('other' === key ? categoryName : key);
                         }}
                       >
                         <span className="block text-2xl">

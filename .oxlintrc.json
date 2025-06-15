@@ -1,0 +1,43 @@
+{
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "style": "warn",
+    "perf": "warn"
+  },
+  "plugins": ["nextjs", "react", "react-perf", "typescript", "import", "oxc"],
+  "rules": {
+    "no-magic-numbers": "off",
+    "no-anonymous-default-export": ["warn", { "allowCallExpression": true }],
+    "no-ternary": "off",
+    "consistent-type-specifier-style": "off",
+    "sort-keys": "off",
+    "exports-last": "off",
+    "no-unused-vars": "warn",
+    "no-unassigned-import": "off",
+    "consistent-indexed-object-style": "off",
+    "max-params": "off",
+    "group-exports": "off",
+    "func-style": "off",
+    "sort-imports": [
+      "error",
+      {
+        "ignoreCase": false,
+        "ignoreDeclarationSort": true,
+        "ignoreMemberSort": false,
+        "memberSyntaxSortOrder": ["none", "all", "multiple", "single"],
+        "allowSeparatedGroups": true
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.jsx", "**/*.tsx"],
+      "rules": {
+        "react-in-jsx-scope": "off",
+        "no-console": ["warn", { "allow": ["info", "warn", "error", "debug", "trace"] }]
+      }
+    }
+  ],
+  "ignorePatterns": ["prisma/seed.ts"]
+}

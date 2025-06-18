@@ -452,7 +452,7 @@ export const groupRouter = createTRPCRouter({
         throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Only creator can delete the group' });
       }
 
-      const balanceWithNonZero = group?.groupBalances.find((b) => b.amount !== 0n);
+      const balanceWithNonZero = group?.groupBalances.find((b) => 0n !== b.amount);
 
       if (balanceWithNonZero) {
         throw new TRPCError({

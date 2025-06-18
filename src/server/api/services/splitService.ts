@@ -43,7 +43,7 @@ export async function createGroupExpense(
 ) {
   const operations = [];
 
-  const nonZeroParticipants = participants.filter((p) => p.amount !== 0n);
+  const nonZeroParticipants = participants.filter((p) => 0n !== p.amount);
 
   // Create expense operation
   operations.push(
@@ -202,7 +202,7 @@ export async function addUserExpense(
 ) {
   const operations = [];
 
-  const nonZeroParticipants = participants.filter((p) => p.amount !== 0n);
+  const nonZeroParticipants = participants.filter((p) => 0n !== p.amount);
 
   // Create expense operation
   operations.push(
@@ -441,7 +441,7 @@ export async function editExpense(
   expenseDate: Date,
   fileKey?: string,
 ) {
-  const nonZeroParticipants = participants.filter((p) => p.amount !== 0n);
+  const nonZeroParticipants = participants.filter((p) => 0n !== p.amount);
 
   const expense = await db.expense.findUnique({
     where: { id: expenseId },
@@ -458,7 +458,7 @@ export async function editExpense(
 
   // First reverse all existing balances
   for (const participant of expense.expenseParticipants) {
-    if (participant.userId === expense.paidBy || participant.amount === 0n) {
+    if (participant.userId === expense.paidBy || 0n === participant.amount) {
       continue;
     }
 
@@ -684,10 +684,9 @@ export async function editExpense(
 
 async function updateGroupExpenseForIfBalanceIsZero(
   userId: number,
-  friendIds: Array<number>,
+  friendIds: number[],
   currency: string,
 ) {
-  console.log('Checking for users with 0 balance to reflect in group');
   const balances = await db.balance.findMany({
     where: {
       userId,
@@ -698,8 +697,6 @@ async function updateGroupExpenseForIfBalanceIsZero(
       amount: 0,
     },
   });
-
-  console.log('Total balances needs to be updated:', balances.length);
 
   if (balances.length) {
     const friendIds = balances.map((b) => b.friendId);
@@ -744,16 +741,14 @@ export async function getCompleteFriendsDetails(userId: number) {
   const friends = balances.reduce(
     (acc, balance) => {
       const friendId = balance.friendId;
-      if (!acc[friendId]) {
-        acc[friendId] = {
-          balances: [],
-          id: balance.friendId,
-          email: balance.friend.email,
-          name: balance.friend.name,
-        };
-      }
+      acc[friendId] ??= {
+        balances: [],
+        id: balance.friendId,
+        email: balance.friend.email,
+        name: balance.friend.name,
+      };
 
-      if (balance.amount !== 0n) {
+      if (0n !== balance.amount) {
         acc[friendId]?.balances.push({
           currency: balance.currency,
           amount: balance.amount,
@@ -959,7 +954,7 @@ export async function importUserBalanceFromSplitWise(
   await db.$transaction(operations);
 }
 
-async function createUsersFromSplitwise(users: Array<SplitwiseUser>) {
+async function createUsersFromSplitwise(users: SplitwiseUser[]) {
   const userEmails = users.map((u) => u.email);
 
   const existingUsers = await db.user.findMany({
@@ -998,7 +993,7 @@ async function createUsersFromSplitwise(users: Array<SplitwiseUser>) {
 
 export async function importGroupFromSplitwise(
   currentUserId: number,
-  splitWiseGroups: Array<SplitwiseGroup>,
+  splitWiseGroups: SplitwiseGroup[],
 ) {
   const splitwiseUserMap: Record<string, SplitwiseUser> = {};
 
@@ -1021,13 +1016,9 @@ export async function importGroupFromSplitwise(
     {} as Record<string, User>,
   );
 
-  console.log('userMap', userMap, splitWiseGroups);
-
   const operations = [];
-  console.log('Hello world');
 
   for (const group of splitWiseGroups) {
-    console.log('group', group);
     const dbGroup = await db.group.findUnique({
       where: {
         splitwiseGroupId: group.id.toString(),
@@ -1041,8 +1032,6 @@ export async function importGroupFromSplitwise(
     const groupmembers = group.members.map((member) => ({
       userId: userMap[member.email.toString()]!.id,
     }));
-
-    console.log('groupmembers', groupmembers);
 
     operations.push(
       db.group.create({

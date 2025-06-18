@@ -8,7 +8,7 @@ const Privacy: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
     <>
       <div>
         <main className="mx-auto max-w-4xl px-4 pb-32 lg:px-0">
-          <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4   py-4 lg:px-0 lg:py-5">
+          <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4 py-4 lg:px-0 lg:py-5">
             <Link href="/">
               <div className="flex items-center gap-2">
                 <p className="text-2xl font-medium">SplitPro</p>

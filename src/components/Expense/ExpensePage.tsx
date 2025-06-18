@@ -13,7 +13,7 @@ import { CategoryIcons } from '../ui/categoryIcons';
 import { AppDrawer } from '../ui/drawer';
 import { Separator } from '../ui/separator';
 
-type ExpenseDetailsProps = {
+interface ExpenseDetailsProps {
   user: NextUser;
   expense: Expense & {
     expenseParticipants: Array<ExpenseParticipant & { user: User }>;
@@ -23,7 +23,7 @@ type ExpenseDetailsProps = {
     updatedByUser: User | null;
   };
   storagePublicUrl?: string;
-};
+}
 
 const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
   const youPaid = expense.paidBy === user.id;
@@ -48,18 +48,18 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
               <p className="text-sm text-gray-500">{format(expense.expenseDate, 'dd MMM yyyy')}</p>
             ) : null}
             {expense.updatedByUser ? (
-              <p className=" text-sm text-gray-500">
+              <p className="text-sm text-gray-500">
                 Edited by {expense.updatedByUser?.name ?? expense.updatedByUser?.email} on{' '}
                 {format(expense.updatedAt, 'dd MMM yyyy')}
               </p>
             ) : null}
             {expense.deletedByUser ? (
-              <p className=" text-sm text-orange-600">
+              <p className="text-sm text-orange-600">
                 Deleted by {expense.deletedByUser.name ?? expense.addedByUser.email} on{' '}
                 {format(expense.deletedAt ?? expense.createdAt, 'dd MMM yyyy')}
               </p>
             ) : (
-              <p className=" text-sm text-gray-500">
+              <p className="text-sm text-gray-500">
                 Added by {expense.addedByUser.name ?? expense.addedByUser.email} on{' '}
                 {format(expense.createdAt, 'dd MMM yyyy')}
               </p>
@@ -79,7 +79,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
                   onLoad={(event) => {
                     event.currentTarget.setAttribute('data-loaded', 'true');
                   }}
-                  className=" h-14 w-14 rounded-md object-cover object-center data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
+                  className="h-14 w-14 rounded-md object-cover object-center data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
                 />
               }
               leftAction="Close"
@@ -121,7 +121,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
           {expense.currency} {toUIString(expense.amount)}
         </p>
       </div>
-      <div className="ml-14 mt-4 flex flex-col gap-4 px-6">
+      <div className="mt-4 ml-14 flex flex-col gap-4 px-6">
         {expense.expenseParticipants
           .filter((p) => (expense.paidBy === p.userId ? (expense.amount ?? 0n) : 0n) !== p.amount)
           .map((p) => (

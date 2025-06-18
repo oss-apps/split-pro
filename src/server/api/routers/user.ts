@@ -46,7 +46,7 @@ export const userRouter = createTRPCRouter({
       .reduce(
         (acc, current) => {
           const existing = acc.findIndex((item) => item.friendId === current.friendId);
-          if (existing === -1) {
+          if (-1 === existing) {
             acc.push(current);
           } else {
             const existingItem = acc[existing];
@@ -74,14 +74,14 @@ export const userRouter = createTRPCRouter({
       },
     });
 
-    const youOwe: Array<{ currency: string; amount: bigint }> = [];
-    const youGet: Array<{ currency: string; amount: bigint }> = [];
+    const youOwe: { currency: string; amount: bigint }[] = [];
+    const youGet: { currency: string; amount: bigint }[] = [];
 
     for (const b of cumulatedBalances) {
       const sumAmount = b._sum.amount;
-      if (sumAmount && sumAmount > 0) {
+      if (sumAmount && 0 < sumAmount) {
         youGet.push({ currency: b.currency, amount: sumAmount ?? 0 });
-      } else if (sumAmount && sumAmount < 0) {
+      } else if (sumAmount && 0 > sumAmount) {
         youOwe.push({ currency: b.currency, amount: sumAmount ?? 0 });
       }
     }
@@ -510,7 +510,7 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      if (friendBalances.length > 0) {
+      if (0 < friendBalances.length) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'You have outstanding balances with this friend',
@@ -553,7 +553,7 @@ export const userRouter = createTRPCRouter({
       await importGroupFromSplitwise(ctx.session.user.id, input.groups);
     }),
 
-  getWebPushPublicKey: protectedProcedure.query(async ({}) => {
+  getWebPushPublicKey: protectedProcedure.query(() => {
     return env.WEB_PUSH_PUBLIC_KEY ?? '';
   }),
 });

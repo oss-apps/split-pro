@@ -29,17 +29,19 @@ const ImportSpliwisePage: NextPageWithUser = () => {
 
     const file = files?.[0];
 
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     setUploadedFile(file);
 
     try {
       const json = JSON.parse(await file.text()) as Record<string, unknown>;
-      const friendsWithOutStandingBalance: Array<SplitwiseUser> = [];
-      for (const friend of json.friends as Array<Record<string, unknown>>) {
-        const balance = friend.balance as Array<{ currency_code: string; amount: string }>;
-        if (balance.length && friend.registration_status === 'confirmed') {
-          friendsWithOutStandingBalance.push(friend as SplitwiseUser);
+      const friendsWithOutStandingBalance: SplitwiseUser[] = [];
+      for (const friend of json.friends as Record<string, unknown>[]) {
+        const balance = friend.balance as { currency_code: string; amount: string }[];
+        if (balance.length && 'confirmed' === friend.registration_status) {
+          friendsWithOutStandingBalance.push(friend as unknown as SplitwiseUser);
         }
       }
 
@@ -54,8 +56,8 @@ const ImportSpliwisePage: NextPageWithUser = () => {
         ),
       );
 
-      const _groups = (json.groups as Array<SplitwiseGroup>).filter(
-        (g) => g.members.length > 0 && g.id !== 0,
+      const _groups = (json.groups as SplitwiseGroup[]).filter(
+        (g) => 0 < g.members.length && 0 !== g.id,
       );
 
       setGroups(_groups);
@@ -68,8 +70,6 @@ const ImportSpliwisePage: NextPageWithUser = () => {
           {} as Record<string, boolean>,
         ),
       );
-
-      console.log('Friends with outstanding balance', friendsWithOutStandingBalance);
     } catch (e) {
       console.error(e);
       toast.error('Error importing file');
@@ -99,12 +99,12 @@ const ImportSpliwisePage: NextPageWithUser = () => {
         <title>Import from splitwise</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainLayout hideAppBar={true}>
+      <MainLayout hideAppBar>
         <div className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex gap-4">
               <Link href="/balances">
-                <Button variant="ghost" className="px-0 py-0 text-primary" size="sm">
+                <Button variant="ghost" className="text-primary px-0 py-0" size="sm">
                   Cancel
                 </Button>
               </Link>
@@ -114,7 +114,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               <Button
                 onClick={onImport}
                 variant="ghost"
-                className="px-0 py-0 text-primary"
+                className="text-primary px-0 py-0"
                 size="sm"
                 disabled={importMutation.isPending || !uploadedFile}
               >
@@ -124,12 +124,12 @@ const ImportSpliwisePage: NextPageWithUser = () => {
           </div>
           <div className="mt-4 flex items-center gap-4">
             <label htmlFor="splitwise-json" className="w-full cursor-pointer rounded border">
-              <div className="flex cursor-pointer px-3 py-[6px] ">
-                <div className="flex items-center border-r pr-4 ">
+              <div className="flex cursor-pointer px-3 py-[6px]">
+                <div className="flex items-center border-r pr-4">
                   <PaperClipIcon className="mr-2 h-4 w-4" />{' '}
                   <span className="hidden text-sm md:block">Choose file</span>
                 </div>
-                <div className=" pl-4 text-gray-400  ">
+                <div className="pl-4 text-gray-400">
                   {uploadedFile ? uploadedFile.name : 'No file chosen'}
                 </div>
               </div>
@@ -162,7 +162,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                 <div className="mt-4 flex flex-col gap-3">
                   {usersWithBalance.map((user, index) => (
                     <div key={user.id} className="">
-                      <div key={user.id} className="flex  items-center  justify-between gap-4">
+                      <div key={user.id} className="flex items-center justify-between gap-4">
                         <div className="flex shrink-0 items-center gap-2">
                           <Checkbox
                             checked={selectedUsers[user.id]}
@@ -170,7 +170,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                               setSelectedUsers({ ...selectedUsers, [user.id]: checked });
                             }}
                           />
-                          <div className="flex ">
+                          <div className="flex">
                             <p>{`${user.first_name}${user.last_name ? ' ' + user.last_name : ''}`}</p>
                           </div>
                         </div>
@@ -178,7 +178,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                           {user.balance.map((b, index) => (
                             <span
                               key={b.currency_code}
-                              className={`text-sm ${Number(b.amount) > 0 ? 'text-green-500' : 'text-orange-600'}`}
+                              className={`text-sm ${0 < Number(b.amount) ? 'text-green-500' : 'text-orange-600'}`}
                             >
                               {b.currency_code} {Math.abs(Number(b.amount)).toFixed(2)}
                               <span className="text-xs text-gray-300">

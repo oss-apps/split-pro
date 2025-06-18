@@ -26,7 +26,7 @@ export const SubscribeNotification: React.FC = () => {
   const webPushPublicKey = useAppStore((s) => s.webPushPublicKey);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+    if ('undefined' !== typeof window && 'serviceWorker' in navigator) {
       // run only in browser
       navigator.serviceWorker.ready
         .then((reg) => {
@@ -46,7 +46,7 @@ export const SubscribeNotification: React.FC = () => {
   async function onRequestNotification() {
     try {
       const result = await Notification.requestPermission();
-      if (result === 'granted') {
+      if ('granted' === result) {
         toast.success('You will receive notifications now');
         navigator.serviceWorker.ready
           .then(async (reg) => {
@@ -93,7 +93,7 @@ export const SubscribeNotification: React.FC = () => {
     <>
       <Button
         variant="ghost"
-        className="text-md w-full justify-between px-0 hover:text-foreground/80"
+        className="text-md hover:text-foreground/80 w-full justify-between px-0"
         onClick={isSubscribed ? unSubscribeNotification : onRequestNotification}
       >
         <div className="flex items-center gap-4">

@@ -1,7 +1,7 @@
 export const shuffleArray = <T>(array: T[]) => {
   let currentIndex = array.length;
 
-  while (currentIndex != 0) {
+  while (0 != currentIndex) {
     const randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
 

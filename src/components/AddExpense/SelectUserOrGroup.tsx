@@ -59,7 +59,7 @@ export const SelectUserOrGroup: React.FC<{
     }
   }
 
-  function onGroupSelect(group: Group & { groupUsers: Array<GroupUser & { user: User }> }) {
+  function onGroupSelect(group: Group & { groupUsers: (GroupUser & { user: User })[] }) {
     setGroup(group);
     const { currentUser } = useAddExpenseStore.getState();
     if (currentUser) {
@@ -78,7 +78,7 @@ export const SelectUserOrGroup: React.FC<{
   }
 
   return (
-    <div className="mt-1 ">
+    <div className="mt-1">
       <div>
         <div>
           {enableSendingInvites ? (
@@ -117,7 +117,7 @@ export const SelectUserOrGroup: React.FC<{
       <div className="mt-2">
         {filteredFriends?.length ? (
           <>
-            <div className=" font-normal text-gray-500">Friends</div>
+            <div className="font-normal text-gray-500">Friends</div>
             {filteredFriends.map((f) => {
               const isExisting = participants.some((p) => p.id === f.id);
 
@@ -140,7 +140,7 @@ export const SelectUserOrGroup: React.FC<{
                   </div>
                   {participants.some((p) => p.id === f.id) ? (
                     <div>
-                      <CheckIcon className="h-4 w-4 text-primary" />
+                      <CheckIcon className="text-primary h-4 w-4" />
                     </div>
                   ) : null}
                 </button>
@@ -150,7 +150,7 @@ export const SelectUserOrGroup: React.FC<{
         ) : null}
 
         {/*Can't select multiple groups or groups with outside ppl */}
-        {filteredGroups?.length && participants.length === 1 ? (
+        {filteredGroups?.length && 1 === participants.length ? (
           <>
             <div className="mt-8 text-gray-500">Groups</div>
             <div className="mt-2 flex flex-col gap-1">
@@ -170,7 +170,7 @@ export const SelectUserOrGroup: React.FC<{
           </>
         ) : null}
 
-        {filteredFriends?.length === 0 && filteredGroups?.length === 0 ? (
+        {0 === filteredFriends?.length && 0 === filteredGroups?.length ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

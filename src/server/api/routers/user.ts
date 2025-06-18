@@ -13,6 +13,7 @@ import { getDocumentUploadUrl } from '~/server/storage';
 import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
 import { BigMath } from '~/utils/numbers';
 
+// import { sendExpensePushNotification } from '../services/notificationService';
 import {
   addUserExpense,
   deleteExpense,
@@ -389,6 +390,18 @@ export const userRouter = createTRPCRouter({
 
     return expenses;
   }),
+
+  // sendExpensePushNotification: protectedProcedure
+  //   .input(z.object({ expenseId: z.string() }))
+  //   .mutation(async ({ input }) => {
+  //     sendExpensePushNotification(input.expenseId).catch((err) => {
+  //       console.error('Error sending push notification', err);
+  //       throw new TRPCError({
+  //         code: 'INTERNAL_SERVER_ERROR',
+  //         message: 'Failed to send push notification',
+  //       });
+  //     });
+  //   }),
 
   getUserDetails: protectedProcedure
     .input(z.object({ userId: z.number() }))

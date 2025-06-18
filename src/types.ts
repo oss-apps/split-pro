@@ -5,7 +5,7 @@ import { z } from 'zod';
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithUser<T = {}> = NextPage<{ user: User } & T> & { auth: boolean };
 
-export type PushMessage = { title: string; message: string };
+export type PushMessage = { title: string; message: string; data?: { url?: string } };
 
 export type SplitwisePicture = {
   small: string;

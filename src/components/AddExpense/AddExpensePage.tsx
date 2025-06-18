@@ -171,21 +171,25 @@ export const AddOrEditExpensePage: React.FC<{
     [setDescription],
   );
 
+  const onCancel = useCallback(() => {
+    if (expenseId) {
+      router
+        .push((group ? '/groups/' + group.id : '') + '/expenses/' + expenseId)
+        .catch(console.error);
+    } else if (participants.length === 1) {
+      router.push('/balances').catch(console.error);
+    } else {
+      resetState();
+    }
+  }, [expenseId, group, participants.length, resetState, router]);
+
   return (
     <>
       <div className="flex flex-col gap-4 px-4 py-2">
         <div className="flex items-center justify-between">
-          {participants.length === 1 ? (
-            <Link href="/balances">
-              <Button variant="ghost" className=" px-0 text-primary">
-                Cancel
-              </Button>
-            </Link>
-          ) : (
-            <Button variant="ghost" className=" px-0 text-primary" onClick={resetState}>
-              Cancel
-            </Button>
-          )}
+          <Button variant="ghost" className=" px-0 text-primary" onClick={onCancel}>
+            Cancel
+          </Button>
           <div className="text-center">Add new expense</div>
           <Button
             variant="ghost"

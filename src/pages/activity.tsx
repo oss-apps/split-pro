@@ -68,11 +68,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                   <div className="mt-[30vh] text-center text-gray-400">No activities yet</div>
                 ) : null}
                 {expensesQuery.data?.map((e) => (
-                  <Link
-                    href={`${e.expense.groupId ? `/groups/${e.expense.groupId}/` : '/'}expenses/${e.expenseId}`}
-                    key={e.expenseId}
-                    className="flex  gap-2"
-                  >
+                  <Link href={`/expenses/${e.expenseId}`} key={e.expenseId} className="flex  gap-2">
                     <div className="mt-1">
                       <UserAvatar user={e.expense.paidByUser} size={30} />
                     </div>

@@ -172,6 +172,7 @@ model ExpenseParticipant {
     expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
 
     @@id([expenseId, userId])
+    @@index([userId], type: Hash)
 }
 
 model ExpenseNote {

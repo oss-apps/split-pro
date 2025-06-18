@@ -1,4 +1,5 @@
-import type { GroupBalance, User } from '@prisma/client';
+import type { User } from '@prisma/client';
+import { type getAllBalancesForGroup } from '@prisma/client/sql';
 import clsx from 'clsx';
 import { Info } from 'lucide-react';
 import { useMemo } from 'react';
@@ -18,9 +19,10 @@ interface UserWithBalance {
 }
 
 export const BalanceList: React.FC<{
-  groupBalances: GroupBalance[];
+  groupId: number;
+  groupBalances: getAllBalancesForGroup.Result[];
   users: User[];
-}> = ({ groupBalances, users }) => {
+}> = ({ groupId, groupBalances, users }) => {
   const userQuery = api.user.me.useQuery();
 
   const userMap = useMemo(() => {
@@ -32,16 +34,17 @@ export const BalanceList: React.FC<{
       {} as Record<number, UserWithBalance>,
     );
     groupBalances
-      .filter(({ amount }) => BigMath.abs(amount) > 0)
+      .filter(({ amount }) => amount != null && BigMath.abs(amount) > 0)
       .forEach((balance) => {
-        if (!res[balance.userId]!.balances[balance.firendId]) {
-          res[balance.userId]!.balances[balance.firendId] = {};
+        if (!res[balance.paidBy]!.balances[balance.borrowedBy]) {
+          res[balance.paidBy]!.balances[balance.borrowedBy] = {};
         }
-        const friendBalance = res[balance.userId]!.balances[balance.firendId]!;
-        friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0n) + balance.amount;
+        const friendBalance = res[balance.paidBy]!.balances[balance.borrowedBy]!;
+        friendBalance[balance.currency] =
+          (friendBalance[balance.currency] ?? 0n) + (balance.amount ?? 0n);
 
-        res[balance.userId]!.total[balance.currency] =
-          (res[balance.userId]!.total[balance.currency] ?? 0n) + balance.amount;
+        res[balance.paidBy]!.total[balance.currency] =
+          (res[balance.paidBy]!.total[balance.currency] ?? 0n) + (balance.amount ?? 0n);
       });
 
     return res;
@@ -109,7 +112,7 @@ export const BalanceList: React.FC<{
                           user={user}
                           amount={amount}
                           currency={currency}
-                          groupId={groupBalances[0]!.groupId}
+                          groupId={groupId}
                         >
                           <div className="mb-4 ml-5 flex cursor-pointer items-center gap-3 text-sm">
                             <UserAvatar user={friend} size={20} />

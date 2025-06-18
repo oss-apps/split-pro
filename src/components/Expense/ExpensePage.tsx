@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { type User as NextUser } from 'next-auth';
 import React from 'react';
 
+// import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 
 import { UserAvatar } from '../ui/avatar';
@@ -28,6 +29,8 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
   const youPaid = expense.paidBy === user.id;
 
   const CategoryIcon = CategoryIcons[expense.category] ?? Banknote;
+
+  // const sendNotificationMutation = api.user.sendExpensePushNotification.useMutation();
 
   return (
     <div className="">
@@ -102,6 +105,16 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
       </div>
       <Separator />
       <div className="mt-10 flex items-center gap-5 px-6">
+        {/* <button
+          onClick={() => {
+            sendNotificationMutation.mutate({
+              expenseId: expense.id,
+            });
+          }}
+          className="rounded-md bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600"
+        >
+          Test Notification
+        </button> */}
         <UserAvatar user={expense.paidByUser} size={35} />
         <p>
           {youPaid ? 'You' : (expense.paidByUser.name ?? expense.paidByUser.email)} paid{' '}

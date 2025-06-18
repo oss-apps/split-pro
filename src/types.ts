@@ -7,6 +7,7 @@ export type NextPageWithUser<T = {}> = NextPage<{ user: User } & T> & { auth: bo
 export interface PushMessage {
   title: string;
   message: string;
+  data?: { url?: string };
 }
 
 export interface SplitwisePicture {

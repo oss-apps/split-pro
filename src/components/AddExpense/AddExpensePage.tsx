@@ -14,7 +14,7 @@ import { CategoryPicker } from './CategoryPicker';
 import { CurrencyPicker } from './CurrencyPicker';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { SplitTypeSection } from './SplitTypeSection';
-import UploadFile from './UploadFile';
+import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
 import { Button } from '../ui/button';
 import { Calendar } from '../ui/calendar';
@@ -52,8 +52,7 @@ export const AddOrEditExpensePage: React.FC<{
     setExpenseDate,
   } = useAddExpenseStore((s) => s.actions);
 
-  const addExpenseMutation = api.user.addOrEditExpense.useMutation();
-  const addGroupExpenseMutation = api.group.addOrEditExpense.useMutation();
+  const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
   const updateProfile = api.user.updateUserDetail.useMutation();
 
   const onCurrencyPick = useCallback(
@@ -86,67 +85,37 @@ export const AddOrEditExpensePage: React.FC<{
       return;
     }
 
-    if (group) {
-      addGroupExpenseMutation.mutate(
-        {
-          name: description,
-          currency,
-          amount,
-          groupId: group.id,
-          splitType,
-          participants: participants.map((p) => ({
-            userId: p.id,
-            amount: p.amount ?? 0n,
-          })),
-          paidBy: paidBy.id,
-          category,
-          fileKey,
-          expenseDate,
-          expenseId,
+    addExpenseMutation.mutate(
+      {
+        name: description,
+        currency,
+        amount,
+        groupId: group?.id ?? null,
+        splitType,
+        participants: participants.map((p) => ({
+          userId: p.id,
+          amount: p.amount ?? 0n,
+        })),
+        paidBy: paidBy.id,
+        category,
+        fileKey,
+        expenseDate,
+        expenseId,
+      },
+      {
+        onSuccess: (d) => {
+          if (d) {
+            const id = d?.id ?? expenseId;
+            router
+              .push(group?.id ? `/groups/${group.id}/expenses/${id}` : `/expenses/${id}`)
+              .then(() => resetState())
+              .catch(console.error);
+          }
         },
-        {
-          onSuccess: (d) => {
-            if (d) {
-              router
-                .push(`/groups/${group.id}/expenses/${d?.id ?? expenseId}`)
-                .then(() => resetState())
-                .catch(console.error);
-            }
-          },
-        },
-      );
-    } else {
-      addExpenseMutation.mutate(
-        {
-          expenseId,
-          name: description,
-          currency,
-          amount,
-          splitType,
-          participants: participants.map((p) => ({
-            userId: p.id,
-            amount: p.amount ?? 0n,
-          })),
-          paidBy: paidBy.id,
-          category,
-          fileKey,
-          expenseDate,
-        },
-        {
-          onSuccess: (d) => {
-            if (participants[1] && d) {
-              router
-                .push(`expenses/${d?.id ?? expenseId}`)
-                .then(() => resetState())
-                .catch(console.error);
-            }
-          },
-        },
-      );
-    }
+      },
+    );
   }, [
     setSplitScreenOpen,
-    addGroupExpenseMutation,
     description,
     currency,
     amount,
@@ -195,11 +164,7 @@ export const AddOrEditExpensePage: React.FC<{
             variant="ghost"
             className="text-primary px-0"
             disabled={
-              addExpenseMutation.isPending ||
-              addGroupExpenseMutation.isPending ||
-              !amount ||
-              '' === description ||
-              isFileUploading
+              addExpenseMutation.isPending || !amount || '' === description || isFileUploading
             }
             onClick={addExpense}
           >
@@ -276,20 +241,15 @@ export const AddOrEditExpensePage: React.FC<{
                       <Button
                         className="min-w-[100px]"
                         size="sm"
-                        loading={
-                          addExpenseMutation.isPending ||
-                          addGroupExpenseMutation.isPending ||
-                          isFileUploading
-                        }
+                        loading={addExpenseMutation.isPending || isFileUploading}
                         disabled={
                           addExpenseMutation.isPending ||
-                          addGroupExpenseMutation.isPending ||
                           !amount ||
                           '' === description ||
                           isFileUploading ||
                           !isExpenseSettled
                         }
-                        onClick={() => addExpense()}
+                        onClick={addExpense}
                       >
                         Submit
                       </Button>

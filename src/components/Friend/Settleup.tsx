@@ -32,7 +32,7 @@ export const SettleUp: React.FC<{
     setAmount(toUIString(BigMath.abs(balance.amount)));
   }
 
-  const addExpenseMutation = api.user.addOrEditExpense.useMutation();
+  const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
   const utils = api.useUtils();
 
   function saveExpense() {
@@ -58,6 +58,7 @@ export const SettleUp: React.FC<{
         ],
         paidBy: isCurrentUserPaying ? currentUser.id : friend.id,
         category: 'general',
+        groupId: null,
       },
       {
         onSuccess: () => {

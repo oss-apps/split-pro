@@ -27,7 +27,7 @@ export const UploadFile: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const { setFileUploading, setFileKey } = useAddExpenseStore((s) => s.actions);
 
-  const getUploadUrl = api.user.getUploadUrl.useMutation();
+  const getUploadUrl = api.expense.getUploadUrl.useMutation();
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;

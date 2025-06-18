@@ -20,7 +20,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   const expenseId = router.query.expenseId as string;
   const groupId = parseInt(router.query.groupId as string);
 
-  const expenseQuery = api.group.getExpenseDetails.useQuery({ expenseId, groupId });
+  const expenseQuery = api.expense.getExpenseDetails.useQuery({ expenseId });
 
   return (
     <>

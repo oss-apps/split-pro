@@ -21,10 +21,11 @@ export const DeleteFriend: React.FC<{
     try {
       await deleteFriendMutation.mutateAsync({ friendId });
     } catch (e) {
+      console.error('Failed to delete friend', e);
       toast.error('Failed to delete user');
       return;
     }
-    utils.user.getBalances.invalidate().catch(console.error);
+    utils.expense.getBalances.invalidate().catch(console.error);
 
     await router.replace(`/balances`);
   };

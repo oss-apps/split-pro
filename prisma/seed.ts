@@ -1,6 +1,6 @@
 import { PrismaClient, SplitType } from '@prisma/client';
 
-import { createGroupExpense } from '~/server/api/services/splitService';
+import { createExpense } from '~/server/api/services/splitService';
 import { dummyExpenses, dummyUsers } from '~/utils/dummies';
 
 const prisma = new PrismaClient();
@@ -58,7 +58,7 @@ async function createGroupExpenses() {
       }));
     } else if (template.splitType === SplitType.PERCENTAGE) {
       const percentages =
-        template.participantIndices.length === 4 ? [30, 25, 25, 20] : [40, 35, 25];
+        4 === template.participantIndices.length ? [30, 25, 25, 20] : [40, 35, 25];
       participantsData = participants.map((user, index) => {
         const percentage = percentages[index]!;
         const amount = (baseAmount * BigInt(percentage)) / 100n;
@@ -69,7 +69,7 @@ async function createGroupExpenses() {
       });
     } else if (template.splitType === SplitType.EXACT) {
       const amounts =
-        template.participantIndices.length === 4 ? [4000, 3600, 4000, 4000] : [2750, 2750];
+        4 === template.participantIndices.length ? [4000, 3600, 4000, 4000] : [2750, 2750];
       participantsData = participants.map((user, index) => {
         const amount = BigInt(amounts[index]!);
         return {
@@ -78,7 +78,7 @@ async function createGroupExpenses() {
         };
       });
     } else if (template.splitType === SplitType.SHARE) {
-      const shares = template.participantIndices.length === 3 ? [2, 1, 1] : [3, 2];
+      const shares = 3 === template.participantIndices.length ? [2, 1, 1] : [3, 2];
       const totalShares = shares.reduce((sum, share) => sum + share, 0);
       participantsData = participants.map((user, index) => {
         const amount = (baseAmount * BigInt(shares[index]!)) / BigInt(totalShares);
@@ -89,7 +89,7 @@ async function createGroupExpenses() {
       });
     } else {
       const baseAmountPerPerson = baseAmount / BigInt(participants.length);
-      const adjustments = participants.length === 3 ? [500, -200, -300] : [300, 100, -400];
+      const adjustments = 3 === participants.length ? [500, -200, -300] : [300, 100, -400];
       participantsData = participants.map((user, index) => {
         const adjustment = BigInt(adjustments[index] ?? 0);
         const amount = baseAmountPerPerson + adjustment;
@@ -103,17 +103,16 @@ async function createGroupExpenses() {
     const expenseDate = new Date('2024-12-01');
     expenseDate.setDate(expenseDate.getDate() + i);
 
-    const expense = await createGroupExpense(
-      groupId,
+    const expense = await createExpense(
+      {
+        ...template,
+        groupId,
+        paidBy: paidBy.id,
+        amount: baseAmount,
+        participants: participantsData,
+        expenseDate,
+      },
       paidBy.id,
-      template.name,
-      template.category,
-      baseAmount,
-      template.splitType,
-      template.currency,
-      participantsData,
-      paidBy.id,
-      expenseDate,
     );
 
     expenses.push(expense);

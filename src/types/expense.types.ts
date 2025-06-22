@@ -1,10 +1,5 @@
-import { type Expense, SplitType } from '@prisma/client';
+import { type Expense, type ExpenseParticipant, SplitType } from '@prisma/client';
 import { z } from 'zod';
-
-export interface ExpenseParticipant {
-  userId: number;
-  amount: bigint;
-}
 
 export type CreateExpense = Omit<
   Expense,
@@ -21,7 +16,7 @@ export type CreateExpense = Omit<
   expenseDate?: Date;
   fileKey?: string;
   expenseId?: string;
-  participants: ExpenseParticipant[];
+  participants: Omit<ExpenseParticipant, 'expenseId'>[];
 };
 
 export const createExpenseSchema = z.object({

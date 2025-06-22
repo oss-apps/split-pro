@@ -39,6 +39,7 @@ import { env } from '~/env';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
+import { displayName, toUIDate } from '~/utils/strings';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
@@ -179,16 +180,13 @@ const BalancePage: NextPageWithUser<{
                     ) : null;
                   })}
                 </div>
-                {expensesQuery?.data && 0 < expensesQuery?.data?.length && (
+                {expensesQuery?.data && expensesQuery.data[expensesQuery.data.length - 1] && (
                   <div className="mt-8">
                     <p className="font-semibold">First expense</p>
                     <p>
-                      {expensesQuery.data[expensesQuery.data.length - 1]?.createdAt
-                        ? format(
-                            expensesQuery.data[expensesQuery.data.length - 1]!.createdAt,
-                            'MMM dd, yyyy',
-                          )
-                        : '--'}
+                      {toUIDate(expensesQuery.data[expensesQuery.data.length - 1].createdAt, {
+                        year: true,
+                      })}
                     </p>
                   </div>
                 )}
@@ -231,7 +229,7 @@ const BalancePage: NextPageWithUser<{
                     <div key={groupUser.userId} className="flex items-center justify-between">
                       <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
                         <UserAvatar user={groupUser.user} />
-                        <p>{groupUser.user.name ?? groupUser.user.email}</p>
+                        <p>{displayName(groupUser.user)}</p>
                       </div>
                       {groupUser.userId === groupDetailQuery.data?.userId ? (
                         <p className="text-sm text-gray-400">owner</p>
@@ -269,10 +267,10 @@ const BalancePage: NextPageWithUser<{
                   ))}
                 </div>
               </>
-              {groupDetailQuery?.data?.createdAt && (
+              {groupDetailQuery.data?.createdAt && (
                 <div className="mt-8">
                   <p className="font-semibold">Group created</p>
-                  <p>{format(groupDetailQuery.data?.createdAt, 'MMM dd, yyyy')}</p>
+                  <p>{toUIDate(groupDetailQuery.data.createdAt, { year: true })}</p>
                 </div>
               )}
               <div className="mt-8">

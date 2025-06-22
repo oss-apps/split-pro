@@ -20,6 +20,7 @@ import { Button } from '../ui/button';
 import { Calendar } from '../ui/calendar';
 import { Input } from '../ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { toUIDate } from '~/utils/strings';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
@@ -152,6 +153,14 @@ export const AddOrEditExpensePage: React.FC<{
     }
   }, [expenseId, group, participants.length, resetState, router]);
 
+  const onAmountChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      onUpdateAmount(value);
+    },
+    [onUpdateAmount],
+  );
+
   return (
     <>
       <div className="flex flex-col gap-4 px-4 py-2">
@@ -195,7 +204,7 @@ export const AddOrEditExpensePage: React.FC<{
                 inputMode="decimal"
                 value={amtStr}
                 min="0"
-                onChange={(e) => onUpdateAmount(e.target.value)}
+                onChange={onAmountChange}
               />
             </div>
             <div className="h-[180px]">
@@ -216,12 +225,7 @@ export const AddOrEditExpensePage: React.FC<{
                           >
                             <CalendarIcon className="text-primary mr-2 h-6 w-6" />
                             {expenseDate ? (
-                              format(expenseDate, 'yyyy-MM-dd') ===
-                              format(new Date(), 'yyyy-MM-dd') ? (
-                                'Today'
-                              ) : (
-                                format(expenseDate, 'MMM dd')
-                              )
+                              toUIDate(expenseDate, { useToday: true })
                             ) : (
                               <span>Pick a date</span>
                             )}

@@ -11,6 +11,7 @@ import useEnableAfter from '~/hooks/useEnableAfter';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
+import { displayName, toUIDate } from '~/utils/strings';
 
 function getPaymentString(
   user: User,
@@ -76,9 +77,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                       {e.expense.deletedByUser ? (
                         <p className="text-red-500 opacity-70">
                           <span className="font-semibold">
-                            {e.expense.deletedBy === user.id
-                              ? 'You'
-                              : (e.expense.deletedByUser.name ?? e.expense.deletedByUser.email)}
+                            {displayName(e.expense.deletedByUser, user.id)}
                           </span>
                           {' deleted the expense '}
                           <span className="font-semibold">{e.expense.name}</span>
@@ -86,9 +85,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                       ) : (
                         <p className="text-gray-300">
                           <span className="font-semibold text-gray-300">
-                            {e.expense.paidBy === user.id
-                              ? 'You'
-                              : (e.expense.paidByUser.name ?? e.expense.paidByUser.email)}
+                            {displayName(e.expense.paidByUser, user.id)}
                           </span>
                           {' paid for '}
                           <span className="font-semibold text-gray-300">{e.expense.name}</span>
@@ -106,9 +103,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                           !!e.expense.deletedBy,
                         )}
                       </div>
-                      <p className="text-xs text-gray-500">
-                        {format(e.expense.expenseDate, 'dd MMM')}
-                      </p>
+                      <p className="text-xs text-gray-500">{toUIDate(e.expense.expenseDate)}</p>
                     </div>
                   </Link>
                 ))}

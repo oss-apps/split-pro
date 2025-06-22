@@ -12,6 +12,7 @@ import { UserAvatar } from '../ui/avatar';
 import { CategoryIcons } from '../ui/categoryIcons';
 import { AppDrawer } from '../ui/drawer';
 import { Separator } from '../ui/separator';
+import { displayName, toUIDate } from '~/utils/strings';
 
 interface ExpenseDetailsProps {
   user: NextUser;
@@ -42,26 +43,28 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
           <div className="flex flex-col gap-2">
             <p className="">{expense.name}</p>
             <p className="text-2xl font-semibold">
-              {expense.currency} {toUIString(expense.amount ?? 0)}
+              {expense.currency} {toUIString(expense.amount)}
             </p>
             {!isSameDay(expense.expenseDate, expense.createdAt) ? (
-              <p className="text-sm text-gray-500">{format(expense.expenseDate, 'dd MMM yyyy')}</p>
+              <p className="text-sm text-gray-500">
+                {toUIDate(expense.expenseDate, { year: true })}
+              </p>
             ) : null}
             {expense.updatedByUser ? (
               <p className="text-sm text-gray-500">
-                Edited by {expense.updatedByUser?.name ?? expense.updatedByUser?.email} on{' '}
-                {format(expense.updatedAt, 'dd MMM yyyy')}
+                Edited by {displayName(expense.updatedByUser)} on{' '}
+                {toUIDate(expense.updatedAt, { year: true })}
               </p>
             ) : null}
             {expense.deletedByUser ? (
               <p className="text-sm text-orange-600">
-                Deleted by {expense.deletedByUser.name ?? expense.addedByUser.email} on{' '}
-                {format(expense.deletedAt ?? expense.createdAt, 'dd MMM yyyy')}
+                Deleted by {displayName(expense.deletedByUser)} on{' '}
+                {toUIDate(expense.deletedAt ?? expense.createdAt, { year: true })}
               </p>
             ) : (
               <p className="text-sm text-gray-500">
-                Added by {expense.addedByUser.name ?? expense.addedByUser.email} on{' '}
-                {format(expense.createdAt, 'dd MMM yyyy')}
+                Added by {displayName(expense.addedByUser)} on{' '}
+                {toUIDate(expense.createdAt, { year: true })}
               </p>
             )}
           </div>

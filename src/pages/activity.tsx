@@ -1,5 +1,4 @@
 import { SplitType } from '@prisma/client';
-import { format } from 'date-fns';
 import Head from 'next/head';
 import Link from 'next/link';
 import { type User } from 'next-auth';

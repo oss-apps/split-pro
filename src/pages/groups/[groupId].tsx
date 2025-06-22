@@ -1,6 +1,5 @@
 import Avatar from 'boring-avatars';
-import clsx from 'clsx';
-import { format } from 'date-fns';
+import { clsx } from 'clsx';
 import { motion } from 'framer-motion';
 import {
   BarChartHorizontal,

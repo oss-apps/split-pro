@@ -1,23 +1,23 @@
 import { type Expense, type ExpenseParticipant, type User } from '@prisma/client';
-import { format, isSameDay } from 'date-fns';
+import { isSameDay } from 'date-fns';
 import { Banknote } from 'lucide-react';
-import Image from 'next/image';
 import { type User as NextUser } from 'next-auth';
-import React from 'react';
+import Image from 'next/image';
+import React, { useMemo } from 'react';
 
 // import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 
+import { displayName, toUIDate } from '~/utils/strings';
 import { UserAvatar } from '../ui/avatar';
 import { CategoryIcons } from '../ui/categoryIcons';
 import { AppDrawer } from '../ui/drawer';
 import { Separator } from '../ui/separator';
-import { displayName, toUIDate } from '~/utils/strings';
 
 interface ExpenseDetailsProps {
   user: NextUser;
   expense: Expense & {
-    expenseParticipants: Array<ExpenseParticipant & { user: User }>;
+    expenseParticipants: (ExpenseParticipant & { user: User })[];
     addedByUser: User;
     paidByUser: User;
     deletedByUser: User | null;
@@ -27,11 +27,23 @@ interface ExpenseDetailsProps {
 }
 
 const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
-  const youPaid = expense.paidBy === user.id;
-
   const CategoryIcon = CategoryIcons[expense.category] ?? Banknote;
 
   // const sendNotificationMutation = api.user.sendExpensePushNotification.useMutation();
+
+  const receiptThumbnail = useMemo(() => {
+    return (
+      <Image
+        src={`${storagePublicUrl}/${expense.fileKey}`}
+        alt="Expense receipt"
+        width={56}
+        height={56}
+        data-loaded="false"
+        onLoad={setDataLoaded}
+        className="h-14 w-14 rounded-md object-cover object-center data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
+      />
+    );
+  }, [expense.fileKey, storagePublicUrl]);
 
   return (
     <div className="">
@@ -72,19 +84,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
         <div>
           {expense.fileKey ? (
             <AppDrawer
-              trigger={
-                <Image
-                  src={`${storagePublicUrl}/${expense.fileKey}`}
-                  alt="Expense receipt"
-                  width={56}
-                  height={56}
-                  data-loaded="false"
-                  onLoad={(event) => {
-                    event.currentTarget.setAttribute('data-loaded', 'true');
-                  }}
-                  className="h-14 w-14 rounded-md object-cover object-center data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
-                />
-              }
+              trigger={receiptThumbnail}
               leftAction="Close"
               title="Expense Receipt"
               className="h-[98vh]"
@@ -96,9 +96,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
                   height={800}
                   alt="Expense receipt"
                   data-loaded="false"
-                  onLoad={(event) => {
-                    event.currentTarget.setAttribute('data-loaded', 'true');
-                  }}
+                  onLoad={setDataLoaded}
                   className="h-full w-full rounded-2xl object-cover data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
                 />
               </div>
@@ -120,8 +118,8 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
         </button> */}
         <UserAvatar user={expense.paidByUser} size={35} />
         <p>
-          {youPaid ? 'You' : (expense.paidByUser.name ?? expense.paidByUser.email)} paid{' '}
-          {expense.currency} {toUIString(expense.amount)}
+          {displayName(expense.paidByUser, user.id)} paid {expense.currency}{' '}
+          {toUIString(expense.amount)}
         </p>
       </div>
       <div className="mt-4 ml-14 flex flex-col gap-4 px-6">
@@ -131,7 +129,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
             <div key={p.userId} className="flex items-center gap-2 text-sm text-gray-500">
               <UserAvatar user={p.user} size={25} />
               <p>
-                {user.id === p.userId ? 'You Owe' : `${p.user.name ?? p.user.email} owes`}{' '}
+                {user.id === p.userId ? 'You owe' : `${p.user.name ?? p.user.email} owes`}{' '}
                 {expense.currency}{' '}
                 {toUIString((expense.paidBy === p.userId ? (expense.amount ?? 0n) : 0n) - p.amount)}
               </p>
@@ -140,6 +138,10 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
       </div>
     </div>
   );
+};
+
+const setDataLoaded = (event: React.SyntheticEvent<HTMLImageElement>) => {
+  event.currentTarget.setAttribute('data-loaded', 'true');
 };
 
 export default ExpenseDetails;

@@ -4,6 +4,7 @@ import { type User as NextUser } from 'next-auth';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
+import { DEFAULT_CATEGORY } from '~/lib/category';
 import { api } from '~/utils/api';
 import { BigMath, toSafeBigInt, toUIString } from '~/utils/numbers';
 
@@ -57,7 +58,7 @@ export const SettleUp: React.FC<{
           },
         ],
         paidBy: isCurrentUserPaying ? currentUser.id : friend.id,
-        category: 'general',
+        category: DEFAULT_CATEGORY,
       },
       {
         onSuccess: () => {

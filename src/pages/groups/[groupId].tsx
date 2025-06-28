@@ -164,7 +164,7 @@ const BalancePage: NextPageWithUser<{
               trigger={<BarChartHorizontal className="h-6 w-6" />}
               className="h-[85vh]"
             >
-              <div className="">
+              <>
                 <p className="font-semibold">Total expenses</p>
                 <div className="mt-2 flex flex-wrap gap-1">
                   {groupTotalQuery.data?.map((total, index, arr) => {
@@ -182,13 +182,13 @@ const BalancePage: NextPageWithUser<{
                   <div className="mt-8">
                     <p className="font-semibold">First expense</p>
                     <p>
-                      {toUIDate(expensesQuery.data[expensesQuery.data.length - 1].createdAt, {
+                      {toUIDate(expensesQuery.data[expensesQuery.data.length - 1]!.createdAt, {
                         year: true,
                       })}
                     </p>
                   </div>
                 )}
-              </div>
+              </>
             </AppDrawer>
             <AppDrawer
               title="Group info"
@@ -387,8 +387,8 @@ const BalancePage: NextPageWithUser<{
             <div className="mb-4">
               <GroupMyBalance
                 userId={user.id}
-                groupBalances={groupDetailQuery.data?.groupBalances ?? []}
-                users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
+                groupBalances={groupDetailQuery.data?.groupBalances}
+                users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user)}
               />
             </div>
             <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b pb-4">

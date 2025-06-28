@@ -5,11 +5,15 @@ import { BigMath, toUIString } from '~/utils/numbers';
 
 interface GroupMyBalanceProps {
   userId: number;
-  groupBalances: GroupBalance[];
-  users: User[];
+  groupBalances?: GroupBalance[];
+  users?: User[];
 }
 
-const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, users }) => {
+const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
+  userId,
+  groupBalances = [],
+  users = [],
+}) => {
   const userMap = users.reduce(
     (acc, user) => {
       acc[user.id] = user;

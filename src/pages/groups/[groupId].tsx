@@ -1,6 +1,5 @@
 import Avatar from 'boring-avatars';
 import { clsx } from 'clsx';
-import { motion } from 'framer-motion';
 import {
   BarChartHorizontal,
   Check,
@@ -384,7 +383,7 @@ const BalancePage: NextPageWithUser<{
             <NoMembers group={groupDetailQuery.data} enableSendingInvites={enableSendingInvites} />
           </div>
         ) : (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <div className="transition-discrete starting:opacity-0">
             <div className="mb-4">
               <GroupMyBalance
                 userId={user.id}
@@ -445,7 +444,7 @@ const BalancePage: NextPageWithUser<{
                 />
               </TabsContent>
             </Tabs>
-          </motion.div>
+          </div>
         )}
       </MainLayout>
     </>

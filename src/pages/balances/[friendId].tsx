@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { ChevronLeftIcon, PlusIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -74,7 +73,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
         loading={balances.isPending || expenses.isPending || friendQuery.isPending}
       >
         {!friendQuery.data ? null : (
-          <motion.div className="mb-28" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <div className="mb-28 transition-discrete starting:opacity-0">
             <div className="mx-4 flex flex-wrap gap-2">
               <div className="text-orange-700">
                 {0 < (youOwe?.length ?? 0) && (
@@ -154,7 +153,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 userId={user.id}
               />
             </div>
-          </motion.div>
+          </div>
         )}
       </MainLayout>
     </>

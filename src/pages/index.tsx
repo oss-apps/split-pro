@@ -4,7 +4,6 @@ import {
   Bell,
   FileUp,
   GitFork,
-  Github,
   Globe,
   Import,
   Split,

@@ -1,8 +1,8 @@
 import { PlusIcon } from '@heroicons/react/24/solid';
-import clsx from 'clsx';
-import { motion } from 'framer-motion';
+import { clsx } from 'clsx';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useMemo } from 'react';
 
 import { CreateGroup } from '~/components/group/CreateGroup';
 import MainLayout from '~/components/Layout/MainLayout';
@@ -15,35 +15,32 @@ import { BigMath, toUIString } from '~/utils/numbers';
 const BalancePage: NextPageWithUser = () => {
   const groupQuery = api.group.getAllGroupsWithBalances.useQuery();
 
+  const actions = useMemo(
+    () => (
+      <CreateGroup>
+        <PlusIcon className="text-primary h-6 w-6" />
+      </CreateGroup>
+    ),
+    [],
+  );
+
   return (
     <>
       <Head>
         <title>Groups</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainLayout
-        title="Groups"
-        actions={
-          <CreateGroup>
-            <PlusIcon className="text-primary h-6 w-6" />
-          </CreateGroup>
-        }
-        loading={groupQuery.isPending}
-      >
+      <MainLayout title="Groups" actions={actions} loading={groupQuery.isPending}>
         <div className="mt-7 flex flex-col gap-8 pb-36">
           {0 === groupQuery.data?.length ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="mt-[30vh] flex flex-col items-center justify-center gap-20"
-            >
+            <div className="mt-[30vh] flex flex-col items-center justify-center gap-20">
               <CreateGroup>
                 <Button>
                   <PlusIcon className="mr-2 h-4 w-4" />
                   Create Group
                 </Button>
               </CreateGroup>
-            </motion.div>
+            </div>
           ) : (
             groupQuery.data?.map((g) => {
               const [currency, amount] = Object.entries(g.balances).reduce(
@@ -55,14 +52,14 @@ const BalancePage: NextPageWithUser = () => {
                 },
                 [g.defaultCurrency, 0n],
               );
-              const multiCurrency = 1 < Object.values(g.balances).filter((b) => b !== 0n).length;
+              const multiCurrency = 1 < Object.values(g.balances).filter((b) => 0n !== b).length;
               return (
                 <GroupBalance
                   key={g.id}
                   groupId={g.id}
                   name={g.name}
                   amount={amount}
-                  isPositive={0 <= amount ? true : false}
+                  isPositive={0 <= amount}
                   currency={currency}
                   multiCurrency={multiCurrency}
                 />

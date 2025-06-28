@@ -27,7 +27,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
     { enabled: !!_friendId },
   );
 
-  const expenses = api.user.getExpensesWithFriend.useQuery(
+  const expenses = api.expense.getExpensesWithFriend.useQuery(
     { friendId: _friendId },
     { enabled: !!_friendId },
   );

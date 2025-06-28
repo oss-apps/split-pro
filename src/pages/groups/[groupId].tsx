@@ -48,7 +48,7 @@ const BalancePage: NextPageWithUser<{
 
   const groupDetailQuery = api.group.getGroupDetails.useQuery({ groupId });
   const groupTotalQuery = api.group.getGroupTotals.useQuery({ groupId });
-  const expensesQuery = api.group.getExpenses.useQuery({ groupId });
+  const expensesQuery = api.expense.getGroupExpenses.useQuery({ groupId });
   const deleteGroupMutation = api.group.delete.useMutation();
   const leaveGroupMutation = api.group.leaveGroup.useMutation();
   const toggleSimplifyDebtsMutation = api.group.toggleSimplifyDebts.useMutation();

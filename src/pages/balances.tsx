@@ -17,20 +17,7 @@ import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser = () => {
-  function shareWithFriends() {
-    if (navigator.share) {
-      navigator
-        .share({
-          title: 'SplitPro',
-          text: "Check out SplitPro. It's an open source free alternative for Splitwise",
-          url: 'https://splitpro.app',
-        })
-        .then(() => console.info('Successful share'))
-        .catch((error) => console.error('Error sharing', error));
-    }
-  }
-
-  const balanceQuery = api.user.getBalances.useQuery();
+  const balanceQuery = api.expense.getBalances.useQuery();
   const showProgress = useEnableAfter(350);
 
   return (
@@ -177,6 +164,19 @@ const FriendBalance: React.FC<{
     </Link>
   );
 };
+
+function shareWithFriends() {
+  if (navigator.share) {
+    navigator
+      .share({
+        title: 'SplitPro',
+        text: "Check out SplitPro. It's an open source free alternative for Splitwise",
+        url: 'https://splitpro.app',
+      })
+      .then(() => console.info('Successful share'))
+      .catch((error) => console.error('Error sharing', error));
+  }
+}
 
 BalancePage.auth = true;
 

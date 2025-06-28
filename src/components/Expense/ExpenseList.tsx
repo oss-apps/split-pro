@@ -6,16 +6,15 @@ import Link from 'next/link';
 import React from 'react';
 
 import { CategoryIcon } from '~/components/ui/categoryIcons';
-import { type GroupRouter } from '~/server/api/routers/group';
-import { type UserRouter } from '~/server/api/routers/user';
+import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { toUIString } from '~/utils/numbers';
 import { displayName } from '~/utils/strings';
 
 export const ExpenseList: React.FC<{
   userId: number;
   expenses:
-    | inferRouterOutputs<GroupRouter>['getExpenses']
-    | inferRouterOutputs<UserRouter>['getExpensesWithFriend'];
+    | inferRouterOutputs<ExpenseRouter>['getGroupExpenses']
+    | inferRouterOutputs<ExpenseRouter>['getExpensesWithFriend'];
   contactId: number;
   isLoading?: boolean;
 }> = ({ userId, expenses, contactId, isLoading }) => (

@@ -1,17 +1,11 @@
-import { SplitType } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
 import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
-import { db } from '~/server/db';
 
-import {
-  createGroupExpense,
-  editExpense,
-  recalculateGroupBalances,
-} from '../services/splitService';
+import { recalculateGroupBalances } from '../services/splitService';
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
@@ -120,128 +114,6 @@ export const groupRouter = createTRPCRouter({
       });
 
       return group;
-    }),
-
-  addOrEditExpense: groupProcedure
-    .input(
-      z.object({
-        paidBy: z.number(),
-        name: z.string(),
-        category: z.string(),
-        amount: z.bigint(),
-        splitType: z.enum([
-          SplitType.ADJUSTMENT,
-          SplitType.EQUAL,
-          SplitType.PERCENTAGE,
-          SplitType.SHARE,
-          SplitType.EXACT,
-          SplitType.SETTLEMENT,
-        ]),
-        currency: z.string(),
-        participants: z.array(z.object({ userId: z.number(), amount: z.bigint() })),
-        fileKey: z.string().optional(),
-        expenseDate: z.date().optional(),
-        expenseId: z.string().optional(),
-      }),
-    )
-    .mutation(async ({ input, ctx }) => {
-      if (input.expenseId) {
-        const expenseParticipant = await db.expenseParticipant.findUnique({
-          where: {
-            expenseId_userId: {
-              expenseId: input.expenseId,
-              userId: ctx.session.user.id,
-            },
-          },
-        });
-
-        if (!expenseParticipant) {
-          throw new TRPCError({
-            code: 'UNAUTHORIZED',
-            message: 'You are not the participant of the expense',
-          });
-        }
-      }
-
-      try {
-        const expense = input.expenseId
-          ? await editExpense(
-              input.expenseId,
-              input.paidBy,
-              input.name,
-              input.category,
-              input.amount,
-              input.splitType,
-              input.currency,
-              input.participants,
-              ctx.session.user.id,
-              input.expenseDate ?? new Date(),
-              input.fileKey,
-            )
-          : await createGroupExpense(
-              input.groupId,
-              input.paidBy,
-              input.name,
-              input.category,
-              input.amount,
-              input.splitType,
-              input.currency,
-              input.participants,
-              ctx.session.user.id,
-              input.expenseDate ?? new Date(),
-              input.fileKey,
-            );
-
-        return expense;
-      } catch (error) {
-        console.error(error);
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create expense' });
-      }
-    }),
-
-  getExpenses: groupProcedure
-    .input(z.object({ groupId: z.number() }))
-    .query(async ({ input, ctx }) => {
-      const expenses = await ctx.db.expense.findMany({
-        where: {
-          groupId: input.groupId,
-          deletedBy: null,
-        },
-        orderBy: {
-          expenseDate: 'desc',
-        },
-        include: {
-          expenseParticipants: true,
-          paidByUser: true,
-          deletedByUser: true,
-        },
-      });
-
-      return expenses;
-    }),
-
-  getExpenseDetails: groupProcedure
-    .input(z.object({ expenseId: z.string() }))
-    .query(async ({ input }) => {
-      const expense = await db.expense.findUnique({
-        where: {
-          id: input.expenseId,
-        },
-        include: {
-          expenseParticipants: {
-            include: {
-              user: true,
-            },
-          },
-          expenseNotes: true,
-          addedByUser: true,
-          paidByUser: true,
-          deletedByUser: true,
-          updatedByUser: true,
-        },
-      });
-
-      return expense;
     }),
 
   getGroupDetails: groupProcedure.query(async ({ input, ctx }) => {

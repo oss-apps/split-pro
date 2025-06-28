@@ -22,7 +22,12 @@ export const GroupSettleUp: React.FC<{
 }> = ({ amount, currency, friend, user, children, groupId }) => {
   const [amountStr, setAmountStr] = useState((Number(BigMath.abs(amount)) / 100).toString());
 
-  const addExpenseMutation = api.group.addOrEditExpense.useMutation();
+  const onChangeAmount = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setAmountStr(value);
+  }, []);
+
+  const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
   const utils = api.useUtils();
 
   const sender = 0 > amount ? user : friend;
@@ -92,13 +97,13 @@ export const GroupSettleUp: React.FC<{
             value={amountStr}
             inputMode="decimal"
             className="mx-auto w-[150px] text-lg"
-            onChange={(e) => setAmountStr(e.target.value)}
+            onChange={onChangeAmount}
           />
         </div>
       </div>
       <div className="mt-8 hidden items-center justify-center gap-4 px-2 lg:flex">
         <DrawerClose>
-          <Button size="sm" className="mx-auto" onClick={() => saveExpense()}>
+          <Button size="sm" className="mx-auto" onClick={saveExpense}>
             Save
           </Button>
         </DrawerClose>

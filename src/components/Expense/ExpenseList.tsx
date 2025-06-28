@@ -11,12 +11,12 @@ import { displayName, toUIDate } from '~/utils/strings';
 
 export const ExpenseList: React.FC<{
   userId: number;
-  expenses:
+  expenses?:
     | inferRouterOutputs<ExpenseRouter>['getGroupExpenses']
     | inferRouterOutputs<ExpenseRouter>['getExpensesWithFriend'];
   contactId: number;
   isLoading?: boolean;
-}> = ({ userId, expenses, contactId, isLoading }) => (
+}> = ({ userId, expenses = [], contactId, isLoading }) => (
   <>
     {expenses.map((e) => {
       const isGroup = !!e.groupId;

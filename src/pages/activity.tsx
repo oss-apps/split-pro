@@ -1,12 +1,10 @@
 import { SplitType } from '@prisma/client';
+import { type User } from 'next-auth';
 import Head from 'next/head';
 import Link from 'next/link';
-import { type User } from 'next-auth';
 
 import MainLayout from '~/components/Layout/MainLayout';
 import { UserAvatar } from '~/components/ui/avatar';
-import { LoadingSpinner } from '~/components/ui/spinner';
-import useEnableAfter from '~/hooks/useEnableAfter';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
@@ -45,7 +43,6 @@ function getPaymentString(
 
 const ActivityPage: NextPageWithUser = ({ user }) => {
   const expensesQuery = api.user.getAllExpenses.useQuery();
-  const showProgress = useEnableAfter(350);
 
   return (
     <>
@@ -53,62 +50,50 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
         <title>Activity</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainLayout title="Activity">
-        <div className="px-4">
-          <div className="flex flex-col gap-4">
-            {expensesQuery.isPending ? (
-              showProgress ? (
-                <div className="mt-10 flex justify-center">
-                  <LoadingSpinner className="text-primary" />
-                </div>
-              ) : null
-            ) : (
-              <>
-                {!expensesQuery.data?.length ? (
-                  <div className="mt-[30vh] text-center text-gray-400">No activities yet</div>
-                ) : null}
-                {expensesQuery.data?.map((e) => (
-                  <Link href={`/expenses/${e.expenseId}`} key={e.expenseId} className="flex gap-2">
-                    <div className="mt-1">
-                      <UserAvatar user={e.expense.paidByUser} size={30} />
-                    </div>
-                    <div>
-                      {e.expense.deletedByUser ? (
-                        <p className="text-red-500 opacity-70">
-                          <span className="font-semibold">
-                            {displayName(e.expense.deletedByUser, user.id)}
-                          </span>
-                          {' deleted the expense '}
-                          <span className="font-semibold">{e.expense.name}</span>
-                        </p>
-                      ) : (
-                        <p className="text-gray-300">
-                          <span className="font-semibold text-gray-300">
-                            {displayName(e.expense.paidByUser, user.id)}
-                          </span>
-                          {' paid for '}
-                          <span className="font-semibold text-gray-300">{e.expense.name}</span>
-                        </p>
-                      )}
+      <MainLayout title="Activity" loading={expensesQuery.isPending}>
+        <div className="flex flex-col gap-4">
+          {!expensesQuery.data?.length ? (
+            <div className="mt-[30vh] text-center text-gray-400">No activities yet</div>
+          ) : null}
+          {expensesQuery.data?.map((e) => (
+            <Link href={`/expenses/${e.expenseId}`} key={e.expenseId} className="flex gap-2">
+              <div className="mt-1">
+                <UserAvatar user={e.expense.paidByUser} size={30} />
+              </div>
+              <div>
+                {e.expense.deletedByUser ? (
+                  <p className="text-red-500 opacity-70">
+                    <span className="font-semibold">
+                      {displayName(e.expense.deletedByUser, user.id)}
+                    </span>
+                    {' deleted the expense '}
+                    <span className="font-semibold">{e.expense.name}</span>
+                  </p>
+                ) : (
+                  <p className="text-gray-300">
+                    <span className="font-semibold text-gray-300">
+                      {displayName(e.expense.paidByUser, user.id)}
+                    </span>
+                    {' paid for '}
+                    <span className="font-semibold text-gray-300">{e.expense.name}</span>
+                  </p>
+                )}
 
-                      <div>
-                        {getPaymentString(
-                          user,
-                          e.expense.amount,
-                          e.expense.paidBy,
-                          e.amount,
-                          e.expense.splitType === SplitType.SETTLEMENT,
-                          e.expense.currency,
-                          !!e.expense.deletedBy,
-                        )}
-                      </div>
-                      <p className="text-xs text-gray-500">{toUIDate(e.expense.expenseDate)}</p>
-                    </div>
-                  </Link>
-                ))}
-              </>
-            )}
-          </div>
+                <div>
+                  {getPaymentString(
+                    user,
+                    e.expense.amount,
+                    e.expense.paidBy,
+                    e.amount,
+                    e.expense.splitType === SplitType.SETTLEMENT,
+                    e.expense.currency,
+                    !!e.expense.deletedBy,
+                  )}
+                </div>
+                <p className="text-xs text-gray-500">{toUIDate(e.expense.expenseDate)}</p>
+              </div>
+            </Link>
+          ))}
         </div>
       </MainLayout>
     </>

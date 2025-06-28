@@ -5,21 +5,29 @@ import {
   UserCircleIcon as SolidUserCircleIcon,
   UserGroupIcon as SolidUserGroupIcon,
 } from '@heroicons/react/24/solid';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
+import { LoadingSpinner } from '../ui/spinner';
 
 interface MainLayoutProps {
   title?: React.ReactNode;
   children: React.ReactNode;
   actions?: React.ReactNode;
   header?: React.ReactNode;
+  loading?: boolean;
   hideAppBar?: boolean;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, title }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({
+  children,
+  actions,
+  hideAppBar,
+  title,
+  loading,
+}) => {
   const router = useRouter();
   const currentPath = router.pathname;
 
@@ -74,7 +82,15 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, actions, hideAppBar, 
               {actions}
             </div>
           ) : null}
-          {children}
+          <div className="px-4">
+            {loading ? (
+              <div className="mt-10 flex justify-center">
+                <LoadingSpinner className="text-primary" />
+              </div>
+            ) : (
+              children
+            )}
+          </div>
           <div className="h-28 lg:h-0" />
         </div>
       </div>

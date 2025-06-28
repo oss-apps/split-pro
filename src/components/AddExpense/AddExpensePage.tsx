@@ -161,126 +161,116 @@ export const AddOrEditExpensePage: React.FC<{
   );
 
   return (
-    <>
-      <div className="flex flex-col gap-4 px-4 py-2">
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" className="text-primary px-0" onClick={onCancel}>
-            Cancel
-          </Button>
-          <div className="text-center">Add new expense</div>
-          <Button
-            variant="ghost"
-            className="text-primary px-0"
-            disabled={
-              addExpenseMutation.isPending || !amount || '' === description || isFileUploading
-            }
-            onClick={addExpense}
-          >
-            Save
-          </Button>{' '}
-        </div>
-        <UserInput isEditing={!!expenseId} />
-        {showFriends || (1 === participants.length && !group) ? (
-          <SelectUserOrGroup enableSendingInvites={enableSendingInvites} />
-        ) : (
-          <>
-            <div className="mt-4 flex gap-2 sm:mt-10">
-              <CategoryPicker category={category} onCategoryPick={setCategory} />
-              <Input
-                placeholder="Enter description"
-                value={description}
-                onChange={handleDescriptionChange}
-                className="text-lg placeholder:text-sm"
-                autoFocus
-              />
-            </div>
-            <div className="flex gap-2">
-              <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
-              <Input
-                placeholder="Enter amount"
-                className="text-lg placeholder:text-sm"
-                type="number"
-                inputMode="decimal"
-                value={amtStr}
-                min="0"
-                onChange={onAmountChange}
-              />
-            </div>
-            <div className="h-[180px]">
-              {amount && '' !== description ? (
-                <>
-                  <SplitTypeSection />
-
-                  <div className="mt-4 flex items-center justify-between sm:mt-10">
-                    <div className="flex flex-wrap items-center gap-4">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            className={cn(
-                              'justify-start px-0 text-left font-normal',
-                              !expenseDate && 'text-muted-foreground',
-                            )}
-                          >
-                            <CalendarIcon className="text-primary mr-2 h-6 w-6" />
-                            {expenseDate ? (
-                              toUIDate(expenseDate, { useToday: true })
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
-                          <Calendar
-                            mode="single"
-                            selected={expenseDate}
-                            onSelect={setExpenseDate}
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      {isStorageConfigured ? <UploadFile /> : null}
-                      <Button
-                        className="min-w-[100px]"
-                        size="sm"
-                        loading={addExpenseMutation.isPending || isFileUploading}
-                        disabled={
-                          addExpenseMutation.isPending ||
-                          !amount ||
-                          '' === description ||
-                          isFileUploading ||
-                          !isExpenseSettled
-                        }
-                        onClick={addExpense}
-                      >
-                        Submit
-                      </Button>
-                    </div>
-                  </div>
-                </>
-              ) : null}
-            </div>
-            <div className="flex w-full justify-center">
-              <Link
-                href="https://github.com/sponsors/KMKoushik"
-                target="_blank"
-                className="mx-auto"
-              >
-                <Button
-                  variant="outline"
-                  className="text-md hover:text-foreground/80 justify-between rounded-full border-pink-500"
-                >
-                  <div className="flex items-center gap-4">
-                    <HeartHandshakeIcon className="h-5 w-5 text-pink-500" />
-                    Sponsor us
-                  </div>
-                </Button>
-              </Link>
-            </div>
-          </>
-        )}
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" className="text-primary px-0" onClick={onCancel}>
+          Cancel
+        </Button>
+        <div className="text-center">Add new expense</div>
+        <Button
+          variant="ghost"
+          className="text-primary px-0"
+          disabled={
+            addExpenseMutation.isPending || !amount || '' === description || isFileUploading
+          }
+          onClick={addExpense}
+        >
+          Save
+        </Button>{' '}
       </div>
-    </>
+      <UserInput isEditing={!!expenseId} />
+      {showFriends || (1 === participants.length && !group) ? (
+        <SelectUserOrGroup enableSendingInvites={enableSendingInvites} />
+      ) : (
+        <>
+          <div className="mt-4 flex gap-2 sm:mt-10">
+            <CategoryPicker category={category} onCategoryPick={setCategory} />
+            <Input
+              placeholder="Enter description"
+              value={description}
+              onChange={handleDescriptionChange}
+              className="text-lg placeholder:text-sm"
+              autoFocus
+            />
+          </div>
+          <div className="flex gap-2">
+            <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
+            <Input
+              placeholder="Enter amount"
+              className="text-lg placeholder:text-sm"
+              type="number"
+              inputMode="decimal"
+              value={amtStr}
+              min="0"
+              onChange={onAmountChange}
+            />
+          </div>
+          <div className="h-[180px]">
+            {amount && '' !== description ? (
+              <>
+                <SplitTypeSection />
+
+                <div className="mt-4 flex items-center justify-between sm:mt-10">
+                  <div className="flex flex-wrap items-center gap-4">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className={cn(
+                            'justify-start px-0 text-left font-normal',
+                            !expenseDate && 'text-muted-foreground',
+                          )}
+                        >
+                          <CalendarIcon className="text-primary mr-2 h-6 w-6" />
+                          {expenseDate ? (
+                            toUIDate(expenseDate, { useToday: true })
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar mode="single" selected={expenseDate} onSelect={setExpenseDate} />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    {isStorageConfigured ? <UploadFile /> : null}
+                    <Button
+                      className="min-w-[100px]"
+                      size="sm"
+                      loading={addExpenseMutation.isPending || isFileUploading}
+                      disabled={
+                        addExpenseMutation.isPending ||
+                        !amount ||
+                        '' === description ||
+                        isFileUploading ||
+                        !isExpenseSettled
+                      }
+                      onClick={addExpense}
+                    >
+                      Submit
+                    </Button>
+                  </div>
+                </div>
+              </>
+            ) : null}
+          </div>
+          <div className="flex w-full justify-center">
+            <Link href="https://github.com/sponsors/KMKoushik" target="_blank" className="mx-auto">
+              <Button
+                variant="outline"
+                className="text-md hover:text-foreground/80 justify-between rounded-full border-pink-500"
+              >
+                <div className="flex items-center gap-4">
+                  <HeartHandshakeIcon className="h-5 w-5 text-pink-500" />
+                  Sponsor us
+                </div>
+              </Button>
+            </Link>
+          </div>
+        </>
+      )}
+    </div>
   );
 };

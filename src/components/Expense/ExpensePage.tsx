@@ -31,8 +31,8 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
   // const sendNotificationMutation = api.user.sendExpensePushNotification.useMutation();
 
   return (
-    <div className="">
-      <div className="mb-4 flex items-start justify-between gap-2 px-6">
+    <>
+      <div className="mb-4 flex items-start justify-between gap-2">
         <div className="flex items-start gap-4">
           <div className="rounded-lg border p-2 text-xl">
             <CategoryIcon className="text-gray-400" size={24} />
@@ -73,7 +73,7 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
         </div>
       </div>
       <Separator />
-      <div className="mt-10 flex items-center gap-5 px-6">
+      <div className="mt-10 flex items-center gap-5">
         {/* <button
           onClick={() => {
             sendNotificationMutation.mutate({
@@ -90,7 +90,7 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
           {toUIString(expense.amount)}
         </p>
       </div>
-      <div className="mt-4 ml-14 flex flex-col gap-4 px-6">
+      <div className="mt-4 ml-14 flex flex-col gap-4">
         {expense.expenseParticipants
           .filter((p) => (expense.paidBy === p.userId ? (expense.amount ?? 0n) : 0n) !== p.amount)
           .map((p) => (
@@ -104,7 +104,7 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
             </div>
           ))}
       </div>
-    </div>
+    </>
   );
 };
 

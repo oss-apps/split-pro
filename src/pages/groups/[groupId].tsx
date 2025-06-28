@@ -377,22 +377,22 @@ const BalancePage: NextPageWithUser<{
             <p className="text-lg">{groupDetailQuery.data?.name}</p>
           </div>
         }
+        loading={groupDetailQuery.isPending}
       >
-        {groupDetailQuery.isPending ? null : 1 === groupDetailQuery.data?.groupUsers.length &&
-          !expensesQuery.data?.length ? (
+        {1 === groupDetailQuery.data?.groupUsers.length && !expensesQuery.data?.length ? (
           <div className="h-[85vh]">
             <NoMembers group={groupDetailQuery.data} enableSendingInvites={enableSendingInvites} />
           </div>
         ) : (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div className="mb-4 px-4">
+            <div className="mb-4">
               <GroupMyBalance
                 userId={user.id}
                 groupBalances={groupDetailQuery.data?.groupBalances ?? []}
                 users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
               />
             </div>
-            <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4">
+            <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b pb-4">
               <Link href={`/add?groupId=${groupId}`}>
                 <Button size="sm" className="gap-1 text-sm lg:w-[180px]">
                   Add Expense
@@ -425,7 +425,7 @@ const BalancePage: NextPageWithUser<{
                 )}
               </Button>
             </div>
-            <Tabs defaultValue="expenses" className="px-2">
+            <Tabs defaultValue="expenses">
               <TabsList className="mx-auto grid w-full max-w-96 grid-cols-2">
                 <TabsTrigger value="expenses">Expenses</TabsTrigger>
                 <TabsTrigger value="balances">Balances</TabsTrigger>
@@ -433,15 +433,15 @@ const BalancePage: NextPageWithUser<{
               <TabsContent value="expenses">
                 <ExpenseList
                   userId={user.id}
-                  expenses={expensesQuery.data ?? []}
+                  expenses={expensesQuery.data}
                   contactId={groupId}
                   isLoading={expensesQuery.isPending}
                 />
               </TabsContent>
               <TabsContent value="balances">
                 <BalanceList
-                  groupBalances={groupDetailQuery.data?.groupBalances ?? []}
-                  users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
+                  groupBalances={groupDetailQuery.data?.groupBalances}
+                  users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user)}
                 />
               </TabsContent>
             </Tabs>

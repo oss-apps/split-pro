@@ -72,6 +72,12 @@ export const CATEGORIES = {
       other: 'Utilities',
     },
   },
+  general: {
+    name: 'General',
+    items: {
+      other: 'General',
+    },
+  },
 } as const satisfies Record<string, { name: string; items: Record<string, string> }>;
 
 export const DEFAULT_CATEGORY = 'general';
@@ -80,5 +86,4 @@ export type CategorySection = keyof typeof CATEGORIES;
 
 export type CategoryItem =
   | Exclude<keyof Merge<(typeof CATEGORIES)[CategorySection]['items']>, 'other'>
-  | CategorySection
-  | typeof DEFAULT_CATEGORY;
+  | CategorySection;

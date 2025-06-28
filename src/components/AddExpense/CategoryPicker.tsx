@@ -1,10 +1,11 @@
+import { CATEGORIES, type CategoryItem } from '~/lib/category';
+
 import { Button } from '../ui/button';
 import { CategoryIcon } from '../ui/categoryIcons';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
-import { CATEGORIES, type CategoryItem } from '~/lib/category';
 
 export const CategoryPicker: React.FC<{
-  category: CategoryItem;
+  category: string;
   onCategoryPick: (category: string) => void;
 }> = ({ category, onCategoryPick }) => {
   return (

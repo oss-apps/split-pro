@@ -1,6 +1,5 @@
 import { type Expense, type ExpenseParticipant, type User } from '@prisma/client';
 import { format, isSameDay } from 'date-fns';
-import { Banknote } from 'lucide-react';
 import Image from 'next/image';
 import { type User as NextUser } from 'next-auth';
 import React from 'react';
@@ -9,7 +8,7 @@ import React from 'react';
 import { toUIString } from '~/utils/numbers';
 
 import { UserAvatar } from '../ui/avatar';
-import { CategoryIcons } from '../ui/categoryIcons';
+import { CategoryIcon } from '../ui/categoryIcons';
 import { AppDrawer } from '../ui/drawer';
 import { Separator } from '../ui/separator';
 
@@ -28,8 +27,6 @@ type ExpenseDetailsProps = {
 const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
   const youPaid = expense.paidBy === user.id;
 
-  const CategoryIcon = CategoryIcons[expense.category] ?? Banknote;
-
   // const sendNotificationMutation = api.user.sendExpensePushNotification.useMutation();
 
   return (
@@ -37,7 +34,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
       <div className="mb-4 flex items-start justify-between gap-2 px-6">
         <div className="flex items-start gap-4">
           <div className="rounded-lg border p-2 text-xl">
-            <CategoryIcon className="text-gray-400" size={24} />
+            <CategoryIcon category={expense.category} className="text-gray-400" size={24} />
           </div>
           <div className="flex flex-col gap-2">
             <p className="">{expense.name}</p>

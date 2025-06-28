@@ -100,11 +100,11 @@ export const CategoryIcons: Record<CategoryItem, LucideIcon> = {
 
 export const DEFAULT_CATEGORY_ICON = CategoryIcons[DEFAULT_CATEGORY];
 
-export const CategoryIcon: React.FC<{ category?: CategoryItem } & LucideProps> = ({
+export const CategoryIcon: React.FC<{ category?: string } & LucideProps> = ({
   category = DEFAULT_CATEGORY,
   ...props
 }) => {
-  const Icon = CategoryIcons[category] ?? DEFAULT_CATEGORY_ICON;
+  const Icon = CategoryIcons[category as CategoryItem] ?? DEFAULT_CATEGORY_ICON;
 
   return <Icon {...props} />;
 };

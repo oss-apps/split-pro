@@ -19,6 +19,7 @@ import {
   HandIcon,
   Home,
   type LucideIcon,
+  LucideProps,
   Music,
   Paintbrush,
   ParkingCircle,
@@ -40,8 +41,9 @@ import {
   Wrench,
   Zap,
 } from 'lucide-react';
+import { CategoryItem, DEFAULT_CATEGORY } from '~/lib/category';
 
-export const CategoryIcons: Record<string, LucideIcon> = {
+export const CategoryIcons: Record<CategoryItem, LucideIcon> = {
   games: Gamepad2,
   movies: Popcorn,
   music: Music,
@@ -86,11 +88,13 @@ export const CategoryIcons: Record<string, LucideIcon> = {
   trash: Trash,
 };
 
-export const CategoryIcon: React.FC<{ category: string; className?: string }> = ({
-  category,
+export const DEFAULT_CATEGORY_ICON = CategoryIcons[DEFAULT_CATEGORY];
+
+export const CategoryIcon: React.FC<{ category?: CategoryItem } & LucideProps> = ({
+  category = DEFAULT_CATEGORY,
   ...props
 }) => {
-  const Icon = CategoryIcons[category] ?? Banknote;
+  const Icon = CategoryIcons[category] ?? DEFAULT_CATEGORY_ICON;
 
   return <Icon {...props} />;
 };

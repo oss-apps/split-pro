@@ -1,7 +1,6 @@
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { UserPlusIcon } from '@heroicons/react/24/solid';
 import { type Group, type GroupUser, type User } from '@prisma/client';
-import { motion } from 'framer-motion';
 import { SendIcon } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
@@ -171,13 +170,9 @@ export const SelectUserOrGroup: React.FC<{
         ) : null}
 
         {0 === filteredFriends?.length && 0 === filteredGroups?.length ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mt-[30%] flex flex-col items-center justify-center gap-20"
-          >
+          <div className="mt-[30%] flex flex-col items-center justify-center gap-20 transition-discrete starting:opacity-0">
             <Image alt="empty user image" src="/empty_img.svg" width={250} height={250} />
-          </motion.div>
+          </div>
         ) : null}
       </div>
     </div>

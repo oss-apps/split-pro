@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { ChevronLeftIcon, PlusIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -71,12 +70,10 @@ const FriendPage: NextPageWithUser = ({ user }) => {
             </div>
           </div>
         }
+        loading={balances.isPending || expenses.isPending || friendQuery.isPending}
       >
-        {balances.isPending ||
-        expenses.isPending ||
-        friendQuery.isPending ||
-        !friendQuery.data ? null : (
-          <motion.div className="mb-28" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        {!friendQuery.data ? null : (
+          <div className="mb-28 transition-discrete starting:opacity-0">
             <div className="mx-4 flex flex-wrap gap-2">
               <div className="text-orange-700">
                 {0 < (youOwe?.length ?? 0) && (
@@ -110,7 +107,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 )}
               </div>
             </div>
-            <div className="mt-6 mb-4 flex justify-center gap-2 px-2">
+            <div className="mt-6 mb-4 flex justify-center gap-2">
               {balances.data ? (
                 <SettleUp
                   balances={balances.data}
@@ -139,28 +136,24 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 </Button>
               </Link>
               <Export
-                expenses={expenses.data ?? []}
+                expenses={expenses.data}
                 fileName={`expenses_with_${friendQuery.data?.name}`}
                 currentUserId={user.id}
                 friendName={friendQuery.data?.name ?? ''}
                 friendId={friendQuery.data?.id ?? ''}
                 disabled={!expenses.data || 0 === expenses.data.length}
               />
-              {/* <Button size="sm" className="gap-1 text-sm lg:w-[180px]" variant="secondary">
-                <Bell className="h-4 w-4 text-gray-400" />
-                Remind
-              </Button> */}
             </div>
-            <Separator className="px-4" />
+            <Separator />
             <div className="mx-4 mt-4 flex flex-col gap-3">
               <ExpenseList
-                expenses={expenses.data ?? []}
+                expenses={expenses.data}
                 contactId={_friendId}
                 isLoading={expenses.isPending}
                 userId={user.id}
               />
             </div>
-          </motion.div>
+          </div>
         )}
       </MainLayout>
     </>

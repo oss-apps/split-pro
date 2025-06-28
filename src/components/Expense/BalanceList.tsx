@@ -18,9 +18,9 @@ interface UserWithBalance {
 }
 
 export const BalanceList: React.FC<{
-  groupBalances: GroupBalance[];
-  users: User[];
-}> = ({ groupBalances, users }) => {
+  groupBalances?: GroupBalance[];
+  users?: User[];
+}> = ({ groupBalances = [], users = [] }) => {
   const userQuery = api.user.me.useQuery();
 
   const userMap = useMemo(() => {

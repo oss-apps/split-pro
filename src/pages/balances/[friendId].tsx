@@ -145,7 +145,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 disabled={!expenses.data || 0 === expenses.data.length}
               />
             </div>
-            <Separator className="px-4" />
+            <Separator />
             <div className="mx-4 mt-4 flex flex-col gap-3">
               <ExpenseList
                 expenses={expenses.data}

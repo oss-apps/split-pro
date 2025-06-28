@@ -1,6 +1,6 @@
 import { ArrowUpOnSquareIcon } from '@heroicons/react/24/outline';
 import { type User } from '@prisma/client';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { PlusIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -10,15 +10,12 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { NotificationModal } from '~/components/NotificationModal';
 import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
-import { LoadingSpinner } from '~/components/ui/spinner';
-import useEnableAfter from '~/hooks/useEnableAfter';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser = () => {
   const balanceQuery = api.expense.getBalances.useQuery();
-  const showProgress = useEnableAfter(350);
 
   return (
     <>
@@ -37,6 +34,7 @@ const BalancePage: NextPageWithUser = () => {
             <div className="h-6 w-10" />
           )
         }
+        loading={balanceQuery.isPending}
       >
         <NotificationModal />
         <div className="">
@@ -87,15 +85,7 @@ const BalancePage: NextPageWithUser = () => {
             ) : null}
           </div>
 
-          <div className="mt-5 flex flex-col gap-8 px-4 pb-36">
-            {balanceQuery.isPending ? (
-              showProgress ? (
-                <div className="flex h-full w-full items-center justify-center">
-                  <LoadingSpinner className="text-primary" />
-                </div>
-              ) : null
-            ) : null}
-
+          <div className="mt-5 flex flex-col gap-8 pb-36">
             {balanceQuery.data?.balances.map((b) => (
               <FriendBalance
                 key={b.friend.id}

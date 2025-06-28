@@ -1,4 +1,4 @@
-import { Merge } from './type';
+import { type Merge } from './type';
 
 export const CATEGORIES = {
   entertainment: {
@@ -41,6 +41,7 @@ export const CATEGORIES = {
       clothing: 'Clothing',
       education: 'Education',
       gifts: 'Gifts',
+      insurance: 'Insurance',
       medical: 'Medical',
       taxes: 'Taxes',
       other: 'Life',
@@ -49,10 +50,12 @@ export const CATEGORIES = {
   travel: {
     name: 'Travel',
     items: {
+      bicycle: 'Bicycle',
       bus: 'Bus',
       train: 'Train',
       car: 'Car',
       fuel: 'Fuel',
+      hotel: 'Hotel',
       parking: 'Parking',
       plane: 'Plane',
       taxi: 'Taxi',

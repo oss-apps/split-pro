@@ -2,11 +2,13 @@ import {
   Baby,
   Backpack,
   Banknote,
+  Bike,
   Bone,
   Bus,
   Car,
   CarTaxiFront,
   Construction,
+  DoorOpen,
   FerrisWheel,
   Flame,
   Fuel,
@@ -18,16 +20,20 @@ import {
   Hammer,
   HandIcon,
   Home,
+  Hotel,
   type LucideIcon,
-  LucideProps,
+  type LucideProps,
   Music,
   Paintbrush,
+  Paintbrush2,
   ParkingCircle,
   Phone,
   Pizza,
   Plane,
   Plug,
   Popcorn,
+  ReceiptText,
+  Shield,
   Shirt,
   ShoppingCart,
   Sofa,
@@ -41,7 +47,8 @@ import {
   Wrench,
   Zap,
 } from 'lucide-react';
-import { CategoryItem, DEFAULT_CATEGORY } from '~/lib/category';
+
+import { type CategoryItem, DEFAULT_CATEGORY } from '~/lib/category';
 
 export const CategoryIcons: Record<CategoryItem, LucideIcon> = {
   games: Gamepad2,
@@ -56,11 +63,11 @@ export const CategoryIcons: Record<CategoryItem, LucideIcon> = {
   home: Home,
   electronics: Plug,
   furniture: Sofa,
-  supplies: Sofa,
+  supplies: Paintbrush2,
   maintenance: Construction,
   mortgage: HandIcon,
   pets: Bone,
-  rent: Home,
+  rent: DoorOpen,
   services: Hammer,
   life: Sprout,
   childcare: Baby,
@@ -68,7 +75,7 @@ export const CategoryIcons: Record<CategoryItem, LucideIcon> = {
   education: GraduationCap,
   gifts: Gift,
   medical: Stethoscope,
-  taxes: Banknote,
+  taxes: ReceiptText,
   travel: Backpack,
   bus: Bus,
   train: TrainFront,
@@ -86,6 +93,9 @@ export const CategoryIcons: Record<CategoryItem, LucideIcon> = {
   general: Banknote,
   cleaning: Paintbrush,
   trash: Trash,
+  insurance: Shield,
+  bicycle: Bike,
+  hotel: Hotel,
 };
 
 export const DEFAULT_CATEGORY_ICON = CategoryIcons[DEFAULT_CATEGORY];

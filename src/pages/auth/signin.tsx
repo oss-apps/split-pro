@@ -2,13 +2,16 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
 import { type GetServerSideProps, type NextPage } from 'next';
-import Head from 'next/head';
 import { type ClientSafeProvider, getProviders, signIn } from 'next-auth/react';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import i18nConfig from 'next-i18next.config.js';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { Button } from '~/components/ui/button';
+import { SplitProHead } from '~/components/SplitProHead';
 import {
   Form,
   FormControl,
@@ -19,16 +22,9 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '~/components/ui/input-otp';
+import { LanguageSelector } from '~/components/ui/language-selector';
 import { env } from '~/env';
 import { getServerAuthSession } from '~/server/auth';
-
-const emailSchema = z.object({
-  email: z.string({ required_error: 'Email is required' }).email({ message: 'Invalid email' }),
-});
-
-const otpSchema = z.object({
-  otp: z.string({ required_error: 'OTP is required' }).length(5, { message: 'Invalid OTP' }),
-});
 
 const providerSvgs = {
   github: (
@@ -64,7 +60,20 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
   providers,
   feedbackEmail,
 }) => {
+  const { t } = useTranslation('signin');
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
+
+  const emailSchema = z.object({
+    email: z
+      .string({ required_error: t('validation.email_required') })
+      .email({ message: t('validation.email_invalid') }),
+  });
+
+  const otpSchema = z.object({
+    otp: z
+      .string({ required_error: t('validation.otp_required') })
+      .length(5, { message: t('validation.otp_invalid') }),
+  });
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),
@@ -95,15 +104,13 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
 
   return (
     <>
-      <Head>
-        <title>SplitPro: Split Expenses with your friends for free</title>
-        <meta name="description" content="SplitPro: Split Expenses with your friends for free" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <main className="flex h-full flex-col justify-center lg:justify-normal">
         <div className="flex flex-col items-center lg:mt-20">
+          <div className="mb-5 flex items-center gap-4">
+            <p className="text-primary text-3xl">{t('title')}</p>
+          </div>
           <div className="mb-10 flex items-center gap-4">
-            <p className="text-primary text-3xl">SplitPro</p>
+            <LanguageSelector />
           </div>
           {providers
             .filter((provider) => 'email' !== provider.id)
@@ -114,21 +121,21 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
                 key={provider.id}
               >
                 {providerSvgs[provider.id as keyof typeof providerSvgs]}
-                Continue with {provider.name}
+                {t('auth.continue_with', { provider: provider.name })}
               </Button>
             ))}
           {providers && 2 === providers.length && (
             <div className="mt-6 flex w-[300px] items-center justify-between gap-2">
-              <p className="bg-background z-10 ml-[150px] -translate-x-1/2 px-4 text-sm">or</p>
-              <div className="absolute h-px w-[300px] bg-linear-to-r from-zinc-800 via-zinc-300 to-zinc-800" />
+              <p className="bg-background z-10 ml-[150px] -translate-x-1/2 px-4 text-sm">
+                {t('auth.or')}
+              </p>
+              <div className="bg-linear-to-r absolute h-px w-[300px] from-zinc-800 via-zinc-300 to-zinc-800" />
             </div>
           )}
           {providers.find((provider) => 'email' === provider.id) ? (
             'success' === emailStatus ? (
               <>
-                <p className="mt-6 w-[300px] text-center text-sm">
-                  We have sent an email with the OTP. Please check your inbox
-                </p>
+                <p className="mt-6 w-[300px] text-center text-sm">{t('auth.otp_sent')}</p>
                 <Form {...otpForm}>
                   <form onSubmit={otpForm.handleSubmit(onOTPSubmit)} className="mt-6 space-y-8">
                     <FormField
@@ -160,7 +167,7 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
                     />
 
                     <Button className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100">
-                      Submit
+                      {t('auth.submit')}
                     </Button>
                   </form>
                 </Form>
@@ -176,7 +183,7 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
                         <FormItem>
                           <FormControl>
                             <Input
-                              placeholder="Enter your email"
+                              placeholder={t('auth.email_placeholder')}
                               className="w-[300px] text-lg"
                               type="email"
                               {...field}
@@ -192,7 +199,7 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
                       type="submit"
                       disabled={'sending' === emailStatus}
                     >
-                      {'sending' === emailStatus ? 'Sending...' : 'Send magic link'}
+                      {'sending' === emailStatus ? t('auth.sending') : t('auth.send_magic_link')}
                     </Button>
                   </form>
                 </Form>
@@ -200,7 +207,7 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
             )
           ) : null}
           <p className="text-muted-foreground mt-6 w-[300px] text-center text-sm">
-            Trouble logging in? contact
+            {t('auth.trouble_logging_in')}
             <br />
             <a className="underline" href={'mailto:' + feedbackEmail}>
               {feedbackEmail ?? ''}
@@ -230,6 +237,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
+      ...(await serverSideTranslations(context.locale ?? 'en', ['signin', 'common'], i18nConfig)),
       feedbackEmail: env.FEEDBACK_EMAIL ?? '',
       providers: Object.values(providers ?? {}),
     },

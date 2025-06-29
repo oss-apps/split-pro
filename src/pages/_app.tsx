@@ -6,7 +6,9 @@ import { type Session } from 'next-auth';
 import { SessionProvider, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
-
+import { useTranslation } from 'next-i18next';
+import { appWithTranslation } from 'next-i18next';
+import i18nConfig from 'next-i18next.config.js';
 import { ThemeProvider } from '~/components/theme-provider';
 import '~/styles/globals.css';
 import { LoadingSpinner } from '~/components/ui/spinner';
@@ -22,15 +24,19 @@ const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const { t, ready } = useTranslation('common');
+
+  if (!ready) return null;
+
   return (
     <main className={clsx(poppins.className, 'h-full')}>
       <Head>
-        <title>SplitPro: Split Expenses with your friends for free</title>
+        <title>{t('meta.title')}</title>
         <link rel="icon" href="/favicon.ico" />
-        <meta name="application-name" content="SplitPro" />
+        <meta name="application-name" content={t('meta.application_name')} />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-title" content="SplitPro" />
-        <meta name="description" content="Split Expenses with your friends for free" />
+        <meta name="apple-mobile-web-app-title" content={t('meta.application_name')} />
+        <meta name="description" content={t('meta.description')} />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-config" content="/icons/browserconfig.xml" />
@@ -53,14 +59,14 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:url" content="https://splitpro.app" />
-        <meta name="twitter:title" content="SplitPro" />
-        <meta name="twitter:description" content="Split Expenses with your friends for free" />
+        <meta name="twitter:title" content={t('meta.application_name')} />
+        <meta name="twitter:description" content={t('meta.description')} />
         <meta name="twitter:image" content="https://splitpro.app/og_banner.png" />
         <meta name="twitter:creator" content="@KM_Koushik_" />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="SplitPro" />
-        <meta property="og:description" content="Split Expenses with your friends for free" />
-        <meta property="og:site_name" content="SplitPro" />
+        <meta property="og:title" content={t('meta.application_name')} />
+        <meta property="og:description" content={t('meta.description')} />
+        <meta property="og:site_name" content={t('meta.application_name')} />
         <meta property="og:url" content="https://splitpro.app" />
         <meta property="og:image" content="https://splitpro.app/og_banner.png" />
       </Head>
@@ -81,6 +87,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, pageProps }) => {
   const { status, data } = useSession({ required: true });
   const [showSpinner, setShowSpinner] = useState(false);
+  const { i18n } = useTranslation();
 
   const { setCurrency } = useAddExpenseStore((s) => s.actions);
   const { setWebPushPublicKey } = useAppStore((s) => s.actions);
@@ -102,8 +109,13 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
   useEffect(() => {
     if ('authenticated' === status) {
       setCurrency(data.user.currency as CurrencyCode);
+
+      // Set user's preferred language
+      if (data.user.preferredLanguage && data.user.preferredLanguage !== i18n.language) {
+        i18n.changeLanguage(data.user.preferredLanguage).catch(console.error);
+      }
     }
-  }, [status, data?.user, setCurrency]);
+  }, [status, data?.user, setCurrency, i18n]);
 
   if ('loading' === status) {
     return (
@@ -116,4 +128,4 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
   return <Page user={data.user} {...pageProps} />;
 };
 
-export default api.withTRPC(MyApp);
+export default api.withTRPC(appWithTranslation(MyApp, i18nConfig));

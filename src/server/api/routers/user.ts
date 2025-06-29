@@ -327,6 +327,19 @@ export const userRouter = createTRPCRouter({
   getWebPushPublicKey: protectedProcedure.query(() => {
     return env.WEB_PUSH_PUBLIC_KEY ?? '';
   }),
+
+  updatePreferredLanguage: protectedProcedure
+    .input(z.object({ language: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { language } = input;
+
+      await db.user.update({
+        where: { id: ctx.session.user.id },
+        data: { preferredLanguage: language },
+      });
+
+      return { success: true };
+    }),
 });
 
 export type UserRouter = typeof userRouter;

@@ -1,0 +1,68 @@
+{
+  "ui": {
+    "title": "Group outstanding balances",
+    "no_members": {
+      "no_members": "No members in the group yet.",
+      "add_members": "Add members",
+      "add_members_details": {
+        "title": "Add members",
+        "placeholder": "Enter name or email",
+        "cancel": "Cancel",
+        "save": "Save",
+        "warning": "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused",
+        "note": "Note: sending invite is disabled for now because of spam",
+        "send_invite": "Send invite to user",
+        "add_to_split_pro": "Add to Split Pro",
+        "errors": {
+          "valid_email": "Enter valid email"
+        }
+      },
+      "or": "or",
+      "invite_link": "Share invite link",
+      "copied": "Copied"
+    },
+    "group_statistics": {
+      "title": "Group statistics",
+      "total_expenses": "Total expenses",
+      "first_expense": "First expense"
+    },
+    "group_info": {
+      "title": "Group info",
+      "members": "Members",
+      "group_created": "Group created",
+      "actions": "Actions",
+      "delete_group": "Delete group",
+      "delete_group_details": {
+        "title": "Are you absolutely sure?",
+        "can_delete": "This action cannot be reversed",
+        "cant_delete": "Can't delete the group until everyone settles up the balance",
+        "cancel": "Cancel",
+        "delete": "Delete"
+      },
+      "leave_group": "Leave group",
+      "leave_group_details": {
+        "title": "Are you absolutely sure?",
+        "can_leave": "This action cannot be reversed",
+        "cant_leave": "Can't leave the group until your outstanding balance is settled",
+        "cancel": "Cancel",
+        "leave": "Leave"
+      }
+    },
+    "add_expense": "Add expense",
+    "add_members": "Add members",
+    "copied": "Copied",
+    "invite": "Invite",
+    "you_paid": "You paid",
+    "user_paid": "paid",
+    "you_lent": "You lent",
+    "you_owe": "You owe"
+  },
+  "invite_message": {
+    "join_to": "Join to",
+    "in_splitpro": "in Splitpro",
+    "text": "Join to the group and you can add, manage expenses, and track your balances"
+  },
+  "errors": {
+    "something_went_wrong": "Something went wrong"
+  }
+}

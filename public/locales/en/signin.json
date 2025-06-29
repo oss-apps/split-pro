@@ -1,0 +1,19 @@
+{
+  "title": "SplitPro",
+  "auth": {
+    "continue_with": "Continue with {{provider}}",
+    "or": "or",
+    "email_placeholder": "Enter your email",
+    "send_magic_link": "Send magic link",
+    "sending": "Sending...",
+    "otp_sent": "We have sent an email with the OTP. Please check your inbox",
+    "submit": "Submit",
+    "trouble_logging_in": "Trouble logging in? contact"
+  },
+  "validation": {
+    "email_required": "Email is required",
+    "email_invalid": "Invalid email",
+    "otp_required": "OTP is required",
+    "otp_invalid": "Invalid OTP"
+  }
+}

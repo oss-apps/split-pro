@@ -1,0 +1,19 @@
+{
+  "title": "SplitPro",
+  "auth": {
+    "continue_with": "Continua con {{provider}}",
+    "or": "oppure",
+    "email_placeholder": "Inserisci la tua email",
+    "send_magic_link": "Invia link magico",
+    "sending": "Invio in corso...",
+    "otp_sent": "Abbiamo inviato un'email con l'OTP. Controlla la tua casella di posta",
+    "submit": "Invia",
+    "trouble_logging_in": "Problemi ad accedere? contatta"
+  },
+  "validation": {
+    "email_required": "Email richiesta",
+    "email_invalid": "Email non valida",
+    "otp_required": "OTP richiesto",
+    "otp_invalid": "OTP non valido"
+  }
+}

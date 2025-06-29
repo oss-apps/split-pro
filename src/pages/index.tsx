@@ -22,8 +22,7 @@ import { Button } from '~/components/ui/button';
 import { LanguageSelector } from '~/components/ui/language-selector';
 
 export default function Home() {
-  const { t, i18n, ready } = useTranslation('index');
-
+  const { t } = useTranslation('index');
 
   return (
     <>

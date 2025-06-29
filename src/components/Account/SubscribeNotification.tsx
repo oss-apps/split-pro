@@ -7,6 +7,10 @@ import { api } from '~/utils/api';
 
 import { Button } from '../ui/button';
 
+interface SubscribeNotificationProps {
+  t: (key: string) => string;
+}
+
 const base64ToUint8Array = (base64: string) => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4);
   const b64 = (base64 + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -20,7 +24,7 @@ const base64ToUint8Array = (base64: string) => {
   return outputArray;
 };
 
-export const SubscribeNotification: React.FC = () => {
+export const SubscribeNotification: React.FC<SubscribeNotificationProps> = ({ t }) => {
   const updatePushSubscription = api.user.updatePushNotification.useMutation();
   const [isSubscribed, setIsSubscribed] = useState(false);
   const webPushPublicKey = useAppStore((s) => s.webPushPublicKey);
@@ -47,11 +51,11 @@ export const SubscribeNotification: React.FC = () => {
     try {
       const result = await Notification.requestPermission();
       if ('granted' === result) {
-        toast.success('You will receive notifications now');
+        toast.success(t('ui.notifications.messages.notification_granted'));
         navigator.serviceWorker.ready
           .then(async (reg) => {
             if (!webPushPublicKey) {
-              toast.error('Notification is not supported');
+              toast.error(t('ui.notifications.errors.notification_not_supported'));
               return;
             }
 
@@ -64,11 +68,11 @@ export const SubscribeNotification: React.FC = () => {
             updatePushSubscription.mutate({ subscription: JSON.stringify(sub) });
           })
           .catch((e) => {
-            toast.error('Cannot subscribe to notification');
+            toast.error(t('ui.notifications.errors.subscribe_error'));
           });
       }
     } catch (e) {
-      toast.error('Error requesting notification');
+      toast.error(t('ui.notifications.errors.request_error'));
     }
   }
 
@@ -81,7 +85,7 @@ export const SubscribeNotification: React.FC = () => {
         setIsSubscribed(false);
       }
     } catch (e) {
-      toast.error('Error unsubscribing notification');
+      toast.error(t('ui.notifications.errors.unsubscribe_error'));
     }
   }
 
@@ -100,12 +104,12 @@ export const SubscribeNotification: React.FC = () => {
           {!isSubscribed ? (
             <>
               <Bell className="h-5 w-5 text-red-400" />
-              Enable Notification
+              {t('ui.notifications.enable_notification')}
             </>
           ) : (
             <>
               <BellOff className="h-5 w-5 text-red-400" />
-              Disable notification
+              {t('ui.notifications.disable_notification')}
             </>
           )}
         </div>

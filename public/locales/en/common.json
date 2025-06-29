@@ -3,5 +3,14 @@
     "title": "SplitPro: Split Expenses with your friends for free",
     "description": "Split Expenses with your friends for free",
     "application_name": "SplitPro"
+  },
+  "navigation": {
+    "app_name": "SplitPro",
+    "balances": "Balances",
+    "groups": "Groups",
+    "add_expense": "Add Expense",
+    "add": "Add",
+    "activity": "Activity",
+    "account": "Account"
   }
 }

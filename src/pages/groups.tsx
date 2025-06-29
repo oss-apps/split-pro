@@ -3,6 +3,9 @@ import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import i18nConfig from 'next-i18next.config.js';
 
 import { CreateGroup } from '~/components/group/CreateGroup';
 import MainLayout from '~/components/Layout/MainLayout';
@@ -13,16 +16,19 @@ import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser = () => {
+  const { t } = useTranslation('groups_page');
+  const { t: tCommon } = useTranslation('common');
   const groupQuery = api.group.getAllGroupsWithBalances.useQuery();
 
   return (
     <>
       <Head>
-        <title>Groups</title>
+        <title>{t('ui.title')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
-        title="Groups"
+        title={t('ui.title')}
+        t={tCommon}
         actions={
           <CreateGroup>
             <PlusIcon className="text-primary h-6 w-6" />
@@ -40,7 +46,7 @@ const BalancePage: NextPageWithUser = () => {
                 <CreateGroup>
                   <Button>
                     <PlusIcon className="mr-2 h-4 w-4" />
-                    Create Group
+                    {t('ui.group_create_btn')}
                   </Button>
                 </CreateGroup>
               </motion.div>
@@ -65,6 +71,7 @@ const BalancePage: NextPageWithUser = () => {
                     isPositive={0 <= amount ? true : false}
                     currency={currency}
                     multiCurrency={multiCurrency}
+                    t={t}
                   />
                 );
               })
@@ -83,7 +90,8 @@ const GroupBalance: React.FC<{
   isPositive: boolean;
   currency: string;
   multiCurrency?: boolean;
-}> = ({ name, amount, isPositive, currency, groupId, multiCurrency }) => {
+  t: (key: string) => string;
+}> = ({ name, amount, isPositive, currency, groupId, multiCurrency, t }) => {
   return (
     <Link href={`/groups/${groupId}`}>
       <div className="flex items-center justify-between">
@@ -93,7 +101,7 @@ const GroupBalance: React.FC<{
         </div>
         <div>
           {0n === amount ? (
-            <div className="text-sm text-gray-400">Settled up</div>
+            <div className="text-sm text-gray-400">{t('ui.settled_up')}</div>
           ) : (
             <>
               <div
@@ -102,7 +110,7 @@ const GroupBalance: React.FC<{
                   isPositive ? 'text-emerald-500' : 'text-orange-600',
                 )}
               >
-                {isPositive ? 'you lent' : 'you owe'}
+                {isPositive ? t('ui.you_lent') : t('ui.you_owe')}
               </div>
               <div className={`${isPositive ? 'text-emerald-500' : 'text-orange-600'} text-right`}>
                 {currency} {toUIString(amount)}
@@ -117,5 +125,13 @@ const GroupBalance: React.FC<{
 };
 
 BalancePage.auth = true;
+
+export const getStaticProps = async ({ locale }: { locale: string }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['groups_page', 'common'], i18nConfig)),
+    },
+  };
+};
 
 export default BalancePage;

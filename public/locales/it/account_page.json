@@ -5,13 +5,12 @@
     "change_language_details": {
       "title": "Seleziona una lingua",
       "save": "Salva",
-      "close": "Chiudi",
-      "languages": {
-        "it": "Italiano",
-        "en": "Inglese"
-      },
+      "close": "Chiudi",      
       "messages": {
         "language_changed": "Lingua cambiata con successo"
+      },
+      "errors": {
+        "language_change_failed": "Errore nel cambiare lingua"
       }
     },
     "notifications": {

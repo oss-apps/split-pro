@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { Globe } from 'lucide-react';
 import { Button } from '~/components/ui/button';
+import { getSupportedLanguages } from '~/utils/i18n';
 
 interface LanguageSelectorProps {
   className?: string;
@@ -13,10 +14,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = 
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
-  const supportedLanguages = [
-    { code: 'en', name: 'English' },
-    { code: 'it', name: 'Italiano' },
-  ];
+  const supportedLanguages = useMemo(() => getSupportedLanguages(), []);
 
   const currentLanguage =
     supportedLanguages.find((lang) => lang.code === i18n.language) ?? supportedLanguages[0];
@@ -53,7 +51,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = 
           <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
 
           {/* Dropdown */}
-          <div className="absolute right-0 top-full z-20 mt-1 min-w-[120px] rounded-md border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
+          <div className="absolute top-full right-0 z-20 mt-1 min-w-[120px] rounded-md border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
             <div className="py-1">
               {supportedLanguages.map((language) => (
                 <button

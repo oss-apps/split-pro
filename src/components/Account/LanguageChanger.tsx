@@ -1,23 +1,20 @@
 import { ChevronRight, Languages } from 'lucide-react';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 
 import { api } from '~/utils/api';
+import { getSupportedLanguages } from '~/utils/i18n';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
-
 
 export const LanguageChanger: React.FC = () => {
   const router = useRouter();
   const { i18n, t } = useTranslation('account_page');
   const updatePreferredLanguage = api.user.updatePreferredLanguage.useMutation();
 
-  const supportedLanguages = [
-    { code: 'en', name: 'English' },
-    { code: 'it', name: 'Italiano' },
-  ];
+  const supportedLanguages = useMemo(() => getSupportedLanguages(), []);
 
   const handleLanguageChange = async (languageCode: string) => {
     try {

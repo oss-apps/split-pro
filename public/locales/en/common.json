@@ -14,6 +14,15 @@
     "account": "Account"
   },
   "ui": {
-    "you": "You"
+    "you": "You",
+    "edit_name": {
+      "title": "Edit name",
+      "placeholder": "Enter name",
+      "close": "Close",
+      "save": "Save",
+      "errors": {
+        "name_required": "Name is required"
+      }
+    }
   }
 }

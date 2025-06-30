@@ -2,21 +2,24 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Pencil } from 'lucide-react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'next-i18next';
 import { z } from 'zod';
 
-import { AppDrawer } from '../ui/drawer';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
-import { Input } from '../ui/input';
-
-const detailsSchema = z.object({
-  name: z.string({ required_error: 'Name is required' }).min(1, { message: 'Name is required' }),
-});
+import { AppDrawer } from './drawer';
+import { Form, FormControl, FormField, FormItem, FormMessage } from './form';
+import { Input } from './input';
 
 export const UpdateName: React.FC<{
   className?: string;
   defaultName: string;
-  onNameSubmit: (values: z.infer<typeof detailsSchema>) => void;
+  onNameSubmit: (values: { name: string }) => void;
 }> = ({ className, defaultName, onNameSubmit }) => {
+  const { t } = useTranslation('common');
+
+  const detailsSchema = z.object({
+    name: z.string({ required_error: t('ui.edit_name.errors.name_required') }).min(1, { message: t('ui.edit_name.errors.name_required') }),
+  });
+
   const detailForm = useForm<z.infer<typeof detailsSchema>>({
     resolver: zodResolver(detailsSchema),
     defaultValues: {
@@ -27,11 +30,11 @@ export const UpdateName: React.FC<{
   return (
     <AppDrawer
       trigger={<Pencil className={className} />}
-      leftAction="Close"
-      title="Edit name"
+      leftAction={t('ui.edit_name.close')}
+      title={t('ui.edit_name.title')}
       shouldCloseOnAction
       className="h-[80vh]"
-      actionTitle="Save"
+      actionTitle={t('ui.edit_name.save')}
       actionOnClick={async () => {
         await detailForm.handleSubmit(onNameSubmit)();
       }}
@@ -44,7 +47,7 @@ export const UpdateName: React.FC<{
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl>
-                  <Input className="text-lg" placeholder="Enter name" {...field} />
+                  <Input className="text-lg" placeholder={t('ui.edit_name.placeholder')} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

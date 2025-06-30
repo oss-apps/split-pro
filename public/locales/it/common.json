@@ -14,6 +14,15 @@
     "account": "Account"
   },
   "ui": {
-    "you": "Tu"
+    "you": "Tu",
+    "edit_name": {
+      "title": "Modifica nome",
+      "placeholder": "Inserisci il nome",
+      "close": "Chiudi",
+      "save": "Salva",
+      "errors": {
+        "name_required": "Il nome è obbligatorio"
+      }
+    }
   }
 }

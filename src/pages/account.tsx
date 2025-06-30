@@ -18,7 +18,7 @@ import { useRouter } from 'next/router';
 
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
-import { UpdateName } from '~/components/Account/UpdateDetails';
+import { UpdateName } from '~/components/ui/update-details';
 import { LanguageChanger } from '~/components/Account/LanguageChanger';
 import MainLayout from '~/components/Layout/MainLayout';
 import { UserAvatar } from '~/components/ui/avatar';

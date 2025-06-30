@@ -11,7 +11,6 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { Button } from '~/components/ui/button';
-import { SplitProHead } from '~/components/SplitProHead';
 import {
   Form,
   FormControl,

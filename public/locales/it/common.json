@@ -8,9 +8,12 @@
     "app_name": "SplitPro",
     "balances": "Saldi",
     "groups": "Gruppi",
-    "add_expense": "Aggiungi Spesa",
+    "add_expense": "Aggiungi spesa",
     "add": "Aggiungi",
     "activity": "Attività",
     "account": "Account"
+  },
+  "ui": {
+    "you": "Tu"
   }
 }

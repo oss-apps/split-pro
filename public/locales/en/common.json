@@ -12,5 +12,8 @@
     "add": "Add",
     "activity": "Activity",
     "account": "Account"
+  },
+  "ui": {
+    "you": "You"
   }
 }

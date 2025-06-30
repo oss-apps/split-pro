@@ -13,17 +13,13 @@ import { api } from '~/utils/api';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
 
 export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { t, ready } = useTranslation('groups_details');
+  const { t } = useTranslation('groups_details');
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  if (!ready) {
-    return null;
-  }
-
-  console.log(t('ui.create_group.title'));
-
   const groupSchema = z.object({
-    name: z.string({ required_error: t('ui.create_group.errors.name_required') }).min(1, { message: t('ui.create_group.errors.name_required') }),
+    name: z
+      .string({ required_error: t('ui.create_group.errors.name_required') })
+      .min(1, { message: t('ui.create_group.errors.name_required') }),
   });
 
   const createGroup = api.group.create.useMutation(undefined);
@@ -87,7 +83,11 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormControl>
-                      <Input placeholder={t('ui.create_group.group_name_placeholder')} className="w-full py-2 text-lg" {...field} />
+                      <Input
+                        placeholder={t('ui.create_group.group_name_placeholder')}
+                        className="w-full py-2 text-lg"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

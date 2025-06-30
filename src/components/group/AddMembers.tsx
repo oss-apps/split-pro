@@ -3,6 +3,7 @@ import { type Group, type GroupUser } from '@prisma/client';
 import clsx from 'clsx';
 import { CheckIcon, SendIcon } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'next-i18next';
 import { z } from 'zod';
 
 import { Button } from '~/components/ui/button';
@@ -17,6 +18,7 @@ const AddMembers: React.FC<{
   group: Group & { groupUsers: GroupUser[] };
   children: React.ReactNode;
 }> = ({ group, children, enableSendingInvites }) => {
+  const { t } = useTranslation('groups_details');
   const [open, setOpen] = useState(false);
   const [userIds, setUserIds] = useState<Record<number, boolean>>({});
   const [inputValue, setInputValue] = useState('');
@@ -95,30 +97,29 @@ const AddMembers: React.FC<{
         <div className="flex items-center justify-center gap-2 lg:w-[180px]">{children}</div>
       }
       onTriggerClick={() => setOpen(true)}
-      title="Add members"
-      leftAction="Cancel"
+      title={t('ui.no_members.add_members_details.title')}
+      leftAction={t('ui.no_members.add_members_details.cancel')}
       actionOnClick={() => onSave(userIds)}
       className="h-[85vh]"
       shouldCloseOnAction
-      actionTitle="Save"
+      actionTitle={t('ui.no_members.add_members_details.save')}
       open={open}
       onClose={() => setOpen(false)}
       onOpenChange={(state) => state !== open && setOpen(state)}
     >
       <Input
         className="mt-8 w-full text-lg"
-        placeholder="Search friends or add email"
+        placeholder={t('ui.no_members.add_members_details.placeholder')}
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
       />
       <div>
         {enableSendingInvites ? (
           <div className="mt-1 text-orange-600">
-            Warning: Don&apos;t use send invite if it&apos;s invalid email. use add to Split Pro
-            instead. Your account will be blocked if this feature is misused
+            {t('ui.no_members.add_members_details.warning')}
           </div>
         ) : (
-          <div>Note: sending invites is disabled for now because of spam</div>
+          <div>{t('ui.no_members.add_members_details.note')}</div>
         )}
 
         <div className="flex justify-center gap-4">
@@ -130,7 +131,9 @@ const AddMembers: React.FC<{
               onClick={() => onAddEmailClick(true)}
             >
               <SendIcon className="mr-2 h-4 w-4" />
-              {isEmail.success ? 'Send invite to user' : 'Enter valid email'}
+              {isEmail.success
+                ? t('ui.no_members.add_members_details.send_invite')
+                : t('ui.no_members.add_members_details.errors.valid_email')}
             </Button>
           )}
           <Button
@@ -140,7 +143,9 @@ const AddMembers: React.FC<{
             onClick={() => onAddEmailClick(false)}
           >
             <UserPlusIcon className="mr-2 h-4 w-4" />
-            {isEmail.success ? 'Add to Split Pro' : 'Enter valid email'}
+            {isEmail.success
+              ? t('ui.no_members.add_members_details.add_to_split_pro')
+              : t('ui.no_members.add_members_details.errors.valid_email')}
           </Button>
         </div>
       </div>

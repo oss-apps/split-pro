@@ -4,6 +4,8 @@ import { ChevronLeftIcon, PencilIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 import { DeleteExpense } from '~/components/Expense/DeleteExpense';
 import ExpenseDetails from '~/components/Expense/ExpensePage';
@@ -16,6 +18,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   user,
   storagePublicUrl,
 }) => {
+  const { t } = useTranslation('groups_details');
   const router = useRouter();
   const expenseId = router.query.expenseId as string;
   const groupId = parseInt(router.query.groupId as string);
@@ -25,7 +28,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   return (
     <>
       <Head>
-        <title>Outstanding balances</title>
+        <title>{t('ui.outstanding_balances')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
@@ -34,7 +37,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
             <Link href={`/groups/${groupId}`}>
               <ChevronLeftIcon className="mr-1 h-6 w-6" />
             </Link>
-            <p className="w-full text-center text-[16px] font-normal">Expense details</p>
+            <p className="w-full text-center text-[16px] font-normal">{t('ui.expense_details')}</p>
             <div />
           </div>
         }
@@ -67,10 +70,11 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
 
 ExpensesPage.auth = true;
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context: { locale: string }) {
   return {
     props: {
       storagePublicUrl: env.R2_PUBLIC_URL,
+      ...(await serverSideTranslations(context.locale, ['common', 'groups_details'])),
     },
   };
 }

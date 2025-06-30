@@ -46,7 +46,32 @@
         "cant_leave": "Non puoi lasciare il gruppo finché il saldo in sospeso non sarà saldato",
         "cancel": "Annulla",
         "leave": "Abbandona"
+      },
+      "owner": "proprietario",
+      "remove_member_details": {
+        "title": "Sei assolutamente sicuro?",
+        "can_remove": "Stai per rimuovere questo membro dal gruppo",
+        "cant_remove": "Non puoi rimuovere il membro finché il suo saldo non è saldato"
+      },
+      "simplify_debts": "Semplifica debiti",
+      "recalculate_balances": "Ricalcola saldi",
+      "recalculate_balances_details": {
+        "title": "Sei sicuro?",
+        "description": "Se i saldi non corrispondono alle spese, puoi ricalcolarli. Nota che potrebbe richiedere del tempo se il numero di spese è elevato. I saldi esterni al gruppo non saranno interessati."
       }
+    },
+    "tabs": {
+      "expenses": "Spese",
+      "balances": "Saldi"
+    },
+    "messages": {
+      "group_name_updated": "Nome del gruppo aggiornato",
+      "balances_recalculated": "Saldi ricalcolati con successo"
+    },
+    "errors": {
+      "group_name_update_failed": "Errore nell'aggiornamento del nome del gruppo",
+      "setting_update_failed": "Errore nell'aggiornamento dell'impostazione",
+      "something_went_wrong": "Qualcosa è andato storto"
     },
     "add_expense": "Nuova spesa",
     "add_members": "Nuovi membri",
@@ -56,6 +81,13 @@
     "user_paid": "ha pagato",
     "you_lent": "Hai prestato",
     "you_owe": "Devi",
+    "all_settled_up": "Non hai debiti in sospeso",
+    "owes_you": "ti deve",
+    "you_owe_friend": "Devi a",
+    "balance": "saldo",
+    "balances": "saldi",
+    "outstanding_balances": "Saldi in sospeso",
+    "expense_details": "Dettagli spesa",
     "create_group": {
       "title": "Crea un gruppo",
       "group_name_placeholder": "Nome del gruppo",

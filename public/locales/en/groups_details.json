@@ -46,7 +46,32 @@
         "cant_leave": "Can't leave the group until your outstanding balance is settled",
         "cancel": "Cancel",
         "leave": "Leave"
+      },
+      "owner": "owner",
+      "remove_member_details": {
+        "title": "Are you absolutely sure?",
+        "can_remove": "You are about to remove this member from the group",
+        "cant_remove": "Can't remove member until their outstanding balance is settled"
+      },
+      "simplify_debts": "Simplify debts",
+      "recalculate_balances": "Recalculate balances",
+      "recalculate_balances_details": {
+        "title": "Are you sure?",
+        "description": "If balances do not match expenses, you can recalculate them. Note that it may take some time if the expense count is large. Balances outside the group will not be affected."
       }
+    },
+    "tabs": {
+      "expenses": "Expenses",
+      "balances": "Balances"
+    },
+    "messages": {
+      "group_name_updated": "Updated group name",
+      "balances_recalculated": "Balances recalculated successfully"
+    },
+    "errors": {
+      "group_name_update_failed": "Error in updating group name",
+      "setting_update_failed": "Failed to update setting",
+      "something_went_wrong": "Something went wrong"
     },
     "add_expense": "Add expense",
     "add_members": "Add members",
@@ -56,6 +81,13 @@
     "user_paid": "paid",
     "you_lent": "You lent",
     "you_owe": "You owe",
+    "all_settled_up": "You are all settled up",
+    "owes_you": "owes you",
+    "you_owe_friend": "You owe",
+    "balance": "balance",
+    "balances": "balances",
+    "outstanding_balances": "Outstanding balances",
+    "expense_details": "Expense details",
     "create_group": {
       "title": "Create a group",
       "group_name_placeholder": "Group name",

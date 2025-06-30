@@ -18,6 +18,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { Fragment, useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import i18nConfig from 'next-i18next.config.js';
 
 import { UpdateName } from '~/components/Account/UpdateDetails';
 import { BalanceList } from '~/components/Expense/BalanceList';
@@ -42,6 +45,7 @@ import { displayName, toUIDate } from '~/utils/strings';
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
 }> = ({ user, enableSendingInvites }) => {
+  const { t } = useTranslation('groups_details');
   const router = useRouter();
   const groupId = parseInt(router.query.groupId as string);
 
@@ -66,8 +70,8 @@ const BalancePage: NextPageWithUser<{
     if (navigator.share) {
       navigator
         .share({
-          title: `Join to ${groupDetailQuery.data.name} in Splitpro`,
-          text: 'Join to the group and you can add, manage expenses, and track your balances',
+          title: `${t('invite_message.join_to')} ${groupDetailQuery.data.name} ${t('invite_message.in_splitpro')}`,
+          text: t('invite_message.text'),
           url: inviteLink,
         })
         .then(() => console.info('Successful share'))
@@ -95,10 +99,10 @@ const BalancePage: NextPageWithUser<{
       {
         onSuccess: () => {
           void groupDetailQuery.refetch();
-          toast.success('Balances recalculated successfully');
+          toast.success(t('ui.messages.balances_recalculated'));
         },
         onError: () => {
-          toast.error('Something went wrong');
+          toast.error(t('ui.errors.something_went_wrong'));
         },
       },
     );
@@ -112,7 +116,7 @@ const BalancePage: NextPageWithUser<{
           router.replace('/groups').catch(console.error);
         },
         onError: () => {
-          toast.error('Something went wrong');
+          toast.error(t('ui.errors.something_went_wrong'));
         },
       },
     );
@@ -130,7 +134,7 @@ const BalancePage: NextPageWithUser<{
           }
         },
         onError: () => {
-          toast.error('Something went wrong');
+          toast.error(t('ui.errors.something_went_wrong'));
         },
       },
     );
@@ -139,7 +143,7 @@ const BalancePage: NextPageWithUser<{
   return (
     <>
       <Head>
-        <title>Group outstanding balances</title>
+        <title>{t('ui.title')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
@@ -160,12 +164,12 @@ const BalancePage: NextPageWithUser<{
         actions={
           <div className="flex gap-2">
             <AppDrawer
-              title="Group statistics"
+              title={t('ui.group_statistics.title')}
               trigger={<BarChartHorizontal className="h-6 w-6" />}
               className="h-[85vh]"
             >
               <>
-                <p className="font-semibold">Total expenses</p>
+                <p className="font-semibold">{t('ui.group_statistics.total_expenses')}</p>
                 <div className="mt-2 flex flex-wrap gap-1">
                   {groupTotalQuery.data?.map((total, index, arr) => {
                     return null != total._sum.amount ? (
@@ -180,7 +184,7 @@ const BalancePage: NextPageWithUser<{
                 </div>
                 {expensesQuery?.data && expensesQuery.data[expensesQuery.data.length - 1] && (
                   <div className="mt-8">
-                    <p className="font-semibold">First expense</p>
+                    <p className="font-semibold">{t('ui.group_statistics.first_expense')}</p>
                     <p>
                       {toUIDate(expensesQuery.data[expensesQuery.data.length - 1]!.createdAt, {
                         year: true,
@@ -191,7 +195,7 @@ const BalancePage: NextPageWithUser<{
               </>
             </AppDrawer>
             <AppDrawer
-              title="Group info"
+              title={t('ui.group_info.title')}
               trigger={<Info className="h-6 w-6" />}
               className="h-[85vh]"
             >
@@ -210,10 +214,10 @@ const BalancePage: NextPageWithUser<{
                             groupId,
                             name: values.name,
                           });
-                          toast.success('Updated group name', { duration: 1500 });
+                          toast.success(t('ui.messages.group_name_updated'), { duration: 1500 });
                           await groupDetailQuery.refetch();
                         } catch (error) {
-                          toast.error('Error in updating group name');
+                          toast.error(t('ui.errors.group_name_update_failed'));
                           console.error(error);
                         }
                       }}
@@ -221,7 +225,7 @@ const BalancePage: NextPageWithUser<{
                   )}
                 </div>
 
-                <p className="mt-5 font-semibold">Members</p>
+                <p className="mt-5 font-semibold">{t('ui.group_info.members')}</p>
                 <div className="mt-2 flex flex-col gap-2">
                   {groupDetailQuery.data?.groupUsers.map((groupUser) => (
                     <div key={groupUser.userId} className="flex items-center justify-between">
@@ -230,7 +234,7 @@ const BalancePage: NextPageWithUser<{
                         <p>{displayName(groupUser.user)}</p>
                       </div>
                       {groupUser.userId === groupDetailQuery.data?.userId ? (
-                        <p className="text-sm text-gray-400">owner</p>
+                        <p className="text-sm text-gray-400">{t('ui.group_info.owner')}</p>
                       ) : (
                         isAdmin &&
                         (() => {
@@ -240,11 +244,11 @@ const BalancePage: NextPageWithUser<{
 
                           return (
                             <SimpleConfirmationDialog
-                              title={canLeave ? 'Are you absolutely sure?' : ''}
+                              title={canLeave ? t('ui.group_info.remove_member_details.title') : ''}
                               description={
                                 canLeave
-                                  ? 'You are about to remove this member from the group'
-                                  : "Can't remove member until their outstanding balance is settled"
+                                  ? t('ui.group_info.remove_member_details.can_remove')
+                                  : t('ui.group_info.remove_member_details.cant_remove')
                               }
                               hasPermission={canLeave}
                               onConfirm={() => onGroupLeave(groupUser.userId)}
@@ -267,16 +271,16 @@ const BalancePage: NextPageWithUser<{
               </>
               {groupDetailQuery.data?.createdAt && (
                 <div className="mt-8">
-                  <p className="font-semibold">Group created</p>
+                  <p className="font-semibold">{t('ui.group_info.group_created')}</p>
                   <p>{toUIDate(groupDetailQuery.data.createdAt, { year: true })}</p>
                 </div>
               )}
               <div className="mt-8">
-                <p className="font-semibold">Actions</p>
+                <p className="font-semibold">{t('ui.group_info.actions')}</p>
                 <div className="child:h-7 mt-2 flex flex-col">
                   <Label className="flex cursor-pointer items-center justify-between">
                     <p className="flex items-center">
-                      <Merge className="mr-2 size-4" /> Simplify debts
+                      <Merge className="mr-2 size-4" /> {t('ui.group_info.simplify_debts')}
                     </p>
                     <Switch
                       id="simplify-debts"
@@ -289,7 +293,7 @@ const BalancePage: NextPageWithUser<{
                               void groupDetailQuery.refetch();
                             },
                             onError: () => {
-                              toast.error('Failed to update setting');
+                              toast.error(t('ui.errors.setting_update_failed'));
                             },
                           },
                         );
@@ -298,25 +302,26 @@ const BalancePage: NextPageWithUser<{
                   </Label>
                   {isAdmin && (
                     <SimpleConfirmationDialog
-                      title="Are you sure?"
-                      description="If balances do not match expenses, you can recalculate them. Note that it may take some time if the expense count is large. Balances outside the group will not be affected."
+                      title={t('ui.group_info.recalculate_balances_details.title')}
+                      description={t('ui.group_info.recalculate_balances_details.description')}
                       hasPermission
                       onConfirm={onRecalculateBalances}
                       loading={recalculateGroupBalancesMutation.isPending}
                       variant="default"
                     >
                       <Button variant="ghost" className="text-primary justify-start p-0 text-left">
-                        <Construction className="mr-2 h-5 w-5" /> Recalculate balances
+                        <Construction className="mr-2 h-5 w-5" />{' '}
+                        {t('ui.group_info.recalculate_balances')}
                       </Button>
                     </SimpleConfirmationDialog>
                   )}
                   {isAdmin ? (
                     <SimpleConfirmationDialog
-                      title={canDelete ? 'Are you absolutely sure?' : ''}
+                      title={canDelete ? t('ui.group_info.delete_group_details.title') : ''}
                       description={
                         canDelete
-                          ? 'This action cannot be reversed'
-                          : "Can't delete the group until everyone settles up the balance"
+                          ? t('ui.group_info.delete_group_details.can_delete')
+                          : t('ui.group_info.delete_group_details.cant_delete')
                       }
                       hasPermission={canDelete}
                       onConfirm={onGroupDelete}
@@ -327,16 +332,16 @@ const BalancePage: NextPageWithUser<{
                         variant="ghost"
                         className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
                       >
-                        <Trash2 className="mr-2 size-4" /> Delete group
+                        <Trash2 className="mr-2 size-4" /> {t('ui.group_info.delete_group')}
                       </Button>
                     </SimpleConfirmationDialog>
                   ) : (
                     <SimpleConfirmationDialog
-                      title={canLeave ? 'Are you absolutely sure?' : ''}
+                      title={canLeave ? t('ui.group_info.leave_group_details.title') : ''}
                       description={
                         canLeave
-                          ? 'This action cannot be reversed'
-                          : "Can't leave the group until your outstanding balance is settled"
+                          ? t('ui.group_info.leave_group_details.can_leave')
+                          : t('ui.group_info.leave_group_details.cant_leave')
                       }
                       hasPermission={canLeave}
                       onConfirm={onGroupLeave}
@@ -347,7 +352,7 @@ const BalancePage: NextPageWithUser<{
                         variant="ghost"
                         className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
                       >
-                        <DoorOpen className="mr-2 h-5 w-5" /> Leave group
+                        <DoorOpen className="mr-2 h-5 w-5" /> {t('ui.group_info.leave_group')}
                       </Button>
                     </SimpleConfirmationDialog>
                   )}
@@ -394,7 +399,7 @@ const BalancePage: NextPageWithUser<{
             <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b pb-4">
               <Link href={`/add?groupId=${groupId}`}>
                 <Button size="sm" className="gap-1 text-sm lg:w-[180px]">
-                  Add Expense
+                  {t('ui.add_expense')}
                 </Button>
               </Link>
               <Button size="sm" className="gap-1 text-sm" variant="secondary">
@@ -403,7 +408,7 @@ const BalancePage: NextPageWithUser<{
                     group={groupDetailQuery.data}
                     enableSendingInvites={enableSendingInvites}
                   >
-                    <UserPlus className="size-4 text-gray-400" /> Add members
+                    <UserPlus className="size-4 text-gray-400" /> {t('ui.add_members')}
                   </AddMembers>
                 ) : null}
               </Button>
@@ -415,19 +420,19 @@ const BalancePage: NextPageWithUser<{
               >
                 {isInviteCopied ? (
                   <>
-                    <Check className="size-4 text-gray-400" /> Copied
+                    <Check className="size-4 text-gray-400" /> {t('ui.copied')}
                   </>
                 ) : (
                   <>
-                    <Share className="size-4 text-gray-400" /> Invite
+                    <Share className="size-4 text-gray-400" /> {t('ui.invite')}
                   </>
                 )}
               </Button>
             </div>
             <Tabs defaultValue="expenses">
               <TabsList className="mx-auto grid w-full max-w-96 grid-cols-2">
-                <TabsTrigger value="expenses">Expenses</TabsTrigger>
-                <TabsTrigger value="balances">Balances</TabsTrigger>
+                <TabsTrigger value="expenses">{t('ui.tabs.expenses')}</TabsTrigger>
+                <TabsTrigger value="balances">{t('ui.tabs.balances')}</TabsTrigger>
               </TabsList>
               <TabsContent value="expenses">
                 <ExpenseList
@@ -455,9 +460,10 @@ BalancePage.auth = true;
 
 export default BalancePage;
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ locale }: { locale: string }) {
   return {
     props: {
+      ...(await serverSideTranslations(locale, ['groups_details', 'common'], i18nConfig)),
       enableSendingInvites: env.ENABLE_SENDING_INVITES,
     },
   };

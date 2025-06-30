@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import i18nConfig from 'next-i18next.config.js';
+import { useRouter } from 'next/router';
 
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
@@ -30,6 +31,7 @@ import { api } from '~/utils/api';
 const AccountPage: NextPageWithUser = ({ user }) => {
   const { t } = useTranslation('account_page');
   const { t: tCommon } = useTranslation('common');
+  const router = useRouter();
   const userQuery = api.user.me.useQuery();
   const downloadQuery = api.user.downloadData.useMutation();
   const updateDetailsMutation = api.user.updateUserDetail.useMutation();
@@ -82,8 +84,10 @@ const AccountPage: NextPageWithUser = ({ user }) => {
   );
 
   const onSignOut = useCallback(() => {
-    void signOut();
-  }, []);
+    // Keep current language at logout by specifying callbackUrl with locale
+    const callbackUrl = `/${router.locale === 'en' ? '' : router.locale}`;
+    void signOut({ callbackUrl });
+  }, [router.locale]);
 
   return (
     <>

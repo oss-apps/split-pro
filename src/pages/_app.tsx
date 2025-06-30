@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { type AppType } from 'next/app';
 import { Poppins } from 'next/font/google';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { type Session } from 'next-auth';
 import { SessionProvider, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
@@ -88,6 +89,7 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
   const { status, data } = useSession({ required: true });
   const [showSpinner, setShowSpinner] = useState(false);
   const { i18n } = useTranslation();
+  const router = useRouter();
 
   const { setCurrency } = useAddExpenseStore((s) => s.actions);
   const { setWebPushPublicKey } = useAppStore((s) => s.actions);
@@ -110,12 +112,15 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
     if ('authenticated' === status) {
       setCurrency(data.user.currency as CurrencyCode);
 
-      // Set user's preferred language
-      if (data.user.preferredLanguage && data.user.preferredLanguage !== i18n.language) {
-        i18n.changeLanguage(data.user.preferredLanguage).catch(console.error);
+      // Set user's preferred language by changing the locale
+      if (data.user.preferredLanguage && data.user.preferredLanguage !== router.locale) {
+        router.push(router.asPath, router.asPath, {
+          locale: data.user.preferredLanguage,
+          scroll: false,
+        }).catch(console.error);
       }
     }
-  }, [status, data?.user, setCurrency, i18n]);
+  }, [status, data?.user, setCurrency, router]);
 
   if ('loading' === status) {
     return (

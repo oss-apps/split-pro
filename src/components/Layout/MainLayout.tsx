@@ -26,8 +26,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   children,
   actions,
   hideAppBar,
-  title, t,
+  title,
   loading,
+  t,
 }) => {
   const router = useRouter();
   const currentPath = router.pathname;
@@ -109,11 +110,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           link="/groups"
           currentPath={currentPath}
         />
-        <NavItem 
-          title={t?.('navigation.add') ?? 'Add'} 
-          Icon={SolidPlusCircleIcon} 
-          link="/add" 
-          currentPath={currentPath} 
+        <NavItem
+          title={t?.('navigation.add') ?? 'Add'}
+          Icon={SolidPlusCircleIcon}
+          link="/add"
+          currentPath={currentPath}
         />
         <NavItem
           title={t?.('navigation.activity') ?? 'Activity'}

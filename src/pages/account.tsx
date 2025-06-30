@@ -90,8 +90,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
       <Head>
         <title>{t('ui.title')}</title>
       </Head>
-      <MainLayout title={t('ui.title')} 
-        t={tCommon} header={header}>
+      <MainLayout title={t('ui.title')} t={tCommon} header={header}>
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <UserAvatar user={user} size={50} />

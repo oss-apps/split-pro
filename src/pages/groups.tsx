@@ -35,8 +35,12 @@ const BalancePage: NextPageWithUser = () => {
         <title>{t('ui.title')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainLayout title={t('ui.title')}
-        t={tCommon} actions={actions} loading={groupQuery.isPending}>
+      <MainLayout
+        title={t('ui.title')}
+        t={tCommon}
+        actions={actions}
+        loading={groupQuery.isPending}
+      >
         <div className="mt-7 flex flex-col gap-8 pb-36">
           {0 === groupQuery.data?.length ? (
             <div className="mt-[30vh] flex flex-col items-center justify-center gap-20">

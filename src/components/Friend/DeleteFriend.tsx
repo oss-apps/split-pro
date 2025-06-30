@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { api } from '~/utils/api';
 
 import { Button } from '../ui/button';
-import { SimpleConfirmationDialog } from '../ui/SimpleConfirmationDialog';
+import { SimpleConfirmationDialog } from '../ui/simple-confirmation-dialog';
 
 export const DeleteFriend: React.FC<{
   friendId: number;

@@ -33,7 +33,7 @@ import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { Label } from '~/components/ui/label';
-import { SimpleConfirmationDialog } from '~/components/ui/SimpleConfirmationDialog';
+import { SimpleConfirmationDialog } from '~/components/ui/simple-confirmation-dialog';
 import { Switch } from '~/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { env } from '~/env';

@@ -1,5 +1,6 @@
 import { type VariantProps } from 'class-variance-authority';
 import { useState } from 'react';
+import { useTranslation } from 'next-i18next';
 
 import {
   AlertDialog,
@@ -23,6 +24,7 @@ export const SimpleConfirmationDialog: React.FC<
     children: React.ReactNode;
   } & VariantProps<typeof buttonVariants>
 > = ({ title, description, hasPermission, onConfirm, loading, variant, children }) => {
+  const { t } = useTranslation('common');
   const [open, setOpen] = useState(false);
 
   return (
@@ -34,7 +36,7 @@ export const SimpleConfirmationDialog: React.FC<
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t('ui.cancel')}</AlertDialogCancel>
           {hasPermission && (
             <form
               onSubmit={async (e) => {
@@ -50,7 +52,7 @@ export const SimpleConfirmationDialog: React.FC<
                 disabled={loading}
                 loading={loading}
               >
-                Confirm
+                {t('ui.confirm')}
               </Button>
             </form>
           )}

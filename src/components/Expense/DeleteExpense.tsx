@@ -5,7 +5,7 @@ import React from 'react';
 import { api } from '~/utils/api';
 
 import { Button } from '../ui/button';
-import { SimpleConfirmationDialog } from '../ui/SimpleConfirmationDialog';
+import { SimpleConfirmationDialog } from '../ui/simple-confirmation-dialog';
 
 export const DeleteExpense: React.FC<{
   expenseId: string;

@@ -15,6 +15,8 @@
   },
   "ui": {
     "you": "Tu",
+    "cancel": "Annulla",
+    "confirm": "Conferma",
     "edit_name": {
       "title": "Modifica nome",
       "placeholder": "Inserisci il nome",

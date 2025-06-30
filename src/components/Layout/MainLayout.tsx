@@ -9,6 +9,7 @@ import { clsx } from 'clsx';
 import { type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import React from 'react';
 import { LoadingSpinner } from '../ui/spinner';
 
@@ -19,7 +20,6 @@ interface MainLayoutProps {
   header?: React.ReactNode;
   loading?: boolean;
   hideAppBar?: boolean;
-  t?: (key: string) => string;
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({
@@ -28,8 +28,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   hideAppBar,
   title,
   loading,
-  t,
 }) => {
+  const { t } = useTranslation('common');
   const router = useRouter();
   const currentPath = router.pathname;
 

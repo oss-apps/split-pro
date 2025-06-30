@@ -3,6 +3,7 @@ import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'next-i18next';
 import { z } from 'zod';
 
 import { AppDrawer } from '~/components/ui/drawer';
@@ -11,12 +12,19 @@ import { api } from '~/utils/api';
 
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
 
-const groupSchema = z.object({
-  name: z.string({ required_error: 'Name is required' }).min(1, { message: 'Name is required' }),
-});
-
 export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { t, ready } = useTranslation('groups_details');
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  if (!ready) {
+    return null;
+  }
+
+  console.log(t('ui.create_group.title'));
+
+  const groupSchema = z.object({
+    name: z.string({ required_error: t('ui.create_group.errors.name_required') }).min(1, { message: t('ui.create_group.errors.name_required') }),
+  });
 
   const createGroup = api.group.create.useMutation(undefined);
   const utils = api.useUtils();
@@ -52,11 +60,11 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
           }
         }}
         trigger={children}
-        leftAction="Cancel"
+        leftAction={t('ui.create_group.cancel')}
         leftActionOnClick={() => setDrawerOpen(false)}
-        title="Create a group"
+        title={t('ui.create_group.title')}
         className="h-[70vh]"
-        actionTitle="Submit"
+        actionTitle={t('ui.create_group.submit')}
         actionOnClick={async () => {
           await groupForm.handleSubmit(onGroupSubmit)();
         }}
@@ -79,7 +87,7 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormControl>
-                      <Input placeholder="Group name" className="w-full py-2 text-lg" {...field} />
+                      <Input placeholder={t('ui.create_group.group_name_placeholder')} className="w-full py-2 text-lg" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

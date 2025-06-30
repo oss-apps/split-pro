@@ -30,7 +30,6 @@ import { api } from '~/utils/api';
 
 const AccountPage: NextPageWithUser = ({ user }) => {
   const { t } = useTranslation('account_page');
-  const { t: tCommon } = useTranslation('common');
   const router = useRouter();
   const userQuery = api.user.me.useQuery();
   const downloadQuery = api.user.downloadData.useMutation();
@@ -94,7 +93,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
       <Head>
         <title>{t('ui.title')}</title>
       </Head>
-      <MainLayout title={t('ui.title')} t={tCommon} header={header}>
+      <MainLayout title={t('ui.title')} header={header}>
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <UserAvatar user={user} size={50} />
@@ -112,7 +111,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
           )}
         </div>
         <div className="mt-8 flex flex-col gap-4">
-          <LanguageChanger t={t} />
+          <LanguageChanger />
           <Link href="https://twitter.com/KM_Koushik_" target="_blank">
             <Button
               variant="ghost"
@@ -175,8 +174,8 @@ const AccountPage: NextPageWithUser = ({ user }) => {
               <ChevronRight className="h-6 w-6 text-gray-500" />
             </Button>
           </Link>
-          <SubmitFeedback t={t} />
-          <SubscribeNotification t={t} />
+          <SubmitFeedback />
+          <SubscribeNotification />
           <Link href="https://www.producthunt.com/products/splitpro/reviews/new" target="_blank">
             <Button
               variant="ghost"

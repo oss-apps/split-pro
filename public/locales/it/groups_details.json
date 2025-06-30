@@ -55,7 +55,16 @@
     "you_paid": "Hai pagato",
     "user_paid": "ha pagato",
     "you_lent": "Hai prestato",
-    "you_owe": "Devi"
+    "you_owe": "Devi",
+    "create_group": {
+      "title": "Crea un gruppo",
+      "group_name_placeholder": "Nome del gruppo",
+      "cancel": "Annulla",
+      "submit": "Invia",
+      "errors": {
+        "name_required": "Il nome è obbligatorio"
+      }
+    }
   },
   "invite_message": {
     "join_to": "Unisciti a",

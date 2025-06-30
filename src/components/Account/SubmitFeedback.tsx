@@ -3,6 +3,7 @@ import { ChevronRight, MessageSquare } from 'lucide-react';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { useTranslation } from 'next-i18next';
 import { z } from 'zod';
 
 import { api } from '~/utils/api';
@@ -11,17 +12,15 @@ import { AppDrawer } from '../ui/drawer';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
 import { Textarea } from '../ui/textarea';
 
-interface SubmitFeedbackProps {
-  t: (key: string) => string;
-}
+const feedbackSchema = (t: (key: string) => string) =>
+  z.object({
+    feedback: z
+      .string({ required_error: t('ui.errors.feedback_required') })
+      .min(10, { message: t('ui.errors.feedback_min_length') }),
+  });
 
-const feedbackSchema = (t: (key: string) => string) => z.object({
-  feedback: z
-    .string({ required_error: t('ui.errors.feedback_required') })
-    .min(10, { message: t('ui.errors.feedback_min_length') }),
-});
-
-export const SubmitFeedback: React.FC<SubmitFeedbackProps> = ({ t }) => {
+export const SubmitFeedback: React.FC = () => {
+  const { t } = useTranslation('account_page');
   const submitFeedbackMutation = api.user.submitFeedback.useMutation();
   const [feedbackOpen, setFeedbackOpen] = useState(false);
 

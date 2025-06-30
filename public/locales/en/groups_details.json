@@ -55,7 +55,16 @@
     "you_paid": "You paid",
     "user_paid": "paid",
     "you_lent": "You lent",
-    "you_owe": "You owe"
+    "you_owe": "You owe",
+    "create_group": {
+      "title": "Create a group",
+      "group_name_placeholder": "Group name",
+      "cancel": "Cancel",
+      "submit": "Submit",
+      "errors": {
+        "name_required": "Name is required"
+      }
+    }
   },
   "invite_message": {
     "join_to": "Join to",

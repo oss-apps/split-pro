@@ -8,13 +8,10 @@ import { api } from '~/utils/api';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 
-interface LanguageChangerProps {
-  t: (key: string) => string;
-}
 
-export const LanguageChanger: React.FC<LanguageChangerProps> = ({ t }) => {
+export const LanguageChanger: React.FC = () => {
   const router = useRouter();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation('account_page');
   const updatePreferredLanguage = api.user.updatePreferredLanguage.useMutation();
 
   const supportedLanguages = [

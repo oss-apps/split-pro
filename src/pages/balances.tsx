@@ -19,7 +19,6 @@ import { toUIString } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser = () => {
   const { t } = useTranslation('balances');
-  const { t: tCommon } = useTranslation('common');
   const balanceQuery = api.expense.getBalances.useQuery();
 
   const shareWithFriends = () => {
@@ -42,7 +41,6 @@ const BalancePage: NextPageWithUser = () => {
       </Head>
       <MainLayout
         title={t('title')}
-        t={tCommon}
         actions={
           'undefined' !== typeof window && !!window.navigator?.share ? (
             <Button variant="ghost" onClick={shareWithFriends}>
@@ -144,7 +142,7 @@ const FriendBalance: React.FC<{
   hasMore?: boolean;
 }> = ({ friend, amount, isPositive, currency, id, hasMore }) => {
   const { t } = useTranslation('balances');
-  
+
   return (
     <Link className="flex items-center justify-between" href={`/balances/${id}`}>
       <div className="flex items-center gap-3">

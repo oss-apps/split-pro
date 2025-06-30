@@ -17,7 +17,6 @@ import { BigMath, toUIString } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser = () => {
   const { t } = useTranslation('groups_page');
-  const { t: tCommon } = useTranslation('common');
   const groupQuery = api.group.getAllGroupsWithBalances.useQuery();
 
   const actions = useMemo(
@@ -35,12 +34,7 @@ const BalancePage: NextPageWithUser = () => {
         <title>{t('ui.title')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainLayout
-        title={t('ui.title')}
-        t={tCommon}
-        actions={actions}
-        loading={groupQuery.isPending}
-      >
+      <MainLayout title={t('ui.title')} actions={actions} loading={groupQuery.isPending}>
         <div className="mt-7 flex flex-col gap-8 pb-36">
           {0 === groupQuery.data?.length ? (
             <div className="mt-[30vh] flex flex-col items-center justify-center gap-20">
@@ -129,7 +123,11 @@ BalancePage.auth = true;
 export const getStaticProps = async ({ locale }: { locale: string }) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['groups_page', 'common'], i18nConfig)),
+      ...(await serverSideTranslations(
+        locale,
+        ['groups_page', 'groups_details', 'common'],
+        i18nConfig,
+      )),
     },
   };
 };

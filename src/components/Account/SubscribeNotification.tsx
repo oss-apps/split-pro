@@ -1,9 +1,9 @@
 import { Bell, BellOff, ChevronRight } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-
 import { useAppStore } from '~/store/appStore';
 import { api } from '~/utils/api';
+import { useTranslation } from 'next-i18next';
 
 import { Button } from '../ui/button';
 
@@ -24,7 +24,8 @@ const base64ToUint8Array = (base64: string) => {
   return outputArray;
 };
 
-export const SubscribeNotification: React.FC<SubscribeNotificationProps> = ({ t }) => {
+export const SubscribeNotification: React.FC = () => {
+  const { t } = useTranslation('account_page');
   const updatePushSubscription = api.user.updatePushNotification.useMutation();
   const [isSubscribed, setIsSubscribed] = useState(false);
   const webPushPublicKey = useAppStore((s) => s.webPushPublicKey);

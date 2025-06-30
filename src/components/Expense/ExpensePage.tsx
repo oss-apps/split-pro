@@ -1,22 +1,22 @@
 import { type Expense, type ExpenseParticipant, type User } from '@prisma/client';
-import { format, isSameDay } from 'date-fns';
+import { isSameDay } from 'date-fns';
 import { Banknote } from 'lucide-react';
-import Image from 'next/image';
 import { type User as NextUser } from 'next-auth';
-import React from 'react';
 
 // import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 
+import type { FC } from 'react';
+import { displayName, toUIDate } from '~/utils/strings';
 import { UserAvatar } from '../ui/avatar';
 import { CategoryIcons } from '../ui/categoryIcons';
-import { AppDrawer } from '../ui/drawer';
 import { Separator } from '../ui/separator';
+import { Receipt } from './Receipt';
 
 interface ExpenseDetailsProps {
   user: NextUser;
   expense: Expense & {
-    expenseParticipants: Array<ExpenseParticipant & { user: User }>;
+    expenseParticipants: (ExpenseParticipant & { user: User })[];
     addedByUser: User;
     paidByUser: User;
     deletedByUser: User | null;
@@ -25,16 +25,14 @@ interface ExpenseDetailsProps {
   storagePublicUrl?: string;
 }
 
-const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
-  const youPaid = expense.paidBy === user.id;
-
+const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
   const CategoryIcon = CategoryIcons[expense.category] ?? Banknote;
 
   // const sendNotificationMutation = api.user.sendExpensePushNotification.useMutation();
 
   return (
-    <div className="">
-      <div className="mb-4 flex items-start justify-between gap-2 px-6">
+    <>
+      <div className="mb-4 flex items-start justify-between gap-2">
         <div className="flex items-start gap-4">
           <div className="rounded-lg border p-2 text-xl">
             <CategoryIcon className="text-gray-400" size={24} />
@@ -42,69 +40,40 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
           <div className="flex flex-col gap-2">
             <p className="">{expense.name}</p>
             <p className="text-2xl font-semibold">
-              {expense.currency} {toUIString(expense.amount ?? 0)}
+              {expense.currency} {toUIString(expense.amount)}
             </p>
             {!isSameDay(expense.expenseDate, expense.createdAt) ? (
-              <p className="text-sm text-gray-500">{format(expense.expenseDate, 'dd MMM yyyy')}</p>
+              <p className="text-sm text-gray-500">
+                {toUIDate(expense.expenseDate, { year: true })}
+              </p>
             ) : null}
             {expense.updatedByUser ? (
               <p className="text-sm text-gray-500">
-                Edited by {expense.updatedByUser?.name ?? expense.updatedByUser?.email} on{' '}
-                {format(expense.updatedAt, 'dd MMM yyyy')}
+                Edited by {displayName(expense.updatedByUser)} on{' '}
+                {toUIDate(expense.updatedAt, { year: true })}
               </p>
             ) : null}
             {expense.deletedByUser ? (
               <p className="text-sm text-orange-600">
-                Deleted by {expense.deletedByUser.name ?? expense.addedByUser.email} on{' '}
-                {format(expense.deletedAt ?? expense.createdAt, 'dd MMM yyyy')}
+                Deleted by {displayName(expense.deletedByUser)} on{' '}
+                {toUIDate(expense.deletedAt ?? expense.createdAt, { year: true })}
               </p>
             ) : (
               <p className="text-sm text-gray-500">
-                Added by {expense.addedByUser.name ?? expense.addedByUser.email} on{' '}
-                {format(expense.createdAt, 'dd MMM yyyy')}
+                Added by {displayName(expense.addedByUser)} on{' '}
+                {toUIDate(expense.createdAt, { year: true })}
               </p>
             )}
           </div>
         </div>
         <div>
           {expense.fileKey ? (
-            <AppDrawer
-              trigger={
-                <Image
-                  src={`${storagePublicUrl}/${expense.fileKey}`}
-                  alt="Expense receipt"
-                  width={56}
-                  height={56}
-                  data-loaded="false"
-                  onLoad={(event) => {
-                    event.currentTarget.setAttribute('data-loaded', 'true');
-                  }}
-                  className="h-14 w-14 rounded-md object-cover object-center data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
-                />
-              }
-              leftAction="Close"
-              title="Expense Receipt"
-              className="h-[98vh]"
-            >
-              <div className="mb-8 overflow-scroll">
-                <Image
-                  src={`${storagePublicUrl}/${expense.fileKey}`}
-                  width={300}
-                  height={800}
-                  alt="Expense receipt"
-                  data-loaded="false"
-                  onLoad={(event) => {
-                    event.currentTarget.setAttribute('data-loaded', 'true');
-                  }}
-                  className="h-full w-full rounded-2xl object-cover data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
-                />
-              </div>
-            </AppDrawer>
+            <Receipt fileKey={expense.fileKey} url={storagePublicUrl ?? ''} />
           ) : null}
         </div>
       </div>
       <Separator />
-      <div className="mt-10 flex items-center gap-5 px-6">
+      <div className="mt-10 flex items-center gap-5">
         {/* <button
           onClick={() => {
             sendNotificationMutation.mutate({
@@ -117,25 +86,25 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
         </button> */}
         <UserAvatar user={expense.paidByUser} size={35} />
         <p>
-          {youPaid ? 'You' : (expense.paidByUser.name ?? expense.paidByUser.email)} paid{' '}
-          {expense.currency} {toUIString(expense.amount)}
+          {displayName(expense.paidByUser, user.id)} paid {expense.currency}{' '}
+          {toUIString(expense.amount)}
         </p>
       </div>
-      <div className="mt-4 ml-14 flex flex-col gap-4 px-6">
+      <div className="mt-4 ml-14 flex flex-col gap-4">
         {expense.expenseParticipants
           .filter((p) => (expense.paidBy === p.userId ? (expense.amount ?? 0n) : 0n) !== p.amount)
           .map((p) => (
             <div key={p.userId} className="flex items-center gap-2 text-sm text-gray-500">
               <UserAvatar user={p.user} size={25} />
               <p>
-                {user.id === p.userId ? 'You Owe' : `${p.user.name ?? p.user.email} owes`}{' '}
+                {user.id === p.userId ? 'You owe' : `${p.user.name ?? p.user.email} owes`}{' '}
                 {expense.currency}{' '}
                 {toUIString((expense.paidBy === p.userId ? (expense.amount ?? 0n) : 0n) - p.amount)}
               </p>
             </div>
           ))}
       </div>
-    </div>
+    </>
   );
 };
 

@@ -7,7 +7,7 @@ import { Button } from '~/components/ui/button';
 import { toUIString } from '~/utils/numbers';
 
 interface ExportCSVProps {
-  expenses: (Expense & { expenseParticipants: ExpenseParticipant[] })[];
+  expenses?: (Expense & { expenseParticipants: ExpenseParticipant[] })[];
   fileName: string;
   currentUserId: number;
   friendName: string;
@@ -16,7 +16,7 @@ interface ExportCSVProps {
 }
 
 export const Export: React.FC<ExportCSVProps> = ({
-  expenses,
+  expenses = [],
   fileName,
   currentUserId,
   friendName,

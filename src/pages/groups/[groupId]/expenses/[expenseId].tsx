@@ -51,6 +51,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
             </Link>
           </div>
         }
+        loading={expenseQuery.isPending}
       >
         {expenseQuery.data ? (
           <ExpenseDetails

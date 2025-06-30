@@ -1,6 +1,5 @@
 import { SplitType } from '@prisma/client';
 import { type inferRouterOutputs } from '@trpc/server';
-import { format } from 'date-fns';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -8,16 +7,16 @@ import React from 'react';
 import { CategoryIcon } from '~/components/ui/categoryIcons';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { toUIString } from '~/utils/numbers';
-import { displayName } from '~/utils/strings';
+import { displayName, toUIDate } from '~/utils/strings';
 
 export const ExpenseList: React.FC<{
   userId: number;
-  expenses:
+  expenses?:
     | inferRouterOutputs<ExpenseRouter>['getGroupExpenses']
     | inferRouterOutputs<ExpenseRouter>['getExpensesWithFriend'];
   contactId: number;
   isLoading?: boolean;
-}> = ({ userId, expenses, contactId, isLoading }) => (
+}> = ({ userId, expenses = [], contactId, isLoading }) => (
   <>
     {expenses.map((e) => {
       const isGroup = !!e.groupId;
@@ -35,14 +34,8 @@ export const ExpenseList: React.FC<{
           className="flex items-center justify-between py-2"
         >
           <div className="flex items-center gap-4">
-            <div className="text-xs text-gray-500">
-              {format(e.expenseDate, 'MMM dd')
-                .split(' ')
-                .map((d) => (
-                  <div className="text-center" key={d}>
-                    {d}
-                  </div>
-                ))}
+            <div className="inline-block max-w-min text-center text-xs text-gray-500">
+              {toUIDate(e.expenseDate)}
             </div>
             <div>
               <CategoryIcon category={e.category} className="h-5 w-5 text-gray-400" />

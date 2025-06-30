@@ -1,7 +1,5 @@
 import Avatar from 'boring-avatars';
-import clsx from 'clsx';
-import { format } from 'date-fns';
-import { motion } from 'framer-motion';
+import { clsx } from 'clsx';
 import {
   BarChartHorizontal,
   Check,
@@ -39,6 +37,7 @@ import { env } from '~/env';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
+import { displayName, toUIDate } from '~/utils/strings';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
@@ -165,7 +164,7 @@ const BalancePage: NextPageWithUser<{
               trigger={<BarChartHorizontal className="h-6 w-6" />}
               className="h-[85vh]"
             >
-              <div className="">
+              <>
                 <p className="font-semibold">Total expenses</p>
                 <div className="mt-2 flex flex-wrap gap-1">
                   {groupTotalQuery.data?.map((total, index, arr) => {
@@ -179,20 +178,17 @@ const BalancePage: NextPageWithUser<{
                     ) : null;
                   })}
                 </div>
-                {expensesQuery?.data && 0 < expensesQuery?.data?.length && (
+                {expensesQuery?.data && expensesQuery.data[expensesQuery.data.length - 1] && (
                   <div className="mt-8">
                     <p className="font-semibold">First expense</p>
                     <p>
-                      {expensesQuery.data[expensesQuery.data.length - 1]?.createdAt
-                        ? format(
-                            expensesQuery.data[expensesQuery.data.length - 1]!.createdAt,
-                            'MMM dd, yyyy',
-                          )
-                        : '--'}
+                      {toUIDate(expensesQuery.data[expensesQuery.data.length - 1]!.createdAt, {
+                        year: true,
+                      })}
                     </p>
                   </div>
                 )}
-              </div>
+              </>
             </AppDrawer>
             <AppDrawer
               title="Group info"
@@ -231,7 +227,7 @@ const BalancePage: NextPageWithUser<{
                     <div key={groupUser.userId} className="flex items-center justify-between">
                       <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
                         <UserAvatar user={groupUser.user} />
-                        <p>{groupUser.user.name ?? groupUser.user.email}</p>
+                        <p>{displayName(groupUser.user)}</p>
                       </div>
                       {groupUser.userId === groupDetailQuery.data?.userId ? (
                         <p className="text-sm text-gray-400">owner</p>
@@ -269,10 +265,10 @@ const BalancePage: NextPageWithUser<{
                   ))}
                 </div>
               </>
-              {groupDetailQuery?.data?.createdAt && (
+              {groupDetailQuery.data?.createdAt && (
                 <div className="mt-8">
                   <p className="font-semibold">Group created</p>
-                  <p>{format(groupDetailQuery.data?.createdAt, 'MMM dd, yyyy')}</p>
+                  <p>{toUIDate(groupDetailQuery.data.createdAt, { year: true })}</p>
                 </div>
               )}
               <div className="mt-8">
@@ -380,22 +376,22 @@ const BalancePage: NextPageWithUser<{
             <p className="text-lg">{groupDetailQuery.data?.name}</p>
           </div>
         }
+        loading={groupDetailQuery.isPending}
       >
-        {groupDetailQuery.isPending ? null : 1 === groupDetailQuery.data?.groupUsers.length &&
-          !expensesQuery.data?.length ? (
+        {1 === groupDetailQuery.data?.groupUsers.length && !expensesQuery.data?.length ? (
           <div className="h-[85vh]">
             <NoMembers group={groupDetailQuery.data} enableSendingInvites={enableSendingInvites} />
           </div>
         ) : (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div className="mb-4 px-4">
+          <div className="transition-discrete starting:opacity-0">
+            <div className="mb-4">
               <GroupMyBalance
                 userId={user.id}
-                groupBalances={groupDetailQuery.data?.groupBalances ?? []}
-                users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
+                groupBalances={groupDetailQuery.data?.groupBalances}
+                users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user)}
               />
             </div>
-            <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4">
+            <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b pb-4">
               <Link href={`/add?groupId=${groupId}`}>
                 <Button size="sm" className="gap-1 text-sm lg:w-[180px]">
                   Add Expense
@@ -428,7 +424,7 @@ const BalancePage: NextPageWithUser<{
                 )}
               </Button>
             </div>
-            <Tabs defaultValue="expenses" className="px-2">
+            <Tabs defaultValue="expenses">
               <TabsList className="mx-auto grid w-full max-w-96 grid-cols-2">
                 <TabsTrigger value="expenses">Expenses</TabsTrigger>
                 <TabsTrigger value="balances">Balances</TabsTrigger>
@@ -436,19 +432,19 @@ const BalancePage: NextPageWithUser<{
               <TabsContent value="expenses">
                 <ExpenseList
                   userId={user.id}
-                  expenses={expensesQuery.data ?? []}
+                  expenses={expensesQuery.data}
                   contactId={groupId}
                   isLoading={expensesQuery.isPending}
                 />
               </TabsContent>
               <TabsContent value="balances">
                 <BalanceList
-                  groupBalances={groupDetailQuery.data?.groupBalances ?? []}
-                  users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
+                  groupBalances={groupDetailQuery.data?.groupBalances}
+                  users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user)}
                 />
               </TabsContent>
             </Tabs>
-          </motion.div>
+          </div>
         )}
       </MainLayout>
     </>

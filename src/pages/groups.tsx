@@ -1,11 +1,11 @@
 import { PlusIcon } from '@heroicons/react/24/solid';
-import clsx from 'clsx';
-import { motion } from 'framer-motion';
+import { clsx } from 'clsx';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import i18nConfig from 'next-i18next.config.js';
+import { useMemo } from 'react';
 
 import { CreateGroup } from '~/components/group/CreateGroup';
 import MainLayout from '~/components/Layout/MainLayout';
@@ -20,63 +20,59 @@ const BalancePage: NextPageWithUser = () => {
   const { t: tCommon } = useTranslation('common');
   const groupQuery = api.group.getAllGroupsWithBalances.useQuery();
 
+  const actions = useMemo(
+    () => (
+      <CreateGroup>
+        <PlusIcon className="text-primary h-6 w-6" />
+      </CreateGroup>
+    ),
+    [],
+  );
+
   return (
     <>
       <Head>
         <title>{t('ui.title')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainLayout
-        title={t('ui.title')}
-        t={tCommon}
-        actions={
-          <CreateGroup>
-            <PlusIcon className="text-primary h-6 w-6" />
-          </CreateGroup>
-        }
-      >
-        <div className="mt-2">
-          <div className="mt-5 flex flex-col gap-8 px-4 pb-36">
-            {groupQuery.isPending ? null : 0 === groupQuery.data?.length ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mt-[30vh] flex flex-col items-center justify-center gap-20"
-              >
-                <CreateGroup>
-                  <Button>
-                    <PlusIcon className="mr-2 h-4 w-4" />
-                    {t('ui.group_create_btn')}
-                  </Button>
-                </CreateGroup>
-              </motion.div>
-            ) : (
-              groupQuery.data?.map((g) => {
-                const [currency, amount] = Object.entries(g.balances).reduce(
-                  (acc, balance) => {
-                    if (BigMath.abs(balance[1]) > BigMath.abs(acc[1])) {
-                      return balance;
-                    }
-                    return acc;
-                  },
-                  [g.defaultCurrency, 0n],
-                );
-                const multiCurrency = 1 < Object.values(g.balances).filter((b) => b !== 0n).length;
-                return (
-                  <GroupBalance
-                    key={g.id}
-                    groupId={g.id}
-                    name={g.name}
-                    amount={amount}
-                    isPositive={0 <= amount ? true : false}
-                    currency={currency}
-                    multiCurrency={multiCurrency}
-                    t={t}
-                  />
-                );
-              })
-            )}
-          </div>
+      <MainLayout title={t('ui.title')}
+        t={tCommon} actions={actions} loading={groupQuery.isPending}>
+        <div className="mt-7 flex flex-col gap-8 pb-36">
+          {0 === groupQuery.data?.length ? (
+            <div className="mt-[30vh] flex flex-col items-center justify-center gap-20">
+              <CreateGroup>
+                <Button>
+                  <PlusIcon className="mr-2 h-4 w-4" />
+                  {t('ui.group_create_btn')}
+                </Button>
+              </CreateGroup>
+            </div>
+          ) : (
+            groupQuery.data?.map((g) => {
+              const [currency, amount] = Object.entries(g.balances).reduce(
+                (acc, balance) => {
+                  if (BigMath.abs(balance[1]) > BigMath.abs(acc[1])) {
+                    return balance;
+                  }
+                  return acc;
+                },
+                [g.defaultCurrency, 0n],
+              );
+              const multiCurrency = 1 < Object.values(g.balances).filter((b) => 0n !== b).length;
+              return (
+                <GroupBalance
+                  key={g.id}
+                  groupId={g.id}
+                  name={g.name}
+                  amount={amount}
+                  isPositive={0 <= amount}
+                  currency={currency}
+                  multiCurrency={multiCurrency}
+                  t={t}
+                />
+              );
+            })
+          )}
         </div>
       </MainLayout>
     </>

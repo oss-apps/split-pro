@@ -28,7 +28,9 @@
         "memberSyntaxSortOrder": ["none", "all", "multiple", "single"],
         "allowSeparatedGroups": true
       }
-    ]
+    ],
+    "prefer-default-export": "off",
+    "yoda": "off"
   },
   "overrides": [
     {

@@ -10,6 +10,7 @@ import { env } from '~/env';
 import { db } from '~/server/db';
 
 import { sendSignUpEmail } from './mailer';
+import { getBaseUrl } from '~/utils/api';
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -76,6 +77,19 @@ export const authOptions: NextAuthOptions = {
         currency: user.currency,
       },
     }),
+    async signIn({ user, email }) {
+      if (email?.verificationRequest && env.DISABLE_EMAIL_SIGNUP) {
+        const existingUser = await db.user.findUnique({
+          where: { email: user.email! },
+        });
+
+        if (!existingUser) {
+          return `${getBaseUrl()}/auth/signin?error=SignupDisabled`;
+        }
+      }
+
+      return true;
+    },
   },
   adapter: SplitProPrismaAdapter(db),
   providers: getProviders(),
@@ -104,9 +118,7 @@ export const authOptions: NextAuthOptions = {
 export const getServerAuthSession = (ctx: {
   req: GetServerSidePropsContext['req'];
   res: GetServerSidePropsContext['res'];
-}) => {
-  return getServerSession(ctx.req, ctx.res, authOptions);
-};
+}) => getServerSession(ctx.req, ctx.res, authOptions);
 
 export const getServerAuthSessionForSSG = async (context: GetServerSidePropsContext) => {
   console.log('Before getting session');
@@ -157,8 +169,8 @@ function getProviders() {
             pass: env.EMAIL_SERVER_PASSWORD,
           },
         },
-        async sendVerificationRequest({ identifier: email, url, token }) {
-          const result = await sendSignUpEmail(email, token, url);
+        async sendVerificationRequest({ identifier: email, url }) {
+          const result = await sendSignUpEmail(email, url);
           if (!result) {
             throw new Error('Failed to send email');
           }

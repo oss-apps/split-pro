@@ -48,6 +48,10 @@ export async function sendSignUpEmail(email: string, token: string, url: string)
     return true;
   }
 
+  if (!env.ENABLE_EMAIL_SIGNUP) {
+    throw new Error('Email signup is not enabled');
+  }
+
   const subject = 'Sign in to SplitPro';
   const text = `Hey,\n\nYou can sign in to SplitPro by clicking the below URL:\n${url}\n\nYou can also use this OTP: ${token}\n\nThanks,\nSplitPro Team`;
   const html = `<p>Hey,</p> <p>You can sign in to SplitPro by clicking the below URL:</p><p><a href="${url}">Sign in to ${host}</a></p><p>You can also use this OTP: <b>${token}</b></p><br /><br /><p>Thanks,</p><br/>SplitPro Team</p>`;

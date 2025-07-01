@@ -145,7 +145,7 @@ function getProviders() {
     );
   }
 
-  if (env.EMAIL_SERVER_HOST) {
+  if (env.EMAIL_SERVER_HOST && env.ENABLE_EMAIL_SIGNUP) {
     providersList.push(
       EmailProvider({
         from: env.FROM_EMAIL,

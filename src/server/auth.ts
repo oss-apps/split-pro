@@ -76,6 +76,27 @@ export const authOptions: NextAuthOptions = {
         currency: user.currency,
       },
     }),
+    async signIn({ user, account, profile }) {
+      // Allow OAuth providers to work normally
+      if (account?.provider !== 'email') {
+        return true;
+      }
+
+      // For email provider, check if signup is disabled
+      if (env.DISABLE_EMAIL_SIGNUP) {
+        // Check if user already exists in database
+        const existingUser = await db.user.findUnique({
+          where: { email: user.email! },
+        });
+
+        if (!existingUser) {
+          // User doesn't exist and signups are disabled
+          return '/auth/signin?error=SignupDisabled';
+        }
+      }
+
+      return true;
+    },
   },
   adapter: SplitProPrismaAdapter(db),
   providers: getProviders(),
@@ -145,7 +166,7 @@ function getProviders() {
     );
   }
 
-  if (env.EMAIL_SERVER_HOST && env.ENABLE_EMAIL_SIGNUP) {
+  if (env.EMAIL_SERVER_HOST) {
     providersList.push(
       EmailProvider({
         from: env.FROM_EMAIL,

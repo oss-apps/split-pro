@@ -1,6 +1,11 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import type { GetServerSideProps } from 'next';
+
+import nextI18NextConfig from '../../next-i18next.config.js';
 
 import { AddOrEditExpensePage } from '~/components/AddExpense/AddExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
@@ -15,6 +20,7 @@ const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
 }> = ({ user, isStorageConfigured, enableSendingInvites }) => {
+  const { t } = useTranslation('add_page');
   const {
     setCurrentUser,
     setGroup,
@@ -113,7 +119,7 @@ const AddPage: NextPageWithUser<{
   return (
     <>
       <Head>
-        <title>Add Expense</title>
+        <title>{_expenseId ? t('meta.title_edit') : t('meta.title')}</title>
       </Head>
       <MainLayout hideAppBar>
         {currentUser && (!_expenseId || expenseQuery.data) && (
@@ -132,11 +138,16 @@ AddPage.auth = true;
 
 export default AddPage;
 
-export async function getServerSideProps() {
+export const getServerSideProps = async ({ locale }: { locale: string }) => {
   return {
     props: {
       isStorageConfigured: !!isStorageConfigured(),
       enableSendingInvites: !!env.ENABLE_SENDING_INVITES,
+      ...(await serverSideTranslations(
+        locale ?? 'en', 
+        ['common', 'add_page', 'expense_details'], 
+        nextI18NextConfig
+      )),
     },
   };
-}
+};

@@ -1,5 +1,6 @@
 import { Banknote } from 'lucide-react';
 import { useMemo } from 'react';
+import { useTranslation } from 'next-i18next';
 
 import { Button } from '../ui/button';
 import { CategoryIcons } from '../ui/categoryIcons';
@@ -9,6 +10,7 @@ export const CategoryPicker: React.FC<{
   category: string;
   onCategoryPick: (category: string) => void;
 }> = ({ category, onCategoryPick }) => {
+  const { t } = useTranslation('expense_details');
   const CategoryIcon = useMemo(() => CategoryIcons[category] ?? Banknote, [category]);
 
   return (
@@ -18,36 +20,34 @@ export const CategoryPicker: React.FC<{
           <CategoryIcon size={20} />
         </div>
       }
-      title="Categories"
+      title={t('ui.categories.title')}
       className="h-[70vh]"
       shouldCloseOnAction
     >
       {Object.entries(CATEGORIES).map(([categoryName, categoryDetails]) => {
         return (
           <div key={categoryName} className="mb-8">
-            <h3 className="mb-4 text-lg font-semibold">{categoryDetails.name}</h3>
+            <h3 className="mb-4 text-lg font-semibold">{t(`ui.categories.categories_list.${categoryName}.name`)}</h3>
             <div className="flex flex-wrap justify-between gap-2">
-              {categoryDetails.items.map((item) =>
-                Object.entries(item).map(([key, value]) => {
-                  const Icon = CategoryIcons[key] ?? CategoryIcons[categoryName] ?? Banknote;
-                  return (
-                    <DrawerClose key={key}>
-                      <Button
-                        variant="ghost"
-                        className="flex w-[75px] flex-col gap-1 py-8 text-center"
-                        onClick={() => {
-                          onCategoryPick('other' === key ? categoryName : key);
-                        }}
-                      >
-                        <span className="block text-2xl">
-                          <Icon />
-                        </span>
-                        <span className="block text-xs capitalize">{value}</span>
-                      </Button>
-                    </DrawerClose>
-                  );
-                }),
-              )}
+              {categoryDetails.items.map((key) => {
+                const Icon = CategoryIcons[key] ?? CategoryIcons[categoryName] ?? Banknote;
+                return (
+                  <DrawerClose key={key}>
+                    <Button
+                      variant="ghost"
+                      className="flex w-[75px] flex-col gap-1 py-8 text-center"
+                      onClick={() => {
+                        onCategoryPick('other' === key ? categoryName : key);
+                      }}
+                    >
+                      <span className="block text-2xl">
+                        <Icon />
+                      </span>
+                      <span className="block text-xs capitalize">{t(`ui.categories.categories_list.${categoryName}.items.${key}`)}</span>
+                    </Button>
+                  </DrawerClose>
+                );
+              })}
             </div>
           </div>
         );
@@ -58,86 +58,21 @@ export const CategoryPicker: React.FC<{
 
 const CATEGORIES = {
   entertainment: {
-    name: 'Entertainment',
-    items: [
-      {
-        games: 'Games',
-        movies: 'Movies',
-        music: 'Music',
-        sports: 'Sports',
-        other: 'Entertainment',
-      },
-    ],
+    items: ['games', 'movies', 'music', 'sports', 'other'],
   },
   food: {
-    name: 'Food & Drinks',
-    items: [
-      {
-        diningOut: 'Dining Out',
-        groceries: 'Groceries',
-        liquor: 'Liquor',
-        other: 'Food & Drinks',
-      },
-    ],
+    items: ['diningOut', 'groceries', 'liquor', 'other'],
   },
   home: {
-    name: 'Home',
-    items: [
-      {
-        electronics: 'Electronics',
-        furniture: 'Furniture',
-        supplies: 'Supplies',
-        maintenance: 'Maintenance',
-        mortgage: 'Mortgage',
-        pets: 'Pets',
-        rent: 'Rent',
-        services: 'Services',
-        other: 'Home',
-      },
-    ],
+    items: ['electronics', 'furniture', 'supplies', 'maintenance', 'mortgage', 'pets', 'rent', 'services', 'other'],
   },
   life: {
-    name: 'Life',
-    items: [
-      {
-        childcare: 'Childcare',
-        clothing: 'Clothing',
-        education: 'Education',
-        gifts: 'Gifts',
-        medical: 'Medical',
-        taxes: 'Taxes',
-        other: 'Life',
-      },
-    ],
+    items: ['childcare', 'clothing', 'education', 'gifts', 'medical', 'taxes', 'other'],
   },
   travel: {
-    name: 'Travel',
-    items: [
-      {
-        bus: 'Bus',
-        train: 'Train',
-        car: 'Car',
-        fuel: 'Fuel',
-        parking: 'Parking',
-        plane: 'Plane',
-        taxi: 'Taxi',
-        other: 'Travel',
-      },
-    ],
+    items: ['bus', 'train', 'car', 'fuel', 'parking', 'plane', 'taxi', 'other'],
   },
   utilities: {
-    name: 'Utilities',
-    items: [
-      {
-        cleaning: 'Cleaning',
-        electricity: 'Electricity',
-        gas: 'Gas',
-        internet: 'Internet',
-        trash: 'Trash',
-        phone: 'Phone',
-        water: 'Water',
-        other: 'Utilities',
-      },
-    ],
+    items: ['cleaning', 'electricity', 'gas', 'internet', 'trash', 'phone', 'water', 'other'],
   },
 };

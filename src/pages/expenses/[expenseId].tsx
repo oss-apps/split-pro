@@ -4,18 +4,22 @@ import { ChevronLeftIcon, PencilIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { type GetServerSideProps } from 'next';
 import { DeleteExpense } from '~/components/Expense/DeleteExpense';
-import ExpenseDetails from '~/components/Expense/ExpensePage';
+import ExpenseDetails from '~/components/Expense/ExpenseDetails';
 import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
+import i18nConfig from 'next-i18next.config.js';
 
 const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   user,
   storagePublicUrl,
 }) => {
+  const { t } = useTranslation('expense_details');
   const router = useRouter();
   const expenseId = router.query.expenseId as string;
 
@@ -24,7 +28,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   return (
     <>
       <Head>
-        <title>Outstanding balances</title>
+        <title>{t('ui.expense_page.title')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
@@ -33,7 +37,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
             <Link href={`/activity`}>
               <ChevronLeftIcon className="mr-1 h-6 w-6" />
             </Link>
-            <p className="text-[16px] font-normal">Expense details</p>
+            <p className="text-[16px] font-normal">{t('ui.expense_page.expense_details')}</p>
           </div>
         }
         actions={
@@ -65,12 +69,13 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
 
 ExpensesPage.auth = true;
 
-export async function getServerSideProps() {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       storagePublicUrl: env.R2_PUBLIC_URL,
+      ...(await serverSideTranslations(context.locale ?? 'en', ['expense_details', 'common'], i18nConfig)),
     },
   };
-}
+};
 
 export default ExpensesPage;

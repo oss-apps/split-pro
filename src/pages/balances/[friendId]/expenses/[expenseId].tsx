@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { DeleteExpense } from '~/components/Expense/DeleteExpense';
-import ExpenseDetails from '~/components/Expense/ExpensePage';
+import ExpenseDetails from '~/components/Expense/ExpenseDetails';
 import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
 import { env } from '~/env';

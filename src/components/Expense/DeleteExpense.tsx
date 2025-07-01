@@ -1,6 +1,7 @@
 import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import React from 'react';
+import { useTranslation } from 'next-i18next';
 
 import { api } from '~/utils/api';
 
@@ -12,6 +13,7 @@ export const DeleteExpense: React.FC<{
   friendId?: number;
   groupId?: number;
 }> = ({ expenseId, friendId, groupId }) => {
+  const { t } = useTranslation('expense_details');
   const router = useRouter();
 
   const deleteExpenseMutation = api.user.deleteExpense.useMutation();
@@ -32,8 +34,8 @@ export const DeleteExpense: React.FC<{
 
   return (
     <SimpleConfirmationDialog
-      title="Are you absolutely sure?"
-      description="This action cannot be undone. This will permanently delete your expense."
+      title={t('ui.delete_expense_details.title')}
+      description={t('ui.delete_expense_details.text')}
       hasPermission
       onConfirm={onDeleteExpense}
       loading={deleteExpenseMutation.isPending}

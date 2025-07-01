@@ -3,6 +3,10 @@
     "title": "Add expense",
     "title_mobile": "Add",
     "add_expense": "Add expense",
+    "expense_page": {
+      "title": "Outstanding balances",
+      "expense_details": "Expense details"
+    },
     "add_expense_details": {
       "add_new_expense": "Add new expense",
       "cancel": "Cancel",
@@ -16,6 +20,7 @@
         "split_equally": "split equally",
         "split_unequally": "split unequally",
         "save": "Save",
+        "all": "All",
         "types": {
           "equal": {
             "title": "Equal",
@@ -146,6 +151,40 @@
         }
       }
     },
+    "delete_expense_details": {
+      "title": "Are you absolutely sure?",
+      "text": "This action cannot be undone. This will permanently delete your expense.",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "edited_by": "Edited by",
+    "deleted_by": "Deleted by",
+    "added_by": "Added by",
+    "on": "on",
+    "image_details": {
+      "title": "Expense receipt",
+      "close": "Close"
+    },
+    "you_paid": "You paid",
+    "user_paid": "paid",
+    "you_owe": "You owe",
+    "owes": "owes",
+    "balance_list": {
+      "press_balance_info": "Press on individual balance to initiate settlement",
+      "are_settled_up": "are settled up",
+      "is_settled_up": "is settled up",
+      "get": "get",
+      "gets": "gets",
+      "owe": "owe",
+      "owes": "owes",
+      "to": "to",
+      "from": "from"
+    },
+    "expense_list": {
+      "you_lent": "You lent",
+      "you_owe": "You owe",
+      "not_involved": "Not involved"
+    },
     "currency": {
       "title": "Select currency",
       "placeholder": "Select currency",
@@ -157,7 +196,7 @@
         },
         "EUR": {
           "name": "Euro",
-          "name_plural": "euros"
+          "name_plural": "Euros"
         },
         "AED": {
           "name": "United Arab Emirates Dirham",

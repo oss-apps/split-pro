@@ -10,6 +10,7 @@ import { env } from '~/env';
 import { db } from '~/server/db';
 
 import { sendSignUpEmail } from './mailer';
+import { getBaseUrl } from '~/utils/api';
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -76,22 +77,14 @@ export const authOptions: NextAuthOptions = {
         currency: user.currency,
       },
     }),
-    async signIn({ user, account, profile }) {
-      // Allow OAuth providers to work normally
-      if (account?.provider !== 'email') {
-        return true;
-      }
-
-      // For email provider, check if signup is disabled
-      if (env.DISABLE_EMAIL_SIGNUP) {
-        // Check if user already exists in database
+    async signIn({ user, email }) {
+      if (email?.verificationRequest && env.DISABLE_EMAIL_SIGNUP) {
         const existingUser = await db.user.findUnique({
           where: { email: user.email! },
         });
 
         if (!existingUser) {
-          // User doesn't exist and signups are disabled
-          return '/auth/signin?error=SignupDisabled';
+          return `${getBaseUrl()}/auth/signin?error=SignupDisabled`;
         }
       }
 
@@ -125,9 +118,7 @@ export const authOptions: NextAuthOptions = {
 export const getServerAuthSession = (ctx: {
   req: GetServerSidePropsContext['req'];
   res: GetServerSidePropsContext['res'];
-}) => {
-  return getServerSession(ctx.req, ctx.res, authOptions);
-};
+}) => getServerSession(ctx.req, ctx.res, authOptions);
 
 export const getServerAuthSessionForSSG = async (context: GetServerSidePropsContext) => {
   console.log('Before getting session');

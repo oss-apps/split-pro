@@ -11,7 +11,7 @@ import superjson from 'superjson';
 
 import { type AppRouter } from '~/server/api/root';
 
-const getBaseUrl = () => {
+export const getBaseUrl = () => {
   if ('undefined' !== typeof window) {
     return '';
   } // browser should use relative url

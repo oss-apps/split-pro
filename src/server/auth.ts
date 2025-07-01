@@ -169,8 +169,8 @@ function getProviders() {
             pass: env.EMAIL_SERVER_PASSWORD,
           },
         },
-        async sendVerificationRequest({ identifier: email, url, token }) {
-          const result = await sendSignUpEmail(email, token, url);
+        async sendVerificationRequest({ identifier: email, url }) {
+          const result = await sendSignUpEmail(email, url);
           if (!result) {
             throw new Error('Failed to send email');
           }

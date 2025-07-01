@@ -2,7 +2,9 @@ import { ChevronLeftIcon, PlusIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import i18nConfig from 'next-i18next.config.js';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
 import { Export } from '~/components/Friend/Export';
@@ -16,6 +18,7 @@ import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
+  const { t } = useTranslation('friend_details');
   const router = useRouter();
   const { friendId } = router.query;
 
@@ -41,7 +44,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
   return (
     <>
       <Head>
-        <title>Outstanding balances</title>
+        <title>{t('ui.expense_page.title')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
@@ -78,7 +81,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <div className="text-orange-700">
                 {0 < (youOwe?.length ?? 0) && (
                   <>
-                    You owe{' '}
+                    {t('ui.you_owe')}{' '}
                     {youOwe?.map((b, index) => (
                       <span key={b.currency}>
                         <span className="font-semibold tracking-wide">
@@ -94,7 +97,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <div className="text-emerald-600">
                 {0 < (youLent?.length ?? 0) && (
                   <>
-                    You lent{' '}
+                    {t('ui.you_lent')}{' '}
                     {youLent?.map((b, index) => (
                       <span key={b.currency}>
                         <span className="font-semibold tracking-wide">
@@ -122,7 +125,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   className="w-[150px] gap-1 text-sm lg:w-[180px]"
                   disabled
                 >
-                  Settle up
+                  {t('ui.settle_up')}
                 </Button>
               )}
 
@@ -132,7 +135,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   variant="secondary"
                   className="w-[150px] gap-1 text-sm lg:w-[180px]"
                 >
-                  <PlusIcon className="h-4 w-4 text-gray-400" /> Add Expense
+                  <PlusIcon className="h-4 w-4 text-gray-400" /> {t('ui.add_expense')}
                 </Button>
               </Link>
               <Export
@@ -161,5 +164,17 @@ const FriendPage: NextPageWithUser = ({ user }) => {
 };
 
 FriendPage.auth = true;
+
+export async function getServerSideProps({ locale }: { locale: string }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(
+        locale,
+        ['friend_details', 'expense_details', 'common'],
+        i18nConfig,
+      )),
+    },
+  };
+}
 
 export default FriendPage;

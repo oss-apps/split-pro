@@ -2,7 +2,9 @@ import { ChevronLeftIcon, PencilIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import i18nConfig from 'next-i18next.config.js';
 import { DeleteExpense } from '~/components/Expense/DeleteExpense';
 import ExpenseDetails from '~/components/Expense/ExpenseDetails';
 import MainLayout from '~/components/Layout/MainLayout';
@@ -15,6 +17,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   user,
   storagePublicUrl,
 }) => {
+  const { t } = useTranslation('friend_details');
   const router = useRouter();
   const expenseId = router.query.expenseId as string;
   const friendId = parseInt(router.query.friendId as string);
@@ -24,8 +27,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   return (
     <>
       <Head>
-        <title>Outstanding balances</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>{t('ui.expense_page.title')}</title>
       </Head>
       <MainLayout
         title={
@@ -33,7 +35,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
             <Link href={`/balances/${friendId}`}>
               <ChevronLeftIcon className="mr-1 h-6 w-6" />
             </Link>
-            <p className="text-[16px] font-normal">Expense details</p>
+            <p className="text-[16px] font-normal">{t('ui.expense_page.expense_details')}</p>
           </div>
         }
         actions={
@@ -65,10 +67,15 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
 
 ExpensesPage.auth = true;
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ locale }: { locale: string }) {
   return {
     props: {
       storagePublicUrl: env.R2_PUBLIC_URL,
+      ...(await serverSideTranslations(
+        locale,
+        ['friend_details', 'expense_details', 'common'],
+        i18nConfig,
+      )),
     },
   };
 }

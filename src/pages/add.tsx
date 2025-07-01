@@ -144,9 +144,9 @@ export const getServerSideProps = async ({ locale }: { locale: string }) => {
       isStorageConfigured: !!isStorageConfigured(),
       enableSendingInvites: !!env.ENABLE_SENDING_INVITES,
       ...(await serverSideTranslations(
-        locale ?? 'en', 
-        ['common', 'add_page', 'expense_details'], 
-        nextI18NextConfig
+        locale ?? 'en',
+        ['common', 'add_page', 'expense_details'],
+        nextI18NextConfig,
       )),
     },
   };

@@ -463,7 +463,11 @@ export default BalancePage;
 export async function getServerSideProps({ locale }: { locale: string }) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['groups_details', 'expense_details', 'common'], i18nConfig)),
+      ...(await serverSideTranslations(
+        locale,
+        ['groups_details', 'expense_details', 'common'],
+        i18nConfig,
+      )),
       enableSendingInvites: env.ENABLE_SENDING_INVITES,
     },
   };

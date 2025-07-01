@@ -73,7 +73,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       storagePublicUrl: env.R2_PUBLIC_URL,
-      ...(await serverSideTranslations(context.locale ?? 'en', ['expense_details', 'common'], i18nConfig)),
+      ...(await serverSideTranslations(
+        context.locale ?? 'en',
+        ['expense_details', 'common'],
+        i18nConfig,
+      )),
     },
   };
 };

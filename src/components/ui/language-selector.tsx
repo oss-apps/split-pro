@@ -21,7 +21,6 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = 
 
   const handleLanguageChange = async (languageCode: string) => {
     try {
-      // Usa il router di Next.js per cambiare la locale mantenendo la stessa pagina
       await router.push(router.asPath, router.asPath, {
         locale: languageCode,
         scroll: false,

@@ -86,3 +86,7 @@ export const BigMath = {
     }
   },
 };
+
+export const bigIntReplacer = (key: string, value: any) => {
+  return typeof value === 'bigint' ? value.toString() : value;
+};

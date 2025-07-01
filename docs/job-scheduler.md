@@ -142,3 +142,52 @@ boss.work('my-custom-job', async (job: Job<MyCustomJobPayload>) => {
   // Your job logic here
 });
 ```
+
+### Deployment Considerations
+
+#### Docker
+
+The job scheduler is automatically initialized when the application starts. For Docker deployments:
+
+1. Ensure your database connection string includes access to the PostgreSQL database
+2. The `pgboss` schema will be created automatically in your existing database
+3. Set `JOB_SCHEDULER_ENABLED=true` in your environment variables
+
+#### Production Monitoring
+
+Consider implementing:
+
+- Health checks for the job scheduler
+- Metrics for job success/failure rates
+- Alerting for failed jobs
+- Log aggregation for job outputs
+
+#### Performance Tuning
+
+For high-volume deployments, you may want to adjust:
+
+```typescript
+const boss = new PgBoss({
+  connectionString: env.DATABASE_URL,
+  schema: 'pgboss',
+  max: 10, // Increase connection pool size
+  retryLimit: 3, // Adjust retry behavior
+  retryDelay: 10000, // Increase retry delay
+  monitorStateIntervalSeconds: 30, // Adjust monitoring frequency
+});
+```
+
+### Troubleshooting
+
+#### Common Issues
+
+1. **Job scheduler not starting**: Check database connectivity and permissions
+2. **Jobs not executing**: Verify job handlers are properly registered
+3. **Performance issues**: Consider adjusting connection pool size and retry settings
+
+#### Logs
+
+Job scheduler activities are logged to the console. Look for:
+- "Job scheduler initialized successfully" - startup confirmation
+- "Scheduled job [type] with ID: [id]" - successful job scheduling
+- Job handler logs during execution

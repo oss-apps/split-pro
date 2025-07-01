@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { CronHelpers, CurrencyConversionService, RecurringExpenseService } from '../services/jobService';
+import { ExpenseSchedulingService } from '../services/expenseSchedulingService';
 import { scheduleJob } from '~/server/job-scheduler';
 
 export const jobRouter = createTRPCRouter({
@@ -203,6 +204,42 @@ export const jobRouter = createTRPCRouter({
             dayOfWeek: '0-7 (0 and 7 = Sunday)',
           },
         },
+      };
+    }),
+
+  /**
+   * Get common recurring expense schedules
+   */
+  getCommonSchedules: protectedProcedure
+    .query(() => {
+      const schedules = ExpenseSchedulingService.getCommonSchedules();
+      
+      // Add human-readable descriptions
+      const describedSchedules = Object.entries(schedules).reduce((acc, [category, patterns]) => {
+        acc[category] = Object.entries(patterns).reduce((catAcc, [name, cron]) => {
+          catAcc[name] = {
+            cron,
+            description: ExpenseSchedulingService.describeCronExpression(cron),
+          };
+          return catAcc;
+        }, {} as Record<string, { cron: string; description: string }>);
+        return acc;
+      }, {} as Record<string, Record<string, { cron: string; description: string }>>);
+
+      return describedSchedules;
+    }),
+
+  /**
+   * Describe a cron expression in human-readable format
+   */
+  describeCron: protectedProcedure
+    .input(z.object({
+      cronExpression: z.string(),
+    }))
+    .query(({ input }) => {
+      return {
+        expression: input.cronExpression,
+        description: ExpenseSchedulingService.describeCronExpression(input.cronExpression),
       };
     }),
 });

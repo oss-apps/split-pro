@@ -1,11 +1,11 @@
-'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
 import { type GetServerSideProps, type NextPage } from 'next';
 import { type ClientSafeProvider, getProviders, signIn } from 'next-auth/react';
 import { useTranslation } from 'next-i18next';
-import { useState } from 'react';
+import Head from 'next/head';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '~/components/ui/button';
@@ -18,7 +18,6 @@ import {
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '~/components/ui/input-otp';
 import { LanguageSelector } from '~/components/ui/language-selector';
 import { env } from '~/env';
 import { getServerAuthSession } from '~/server/auth';
@@ -54,7 +53,8 @@ const providerSvgs = {
   ),
 };
 
-const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }> = ({
+const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSafeProvider[] }> = ({
+  error,
   providers,
   feedbackEmail,
 }) => {
@@ -80,24 +80,20 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
     },
   });
 
-  const otpForm = useForm<z.infer<typeof otpSchema>>({
-    resolver: zodResolver(otpSchema),
-  });
+  useEffect(() => {
+    if (error) {
+      if ('SignupDisabled' === error) {
+        toast.error('Signup of new accounts is disabled on this instance', { duration: 5000 });
+      } else {
+        toast.error('An error occurred while signing in: ' + error);
+      }
+    }
+  }, [error]);
 
   async function onEmailSubmit(values: z.infer<typeof emailSchema>) {
     setEmailStatus('sending');
-    await signIn('email', { email: values.email.toLowerCase(), redirect: false });
+    await signIn('email', { email: values.email.toLowerCase() });
     setEmailStatus('success');
-  }
-
-  async function onOTPSubmit(values: z.infer<typeof otpSchema>) {
-    const email = emailForm.getValues().email;
-
-    const callbackUrl = window.location.origin;
-
-    window.location.href = `/api/auth/callback/email?email=${encodeURIComponent(
-      email.toLowerCase(),
-    )}&token=${values.otp.toLowerCase()}${callbackUrl ? `&callbackUrl=${callbackUrl}/balances` : ''}`;
   }
 
   return (
@@ -131,78 +127,20 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
             </div>
           )}
           {providers.find((provider) => 'email' === provider.id) ? (
-            'success' === emailStatus ? (
-              <>
-                <p className="mt-6 w-[300px] text-center text-sm">{t('auth.otp_sent')}</p>
-                <Form {...otpForm}>
-                  <form onSubmit={otpForm.handleSubmit(onOTPSubmit)} className="mt-6 space-y-8">
-                    <FormField
-                      control={otpForm.control}
-                      name="otp"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <InputOTP
-                              className="w-[300px]"
-                              maxLength={5}
-                              pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
-                              inputMode="text"
-                              {...field}
-                            >
-                              <InputOTPGroup>
-                                <InputOTPSlot className="w-[60px]" index={0} />
-                                <InputOTPSlot className="w-[60px]" index={1} />
-                                <InputOTPSlot className="w-[60px]" index={2} />
-                                <InputOTPSlot className="w-[60px]" index={3} />
-                                <InputOTPSlot className="w-[60px]" index={4} />
-                              </InputOTPGroup>
-                            </InputOTP>
-                          </FormControl>
-
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <Button className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100">
-                      {t('auth.submit')}
-                    </Button>
-                  </form>
-                </Form>
-              </>
-            ) : (
-              <>
-                <Form {...emailForm}>
-                  <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="mt-6 space-y-8">
-                    <FormField
-                      control={emailForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              placeholder={t('auth.email_placeholder')}
-                              className="w-[300px] text-lg"
-                              type="email"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormDescription />
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <Button
-                      className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
-                      type="submit"
-                      disabled={'sending' === emailStatus}
-                    >
-                      {'sending' === emailStatus ? t('auth.sending') : t('auth.send_magic_link')}
-                    </Button>
-                  </form>
-                </Form>
-              </>
-            )
+            <>
+              <Form {...emailForm}>
+                <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="mt-6 space-y-8">
+                  <FormField control={emailForm.control} name="email" render={emailInput} />
+                  <Button
+                    className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
+                    type="submit"
+                    disabled={'sending' === emailStatus}
+                  >
+                    {'sending' === emailStatus ? t('auth.sending') : t('auth.send_magic_link')}
+                  </Button>
+                </form>
+              </Form>
+            </>
           ) : null}
           <p className="text-muted-foreground mt-6 w-[300px] text-center text-sm">
             {t('auth.trouble_logging_in')}
@@ -217,12 +155,23 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
   );
 };
 
+// @ts-expect-error form types are not very handy
+const emailInput = ({ field }) => (
+  <FormItem>
+    <FormControl>
+      <Input placeholder="Enter your email" className="w-[300px] text-lg" type="email" {...field} />
+    </FormControl>
+    <FormDescription />
+    <FormMessage />
+  </FormItem>
+);
+
 export default Home;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);
   const providers = await getProviders();
-  const { callbackUrl } = context.query;
+  const { callbackUrl, error } = context.query;
 
   if (session) {
     return {
@@ -236,6 +185,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       ...(await customServerSideTranslations(context.locale ?? 'en', ['common', 'signin'])),
+      error: typeof error === 'string' ? error : '',
       feedbackEmail: env.FEEDBACK_EMAIL ?? '',
       providers: Object.values(providers ?? {}),
     },

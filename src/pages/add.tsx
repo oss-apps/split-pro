@@ -28,6 +28,7 @@ const AddPage: NextPageWithUser<{
     setPaidBy,
     setAmountStr,
     setExpenseDate,
+    setCategory,
     resetState,
   } = useAddExpenseStore((s) => s.actions);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
@@ -100,6 +101,7 @@ const AddPage: NextPageWithUser<{
     setCurrency(expenseQuery.data.currency as CurrencyCode);
     setAmountStr((Number(expenseQuery.data.amount) / 100).toString());
     setDescription(expenseQuery.data.name);
+    setCategory(expenseQuery.data.category);
     setAmount(expenseQuery.data.amount);
     setParticipants(
       expenseQuery.data.expenseParticipants.map((ep) => ({

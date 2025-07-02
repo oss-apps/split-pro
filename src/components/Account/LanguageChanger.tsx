@@ -12,28 +12,32 @@ import { AppDrawer } from '~/components/ui/drawer';
 export const LanguageChanger: React.FC = () => {
   const router = useRouter();
   const { i18n, t } = useTranslation('account_page');
-  const updatePreferredLanguage = api.user.updatePreferredLanguage.useMutation();
+  const updateUser = api.user.updateUserDetail.useMutation();
 
-  const supportedLanguages = useMemo(() => getSupportedLanguages(), []);
+  const supportedLanguages = useMemo(getSupportedLanguages, []);
 
-  const handleLanguageChange = async (languageCode: string) => {
-    try {
-      console.log('Changing language to:', languageCode);
-      await updatePreferredLanguage.mutateAsync({
-        language: languageCode,
-      });
+  const handleLanguageChange = React.useCallback(
+    async (languageCode: string) => {
+      try {
+        await updateUser.mutateAsync({
+          preferredLanguage: languageCode,
+        });
 
-      await router.push(router.asPath, router.asPath, {
-        locale: languageCode,
-        scroll: false,
-      });
+        await router.push(router.asPath, router.asPath, {
+          locale: languageCode,
+          scroll: false,
+        });
 
-      toast.success(t('ui.change_language_details.messages.language_changed'), { duration: 1500 });
-    } catch (error) {
-      console.error('Error changing language:', error);
-      toast.error(t('ui.change_language_details.errors.language_change_failed'));
-    }
-  };
+        toast.success(t('ui.change_language_details.messages.language_changed'), {
+          duration: 1500,
+        });
+      } catch (error) {
+        console.error('Error changing language:', error);
+        toast.error(t('ui.change_language_details.errors.language_change_failed'));
+      }
+    },
+    [router, t, updateUser],
+  );
 
   return (
     <AppDrawer

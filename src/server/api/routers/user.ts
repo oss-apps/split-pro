@@ -143,7 +143,13 @@ export const userRouter = createTRPCRouter({
     }),
 
   updateUserDetail: protectedProcedure
-    .input(z.object({ name: z.string().optional(), currency: z.string().optional() }))
+    .input(
+      z.object({
+        name: z.string().optional(),
+        currency: z.string().optional(),
+        preferredLanguage: z.string().optional(),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       const user = await db.user.update({
         where: {
@@ -327,19 +333,6 @@ export const userRouter = createTRPCRouter({
   getWebPushPublicKey: protectedProcedure.query(() => {
     return env.WEB_PUSH_PUBLIC_KEY ?? '';
   }),
-
-  updatePreferredLanguage: protectedProcedure
-    .input(z.object({ language: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const { language } = input;
-
-      await db.user.update({
-        where: { id: ctx.session.user.id },
-        data: { preferredLanguage: language },
-      });
-
-      return { success: true };
-    }),
 });
 
 export type UserRouter = typeof userRouter;

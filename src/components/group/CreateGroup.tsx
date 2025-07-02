@@ -3,7 +3,7 @@ import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useTranslation } from 'next-i18next';
+import { TFunction, useTranslation } from 'next-i18next';
 import { z } from 'zod';
 
 import { AppDrawer } from '~/components/ui/drawer';
@@ -12,26 +12,29 @@ import { api } from '~/utils/api';
 
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
 
-export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { t } = useTranslation('groups_details');
-  const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const groupSchema = z.object({
+const groupSchema = (t: TFunction) =>
+  z.object({
     name: z
       .string({ required_error: t('ui.create_group.errors.name_required') })
       .min(1, { message: t('ui.create_group.errors.name_required') }),
   });
 
+type CreateGroupFormValues = z.infer<ReturnType<typeof groupSchema>>;
+
+export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { t } = useTranslation('groups_details');
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   const createGroup = api.group.create.useMutation(undefined);
   const utils = api.useUtils();
 
-  const groupForm = useForm<z.infer<typeof groupSchema>>({
-    resolver: zodResolver(groupSchema),
+  const groupForm = useForm<CreateGroupFormValues>({
+    resolver: zodResolver(groupSchema(t)),
   });
 
   const router = useRouter();
 
-  async function onGroupSubmit(values: z.infer<typeof groupSchema>) {
+  async function onGroupSubmit(values: CreateGroupFormValues) {
     await createGroup.mutateAsync(
       { name: values.name },
       {

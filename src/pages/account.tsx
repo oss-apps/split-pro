@@ -24,8 +24,6 @@ import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { bigIntReplacer } from '~/utils/numbers';
 
-
-
 const AccountPage: NextPageWithUser = ({ user }) => {
   const userQuery = api.user.me.useQuery();
   const downloadQuery = api.user.downloadData.useMutation();

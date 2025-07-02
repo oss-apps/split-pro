@@ -4,7 +4,7 @@ import { useTranslation } from 'next-i18next';
 
 import { CURRENCIES, type CurrencyCode } from '~/lib/currency';
 import { cn } from '~/lib/utils';
-import { getLocalizedCurrencyName } from '~/utils/i18n';
+import { getLocalizedCurrencyName } from '~/utils/i18n/client';
 
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '../ui/command';
 import { AppDrawer, DrawerClose } from '../ui/drawer';

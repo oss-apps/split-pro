@@ -3,8 +3,6 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import i18nConfig from 'next-i18next.config.js';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
 import { Export } from '~/components/Friend/Export';
@@ -16,6 +14,7 @@ import { Separator } from '~/components/ui/separator';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
+import { withI18nStaticProps } from '~/utils/i18n/server';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
   const { t } = useTranslation('friend_details');
@@ -165,16 +164,6 @@ const FriendPage: NextPageWithUser = ({ user }) => {
 
 FriendPage.auth = true;
 
-export async function getServerSideProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(
-        locale,
-        ['friend_details', 'expense_details', 'common'],
-        i18nConfig,
-      )),
-    },
-  };
-}
+export const getStaticProps = withI18nStaticProps(['friend_details', 'expense_details', 'common']);
 
 export default FriendPage;

@@ -3,9 +3,6 @@ import { type User } from 'next-auth';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import i18nConfig from 'next-i18next.config.js';
-
 import MainLayout from '~/components/Layout/MainLayout';
 import { UserAvatar } from '~/components/ui/avatar';
 import { type NextPageWithUser } from '~/types';
@@ -14,6 +11,7 @@ import { BigMath, toUIString } from '~/utils/numbers';
 import { toUIDate } from '~/utils/strings';
 import { type TFunction } from 'next-i18next';
 import { useCommonTranslation } from '~/hooks/useCommonTranslation';
+import { withI18nStaticProps } from '~/utils/i18n/server';
 
 function getPaymentString(
   user: User,
@@ -111,12 +109,6 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
 
 ActivityPage.auth = true;
 
-export async function getServerSideProps(context: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(context.locale, ['common', 'activity_page'], i18nConfig)),
-    },
-  };
-}
+export const getStaticProps = withI18nStaticProps(['common', 'activity_page']);
 
 export default ActivityPage;

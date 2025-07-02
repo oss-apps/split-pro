@@ -12,10 +12,7 @@ import { signOut } from 'next-auth/react';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import i18nConfig from 'next-i18next.config.js';
 import { useRouter } from 'next/router';
-
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
 import { UpdateName } from '~/components/ui/update-details';
@@ -27,6 +24,7 @@ import { AppDrawer } from '~/components/ui/drawer';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
+import { withI18nStaticProps } from '~/utils/i18n/server';
 
 const AccountPage: NextPageWithUser = ({ user }) => {
   const { t } = useTranslation('account_page');
@@ -265,12 +263,6 @@ const AccountPage: NextPageWithUser = ({ user }) => {
 
 AccountPage.auth = true;
 
-export const getStaticProps = async ({ locale }: { locale: string }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'account_page'], i18nConfig)),
-    },
-  };
-};
+export const getStaticProps = withI18nStaticProps(['common', 'account_page']);
 
 export default AccountPage;

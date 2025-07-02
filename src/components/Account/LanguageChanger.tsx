@@ -5,7 +5,7 @@ import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 
 import { api } from '~/utils/api';
-import { getSupportedLanguages } from '~/utils/i18n';
+import { getSupportedLanguages } from '~/utils/i18n/client';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 

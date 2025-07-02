@@ -2,11 +2,6 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import type { GetServerSideProps } from 'next';
-
-import nextI18NextConfig from '../../next-i18next.config.js';
-
 import { AddOrEditExpensePage } from '~/components/AddExpense/AddExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
 import { env } from '~/env';
@@ -15,6 +10,8 @@ import { isStorageConfigured } from '~/server/storage';
 import { useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
+import { customServerSideTranslations } from '~/utils/i18n/server.js';
+import { type GetServerSideProps } from 'next';
 
 const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;
@@ -138,16 +135,16 @@ AddPage.auth = true;
 
 export default AddPage;
 
-export const getServerSideProps = async ({ locale }: { locale: string }) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       isStorageConfigured: !!isStorageConfigured(),
       enableSendingInvites: !!env.ENABLE_SENDING_INVITES,
-      ...(await serverSideTranslations(
-        locale ?? 'en',
-        ['common', 'add_page', 'expense_details'],
-        nextI18NextConfig,
-      )),
+      ...(await customServerSideTranslations(context.locale, [
+        'common',
+        'add_page',
+        'expense_details',
+      ])),
     },
   };
 };

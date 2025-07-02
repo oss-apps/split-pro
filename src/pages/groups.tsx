@@ -3,10 +3,7 @@ import { clsx } from 'clsx';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import i18nConfig from 'next-i18next.config.js';
 import { useMemo } from 'react';
-
 import { CreateGroup } from '~/components/group/CreateGroup';
 import MainLayout from '~/components/Layout/MainLayout';
 import { GroupAvatar } from '~/components/ui/avatar';
@@ -14,6 +11,7 @@ import { Button } from '~/components/ui/button';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
+import { withI18nStaticProps } from '~/utils/i18n/server';
 
 const BalancePage: NextPageWithUser = () => {
   const { t } = useTranslation('groups_page');
@@ -120,16 +118,11 @@ const GroupBalance: React.FC<{
 
 BalancePage.auth = true;
 
-export const getStaticProps = async ({ locale }: { locale: string }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(
-        locale,
-        ['groups_page', 'groups_details', 'expense_details', 'common'],
-        i18nConfig,
-      )),
-    },
-  };
-};
+export const getStaticProps = withI18nStaticProps([
+  'groups_page',
+  'groups_details',
+  'expense_details',
+  'common',
+]);
 
 export default BalancePage;

@@ -1,6 +1,5 @@
 import { type TFunction } from 'next-i18next';
-import { CURRENCIES, type CurrencyCode } from '~/lib/currency';
-
+import { type CurrencyCode } from '~/lib/currency';
 export interface SupportedLanguage {
   code: string;
   name: string;

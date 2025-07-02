@@ -4,8 +4,6 @@ import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
 import { type GetServerSideProps, type NextPage } from 'next';
 import { type ClientSafeProvider, getProviders, signIn } from 'next-auth/react';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import i18nConfig from 'next-i18next.config.js';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -24,6 +22,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '~/components/ui/input-otp
 import { LanguageSelector } from '~/components/ui/language-selector';
 import { env } from '~/env';
 import { getServerAuthSession } from '~/server/auth';
+import { customServerSideTranslations } from '~/utils/i18n/server';
 
 const providerSvgs = {
   github: (
@@ -128,7 +127,7 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
               <p className="bg-background z-10 ml-[150px] -translate-x-1/2 px-4 text-sm">
                 {t('auth.or')}
               </p>
-              <div className="bg-linear-to-r absolute h-px w-[300px] from-zinc-800 via-zinc-300 to-zinc-800" />
+              <div className="absolute h-px w-[300px] bg-linear-to-r from-zinc-800 via-zinc-300 to-zinc-800" />
             </div>
           )}
           {providers.find((provider) => 'email' === provider.id) ? (
@@ -236,7 +235,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(context.locale ?? 'en', ['signin', 'common'], i18nConfig)),
+      ...(await customServerSideTranslations(context.locale ?? 'en', ['common', 'signin'])),
       feedbackEmail: env.FEEDBACK_EMAIL ?? '',
       providers: Object.values(providers ?? {}),
     },

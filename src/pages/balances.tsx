@@ -5,9 +5,6 @@ import { PlusIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import i18nConfig from 'next-i18next.config.js';
-
 import InstallApp from '~/components/InstallApp';
 import MainLayout from '~/components/Layout/MainLayout';
 import { NotificationModal } from '~/components/NotificationModal';
@@ -16,6 +13,7 @@ import { Button } from '~/components/ui/button';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
+import { withI18nStaticProps } from '~/utils/i18n/server';
 
 const BalancePage: NextPageWithUser = () => {
   const { t } = useTranslation('balances');
@@ -175,12 +173,6 @@ const FriendBalance: React.FC<{
 
 BalancePage.auth = true;
 
-export const getServerSideProps = async ({ locale }: { locale: string }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['balances', 'common'], i18nConfig)),
-    },
-  };
-};
+export const getStaticProps = withI18nStaticProps(['common', 'balances']);
 
 export default BalancePage;

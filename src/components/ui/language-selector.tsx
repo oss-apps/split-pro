@@ -3,7 +3,7 @@ import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { Globe } from 'lucide-react';
 import { Button } from '~/components/ui/button';
-import { getSupportedLanguages } from '~/utils/i18n';
+import { getSupportedLanguages } from '~/utils/i18n/client';
 import { cn } from '~/lib/utils';
 
 interface LanguageSelectorProps {

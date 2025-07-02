@@ -5,7 +5,6 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { type GetServerSideProps } from 'next';
 import { DeleteExpense } from '~/components/Expense/DeleteExpense';
 import ExpenseDetails from '~/components/Expense/ExpenseDetails';
@@ -13,7 +12,7 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
-import i18nConfig from 'next-i18next.config.js';
+import { customServerSideTranslations } from '~/utils/i18n/server';
 
 const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   user,
@@ -73,11 +72,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       storagePublicUrl: env.R2_PUBLIC_URL,
-      ...(await serverSideTranslations(
-        context.locale ?? 'en',
-        ['expense_details', 'common'],
-        i18nConfig,
-      )),
+      ...(await customServerSideTranslations(context.locale ?? 'en', [
+        'common',
+        'expense_details',
+      ])),
     },
   };
 };

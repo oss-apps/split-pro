@@ -19,9 +19,6 @@ import { useRouter } from 'next/router';
 import React, { Fragment, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import i18nConfig from 'next-i18next.config.js';
-
 import { UpdateName } from '~/components/ui/update-details';
 import { BalanceList } from '~/components/Expense/BalanceList';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
@@ -42,6 +39,8 @@ import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 import { toUIDate } from '~/utils/strings';
 import { useCommonTranslation } from '~/hooks/useCommonTranslation';
+import { customServerSideTranslations } from '~/utils/i18n/server';
+import { type GetServerSideProps } from 'next';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
@@ -462,15 +461,15 @@ BalancePage.auth = true;
 
 export default BalancePage;
 
-export async function getServerSideProps({ locale }: { locale: string }) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
-      ...(await serverSideTranslations(
-        locale,
-        ['groups_details', 'expense_details', 'common'],
-        i18nConfig,
-      )),
+      ...(await customServerSideTranslations(context.locale, [
+        'common',
+        'groups_details',
+        'expense_details',
+      ])),
       enableSendingInvites: env.ENABLE_SENDING_INVITES,
     },
   };
-}
+};

@@ -13,12 +13,10 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import i18nConfig from 'next-i18next.config.js';
-
 import { BackgroundGradient } from '~/components/ui/background-gradient';
 import { Button } from '~/components/ui/button';
 import { LanguageSelector } from '~/components/ui/language-selector';
+import { withI18nStaticProps } from '~/utils/i18n/server';
 
 export default function Home() {
   const { t } = useTranslation('index');
@@ -53,7 +51,7 @@ export default function Home() {
         <div className="mx-auto mt-20 flex w-full items-start justify-center gap-16 px-4 lg:max-w-5xl lg:px-0">
           <div>
             <div className="mb-32 text-center lg:mb-0 lg:h-[70vh] lg:text-left">
-              <h1 className="lg:leading-16 max-w-3xl text-center text-2xl font-semibold leading-loose text-gray-100 lg:text-left lg:text-5xl">
+              <h1 className="max-w-3xl text-center text-2xl leading-loose font-semibold text-gray-100 lg:text-left lg:text-5xl lg:leading-16">
                 {t('hero.title_part1')}{' '}
                 <span className="text-primary font-bold">{t('hero.title_highlight')}</span>.
               </h1>
@@ -98,7 +96,7 @@ export default function Home() {
               </div>
               <div className="mt-40" />
             </div>
-            <div className="mb-20 mt-8 flex justify-center lg:hidden">
+            <div className="mt-8 mb-20 flex justify-center lg:hidden">
               <MobileScreenShot />
             </div>
             <div className="flex flex-col gap-20 text-center lg:text-left">
@@ -191,7 +189,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mb-20 mt-24 flex flex-col gap-8 text-center lg:text-left">
+            <div className="mt-24 mb-20 flex flex-col gap-8 text-center lg:text-left">
               <a
                 href="https://www.producthunt.com/posts/splitpro?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-splitpro"
                 target="_blank"
@@ -262,10 +260,4 @@ const MobileScreenShot = () => {
   );
 };
 
-export const getStaticProps = async ({ locale }: { locale: string }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['index', 'common'], i18nConfig)),
-    },
-  };
-};
+export const getStaticProps = withI18nStaticProps(['index', 'common']);

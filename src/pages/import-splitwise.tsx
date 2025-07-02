@@ -6,11 +6,6 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import type { GetStaticProps } from 'next';
-
-import nextI18NextConfig from '../../next-i18next.config.js';
-
 import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
@@ -19,6 +14,7 @@ import { Separator } from '~/components/ui/separator';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { type NextPageWithUser, type SplitwiseGroup, type SplitwiseUser } from '~/types';
 import { api } from '~/utils/api';
+import { withI18nStaticProps } from '~/utils/i18n/server.js';
 
 const ImportSpliwisePage: NextPageWithUser = () => {
   const { t } = useTranslation('import_splitwise');
@@ -155,13 +151,13 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             {importMutation.isPending ? <LoadingSpinner /> : t('ui.import')}
           </Button>
         </div>
-        <div className="mt-4 text-sm text-gray-400">
-          {t('ui.note')}
-        </div>
+        <div className="mt-4 text-sm text-gray-400">{t('ui.note')}</div>
 
         {uploadedFile ? (
           <>
-            <div className="mt-8 font-semibold">{t('ui.friends')} ({usersWithBalance.length})</div>
+            <div className="mt-8 font-semibold">
+              {t('ui.friends')} ({usersWithBalance.length})
+            </div>
             {usersWithBalance.length ? (
               <div className="mt-4 flex flex-col gap-3">
                 {usersWithBalance.map((user, index) => (
@@ -199,7 +195,9 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                 ))}
               </div>
             ) : null}
-            <div className="mt-8 font-semibold">{t('ui.groups')} ({groups.length})</div>
+            <div className="mt-8 font-semibold">
+              {t('ui.groups')} ({groups.length})
+            </div>
             {groups.length ? (
               <div className="mt-4 flex flex-col gap-3">
                 {groups.map((group, index) => (
@@ -244,16 +242,6 @@ const ImportSpliwisePage: NextPageWithUser = () => {
 
 ImportSpliwisePage.auth = true;
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(
-        locale ?? 'en', 
-        ['common', 'import_splitwise'], 
-        nextI18NextConfig
-      )),
-    },
-  };
-};
+export const getStaticProps = withI18nStaticProps(['common', 'import_splitwise']);
 
 export default ImportSpliwisePage;

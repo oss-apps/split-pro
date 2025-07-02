@@ -11,7 +11,9 @@ import { UserAvatar } from '~/components/ui/avatar';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
-import { displayName, toUIDate } from '~/utils/strings';
+import { toUIDate } from '~/utils/strings';
+import { type TFunction } from 'next-i18next';
+import { useCommonTranslation } from '~/hooks/useCommonTranslation';
 
 function getPaymentString(
   user: User,
@@ -20,7 +22,7 @@ function getPaymentString(
   expenseUserAmt: bigint,
   isSettlement: boolean,
   currency: string,
-  t: (key: string) => string,
+  t: TFunction,
   isDeleted?: boolean,
 ) {
   if (isDeleted) {
@@ -47,7 +49,7 @@ function getPaymentString(
 
 const ActivityPage: NextPageWithUser = ({ user }) => {
   const { t } = useTranslation('activity_page');
-  const { t: tCommon } = useTranslation('common');
+  const { displayName } = useCommonTranslation();
   const expensesQuery = api.user.getAllExpenses.useQuery();
 
   return (
@@ -70,7 +72,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                 {e.expense.deletedByUser ? (
                   <p className="text-red-500 opacity-70">
                     <span className="font-semibold">
-                      {displayName(e.expense.deletedByUser, user.id, tCommon)}
+                      {displayName(e.expense.deletedByUser, user.id)}
                     </span>{' '}
                     {t('ui.user_deleted_expense')}{' '}
                     <span className="font-semibold">{e.expense.name}</span>
@@ -78,7 +80,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                 ) : (
                   <p className="text-gray-300">
                     <span className="font-semibold text-gray-300">
-                      {displayName(e.expense.paidByUser, user.id, tCommon)}
+                      {displayName(e.expense.paidByUser, user.id)}
                     </span>{' '}
                     {t('ui.user_paid_for')}{' '}
                     <span className="font-semibold text-gray-300">{e.expense.name}</span>

@@ -3,7 +3,7 @@ import { ChevronRight, MessageSquare } from 'lucide-react';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { useTranslation } from 'next-i18next';
+import { TFunction, useTranslation } from 'next-i18next';
 import { z } from 'zod';
 
 import { api } from '~/utils/api';
@@ -12,23 +12,25 @@ import { AppDrawer } from '../ui/drawer';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
 import { Textarea } from '../ui/textarea';
 
-const feedbackSchema = (t: (key: string) => string) =>
+const feedbackSchema = (t: TFunction) =>
   z.object({
     feedback: z
       .string({ required_error: t('ui.errors.feedback_required') })
       .min(10, { message: t('ui.errors.feedback_min_length') }),
   });
 
+type FeedbackFormValues = z.infer<ReturnType<typeof feedbackSchema>>;
+
 export const SubmitFeedback: React.FC = () => {
   const { t } = useTranslation('account_page');
   const submitFeedbackMutation = api.user.submitFeedback.useMutation();
   const [feedbackOpen, setFeedbackOpen] = useState(false);
 
-  const feedbackForm = useForm<z.infer<ReturnType<typeof feedbackSchema>>>({
+  const feedbackForm = useForm<FeedbackFormValues>({
     resolver: zodResolver(feedbackSchema(t)),
   });
 
-  async function onGroupSubmit(values: z.infer<ReturnType<typeof feedbackSchema>>) {
+  async function onGroupSubmit(values: FeedbackFormValues) {
     try {
       await submitFeedbackMutation.mutateAsync({ feedback: values.feedback });
       feedbackForm.reset();

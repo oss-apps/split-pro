@@ -40,12 +40,14 @@ import { env } from '~/env';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
-import { displayName, toUIDate } from '~/utils/strings';
+import { toUIDate } from '~/utils/strings';
+import { useCommonTranslation } from '~/hooks/useCommonTranslation';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
 }> = ({ user, enableSendingInvites }) => {
   const { t } = useTranslation('groups_details');
+  const { displayName } = useCommonTranslation();
   const router = useRouter();
   const groupId = parseInt(router.query.groupId as string);
 

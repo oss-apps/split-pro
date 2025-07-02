@@ -7,10 +7,6 @@ import { useTranslation } from 'next-i18next';
 
 import { Button } from '../ui/button';
 
-interface SubscribeNotificationProps {
-  t: (key: string) => string;
-}
-
 const base64ToUint8Array = (base64: string) => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4);
   const b64 = (base64 + padding).replace(/-/g, '+').replace(/_/g, '/');

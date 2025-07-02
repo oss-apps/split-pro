@@ -7,10 +7,10 @@ import { useTranslation } from 'next-i18next';
 import { UserAvatar } from '~/components/ui/avatar';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
-import { displayName } from '~/utils/strings';
 
 import { GroupSettleUp } from '../Friend/GroupSettleup';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
+import { useCommonTranslation } from '~/hooks/useCommonTranslation';
 
 interface UserWithBalance {
   user: User;
@@ -23,7 +23,7 @@ export const BalanceList: React.FC<{
   users?: User[];
 }> = ({ groupBalances = [], users = [] }) => {
   const { t } = useTranslation('expense_details');
-  const { t: tCommon } = useTranslation('common');
+  const { displayName } = useCommonTranslation();
   const userQuery = api.user.me.useQuery();
 
   const userMap = useMemo(() => {
@@ -68,24 +68,30 @@ export const BalanceList: React.FC<{
           });
 
           return (
-            <AccordionItem key={user.id} value={displayName(user, undefined, tCommon)}>
+            <AccordionItem key={user.id} value={displayName(user)}>
               <AccordionTrigger className="hover:no-underline">
                 <div className="flex items-center gap-3">
                   <UserAvatar user={user} />
                   <div className="text-foreground">
-                    {displayName(user, userQuery.data?.id, tCommon)}
+                    {displayName(user, userQuery.data?.id)}
                     {Object.values(total).every((amount) => 0n === amount) ? (
                       <span className="text-gray-400">
                         {' '}
-                        {isCurrentUser ? t('ui.balance_list.are_settled_up') : t('ui.balance_list.is_settled_up')}
+                        {isCurrentUser
+                          ? t('ui.balance_list.are_settled_up')
+                          : t('ui.balance_list.is_settled_up')}
                       </span>
                     ) : (
                       <>
                         <span className="text-gray-400">
                           {' '}
-                          {0 < totalAmount[1] ? 
-                            (isCurrentUser ? t('ui.balance_list.get') : t('ui.balance_list.gets')) : 
-                            (isCurrentUser ? t('ui.balance_list.owe') : t('ui.balance_list.owes'))}{' '}
+                          {0 < totalAmount[1]
+                            ? isCurrentUser
+                              ? t('ui.balance_list.get')
+                              : t('ui.balance_list.gets')
+                            : isCurrentUser
+                              ? t('ui.balance_list.owe')
+                              : t('ui.balance_list.owes')}{' '}
                         </span>
                         <span
                           className={clsx(
@@ -118,12 +124,16 @@ export const BalanceList: React.FC<{
                           <div className="mb-4 ml-5 flex cursor-pointer items-center gap-3 text-sm">
                             <UserAvatar user={friend} size={20} />
                             <div className="text-foreground">
-                              {displayName(friend, userQuery.data?.id, tCommon)}
+                              {displayName(friend, userQuery.data?.id)}
                               <span className="text-gray-400">
                                 {' '}
-                                {0 > amount ? 
-                                  (friend.id === userQuery.data?.id ? t('ui.balance_list.get') : t('ui.balance_list.gets')) : 
-                                  (friend.id === userQuery.data?.id ? t('ui.balance_list.owe') : t('ui.balance_list.owes'))}{' '}
+                                {0 > amount
+                                  ? friend.id === userQuery.data?.id
+                                    ? t('ui.balance_list.get')
+                                    : t('ui.balance_list.gets')
+                                  : friend.id === userQuery.data?.id
+                                    ? t('ui.balance_list.owe')
+                                    : t('ui.balance_list.owes')}{' '}
                               </span>
                               <span
                                 className={clsx(
@@ -133,9 +143,14 @@ export const BalanceList: React.FC<{
                               >
                                 {toUIString(amount)} {currency}
                               </span>
-                              <span className="text-gray-400"> {0 < amount ? t('ui.balance_list.to') : t('ui.balance_list.from')} </span>
+                              <span className="text-gray-400">
+                                {' '}
+                                {0 < amount
+                                  ? t('ui.balance_list.to')
+                                  : t('ui.balance_list.from')}{' '}
+                              </span>
                               <span className="text-foreground">
-                                {displayName(user, userQuery.data?.id, tCommon)}
+                                {displayName(user, userQuery.data?.id)}
                               </span>
                             </div>
                           </div>

@@ -24,12 +24,14 @@ export const CategoryPicker: React.FC<{
       className="h-[70vh]"
       shouldCloseOnAction
     >
-      {Object.entries(CATEGORIES).map(([categoryName, categoryDetails]) => {
+      {Object.entries(CATEGORIES).map(([categoryName, categoryItems]) => {
         return (
           <div key={categoryName} className="mb-8">
-            <h3 className="mb-4 text-lg font-semibold">{t(`ui.categories.categories_list.${categoryName}.name`)}</h3>
+            <h3 className="mb-4 text-lg font-semibold">
+              {t(`ui.categories.categories_list.${categoryName}.name`)}
+            </h3>
             <div className="flex flex-wrap justify-between gap-2">
-              {categoryDetails.items.map((key) => {
+              {categoryItems.map((key) => {
                 const Icon = CategoryIcons[key] ?? CategoryIcons[categoryName] ?? Banknote;
                 return (
                   <DrawerClose key={key}>
@@ -43,7 +45,9 @@ export const CategoryPicker: React.FC<{
                       <span className="block text-2xl">
                         <Icon />
                       </span>
-                      <span className="block text-xs capitalize">{t(`ui.categories.categories_list.${categoryName}.items.${key}`)}</span>
+                      <span className="block text-xs capitalize">
+                        {t(`ui.categories.categories_list.${categoryName}.items.${key}`)}
+                      </span>
                     </Button>
                   </DrawerClose>
                 );
@@ -57,22 +61,20 @@ export const CategoryPicker: React.FC<{
 };
 
 const CATEGORIES = {
-  entertainment: {
-    items: ['games', 'movies', 'music', 'sports', 'other'],
-  },
-  food: {
-    items: ['diningOut', 'groceries', 'liquor', 'other'],
-  },
-  home: {
-    items: ['electronics', 'furniture', 'supplies', 'maintenance', 'mortgage', 'pets', 'rent', 'services', 'other'],
-  },
-  life: {
-    items: ['childcare', 'clothing', 'education', 'gifts', 'medical', 'taxes', 'other'],
-  },
-  travel: {
-    items: ['bus', 'train', 'car', 'fuel', 'parking', 'plane', 'taxi', 'other'],
-  },
-  utilities: {
-    items: ['cleaning', 'electricity', 'gas', 'internet', 'trash', 'phone', 'water', 'other'],
-  },
+  entertainment: ['games', 'movies', 'music', 'sports', 'other'],
+  food: ['diningOut', 'groceries', 'liquor', 'other'],
+  home: [
+    'electronics',
+    'furniture',
+    'supplies',
+    'maintenance',
+    'mortgage',
+    'pets',
+    'rent',
+    'services',
+    'other',
+  ],
+  life: ['childcare', 'clothing', 'education', 'gifts', 'medical', 'taxes', 'other'],
+  travel: ['bus', 'train', 'car', 'fuel', 'parking', 'plane', 'taxi', 'other'],
+  utilities: ['cleaning', 'electricity', 'gas', 'internet', 'trash', 'phone', 'water', 'other'],
 };

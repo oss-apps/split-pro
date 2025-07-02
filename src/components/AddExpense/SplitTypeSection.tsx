@@ -10,7 +10,7 @@ import {
   Plus,
   X,
 } from 'lucide-react';
-import { useTranslation } from 'next-i18next';
+import { type TFunction, useTranslation } from 'next-i18next';
 import { type ChangeEvent, useCallback, useMemo } from 'react';
 
 import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/store/addStore';
@@ -39,9 +39,10 @@ export const SplitTypeSection: React.FC = () => {
         trigger={
           <p className="overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
             {
-              (currentUser?.id === paidBy?.id ? t('ui.add_expense_details.split_type_section.you') : (paidBy?.name ?? paidBy?.email))?.split(
-                ' ',
-              )[0]
+              (currentUser?.id === paidBy?.id
+                ? t('ui.add_expense_details.split_type_section.you')
+                : (paidBy?.name ?? paidBy?.email)
+              )?.split(' ')[0]
             }
           </p>
         }
@@ -70,10 +71,14 @@ export const SplitTypeSection: React.FC = () => {
       <AppDrawer
         trigger={
           <div className="max-w-32 overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
-            {splitType === SplitType.EQUAL ? t('ui.add_expense_details.split_type_section.split_equally') : t('ui.add_expense_details.split_type_section.split_unequally')}
+            {splitType === SplitType.EQUAL
+              ? t('ui.add_expense_details.split_type_section.split_equally')
+              : t('ui.add_expense_details.split_type_section.split_unequally')}
           </div>
         }
-        title={t(`ui.add_expense_details.split_type_section.types.${splitType.toLowerCase()}.title`)}
+        title={t(
+          `ui.add_expense_details.split_type_section.types.${splitType.toLowerCase()}.title`,
+        )}
         className="h-[85vh] lg:h-[70vh]"
         shouldCloseOnAction
         dismissible={false}
@@ -149,7 +154,7 @@ type SplitSectionProps = BooleanSplitSectionProps | NumericSplitSectionProps;
 
 const CURRENCY_TOKEN = '__CURRENCY__';
 
-const getSplitProps = (t: (key: string) => string): SplitSectionProps[] => [
+const getSplitProps = (t: TFunction): SplitSectionProps[] => [
   {
     splitType: SplitType.EQUAL,
     iconComponent: Equal,

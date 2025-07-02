@@ -8,7 +8,8 @@ import { useTranslation } from 'next-i18next';
 import { CategoryIcon } from '~/components/ui/categoryIcons';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { toUIString } from '~/utils/numbers';
-import { displayName, toUIDate } from '~/utils/strings';
+import { toUIDate } from '~/utils/strings';
+import { useCommonTranslation } from '~/hooks/useCommonTranslation';
 
 export const ExpenseList: React.FC<{
   userId: number;
@@ -19,7 +20,7 @@ export const ExpenseList: React.FC<{
   isLoading?: boolean;
 }> = ({ userId, expenses = [], contactId, isLoading }) => {
   const { t } = useTranslation('expense_details');
-  const { t: tCommon } = useTranslation('common');
+  const { displayName } = useCommonTranslation();
 
   return (
     <>
@@ -55,7 +56,7 @@ export const ExpenseList: React.FC<{
                   className={`flex text-center ${isSettlement ? 'text-sm text-gray-400' : 'text-xs text-gray-500'}`}
                 >
                   <span className="text-[10px]">{isSettlement ? '  🎉  ' : null}</span>
-                  {displayName(e.paidByUser, userId, tCommon)} {t('ui.user_paid')} {e.currency}{' '}
+                  {displayName(e.paidByUser, userId)} {t('ui.user_paid')} {e.currency}{' '}
                   {toUIString(e.amount)}
                 </p>
               </div>

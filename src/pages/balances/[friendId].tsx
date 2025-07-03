@@ -14,7 +14,8 @@ import { Separator } from '~/components/ui/separator';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
-import { withI18nStaticProps } from '~/utils/i18n/server';
+import { customServerSideTranslations, withI18nStaticProps } from '~/utils/i18n/server';
+import { type GetServerSideProps } from 'next';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
   const { t } = useTranslation('friend_details');
@@ -164,6 +165,16 @@ const FriendPage: NextPageWithUser = ({ user }) => {
 
 FriendPage.auth = true;
 
-export const getStaticProps = withI18nStaticProps(['friend_details', 'expense_details', 'common']);
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return {
+    props: {
+      ...(await customServerSideTranslations(context.locale, [
+        'common',
+        'friend_details',
+        'expense_details',
+      ])),
+    },
+  };
+};
 
 export default FriendPage;

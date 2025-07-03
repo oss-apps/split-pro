@@ -143,7 +143,13 @@ export const userRouter = createTRPCRouter({
     }),
 
   updateUserDetail: protectedProcedure
-    .input(z.object({ name: z.string().optional(), currency: z.string().optional() }))
+    .input(
+      z.object({
+        name: z.string().optional(),
+        currency: z.string().optional(),
+        preferredLanguage: z.string().optional(),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       const user = await db.user.update({
         where: {

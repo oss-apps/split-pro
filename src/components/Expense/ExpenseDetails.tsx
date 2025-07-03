@@ -2,16 +2,18 @@ import { type Expense, type ExpenseParticipant, type User } from '@prisma/client
 import { isSameDay } from 'date-fns';
 import { Banknote } from 'lucide-react';
 import { type User as NextUser } from 'next-auth';
+import { useTranslation } from 'next-i18next';
 
 // import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 
 import type { FC } from 'react';
-import { displayName, toUIDate } from '~/utils/strings';
+import { toUIDate } from '~/utils/strings';
 import { UserAvatar } from '../ui/avatar';
 import { CategoryIcons } from '../ui/categoryIcons';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
+import { useCommonTranslation } from '~/hooks/useCommonTranslation';
 
 interface ExpenseDetailsProps {
   user: NextUser;
@@ -26,6 +28,8 @@ interface ExpenseDetailsProps {
 }
 
 const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
+  const { t } = useTranslation('expense_details');
+  const { displayName } = useCommonTranslation();
   const CategoryIcon = CategoryIcons[expense.category] ?? Banknote;
 
   // const sendNotificationMutation = api.user.sendExpensePushNotification.useMutation();
@@ -49,18 +53,18 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
             ) : null}
             {expense.updatedByUser ? (
               <p className="text-sm text-gray-500">
-                Edited by {displayName(expense.updatedByUser)} on{' '}
+                {t('ui.edited_by')} {displayName(expense.updatedByUser, user.id)} {t('ui.on')}{' '}
                 {toUIDate(expense.updatedAt, { year: true })}
               </p>
             ) : null}
             {expense.deletedByUser ? (
               <p className="text-sm text-orange-600">
-                Deleted by {displayName(expense.deletedByUser)} on{' '}
+                {t('ui.deleted_by')} {displayName(expense.deletedByUser, user.id)} {t('ui.on')}{' '}
                 {toUIDate(expense.deletedAt ?? expense.createdAt, { year: true })}
               </p>
             ) : (
               <p className="text-sm text-gray-500">
-                Added by {displayName(expense.addedByUser)} on{' '}
+                {t('ui.added_by')} {displayName(expense.addedByUser, user.id)} {t('ui.on')}{' '}
                 {toUIDate(expense.createdAt, { year: true })}
               </p>
             )}
@@ -86,7 +90,7 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
         </button> */}
         <UserAvatar user={expense.paidByUser} size={35} />
         <p>
-          {displayName(expense.paidByUser, user.id)} paid {expense.currency}{' '}
+          {displayName(expense.paidByUser, user.id)} {t('ui.user_paid')} {expense.currency}{' '}
           {toUIString(expense.amount)}
         </p>
       </div>
@@ -97,7 +101,9 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
             <div key={p.userId} className="flex items-center gap-2 text-sm text-gray-500">
               <UserAvatar user={p.user} size={25} />
               <p>
-                {user.id === p.userId ? 'You owe' : `${p.user.name ?? p.user.email} owes`}{' '}
+                {user.id === p.userId
+                  ? t('ui.you_owe')
+                  : `${p.user.name ?? p.user.email} ${t('ui.owes')}`}{' '}
                 {expense.currency}{' '}
                 {toUIString((expense.paidBy === p.userId ? (expense.amount ?? 0n) : 0n) - p.amount)}
               </p>

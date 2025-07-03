@@ -2,14 +2,15 @@ import type { GroupBalance, User } from '@prisma/client';
 import clsx from 'clsx';
 import { Info } from 'lucide-react';
 import { Fragment, useMemo } from 'react';
+import { useTranslation } from 'next-i18next';
 
 import { UserAvatar } from '~/components/ui/avatar';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
-import { displayName } from '~/utils/strings';
 
 import { GroupSettleUp } from '../Friend/GroupSettleup';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
+import { useCommonTranslation } from '~/hooks/useCommonTranslation';
 
 interface UserWithBalance {
   user: User;
@@ -21,6 +22,8 @@ export const BalanceList: React.FC<{
   groupBalances?: GroupBalance[];
   users?: User[];
 }> = ({ groupBalances = [], users = [] }) => {
+  const { t } = useTranslation('expense_details');
+  const { displayName } = useCommonTranslation();
   const userQuery = api.user.me.useQuery();
 
   const userMap = useMemo(() => {
@@ -51,7 +54,7 @@ export const BalanceList: React.FC<{
     <>
       <div className="mt-4 flex w-full items-center justify-center space-x-2 text-sm text-gray-500">
         <Info className="size-4" />
-        <span>Press on individual balance to initiate settlement</span>
+        <span>{t('ui.balance_list.press_balance_info')}</span>
       </div>
       <Accordion type="multiple">
         {Object.values(userMap).map(({ user, total, balances }) => {
@@ -74,14 +77,21 @@ export const BalanceList: React.FC<{
                     {Object.values(total).every((amount) => 0n === amount) ? (
                       <span className="text-gray-400">
                         {' '}
-                        {isCurrentUser ? 'are' : 'is'} settled up
+                        {isCurrentUser
+                          ? t('ui.balance_list.are_settled_up')
+                          : t('ui.balance_list.is_settled_up')}
                       </span>
                     ) : (
                       <>
                         <span className="text-gray-400">
                           {' '}
-                          {0 < totalAmount[1] ? 'get' : 'owe'}
-                          {isCurrentUser ? '' : 's'}{' '}
+                          {0 < totalAmount[1]
+                            ? isCurrentUser
+                              ? t('ui.balance_list.get')
+                              : t('ui.balance_list.gets')
+                            : isCurrentUser
+                              ? t('ui.balance_list.owe')
+                              : t('ui.balance_list.owes')}{' '}
                         </span>
                         <span
                           className={clsx(
@@ -117,8 +127,13 @@ export const BalanceList: React.FC<{
                               {displayName(friend, userQuery.data?.id)}
                               <span className="text-gray-400">
                                 {' '}
-                                {0 > amount ? 'get' : 'owe'}
-                                {friend.id === userQuery.data?.id ? '' : 's'}{' '}
+                                {0 > amount
+                                  ? friend.id === userQuery.data?.id
+                                    ? t('ui.balance_list.get')
+                                    : t('ui.balance_list.gets')
+                                  : friend.id === userQuery.data?.id
+                                    ? t('ui.balance_list.owe')
+                                    : t('ui.balance_list.owes')}{' '}
                               </span>
                               <span
                                 className={clsx(
@@ -128,7 +143,12 @@ export const BalanceList: React.FC<{
                               >
                                 {toUIString(amount)} {currency}
                               </span>
-                              <span className="text-gray-400"> {0 < amount ? 'to' : 'from'} </span>
+                              <span className="text-gray-400">
+                                {' '}
+                                {0 < amount
+                                  ? t('ui.balance_list.to')
+                                  : t('ui.balance_list.from')}{' '}
+                              </span>
                               <span className="text-foreground">
                                 {displayName(user, userQuery.data?.id)}
                               </span>

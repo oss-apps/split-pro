@@ -1,12 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type GetServerSideProps, type NextPage } from 'next';
 import { type ClientSafeProvider, getProviders, signIn } from 'next-auth/react';
-import Head from 'next/head';
-import { useEffect, useState } from 'react';
+import { useTranslation } from 'next-i18next';
+import { useEffect, useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-
 import { Button } from '~/components/ui/button';
 import {
   Form,
@@ -17,12 +16,10 @@ import {
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
+import { LanguageSelector } from '~/components/ui/language-selector';
 import { env } from '~/env';
 import { getServerAuthSession } from '~/server/auth';
-
-const emailSchema = z.object({
-  email: z.string({ required_error: 'Email is required' }).email({ message: 'Invalid email' }),
-});
+import { customServerSideTranslations } from '~/utils/i18n/server';
 
 const providerSvgs = {
   github: (
@@ -59,7 +56,18 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
   providers,
   feedbackEmail,
 }) => {
+  const { t } = useTranslation('signin');
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
+
+  const emailSchema = useMemo(
+    () =>
+      z.object({
+        email: z
+          .string({ required_error: t('validation.email_required') })
+          .email({ message: t('validation.email_invalid') }),
+      }),
+    [t],
+  );
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),
@@ -71,9 +79,9 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
   useEffect(() => {
     if (error) {
       if ('SignupDisabled' === error) {
-        toast.error('Signup of new accounts is disabled on this instance', { duration: 5000 });
+        toast.error(t('errors.signup_disabled'), { duration: 5000 });
       } else {
-        toast.error('An error occurred while signing in: ' + error);
+        toast.error(t('errors.signin_error') + error);
       }
     }
   }, [error]);
@@ -86,15 +94,13 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
 
   return (
     <>
-      <Head>
-        <title>SplitPro: Split Expenses with your friends for free</title>
-        <meta name="description" content="SplitPro: Split Expenses with your friends for free" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <main className="flex h-full flex-col justify-center lg:justify-normal">
         <div className="flex flex-col items-center lg:mt-20">
+          <div className="mb-5 flex items-center gap-4">
+            <p className="text-primary text-3xl">{t('title')}</p>
+          </div>
           <div className="mb-10 flex items-center gap-4">
-            <p className="text-primary text-3xl">SplitPro</p>
+            <LanguageSelector />
           </div>
           {providers
             .filter((provider) => 'email' !== provider.id)
@@ -105,12 +111,14 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
                 key={provider.id}
               >
                 {providerSvgs[provider.id as keyof typeof providerSvgs]}
-                Continue with {provider.name}
+                {t('auth.continue_with', { provider: provider.name })}
               </Button>
             ))}
           {providers && 2 === providers.length && (
             <div className="mt-6 flex w-[300px] items-center justify-between gap-2">
-              <p className="bg-background z-10 ml-[150px] -translate-x-1/2 px-4 text-sm">or</p>
+              <p className="bg-background z-10 ml-[150px] -translate-x-1/2 px-4 text-sm">
+                {t('auth.or')}
+              </p>
               <div className="absolute h-px w-[300px] bg-linear-to-r from-zinc-800 via-zinc-300 to-zinc-800" />
             </div>
           )}
@@ -118,41 +126,49 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
             <>
               <Form {...emailForm}>
                 <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="mt-6 space-y-8">
-                  <FormField control={emailForm.control} name="email" render={emailInput} />
+                  <FormField
+                    control={emailForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder={t('auth.email_placeholder')}
+                            className="w-[300px] text-lg"
+                            type="email"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   <Button
                     className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
                     type="submit"
                     disabled={'sending' === emailStatus}
                   >
-                    {'sending' === emailStatus ? 'Sending...' : 'Send magic link'}
+                    {'sending' === emailStatus ? t('auth.sending') : t('auth.send_magic_link')}
                   </Button>
                 </form>
               </Form>
             </>
           ) : null}
-          <p className="text-muted-foreground mt-6 w-[300px] text-center text-sm">
-            Trouble logging in? contact
-            <br />
-            <a className="underline" href={'mailto:' + feedbackEmail}>
-              {feedbackEmail ?? ''}
-            </a>
-          </p>
+          {feedbackEmail && (
+            <p className="text-muted-foreground mt-6 w-[300px] text-center text-sm">
+              {t('auth.trouble_logging_in')}
+              <br />
+              <a className="underline" href={'mailto:' + feedbackEmail}>
+                {feedbackEmail ?? ''}
+              </a>
+            </p>
+          )}
         </div>
       </main>
     </>
   );
 };
-
-// @ts-expect-error form types are not very handy
-const emailInput = ({ field }) => (
-  <FormItem>
-    <FormControl>
-      <Input placeholder="Enter your email" className="w-[300px] text-lg" type="email" {...field} />
-    </FormControl>
-    <FormDescription />
-    <FormMessage />
-  </FormItem>
-);
 
 export default Home;
 
@@ -172,6 +188,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
+      ...(await customServerSideTranslations(context.locale, ['common', 'signin'])),
       error: typeof error === 'string' ? error : '',
       feedbackEmail: env.FEEDBACK_EMAIL ?? '',
       providers: Object.values(providers ?? {}),

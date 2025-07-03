@@ -6,14 +6,18 @@
     "email_placeholder": "Enter your email",
     "send_magic_link": "Send magic link",
     "sending": "Sending...",
-    "otp_sent": "We have sent an email with the OTP. Please check your inbox",
+    "otp_sent": "We have sent an email with the OTP. Please check your inbox and click the link in the email to sign in.",
     "submit": "Submit",
-    "trouble_logging_in": "Trouble logging in? contact"
+    "trouble_logging_in": "Trouble logging in? Contact"
   },
   "validation": {
     "email_required": "Email is required",
     "email_invalid": "Invalid email",
     "otp_required": "OTP is required",
     "otp_invalid": "Invalid OTP"
+  },
+  "errors": {
+    "signup_disabled": "Signup of new accounts is disabled on this instance",
+    "signin_error": "An error occurred while signing in: "
   }
 }

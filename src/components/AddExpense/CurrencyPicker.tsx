@@ -17,7 +17,7 @@ function CurrencyPickerInner({
   onCurrencyPick: (currency: CurrencyCode) => void;
 }) {
   const { t } = useTranslation('expense_details');
-  
+
   const onSelect = useCallback(
     (currentValue: string) => {
       const currency = currentValue.split('-')[0]?.toUpperCase() ?? 'USD';

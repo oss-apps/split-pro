@@ -5,7 +5,7 @@
     "change_language_details": {
       "title": "Seleziona una lingua",
       "save": "Salva",
-      "close": "Chiudi",      
+      "close": "Chiudi",
       "messages": {
         "language_changed": "Lingua cambiata con successo"
       },

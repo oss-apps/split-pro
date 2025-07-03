@@ -75,7 +75,9 @@ export const SelectUserOrGroup: React.FC<{
 
   if (group) {
     return (
-      <div className="mt-4 text-center text-red-500">{t('ui.add_expense_details.select_user_or_group.only_one_group_time')}</div>
+      <div className="mt-4 text-center text-red-500">
+        {t('ui.add_expense_details.select_user_or_group.only_one_group_time')}
+      </div>
     );
   }
 
@@ -85,9 +87,7 @@ export const SelectUserOrGroup: React.FC<{
         <div>
           {enableSendingInvites ? (
             <div className="mt-1 text-orange-600">
-              {isEmail.success
-                ? t('ui.add_expense_details.select_user_or_group.warning')
-                : null}
+              {isEmail.success ? t('ui.add_expense_details.select_user_or_group.warning') : null}
             </div>
           ) : (
             <div>{t('ui.add_expense_details.select_user_or_group.note')}</div>
@@ -119,7 +119,9 @@ export const SelectUserOrGroup: React.FC<{
       <div className="mt-2">
         {filteredFriends?.length ? (
           <>
-            <div className="font-normal text-gray-500">{t('ui.add_expense_details.select_user_or_group.friends')}</div>
+            <div className="font-normal text-gray-500">
+              {t('ui.add_expense_details.select_user_or_group.friends')}
+            </div>
             {filteredFriends.map((f) => {
               const isExisting = participants.some((p) => p.id === f.id);
 
@@ -154,7 +156,9 @@ export const SelectUserOrGroup: React.FC<{
         {/*Can't select multiple groups or groups with outside ppl */}
         {filteredGroups?.length && 1 === participants.length ? (
           <>
-            <div className="mt-8 text-gray-500">{t('ui.add_expense_details.select_user_or_group.groups')}</div>
+            <div className="mt-8 text-gray-500">
+              {t('ui.add_expense_details.select_user_or_group.groups')}
+            </div>
             <div className="mt-2 flex flex-col gap-1">
               {filteredGroups.map((g) => (
                 <button

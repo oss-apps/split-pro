@@ -29,7 +29,7 @@ interface ExpenseDetailsProps {
 
 const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
   const { t } = useTranslation('expense_details');
-  const displayName = useCommonTranslation();
+  const { displayName } = useCommonTranslation();
   const CategoryIcon = CategoryIcons[expense.category] ?? Banknote;
 
   // const sendNotificationMutation = api.user.sendExpensePushNotification.useMutation();

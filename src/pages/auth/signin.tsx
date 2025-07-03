@@ -2,12 +2,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type GetServerSideProps, type NextPage } from 'next';
 import { type ClientSafeProvider, getProviders, signIn } from 'next-auth/react';
 import { useTranslation } from 'next-i18next';
-import Head from 'next/head';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-
 import { Button } from '~/components/ui/button';
 import {
   Form,
@@ -61,17 +59,15 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
   const { t } = useTranslation('signin');
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
 
-  const emailSchema = z.object({
-    email: z
-      .string({ required_error: t('validation.email_required') })
-      .email({ message: t('validation.email_invalid') }),
-  });
-
-  const otpSchema = z.object({
-    otp: z
-      .string({ required_error: t('validation.otp_required') })
-      .length(5, { message: t('validation.otp_invalid') }),
-  });
+  const emailSchema = useMemo(
+    () =>
+      z.object({
+        email: z
+          .string({ required_error: t('validation.email_required') })
+          .email({ message: t('validation.email_invalid') }),
+      }),
+    [t],
+  );
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),
@@ -83,9 +79,9 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
   useEffect(() => {
     if (error) {
       if ('SignupDisabled' === error) {
-        toast.error('Signup of new accounts is disabled on this instance', { duration: 5000 });
+        toast.error(t('errors.signup_disabled'), { duration: 5000 });
       } else {
-        toast.error('An error occurred while signing in: ' + error);
+        toast.error(t('errors.signin_error') + error);
       }
     }
   }, [error]);
@@ -130,7 +126,24 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
             <>
               <Form {...emailForm}>
                 <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="mt-6 space-y-8">
-                  <FormField control={emailForm.control} name="email" render={emailInput} />
+                  <FormField
+                    control={emailForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder={t('auth.email_placeholder')}
+                            className="w-[300px] text-lg"
+                            type="email"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   <Button
                     className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
                     type="submit"
@@ -142,29 +155,20 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
               </Form>
             </>
           ) : null}
-          <p className="text-muted-foreground mt-6 w-[300px] text-center text-sm">
-            {t('auth.trouble_logging_in')}
-            <br />
-            <a className="underline" href={'mailto:' + feedbackEmail}>
-              {feedbackEmail ?? ''}
-            </a>
-          </p>
+          {feedbackEmail && (
+            <p className="text-muted-foreground mt-6 w-[300px] text-center text-sm">
+              {t('auth.trouble_logging_in')}
+              <br />
+              <a className="underline" href={'mailto:' + feedbackEmail}>
+                {feedbackEmail ?? ''}
+              </a>
+            </p>
+          )}
         </div>
       </main>
     </>
   );
 };
-
-// @ts-expect-error form types are not very handy
-const emailInput = ({ field }) => (
-  <FormItem>
-    <FormControl>
-      <Input placeholder="Enter your email" className="w-[300px] text-lg" type="email" {...field} />
-    </FormControl>
-    <FormDescription />
-    <FormMessage />
-  </FormItem>
-);
 
 export default Home;
 
@@ -184,7 +188,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      ...(await customServerSideTranslations(context.locale ?? 'en', ['common', 'signin'])),
+      ...(await customServerSideTranslations(context.locale, ['common', 'signin'])),
       error: typeof error === 'string' ? error : '',
       feedbackEmail: env.FEEDBACK_EMAIL ?? '',
       providers: Object.values(providers ?? {}),

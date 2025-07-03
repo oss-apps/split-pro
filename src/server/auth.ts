@@ -177,7 +177,7 @@ function getProviders() {
           if (!result) {
             throw new Error('Failed to send email');
           }
-        },        
+        },
         async generateVerificationToken() {
           return Math.random().toString(36).substring(2, 7).toLowerCase();
         },

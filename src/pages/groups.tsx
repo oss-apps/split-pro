@@ -30,7 +30,6 @@ const BalancePage: NextPageWithUser = () => {
     <>
       <Head>
         <title>{t('ui.title')}</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout title={t('ui.title')} actions={actions} loading={groupQuery.isPending}>
         <div className="mt-7 flex flex-col gap-8 pb-36">
@@ -64,7 +63,6 @@ const BalancePage: NextPageWithUser = () => {
                   isPositive={0 <= amount}
                   currency={currency}
                   multiCurrency={multiCurrency}
-                  t={t}
                 />
               );
             })
@@ -82,8 +80,9 @@ const GroupBalance: React.FC<{
   isPositive: boolean;
   currency: string;
   multiCurrency?: boolean;
-  t: (key: string) => string;
-}> = ({ name, amount, isPositive, currency, groupId, multiCurrency, t }) => {
+}> = ({ name, amount, isPositive, currency, groupId, multiCurrency }) => {
+  const { t } = useTranslation('groups_page');
+
   return (
     <Link href={`/groups/${groupId}`}>
       <div className="flex items-center justify-between">

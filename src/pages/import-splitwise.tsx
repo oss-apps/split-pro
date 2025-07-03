@@ -14,7 +14,7 @@ import { Separator } from '~/components/ui/separator';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { type NextPageWithUser, type SplitwiseGroup, type SplitwiseUser } from '~/types';
 import { api } from '~/utils/api';
-import { withI18nStaticProps } from '~/utils/i18n/server.js';
+import { withI18nStaticProps } from '~/utils/i18n/server';
 
 const ImportSpliwisePage: NextPageWithUser = () => {
   const { t } = useTranslation('import_splitwise');

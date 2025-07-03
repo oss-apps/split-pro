@@ -10,7 +10,7 @@ import { isStorageConfigured } from '~/server/storage';
 import { useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
-import { customServerSideTranslations } from '~/utils/i18n/server.js';
+import { customServerSideTranslations } from '~/utils/i18n/server';
 import { type GetServerSideProps } from 'next';
 
 const AddPage: NextPageWithUser<{

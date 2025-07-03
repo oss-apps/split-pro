@@ -88,7 +88,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, pageProps }) => {
   const { status, data } = useSession({ required: true });
   const [showSpinner, setShowSpinner] = useState(false);
-  const updatePreferredLanguage = api.user.updatePreferredLanguage.useMutation();
+  const updateUser = api.user.updateUserDetail.useMutation();
   const router = useRouter();
 
   const { setCurrency } = useAddExpenseStore((s) => s.actions);
@@ -115,9 +115,9 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
       if (!data.user.preferredLanguage) {
         // If user has no preferred language, set it to the current locale
         const currentLocale = router.locale ?? 'en';
-        updatePreferredLanguage
+        updateUser
           .mutateAsync({
-            language: currentLocale,
+            preferredLanguage: currentLocale,
           })
           .catch(console.error);
       } else if (data.user.preferredLanguage && data.user.preferredLanguage !== router.locale) {

@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Pencil } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -17,6 +17,8 @@ export const UpdateName: React.FC<{
   defaultName: string;
   onNameSubmit: (values: z.infer<typeof detailsSchema>) => void;
 }> = ({ className, defaultName, onNameSubmit }) => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   const detailForm = useForm<z.infer<typeof detailsSchema>>({
     resolver: zodResolver(detailsSchema),
     defaultValues: {
@@ -27,13 +29,23 @@ export const UpdateName: React.FC<{
   return (
     <AppDrawer
       trigger={<Pencil className={className} />}
+      open={drawerOpen}
+      onOpenChange={(openVal) => {
+        if (openVal !== drawerOpen) {
+          setDrawerOpen(openVal);
+        }
+      }}
       leftAction="Close"
       title="Edit name"
-      shouldCloseOnAction
+      shouldCloseOnAction={false}
       className="h-[80vh]"
       actionTitle="Save"
       actionOnClick={async () => {
-        await detailForm.handleSubmit(onNameSubmit)();
+        const isValid = await detailForm.trigger();
+        if (isValid) {
+          await detailForm.handleSubmit(onNameSubmit)();
+          setDrawerOpen(false);
+        }
       }}
     >
       <Form {...detailForm}>

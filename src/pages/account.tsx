@@ -23,8 +23,11 @@ import { LoadingSpinner } from '~/components/ui/spinner';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { bigIntReplacer } from '~/utils/numbers';
+import { useRouter } from 'next/router';
 
 const AccountPage: NextPageWithUser = ({ user }) => {
+  const router = useRouter();
+
   const userQuery = api.user.me.useQuery();
   const downloadQuery = api.user.downloadData.useMutation();
   const updateDetailsMutation = api.user.updateUserDetail.useMutation();
@@ -76,9 +79,10 @@ const AccountPage: NextPageWithUser = ({ user }) => {
     [],
   );
 
-  const onSignOut = useCallback(() => {
-    void signOut();
-  }, []);
+  const onSignOut = useCallback(async () => {
+    await signOut({ redirect: false });
+    await router.push('/auth/signin');
+  }, [router]);
 
   return (
     <>

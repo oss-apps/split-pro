@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type GetServerSideProps, type NextPage } from 'next';
 import { type ClientSafeProvider, getProviders, signIn } from 'next-auth/react';
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -18,6 +18,7 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { env } from '~/env';
+import { useSession } from '~/hooks/useSession';
 import { getServerAuthSession } from '~/server/auth';
 
 const emailSchema = z.object({
@@ -60,6 +61,7 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
   feedbackEmail,
 }) => {
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
+  const [, setEmail] = useSession('splitpro-email');
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),
@@ -74,15 +76,18 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
         toast.error('Signup of new accounts is disabled on this instance', { duration: 5000 });
       } else {
         toast.error('An error occurred while signing in: ' + error);
+        console.error('Error during sign-in:', error);
       }
     }
   }, [error]);
 
-  async function onEmailSubmit(values: z.infer<typeof emailSchema>) {
+  const onEmailSubmit = useCallback(async () => {
     setEmailStatus('sending');
-    await signIn('email', { email: values.email.toLowerCase() });
+    const email = emailForm.getValues().email.toLowerCase();
+    setEmail(email);
+    await signIn('email', { email });
     setEmailStatus('success');
-  }
+  }, [emailForm, setEmail]);
 
   return (
     <>

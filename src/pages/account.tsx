@@ -22,6 +22,7 @@ import { AppDrawer } from '~/components/ui/drawer';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
+import { bigIntReplacer } from '~/utils/numbers';
 
 const AccountPage: NextPageWithUser = ({ user }) => {
   const userQuery = api.user.me.useQuery();
@@ -33,7 +34,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
   const downloadData = useCallback(async () => {
     setDownloading(true);
     const data = await downloadQuery.mutateAsync();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(data, bigIntReplacer, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;

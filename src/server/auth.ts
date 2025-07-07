@@ -169,13 +169,13 @@ function getProviders() {
             pass: env.EMAIL_SERVER_PASSWORD,
           },
         },
-        async sendVerificationRequest({ identifier: email, url }) {
-          const result = await sendSignUpEmail(email, url);
+        async sendVerificationRequest({ identifier: email, url, token }) {
+          const result = await sendSignUpEmail(email, url, token);
           if (!result) {
             throw new Error('Failed to send email');
           }
         },
-        async generateVerificationToken() {
+        generateVerificationToken() {
           return Math.random().toString(36).substring(2, 7).toLowerCase();
         },
       }),

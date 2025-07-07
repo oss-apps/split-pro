@@ -38,19 +38,19 @@ const getTransporter = () => {
   return transporter;
 };
 
-export async function sendSignUpEmail(email: string, url: string) {
+export async function sendSignUpEmail(email: string, url: string, token: string) {
   const { host } = new URL(url);
 
   console.log(env.NODE_ENV);
 
   if ('development' === env.NODE_ENV) {
-    console.log('Sign in link : ', email, url);
+    console.log('Sign in link : ', email, url, token);
     return true;
   }
 
   const subject = 'Sign in to SplitPro';
-  const text = `Hey,\n\nYou can sign in to SplitPro by clicking the below URL:\n${url}\n\nThanks,\nSplitPro Team`;
-  const html = `<p>Hey,</p> <p>You can sign in to SplitPro by clicking the below URL:</p><p><a href="${url}">Sign in to ${host}</a></p><br /><br /><p>Thanks,</p><br/>SplitPro Team</p>`;
+  const text = `Hey,\n\nYou can sign in to SplitPro by clicking the below URL:\n${url}\n\nYou can also use this OTP: ${token}\n\nThanks,\nSplitPro Team`;
+  const html = `<p>Hey,</p> <p>You can sign in to SplitPro by clicking the below URL:</p><p><a href="${url}">Sign in to ${host}</a></p><p>You can also use this OTP: <b>${token}</b></p><br /><br /><p>Thanks,</p><br/>SplitPro Team</p>`;
 
   return await sendMail(email, subject, text, html);
 }

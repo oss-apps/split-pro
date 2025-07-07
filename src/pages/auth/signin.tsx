@@ -61,7 +61,7 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
   feedbackEmail,
 }) => {
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
-  const [, setEmail] = useSession<string>('splitpro-email');
+  const [, setEmail] = useSession('splitpro-email');
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),

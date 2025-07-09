@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { useTranslation } from 'next-i18next';
+import { i18n, useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
@@ -73,19 +73,23 @@ const AccountPage: NextPageWithUser = ({ user }) => {
       <div className="hover:text-foreground/80 flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300">
         <div className="flex items-center gap-4">
           <Download className="h-5 w-5 text-blue-500" />
-          Download App
+          {t('ui.download_app')}
         </div>
         <ChevronRight className="h-6x w-6 text-gray-500" />
       </div>
     ),
-    [],
+    [t],
   );
 
   const onSignOut = useCallback(async () => {
     // Keep current language at logout by specifying callbackUrl with locale
-    const langUrl = router.locale === 'en' ? '' : `/${router.locale}`;
+    let langUrl = '';
+    if (i18n) {
+      langUrl = i18n.language === 'en' ? '' : `/${i18n.language}`;
+    }
+    console.info(`Logging out, redirecting to: ${langUrl}/auth/signin`);
     await signOut({ redirect: false });
-    await router.push(`${langUrl}$auth/signin`);
+    await router.push(`${langUrl}/auth/signin`);
   }, [router]);
 
   return (

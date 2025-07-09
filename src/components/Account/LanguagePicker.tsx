@@ -21,10 +21,7 @@ export const LanguagePicker: React.FC = () => {
           preferredLanguage: currentValue,
         });
 
-        await router.push(router.asPath, router.asPath, {
-          locale: currentValue,
-          scroll: false,
-        });
+        router.reload();
 
         toast.success(t('ui.change_language_details.messages.language_changed'), {
           duration: 1500,

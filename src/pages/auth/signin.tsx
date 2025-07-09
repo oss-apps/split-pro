@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type GetServerSideProps, type NextPage } from 'next';
 import { type ClientSafeProvider, getProviders, signIn } from 'next-auth/react';
 import { useTranslation } from 'next-i18next';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -18,6 +18,7 @@ import {
 import { Input } from '~/components/ui/input';
 import { LanguageSelector } from '~/components/ui/language-selector';
 import { env } from '~/env';
+import { useSession } from '~/hooks/useSession';
 import { getServerAuthSession } from '~/server/auth';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 
@@ -58,6 +59,7 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
 }) => {
   const { t } = useTranslation('signin');
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
+  const [, setEmail] = useSession('splitpro-email');
 
   const emailSchema = useMemo(
     () =>
@@ -82,15 +84,18 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
         toast.error(t('errors.signup_disabled'), { duration: 5000 });
       } else {
         toast.error(t('errors.signin_error') + error);
+        console.error('Error during sign-in:', error);
       }
     }
   }, [error, t]);
 
-  async function onEmailSubmit(values: z.infer<typeof emailSchema>) {
+  const onEmailSubmit = useCallback(async () => {
     setEmailStatus('sending');
-    await signIn('email', { email: values.email.toLowerCase() });
+    const email = emailForm.getValues().email.toLowerCase();
+    setEmail(email);
+    await signIn('email', { email });
     setEmailStatus('success');
-  }
+  }, [emailForm, setEmail]);
 
   return (
     <>

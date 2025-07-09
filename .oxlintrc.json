@@ -31,7 +31,7 @@
     ],
     "prefer-default-export": "off",
     "yoda": "off",
-    "id-length": ["warn", { "exceptions": ["t", "i", "j", "s", "e"] }]
+    "id-length": "off"
   },
   "overrides": [
     {

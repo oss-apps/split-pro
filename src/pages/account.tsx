@@ -25,6 +25,7 @@ import { LoadingSpinner } from '~/components/ui/spinner';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
+import { bigIntReplacer } from '~/utils/numbers';
 
 const AccountPage: NextPageWithUser = ({ user }) => {
   const { t } = useTranslation('account_page');
@@ -38,7 +39,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
   const downloadData = useCallback(async () => {
     setDownloading(true);
     const data = await downloadQuery.mutateAsync();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(data, bigIntReplacer, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -80,11 +81,12 @@ const AccountPage: NextPageWithUser = ({ user }) => {
     [],
   );
 
-  const onSignOut = useCallback(() => {
+  const onSignOut = useCallback(async () => {
     // Keep current language at logout by specifying callbackUrl with locale
-    const callbackUrl = `/${router.locale === 'en' ? '' : router.locale}`;
-    void signOut({ callbackUrl });
-  }, [router.locale]);
+    const langUrl = router.locale === 'en' ? '' : `/${router.locale}`;
+    await signOut({ redirect: false });
+    await router.push(`${langUrl}$auth/signin`);
+  }, [router]);
 
   return (
     <>

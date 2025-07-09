@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Pencil } from 'lucide-react';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'next-i18next';
 import { z } from 'zod';
@@ -13,6 +13,8 @@ export const UpdateName: React.FC<{
   defaultName: string;
   onNameSubmit: (values: { name: string }) => void;
 }> = ({ className, defaultName, onNameSubmit }) => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   const { t } = useTranslation('common');
 
   const detailsSchema = useMemo(
@@ -35,13 +37,23 @@ export const UpdateName: React.FC<{
   return (
     <AppDrawer
       trigger={<Pencil className={className} />}
+      open={drawerOpen}
+      onOpenChange={(openVal) => {
+        if (openVal !== drawerOpen) {
+          setDrawerOpen(openVal);
+        }
+      }}
       leftAction={t('ui.edit_name.close')}
       title={t('ui.edit_name.title')}
-      shouldCloseOnAction
+      shouldCloseOnAction={false}
       className="h-[80vh]"
       actionTitle={t('ui.edit_name.save')}
       actionOnClick={async () => {
-        await detailForm.handleSubmit(onNameSubmit)();
+        const isValid = await detailForm.trigger();
+        if (isValid) {
+          await detailForm.handleSubmit(onNameSubmit)();
+          setDrawerOpen(false);
+        }
       }}
     >
       <Form {...detailForm}>

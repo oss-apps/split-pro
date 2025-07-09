@@ -65,10 +65,12 @@ export const SubscribeNotification: React.FC = () => {
             updatePushSubscription.mutate({ subscription: JSON.stringify(sub) });
           })
           .catch((e) => {
+            console.info(e);
             toast.error(t('ui.notifications.errors.subscribe_error'));
           });
       }
     } catch (e) {
+      console.info(e);
       toast.error(t('ui.notifications.errors.request_error'));
     }
   }
@@ -82,6 +84,7 @@ export const SubscribeNotification: React.FC = () => {
         setIsSubscribed(false);
       }
     } catch (e) {
+      console.info(e);
       toast.error(t('ui.notifications.errors.unsubscribe_error'));
     }
   }

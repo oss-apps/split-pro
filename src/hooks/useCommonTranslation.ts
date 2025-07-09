@@ -3,12 +3,19 @@ import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
 import { displayName as dn } from '~/utils/strings';
 
-export const useCommonTranslation = () => {
-  const { t, ready } = useTranslation('common');
+export const useCommonTranslation = (namespaces?: string[]) => {
+  if (!namespaces || namespaces.length === 0) {
+    namespaces = ['common'];
+  } else if (!namespaces.includes('common')) {
+    namespaces.push('common');
+  }
+  const { t, ready } = useTranslation(namespaces);
 
   const displayName = useCallback(
     (user: Pick<User, 'name' | 'email' | 'id'> | undefined, currentUserId?: number): string => {
-      if (!user) return '';
+      if (!user) {
+        return '';
+      }
       return dn(user, currentUserId, t);
     },
     [t],

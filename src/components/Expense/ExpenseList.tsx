@@ -3,8 +3,6 @@ import { type inferRouterOutputs } from '@trpc/server';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import { useTranslation } from 'next-i18next';
-
 import { CategoryIcon } from '~/components/ui/categoryIcons';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { toUIString } from '~/utils/numbers';
@@ -19,15 +17,14 @@ export const ExpenseList: React.FC<{
   contactId: number;
   isLoading?: boolean;
 }> = ({ userId, expenses = [], contactId, isLoading }) => {
-  const { t } = useTranslation('expense_details');
-  const { displayName } = useCommonTranslation();
+  const { displayName, t } = useCommonTranslation(['expense_details']);
 
   return (
     <>
       {expenses.map((e) => {
         const isGroup = !!e.groupId;
         const youPaid = e.paidBy === userId;
-        const yourExpense = e.expenseParticipants.find((p) => p.userId === userId);
+        const yourExpense = e.expenseParticipants.find((partecipant) => partecipant.userId === userId);
         const isSettlement = e.splitType === SplitType.SETTLEMENT;
         const yourExpenseAmount = youPaid
           ? (yourExpense?.amount ?? 0n)

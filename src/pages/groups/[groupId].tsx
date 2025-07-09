@@ -16,9 +16,8 @@ import {
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useCallback, useState } from 'react';
 import { toast } from 'sonner';
-import { useTranslation } from 'next-i18next';
 import { UpdateName } from '~/components/ui/update-details';
 import { BalanceList } from '~/components/Expense/BalanceList';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
@@ -45,8 +44,7 @@ import { type GetServerSideProps } from 'next';
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
 }> = ({ user, enableSendingInvites }) => {
-  const { t } = useTranslation('groups_details');
-  const { displayName } = useCommonTranslation();
+  const { displayName, t } = useCommonTranslation(['groups_details']);
   const router = useRouter();
   const groupId = parseInt(router.query.groupId as string);
 
@@ -61,7 +59,7 @@ const BalancePage: NextPageWithUser<{
 
   const [isInviteCopied, setIsInviteCopied] = useState(false);
 
-  async function inviteMembers() {
+  const inviteMembers = useCallback(async () => {
     if (!groupDetailQuery.data) {
       return;
     }
@@ -84,17 +82,17 @@ const BalancePage: NextPageWithUser<{
         setIsInviteCopied(false);
       }, 2000);
     }
-  }
+  }, [groupDetailQuery.data, t]);
 
   const isAdmin = groupDetailQuery.data?.userId === user.id;
   const canDelete =
     groupDetailQuery.data?.userId === user.id &&
-    !groupDetailQuery.data?.groupBalances.find((b) => 0n !== b.amount);
+    !groupDetailQuery.data?.groupBalances.find((bal) => 0n !== bal.amount);
   const canLeave = !groupDetailQuery.data?.groupBalances.find(
-    (b) => 0n !== b.amount && b.userId === user.id,
+    (bal) => 0n !== bal.amount && bal.userId === user.id,
   );
 
-  function onRecalculateBalances() {
+  const onRecalculateBalances = useCallback(() => {
     recalculateGroupBalancesMutation.mutate(
       { groupId },
       {
@@ -107,9 +105,9 @@ const BalancePage: NextPageWithUser<{
         },
       },
     );
-  }
+  }, [groupId, groupDetailQuery, recalculateGroupBalancesMutation, t]);
 
-  function onGroupDelete() {
+  const onGroupDelete = useCallback(() => {
     deleteGroupMutation.mutate(
       { groupId },
       {
@@ -121,25 +119,28 @@ const BalancePage: NextPageWithUser<{
         },
       },
     );
-  }
+  }, [groupId, deleteGroupMutation, router, t]);
 
-  function onGroupLeave(userId?: number) {
-    leaveGroupMutation.mutate(
-      { groupId, userId },
-      {
-        onSuccess: () => {
-          if (!userId) {
-            router.replace('/groups').catch(console.error);
-          } else {
-            groupDetailQuery.refetch().catch(console.error);
-          }
+  const onGroupLeave = useCallback(
+    (userId?: number) => {
+      leaveGroupMutation.mutate(
+        { groupId, userId },
+        {
+          onSuccess: () => {
+            if (!userId) {
+              router.replace('/groups').catch(console.error);
+            } else {
+              groupDetailQuery.refetch().catch(console.error);
+            }
+          },
+          onError: () => {
+            toast.error(t('ui.errors.something_went_wrong'));
+          },
         },
-        onError: () => {
-          toast.error(t('ui.errors.something_went_wrong'));
-        },
-      },
-    );
-  }
+      );
+    },
+    [groupId, leaveGroupMutation, groupDetailQuery, router, t],
+  );
 
   return (
     <>
@@ -461,15 +462,13 @@ BalancePage.auth = true;
 
 export default BalancePage;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return {
-    props: {
-      ...(await customServerSideTranslations(context.locale, [
-        'common',
-        'groups_details',
-        'expense_details',
-      ])),
-      enableSendingInvites: env.ENABLE_SENDING_INVITES,
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async (context) => ({
+  props: {
+    ...(await customServerSideTranslations(context.locale, [
+      'common',
+      'groups_details',
+      'expense_details',
+    ])),
+    enableSendingInvites: env.ENABLE_SENDING_INVITES,
+  },
+});

@@ -16,7 +16,7 @@ import { useRouter } from 'next/router';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
 import { UpdateName } from '~/components/ui/update-details';
-import { LanguageChanger } from '~/components/Account/LanguageChanger';
+import { LanguagePicker } from '~/components/Account/LanguagePicker';
 import MainLayout from '~/components/Layout/MainLayout';
 import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
@@ -62,7 +62,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
         console.error(error);
       }
     },
-    [updateDetailsMutation, utils.user.me],
+    [updateDetailsMutation, utils.user.me, t],
   );
 
   const header = useMemo(() => <div className="text-3xl font-semibold">Account</div>, []);
@@ -109,7 +109,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
           )}
         </div>
         <div className="mt-8 flex flex-col gap-4">
-          <LanguageChanger />
+          <LanguagePicker />
           <Link href="https://twitter.com/KM_Koushik_" target="_blank">
             <Button
               variant="ghost"

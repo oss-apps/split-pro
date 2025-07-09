@@ -14,12 +14,13 @@ import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 import { withI18nStaticProps } from '~/utils/i18n/server';
+import { useCallback } from 'react';
 
 const BalancePage: NextPageWithUser = () => {
   const { t } = useTranslation('balances');
   const balanceQuery = api.expense.getBalances.useQuery();
 
-  const shareWithFriends = () => {
+  const shareWithFriends = useCallback(() => {
     if (navigator.share) {
       navigator
         .share({
@@ -30,7 +31,7 @@ const BalancePage: NextPageWithUser = () => {
         .then(() => console.info('Successful share'))
         .catch((error) => console.error('Error sharing', error));
     }
-  };
+  }, [t]);
 
   return (
     <>
@@ -63,10 +64,10 @@ const BalancePage: NextPageWithUser = () => {
                   </div>
                 </div>
                 <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
-                  {balanceQuery.data?.youOwe.map((b, index) => (
-                    <span key={b.currency} className="flex gap-1">
+                  {balanceQuery.data?.youOwe.map((balance, index) => (
+                    <span key={balance.currency} className="flex gap-1">
                       <span className="text-orange-600">
-                        {b.currency.toUpperCase()} {toUIString(b.amount)}
+                        {balance.currency.toUpperCase()} {toUIString(balance.amount)}
                       </span>
                       {index !== balanceQuery.data.youOwe.length - 1 ? (
                         <span className="">+</span>
@@ -84,10 +85,10 @@ const BalancePage: NextPageWithUser = () => {
                   </div>
                 </div>
                 <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
-                  {balanceQuery.data?.youGet.map((b, index) => (
-                    <span key={b.currency} className="flex gap-1">
+                  {balanceQuery.data?.youGet.map((balance, index) => (
+                    <span key={balance.currency} className="flex gap-1">
                       <p className="text-emerald-500">
-                        {b.currency.toUpperCase()} {toUIString(b.amount)}
+                        {balance.currency.toUpperCase()} {toUIString(balance.amount)}
                       </p>{' '}
                       {index !== balanceQuery.data.youGet.length - 1 ? (
                         <span className="text-gray-400">+</span>
@@ -100,15 +101,15 @@ const BalancePage: NextPageWithUser = () => {
           </div>
 
           <div className="mt-5 flex flex-col gap-8 pb-36">
-            {balanceQuery.data?.balances.map((b) => (
+            {balanceQuery.data?.balances.map((balance) => (
               <FriendBalance
-                key={b.friend.id}
-                id={b.friend.id}
-                friend={b.friend}
-                amount={b.amount}
-                isPositive={0n < b.amount}
-                currency={b.currency}
-                hasMore={b.hasMore}
+                key={balance.friend.id}
+                id={balance.friend.id}
+                friend={balance.friend}
+                amount={balance.amount}
+                isPositive={0n < balance.amount}
+                currency={balance.currency}
+                hasMore={balance.hasMore}
               />
             ))}
 

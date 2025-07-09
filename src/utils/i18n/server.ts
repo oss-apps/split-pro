@@ -10,10 +10,10 @@ export const customServerSideTranslations = async (
   return await serverSideTranslations(locale, namespaces, i18nConfig);
 };
 
-export const withI18nStaticProps = (namespaces: string[] = ['common']) => {
-  return async ({ locale }: { locale: string }) => ({
+export const withI18nStaticProps =
+  (namespaces: string[] = ['common']) =>
+  async ({ locale }: { locale: string }) => ({
     props: {
       ...(await customServerSideTranslations(locale, namespaces)),
     },
   });
-};

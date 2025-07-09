@@ -2,9 +2,7 @@ import { type Expense, type ExpenseParticipant, type User } from '@prisma/client
 import { isSameDay } from 'date-fns';
 import { Banknote } from 'lucide-react';
 import { type User as NextUser } from 'next-auth';
-import { useTranslation } from 'next-i18next';
 
-// import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 
 import type { FC } from 'react';
@@ -28,8 +26,7 @@ interface ExpenseDetailsProps {
 }
 
 const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
-  const { t } = useTranslation('expense_details');
-  const { displayName } = useCommonTranslation();
+  const { displayName, t } = useCommonTranslation(['expense_details']);
   const CategoryIcon = CategoryIcons[expense.category] ?? Banknote;
 
   // const sendNotificationMutation = api.user.sendExpensePushNotification.useMutation();
@@ -96,16 +93,23 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
       </div>
       <div className="mt-4 ml-14 flex flex-col gap-4">
         {expense.expenseParticipants
-          .filter((p) => (expense.paidBy === p.userId ? (expense.amount ?? 0n) : 0n) !== p.amount)
-          .map((p) => (
-            <div key={p.userId} className="flex items-center gap-2 text-sm text-gray-500">
-              <UserAvatar user={p.user} size={25} />
+          .filter(
+            (partecipant) =>
+              (expense.paidBy === partecipant.userId ? (expense.amount ?? 0n) : 0n) !==
+              partecipant.amount,
+          )
+          .map((partecipant) => (
+            <div key={partecipant.userId} className="flex items-center gap-2 text-sm text-gray-500">
+              <UserAvatar user={partecipant.user} size={25} />
               <p>
-                {user.id === p.userId
+                {user.id === partecipant.userId
                   ? t('ui.you_owe')
-                  : `${p.user.name ?? p.user.email} ${t('ui.owes')}`}{' '}
+                  : `${partecipant.user.name ?? partecipant.user.email} ${t('ui.owes')}`}{' '}
                 {expense.currency}{' '}
-                {toUIString((expense.paidBy === p.userId ? (expense.amount ?? 0n) : 0n) - p.amount)}
+                {toUIString(
+                  (expense.paidBy === partecipant.userId ? (expense.amount ?? 0n) : 0n) -
+                    partecipant.amount,
+                )}
               </p>
             </div>
           ))}

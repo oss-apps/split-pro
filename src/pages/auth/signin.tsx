@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type GetServerSideProps, type NextPage } from 'next';
 import { type ClientSafeProvider, getProviders, signIn } from 'next-auth/react';
 import { useTranslation } from 'next-i18next';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -84,7 +84,7 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
         toast.error(t('errors.signin_error') + error);
       }
     }
-  }, [error]);
+  }, [error, t]);
 
   async function onEmailSubmit(values: z.infer<typeof emailSchema>) {
     setEmailStatus('sending');

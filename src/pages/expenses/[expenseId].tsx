@@ -68,16 +68,11 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
 
 ExpensesPage.auth = true;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return {
-    props: {
-      storagePublicUrl: env.R2_PUBLIC_URL,
-      ...(await customServerSideTranslations(context.locale ?? 'en', [
-        'common',
-        'expense_details',
-      ])),
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async (context) => ({
+  props: {
+    storagePublicUrl: env.R2_PUBLIC_URL,
+    ...(await customServerSideTranslations(context.locale, ['common', 'expense_details'])),
+  },
+});
 
 export default ExpensesPage;

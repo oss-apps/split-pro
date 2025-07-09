@@ -74,7 +74,9 @@ const AddPage: NextPageWithUser<{
 
       setParticipants([
         currentUser,
-        ...groupQuery.data.groupUsers.map((gu) => gu.user).filter((u) => u.id !== currentUser.id),
+        ...groupQuery.data.groupUsers
+          .map((gu) => gu.user)
+          .filter((user) => user.id !== currentUser.id),
       ]);
       useAddExpenseStore.setState({ showFriends: false });
     }
@@ -137,16 +139,14 @@ AddPage.auth = true;
 
 export default AddPage;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return {
-    props: {
-      isStorageConfigured: !!isStorageConfigured(),
-      enableSendingInvites: !!env.ENABLE_SENDING_INVITES,
-      ...(await customServerSideTranslations(context.locale, [
-        'common',
-        'add_page',
-        'expense_details',
-      ])),
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async (context) => ({
+  props: {
+    isStorageConfigured: !!isStorageConfigured(),
+    enableSendingInvites: !!env.ENABLE_SENDING_INVITES,
+    ...(await customServerSideTranslations(context.locale, [
+      'common',
+      'add_page',
+      'expense_details',
+    ])),
+  },
+});

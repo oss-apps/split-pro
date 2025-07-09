@@ -16,9 +16,7 @@ import {
 } from '../services/splitService';
 
 export const userRouter = createTRPCRouter({
-  me: protectedProcedure.query(({ ctx }) => {
-    return ctx.session.user;
-  }),
+  me: protectedProcedure.query(({ ctx }) => ctx.session.user),
 
   getFriends: protectedProcedure.query(async ({ ctx }) => {
     const balanceWithFriends = await db.balance.findMany({
@@ -31,7 +29,7 @@ export const userRouter = createTRPCRouter({
       distinct: ['friendId'],
     });
 
-    const friendsIds = balanceWithFriends.map((f) => f.friendId);
+    const friendsIds = balanceWithFriends.map((friend) => friend.friendId);
 
     const friends = await db.user.findMany({
       where: {
@@ -330,9 +328,7 @@ export const userRouter = createTRPCRouter({
       await importGroupFromSplitwise(ctx.session.user.id, input.groups);
     }),
 
-  getWebPushPublicKey: protectedProcedure.query(() => {
-    return env.WEB_PUSH_PUBLIC_KEY ?? '';
-  }),
+  getWebPushPublicKey: protectedProcedure.query(() => env.WEB_PUSH_PUBLIC_KEY ?? ''),
 });
 
 export type UserRouter = typeof userRouter;

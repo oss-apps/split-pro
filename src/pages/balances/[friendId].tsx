@@ -14,7 +14,7 @@ import { Separator } from '~/components/ui/separator';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
-import { customServerSideTranslations, withI18nStaticProps } from '~/utils/i18n/server';
+import { customServerSideTranslations } from '~/utils/i18n/server';
 import { type GetServerSideProps } from 'next';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
@@ -82,10 +82,10 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 {0 < (youOwe?.length ?? 0) && (
                   <>
                     {t('ui.you_owe')}{' '}
-                    {youOwe?.map((b, index) => (
-                      <span key={b.currency}>
+                    {youOwe?.map((bal, index) => (
+                      <span key={bal.currency}>
                         <span className="font-semibold tracking-wide">
-                          {b.currency} {toUIString(b.amount)}
+                          {bal.currency} {toUIString(bal.amount)}
                         </span>
                         {youOwe.length - 1 === index ? '' : ' + '}
                       </span>
@@ -98,10 +98,10 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 {0 < (youLent?.length ?? 0) && (
                   <>
                     {t('ui.you_lent')}{' '}
-                    {youLent?.map((b, index) => (
-                      <span key={b.currency}>
+                    {youLent?.map((bal, index) => (
+                      <span key={bal.currency}>
                         <span className="font-semibold tracking-wide">
-                          {b.currency} {toUIString(b.amount)}
+                          {bal.currency} {toUIString(bal.amount)}
                         </span>
                         {youLent.length - 1 === index ? '' : ' + '}
                       </span>
@@ -165,16 +165,14 @@ const FriendPage: NextPageWithUser = ({ user }) => {
 
 FriendPage.auth = true;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return {
-    props: {
-      ...(await customServerSideTranslations(context.locale, [
-        'common',
-        'friend_details',
-        'expense_details',
-      ])),
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async (context) => ({
+  props: {
+    ...(await customServerSideTranslations(context.locale, [
+      'common',
+      'friend_details',
+      'expense_details',
+    ])),
+  },
+});
 
 export default FriendPage;

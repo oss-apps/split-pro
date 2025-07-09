@@ -1,6 +1,6 @@
 import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'next-i18next';
 
 import { api } from '~/utils/api';
@@ -18,7 +18,7 @@ export const DeleteExpense: React.FC<{
 
   const deleteExpenseMutation = api.user.deleteExpense.useMutation();
 
-  const onDeleteExpense = async () => {
+  const onDeleteExpense = useCallback(async () => {
     await deleteExpenseMutation.mutateAsync({ expenseId });
     if (groupId) {
       await router.replace(`/groups/${groupId}`);
@@ -30,7 +30,7 @@ export const DeleteExpense: React.FC<{
     }
 
     await router.replace(`/balances`);
-  };
+  }, [groupId, friendId, expenseId, deleteExpenseMutation, router]);
 
   return (
     <SimpleConfirmationDialog

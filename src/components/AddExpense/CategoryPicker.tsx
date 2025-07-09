@@ -13,49 +13,58 @@ export const CategoryPicker: React.FC<{
   const { t } = useTranslation('expense_details');
   const CategoryIcon = useMemo(() => CategoryIcons[category] ?? Banknote, [category]);
 
+  const trigger = useMemo(
+    () => (
+      <div className="flex w-[70px] justify-center rounded-lg border py-2">
+        <CategoryIcon size={20} />
+      </div>
+    ),
+    [CategoryIcon],
+  );
+
   return (
     <AppDrawer
-      trigger={
-        <div className="flex w-[70px] justify-center rounded-lg border py-2">
-          <CategoryIcon size={20} />
-        </div>
-      }
+      trigger={trigger}
       title={t('ui.categories.title')}
       className="h-[70vh]"
       shouldCloseOnAction
     >
-      {Object.entries(CATEGORIES).map(([categoryName, categoryItems]) => {
-        return (
-          <div key={categoryName} className="mb-8">
-            <h3 className="mb-4 text-lg font-semibold">
-              {t(`ui.categories.categories_list.${categoryName}.name`)}
-            </h3>
-            <div className="flex flex-wrap justify-between gap-2">
-              {categoryItems.map((key) => {
-                const Icon = CategoryIcons[key] ?? CategoryIcons[categoryName] ?? Banknote;
-                return (
-                  <DrawerClose key={key}>
-                    <Button
-                      variant="ghost"
-                      className="flex w-[75px] flex-col gap-1 py-8 text-center"
-                      onClick={() => {
-                        onCategoryPick('other' === key ? categoryName : key);
-                      }}
-                    >
-                      <span className="block text-2xl">
-                        <Icon />
-                      </span>
-                      <span className="block text-xs capitalize">
-                        {t(`ui.categories.categories_list.${categoryName}.items.${key}`)}
-                      </span>
-                    </Button>
-                  </DrawerClose>
-                );
-              })}
-            </div>
+      {Object.entries(CATEGORIES).map(([categoryName, categoryItems]) => (
+        <div key={categoryName} className="mb-8">
+          <h3 className="mb-4 text-lg font-semibold">
+            {t(`ui.categories.categories_list.${categoryName}.name`)}
+          </h3>
+          <div className="flex flex-wrap justify-between gap-2">
+            {categoryItems.map((key: string) => {
+              const Icon = CategoryIcons[key] ?? CategoryIcons[categoryName] ?? Banknote;
+
+              const handleClick = useMemo(
+                () => () => {
+                  onCategoryPick('other' === key ? categoryName : key);
+                },
+                [key],
+              );
+
+              return (
+                <DrawerClose key={key}>
+                  <Button
+                    variant="ghost"
+                    className="flex w-[75px] flex-col gap-1 py-8 text-center"
+                    onClick={handleClick}
+                  >
+                    <span className="block text-2xl">
+                      <Icon />
+                    </span>
+                    <span className="block text-xs capitalize">
+                      {t(`ui.categories.categories_list.${categoryName}.items.${key}`)}
+                    </span>
+                  </Button>
+                </DrawerClose>
+              );
+            })}
           </div>
-        );
-      })}
+        </div>
+      ))}
     </AppDrawer>
   );
 };

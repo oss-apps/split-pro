@@ -2,7 +2,6 @@ import { SplitType } from '@prisma/client';
 import { type User } from 'next-auth';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useTranslation } from 'next-i18next';
 import MainLayout from '~/components/Layout/MainLayout';
 import { UserAvatar } from '~/components/ui/avatar';
 import { type NextPageWithUser } from '~/types';
@@ -46,8 +45,7 @@ function getPaymentString(
 }
 
 const ActivityPage: NextPageWithUser = ({ user }) => {
-  const { t } = useTranslation('activity_page');
-  const { displayName } = useCommonTranslation();
+  const { displayName, t } = useCommonTranslation(['activity_page']);
   const expensesQuery = api.user.getAllExpenses.useQuery();
 
   return (

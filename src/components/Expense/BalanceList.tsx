@@ -1,9 +1,7 @@
 import type { GroupBalance, User } from '@prisma/client';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { Info } from 'lucide-react';
 import { Fragment, useMemo } from 'react';
-import { useTranslation } from 'next-i18next';
-
 import { UserAvatar } from '~/components/ui/avatar';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
@@ -22,8 +20,7 @@ export const BalanceList: React.FC<{
   groupBalances?: GroupBalance[];
   users?: User[];
 }> = ({ groupBalances = [], users = [] }) => {
-  const { t } = useTranslation('expense_details');
-  const { displayName } = useCommonTranslation();
+  const { displayName, t } = useCommonTranslation(['expense_details']);
   const userQuery = api.user.me.useQuery();
 
   const userMap = useMemo(() => {
@@ -85,13 +82,17 @@ export const BalanceList: React.FC<{
                       <>
                         <span className="text-gray-400">
                           {' '}
-                          {0 < totalAmount[1]
-                            ? isCurrentUser
-                              ? t('ui.balance_list.get')
-                              : t('ui.balance_list.gets')
-                            : isCurrentUser
-                              ? t('ui.balance_list.owe')
-                              : t('ui.balance_list.owes')}{' '}
+                          {(() => {
+                            if (0 < totalAmount[1]) {
+                              return isCurrentUser
+                                ? t('ui.balance_list.get')
+                                : t('ui.balance_list.gets');
+                            } else {
+                              return isCurrentUser
+                                ? t('ui.balance_list.owe')
+                                : t('ui.balance_list.owes');
+                            }
+                          })()}{' '}
                         </span>
                         <span
                           className={clsx(
@@ -127,13 +128,17 @@ export const BalanceList: React.FC<{
                               {displayName(friend, userQuery.data?.id)}
                               <span className="text-gray-400">
                                 {' '}
-                                {0 > amount
-                                  ? friend.id === userQuery.data?.id
-                                    ? t('ui.balance_list.get')
-                                    : t('ui.balance_list.gets')
-                                  : friend.id === userQuery.data?.id
-                                    ? t('ui.balance_list.owe')
-                                    : t('ui.balance_list.owes')}{' '}
+                                {(() => {
+                                  if (0 > amount) {
+                                    return friend.id === userQuery.data?.id
+                                      ? t('ui.balance_list.get')
+                                      : t('ui.balance_list.gets');
+                                  } else {
+                                    return friend.id === userQuery.data?.id
+                                      ? t('ui.balance_list.owe')
+                                      : t('ui.balance_list.owes');
+                                  }
+                                })()}{' '}
                               </span>
                               <span
                                 className={clsx(

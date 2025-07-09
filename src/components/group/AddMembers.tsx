@@ -1,8 +1,8 @@
 import { UserPlusIcon } from '@heroicons/react/24/solid';
 import { type Group, type GroupUser } from '@prisma/client';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { CheckIcon, SendIcon } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { z } from 'zod';
 
@@ -38,43 +38,47 @@ const AddMembers: React.FC<{
   );
 
   const filteredUsers = friendsQuery.data?.filter(
-    (f) =>
-      !groupUserMap[f.id] && (f.name ?? f.email)?.toLowerCase().includes(inputValue.toLowerCase()),
+    (friend) =>
+      !groupUserMap[friend.id] &&
+      (friend.name ?? friend.email)?.toLowerCase().includes(inputValue.toLowerCase()),
   );
 
   function onUserSelect(userId: number) {
     setUserIds((prev) => ({ ...prev, [userId]: !prev[userId] }));
   }
 
-  function onSave(userIds: Record<number, boolean>) {
-    const users = [];
+  const onSave = useCallback(
+    (userIds: Record<number, boolean>) => {
+      const users = [];
 
-    for (const userId of Object.keys(userIds)) {
-      if (userIds[parseInt(userId)]) {
-        users.push(parseInt(userId));
+      for (const userId of Object.keys(userIds)) {
+        if (userIds[parseInt(userId)]) {
+          users.push(parseInt(userId));
+        }
       }
-    }
 
-    setInputValue('');
+      setInputValue('');
 
-    if (0 === users.length) {
-      return;
-    }
+      if (0 === users.length) {
+        return;
+      }
 
-    addMembersMutation.mutate(
-      {
-        groupId: group.id,
-        userIds: users,
-      },
-      {
-        onSuccess: () => {
-          utils.group.getGroupDetails.invalidate({ groupId: group.id }).catch(console.error);
+      addMembersMutation.mutate(
+        {
+          groupId: group.id,
+          userIds: users,
         },
-      },
-    );
-    setOpen(false);
-    setUserIds({});
-  }
+        {
+          onSuccess: () => {
+            utils.group.getGroupDetails.invalidate({ groupId: group.id }).catch(console.error);
+          },
+        },
+      );
+      setOpen(false);
+      setUserIds({});
+    },
+    [addMembersMutation, group.id, utils],
+  );
 
   const isEmail = z.string().email().safeParse(inputValue);
 
@@ -91,20 +95,24 @@ const AddMembers: React.FC<{
     }
   }
 
+  const handleTriggerClick = useCallback(() => setOpen(true), []);
+
+  const handleActionClick = useCallback(() => onSave(userIds), [onSave, userIds]);
+
+  const handleClose = useCallback(() => setOpen(false), []);
+
   return (
     <AppDrawer
       trigger={
         <div className="flex items-center justify-center gap-2 lg:w-[180px]">{children}</div>
       }
-      onTriggerClick={() => setOpen(true)}
+      onTriggerClick={handleTriggerClick}
       title={t('ui.no_members.add_members_details.title')}
       leftAction={t('ui.no_members.add_members_details.cancel')}
-      actionOnClick={() => onSave(userIds)}
+      actionOnClick={handleActionClick}
       className="h-[85vh]"
       shouldCloseOnAction
-      actionTitle={t('ui.no_members.add_members_details.save')}
-      open={open}
-      onClose={() => setOpen(false)}
+      onClose={handleClose}
       onOpenChange={(state) => state !== open && setOpen(state)}
     >
       <Input

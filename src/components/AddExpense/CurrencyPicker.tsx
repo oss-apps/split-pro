@@ -1,5 +1,5 @@
 import { Check } from 'lucide-react';
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'next-i18next';
 
 import { CURRENCIES, type CurrencyCode } from '~/lib/currency';
@@ -26,13 +26,18 @@ function CurrencyPickerInner({
     [onCurrencyPick],
   );
 
+  const trigger = useMemo(
+    () => (
+      <div className="flex w-[70px] justify-center rounded-lg border py-2 text-center text-base">
+        {currentCurrency}
+      </div>
+    ),
+    [currentCurrency],
+  );
+
   return (
     <AppDrawer
-      trigger={
-        <div className="flex w-[70px] justify-center rounded-lg border py-2 text-center text-base">
-          {currentCurrency}
-        </div>
-      }
+      trigger={trigger}
       title={t('ui.currency.title')}
       className="h-[70vh]"
       shouldCloseOnAction

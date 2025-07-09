@@ -1,13 +1,10 @@
-import { Check } from 'lucide-react';
 import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'next-i18next';
 
 import { CURRENCIES, type CurrencyCode } from '~/lib/currency';
-import { cn } from '~/lib/utils';
 import { getLocalizedCurrencyName } from '~/utils/i18n/client';
 
-import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '../ui/command';
-import { AppDrawer, DrawerClose } from '../ui/drawer';
+import { GeneralPicker } from '../ui/picker';
 
 function CurrencyPickerInner({
   currentCurrency = 'USD',
@@ -20,7 +17,7 @@ function CurrencyPickerInner({
 
   const onSelect = useCallback(
     (currentValue: string) => {
-      const currency = currentValue.split('-')[0]?.toUpperCase() ?? 'USD';
+      const currency = currentValue ?? 'USD';
       onCurrencyPick(currency as CurrencyCode);
     },
     [onCurrencyPick],
@@ -35,45 +32,38 @@ function CurrencyPickerInner({
     [currentCurrency],
   );
 
+  const extractValue = useCallback((currency: { code: CurrencyCode }) => currency.code, []);
+  const extractKey = useCallback((currency: { code: CurrencyCode }) => currency.code, []);
+  const selected = useCallback(
+    (currency: { code: CurrencyCode }) => currency.code === currentCurrency,
+    [currentCurrency],
+  );
+  const renderCurrency = useCallback(
+    (currency: { code: CurrencyCode }) => {
+      const translatedName = getLocalizedCurrencyName(currency.code, t);
+      return (
+        <>
+          <p>{translatedName}</p>
+          <p className="text-muted-foreground">{currency.code}</p>
+        </>
+      );
+    },
+    [t],
+  );
+
   return (
-    <AppDrawer
+    <GeneralPicker
       trigger={trigger}
       title={t('ui.currency.title')}
-      className="h-[70vh]"
-      shouldCloseOnAction
-    >
-      <Command className="h-[50vh]">
-        <CommandInput className="text-lg" placeholder={t('ui.currency.placeholder')} />
-        <CommandList>
-          <CommandEmpty>{t('ui.currency.no_currency_found')}</CommandEmpty>
-          {Object.values(CURRENCIES).map((currency) => {
-            const translatedName = getLocalizedCurrencyName(currency.code as CurrencyCode, t);
-            return (
-              <CommandItem
-                key={`${currency.code}-${translatedName}`}
-                value={`${currency.code}-${translatedName}`}
-                onSelect={onSelect}
-              >
-                <DrawerClose className="flex items-center">
-                  <Check
-                    className={cn(
-                      'mr-2 h-4 w-4',
-                      `${currency.code}-${translatedName.toLowerCase()}`.startsWith(currentCurrency)
-                        ? 'opacity-100'
-                        : 'opacity-0',
-                    )}
-                  />
-                  <div className="flex gap-2">
-                    <p>{translatedName}</p>
-                    <p className="text-muted-foreground">{currency.code}</p>
-                  </div>
-                </DrawerClose>
-              </CommandItem>
-            );
-          })}
-        </CommandList>
-      </Command>
-    </AppDrawer>
+      placeholderText={t('ui.currency.placeholder')}
+      noOptionsText={t('ui.currency.no_currency_found')}
+      onSelect={onSelect}
+      items={Object.values(CURRENCIES)}
+      extractValue={extractValue}
+      extractKey={extractKey}
+      selected={selected}
+      render={renderCurrency}
+    />
   );
 }
 

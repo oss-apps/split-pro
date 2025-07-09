@@ -1,13 +1,11 @@
-import { Check, ChevronRight, Languages } from 'lucide-react';
+import { ChevronRight, Languages } from 'lucide-react';
 import React, { useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '../ui/command';
 import { api } from '~/utils/api';
 import { getSupportedLanguages } from '~/utils/i18n/client';
-import { cn } from '~/lib/utils';
-import { AppDrawer, DrawerClose } from '~/components/ui/drawer';
+import { GeneralPicker } from '../ui/picker';
 
 export const LanguagePicker: React.FC = () => {
   const router = useRouter();
@@ -52,38 +50,26 @@ export const LanguagePicker: React.FC = () => {
     [t],
   );
 
+  const extractValue = useCallback((language: { code: string }) => language.code, []);
+  const extractKey = useCallback((language: { code: string }) => language.code, []);
+  const selected = useCallback(
+    (language: { code: string }) => i18n.language === language.code,
+    [i18n.language],
+  );
+  const render = useCallback((language: { name: string }) => <p>{language.name}</p>, []);
+
   return (
-    <AppDrawer
+    <GeneralPicker
       trigger={trigger}
-      leftAction={t('ui.change_language_details.close')}
       title={t('ui.change_language_details.title')}
-      className="h-[40vh]"
-      shouldCloseOnAction
-    >
-      <Command className="h-[50vh]">
-        <CommandInput
-          className="text-lg"
-          placeholder={t('ui.change_language_details.placeholder')}
-        />
-        <CommandList>
-          <CommandEmpty>{t('ui.change_language_details.no_language_found')}</CommandEmpty>
-          {supportedLanguages.map((language) => (
-            <CommandItem key={language.code} value={language.code} onSelect={onSelect}>
-              <DrawerClose className="flex items-center">
-                <Check
-                  className={cn(
-                    'mr-2 h-4 w-4',
-                    i18n.language === language.code ? 'opacity-100' : 'opacity-0',
-                  )}
-                />
-                <div className="flex gap-2">
-                  <p>{language.name}</p>
-                </div>
-              </DrawerClose>
-            </CommandItem>
-          ))}
-        </CommandList>
-      </Command>
-    </AppDrawer>
+      placeholderText={t('ui.change_language_details.placeholder')}
+      noOptionsText={t('ui.change_language_details.no_currency_found')}
+      onSelect={onSelect}
+      items={supportedLanguages}
+      extractValue={extractValue}
+      extractKey={extractKey}
+      selected={selected}
+      render={render}
+    />
   );
 };

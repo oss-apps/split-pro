@@ -11,7 +11,8 @@
       },
       "errors": {
         "language_change_failed": "Error changing language"
-      }
+      },
+      "placeholder": "Select a language"
     },
     "notifications": {
       "enable_notification": "Enable notification",

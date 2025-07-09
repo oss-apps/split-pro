@@ -11,7 +11,8 @@
       },
       "errors": {
         "language_change_failed": "Errore nel cambiare lingua"
-      }
+      },
+      "placeholder": "Seleziona una lingua"
     },
     "notifications": {
       "enable_notification": "Abilita notifiche",

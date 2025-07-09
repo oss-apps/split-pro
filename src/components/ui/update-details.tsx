@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Pencil } from 'lucide-react';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'next-i18next';
 import { z } from 'zod';
@@ -34,27 +34,36 @@ export const UpdateName: React.FC<{
     },
   });
 
+  const trigger = useMemo(() => <Pencil className={className} />, [className]);
+
+  const handleOpenChange = useCallback(
+    (openVal: boolean) => {
+      if (openVal !== drawerOpen) {
+        setDrawerOpen(openVal);
+      }
+    },
+    [drawerOpen],
+  );
+
+  const handleOnActionClick = useCallback(async () => {
+    const isValid = await detailForm.trigger();
+    if (isValid) {
+      await detailForm.handleSubmit(onNameSubmit)();
+      setDrawerOpen(false);
+    }
+  }, [detailForm, onNameSubmit]);
+
   return (
     <AppDrawer
-      trigger={<Pencil className={className} />}
+      trigger={trigger}
       open={drawerOpen}
-      onOpenChange={(openVal) => {
-        if (openVal !== drawerOpen) {
-          setDrawerOpen(openVal);
-        }
-      }}
+      onOpenChange={handleOpenChange}
       leftAction={t('ui.edit_name.close')}
       title={t('ui.edit_name.title')}
       shouldCloseOnAction={false}
       className="h-[80vh]"
       actionTitle={t('ui.edit_name.save')}
-      actionOnClick={async () => {
-        const isValid = await detailForm.trigger();
-        if (isValid) {
-          await detailForm.handleSubmit(onNameSubmit)();
-          setDrawerOpen(false);
-        }
-      }}
+      actionOnClick={handleOnActionClick}
     >
       <Form {...detailForm}>
         <form className="mt-4 flex w-full items-start gap-4">

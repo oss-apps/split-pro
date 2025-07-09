@@ -69,7 +69,9 @@ export const BigMath = {
     } else {
       let value = values[0]!;
       for (const v of values) {
-        if (v < value) value = v;
+        if (v < value) {
+          value = v;
+        }
       }
       return value;
     }
@@ -80,13 +82,14 @@ export const BigMath = {
     } else {
       let value = values[0]!;
       for (const v of values) {
-        if (v > value) value = v;
+        if (v > value) {
+          value = v;
+        }
       }
       return value;
     }
   },
 };
 
-export const bigIntReplacer = (key: string, value: any): unknown => {
-  return typeof value === 'bigint' ? value.toString() : value;
-};
+export const bigIntReplacer = (key: string, value: any): any =>
+  typeof value === 'bigint' ? value.toString() : value;

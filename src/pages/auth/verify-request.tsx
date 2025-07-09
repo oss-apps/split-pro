@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
 import { type GetServerSideProps, type NextPage } from 'next';
 import { getProviders } from 'next-auth/react';
-import { useTranslation } from 'next-i18next';
+import { type TFunction, useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
@@ -13,11 +13,16 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '~/component
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '~/components/ui/input-otp';
 import { env } from '~/env';
 import { useSession } from '~/hooks/useSession';
-
-const otpSchema = z.object({
-  otp: z.string({ required_error: 'OTP is required' }).length(5, { message: 'Invalid OTP' }),
-});
 import { customServerSideTranslations } from '~/utils/i18n/server';
+
+const otpSchema = (t: TFunction) =>
+  z.object({
+    otp: z
+      .string({ required_error: t('ui.otp_required') })
+      .length(5, { message: t('ui.otp_invalid') }),
+  });
+
+type OTPFormValues = z.infer<ReturnType<typeof otpSchema>>;
 
 const Home: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
   const { t } = useTranslation('signin');
@@ -27,13 +32,13 @@ const Home: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
   } = useRouter();
 
   const [email] = useSession('splitpro-email');
-  const otpForm = useForm<z.infer<typeof otpSchema>>({
-    resolver: zodResolver(otpSchema),
+  const otpForm = useForm<OTPFormValues>({
+    resolver: zodResolver(otpSchema(t)),
   });
 
   const onOTPSubmit = useCallback(async () => {
     if (!email) {
-      toast.error('Email is invalid, please try the signin flow again.');
+      toast.error(t('errors.email_invalid'));
       return;
     }
 
@@ -42,7 +47,7 @@ const Home: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
         email.toLowerCase(),
       )}&token=${otpForm.getValues().otp}${typeof callbackUrl === 'string' ? `&callbackUrl=${callbackUrl}/balances` : ''}`,
     );
-  }, [email, otpForm, push, callbackUrl]);
+  }, [email, otpForm, push, callbackUrl, t]);
 
   return (
     <>
@@ -51,22 +56,19 @@ const Home: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
           <div className="mb-10 flex items-center gap-4">
             <p className="text-primary text-3xl">SplitPro</p>
           </div>
-          <p className="mt-6 w-[300px] text-center text-sm">
-            We have sent an email with the OTP. Please check your inbox and click the link in the
-            email to sign in.
-          </p>
+          <p className="mt-6 w-[300px] text-center text-sm">{t('auth.otp_sent')}</p>
           <Form {...otpForm}>
             <form onSubmit={otpForm.handleSubmit(onOTPSubmit)} className="mt-6 space-y-8">
               <FormField control={otpForm.control} name="otp" render={OTPInput} />
 
               <Button className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100">
-                Submit
+                {t('auth.submit')}
               </Button>
             </form>
           </Form>
 
           <p className="text-muted-foreground mt-6 w-[300px] text-center text-sm">
-            Trouble logging in? contact
+            {t('auth.trouble_logging_in')}
             <br />
             <a className="underline" href={'mailto:' + feedbackEmail}>
               {feedbackEmail ?? ''}

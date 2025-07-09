@@ -18,6 +18,7 @@
   },
   "errors": {
     "signup_disabled": "Signup of new accounts is disabled on this instance",
-    "signin_error": "An error occurred while signing in: "
+    "signin_error": "An error occurred while signing in: ",
+    "email_invalid": "Email is invalid, please try the signin flow again."
   }
 }

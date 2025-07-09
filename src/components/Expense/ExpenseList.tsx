@@ -24,7 +24,9 @@ export const ExpenseList: React.FC<{
       {expenses.map((e) => {
         const isGroup = !!e.groupId;
         const youPaid = e.paidBy === userId;
-        const yourExpense = e.expenseParticipants.find((partecipant) => partecipant.userId === userId);
+        const yourExpense = e.expenseParticipants.find(
+          (partecipant) => partecipant.userId === userId,
+        );
         const isSettlement = e.splitType === SplitType.SETTLEMENT;
         const yourExpenseAmount = youPaid
           ? (yourExpense?.amount ?? 0n)

@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type GetServerSideProps, type NextPage } from 'next';
 import { type ClientSafeProvider, getProviders, signIn } from 'next-auth/react';
-import { useTranslation } from 'next-i18next';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { type TFunction, useTranslation } from 'next-i18next';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -52,6 +52,15 @@ const providerSvgs = {
   ),
 };
 
+const emailSchema = (t: TFunction) =>
+  z.object({
+    email: z
+      .string({ required_error: t('validation.email_required') })
+      .email({ message: t('validation.email_invalid') }),
+  });
+
+type EmailFormValues = z.infer<ReturnType<typeof emailSchema>>;
+
 const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSafeProvider[] }> = ({
   error,
   providers,
@@ -61,18 +70,8 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
   const [, setEmail] = useSession('splitpro-email');
 
-  const emailSchema = useMemo(
-    () =>
-      z.object({
-        email: z
-          .string({ required_error: t('validation.email_required') })
-          .email({ message: t('validation.email_invalid') }),
-      }),
-    [t],
-  );
-
-  const emailForm = useForm<z.infer<typeof emailSchema>>({
-    resolver: zodResolver(emailSchema),
+  const emailForm = useForm<EmailFormValues>({
+    resolver: zodResolver(emailSchema(t)),
     defaultValues: {
       email: '',
     },
@@ -97,6 +96,26 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
     setEmailStatus('success');
   }, [emailForm, setEmail]);
 
+  const handleProviderSignIn = useCallback((providerId: string) => () => signIn(providerId), []);
+
+  const field = useCallback(
+    ({ field }: any) => (
+      <FormItem>
+        <FormControl>
+          <Input
+            placeholder={t('auth.email_placeholder')}
+            className="w-[300px] text-lg"
+            type="email"
+            {...field}
+          />
+        </FormControl>
+        <FormDescription />
+        <FormMessage />
+      </FormItem>
+    ),
+    [t],
+  );
+
   return (
     <>
       <main className="flex h-full flex-col justify-center lg:justify-normal">
@@ -107,12 +126,13 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
           <div className="mb-10 flex items-center gap-4">
             <LanguageSelector />
           </div>
+
           {providers
             .filter((provider) => 'email' !== provider.id)
             .map((provider) => (
               <Button
                 className="mx-auto flex w-[300px] items-center gap-3 bg-white hover:bg-gray-100 focus:bg-gray-100"
-                onClick={() => signIn(provider.id)}
+                onClick={handleProviderSignIn(provider.id)}
                 key={provider.id}
               >
                 {providerSvgs[provider.id as keyof typeof providerSvgs]}
@@ -131,24 +151,7 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
             <>
               <Form {...emailForm}>
                 <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="mt-6 space-y-8">
-                  <FormField
-                    control={emailForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder={t('auth.email_placeholder')}
-                            className="w-[300px] text-lg"
-                            type="email"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <FormField control={emailForm.control} name="email" render={field} />
                   <Button
                     className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
                     type="submit"

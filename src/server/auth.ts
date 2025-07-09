@@ -23,6 +23,7 @@ declare module 'next-auth' {
     user: DefaultSession['user'] & {
       id: number;
       currency: string;
+      preferredLanguage: string;
       // ...other properties
       // role: UserRole;
     };
@@ -31,6 +32,7 @@ declare module 'next-auth' {
   interface User {
     id: number;
     currency: string;
+    preferredLanguage: string;
   }
 }
 
@@ -75,6 +77,7 @@ export const authOptions: NextAuthOptions = {
         ...session.user,
         id: user.id,
         currency: user.currency,
+        preferredLanguage: user.preferredLanguage,
       },
     }),
     async signIn({ user, email }) {

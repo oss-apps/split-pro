@@ -5,6 +5,7 @@ import { SendIcon } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 import { z } from 'zod';
+import { useTranslation } from 'next-i18next';
 
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
@@ -15,6 +16,7 @@ import { Button } from '../ui/button';
 export const SelectUserOrGroup: React.FC<{
   enableSendingInvites: boolean;
 }> = ({ enableSendingInvites }) => {
+  const { t } = useTranslation('expense_details');
   const nameOrEmail = useAddExpenseStore((s) => s.nameOrEmail);
   const participants = useAddExpenseStore((s) => s.participants);
   const group = useAddExpenseStore((s) => s.group);
@@ -53,6 +55,7 @@ export const SelectUserOrGroup: React.FC<{
         emailVerified: new Date(),
         image: null,
         currency: 'USD',
+        preferredLanguage: '',
       });
       // add email to split pro
     }
@@ -72,7 +75,9 @@ export const SelectUserOrGroup: React.FC<{
 
   if (group) {
     return (
-      <div className="mt-4 text-center text-red-500">You can have only one group at a time</div>
+      <div className="mt-4 text-center text-red-500">
+        {t('ui.add_expense_details.select_user_or_group.only_one_group_time')}
+      </div>
     );
   }
 
@@ -82,12 +87,10 @@ export const SelectUserOrGroup: React.FC<{
         <div>
           {enableSendingInvites ? (
             <div className="mt-1 text-orange-600">
-              {isEmail.success
-                ? "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused"
-                : null}
+              {isEmail.success ? t('ui.add_expense_details.select_user_or_group.warning') : null}
             </div>
           ) : (
-            <div>Note: sending invite is disabled for now because of spam</div>
+            <div>{t('ui.add_expense_details.select_user_or_group.note')}</div>
           )}
         </div>
         <div className="flex justify-center gap-4">
@@ -99,7 +102,7 @@ export const SelectUserOrGroup: React.FC<{
               onClick={() => onAddEmailClick(false)}
             >
               <SendIcon className="mr-2 h-4 w-4" />
-              Send invite to user
+              {t('ui.add_expense_details.select_user_or_group.send_invite')}
             </Button>
           )}
           <Button
@@ -109,14 +112,16 @@ export const SelectUserOrGroup: React.FC<{
             onClick={() => onAddEmailClick(false)}
           >
             <UserPlusIcon className="mr-2 h-4 w-4" />
-            Add to Split Pro
+            {t('ui.add_expense_details.select_user_or_group.add_to_split_pro')}
           </Button>
         </div>
       </div>
       <div className="mt-2">
         {filteredFriends?.length ? (
           <>
-            <div className="font-normal text-gray-500">Friends</div>
+            <div className="font-normal text-gray-500">
+              {t('ui.add_expense_details.select_user_or_group.friends')}
+            </div>
             {filteredFriends.map((f) => {
               const isExisting = participants.some((p) => p.id === f.id);
 
@@ -151,7 +156,9 @@ export const SelectUserOrGroup: React.FC<{
         {/*Can't select multiple groups or groups with outside ppl */}
         {filteredGroups?.length && 1 === participants.length ? (
           <>
-            <div className="mt-8 text-gray-500">Groups</div>
+            <div className="mt-8 text-gray-500">
+              {t('ui.add_expense_details.select_user_or_group.groups')}
+            </div>
             <div className="mt-2 flex flex-col gap-1">
               {filteredGroups.map((g) => (
                 <button

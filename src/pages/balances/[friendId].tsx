@@ -2,7 +2,7 @@ import { ChevronLeftIcon, PlusIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-
+import { useTranslation } from 'next-i18next';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
 import { Export } from '~/components/Friend/Export';
@@ -14,8 +14,11 @@ import { Separator } from '~/components/ui/separator';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
+import { customServerSideTranslations } from '~/utils/i18n/server';
+import { type GetServerSideProps } from 'next';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
+  const { t } = useTranslation('friend_details');
   const router = useRouter();
   const { friendId } = router.query;
 
@@ -41,7 +44,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
   return (
     <>
       <Head>
-        <title>Outstanding balances</title>
+        <title>{t('ui.expense_page.title')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
@@ -78,11 +81,11 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <div className="text-orange-700">
                 {0 < (youOwe?.length ?? 0) && (
                   <>
-                    You owe{' '}
-                    {youOwe?.map((b, index) => (
-                      <span key={b.currency}>
+                    {t('ui.you_owe')}{' '}
+                    {youOwe?.map((bal, index) => (
+                      <span key={bal.currency}>
                         <span className="font-semibold tracking-wide">
-                          {b.currency} {toUIString(b.amount)}
+                          {bal.currency} {toUIString(bal.amount)}
                         </span>
                         {youOwe.length - 1 === index ? '' : ' + '}
                       </span>
@@ -94,11 +97,11 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <div className="text-emerald-600">
                 {0 < (youLent?.length ?? 0) && (
                   <>
-                    You lent{' '}
-                    {youLent?.map((b, index) => (
-                      <span key={b.currency}>
+                    {t('ui.you_lent')}{' '}
+                    {youLent?.map((bal, index) => (
+                      <span key={bal.currency}>
                         <span className="font-semibold tracking-wide">
-                          {b.currency} {toUIString(b.amount)}
+                          {bal.currency} {toUIString(bal.amount)}
                         </span>
                         {youLent.length - 1 === index ? '' : ' + '}
                       </span>
@@ -122,7 +125,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   className="w-[150px] gap-1 text-sm lg:w-[180px]"
                   disabled
                 >
-                  Settle up
+                  {t('ui.settle_up')}
                 </Button>
               )}
 
@@ -132,7 +135,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   variant="secondary"
                   className="w-[150px] gap-1 text-sm lg:w-[180px]"
                 >
-                  <PlusIcon className="h-4 w-4 text-gray-400" /> Add Expense
+                  <PlusIcon className="h-4 w-4 text-gray-400" /> {t('ui.add_expense')}
                 </Button>
               </Link>
               <Export
@@ -161,5 +164,15 @@ const FriendPage: NextPageWithUser = ({ user }) => {
 };
 
 FriendPage.auth = true;
+
+export const getServerSideProps: GetServerSideProps = async (context) => ({
+  props: {
+    ...(await customServerSideTranslations(context.locale, [
+      'common',
+      'friend_details',
+      'expense_details',
+    ])),
+  },
+});
 
 export default FriendPage;

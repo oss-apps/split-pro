@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-
+import { useTranslation } from 'next-i18next';
 import { AddOrEditExpensePage } from '~/components/AddExpense/AddExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
 import { env } from '~/env';
@@ -10,11 +10,14 @@ import { isStorageConfigured } from '~/server/storage';
 import { useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
+import { customServerSideTranslations } from '~/utils/i18n/server';
+import { type GetServerSideProps } from 'next';
 
 const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
 }> = ({ user, isStorageConfigured, enableSendingInvites }) => {
+  const { t } = useTranslation('add_page');
   const {
     setCurrentUser,
     setGroup,
@@ -71,7 +74,9 @@ const AddPage: NextPageWithUser<{
 
       setParticipants([
         currentUser,
-        ...groupQuery.data.groupUsers.map((gu) => gu.user).filter((u) => u.id !== currentUser.id),
+        ...groupQuery.data.groupUsers
+          .map((gu) => gu.user)
+          .filter((user) => user.id !== currentUser.id),
       ]);
       useAddExpenseStore.setState({ showFriends: false });
     }
@@ -115,7 +120,7 @@ const AddPage: NextPageWithUser<{
   return (
     <>
       <Head>
-        <title>Add Expense</title>
+        <title>{_expenseId ? t('meta.title_edit') : t('meta.title')}</title>
       </Head>
       <MainLayout hideAppBar>
         {currentUser && (!_expenseId || expenseQuery.data) && (
@@ -134,11 +139,14 @@ AddPage.auth = true;
 
 export default AddPage;
 
-export async function getServerSideProps() {
-  return {
-    props: {
-      isStorageConfigured: !!isStorageConfigured(),
-      enableSendingInvites: !!env.ENABLE_SENDING_INVITES,
-    },
-  };
-}
+export const getServerSideProps: GetServerSideProps = async (context) => ({
+  props: {
+    isStorageConfigured: !!isStorageConfigured(),
+    enableSendingInvites: !!env.ENABLE_SENDING_INVITES,
+    ...(await customServerSideTranslations(context.locale, [
+      'common',
+      'add_page',
+      'expense_details',
+    ])),
+  },
+});

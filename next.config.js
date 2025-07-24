@@ -5,10 +5,6 @@
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
  */
-await import('./src/env.js');
-
-/** @type {import("next").NextConfig} */
-
 import pwa from 'next-pwa';
 // @ts-ignore
 import nextra from 'nextra';
@@ -19,6 +15,7 @@ const withPwa = pwa({
   // disable: process.env.NODE_ENV === 'development',
 });
 
+/** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
   output: process.env.DOCKER_OUTPUT ? 'standalone' : undefined,
@@ -35,6 +32,13 @@ const config = {
     defaultLocale: 'en',
   },
   transpilePackages: ['geist'],
+  redirects: async () => [
+    {
+      source: '/',
+      destination: process.env.DEFAULT_HOMEPAGE ?? '/home',
+      permanent: true,
+    },
+  ],
   images: {
     remotePatterns: [
       {

@@ -49,7 +49,7 @@ export const env = createEnv({
     WEB_PUSH_PUBLIC_KEY: z.string().optional(),
     FEEDBACK_EMAIL: z.string().optional(),
     DISCORD_WEBHOOK_URL: z.string().optional(),
-    DEFAULT_HOMEPAGE: z.string().default('/'),
+    DEFAULT_HOMEPAGE: z.string().default('/home'),
   },
 
   /**

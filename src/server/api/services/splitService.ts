@@ -43,7 +43,8 @@ export async function createGroupExpense(
 ) {
   const operations = [];
 
-  const nonZeroParticipants = participants.filter((p) => p.amount !== 0n);
+  const nonZeroParticipants =
+    participants.length > 1 ? participants.filter((p) => p.amount !== 0n) : participants;
 
   // Create expense operation
   operations.push(
@@ -202,7 +203,8 @@ export async function addUserExpense(
 ) {
   const operations = [];
 
-  const nonZeroParticipants = participants.filter((p) => p.amount !== 0n);
+  const nonZeroParticipants =
+    participants.length > 1 ? participants.filter((p) => p.amount !== 0n) : participants;
 
   // Create expense operation
   operations.push(
@@ -441,7 +443,8 @@ export async function editExpense(
   expenseDate: Date,
   fileKey?: string,
 ) {
-  const nonZeroParticipants = participants.filter((p) => p.amount !== 0n);
+  const nonZeroParticipants =
+    participants.length > 1 ? participants.filter((p) => p.amount !== 0n) : participants;
 
   const expense = await db.expense.findUnique({
     where: { id: expenseId },

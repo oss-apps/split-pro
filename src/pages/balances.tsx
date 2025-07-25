@@ -23,7 +23,7 @@ const BalancePage: NextPageWithUser = () => {
         .share({
           title: 'SplitPro',
           text: "Check out SplitPro. It's an open source free alternative for Splitwise",
-          url: 'https://splitpro.app',
+          url: window.location.origin,
         })
         .then(() => console.info('Successful share'))
         .catch((error) => console.error('Error sharing', error));

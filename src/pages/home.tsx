@@ -10,6 +10,7 @@ import {
   Split,
   Users,
 } from 'lucide-react';
+import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -18,10 +19,10 @@ import { BackgroundGradient } from '~/components/ui/background-gradient';
 import { Button } from '~/components/ui/button';
 import { env } from '~/env';
 
-export default function Home() {
+export default function Home({ isCloud }: { isCloud: boolean }) {
   return (
     <>
-      {env.NEXTAUTH_URL.includes('splitpro.app') && (
+      {isCloud && (
         <Head>
           {process.env.NODE_ENV === 'production' && (
             <>
@@ -242,4 +243,10 @@ const MobileScreenShot = () => {
       />
     </BackgroundGradient>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: { isCloud: env.NEXTAUTH_URL.includes('splitpro.app') },
+  };
 };

@@ -47,7 +47,6 @@ export const LanguagePicker: React.FC = () => {
     [t],
   );
 
-  const extractValue = useCallback((language: { code: string }) => language.code, []);
   const extractKey = useCallback((language: { code: string }) => language.code, []);
   const selected = useCallback(
     (language: { code: string }) => i18n.language === language.code,
@@ -63,7 +62,7 @@ export const LanguagePicker: React.FC = () => {
       noOptionsText={t('ui.change_language_details.no_currency_found')}
       onSelect={onSelect}
       items={supportedLanguages}
-      extractValue={extractValue}
+      extractValue={extractKey}
       extractKey={extractKey}
       selected={selected}
       render={render}

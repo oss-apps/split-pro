@@ -8,7 +8,7 @@ import { BigMath, toUIString } from '~/utils/numbers';
 
 import { GroupSettleUp } from '../Friend/GroupSettleup';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
-import { useCommonTranslation } from '~/hooks/useCommonTranslation';
+import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
 
 interface UserWithBalance {
   user: User;
@@ -20,7 +20,7 @@ export const BalanceList: React.FC<{
   groupBalances?: GroupBalance[];
   users?: User[];
 }> = ({ groupBalances = [], users = [] }) => {
-  const { displayName, t } = useCommonTranslation(['expense_details']);
+  const { displayName, t } = useTranslationWithUtils(['expense_details']);
   const userQuery = api.user.me.useQuery();
 
   const userMap = useMemo(() => {

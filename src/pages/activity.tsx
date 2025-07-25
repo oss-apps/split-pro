@@ -9,7 +9,7 @@ import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
 import { toUIDate } from '~/utils/strings';
 import { type TFunction } from 'next-i18next';
-import { useCommonTranslation } from '~/hooks/useCommonTranslation';
+import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
 import { withI18nStaticProps } from '~/utils/i18n/server';
 
 function getPaymentString(
@@ -45,7 +45,7 @@ function getPaymentString(
 }
 
 const ActivityPage: NextPageWithUser = ({ user }) => {
-  const { displayName, t } = useCommonTranslation(['activity_page']);
+  const { displayName, t } = useTranslationWithUtils(['activity_page']);
   const expensesQuery = api.user.getAllExpenses.useQuery();
 
   return (

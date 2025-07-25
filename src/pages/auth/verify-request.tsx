@@ -1,3 +1,4 @@
+// oxlint-disable no-html-link-for-pages
 import { zodResolver } from '@hookform/resolvers/zod';
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
 import { type GetServerSideProps, type NextPage } from 'next';

@@ -37,14 +37,14 @@ import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 import { toUIDate } from '~/utils/strings';
-import { useCommonTranslation } from '~/hooks/useCommonTranslation';
+import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { type GetServerSideProps } from 'next';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
 }> = ({ user, enableSendingInvites }) => {
-  const { displayName, t } = useCommonTranslation(['groups_details']);
+  const { displayName, t } = useTranslationWithUtils(['groups_details']);
   const router = useRouter();
   const groupId = parseInt(router.query.groupId as string);
 

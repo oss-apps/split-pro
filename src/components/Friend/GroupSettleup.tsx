@@ -2,7 +2,7 @@ import { SplitType, type User } from '@prisma/client';
 import { ArrowRightIcon } from 'lucide-react';
 import React, { type ReactNode, useCallback, useState } from 'react';
 import { toast } from 'sonner';
-import { useCommonTranslation } from '~/hooks/useCommonTranslation';
+import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
 import { api } from '~/utils/api';
 import { BigMath, toSafeBigInt } from '~/utils/numbers';
 
@@ -19,7 +19,7 @@ export const GroupSettleUp: React.FC<{
   children: ReactNode;
   groupId: number;
 }> = ({ amount, currency, friend, user, children, groupId }) => {
-  const { displayName, t } = useCommonTranslation(['friend_details']);
+  const { displayName, t } = useTranslationWithUtils(['friend_details']);
   const [amountStr, setAmountStr] = useState((Number(BigMath.abs(amount)) / 100).toString());
 
   const onChangeAmount = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

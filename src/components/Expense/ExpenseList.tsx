@@ -7,7 +7,7 @@ import { CategoryIcon } from '~/components/ui/categoryIcons';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { toUIString } from '~/utils/numbers';
 import { toUIDate } from '~/utils/strings';
-import { useCommonTranslation } from '~/hooks/useCommonTranslation';
+import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
 
 export const ExpenseList: React.FC<{
   userId: number;
@@ -17,7 +17,7 @@ export const ExpenseList: React.FC<{
   contactId: number;
   isLoading?: boolean;
 }> = ({ userId, expenses = [], contactId, isLoading }) => {
-  const { displayName, t } = useCommonTranslation(['expense_details']);
+  const { displayName, t } = useTranslationWithUtils(['expense_details']);
 
   return (
     <>

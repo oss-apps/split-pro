@@ -11,7 +11,7 @@ import { UserAvatar } from '../ui/avatar';
 import { CategoryIcons } from '../ui/categoryIcons';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
-import { useCommonTranslation } from '~/hooks/useCommonTranslation';
+import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
 
 interface ExpenseDetailsProps {
   user: NextUser;
@@ -26,7 +26,7 @@ interface ExpenseDetailsProps {
 }
 
 const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
-  const { displayName, t } = useCommonTranslation(['expense_details']);
+  const { displayName, t } = useTranslationWithUtils(['expense_details']);
   const CategoryIcon = CategoryIcons[expense.category] ?? Banknote;
 
   // const sendNotificationMutation = api.user.sendExpensePushNotification.useMutation();

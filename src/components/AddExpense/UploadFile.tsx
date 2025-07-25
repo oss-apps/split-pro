@@ -1,6 +1,7 @@
 import { ImagePlus, Image as ImageUploaded } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'next-i18next';
 
 import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { useAddExpenseStore } from '~/store/addStore';
@@ -24,6 +25,7 @@ const getImgHeightAndWidth = (file: File) => {
 };
 
 export const UploadFile: React.FC = () => {
+  const { t } = useTranslation('expense_details');
   const [file, setFile] = useState<File | null>(null);
   const { setFileUploading, setFileKey } = useAddExpenseStore((s) => s.actions);
 
@@ -39,7 +41,10 @@ export const UploadFile: React.FC = () => {
     }
 
     if (file.size > FILE_SIZE_LIMIT) {
-      toast.error(`File should be less than ${FILE_SIZE_LIMIT / 1024 / 1024}MB`);
+      toast.error(
+        t('ui.add_expense_details.upload_file.errors.less_than') +
+          ` ${FILE_SIZE_LIMIT / 1024 / 1024}MB`,
+      );
       return;
     }
 
@@ -61,18 +66,18 @@ export const UploadFile: React.FC = () => {
       });
 
       if (!response.ok) {
-        toast.error('Failed to upload file');
+        toast.error(t('ui.add_expense_details.upload_file.errors.upload_failed'));
         console.error('Failed to upload file:', response.statusText);
         setFile(null);
         return;
       }
 
-      toast.success('File uploaded successfully');
+      toast.success(t('ui.add_expense_details.upload_file.messages.upload_success'));
 
       setFileKey(key);
     } catch (error) {
       console.error('Error getting upload url:', error);
-      toast.error(`Error uploading file`);
+      toast.error(t('ui.add_expense_details.upload_file.errors.uploading_error'));
     } finally {
       setFileUploading(false);
     }

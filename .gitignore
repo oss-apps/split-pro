@@ -50,3 +50,5 @@ yarn-error.log*
 src/server/random.code-workspace
 
 certificates
+
+.vscode

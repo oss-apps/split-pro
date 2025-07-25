@@ -2,6 +2,7 @@ import { CalendarIcon, HeartHandshakeIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useCallback } from 'react';
+import { useTranslation } from 'next-i18next';
 
 import { type CurrencyCode } from '~/lib/currency';
 import { cn } from '~/lib/utils';
@@ -27,6 +28,7 @@ export const AddOrEditExpensePage: React.FC<{
   enableSendingInvites: boolean;
   expenseId?: string;
 }> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
+  const { t } = useTranslation('expense_details');
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
   const participants = useAddExpenseStore((s) => s.participants);
@@ -174,9 +176,9 @@ export const AddOrEditExpensePage: React.FC<{
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <Button variant="ghost" className="text-primary px-0" onClick={onCancel}>
-          Cancel
+          {t('ui.add_expense_details.cancel')}
         </Button>
-        <div className="text-center">Add new expense</div>
+        <div className="text-center">{t('ui.add_expense_details.add_new_expense')}</div>
         <Button
           variant="ghost"
           className="text-primary px-0"
@@ -185,7 +187,7 @@ export const AddOrEditExpensePage: React.FC<{
           }
           onClick={addExpense}
         >
-          Save
+          {t('ui.add_expense_details.save')}
         </Button>{' '}
       </div>
       <UserInput isEditing={!!expenseId} />
@@ -196,7 +198,7 @@ export const AddOrEditExpensePage: React.FC<{
           <div className="mt-4 flex gap-2 sm:mt-10">
             <CategoryPicker category={category} onCategoryPick={setCategory} />
             <Input
-              placeholder="Enter description"
+              placeholder={t('ui.add_expense_details.description_placeholder')}
               value={description}
               onChange={handleDescriptionChange}
               className="text-lg placeholder:text-sm"
@@ -206,7 +208,7 @@ export const AddOrEditExpensePage: React.FC<{
           <div className="flex gap-2">
             <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
             <Input
-              placeholder="Enter amount"
+              placeholder={t('ui.add_expense_details.amount_placeholder')}
               className="text-lg placeholder:text-sm"
               type="number"
               inputMode="decimal"
@@ -235,7 +237,7 @@ export const AddOrEditExpensePage: React.FC<{
                           {expenseDate ? (
                             toUIDate(expenseDate, { useToday: true })
                           ) : (
-                            <span>Pick a date</span>
+                            <span>{t('ui.add_expense_details.pick_a_date')}</span>
                           )}
                         </Button>
                       </PopoverTrigger>
@@ -259,7 +261,7 @@ export const AddOrEditExpensePage: React.FC<{
                       }
                       onClick={addExpense}
                     >
-                      Submit
+                      {t('ui.add_expense_details.submit')}
                     </Button>
                   </div>
                 </div>
@@ -274,7 +276,7 @@ export const AddOrEditExpensePage: React.FC<{
               >
                 <div className="flex items-center gap-4">
                   <HeartHandshakeIcon className="h-5 w-5 text-pink-500" />
-                  Sponsor us
+                  {t('ui.add_expense_details.sponsor_us')}
                 </div>
               </Button>
             </Link>

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
 
 import { useIsClient } from '~/hooks/useIsClient';

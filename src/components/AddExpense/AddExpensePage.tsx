@@ -20,6 +20,7 @@ import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { SplitTypeSection } from './SplitTypeSection';
 import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
+import { toast } from 'sonner';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
@@ -75,7 +76,7 @@ export const AddOrEditExpensePage: React.FC<{
     [setAmount, setAmountStr],
   );
 
-  const addExpense = useCallback(() => {
+  const addExpense = useCallback(async () => {
     if (!paidBy) {
       return;
     }
@@ -85,35 +86,44 @@ export const AddOrEditExpensePage: React.FC<{
       return;
     }
 
-    addExpenseMutation.mutate(
-      {
-        name: description,
-        currency,
-        amount,
-        groupId: group?.id ?? null,
-        splitType,
-        participants: participants.map((p) => ({
-          userId: p.id,
-          amount: p.amount ?? 0n,
-        })),
-        paidBy: paidBy.id,
-        category,
-        fileKey,
-        expenseDate,
-        expenseId,
-      },
-      {
-        onSuccess: (d) => {
-          if (d) {
-            const id = d?.id ?? expenseId;
-            router
-              .push(group?.id ? `/groups/${group.id}/expenses/${id}` : `/expenses/${id}`)
-              .then(() => resetState())
-              .catch(console.error);
-          }
+    try {
+      await addExpenseMutation.mutateAsync(
+        {
+          name: description,
+          currency,
+          amount,
+          groupId: group?.id ?? null,
+          splitType,
+          participants: participants.map((p) => ({
+            userId: p.id,
+            amount: p.amount ?? 0n,
+          })),
+          paidBy: paidBy.id,
+          category,
+          fileKey,
+          expenseDate,
+          expenseId,
         },
-      },
-    );
+        {
+          onSuccess: (d) => {
+            if (d) {
+              const id = d?.id ?? expenseId;
+              router
+                .push(group?.id ? `/groups/${group.id}/expenses/${id}` : `/expenses/${id}`)
+                .then(() => resetState())
+                .catch(console.error);
+            }
+          },
+        },
+      );
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error('An unexpected error occurred while submitting the expense.');
+      }
+    }
   }, [
     setSplitScreenOpen,
     description,

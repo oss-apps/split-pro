@@ -42,7 +42,7 @@ function getPaymentString(
 }
 
 const ActivityPage: NextPageWithUser = ({ user }) => {
-  const expensesQuery = api.user.getAllExpenses.useQuery();
+  const expensesQuery = api.expense.getAllExpenses.useQuery();
 
   return (
     <>

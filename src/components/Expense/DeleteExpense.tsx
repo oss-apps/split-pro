@@ -15,7 +15,7 @@ export const DeleteExpense: React.FC<{
 }> = ({ expenseId, friendId, groupId }) => {
   const router = useRouter();
 
-  const deleteExpenseMutation = api.user.deleteExpense.useMutation();
+  const deleteExpenseMutation = api.expense.deleteExpense.useMutation();
 
   const onDeleteExpense = async () => {
     try {

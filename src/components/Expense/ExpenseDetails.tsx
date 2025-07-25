@@ -9,7 +9,7 @@ import { UserAvatar } from '../ui/avatar';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
 import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
-import { FC } from 'react';
+import type { FC } from 'react';
 import { CategoryIcon } from '../ui/categoryIcons';
 
 interface ExpenseDetailsProps {

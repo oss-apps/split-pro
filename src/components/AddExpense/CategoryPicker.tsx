@@ -15,10 +15,10 @@ export const CategoryPicker: React.FC<{
   const trigger = useMemo(
     () => (
       <div className="flex w-[70px] justify-center rounded-lg border py-2">
-          <CategoryIcon size={20} />
-        </div>
+        <CategoryIcon category={category} size={20} />
+      </div>
     ),
-    [CategoryIcon],
+    [category],
   );
 
   return (
@@ -35,7 +35,6 @@ export const CategoryPicker: React.FC<{
           </h3>
           <div className="flex flex-wrap justify-between gap-2">
             {categoryItems.map((key: string) => {
-
               const handleClick = useMemo(
                 () => () => {
                   onCategoryPick('other' === key ? categoryName : key);
@@ -51,7 +50,7 @@ export const CategoryPicker: React.FC<{
                     onClick={handleClick}
                   >
                     <span className="block text-2xl">
-                       <CategoryIcon
+                      <CategoryIcon
                         category={(key === 'other' ? categoryName : key) as CategoryItem}
                       />
                     </span>
@@ -68,4 +67,3 @@ export const CategoryPicker: React.FC<{
     </AppDrawer>
   );
 };
-

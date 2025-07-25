@@ -120,7 +120,8 @@
             "gifts": "Gifts",
             "medical": "Medical",
             "taxes": "Taxes",
-            "other": "Life"
+            "other": "Life",
+            "insurance": "Insurance"
           }
         },
         "travel": {
@@ -133,7 +134,9 @@
             "parking": "Parking",
             "plane": "Plane",
             "taxi": "Taxi",
-            "other": "Travel"
+            "other": "Travel",
+            "bicycle": "Bicycle",
+            "hotel": "Hotel"
           }
         },
         "utilities": {
@@ -147,6 +150,13 @@
             "phone": "Phone",
             "water": "Water",
             "other": "Utilities"
+          }
+        },
+        "general": {
+          "name": "General",
+          "items": {
+            "general": "General",
+            "other": "General"
           }
         }
       }

@@ -1,5 +1,3 @@
-import { type Merge } from './type';
-
 export const CATEGORIES = {
   entertainment: ['games', 'movies', 'music', 'sports', 'other'],
   food: ['diningOut', 'groceries', 'liquor', 'other'],
@@ -14,15 +12,17 @@ export const CATEGORIES = {
     'services',
     'other',
   ],
-  life: ['childcare', 'clothing', 'education', 'gifts', 'medical', 'taxes', 'other'],
-  travel: ['bus', 'train', 'car', 'fuel', 'parking', 'plane', 'taxi', 'other'],
+  life: ['childcare', 'clothing', 'education', 'gifts', 'insurance', 'medical', 'taxes', 'other'],
+  travel: ['bicycle', 'bus', 'train', 'car', 'fuel', 'hotel', 'parking', 'plane', 'taxi', 'other'],
   utilities: ['cleaning', 'electricity', 'gas', 'internet', 'trash', 'phone', 'water', 'other'],
+  general: ['general', 'other'],
 } as const satisfies Record<string, string[]>;
 
 export const DEFAULT_CATEGORY = 'general';
 
 export type CategorySection = keyof typeof CATEGORIES;
 
-export type CategoryItem =
-  | Exclude<keyof Merge<(typeof CATEGORIES)[CategorySection]>, 'other'>
-  | CategorySection;
+type CategoryValues = (typeof CATEGORIES)[CategorySection][number];
+type CategoryWithoutOther = Exclude<CategoryValues, 'other'>;
+
+export type CategoryItem = CategoryWithoutOther | CategorySection;

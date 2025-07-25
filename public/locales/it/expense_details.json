@@ -154,7 +154,8 @@
             "gifts": "Regali",
             "medical": "Spese mediche",
             "taxes": "Tasse",
-            "other": "Vita"
+            "other": "Vita",
+            "insurance": "Assicurazione"
           }
         },
         "travel": {
@@ -167,7 +168,9 @@
             "parking": "Parcheggio",
             "plane": "Aereo",
             "taxi": "Taxi",
-            "other": "Viaggi"
+            "other": "Viaggi",
+            "bicycle": "Bicicletta",
+            "hotel": "Hotel"
           }
         },
         "utilities": {
@@ -181,6 +184,13 @@
             "phone": "Telefono",
             "water": "Acqua",
             "other": "Utenze"
+          }
+        },
+        "general": {
+          "name": "Generale",
+          "items": {
+            "general": "Generale",
+            "other": "Generale"
           }
         }
       }

@@ -2,6 +2,7 @@ import { type Group, SplitType, type User } from '@prisma/client';
 import Router from 'next/router';
 import { create } from 'zustand';
 
+import { DEFAULT_CATEGORY } from '~/lib/category';
 import { type CurrencyCode } from '~/lib/currency';
 import { shuffleArray } from '~/utils/array';
 import { BigMath } from '~/utils/numbers';
@@ -67,7 +68,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     [SplitType.SETTLEMENT]: {},
   },
   currency: 'USD',
-  category: 'general',
+  category: DEFAULT_CATEGORY,
   nameOrEmail: '',
   paidBy: undefined,
   currentUser: undefined,
@@ -242,7 +243,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         participants: s.currentUser ? [s.currentUser] : [],
         description: '',
         fileKey: '',
-        category: 'general',
+        category: DEFAULT_CATEGORY,
         splitType: SplitType.EQUAL,
         group: undefined,
         amountStr: '',
@@ -356,7 +357,7 @@ export function calculateSplitShareBasedOnAmount(
   switch (splitType) {
     case SplitType.EQUAL:
       participants.forEach((p) => {
-        splitShares[p.id]![splitType] = 0n === p.amount ? 0n : 1n;
+        splitShares[p.id]![splitType] = 0n === p.amount && participants.length > 1 ? 0n : 1n;
       });
 
       break;

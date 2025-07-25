@@ -22,7 +22,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   const expenseId = router.query.expenseId as string;
   const friendId = parseInt(router.query.friendId as string);
 
-  const expenseQuery = api.user.getExpenseDetails.useQuery({ expenseId });
+  const expenseQuery = api.expense.getExpenseDetails.useQuery({ expenseId });
 
   return (
     <>

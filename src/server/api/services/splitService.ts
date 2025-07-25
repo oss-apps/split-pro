@@ -46,7 +46,8 @@ export async function createExpense(
 ) {
   const operations = [];
 
-  const nonZeroParticipants = participants.filter((p) => 0n !== p.amount);
+  const nonZeroParticipants =
+    participants.length > 1 ? participants.filter((p) => 0n !== p.amount) : participants;
 
   // Create expense operation
   operations.push(
@@ -342,7 +343,8 @@ export async function editExpense(
   if (!expenseId) {
     throw new Error('Expense ID is required for editing');
   }
-  const nonZeroParticipants = participants.filter((p) => 0n !== p.amount);
+  const nonZeroParticipants =
+    participants.length > 1 ? participants.filter((p) => 0n !== p.amount) : participants;
 
   const expense = await db.expense.findUnique({
     where: { id: expenseId },

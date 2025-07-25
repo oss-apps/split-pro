@@ -50,6 +50,7 @@ export const env = createEnv({
     WEB_PUSH_PUBLIC_KEY: z.string().optional(),
     FEEDBACK_EMAIL: z.string().optional(),
     DISCORD_WEBHOOK_URL: z.string().optional(),
+    DEFAULT_HOMEPAGE: z.string().default('/home'),
   },
 
   /**
@@ -94,6 +95,7 @@ export const env = createEnv({
     WEB_PUSH_PUBLIC_KEY: process.env.WEB_PUSH_PUBLIC_KEY,
     FEEDBACK_EMAIL: process.env.FEEDBACK_EMAIL,
     DISCORD_WEBHOOK_URL: process.env.DISCORD_WEBHOOK_URL,
+    DEFAULT_HOMEPAGE: process.env.DEFAULT_HOMEPAGE,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

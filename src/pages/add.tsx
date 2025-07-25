@@ -62,7 +62,7 @@ const AddPage: NextPageWithUser<{
     { enabled: !!_friendId && !_expenseId },
   );
 
-  const expenseQuery = api.user.getExpenseDetails.useQuery(
+  const expenseQuery = api.expense.getExpenseDetails.useQuery(
     { expenseId: _expenseId },
     { enabled: !!_expenseId },
   );

@@ -9,34 +9,39 @@ import {
   Split,
   Users,
 } from 'lucide-react';
+import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
 import { BackgroundGradient } from '~/components/ui/background-gradient';
 import { Button } from '~/components/ui/button';
-import { LanguageSelector } from '~/components/ui/language-selector';
-import { withI18nStaticProps } from '~/utils/i18n/server';
+import { env } from '~/env';
 
-export default function Home() {
+import { LanguageSelector } from '~/components/ui/language-selector';
+import { customServerSideTranslations } from '~/utils/i18n/server';
+
+export default function Home({ isCloud }: { isCloud: boolean }) {
   const { t } = useTranslation('index');
 
   return (
     <>
-      <Head>
-        {'production' === process.env.NODE_ENV && (
-          <>
-            <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js" />
-            <noscript>
-              <Image
-                src="https://queue.simpleanalyticscdn.com/noscript.gif"
-                alt=""
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </noscript>
-          </>
-        )}
-      </Head>
+      {isCloud && (
+        <Head>
+          {'production' === process.env.NODE_ENV && (
+            <>
+              <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js" />
+              <noscript>
+                <Image
+                  src="https://queue.simpleanalyticscdn.com/noscript.gif"
+                  alt=""
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </noscript>
+            </>
+          )}
+        </Head>
+      )}
       <main className="min-h-screen">
         <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4 py-4 lg:px-0 lg:py-5">
           <div className="flex items-center gap-2">
@@ -246,18 +251,21 @@ export default function Home() {
   );
 }
 
-const MobileScreenShot = () => {
-  return (
-    <BackgroundGradient>
-      <Image
-        src="/hero.webp"
-        className="bg-background rounded-[22px] border"
-        width={300}
-        height={550}
-        alt="hero"
-      />
-    </BackgroundGradient>
-  );
-};
+const MobileScreenShot = () => (
+  <BackgroundGradient>
+    <Image
+      src="/hero.webp"
+      className="bg-background rounded-[22px] border"
+      width={300}
+      height={550}
+      alt="hero"
+    />
+  </BackgroundGradient>
+);
 
-export const getStaticProps = withI18nStaticProps(['index', 'common']);
+export const getServerSideProps: GetServerSideProps = async (context) => ({
+  props: {
+    isCloud: env.NEXTAUTH_URL.includes('splitpro.app'),
+    ...(await customServerSideTranslations(context.locale, ['index', 'common'])),
+  },
+});

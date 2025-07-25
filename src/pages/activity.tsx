@@ -46,7 +46,7 @@ function getPaymentString(
 
 const ActivityPage: NextPageWithUser = ({ user }) => {
   const { displayName, t } = useTranslationWithUtils(['activity_page']);
-  const expensesQuery = api.user.getAllExpenses.useQuery();
+  const expensesQuery = api.expense.getAllExpenses.useQuery();
 
   return (
     <>

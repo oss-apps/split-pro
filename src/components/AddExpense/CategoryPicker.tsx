@@ -1,9 +1,9 @@
-import { Banknote } from 'lucide-react';
+import { CATEGORIES, type CategoryItem } from '~/lib/category';
 import { useMemo } from 'react';
 import { useTranslation } from 'next-i18next';
 
 import { Button } from '../ui/button';
-import { CategoryIcons } from '../ui/categoryIcons';
+import { CategoryIcon } from '../ui/categoryIcons';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 
 export const CategoryPicker: React.FC<{
@@ -11,13 +11,12 @@ export const CategoryPicker: React.FC<{
   onCategoryPick: (category: string) => void;
 }> = ({ category, onCategoryPick }) => {
   const { t } = useTranslation('expense_details');
-  const CategoryIcon = useMemo(() => CategoryIcons[category] ?? Banknote, [category]);
 
   const trigger = useMemo(
     () => (
       <div className="flex w-[70px] justify-center rounded-lg border py-2">
-        <CategoryIcon size={20} />
-      </div>
+          <CategoryIcon size={20} />
+        </div>
     ),
     [CategoryIcon],
   );
@@ -36,7 +35,6 @@ export const CategoryPicker: React.FC<{
           </h3>
           <div className="flex flex-wrap justify-between gap-2">
             {categoryItems.map((key: string) => {
-              const Icon = CategoryIcons[key] ?? CategoryIcons[categoryName] ?? Banknote;
 
               const handleClick = useMemo(
                 () => () => {
@@ -53,7 +51,9 @@ export const CategoryPicker: React.FC<{
                     onClick={handleClick}
                   >
                     <span className="block text-2xl">
-                      <Icon />
+                       <CategoryIcon
+                        category={(key === 'other' ? categoryName : key) as CategoryItem}
+                      />
                     </span>
                     <span className="block text-xs capitalize">
                       {t(`ui.categories.categories_list.${categoryName}.items.${key}`)}
@@ -69,21 +69,3 @@ export const CategoryPicker: React.FC<{
   );
 };
 
-const CATEGORIES = {
-  entertainment: ['games', 'movies', 'music', 'sports', 'other'],
-  food: ['diningOut', 'groceries', 'liquor', 'other'],
-  home: [
-    'electronics',
-    'furniture',
-    'supplies',
-    'maintenance',
-    'mortgage',
-    'pets',
-    'rent',
-    'services',
-    'other',
-  ],
-  life: ['childcare', 'clothing', 'education', 'gifts', 'medical', 'taxes', 'other'],
-  travel: ['bus', 'train', 'car', 'fuel', 'parking', 'plane', 'taxi', 'other'],
-  utilities: ['cleaning', 'electricity', 'gas', 'internet', 'trash', 'phone', 'water', 'other'],
-};

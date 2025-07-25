@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
 
+import { DEFAULT_CATEGORY } from '~/lib/category';
 import { api } from '~/utils/api';
 import { BigMath, toSafeBigInt, toUIString } from '~/utils/numbers';
 
@@ -59,7 +60,7 @@ export const SettleUp: React.FC<{
           },
         ],
         paidBy: isCurrentUserPaying ? currentUser.id : friend.id,
-        category: 'general',
+        category: DEFAULT_CATEGORY,
         groupId: null,
       },
       {
@@ -79,7 +80,7 @@ export const SettleUp: React.FC<{
       trigger={
         <Button
           size="sm"
-          className="flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500 px-3 text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 focus-visible:outline-hidden lg:w-[180px]"
+          className="focus-visible:outline-hidden flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500 px-3 text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 lg:w-[180px]"
           disabled={!balances.length}
         >
           {t('ui.settle_up')}
@@ -120,7 +121,7 @@ export const SettleUp: React.FC<{
               </DrawerClose>
             ))}
         </div>
-        <div className="mt-4 mb-2 text-center">
+        <div className="mb-2 mt-4 text-center">
           {balanceToSettle ? t('ui.settle_up') : t('ui.settle_up_details.select_currency')}
         </div>
         {balanceToSettle && (

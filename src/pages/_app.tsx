@@ -12,6 +12,7 @@ import i18nConfig from 'next-i18next.config.js';
 import { ThemeProvider } from '~/components/theme-provider';
 import '~/styles/globals.css';
 import { LoadingSpinner } from '~/components/ui/spinner';
+import { env } from '~/env';
 import { type CurrencyCode } from '~/lib/currency';
 import { useAddExpenseStore } from '~/store/addStore';
 import { useAppStore } from '~/store/appStore';
@@ -21,9 +22,9 @@ import { api } from '~/utils/api';
 const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });
 const toastOptions = { duration: 1500 };
 
-const MyApp: AppType<{ session: Session | null }> = ({
+const MyApp: AppType<{ session: Session | null; baseUrl: string }> = ({
   Component,
-  pageProps: { session, ...pageProps },
+  pageProps: { session, baseUrl, ...pageProps },
 }) => {
   const { t, ready } = useTranslation('common');
 
@@ -61,17 +62,17 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <link rel="shortcut icon" href="/favicon.ico" />
 
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:url" content="https://splitpro.app" />
+        <meta name="twitter:url" content={baseUrl} />
         <meta name="twitter:title" content={t('meta.application_name')} />
         <meta name="twitter:description" content={t('meta.description')} />
-        <meta name="twitter:image" content="https://splitpro.app/og_banner.png" />
+        <meta name="twitter:image" content={`${baseUrl}/og_banner.png`} />
         <meta name="twitter:creator" content="@KM_Koushik_" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content={t('meta.application_name')} />
         <meta property="og:description" content={t('meta.description')} />
         <meta property="og:site_name" content={t('meta.application_name')} />
-        <meta property="og:url" content="https://splitpro.app" />
-        <meta property="og:image" content="https://splitpro.app/og_banner.png" />
+        <meta property="og:url" content={baseUrl} />
+        <meta property="og:image" content={`${baseUrl}/og_banner.png`} />
       </Head>
       <SessionProvider session={session}>
         <ThemeProvider attribute="class" defaultTheme="dark">
@@ -144,5 +145,11 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
 
   return <Page user={data.user} {...pageProps} />;
 };
+
+export const getServerSideProps = async () => ({
+  props: {
+    baseUrl: env.NEXTAUTH_URL,
+  },
+});
 
 export default api.withTRPC(appWithTranslation(MyApp, i18nConfig));

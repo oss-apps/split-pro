@@ -2,6 +2,7 @@ import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'next-i18next';
+import { toast } from 'sonner';
 
 import { api } from '~/utils/api';
 
@@ -16,10 +17,20 @@ export const DeleteExpense: React.FC<{
   const { t } = useTranslation('expense_details');
   const router = useRouter();
 
-  const deleteExpenseMutation = api.user.deleteExpense.useMutation();
+  const deleteExpenseMutation = api.expense.deleteExpense.useMutation();
 
   const onDeleteExpense = useCallback(async () => {
-    await deleteExpenseMutation.mutateAsync({ expenseId });
+    try {
+      await deleteExpenseMutation.mutateAsync({ expenseId });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(`Error: ${error.message}`);
+      } else {
+        console.error('Unexpected error:', error);
+        toast.error('An unexpected error occurred while deleting the expense.');
+      }
+      return;
+    }
     if (groupId) {
       await router.replace(`/groups/${groupId}`);
       return;

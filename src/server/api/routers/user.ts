@@ -7,8 +7,8 @@ import { db } from '~/server/db';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
 import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
 
+// import { sendExpensePushNotification } from '../services/notificationService';
 import {
-  deleteExpense,
   getCompleteFriendsDetails,
   getCompleteGroupDetails,
   importGroupFromSplitwise,
@@ -87,59 +87,6 @@ export const userRouter = createTRPCRouter({
       return balances;
     }),
 
-  getExpenseDetails: protectedProcedure
-    .input(z.object({ expenseId: z.string() }))
-    .query(async ({ input }) => {
-      const expense = await db.expense.findUnique({
-        where: {
-          id: input.expenseId,
-        },
-        include: {
-          expenseParticipants: {
-            include: {
-              user: true,
-            },
-          },
-          expenseNotes: true,
-          addedByUser: true,
-          paidByUser: true,
-          deletedByUser: true,
-          updatedByUser: true,
-          group: true,
-        },
-      });
-
-      if (expense?.groupId) {
-        const missingGroupMembers = await db.group.findUnique({
-          where: {
-            id: expense.groupId,
-          },
-          include: {
-            groupUsers: {
-              include: {
-                user: true,
-              },
-              where: {
-                userId: {
-                  notIn: expense.expenseParticipants.map((ep) => ep.userId),
-                },
-              },
-            },
-          },
-        });
-        missingGroupMembers?.groupUsers.forEach((gu) => {
-          expense.expenseParticipants.push({
-            userId: gu.user.id,
-            expenseId: expense.id,
-            user: gu.user,
-            amount: 0n,
-          });
-        });
-      }
-
-      return expense;
-    }),
-
   updateUserDetail: protectedProcedure
     .input(
       z.object({
@@ -161,42 +108,17 @@ export const userRouter = createTRPCRouter({
       return user;
     }),
 
-  getAllExpenses: protectedProcedure.query(async ({ ctx }) => {
-    const expenses = await db.expenseParticipant.findMany({
-      where: {
-        userId: ctx.session.user.id,
-      },
-      orderBy: {
-        expense: {
-          createdAt: 'desc',
-        },
-      },
-      include: {
-        expense: {
-          include: {
-            paidByUser: {
-              select: {
-                name: true,
-                email: true,
-                image: true,
-                id: true,
-              },
-            },
-            deletedByUser: {
-              select: {
-                name: true,
-                email: true,
-                image: true,
-                id: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    return expenses;
-  }),
+  // sendExpensePushNotification: protectedProcedure
+  //   .input(z.object({ expenseId: z.string() }))
+  //   .mutation(async ({ input }) => {
+  //     sendExpensePushNotification(input.expenseId).catch((err) => {
+  //       console.error('Error sending push notification', err);
+  //       throw new TRPCError({
+  //         code: 'INTERNAL_SERVER_ERROR',
+  //         message: 'Failed to send push notification',
+  //       });
+  //     });
+  //   }),
 
   getUserDetails: protectedProcedure
     .input(z.object({ userId: z.number() }))
@@ -208,28 +130,6 @@ export const userRouter = createTRPCRouter({
       });
 
       return user;
-    }),
-
-  deleteExpense: protectedProcedure
-    .input(z.object({ expenseId: z.string() }))
-    .mutation(async ({ input, ctx }) => {
-      const expenseParticipant = await db.expenseParticipant.findUnique({
-        where: {
-          expenseId_userId: {
-            expenseId: input.expenseId,
-            userId: ctx.session.user.id,
-          },
-        },
-      });
-
-      if (!expenseParticipant) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'You are not the participant of the expense',
-        });
-      }
-
-      await deleteExpense(input.expenseId, ctx.session.user.id);
     }),
 
   submitFeedback: protectedProcedure

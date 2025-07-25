@@ -3,6 +3,7 @@ import { ArrowRightIcon } from 'lucide-react';
 import React, { type ReactNode, useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
+import { DEFAULT_CATEGORY } from '~/lib/category';
 import { api } from '~/utils/api';
 import { BigMath, toSafeBigInt } from '~/utils/numbers';
 
@@ -56,7 +57,7 @@ export const GroupSettleUp: React.FC<{
           },
         ],
         paidBy: sender.id,
-        category: 'general',
+        category: DEFAULT_CATEGORY,
       },
       {
         onSuccess: () => {

@@ -52,6 +52,7 @@ services:
       - WEB_PUSH_EMAIL=${WEB_PUSH_EMAIL}
       - FEEDBACK_EMAIL=${FEEDBACK_EMAIL}
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
+      - DEFAULT_HOMEPAGE=${DEFAULT_HOMEPAGE}
     depends_on:
       postgres:
         condition: service_healthy

@@ -10,31 +10,35 @@ import {
   Split,
   Users,
 } from 'lucide-react';
+import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 
 import { BackgroundGradient } from '~/components/ui/background-gradient';
 import { Button } from '~/components/ui/button';
+import { env } from '~/env';
 
-export default function Home() {
+export default function Home({ isCloud }: { isCloud: boolean }) {
   return (
     <>
-      <Head>
-        {process.env.NODE_ENV === 'production' && (
-          <>
-            <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
-            <noscript>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="https://queue.simpleanalyticscdn.com/noscript.gif"
-                alt=""
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </noscript>
-          </>
-        )}
-      </Head>
+      {isCloud && (
+        <Head>
+          {process.env.NODE_ENV === 'production' && (
+            <>
+              <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+              <noscript>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://queue.simpleanalyticscdn.com/noscript.gif"
+                  alt=""
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </noscript>
+            </>
+          )}
+        </Head>
+      )}
       <main className="min-h-screen">
         <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4   py-4 lg:px-0 lg:py-5">
           <div className="flex items-center gap-2">
@@ -239,4 +243,10 @@ const MobileScreenShot = () => {
       />
     </BackgroundGradient>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: { isCloud: env.NEXTAUTH_URL.includes('splitpro.app') },
+  };
 };

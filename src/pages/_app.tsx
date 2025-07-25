@@ -19,9 +19,9 @@ import { api } from '~/utils/api';
 
 const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });
 
-const MyApp: AppType<{ session: Session | null }> = ({
+const MyApp: AppType<{ session: Session | null; baseUrl: string }> = ({
   Component,
-  pageProps: { session, ...pageProps },
+  pageProps: { session, baseUrl, ...pageProps },
 }) => {
   return (
     <main className={clsx(poppins.className, 'h-full')}>
@@ -53,17 +53,17 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <link rel="shortcut icon" href="/favicon.ico" />
 
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:url" content={env.NEXTAUTH_URL} />
+        <meta name="twitter:url" content={baseUrl} />
         <meta name="twitter:title" content="SplitPro" />
         <meta name="twitter:description" content="Split Expenses with your friends for free" />
-        <meta name="twitter:image" content={`${env.NEXTAUTH_URL}/og_banner.png`} />
+        <meta name="twitter:image" content={`${baseUrl}/og_banner.png`} />
         <meta name="twitter:creator" content="@KM_Koushik_" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="SplitPro" />
         <meta property="og:description" content="Split Expenses with your friends for free" />
         <meta property="og:site_name" content="SplitPro" />
-        <meta property="og:url" content={env.NEXTAUTH_URL} />
-        <meta property="og:image" content={`${env.NEXTAUTH_URL}/og_banner.png`} />
+        <meta property="og:url" content={baseUrl} />
+        <meta property="og:image" content={`${baseUrl}/og_banner.png`} />
       </Head>
       <SessionProvider session={session}>
         <ThemeProvider attribute="class" defaultTheme="dark">
@@ -115,6 +115,14 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
   }
 
   return <Page user={data.user} {...pageProps} />;
+};
+
+export const getServerSideProps = async () => {
+  return {
+    props: {
+      baseUrl: env.NEXTAUTH_URL,
+    },
+  };
 };
 
 export default api.withTRPC(MyApp);

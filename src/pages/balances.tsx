@@ -48,7 +48,7 @@ const BalancePage: NextPageWithUser = () => {
                     <p className="text-sm">You owe</p>
                   </div>
                 </div>
-                <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
+                <div className="mb-2 mt-4 flex flex-wrap justify-center gap-1">
                   {balanceQuery.data?.youOwe.map((b, index) => (
                     <span key={b.currency} className="flex gap-1">
                       <span className="text-orange-600">
@@ -64,12 +64,12 @@ const BalancePage: NextPageWithUser = () => {
             ) : null}
             {balanceQuery.data?.youGet.length ? (
               <div className="w-1/2 rounded-2xl border px-2 py-2">
-                <div className="bg-opacity-40 mt-2 flex flex-col justify-center px-1">
+                <div className="mt-2 flex flex-col justify-center bg-opacity-40 px-1">
                   <div className="flex items-center justify-center gap-2">
                     <p className="text-sm">You get</p>
                   </div>
                 </div>
-                <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
+                <div className="mb-2 mt-4 flex flex-wrap justify-center gap-1">
                   {balanceQuery.data?.youGet.map((b, index) => (
                     <span key={b.currency} className="flex gap-1">
                       <p className="text-emerald-500">
@@ -161,7 +161,7 @@ function shareWithFriends() {
       .share({
         title: 'SplitPro',
         text: "Check out SplitPro. It's an open source free alternative for Splitwise",
-        url: 'https://splitpro.app',
+        url: window.location.origin,
       })
       .then(() => console.info('Successful share'))
       .catch((error) => console.error('Error sharing', error));

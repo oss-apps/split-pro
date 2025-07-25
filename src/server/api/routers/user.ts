@@ -7,6 +7,7 @@ import { db } from '~/server/db';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
 import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
 
+// import { sendExpensePushNotification } from '../services/notificationService';
 import {
   deleteExpense,
   getCompleteFriendsDetails,
@@ -193,6 +194,18 @@ export const userRouter = createTRPCRouter({
 
     return expenses;
   }),
+
+  // sendExpensePushNotification: protectedProcedure
+  //   .input(z.object({ expenseId: z.string() }))
+  //   .mutation(async ({ input }) => {
+  //     sendExpensePushNotification(input.expenseId).catch((err) => {
+  //       console.error('Error sending push notification', err);
+  //       throw new TRPCError({
+  //         code: 'INTERNAL_SERVER_ERROR',
+  //         message: 'Failed to send push notification',
+  //       });
+  //     });
+  //   }),
 
   getUserDetails: protectedProcedure
     .input(z.object({ userId: z.number() }))

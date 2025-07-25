@@ -9,33 +9,35 @@ import {
   Split,
   Users,
 } from 'lucide-react';
+import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 
 import { BackgroundGradient } from '~/components/ui/background-gradient';
 import { Button } from '~/components/ui/button';
+import { env } from '~/env';
 
-export default function Home() {
+export default function Home({ isCloud }: { isCloud: boolean }) {
   return (
     <>
-      <Head>
-        <title>SplitPro: Split Expenses with your friends for free</title>
-        <meta name="description" content="SplitPro: Split Expenses with your friends for free" />
-        <link rel="icon" href="/favicon.ico" />
-        {'production' === process.env.NODE_ENV && (
-          <>
-            <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js" />
-            <noscript>
-              <Image
-                src="https://queue.simpleanalyticscdn.com/noscript.gif"
-                alt=""
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </noscript>
-          </>
-        )}
-      </Head>
+      {isCloud && (
+        <Head>
+          {process.env.NODE_ENV === 'production' && (
+            <>
+              <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+              <noscript>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://queue.simpleanalyticscdn.com/noscript.gif"
+                  alt=""
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </noscript>
+            </>
+          )}
+        </Head>
+      )}
       <main className="min-h-screen">
         <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4 py-4 lg:px-0 lg:py-5">
           <div className="flex items-center gap-2">
@@ -49,9 +51,9 @@ export default function Home() {
         <div className="mx-auto mt-20 flex w-full items-start justify-center gap-16 px-4 lg:max-w-5xl lg:px-0">
           <div>
             <div className="mb-32 text-center lg:mb-0 lg:h-[70vh] lg:text-left">
-              <h1 className="max-w-3xl text-center text-2xl leading-loose font-semibold text-gray-100 lg:text-left lg:text-5xl lg:leading-16">
+              <h1 className="lg:leading-16 max-w-3xl text-center text-2xl font-semibold leading-loose text-gray-100 lg:text-left lg:text-5xl">
                 Split Expenses with your friends for{' '}
-                <span className="text-primary font-bold">free</span>.
+                <span className="font-bold text-primary">free</span>.
               </h1>
               <h2 className="mt-5 text-gray-300 lg:mt-8 lg:text-lg">
                 An{' '}
@@ -94,7 +96,7 @@ export default function Home() {
               </div>
               <div className="mt-40" />
             </div>
-            <div className="mt-8 mb-20 flex justify-center lg:hidden">
+            <div className="mb-20 mt-8 flex justify-center lg:hidden">
               <MobileScreenShot />
             </div>
             <div className="flex flex-col gap-20 text-center lg:text-left">
@@ -103,7 +105,7 @@ export default function Home() {
               <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Users className="text-primary size-6" />
+                    <Users className="size-6 text-primary" />
                     <p className="text-lg font-medium">Groups and Friends</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
@@ -114,7 +116,7 @@ export default function Home() {
 
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Banknote className="text-primary h-6 w-6" />
+                    <Banknote className="h-6 w-6 text-primary" />
                     <p className="text-lg font-medium">Multiple currencies</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
@@ -126,7 +128,7 @@ export default function Home() {
               <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Split className="text-primary h-6 w-6" />
+                    <Split className="h-6 w-6 text-primary" />
                     <p className="text-lg font-medium">Unequal Split</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
@@ -136,7 +138,7 @@ export default function Home() {
 
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Globe className="text-primary h-6 w-6" />
+                    <Globe className="h-6 w-6 text-primary" />
                     <p className="text-lg font-medium">PWA support</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
@@ -149,7 +151,7 @@ export default function Home() {
               <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <FileUp className="text-primary h-6 w-6" />
+                    <FileUp className="h-6 w-6 text-primary" />
                     <p className="text-lg font-medium">Upload Receipts</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
@@ -159,7 +161,7 @@ export default function Home() {
 
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <GitFork className="text-primary h-6 w-6" />
+                    <GitFork className="h-6 w-6 text-primary" />
                     <p className="text-lg font-medium">Open source</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
@@ -170,7 +172,7 @@ export default function Home() {
               <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Import className="text-primary h-6 w-6" />
+                    <Import className="h-6 w-6 text-primary" />
                     <p className="text-lg font-medium">Import from splitwise</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
@@ -180,7 +182,7 @@ export default function Home() {
                 </div>
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Bell className="text-primary h-6 w-6" />
+                    <Bell className="h-6 w-6 text-primary" />
                     <p className="text-lg font-medium">Push notification</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
@@ -191,7 +193,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mt-24 mb-20 flex flex-col gap-8 text-center lg:text-left">
+            <div className="mb-20 mt-24 flex flex-col gap-8 text-center lg:text-left">
               <a
                 href="https://www.producthunt.com/posts/splitpro?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-splitpro"
                 target="_blank"
@@ -253,11 +255,17 @@ const MobileScreenShot = () => {
     <BackgroundGradient>
       <Image
         src="/hero.webp"
-        className="bg-background rounded-[22px] border"
+        className="rounded-[22px] border bg-background"
         width={300}
         height={550}
         alt="hero"
       />
     </BackgroundGradient>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: { isCloud: env.NEXTAUTH_URL.includes('splitpro.app') },
+  };
 };

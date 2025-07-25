@@ -1,15 +1,11 @@
 import { type Expense, type ExpenseParticipant, type User } from '@prisma/client';
 import { isSameDay } from 'date-fns';
-import { Banknote } from 'lucide-react';
 import { type User as NextUser } from 'next-auth';
 
-// import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 
-import type { FC } from 'react';
 import { displayName, toUIDate } from '~/utils/strings';
 import { UserAvatar } from '../ui/avatar';
-import { CategoryIcons } from '../ui/categoryIcons';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
 
@@ -35,7 +31,7 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
       <div className="mb-4 flex items-start justify-between gap-2">
         <div className="flex items-start gap-4">
           <div className="rounded-lg border p-2 text-xl">
-            <CategoryIcon className="text-gray-400" size={24} />
+            <CategoryIcon category={expense.category} className="text-gray-400" size={24} />
           </div>
           <div className="flex flex-col gap-2">
             <p className="">{expense.name}</p>
@@ -90,7 +86,7 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
           {toUIString(expense.amount)}
         </p>
       </div>
-      <div className="mt-4 ml-14 flex flex-col gap-4">
+      <div className="ml-14 mt-4 flex flex-col gap-4">
         {expense.expenseParticipants
           .filter((p) => (expense.paidBy === p.userId ? (expense.amount ?? 0n) : 0n) !== p.amount)
           .map((p) => (

@@ -169,7 +169,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (session) {
     return {
       redirect: {
-        destination: callbackUrl && !Array.isArray(callbackUrl) ? callbackUrl : '/balances',
+        destination:
+          callbackUrl && !Array.isArray(callbackUrl) ? callbackUrl : env.DEFAULT_HOMEPAGE,
         permanent: false,
       },
     };

@@ -10,6 +10,7 @@ import { Toaster } from 'sonner';
 import { ThemeProvider } from '~/components/theme-provider';
 import '~/styles/globals.css';
 import { LoadingSpinner } from '~/components/ui/spinner';
+import { env } from '~/env';
 import { type CurrencyCode } from '~/lib/currency';
 import { useAddExpenseStore } from '~/store/addStore';
 import { useAppStore } from '~/store/appStore';
@@ -52,17 +53,17 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <link rel="shortcut icon" href="/favicon.ico" />
 
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:url" content="https://splitpro.app" />
+        <meta name="twitter:url" content={env.NEXTAUTH_URL} />
         <meta name="twitter:title" content="SplitPro" />
         <meta name="twitter:description" content="Split Expenses with your friends for free" />
-        <meta name="twitter:image" content="https://splitpro.app/og_banner.png" />
+        <meta name="twitter:image" content={`${env.NEXTAUTH_URL}/og_banner.png`} />
         <meta name="twitter:creator" content="@KM_Koushik_" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="SplitPro" />
         <meta property="og:description" content="Split Expenses with your friends for free" />
         <meta property="og:site_name" content="SplitPro" />
-        <meta property="og:url" content="https://splitpro.app" />
-        <meta property="og:image" content="https://splitpro.app/og_banner.png" />
+        <meta property="og:url" content={env.NEXTAUTH_URL} />
+        <meta property="og:image" content={`${env.NEXTAUTH_URL}/og_banner.png`} />
       </Head>
       <SessionProvider session={session}>
         <ThemeProvider attribute="class" defaultTheme="dark">

@@ -86,7 +86,7 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
           {toUIString(expense.amount)}
         </p>
       </div>
-      <div className="ml-14 mt-4 flex flex-col gap-4">
+      <div className="mt-4 ml-14 flex flex-col gap-4">
         {expense.expenseParticipants
           .filter(
             (partecipant) =>

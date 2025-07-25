@@ -32,13 +32,6 @@ const config = {
     defaultLocale: 'en',
   },
   transpilePackages: ['geist'],
-  redirects: async () => [
-    {
-      source: '/',
-      destination: process.env.DEFAULT_HOMEPAGE ?? '/home',
-      permanent: true,
-    },
-  ],
   images: {
     remotePatterns: [
       {

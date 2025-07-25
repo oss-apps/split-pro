@@ -8,6 +8,8 @@ import { displayName, toUIDate } from '~/utils/strings';
 import { UserAvatar } from '../ui/avatar';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
+import { FC } from 'react';
+import { CategoryIcon } from '../ui/categoryIcons';
 
 interface ExpenseDetailsProps {
   user: NextUser;
@@ -22,10 +24,6 @@ interface ExpenseDetailsProps {
 }
 
 const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
-  const CategoryIcon = CategoryIcons[expense.category] ?? Banknote;
-
-  // const sendNotificationMutation = api.user.sendExpensePushNotification.useMutation();
-
   return (
     <>
       <div className="mb-4 flex items-start justify-between gap-2">

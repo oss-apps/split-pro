@@ -27,7 +27,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
             <>
               <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
               <noscript>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {/* oxlint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="https://queue.simpleanalyticscdn.com/noscript.gif"
                   alt=""

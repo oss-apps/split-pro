@@ -146,21 +146,7 @@ export const groupRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       if (input.expenseId) {
-        const expenseParticipant = await db.expenseParticipant.findUnique({
-          where: {
-            expenseId_userId: {
-              expenseId: input.expenseId,
-              userId: ctx.session.user.id,
-            },
-          },
-        });
-
-        if (!expenseParticipant) {
-          throw new TRPCError({
-            code: 'UNAUTHORIZED',
-            message: 'You are not the participant of the expense',
-          });
-        }
+        await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
       }
 
       try {
@@ -470,5 +456,26 @@ export const groupRouter = createTRPCRouter({
       return group;
     }),
 });
+
+const validateEditExpensePermission = async (expenseId: string, userId: number): Promise<void> => {
+  const [expenseParticipant, addedBy] = await Promise.all([
+    db.expenseParticipant.findUnique({
+      where: {
+        expenseId_userId: {
+          expenseId: expenseId,
+          userId: userId,
+        },
+      },
+    }),
+    db.expense.findUnique({ where: { id: expenseId }, select: { addedBy: true } }),
+  ]);
+
+  if (!expenseParticipant && !addedBy?.addedBy) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: 'You are not the participant of the expense',
+    });
+  }
+};
 
 export type GroupRouter = typeof groupRouter;

@@ -65,7 +65,7 @@ const Privacy: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
           <p className="mt-16 text-xl font-semibold">6. Your Rights</p>
           <p className="mt-1 text-lg text-gray-400">
             You may access, update, or request the deletion of your personal information by
-            contacting us at{' '}
+            contacting us at {/* oxlint-disable-next-line next/no-html-link-for-pages */}
             <a className="underline" href={'mailto:' + feedbackEmail}>
               {feedbackEmail ?? ''}
             </a>
@@ -77,6 +77,7 @@ const Privacy: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
             The Service is not intended for users under 13 years old. We do not knowingly collect
             personal information from children under 13. If you are a parent or guardian and believe
             your child has provided us with personal information, please contact us at{' '}
+            {/* oxlint-disable-next-line next/no-html-link-for-pages */}
             <a className="underline" href={'mailto:' + feedbackEmail}>
               {feedbackEmail ?? ''}
             </a>
@@ -91,6 +92,7 @@ const Privacy: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
           <p className="mt-16 text-xl font-semibold">9. Contact</p>
           <p className="mt-1 text-lg text-gray-400">
             If you have any questions or concerns regarding these Terms, please contact us at{' '}
+            {/* oxlint-disable-next-line next/no-html-link-for-pages */}
             <a className="underline" href={'mailto:' + feedbackEmail}>
               {feedbackEmail ?? ''}
             </a>

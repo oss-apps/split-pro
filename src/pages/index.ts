@@ -9,7 +9,7 @@ export default function Home() {
 export const getServerSideProps: GetServerSideProps = async () => {
   return {
     redirect: {
-      destination: env.DEFAULT_HOMEPAGE,
+      destination: env.DEFAULT_HOMEPAGE ?? '/home',
       permanent: true,
     },
   };

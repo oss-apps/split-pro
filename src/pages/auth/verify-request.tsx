@@ -71,6 +71,7 @@ const Home: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
           <p className="text-muted-foreground mt-6 w-[300px] text-center text-sm">
             {t('auth.trouble_logging_in')}
             <br />
+            {/* oxlint-disable-next-line next/no-html-link-for-pages */}
             <a className="underline" href={'mailto:' + feedbackEmail}>
               {feedbackEmail ?? ''}
             </a>

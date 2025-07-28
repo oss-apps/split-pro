@@ -63,7 +63,7 @@ const BalancePage: NextPageWithUser = () => {
                     <p className="text-sm">{t('you_owe')}</p>
                   </div>
                 </div>
-                <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
+                <div className="mb-2 mt-4 flex flex-wrap justify-center gap-1">
                   {balanceQuery.data?.youOwe.map((balance, index) => (
                     <span key={balance.currency} className="flex gap-1">
                       <span className="text-orange-600">
@@ -84,7 +84,7 @@ const BalancePage: NextPageWithUser = () => {
                     <p className="text-sm">{t('you_get')}</p>
                   </div>
                 </div>
-                <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
+                <div className="mb-2 mt-4 flex flex-wrap justify-center gap-1">
                   {balanceQuery.data?.youGet.map((balance, index) => (
                     <span key={balance.currency} className="flex gap-1">
                       <p className="text-emerald-500">

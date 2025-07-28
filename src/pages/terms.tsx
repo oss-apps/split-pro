@@ -64,6 +64,7 @@ const Terms: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
           <p className="mt-12 text-xl font-semibold">8. Contact</p>
           <p className="mt-1 text-lg text-gray-300">
             If you have any questions or concerns regarding these Terms, please contact us at{' '}
+            {/* oxlint-disable-next-line next/no-html-link-for-pages */}
             <a className="underline" href={'mailto:' + feedbackEmail}>
               {feedbackEmail ?? ''}
             </a>

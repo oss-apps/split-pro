@@ -121,7 +121,7 @@ export const SettleUp: React.FC<{
               </DrawerClose>
             ))}
         </div>
-        <div className="mb-2 mt-4 text-center">
+        <div className="mt-4 mb-2 text-center">
           {balanceToSettle ? t('ui.settle_up') : t('ui.settle_up_details.select_currency')}
         </div>
         {balanceToSettle && (

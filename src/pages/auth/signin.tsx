@@ -168,7 +168,7 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
               {t('auth.trouble_logging_in')}
               <br />
               {/* oxlint-disable-next-line next/no-html-link-for-pages */}
-            <a className="underline" href={'mailto:' + feedbackEmail}>
+              <a className="underline" href={'mailto:' + feedbackEmail}>
                 {feedbackEmail ?? ''}
               </a>
             </p>

@@ -1,0 +1,15 @@
+{
+  "ui": {
+    "title": "Edit details",
+    "placeholder": "Enter your name",
+    "save": "Save",
+    "close": "Close"
+  },
+  "errors": {
+    "name_required": "Name is required"
+  },
+  "messages": {
+    "update_success": "Details updated successfully",
+    "update_error": "Error updating details"
+  }
+}

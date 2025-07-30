@@ -1,92 +1,28 @@
-import { type Merge } from './type';
-
 export const CATEGORIES = {
-  entertainment: {
-    name: 'Entertainment',
-    items: {
-      games: 'Games',
-      movies: 'Movies',
-      music: 'Music',
-      sports: 'Sports',
-      other: 'Entertainment',
-    },
-  },
-  food: {
-    name: 'Food & Drinks',
-    items: {
-      diningOut: 'Dining Out',
-      groceries: 'Groceries',
-      liquor: 'Liquor',
-      other: 'Food & Drinks',
-    },
-  },
-  home: {
-    name: 'Home',
-    items: {
-      electronics: 'Electronics',
-      furniture: 'Furniture',
-      supplies: 'Supplies',
-      maintenance: 'Maintenance',
-      mortgage: 'Mortgage',
-      pets: 'Pets',
-      rent: 'Rent',
-      services: 'Services',
-      other: 'Home',
-    },
-  },
-  life: {
-    name: 'Life',
-    items: {
-      childcare: 'Childcare',
-      clothing: 'Clothing',
-      education: 'Education',
-      gifts: 'Gifts',
-      insurance: 'Insurance',
-      medical: 'Medical',
-      taxes: 'Taxes',
-      other: 'Life',
-    },
-  },
-  travel: {
-    name: 'Travel',
-    items: {
-      bicycle: 'Bicycle',
-      bus: 'Bus',
-      train: 'Train',
-      car: 'Car',
-      fuel: 'Fuel',
-      hotel: 'Hotel',
-      parking: 'Parking',
-      plane: 'Plane',
-      taxi: 'Taxi',
-      other: 'Travel',
-    },
-  },
-  utilities: {
-    name: 'Utilities',
-    items: {
-      cleaning: 'Cleaning',
-      electricity: 'Electricity',
-      gas: 'Gas',
-      internet: 'Internet',
-      trash: 'Trash',
-      phone: 'Phone',
-      water: 'Water',
-      other: 'Utilities',
-    },
-  },
-  general: {
-    name: 'General',
-    items: {
-      other: 'General',
-    },
-  },
-} as const satisfies Record<string, { name: string; items: Record<string, string> }>;
+  entertainment: ['games', 'movies', 'music', 'sports', 'other'],
+  food: ['diningOut', 'groceries', 'liquor', 'other'],
+  home: [
+    'electronics',
+    'furniture',
+    'supplies',
+    'maintenance',
+    'mortgage',
+    'pets',
+    'rent',
+    'services',
+    'other',
+  ],
+  life: ['childcare', 'clothing', 'education', 'gifts', 'insurance', 'medical', 'taxes', 'other'],
+  travel: ['bicycle', 'bus', 'train', 'car', 'fuel', 'hotel', 'parking', 'plane', 'taxi', 'other'],
+  utilities: ['cleaning', 'electricity', 'gas', 'internet', 'trash', 'phone', 'water', 'other'],
+  general: ['general', 'other'],
+} as const satisfies Record<string, string[]>;
 
 export const DEFAULT_CATEGORY = 'general';
 
 export type CategorySection = keyof typeof CATEGORIES;
 
-export type CategoryItem =
-  | Exclude<keyof Merge<(typeof CATEGORIES)[CategorySection]['items']>, 'other'>
-  | CategorySection;
+type CategoryValues = (typeof CATEGORIES)[CategorySection][number];
+type CategoryWithoutOther = Exclude<CategoryValues, 'other'>;
+
+export type CategoryItem = CategoryWithoutOther | CategorySection;

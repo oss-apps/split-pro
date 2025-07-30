@@ -11,10 +11,12 @@ import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-
+import { i18n, useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
-import { UpdateName } from '~/components/Account/UpdateDetails';
+import { UpdateName } from '~/components/ui/update-details';
+import { LanguagePicker } from '~/components/Account/LanguagePicker';
 import MainLayout from '~/components/Layout/MainLayout';
 import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
@@ -22,12 +24,12 @@ import { AppDrawer } from '~/components/ui/drawer';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
+import { withI18nStaticProps } from '~/utils/i18n/server';
 import { bigIntReplacer } from '~/utils/numbers';
-import { useRouter } from 'next/router';
 
 const AccountPage: NextPageWithUser = ({ user }) => {
+  const { t } = useTranslation('account_page');
   const router = useRouter();
-
   const userQuery = api.user.me.useQuery();
   const downloadQuery = api.user.downloadData.useMutation();
   const updateDetailsMutation = api.user.updateUserDetail.useMutation();
@@ -53,15 +55,15 @@ const AccountPage: NextPageWithUser = ({ user }) => {
     async (values: { name: string }) => {
       try {
         await updateDetailsMutation.mutateAsync({ name: values.name });
-        toast.success('Updated details', { duration: 1500 });
+        toast.success(t('ui.messages.submit_success'), { duration: 1500 });
         utils.user.me.refetch().catch(console.error);
       } catch (error) {
-        toast.error('Error in updating details');
+        toast.error(t('ui.messages.submit_error'));
 
         console.error(error);
       }
     },
-    [updateDetailsMutation, utils.user.me],
+    [updateDetailsMutation, utils.user.me, t],
   );
 
   const header = useMemo(() => <div className="text-3xl font-semibold">Account</div>, []);
@@ -71,26 +73,31 @@ const AccountPage: NextPageWithUser = ({ user }) => {
       <div className="hover:text-foreground/80 flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300">
         <div className="flex items-center gap-4">
           <Download className="h-5 w-5 text-blue-500" />
-          Download App
+          {t('ui.download_app')}
         </div>
         <ChevronRight className="h-6x w-6 text-gray-500" />
       </div>
     ),
-    [],
+    [t],
   );
 
   const onSignOut = useCallback(async () => {
+    // Keep current language at logout by specifying callbackUrl with locale
+    let langUrl = '';
+    if (i18n) {
+      langUrl = i18n.language === 'en' ? '' : `/${i18n.language}`;
+    }
+    console.info(`Logging out, redirecting to: ${langUrl}/auth/signin`);
     await signOut({ redirect: false });
-    await router.push('/auth/signin');
+    await router.push(`${langUrl}/auth/signin`);
   }, [router]);
 
   return (
     <>
       <Head>
-        <title>Account</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>{t('ui.title')}</title>
       </Head>
-      <MainLayout title="Account" header={header}>
+      <MainLayout title={t('ui.title')} header={header}>
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <UserAvatar user={user} size={50} />
@@ -108,6 +115,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
           )}
         </div>
         <div className="mt-8 flex flex-col gap-4">
+          <LanguagePicker />
           <Link href="https://twitter.com/KM_Koushik_" target="_blank">
             <Button
               variant="ghost"
@@ -132,7 +140,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
                     </clipPath>
                   </defs>
                 </svg>
-                Follow us on X
+                {t('ui.follow_on_x')}
               </div>
               <ChevronRight className="h-6 w-6 text-gray-500" />
             </Button>
@@ -153,7 +161,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
                     />
                   </svg>
                 </div>
-                Star us on Github
+                {t('ui.star_on_github')}
               </div>
               <ChevronRight className="h-6 w-6 text-gray-500" />
             </Button>
@@ -165,7 +173,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             >
               <div className="flex items-center gap-4">
                 <HeartHandshakeIcon className="h-5 w-5 text-pink-600" />
-                Sponsor us
+                {t('ui.support_us')}
               </div>
               <ChevronRight className="h-6 w-6 text-gray-500" />
             </Button>
@@ -179,42 +187,42 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             >
               <div className="flex items-center gap-4">
                 <Star className="h-5 w-5 text-yellow-400" />
-                Write a review
+                {t('ui.write_review')}
               </div>
               <ChevronRight className="h-6 w-6 text-gray-500" />
             </Button>
           </Link>
           <AppDrawer
             trigger={downloadAppButton}
-            leftAction="Close"
-            title="Download App"
+            leftAction={t('ui.download_app_details.close')}
+            title={t('ui.download_app_details.title')}
             className="h-[70vh]"
             shouldCloseOnAction
           >
             <div className="flex flex-col gap-8">
-              <p>You can download SplitPro as a PWA to your home screen</p>
+              <p>{t('ui.download_app_details.download_as_pwa')}</p>
 
               <p>
-                If you are using iOS, checkout this{' '}
+                {t('ui.download_app_details.using_ios')}{' '}
                 <a
                   className="text-cyan-500 underline"
                   href="https://youtube.com/shorts/MQHeLOjr350"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  video
+                  {t('ui.download_app_details.video')}
                 </a>
               </p>
 
               <p>
-                If you are using Android, checkout this{' '}
+                {t('ui.download_app_details.using_android')}{' '}
                 <a
                   className="text-cyan-500 underline"
                   href="https://youtube.com/shorts/04n7oKGzgOs"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Video
+                  {t('ui.download_app_details.video')}
                 </a>
               </p>
             </div>
@@ -227,7 +235,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
           >
             <div className="flex items-center gap-4">
               <FileDown className="h-5 w-5 text-teal-500" />
-              Download splitpro data
+              {t('ui.download_splitpro_data')}
             </div>
             {downloading ? <LoadingSpinner /> : <ChevronRight className="h-6 w-6 text-gray-500" />}
           </Button>
@@ -238,7 +246,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             >
               <div className="flex items-center gap-4">
                 <DownloadCloud className="h-5 w-5 text-violet-500" />
-                Import from Splitwise
+                {t('ui.import_from_splitwise')}
               </div>
               <ChevronRight className="h-6 w-6 text-gray-500" />
             </Button>
@@ -251,7 +259,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
             className="text-orange-600 hover:text-orange-600/90"
             onClick={onSignOut}
           >
-            Logout
+            {t('ui.logout')}
           </Button>
         </div>
       </MainLayout>
@@ -260,5 +268,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
 };
 
 AccountPage.auth = true;
+
+export const getStaticProps = withI18nStaticProps(['common', 'account_page']);
 
 export default AccountPage;

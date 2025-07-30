@@ -1,5 +1,6 @@
 import { type GroupBalance, type User } from '@prisma/client';
 import React from 'react';
+import { useTranslation } from 'next-i18next';
 
 import { BigMath, toUIString } from '~/utils/numbers';
 
@@ -14,6 +15,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
   groupBalances = [],
   users = [],
 }) => {
+  const { t } = useTranslation('groups_details');
   const userMap = users.reduce(
     (acc, user) => {
       acc[user.id] = user;
@@ -52,7 +54,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
       <div className="flex flex-col gap-2">
         {0 < youLent.length ? (
           <div className="flex flex-wrap gap-1 text-emerald-500">
-            You lent
+            {t('ui.you_lent')}
             {youLent.map(([currency, amount], index, arr) => {
               return (
                 <React.Fragment key={currency}>
@@ -68,7 +70,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
 
         {0 < youOwe.length ? (
           <div className="text-orange-6000 flex flex-wrap gap-1 text-orange-600">
-            You owe
+            {t('ui.you_owe')}
             {youOwe.map(([currency, amount], index, arr) => {
               return (
                 <React.Fragment key={currency}>
@@ -83,7 +85,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
         ) : null}
 
         {0 === youLent.length && 0 === youOwe.length ? (
-          <div className="text-gray-500">You are all settled up</div>
+          <div className="text-gray-500">{t('ui.all_settled_up')}</div>
         ) : null}
 
         {Object.entries(friendBalances)
@@ -94,7 +96,9 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
               <div key={friendId} className="text-sm text-gray-500">
                 {Object.entries(balances).map(([currency, amount]) => (
                   <div key={currency}>
-                    {0 < amount ? `${friend?.name} owes you` : `You owe ${friend?.name}`}{' '}
+                    {0 < amount
+                      ? `${friend?.name} ${t('ui.owes_you')}`
+                      : `${t('ui.you_owe_friend')} ${friend?.name}`}{' '}
                     {toUIString(amount)} {currency}
                   </div>
                 ))}
@@ -104,8 +108,8 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
 
         {2 < Object.keys(friendBalances).length ? (
           <div className="text-sm text-gray-500">
-            +{Object.keys(friendBalances).length - 2} balance
-            {3 < Object.keys(friendBalances).length ? 's' : ''}...
+            +{Object.keys(friendBalances).length - 2}{' '}
+            {Object.keys(friendBalances).length === 3 ? t('ui.balance') : t('ui.balances')}...
           </div>
         ) : null}
       </div>

@@ -1,5 +1,6 @@
 import Router from 'next/router';
 import { z } from 'zod';
+import { useTranslation } from 'next-i18next';
 
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
@@ -9,6 +10,7 @@ import { GroupAvatar, UserAvatar } from '../ui/avatar';
 export const UserInput: React.FC<{
   isEditing?: boolean;
 }> = ({ isEditing }) => {
+  const { t } = useTranslation('expense_details');
   const {
     setNameOrEmail,
     removeLastParticipant,
@@ -60,6 +62,7 @@ export const UserInput: React.FC<{
         emailVerified: new Date(),
         image: null,
         currency: 'USD',
+        preferredLanguage: '',
       });
     }
   };
@@ -89,12 +92,12 @@ export const UserInput: React.FC<{
         type="email"
         placeholder={
           isEditing && !!group
-            ? 'Cannot change group while editing'
+            ? t('ui.add_expense_details.user_input.cannot_change_group')
             : group
-              ? 'Press delete to remove group'
+              ? t('ui.add_expense_details.user_input.remove_group')
               : 1 < participants.length
-                ? 'Add more friends'
-                : 'Search friends, groups or add email'
+                ? t('ui.add_expense_details.user_input.add_more_friends')
+                : t('ui.add_expense_details.user_input.search_friends')
         }
         value={nameOrEmail}
         onChange={(e) => setNameOrEmail(e.target.value)}

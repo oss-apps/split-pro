@@ -13,22 +13,26 @@ import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-
+import { useTranslation } from 'next-i18next';
 import { BackgroundGradient } from '~/components/ui/background-gradient';
 import { Button } from '~/components/ui/button';
 import { env } from '~/env';
 
+import { LanguageSelector } from '~/components/ui/language-selector';
+import { customServerSideTranslations } from '~/utils/i18n/server';
+
 export default function Home({ isCloud }: { isCloud: boolean }) {
+  const { t } = useTranslation('index');
+
   return (
     <>
       {isCloud && (
         <Head>
-          {process.env.NODE_ENV === 'production' && (
+          {'production' === process.env.NODE_ENV && (
             <>
-              <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+              <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js" />
               <noscript>
-                {/* oxlint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src="https://queue.simpleanalyticscdn.com/noscript.gif"
                   alt=""
                   referrerPolicy="no-referrer-when-downgrade"
@@ -41,36 +45,37 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
       <main className="min-h-screen">
         <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4 py-4 lg:px-0 lg:py-5">
           <div className="flex items-center gap-2">
-            <p className="text-2xl font-medium">SplitPro</p>
+            <p className="text-2xl font-medium">{t('nav.app_name')}</p>
           </div>
           <div className="flex items-center gap-8">
-            <Link href="/terms">Terms</Link>
-            <Link href="/privacy">Privacy</Link>
+            <LanguageSelector />
+            <Link href="/terms">{t('nav.terms')}</Link>
+            <Link href="/privacy">{t('nav.privacy')}</Link>
           </div>
         </nav>
         <div className="mx-auto mt-20 flex w-full items-start justify-center gap-16 px-4 lg:max-w-5xl lg:px-0">
           <div>
             <div className="mb-32 text-center lg:mb-0 lg:h-[70vh] lg:text-left">
               <h1 className="max-w-3xl text-center text-2xl leading-loose font-semibold text-gray-100 lg:text-left lg:text-5xl lg:leading-16">
-                Split Expenses with your friends for{' '}
-                <span className="text-primary font-bold">free</span>.
+                {t('hero.title_part1')}{' '}
+                <span className="text-primary font-bold">{t('hero.title_highlight')}</span>.
               </h1>
               <h2 className="mt-5 text-gray-300 lg:mt-8 lg:text-lg">
-                An{' '}
+                {t('hero.subtitle_part1')}{' '}
                 <a
                   className="text-primary hover:underline"
                   href="https://github.com/oss-apps/split-pro"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  open source
+                  {t('hero.subtitle_link')}
                 </a>{' '}
-                alternative to SplitWise
+                {t('hero.subtitle_part2')}
               </h2>
               <div className="mt-10 flex flex-col gap-6 lg:flex-row">
                 <Link href="/auth/signin" className="mx-auto lg:mx-0">
                   <Button className="flex w-[200px] items-center gap-2 rounded-full">
-                    Add Expense <ArrowRight size={15} />{' '}
+                    {t('hero.add_expense_button')} <ArrowRight size={15} />{' '}
                   </Button>
                 </Link>
                 <Link
@@ -90,7 +95,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                         fill="#fff"
                       />
                     </svg>{' '}
-                    Star us on github
+                    {t('hero.star_github_button')}
                   </Button>
                 </Link>
               </div>
@@ -100,7 +105,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
               <MobileScreenShot />
             </div>
             <div className="flex flex-col gap-20 text-center lg:text-left">
-              <p className="text-2xl">Features</p>
+              <p className="text-2xl">{t('features.title')}</p>
 
               <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
                 <div className="flex flex-col gap-1 lg:w-1/2">
@@ -109,8 +114,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                     <p className="text-lg font-medium">Groups and Friends</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Can create multiple groups or add balance directly. Everything will be
-                    consolidated
+                    {t('features.groups_and_friends.description')}
                   </p>
                 </div>
 
@@ -120,7 +124,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                     <p className="text-lg font-medium">Multiple currencies</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Need to add expense with different currency for same user? No problem!
+                    {t('features.multiple_currencies.description')}
                   </p>
                 </div>
               </div>
@@ -132,7 +136,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                     <p className="text-lg font-medium">Unequal Split</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Advanced split options. By shares, percentage or exact amounts.
+                    {t('features.unequal_split.description')}
                   </p>
                 </div>
 
@@ -142,8 +146,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                     <p className="text-lg font-medium">PWA support</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Love mobile apps? We got you covered. Install it as a PWA and you won&apos;t
-                    even notice!
+                    {t('features.pwa_support.description')}
                   </p>
                 </div>
               </div>
@@ -155,7 +158,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                     <p className="text-lg font-medium">Upload Receipts</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Upload receipts along with the expense
+                    {t('features.upload_receipts.description')}
                   </p>
                 </div>
 
@@ -165,7 +168,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                     <p className="text-lg font-medium">Open source</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Which makes it hard to become evil. Easy to self host
+                    {t('features.open_source.description')}
                   </p>
                 </div>
               </div>
@@ -176,8 +179,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                     <p className="text-lg font-medium">Import from splitwise</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Don&apos;t have to manually migrate balances. You can import users and groups
-                    from splitwise
+                    {t('features.import_splitwise.description')}
                   </p>
                 </div>
                 <div className="flex flex-col gap-1 lg:w-1/2">
@@ -186,8 +188,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                     <p className="text-lg font-medium">Push notification</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Never miss important notifications. Get notified when someone adds an expense or
-                    settles up
+                    {t('features.push_notifications.description')}
                   </p>
                 </div>
               </div>
@@ -208,14 +209,14 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 />
               </a>
               <div>
-                Built by{' '}
+                {t('footer.built_by')}{' '}
                 <a
                   className="text-primary"
                   href="https://koushik.dev"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  KM Koushik
+                  {t('footer.author_name')}
                 </a>
                 {/* <p className="text-gray-400">
                   A product of <a className="underline underline-offset-2">ossapps.dev</a>
@@ -228,7 +229,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Twitter
+                  {t('footer.twitter')}
                 </a>
                 <a
                   className="text-primary"
@@ -236,7 +237,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Github
+                  {t('footer.github')}
                 </a>
               </div>
             </div>
@@ -250,22 +251,21 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
   );
 }
 
-const MobileScreenShot = () => {
-  return (
-    <BackgroundGradient>
-      <Image
-        src="/hero.webp"
-        className="bg-background rounded-[22px] border"
-        width={300}
-        height={550}
-        alt="hero"
-      />
-    </BackgroundGradient>
-  );
-};
+const MobileScreenShot = () => (
+  <BackgroundGradient>
+    <Image
+      src="/hero.webp"
+      className="bg-background rounded-[22px] border"
+      width={300}
+      height={550}
+      alt="hero"
+    />
+  </BackgroundGradient>
+);
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  return {
-    props: { isCloud: env.NEXTAUTH_URL.includes('splitpro.app') },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async (context) => ({
+  props: {
+    isCloud: env.NEXTAUTH_URL.includes('splitpro.app'),
+    ...(await customServerSideTranslations(context.locale, ['index', 'common'])),
+  },
+});

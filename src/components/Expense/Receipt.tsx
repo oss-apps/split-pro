@@ -3,8 +3,8 @@ import { AppDrawer } from '../ui/drawer';
 import { useMemo } from 'react';
 
 export const Receipt = ({ fileKey, url }: { fileKey: string; url: string }) => {
-  const receiptThumbnail = useMemo(() => {
-    return (
+  const receiptThumbnail = useMemo(
+    () => (
       <Image
         src={`${url}/${fileKey}`}
         alt="Expense receipt"
@@ -14,8 +14,9 @@ export const Receipt = ({ fileKey, url }: { fileKey: string; url: string }) => {
         onLoad={setDataLoaded}
         className="h-14 w-14 rounded-md object-cover object-center data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
       />
-    );
-  }, [fileKey, url]);
+    ),
+    [fileKey, url],
+  );
 
   return (
     <AppDrawer

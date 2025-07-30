@@ -9,6 +9,7 @@ import { clsx } from 'clsx';
 import { type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import React from 'react';
 import { LoadingSpinner } from '../ui/spinner';
 
@@ -28,6 +29,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   title,
   loading,
 }) => {
+  const { t } = useTranslation('common');
   const router = useRouter();
   const currentPath = router.pathname;
 
@@ -42,34 +44,34 @@ const MainLayout: React.FC<MainLayoutProps> = ({
       >
         <nav className="item-center -ml-[170px] hidden w-[170px] px-4 py-4 lg:flex lg:flex-col lg:gap-2">
           <Link href="/balances" className="mb-8 flex items-center gap-2">
-            <span className="text-xl font-medium">SplitPro</span>
+            <span className="text-xl font-medium">{t?.('navigation.app_name') ?? 'SplitPro'}</span>
           </Link>
           <NavItemDesktop
-            title="Balances"
+            title={t?.('navigation.balances') ?? 'Balances'}
             Icon={SolidScaleIcon}
             link="/balances"
             currentPath={currentPath}
           />
           <NavItemDesktop
-            title="Groups"
+            title={t?.('navigation.groups') ?? 'Groups'}
             Icon={SolidUserGroupIcon}
             link="/groups"
             currentPath={currentPath}
           />
           <NavItemDesktop
-            title="Add Expense"
+            title={t?.('navigation.add_expense') ?? 'Add Expense'}
             Icon={SolidPlusCircleIcon}
             link="/add"
             currentPath={currentPath}
           />
           <NavItemDesktop
-            title="Activity"
+            title={t?.('navigation.activity') ?? 'Activity'}
             Icon={SolidListBulletIcon}
             link="/activity"
             currentPath={currentPath}
           />
           <NavItemDesktop
-            title="Account"
+            title={t?.('navigation.account') ?? 'Account'}
             Icon={SolidUserCircleIcon}
             link="/account"
             currentPath={currentPath}
@@ -97,26 +99,31 @@ const MainLayout: React.FC<MainLayoutProps> = ({
 
       <nav className="bg-opacity-80 fixed bottom-0 flex w-full justify-between border-t px-2 pb-4 shadow-xs backdrop-blur-lg lg:hidden">
         <NavItem
-          title="Balances"
+          title={t?.('navigation.balances') ?? 'Balances'}
           Icon={SolidScaleIcon}
           link="/balances"
           currentPath={currentPath}
         />
         <NavItem
-          title="Groups"
+          title={t?.('navigation.groups') ?? 'Groups'}
           Icon={SolidUserGroupIcon}
           link="/groups"
           currentPath={currentPath}
         />
-        <NavItem title="Add" Icon={SolidPlusCircleIcon} link="/add" currentPath={currentPath} />
         <NavItem
-          title="Activity"
+          title={t?.('navigation.add') ?? 'Add'}
+          Icon={SolidPlusCircleIcon}
+          link="/add"
+          currentPath={currentPath}
+        />
+        <NavItem
+          title={t?.('navigation.activity') ?? 'Activity'}
           Icon={SolidListBulletIcon}
           link="/activity"
           currentPath={currentPath}
         />
         <NavItem
-          title="Account"
+          title={t?.('navigation.account') ?? 'Account'}
           Icon={SolidUserCircleIcon}
           link="/account"
           currentPath={currentPath}

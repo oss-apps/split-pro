@@ -121,9 +121,7 @@ We are grateful for the support of our sponsors.
 
 ### Our Sponsors
 
-<a href="https://hekuta.net/en" target="_blank">
-  <img src="https://avatars.githubusercontent.com/u/70084358?v=4" alt="hekuta" style="width:60px;height:60px;">
-</a>
+<!-- sponsors --><!-- sponsors -->
 
 ## Star History
 

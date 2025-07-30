@@ -121,7 +121,7 @@ We are grateful for the support of our sponsors.
 
 ### Our Sponsors
 
-<!-- sponsors --><!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/igorrrpawlowski"><img src="https:&#x2F;&#x2F;github.com&#x2F;igorrrpawlowski.png" width="60px" alt="User avatar: " /></a><a href="https://github.com/probeonstimpack"><img src="https:&#x2F;&#x2F;github.com&#x2F;probeonstimpack.png" width="60px" alt="User avatar: Marcel Szmeterowicz" /></a><!-- sponsors -->
 
 ## Star History
 

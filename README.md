@@ -6,13 +6,6 @@
   <h1 align="center">SplitPro</h1>
   <h2 align="center">An open source alternative to Splitwise</h2>
 
-<p align="center">
-    <a href="https://splitpro.app"><strong>To our App »</strong></a>
-    <br />
-    <br />
-  </p>
-</p>
-
 ## About
 
 SplitPro aims to provide an open-source way to share expenses with your friends.
@@ -30,8 +23,20 @@ It currently has most of the important features.
 - Push notification
 - Download your data
 - Import from splitwise
+- **NEW** simplify group debts
+- **NEW** community translations, feel free to add your language!
 
 **More features coming every day**
+
+## Versions
+
+Split Pro is aimed for self hosting mostly. To get the most recent features you can build an image from source. Stabilized changes are released as Docker images, while we also have a not so often updated cloud instance for you to try:
+
+<p align="center">
+    <a href="https://splitpro.app"><strong>To our App »</strong></a>
+    <br />
+  </p>
+</p>
 
 ---
 

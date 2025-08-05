@@ -16,7 +16,7 @@ import {
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { Fragment, useCallback, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { UpdateName } from '~/components/ui/update-details';
 import { BalanceList } from '~/components/Expense/BalanceList';
@@ -40,6 +40,7 @@ import { toUIDate } from '~/utils/strings';
 import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { type GetServerSideProps } from 'next';
+import { db } from '~/server/db';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
@@ -462,13 +463,30 @@ BalancePage.auth = true;
 
 export default BalancePage;
 
-export const getServerSideProps: GetServerSideProps = async (context) => ({
-  props: {
-    ...(await customServerSideTranslations(context.locale, [
-      'common',
-      'groups_details',
-      'expense_details',
-    ])),
-    enableSendingInvites: env.ENABLE_SENDING_INVITES,
-  },
-});
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const group = await db.group.findFirst({
+    where: {
+      id: Number(context.query.groupId),
+    },
+  });
+
+  if (!group) {
+    return {
+      redirect: {
+        destination: '/groups',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      ...(await customServerSideTranslations(context.locale, [
+        'common',
+        'groups_details',
+        'expense_details',
+      ])),
+      enableSendingInvites: env.ENABLE_SENDING_INVITES,
+    },
+  };
+};

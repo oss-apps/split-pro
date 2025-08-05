@@ -443,6 +443,7 @@ const BalancePage: NextPageWithUser<{
                   expenses={expensesQuery.data}
                   contactId={groupId}
                   isLoading={expensesQuery.isPending}
+                  isGroup
                 />
               </TabsContent>
               <TabsContent value="balances">

@@ -15,14 +15,14 @@ export const ExpenseList: React.FC<{
     | inferRouterOutputs<ExpenseRouter>['getGroupExpenses']
     | inferRouterOutputs<ExpenseRouter>['getExpensesWithFriend'];
   contactId: number;
+  isGroup?: boolean;
   isLoading?: boolean;
-}> = ({ userId, expenses = [], contactId, isLoading }) => {
+}> = ({ userId, isGroup = false, expenses = [], contactId, isLoading }) => {
   const { displayName, t } = useTranslationWithUtils(['expense_details']);
 
   return (
     <>
       {expenses.map((e) => {
-        const isGroup = !!e.groupId;
         const youPaid = e.paidBy === userId;
         const yourExpense = e.expenseParticipants.find(
           (partecipant) => partecipant.userId === userId,

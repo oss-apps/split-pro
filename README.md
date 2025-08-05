@@ -126,7 +126,11 @@ We are grateful for the support of our sponsors.
 
 ### Our Sponsors
 
-<!-- sponsors --><a href="https://github.com/igorrrpawlowski"><img src="https:&#x2F;&#x2F;github.com&#x2F;igorrrpawlowski.png" width="60px" alt="User avatar: " /></a><a href="https://github.com/probeonstimpack"><img src="https:&#x2F;&#x2F;github.com&#x2F;probeonstimpack.png" width="60px" alt="User avatar: Marcel Szmeterowicz" /></a><!-- sponsors -->
+<a href="https://hekuta.net/en" target="_blank">
+  <img src="https://avatars.githubusercontent.com/u/70084358?v=4" alt="hekuta" style="width:60px;height:60px;">
+</a>
+<a href="https://github.com/igorrrpawlowski"><img src="https:&#x2F;&#x2F;github.com&#x2F;igorrrpawlowski.png" width="60px" alt="User avatar: igorrrpawlowski" /></a>
+<a href="https://github.com/probeonstimpack"><img src="https:&#x2F;&#x2F;github.com&#x2F;probeonstimpack.png" width="60px" alt="User avatar: Marcel Szmeterowicz" /></a>
 
 ## Star History
 

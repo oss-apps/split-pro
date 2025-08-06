@@ -1,0 +1,16 @@
+{
+  "ui": {
+    "title": "Aktivität",
+    "you_paid": "Du hast bezahlt",
+    "you_received": "Du hast erhalten",
+    "you_lent": "Du hast verliehen",
+    "you_owe": "Du schuldest",
+    "no_activity": "Noch keine Aktivitäten",
+    "not_involved": "Nicht beteiligt",
+    "you": "Du",
+    "you_deleted_expense": "hast die Ausgabe gelöscht",
+    "you_paid_for": "hast bezahlt für",
+    "user_deleted_expense": "hat die Ausgabe gelöscht",
+    "user_paid_for": "hat bezahlt für"
+  }
+}

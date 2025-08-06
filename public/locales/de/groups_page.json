@@ -1,0 +1,18 @@
+{
+  "ui": {
+    "title": "Gruppen",
+    "group_create_btn": "Gruppe erstellen",
+    "settled_up": "Ausgeglichen",
+    "you_lent": "du hast verliehen",
+    "you_owe": "du schuldest",
+    "group_create": {
+      "title": "Gruppe erstellen",
+      "placeholder": "Gruppenname",
+      "cancel": "Abbrechen",
+      "submit": "Bestätigen"
+    }
+  },
+  "errors": {
+    "required": "Name ist erforderlich"
+  }
+}

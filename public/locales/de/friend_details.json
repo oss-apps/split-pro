@@ -1,0 +1,38 @@
+{
+  "ui": {
+    "expense_page": {
+      "title": "Ausstehende Salden",
+      "expense_details": "Ausgabendetails"
+    },
+    "you_owe": "Du schuldest",
+    "you_lent": "Du hast verliehen",
+    "add_expense": "Ausgabe hinzufügen",
+    "settle_up": "Ausgleichen",
+    "settle_up_name": "Ausgleichen",
+    "settle_up_details": {
+      "select_currency": "Währung auswählen",
+      "youre_paying": "Du zahlst",
+      "is_paying_you": "zahlt dir",
+      "pays": "zahlt",
+      "settlement": "Abrechnung",
+      "save": "Speichern",
+      "back": "Zurück",
+      "errors": {
+        "saving_expense": "Fehler beim Speichern der Ausgabe"
+      }
+    },
+    "delete_details": {
+      "are_you_sure": "Bist du dir absolut sicher?",
+      "cant_remove": "Freund mit ausstehenden Salden kann nicht entfernt werden. Bitte zuerst ausgleichen.",
+      "want_to_continue": "Willst du wirklich fortfahren?",
+      "cancel": "Abbrechen",
+      "delete": "Löschen",
+      "errors": {
+        "failed_to_delete": "Fehler beim Löschen des Nutzers"
+      }
+    },
+    "export": "Exportieren",
+    "you_paid": "Du hast bezahlt",
+    "user_paid": "hat bezahlt"
+  }
+}

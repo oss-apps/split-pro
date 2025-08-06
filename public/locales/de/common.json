@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "title": "SplitPro: Teile Ausgaben mit deinen Freunden. Kostenlos.",
+    "description": "Teile Ausgaben mit deinen Freunden. Kostenlos.",
+    "application_name": "SplitPro"
+  },
+  "navigation": {
+    "app_name": "SplitPro",
+    "balances": "Salden",
+    "groups": "Gruppen",
+    "add_expense": "Ausgabe hinzufügen",
+    "add": "Hinzufügen",
+    "activity": "Aktivität",
+    "account": "Konto"
+  },
+  "ui": {
+    "you": "Du",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "edit_name": {
+      "title": "Namen bearbeiten",
+      "placeholder": "Name eingeben",
+      "close": "Schließen",
+      "save": "Speichern",
+      "errors": {
+        "name_required": "Name ist erforderlich"
+      }
+    }
+  }
+}

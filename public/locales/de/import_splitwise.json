@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "title": "Importieren von Splitwise"
+  },
+  "ui": {
+    "title": "Importieren von Splitwise",
+    "cancel": "Abbrechen",
+    "import": "Importieren",
+    "choose_file": "Datei auswählen",
+    "no_file_chosen": "Keine Datei ausgewählt",
+    "note": "Hinweis: Derzeit werden nur Freunde und Gruppen importiert. Transaktionen werden nicht importiert. Wir arbeiten daran.",
+    "friends": "Freunde",
+    "groups": "Gruppen",
+    "members": "Mitglieder",
+    "follow_to_export_splitwise_data": "Folge diesem Link, um Splitwise-Daten zu exportieren",
+    "export_splitwise_data_button": "Splitwise-Daten exportieren",
+    "messages": {
+      "import_successful": "Import erfolgreich"
+    },
+    "errors": {
+      "import_failed": "Fehler beim Import der Datei"
+    }
+  }
+}

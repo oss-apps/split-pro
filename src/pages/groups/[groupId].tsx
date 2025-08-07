@@ -16,7 +16,7 @@ import {
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import { UpdateName } from '~/components/ui/update-details';
 import { BalanceList } from '~/components/Expense/BalanceList';

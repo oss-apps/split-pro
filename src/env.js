@@ -15,7 +15,7 @@ export const env = createEnv({
         'You forgot to change the default URL',
       ),
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-    NEXTAUTH_SECRET: process.env.NODE_ENV === 'production' ? z.string() : z.string().optional(),
+    NEXTAUTH_SECRET: 'production' === process.env.NODE_ENV ? z.string() : z.string().optional(),
     NEXTAUTH_URL: z.preprocess(
       // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
       // Since NextAuth.js automatically uses the VERCEL_URL if present.
@@ -23,7 +23,13 @@ export const env = createEnv({
       // VERCEL_URL doesn't include `https` so it cant be validated as a URL
       process.env.VERCEL ? z.string() : z.string().url(),
     ),
+    NEXTAUTH_URL_INTERNAL: z.preprocess(
+      (str) => process.env.VERCEL_URL ?? str,
+      process.env.VERCEL ? z.string() : z.string().url(),
+    ),
     ENABLE_SENDING_INVITES: z.boolean(),
+    DISABLE_EMAIL_SIGNUP: z.boolean(),
+    INVITE_ONLY: z.boolean(),
     FROM_EMAIL: z.string().optional(),
     EMAIL_SERVER_HOST: z.string().optional(),
     EMAIL_SERVER_PORT: z.string().optional(),
@@ -35,6 +41,9 @@ export const env = createEnv({
     GOCARDLESS_SECRET_KEY: z.string().optional(),
     GOOGLE_CLIENT_ID: z.string().optional(),
     GOOGLE_CLIENT_SECRET: z.string().optional(),
+    AUTHENTIK_ID: z.string().optional(),
+    AUTHENTIK_SECRET: z.string().optional(),
+    AUTHENTIK_ISSUER: z.string().optional(),
     R2_ACCESS_KEY: z.string().optional(),
     R2_SECRET_KEY: z.string().optional(),
     R2_BUCKET: z.string().optional(),
@@ -45,6 +54,7 @@ export const env = createEnv({
     WEB_PUSH_PUBLIC_KEY: z.string().optional(),
     FEEDBACK_EMAIL: z.string().optional(),
     DISCORD_WEBHOOK_URL: z.string().optional(),
+    DEFAULT_HOMEPAGE: z.string().default('/home'),
   },
 
   /**
@@ -65,7 +75,10 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-    ENABLE_SENDING_INVITES: process.env.ENABLE_SENDING_INVITES === 'true',
+    NEXTAUTH_URL_INTERNAL: process.env.NEXTAUTH_URL_INTERNAL ?? process.env.NEXTAUTH_URL,
+    ENABLE_SENDING_INVITES: 'true' === process.env.ENABLE_SENDING_INVITES,
+    DISABLE_EMAIL_SIGNUP: 'true' === process.env.DISABLE_EMAIL_SIGNUP,
+    INVITE_ONLY: 'true' === process.env.INVITE_ONLY,
     FROM_EMAIL: process.env.FROM_EMAIL,
     EMAIL_SERVER_HOST: process.env.EMAIL_SERVER_HOST,
     EMAIL_SERVER_PORT: process.env.EMAIL_SERVER_PORT,
@@ -77,6 +90,9 @@ export const env = createEnv({
     GOCARDLESS_SECRET_KEY: process.env.GOCARDLESS_SECRET_KEY,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    AUTHENTIK_ID: process.env.AUTHENTIK_ID,
+    AUTHENTIK_SECRET: process.env.AUTHENTIK_SECRET,
+    AUTHENTIK_ISSUER: process.env.AUTHENTIK_ISSUER,
     R2_ACCESS_KEY: process.env.R2_ACCESS_KEY,
     R2_SECRET_KEY: process.env.R2_SECRET_KEY,
     R2_BUCKET: process.env.R2_BUCKET,
@@ -87,6 +103,7 @@ export const env = createEnv({
     WEB_PUSH_PUBLIC_KEY: process.env.WEB_PUSH_PUBLIC_KEY,
     FEEDBACK_EMAIL: process.env.FEEDBACK_EMAIL,
     DISCORD_WEBHOOK_URL: process.env.DISCORD_WEBHOOK_URL,
+    DEFAULT_HOMEPAGE: process.env.DEFAULT_HOMEPAGE,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

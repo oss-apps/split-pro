@@ -1,110 +1,28 @@
-import { useRouter } from 'next/router';
-import React from 'react';
-import { calculateParticipantSplit, type Participant, useAddExpenseStore } from '~/store/addStore';
-import { api } from '~/utils/api';
-import { UserInput } from './UserInput';
-import { SelectUserOrGroup } from './SelectUserOrGroup';
-import { AppDrawer, DrawerClose } from '../ui/drawer';
-import { Button } from '../ui/button';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../ui/command';
-import { Banknote, CalendarIcon, Check, HeartHandshakeIcon } from 'lucide-react';
-import { Input } from '../ui/input';
-import { SplitTypeSection } from './SplitTypeSection';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { cn } from '~/lib/utils';
-import { format } from 'date-fns';
-import { Calendar } from '../ui/calendar';
-import UploadFile from './UploadFile';
-import { CategoryIcons } from '../ui/categoryIcons';
+import { CalendarIcon, HeartHandshakeIcon } from 'lucide-react';
 import Link from 'next/link';
-import { CURRENCIES } from '~/lib/currency';
-import { GoCardlessTransactions } from './GoCardlessTransactions';
+import { useRouter } from 'next/router';
+import React, { useCallback } from 'react';
+import { useTranslation } from 'next-i18next';
 
-const categories = {
-  entertainment: {
-    name: 'Entertainment',
-    items: [
-      {
-        games: 'Games',
-        movies: 'Movies',
-        music: 'Music',
-        sports: 'Sports',
-        other: 'Entertainment',
-      },
-    ],
-  },
-  food: {
-    name: 'Food & Drinks',
-    items: [
-      {
-        diningOut: 'Dining Out',
-        groceries: 'Groceries',
-        liquor: 'Liquor',
-        other: 'Food & Drinks',
-      },
-    ],
-  },
-  home: {
-    name: 'Home',
-    items: [
-      {
-        electronics: 'Electronics',
-        furniture: 'Furniture',
-        supplies: 'Supplies',
-        maintenance: 'Maintenance',
-        mortgage: 'Mortgage',
-        pets: 'Pets',
-        rent: 'Rent',
-        services: 'Services',
-        other: 'Home',
-      },
-    ],
-  },
-  life: {
-    name: 'Life',
-    items: [
-      {
-        childcare: 'Childcare',
-        clothing: 'Clothing',
-        education: 'Education',
-        gifts: 'Gifts',
-        medical: 'Medical',
-        taxes: 'Taxes',
-        other: 'Life',
-      },
-    ],
-  },
-  travel: {
-    name: 'Travel',
-    items: [
-      {
-        bus: 'Bus',
-        train: 'Train',
-        car: 'Car',
-        fuel: 'Fuel',
-        parking: 'Parking',
-        plane: 'Plane',
-        taxi: 'Taxi',
-        other: 'Travel',
-      },
-    ],
-  },
-  utilities: {
-    name: 'Utilities',
-    items: [
-      {
-        cleaning: 'Cleaning',
-        electricity: 'Electricity',
-        gas: 'Gas',
-        internet: 'Internet',
-        trash: 'Trash',
-        phone: 'Phone',
-        water: 'Water',
-        other: 'Utilities',
-      },
-    ],
-  },
-};
+import { type CurrencyCode } from '~/lib/currency';
+import { cn } from '~/lib/utils';
+import { calculateParticipantSplit, Participant, useAddExpenseStore } from '~/store/addStore';
+import { api } from '~/utils/api';
+import { toSafeBigInt } from '~/utils/numbers';
+
+import { toUIDate } from '~/utils/strings';
+import { Button } from '../ui/button';
+import { Calendar } from '../ui/calendar';
+import { Input } from '../ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { CategoryPicker } from './CategoryPicker';
+import { CurrencyPicker } from './CurrencyPicker';
+import { SelectUserOrGroup } from './SelectUserOrGroup';
+import { SplitTypeSection } from './SplitTypeSection';
+import { UploadFile } from './UploadFile';
+import { UserInput } from './UserInput';
+import { toast } from 'sonner';
+import { GoCardlessTransactions } from './GoCardlessTransactions';
 
 export type TransactionAddInputModel = {
   date: Date;
@@ -112,19 +30,15 @@ export type TransactionAddInputModel = {
   amount: string;
   currency: string;
   transactionId?: string;
+  expenseId?: string;
 };
 
-export const AddExpensePage: React.FC<{
+export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
-}> = ({ isStorageConfigured, enableSendingInvites }) => {
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
-  const [open, setOpen] = React.useState(false);
-  const [amtStr, setAmountStr] = React.useState('');
-  const [transactionId, setTransactionId] = React.useState('');
-  const [multipleArray, setMultipleArray] = React.useState<TransactionAddInputModel[]>([]);
-
-  const [addMultipleExpensesLoading, setAddMultipleExpensesLoading] = React.useState(false);
+  expenseId?: string;
+}> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
+  const { t } = useTranslation('expense_details');
 
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
@@ -134,69 +48,67 @@ export const AddExpensePage: React.FC<{
   const category = useAddExpenseStore((s) => s.category);
   const description = useAddExpenseStore((s) => s.description);
   const isFileUploading = useAddExpenseStore((s) => s.isFileUploading);
+  const amtStr = useAddExpenseStore((s) => s.amountStr);
+  const expenseDate = useAddExpenseStore((s) => s.expenseDate);
+  const isExpenseSettled = useAddExpenseStore((s) => s.canSplitScreenClosed);
+  const paidBy = useAddExpenseStore((s) => s.paidBy);
+  const splitType = useAddExpenseStore((s) => s.splitType);
+  const fileKey = useAddExpenseStore((s) => s.fileKey);
+  const transactionId = useAddExpenseStore((s) => s.transactionId);
+  const multipleTransactions = useAddExpenseStore((s) => s.multipleTransactions);
+  const isTransactionLoading = useAddExpenseStore((s) => s.isTransactionLoading);
 
-  const { setCurrency, setCategory, setDescription, setAmount, resetState } = useAddExpenseStore(
-    (s) => s.actions,
-  );
+  const {
+    setCurrency,
+    setCategory,
+    setDescription,
+    setAmount,
+    setAmountStr,
+    resetState,
+    setSplitScreenOpen,
+    setExpenseDate,
+    setTransactionId,
+    setMultipleTransactions,
+    setIsTransactionLoading,
+  } = useAddExpenseStore((s) => s.actions);
 
-  const addExpenseMutation = api.user.addExpense.useMutation();
-  const addGroupExpenseMutation = api.group.addExpense.useMutation();
+  const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
   const updateProfile = api.user.updateUserDetail.useMutation();
+
+  const onCurrencyPick = useCallback(
+    (currency: CurrencyCode) => {
+      updateProfile.mutate({ currency });
+
+      setCurrency(currency);
+    },
+    [setCurrency, updateProfile],
+  );
 
   const router = useRouter();
 
-  function onUpdateAmount(amt: string) {
-    const _amt = amt.replace(',', '.');
-    setAmountStr(_amt);
-    setAmount(Number(_amt) || 0);
-  }
+  const onUpdateAmount = useCallback(
+    (amt: string) => {
+      const _amt = amt.replace(',', '.');
+      setAmountStr(_amt);
+      setAmount(toSafeBigInt(_amt));
+    },
+    [setAmount, setAmountStr],
+  );
 
-  const returnMutateObject = ({
-    name,
-    currency,
-    amount,
-    paidBy,
-    date,
-    transactionId,
-    participants,
-  }: {
-    name: string;
-    currency: string;
-    amount: number;
-    paidBy: number;
-    date?: Date;
-    transactionId?: string;
-    participants: Participant[];
-  }) => {
-    const { splitType, fileKey } = useAddExpenseStore.getState();
+  const addMultipleExpenses = useCallback(async () => {
+    setIsTransactionLoading(true);
 
-    return {
-      name,
-      currency,
-      amount,
-      splitType,
-      participants: participants.map((p) => ({
-        userId: p.id,
-        amount: p.amount ?? 0,
-      })),
-      paidBy,
-      category,
-      fileKey,
-      expenseDate: date,
-      transactionId: transactionId,
-    };
-  };
-
-  async function addMultipleExpenses() {
-    setAddMultipleExpensesLoading(true);
-
-    const { group, paidBy, splitType } = useAddExpenseStore.getState();
     if (!paidBy) {
       return;
     }
 
+    if (!isExpenseSettled) {
+      setSplitScreenOpen(true);
+      return;
+    }
+
     const seen = new Set();
-    const deduplicated = multipleArray.filter((item) => {
+    const deduplicated = multipleTransactions.filter((item) => {
       if (seen.has(item.transactionId)) {
         return false;
       }
@@ -207,373 +119,294 @@ export const AddExpensePage: React.FC<{
     for (const tempItem of deduplicated) {
       if (tempItem) {
         const _amt = Number(tempItem.amount.replace(',', '.')) ?? 0;
+        const _amtBigInt = BigInt(Math.round(_amt));
 
         const { participants: tempParticipants } = calculateParticipantSplit(
-          _amt,
+          _amtBigInt,
           participants,
           splitType,
           paidBy,
         );
 
-        if (group) {
-          await addGroupExpenseMutation.mutateAsync({
-            ...returnMutateObject({
-              name: tempItem.description,
-              currency: tempItem.currency,
-              amount: _amt,
-              paidBy: paidBy.id,
-              date: tempItem.date,
-              transactionId: tempItem.transactionId,
-              participants: tempParticipants,
-            }),
-            groupId: group.id,
-          });
-        } else {
-          await addExpenseMutation.mutateAsync(
-            returnMutateObject({
-              name: tempItem.description,
-              currency: tempItem.currency,
-              amount: _amt,
-              paidBy: paidBy.id,
-              date: tempItem.date,
-              transactionId: tempItem.transactionId,
-              participants: tempParticipants,
-            }),
-          );
-        }
+        await addExpenseMutation.mutateAsync({
+          name: tempItem.description,
+          currency: tempItem.currency,
+          amount: _amtBigInt,
+          groupId: group?.id ?? null,
+          splitType,
+          participants: tempParticipants.map((p) => ({
+            userId: p.id,
+            amount: p.amount ?? 0n,
+          })),
+          paidBy: paidBy.id,
+          category,
+          fileKey,
+          expenseDate: tempItem.date,
+          expenseId: tempItem.expenseId,
+          transactionId: tempItem.transactionId,
+        });
       }
     }
 
-    setMultipleArray([]);
-    setAddMultipleExpensesLoading(false);
+    setMultipleTransactions([]);
+    setIsTransactionLoading(false);
     router
-      .push(`/groups/${group?.id}`)
+      .push(group?.id ? `/groups/${group?.id}` : '/balances')
       .then(() => resetState())
       .catch(console.error);
-  }
+  }, [
+    setSplitScreenOpen,
+    router,
+    resetState,
+    addExpenseMutation,
+    group,
+    paidBy,
+    splitType,
+    fileKey,
+    isExpenseSettled,
+    multipleTransactions,
+  ]);
 
-  function addExpense() {
+  const addExpense = useCallback(async () => {
     const { group, paidBy } = useAddExpenseStore.getState();
     if (!paidBy) {
       return;
     }
 
-    if (group) {
-      addGroupExpenseMutation.mutate(
+    if (!isExpenseSettled) {
+      setSplitScreenOpen(true);
+      return;
+    }
+
+    try {
+      await addExpenseMutation.mutateAsync(
         {
-          ...returnMutateObject({
-            name: description,
-            currency,
-            amount,
-            paidBy: paidBy.id,
-            date: date,
-            transactionId: transactionId,
-            participants: participants,
-          }),
-          groupId: group.id,
+          name: description,
+          currency,
+          amount,
+          groupId: group?.id ?? null,
+          splitType,
+          participants: participants.map((p) => ({
+            userId: p.id,
+            amount: p.amount ?? 0n,
+          })),
+          paidBy: paidBy.id,
+          category,
+          fileKey,
+          expenseDate,
+          expenseId,
+          transactionId,
         },
         {
           onSuccess: (d) => {
             if (d) {
+              const id = d?.id ?? expenseId;
               router
-                .push(`/groups/${group.id}`)
+                .push(group?.id ? `/groups/${group.id}/expenses/${id}` : `/expenses/${id}`)
                 .then(() => resetState())
                 .catch(console.error);
             }
           },
         },
       );
-    } else {
-      addExpenseMutation.mutate(
-        returnMutateObject({
-          name: description,
-          currency,
-          amount,
-          paidBy: paidBy.id,
-          date: date,
-          transactionId: transactionId,
-          participants: participants,
-        }),
-        {
-          onSuccess: (d) => {
-            resetState();
-            if (participants[1] && d) {
-              router
-                .push(`/balances/${participants[1]?.id}`)
-                .then(() => resetState())
-                .catch(console.error);
-            }
-          },
-        },
-      );
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error('An unexpected error occurred while submitting the expense.');
+      }
     }
-  }
+  }, [
+    setSplitScreenOpen,
+    description,
+    currency,
+    amount,
+    participants,
+    category,
+    expenseDate,
+    expenseId,
+    router,
+    resetState,
+    addExpenseMutation,
+    group,
+    paidBy,
+    splitType,
+    fileKey,
+    isExpenseSettled,
+  ]);
 
-  const CategoryIcon = CategoryIcons[category] ?? Banknote;
+  const handleDescriptionChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setDescription(e.target.value.toString() ?? '');
+    },
+    [setDescription],
+  );
+
+  const onCancel = useCallback(() => {
+    if (expenseId) {
+      router
+        .push((group ? '/groups/' + group.id : '') + '/expenses/' + expenseId)
+        .catch(console.error);
+    } else if (1 === participants.length) {
+      router.push('/balances').catch(console.error);
+    } else {
+      resetState();
+    }
+  }, [expenseId, group, participants.length, resetState, router]);
+
+  const onAmountChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      onUpdateAmount(value);
+    },
+    [onUpdateAmount],
+  );
 
   const addViaGoCardless = (obj: TransactionAddInputModel) => {
-    setDate(obj.date);
+    setExpenseDate(obj.date);
     setDescription(obj.description);
-    setCurrency(obj.currency);
+    setCurrency(obj.currency as CurrencyCode);
     onUpdateAmount(obj.amount);
     setTransactionId(obj.transactionId ?? '');
   };
 
   const clearFields = () => {
-    setAmount(0);
+    setAmount(0n);
     setDescription('');
     setAmountStr('');
-    setDate(new Date());
+    setTransactionId('');
+    setExpenseDate(new Date());
   };
 
   return (
-    <>
-      <div className="flex flex-col gap-4 px-4 py-2">
-        <div className="flex items-center justify-between">
-          {participants.length === 1 ? (
-            <Link href="/balances">
-              <Button onClick={clearFields} variant="ghost" className=" px-0 text-primary">
-                Cancel
-              </Button>
-            </Link>
-          ) : (
-            <Button variant="ghost" className=" px-0 text-primary" onClick={resetState}>
-              Cancel
-            </Button>
-          )}
-          <div className="text-center">Add new expense</div>
-          <Button
-            variant="ghost"
-            className=" px-0 text-primary"
-            disabled={
-              addExpenseMutation.isLoading ||
-              addGroupExpenseMutation.isLoading ||
-              !amount ||
-              description === '' ||
-              isFileUploading
-            }
-            onClick={addExpense}
-          >
-            Save
-          </Button>{' '}
-        </div>
-        <UserInput />
-        {showFriends || (participants.length === 1 && !group) ? (
-          <SelectUserOrGroup enableSendingInvites={enableSendingInvites} />
-        ) : (
-          <>
-            <div className="mt-10 flex gap-2">
-              <AppDrawer
-                trigger={
-                  <div className="flex w-[70px] justify-center rounded-lg border py-2">
-                    <CategoryIcon size={20} />
-                  </div>
-                }
-                title="Categories"
-                className="h-[70vh]"
-                shouldCloseOnAction
-              >
-                <div>
-                  {Object.entries(categories).map(([categoryName, categoryDetails]) => {
-                    return (
-                      <div key={categoryName} className="mb-8">
-                        <h3 className="mb-4 text-lg font-semibold">{categoryDetails.name}</h3>
-                        <div className="flex flex-wrap justify-between gap-2">
-                          {categoryDetails.items.map((item) =>
-                            Object.entries(item).map(([key, value]) => {
-                              const Icon =
-                                CategoryIcons[key] ?? CategoryIcons[categoryName] ?? Banknote;
-                              return (
-                                <DrawerClose key={key}>
-                                  <Button
-                                    variant="ghost"
-                                    className="flex w-[75px] flex-col gap-1 py-8 text-center"
-                                    onClick={() => {
-                                      setCategory(key === 'other' ? categoryName : key);
-                                    }}
-                                  >
-                                    <span className="block text-2xl">
-                                      <Icon />
-                                    </span>
-                                    <span className="block text-xs capitalize">{value}</span>
-                                  </Button>
-                                </DrawerClose>
-                              );
-                            }),
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </AppDrawer>
-              <Input
-                placeholder="Enter description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value.toString() ?? '')}
-                className="text-lg placeholder:text-sm"
-              />
-            </div>
-            <div className="flex gap-2">
-              <AppDrawer
-                trigger={
-                  <div className="flex w-[70px] justify-center rounded-lg border py-2  text-center text-base">
-                    {currency ?? 'USD'}
-                  </div>
-                }
-                onTriggerClick={() => setOpen(true)}
-                title="Select currency"
-                className="h-[70vh]"
-                shouldCloseOnAction
-                open={open}
-                onOpenChange={(openVal) => {
-                  if (openVal !== open) setOpen(openVal);
-                }}
-              >
-                <div>
-                  <Command className="h-[50vh]">
-                    <CommandInput className="text-lg" placeholder="Search currency" />
-                    <CommandEmpty>No currency found.</CommandEmpty>
-                    <CommandGroup className="h-full overflow-auto">
-                      {CURRENCIES.map((framework) => (
-                        <CommandItem
-                          key={`${framework.code}-${framework.name}`}
-                          value={`${framework.code}-${framework.name}`}
-                          onSelect={(currentValue) => {
-                            const _currency = currentValue.split('-')[0]?.toUpperCase() ?? 'USD';
-                            updateProfile.mutate({ currency: _currency });
-
-                            setCurrency(_currency);
-                            setOpen(false);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              'mr-2 h-4 w-4',
-                              `${framework.code}-${framework.name.toLowerCase()}`.startsWith(
-                                currency,
-                              )
-                                ? 'opacity-100'
-                                : 'opacity-0',
-                            )}
-                          />
-                          <div className="flex gap-2">
-                            <p>{framework.name}</p>
-                            <p className=" text-muted-foreground">{framework.code}</p>
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </Command>
-                </div>
-              </AppDrawer>
-
-              <Input
-                placeholder="Enter amount"
-                className="text-lg placeholder:text-sm"
-                type="text"
-                inputMode="decimal"
-                value={amtStr}
-                onChange={(e) => onUpdateAmount(e.target.value)}
-              />
-            </div>
-            {!amount || description === '' ? (
-              <div className="h-[40px]"></div>
-            ) : (
-              <div className="h-[180px]">
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" className="text-primary px-0" onClick={onCancel}>
+          {t('ui.add_expense_details.cancel')}
+        </Button>
+        <div className="text-center">{t('ui.add_expense_details.add_new_expense')}</div>
+        <Button
+          variant="ghost"
+          className="text-primary px-0"
+          disabled={
+            addExpenseMutation.isPending || !amount || '' === description || isFileUploading
+          }
+          onClick={addExpense}
+        >
+          {t('ui.add_expense_details.save')}
+        </Button>{' '}
+      </div>
+      <UserInput isEditing={!!expenseId} />
+      {showFriends || (1 === participants.length && !group) ? (
+        <SelectUserOrGroup enableSendingInvites={enableSendingInvites} />
+      ) : (
+        <>
+          <div className="mt-4 flex gap-2 sm:mt-10">
+            <CategoryPicker category={category} onCategoryPick={setCategory} />
+            <Input
+              placeholder={t('ui.add_expense_details.description_placeholder')}
+              value={description}
+              onChange={handleDescriptionChange}
+              className="text-lg placeholder:text-sm"
+              autoFocus
+            />
+          </div>
+          <div className="flex gap-2">
+            <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
+            <Input
+              placeholder={t('ui.add_expense_details.amount_placeholder')}
+              className="text-lg placeholder:text-sm"
+              type="number"
+              inputMode="decimal"
+              value={amtStr}
+              min="0"
+              onChange={onAmountChange}
+            />
+          </div>
+          <div className="h-[180px]">
+            {amount && '' !== description ? (
+              <>
                 <SplitTypeSection />
 
-                <div className="mt-4 flex  items-center justify-between">
-                  <div className="flex items-center gap-4">
+                <div className="mt-4 flex items-center justify-between sm:mt-10">
+                  <div className="flex flex-wrap items-center gap-4">
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           variant="ghost"
                           className={cn(
-                            ' justify-start px-0 text-left font-normal',
-                            !date && 'text-muted-foreground',
+                            'justify-start px-0 text-left font-normal',
+                            !expenseDate && 'text-muted-foreground',
                           )}
                         >
-                          <CalendarIcon className="mr-2 h-6 w-6 text-cyan-500" />
-                          {date ? (
-                            format(date, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? (
-                              'Today'
-                            ) : (
-                              format(date, 'MMM dd')
-                            )
+                          <CalendarIcon className="text-primary mr-2 h-6 w-6" />
+                          {expenseDate ? (
+                            toUIDate(expenseDate, { useToday: true })
                           ) : (
-                            <span>Pick a date</span>
+                            <span>{t('ui.add_expense_details.pick_a_date')}</span>
                           )}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0">
-                        <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
+                        <Calendar mode="single" selected={expenseDate} onSelect={setExpenseDate} />
                       </PopoverContent>
                     </Popover>
                   </div>
                   <div className="flex items-center gap-4">
                     {isStorageConfigured ? <UploadFile /> : null}
-
                     <Button
-                      className=" min-w-[100px]"
+                      className="min-w-[100px]"
                       size="sm"
-                      loading={
-                        addExpenseMutation.isLoading ||
-                        addGroupExpenseMutation.isLoading ||
-                        isFileUploading
-                      }
+                      loading={addExpenseMutation.isPending || isFileUploading}
                       disabled={
-                        addExpenseMutation.isLoading ||
-                        addGroupExpenseMutation.isLoading ||
+                        addExpenseMutation.isPending ||
                         !amount ||
-                        description === '' ||
-                        isFileUploading
+                        '' === description ||
+                        isFileUploading ||
+                        !isExpenseSettled
                       }
-                      onClick={() => addExpense()}
+                      onClick={addExpense}
                     >
-                      Submit
+                      {t('ui.add_expense_details.submit')}
                     </Button>
                   </div>
                 </div>
-                <div className="flex items-center justify-end gap-4">
-                  <Button variant="ghost" className=" px-0 text-primary" onClick={clearFields}>
-                    Clear
-                  </Button>
-                </div>
-              </div>
-            )}
-            {group && (
-              <GoCardlessTransactions
-                add={addViaGoCardless}
-                addMultipleExpenses={addMultipleExpenses}
-                multipleArray={multipleArray}
-                setMultipleArray={(a: TransactionAddInputModel[]) => {
-                  clearFields();
-                  setMultipleArray(a);
-                }}
-                addMultipleExpensesLoading={addMultipleExpensesLoading}
-              />
-            )}
-            <div className=" flex w-full justify-center">
-              <Link
-                href="https://github.com/sponsors/KMKoushik"
-                target="_blank"
-                className="mx-auto"
-              >
-                <Button
-                  variant="outline"
-                  className="text-md  justify-between rounded-full border-pink-500 hover:text-foreground/80"
-                >
-                  <div className="flex items-center gap-4">
-                    <HeartHandshakeIcon className="h-5 w-5 text-pink-500" />
-                    Sponsor us
-                  </div>
-                </Button>
-              </Link>
+              </>
+            ) : null}
+            <div className="flex items-center justify-end gap-4">
+              <Button variant="ghost" className=" text-primary px-0" onClick={clearFields}>
+                {t('ui.clear')}
+              </Button>
             </div>
-          </>
-        )}
-      </div>
-    </>
+          </div>
+          {group && (
+            <GoCardlessTransactions
+              add={addViaGoCardless}
+              addMultipleExpenses={addMultipleExpenses}
+              multipleTransactions={multipleTransactions}
+              setMultipleTransactions={(a: TransactionAddInputModel[]) => {
+                clearFields();
+                setMultipleTransactions(a);
+              }}
+              isTransactionLoading={isTransactionLoading}
+            />
+          )}
+          <div className="flex w-full justify-center">
+            <Link href="https://github.com/sponsors/KMKoushik" target="_blank" className="mx-auto">
+              <Button
+                variant="outline"
+                className="text-md hover:text-foreground/80 justify-between rounded-full border-pink-500"
+              >
+                <div className="flex items-center gap-4">
+                  <HeartHandshakeIcon className="h-5 w-5 text-pink-500" />
+                  {t('ui.add_expense_details.sponsor_us')}
+                </div>
+              </Button>
+            </Link>
+          </div>
+        </>
+      )}
+    </div>
   );
 };

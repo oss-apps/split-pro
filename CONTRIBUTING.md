@@ -40,6 +40,10 @@ The development branch is <code>main</code>. All pull requests should be made ag
 
 3. See the [Developer Setup](https://github.com/oss-apps/split-pro?tab=readme-ov-file#developer-setup) for more setup details.
 
+## Linting
+
+This projects implements `oxlint` for linting. When developing please make sure to have an IDE integration enabled and watch out not to introduce new warnings. It is also nice to follow the boy scout rule and leave the code you modify with a little less warnings. Checks are enforced on CI for linting, formatting and typing, so run necessary checks before pushing.
+
 ## Building
 
 > **Note**

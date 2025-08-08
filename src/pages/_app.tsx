@@ -1,35 +1,46 @@
-import { type Session } from 'next-auth';
-import { SessionProvider, useSession } from 'next-auth/react';
+import { clsx } from 'clsx';
 import { type AppType } from 'next/app';
 import { Poppins } from 'next/font/google';
-import { ThemeProvider } from '~/components/theme-provider';
-import { api } from '~/utils/api';
-import clsx from 'clsx';
 import Head from 'next/head';
-import { Toaster } from 'sonner';
-
-import '~/styles/globals.css';
-import { type NextPageWithUser } from '~/types';
-import { LoadingSpinner } from '~/components/ui/spinner';
+import { useRouter } from 'next/router';
+import { type Session } from 'next-auth';
+import { SessionProvider, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+import { Toaster } from 'sonner';
+import { appWithTranslation, useTranslation } from 'next-i18next';
+import i18nConfig from 'next-i18next.config.js';
+import { ThemeProvider } from '~/components/theme-provider';
+import '~/styles/globals.css';
+import { LoadingSpinner } from '~/components/ui/spinner';
+import { env } from '~/env';
+import { type CurrencyCode } from '~/lib/currency';
 import { useAddExpenseStore } from '~/store/addStore';
 import { useAppStore } from '~/store/appStore';
+import { type NextPageWithUser } from '~/types';
+import { api } from '~/utils/api';
 
 const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });
+const toastOptions = { duration: 1500 };
 
-const MyApp: AppType<{ session: Session | null }> = ({
+const MyApp: AppType<{ session: Session | null; baseUrl: string }> = ({
   Component,
-  pageProps: { session, ...pageProps },
+  pageProps: { session, baseUrl, ...pageProps },
 }) => {
+  const { t, ready } = useTranslation('common');
+
+  if (!ready) {
+    return null;
+  }
+
   return (
     <main className={clsx(poppins.className, 'h-full')}>
       <Head>
-        <title>SplitPro: Split Expenses with your friends for free</title>
+        <title>{t('meta.title')}</title>
         <link rel="icon" href="/favicon.ico" />
-        <meta name="application-name" content="SplitPro" />
+        <meta name="application-name" content={t('meta.application_name')} />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-title" content="SplitPro" />
-        <meta name="description" content="Split Expenses with your friends for free" />
+        <meta name="apple-mobile-web-app-title" content={t('meta.application_name')} />
+        <meta name="description" content={t('meta.description')} />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-config" content="/icons/browserconfig.xml" />
@@ -51,23 +62,23 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <link rel="shortcut icon" href="/favicon.ico" />
 
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:url" content="https://splitpro.app" />
-        <meta name="twitter:title" content="SplitPro" />
-        <meta name="twitter:description" content="Split Expenses with your friends for free" />
-        <meta name="twitter:image" content="https://splitpro.app/og_banner.png" />
+        <meta name="twitter:url" content={baseUrl} />
+        <meta name="twitter:title" content={t('meta.application_name')} />
+        <meta name="twitter:description" content={t('meta.description')} />
+        <meta name="twitter:image" content={`${baseUrl}/og_banner.png`} />
         <meta name="twitter:creator" content="@KM_Koushik_" />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="SplitPro" />
-        <meta property="og:description" content="Split Expenses with your friends for free" />
-        <meta property="og:site_name" content="SplitPro" />
-        <meta property="og:url" content="https://splitpro.app" />
-        <meta property="og:image" content="https://splitpro.app/og_banner.png" />
+        <meta property="og:title" content={t('meta.application_name')} />
+        <meta property="og:description" content={t('meta.description')} />
+        <meta property="og:site_name" content={t('meta.application_name')} />
+        <meta property="og:url" content={baseUrl} />
+        <meta property="og:image" content={`${baseUrl}/og_banner.png`} />
       </Head>
       <SessionProvider session={session}>
         <ThemeProvider attribute="class" defaultTheme="dark">
-          <Toaster toastOptions={{ duration: 1500 }} />
+          <Toaster toastOptions={toastOptions} />
           {(Component as NextPageWithUser).auth ? (
-            <Auth pageProps={pageProps} Page={Component as NextPageWithUser}></Auth>
+            <Auth pageProps={pageProps} Page={Component as NextPageWithUser} />
           ) : (
             <Component {...pageProps} />
           )}{' '}
@@ -77,10 +88,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, pageProps }) => {
   const { status, data } = useSession({ required: true });
   const [showSpinner, setShowSpinner] = useState(false);
+  const updateUser = api.user.updateUserDetail.useMutation();
+  const router = useRouter();
 
   const { setCurrency } = useAddExpenseStore((s) => s.actions);
   const { setWebPushPublicKey } = useAppStore((s) => s.actions);
@@ -100,12 +112,30 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
   }, [webPushPublicKey, setWebPushPublicKey]);
 
   useEffect(() => {
-    if (status === 'authenticated') {
-      setCurrency(data.user.currency);
-    }
-  }, [status, data?.user, setCurrency]);
+    if ('authenticated' === status) {
+      setCurrency(data.user.currency as CurrencyCode);
 
-  if (status === 'loading') {
+      if (!data.user.preferredLanguage) {
+        // If user has no preferred language, set it to the current locale
+        const currentLocale = router.locale ?? 'en';
+        updateUser
+          .mutateAsync({
+            preferredLanguage: currentLocale,
+          })
+          .catch(console.error);
+      } else if (data.user.preferredLanguage && data.user.preferredLanguage !== router.locale) {
+        // Set user's preferred language by changing the locale
+        router
+          .push(router.asPath, router.asPath, {
+            locale: data.user.preferredLanguage,
+            scroll: false,
+          })
+          .catch(console.error);
+      }
+    }
+  }, [status, data?.user, setCurrency, router, updateUser]);
+
+  if ('loading' === status) {
     return (
       <div className="flex h-full w-full items-center justify-center">
         {showSpinner ? <LoadingSpinner className="text-primary" /> : null}
@@ -116,4 +146,10 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
   return <Page user={data.user} {...pageProps} />;
 };
 
-export default api.withTRPC(MyApp);
+export const getServerSideProps = async () => ({
+  props: {
+    baseUrl: env.NEXTAUTH_URL,
+  },
+});
+
+export default api.withTRPC(appWithTranslation(MyApp, i18nConfig));

@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
-import { Button } from '~/components/ui/button';
 import { UserPlusIcon } from '@heroicons/react/24/solid';
-import { api } from '~/utils/api';
-import { AppDrawer } from '~/components/ui/drawer';
-import clsx from 'clsx';
-import { UserAvatar } from '../ui/avatar';
 import { type Group, type GroupUser } from '@prisma/client';
+import { clsx } from 'clsx';
 import { CheckIcon, SendIcon } from 'lucide-react';
-import { Input } from '../ui/input';
+import React, { useCallback, useState } from 'react';
+import { useTranslation } from 'next-i18next';
 import { z } from 'zod';
+
+import { Button } from '~/components/ui/button';
+import { AppDrawer } from '~/components/ui/drawer';
+import { api } from '~/utils/api';
+
+import { UserAvatar } from '../ui/avatar';
+import { Input } from '../ui/input';
 
 const AddMembers: React.FC<{
   enableSendingInvites: boolean;
-  group: Group & { groupUsers: Array<GroupUser> };
+  group: Group & { groupUsers: GroupUser[] };
   children: React.ReactNode;
 }> = ({ group, children, enableSendingInvites }) => {
+  const { t } = useTranslation('groups_details');
   const [open, setOpen] = useState(false);
   const [userIds, setUserIds] = useState<Record<number, boolean>>({});
   const [inputValue, setInputValue] = useState('');
@@ -34,43 +38,47 @@ const AddMembers: React.FC<{
   );
 
   const filteredUsers = friendsQuery.data?.filter(
-    (f) =>
-      !groupUserMap[f.id] && (f.name ?? f.email)?.toLowerCase().includes(inputValue.toLowerCase()),
+    (friend) =>
+      !groupUserMap[friend.id] &&
+      (friend.name ?? friend.email)?.toLowerCase().includes(inputValue.toLowerCase()),
   );
 
   function onUserSelect(userId: number) {
     setUserIds((prev) => ({ ...prev, [userId]: !prev[userId] }));
   }
 
-  function onSave(userIds: Record<number, boolean>) {
-    const users = [];
+  const onSave = useCallback(
+    (userIds: Record<number, boolean>) => {
+      const users = [];
 
-    for (const userId of Object.keys(userIds)) {
-      if (userIds[parseInt(userId)]) {
-        users.push(parseInt(userId));
+      for (const userId of Object.keys(userIds)) {
+        if (userIds[parseInt(userId)]) {
+          users.push(parseInt(userId));
+        }
       }
-    }
 
-    setInputValue('');
+      setInputValue('');
 
-    if (users.length === 0) {
-      return;
-    }
+      if (0 === users.length) {
+        return;
+      }
 
-    addMembersMutation.mutate(
-      {
-        groupId: group.id,
-        userIds: users,
-      },
-      {
-        onSuccess: () => {
-          utils.group.getGroupDetails.invalidate({ groupId: group.id }).catch(console.error);
+      addMembersMutation.mutate(
+        {
+          groupId: group.id,
+          userIds: users,
         },
-      },
-    );
-    setOpen(false);
-    setUserIds({});
-  }
+        {
+          onSuccess: () => {
+            utils.group.getGroupDetails.invalidate({ groupId: group.id }).catch(console.error);
+          },
+        },
+      );
+      setOpen(false);
+      setUserIds({});
+    },
+    [addMembersMutation, group.id, utils],
+  );
 
   const isEmail = z.string().email().safeParse(inputValue);
 
@@ -87,84 +95,83 @@ const AddMembers: React.FC<{
     }
   }
 
+  const handleTriggerClick = useCallback(() => setOpen(true), []);
+
+  const handleActionClick = useCallback(() => onSave(userIds), [onSave, userIds]);
+
+  const handleClose = useCallback(() => setOpen(false), []);
+
   return (
     <AppDrawer
       trigger={
         <div className="flex items-center justify-center gap-2 lg:w-[180px]">{children}</div>
       }
-      onTriggerClick={() => setOpen(true)}
-      title="Add members"
-      leftAction="Cancel"
-      actionOnClick={() => onSave(userIds)}
+      onTriggerClick={handleTriggerClick}
+      title={t('ui.no_members.add_members_details.title')}
+      leftAction={t('ui.no_members.add_members_details.cancel')}
+      actionOnClick={handleActionClick}
       className="h-[85vh]"
       shouldCloseOnAction
-      actionTitle="Save"
-      open={open}
-      onClose={() => setOpen(false)}
+      onClose={handleClose}
       onOpenChange={(state) => state !== open && setOpen(state)}
     >
+      <Input
+        className="mt-8 w-full text-lg"
+        placeholder={t('ui.no_members.add_members_details.placeholder')}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+      />
       <div>
-        <Input
-          className="mt-8 w-full text-lg"
-          placeholder="Enter name or email"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-        />
-        {!isEmail.success ? (
-          <p className="mt-4 text-red-500">Enter valid email</p>
-        ) : (
-          <div>
-            {enableSendingInvites ? (
-              <div className="mt-1 text-orange-600">
-                Warning: Don&apos;t use send invite if it&apos;s invalid email. use add to Split Pro
-                instead. Your account will be blocked if this feature is misused
-              </div>
-            ) : (
-              <div>Note: sending invite is disabled for now because of spam</div>
-            )}
-
-            <div className="flex justify-center gap-4">
-              {enableSendingInvites && (
-                <Button
-                  className="mt-4 w-full text-cyan-500"
-                  variant="outline"
-                  disabled={!isEmail.success}
-                  onClick={() => onAddEmailClick(true)}
-                >
-                  <SendIcon className="mr-2 h-4 w-4" />
-                  {isEmail.success ? 'Send invite to user' : 'Enter valid email'}
-                </Button>
-              )}
-              <Button
-                className="mt-4 w-full text-cyan-500"
-                variant="outline"
-                disabled={!isEmail.success}
-                onClick={() => onAddEmailClick(false)}
-              >
-                <UserPlusIcon className="mr-2 h-4 w-4" />
-                {isEmail.success ? 'Add to Split Pro' : 'Enter valid email'}
-              </Button>
-            </div>
+        {enableSendingInvites ? (
+          <div className="mt-1 text-orange-600">
+            {t('ui.no_members.add_members_details.warning')}
           </div>
+        ) : (
+          <div>{t('ui.no_members.add_members_details.note')}</div>
         )}
-        <div className="mt-4 flex flex-col gap-4">
-          {filteredUsers?.map((friend) => (
+
+        <div className="flex justify-center gap-4">
+          {enableSendingInvites && (
             <Button
-              variant="ghost"
-              key={friend.id}
-              className="flex items-center justify-between px-0 focus:text-foreground"
-              onClick={() => onUserSelect(friend.id)}
+              className="mt-4 w-full text-cyan-500"
+              variant="outline"
+              disabled={!isEmail.success}
+              onClick={() => onAddEmailClick(true)}
             >
-              <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
-                <UserAvatar user={friend} />
-                <p>{friend.name ?? friend.email}</p>
-              </div>
-              <div>
-                {userIds[friend.id] ? <CheckIcon className="h-4 w-4 text-primary" /> : null}
-              </div>
+              <SendIcon className="mr-2 h-4 w-4" />
+              {isEmail.success
+                ? t('ui.no_members.add_members_details.send_invite')
+                : t('ui.no_members.add_members_details.errors.valid_email')}
             </Button>
-          ))}
+          )}
+          <Button
+            className="mt-4 w-full text-cyan-500"
+            variant="outline"
+            disabled={!isEmail.success}
+            onClick={() => onAddEmailClick(false)}
+          >
+            <UserPlusIcon className="mr-2 h-4 w-4" />
+            {isEmail.success
+              ? t('ui.no_members.add_members_details.add_to_split_pro')
+              : t('ui.no_members.add_members_details.errors.valid_email')}
+          </Button>
         </div>
+      </div>
+      <div className="mt-4 flex flex-col gap-4">
+        {filteredUsers?.map((friend) => (
+          <Button
+            variant="ghost"
+            key={friend.id}
+            className="focus:text-foreground flex items-center justify-between px-0"
+            onClick={() => onUserSelect(friend.id)}
+          >
+            <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
+              <UserAvatar user={friend} />
+              <p>{friend.name ?? friend.email}</p>
+            </div>
+            <div>{userIds[friend.id] ? <CheckIcon className="text-primary h-4 w-4" /> : null}</div>
+          </Button>
+        ))}
       </div>
     </AppDrawer>
   );

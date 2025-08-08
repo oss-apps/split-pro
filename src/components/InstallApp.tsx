@@ -1,10 +1,11 @@
-import React from 'react';
-import { Button } from './ui/button';
 import { Download } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+
+import { Button } from './ui/button';
 import { AppDrawer } from './ui/drawer';
 
 const InstallApp: React.FC = () => {
-  const [isStandalone, setIsStandalone] = React.useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   function isAppStandalone() {
     // For iOS
@@ -19,7 +20,7 @@ const InstallApp: React.FC = () => {
     return false;
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isAppStandalone()) {
       setIsStandalone(true);
     }
@@ -29,15 +30,20 @@ const InstallApp: React.FC = () => {
     return null;
   }
 
+  const DownloadButton = useMemo(
+    () => (
+      <Button className="w-[250px]">
+        <Download className="mr-2 h-5 w-5 text-black" />
+        Download App
+      </Button>
+    ),
+    [],
+  );
+
   return (
     <>
       <AppDrawer
-        trigger={
-          <Button className="w-[250px]">
-            <Download className="mr-2 h-5 w-5 text-white dark:text-black" />
-            Download App
-          </Button>
-        }
+        trigger={DownloadButton}
         leftAction="Close"
         title="Download App"
         className="h-[70vh]"
@@ -52,6 +58,7 @@ const InstallApp: React.FC = () => {
               className="text-cyan-500 underline"
               href="https://youtube.com/shorts/MQHeLOjr350"
               target="_blank"
+              rel="noreferrer"
             >
               video
             </a>
@@ -63,6 +70,7 @@ const InstallApp: React.FC = () => {
               className="text-cyan-500 underline"
               href="https://youtube.com/shorts/04n7oKGzgOs"
               target="_blank"
+              rel="noreferrer"
             >
               Video
             </a>

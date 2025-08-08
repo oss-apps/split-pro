@@ -1,5 +1,6 @@
 import { type NextPage } from 'next';
 import Link from 'next/link';
+
 import { env } from '~/env';
 
 const Terms: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
@@ -7,7 +8,7 @@ const Terms: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
     <>
       <div>
         <main className="mx-auto max-w-4xl px-4 pb-32 lg:px-0">
-          <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4   py-4 lg:px-0 lg:py-5">
+          <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4 py-4 lg:px-0 lg:py-5">
             <Link href="/">
               <div className="flex items-center gap-2">
                 <p className="text-2xl font-medium">SplitPro</p>
@@ -63,6 +64,7 @@ const Terms: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
           <p className="mt-12 text-xl font-semibold">8. Contact</p>
           <p className="mt-1 text-lg text-gray-300">
             If you have any questions or concerns regarding these Terms, please contact us at{' '}
+            {/* oxlint-disable-next-line next/no-html-link-for-pages */}
             <a className="underline" href={'mailto:' + feedbackEmail}>
               {feedbackEmail ?? ''}
             </a>

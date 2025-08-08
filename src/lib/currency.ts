@@ -1,1073 +1,837 @@
-export const CURRENCIES = [
-  {
-    name: 'US Dollar',
+export const CURRENCIES = {
+  USD: {
     symbol: '$',
     symbolNative: '$',
     decimalDigits: 2,
     rounding: 0,
     code: 'USD',
-    namePlural: 'US dollars',
   },
-  {
-    name: 'Canadian Dollar',
+  CAD: {
     symbol: 'CA$',
     symbolNative: '$',
     decimalDigits: 2,
     rounding: 0,
     code: 'CAD',
-    namePlural: 'Canadian dollars',
   },
-  {
-    name: 'Euro',
+  EUR: {
     symbol: '€',
     symbolNative: '€',
     decimalDigits: 2,
     rounding: 0,
     code: 'EUR',
-    namePlural: 'euros',
   },
-  {
-    name: 'United Arab Emirates Dirham',
+  AED: {
     symbol: 'AED',
     symbolNative: 'د.إ.‏',
     decimalDigits: 2,
     rounding: 0,
     code: 'AED',
-    namePlural: 'UAE dirhams',
   },
-  {
-    name: 'Afghan Afghani',
+  AFN: {
     symbol: 'Af',
     symbolNative: '؋',
     decimalDigits: 0,
     rounding: 0,
     code: 'AFN',
-    namePlural: 'Afghan Afghanis',
   },
-  {
-    name: 'Albanian Lek',
+  ALL: {
     symbol: 'ALL',
     symbolNative: 'Lek',
     decimalDigits: 0,
     rounding: 0,
     code: 'ALL',
-    namePlural: 'Albanian lekë',
   },
-  {
-    name: 'Armenian Dram',
+  AMD: {
     symbol: 'AMD',
     symbolNative: 'դր.',
     decimalDigits: 0,
     rounding: 0,
     code: 'AMD',
-    namePlural: 'Armenian drams',
   },
-  {
-    name: 'Argentine Peso',
+  ARS: {
     symbol: 'AR$',
     symbolNative: '$',
     decimalDigits: 2,
     rounding: 0,
     code: 'ARS',
-    namePlural: 'Argentine pesos',
   },
-  {
-    name: 'Australian Dollar',
+  AUD: {
     symbol: 'AU$',
     symbolNative: '$',
     decimalDigits: 2,
     rounding: 0,
     code: 'AUD',
-    namePlural: 'Australian dollars',
   },
-  {
-    name: 'Azerbaijani Manat',
+  AZN: {
     symbol: 'man.',
     symbolNative: 'ман.',
     decimalDigits: 2,
     rounding: 0,
     code: 'AZN',
-    namePlural: 'Azerbaijani manats',
   },
-  {
-    name: 'Bosnia-Herzegovina Convertible Mark',
+  BAM: {
     symbol: 'KM',
     symbolNative: 'KM',
     decimalDigits: 2,
     rounding: 0,
     code: 'BAM',
-    namePlural: 'Bosnia-Herzegovina convertible marks',
   },
-  {
-    name: 'Bangladeshi Taka',
+  BDT: {
     symbol: 'Tk',
     symbolNative: '৳',
     decimalDigits: 2,
     rounding: 0,
     code: 'BDT',
-    namePlural: 'Bangladeshi takas',
   },
-  {
-    name: 'Bulgarian Lev',
+  BGN: {
     symbol: 'BGN',
     symbolNative: 'лв.',
     decimalDigits: 2,
     rounding: 0,
     code: 'BGN',
-    namePlural: 'Bulgarian leva',
   },
-  {
-    name: 'Bahraini Dinar',
+  BHD: {
     symbol: 'BD',
     symbolNative: 'د.ب.‏',
     decimalDigits: 3,
     rounding: 0,
     code: 'BHD',
-    namePlural: 'Bahraini dinars',
   },
-  {
-    name: 'Burundian Franc',
+  BIF: {
     symbol: 'FBu',
     symbolNative: 'FBu',
     decimalDigits: 0,
     rounding: 0,
     code: 'BIF',
-    namePlural: 'Burundian francs',
   },
-  {
-    name: 'Brunei Dollar',
+  BND: {
     symbol: 'BN$',
     symbolNative: '$',
     decimalDigits: 2,
     rounding: 0,
     code: 'BND',
-    namePlural: 'Brunei dollars',
   },
-  {
-    name: 'Bolivian Boliviano',
+  BOB: {
     symbol: 'Bs',
     symbolNative: 'Bs',
     decimalDigits: 2,
     rounding: 0,
     code: 'BOB',
-    namePlural: 'Bolivian bolivianos',
   },
-  {
-    name: 'Brazilian Real',
+  BRL: {
     symbol: 'R$',
     symbolNative: 'R$',
     decimalDigits: 2,
     rounding: 0,
     code: 'BRL',
-    namePlural: 'Brazilian reals',
   },
-  {
-    name: 'Botswanan Pula',
+  BWP: {
     symbol: 'BWP',
     symbolNative: 'P',
     decimalDigits: 2,
     rounding: 0,
     code: 'BWP',
-    namePlural: 'Botswanan pulas',
   },
-  {
-    name: 'Belarusian Ruble',
+  BYN: {
     symbol: 'Br',
     symbolNative: 'руб.',
     decimalDigits: 2,
     rounding: 0,
     code: 'BYN',
-    namePlural: 'Belarusian rubles',
   },
-  {
-    name: 'Belize Dollar',
+  BZD: {
     symbol: 'BZ$',
     symbolNative: '$',
     decimalDigits: 2,
     rounding: 0,
     code: 'BZD',
-    namePlural: 'Belize dollars',
   },
-  {
-    name: 'Congolese Franc',
+  CDF: {
     symbol: 'CDF',
     symbolNative: 'FrCD',
     decimalDigits: 2,
     rounding: 0,
     code: 'CDF',
-    namePlural: 'Congolese francs',
   },
-  {
-    name: 'Swiss Franc',
+  CHF: {
     symbol: 'CHF',
     symbolNative: 'CHF',
     decimalDigits: 2,
     rounding: 0.05,
     code: 'CHF',
-    namePlural: 'Swiss francs',
   },
-  {
-    name: 'Chilean Peso',
+  CLP: {
     symbol: 'CL$',
     symbolNative: '$',
     decimalDigits: 0,
     rounding: 0,
     code: 'CLP',
-    namePlural: 'Chilean pesos',
   },
-  {
-    name: 'Chinese Yuan',
+  CNY: {
     symbol: 'CN¥',
     symbolNative: 'CN¥',
     decimalDigits: 2,
     rounding: 0,
     code: 'CNY',
-    namePlural: 'Chinese yuan',
   },
-  {
-    name: 'Colombian Peso',
+  COP: {
     symbol: 'CO$',
     symbolNative: '$',
     decimalDigits: 0,
     rounding: 0,
     code: 'COP',
-    namePlural: 'Colombian pesos',
   },
-  {
-    name: 'Costa Rican Colón',
+  CRC: {
     symbol: '₡',
     symbolNative: '₡',
     decimalDigits: 0,
     rounding: 0,
     code: 'CRC',
-    namePlural: 'Costa Rican colóns',
   },
-  {
-    name: 'Cape Verdean Escudo',
+  CVE: {
     symbol: 'CV$',
     symbolNative: 'CV$',
     decimalDigits: 2,
     rounding: 0,
     code: 'CVE',
-    namePlural: 'Cape Verdean escudos',
   },
-  {
-    name: 'Czech Republic Koruna',
+  CZK: {
     symbol: 'Kč',
     symbolNative: 'Kč',
     decimalDigits: 2,
     rounding: 0,
     code: 'CZK',
-    namePlural: 'Czech Republic korunas',
   },
-  {
-    name: 'Djiboutian Franc',
+  DJF: {
     symbol: 'Fdj',
     symbolNative: 'Fdj',
     decimalDigits: 0,
     rounding: 0,
     code: 'DJF',
-    namePlural: 'Djiboutian francs',
   },
-  {
-    name: 'Danish Krone',
+  DKK: {
     symbol: 'Dkr',
     symbolNative: 'kr',
     decimalDigits: 2,
     rounding: 0,
     code: 'DKK',
-    namePlural: 'Danish kroner',
   },
-  {
-    name: 'Dominican Peso',
+  DOP: {
     symbol: 'RD$',
     symbolNative: 'RD$',
     decimalDigits: 2,
     rounding: 0,
     code: 'DOP',
-    namePlural: 'Dominican pesos',
   },
-  {
-    name: 'Algerian Dinar',
+  DZD: {
     symbol: 'DA',
     symbolNative: 'د.ج.‏',
     decimalDigits: 2,
     rounding: 0,
     code: 'DZD',
-    namePlural: 'Algerian dinars',
   },
-  {
-    name: 'Estonian Kroon',
+  EEK: {
     symbol: 'Ekr',
     symbolNative: 'kr',
     decimalDigits: 2,
     rounding: 0,
     code: 'EEK',
-    namePlural: 'Estonian kroons',
   },
-  {
-    name: 'Egyptian Pound',
+  EGP: {
     symbol: 'EGP',
     symbolNative: 'ج.م.‏',
     decimalDigits: 2,
     rounding: 0,
     code: 'EGP',
-    namePlural: 'Egyptian pounds',
   },
-  {
-    name: 'Eritrean Nakfa',
+  ERN: {
     symbol: 'Nfk',
     symbolNative: 'Nfk',
     decimalDigits: 2,
     rounding: 0,
     code: 'ERN',
-    namePlural: 'Eritrean nakfas',
   },
-  {
-    name: 'Ethiopian Birr',
+  ETB: {
     symbol: 'Br',
     symbolNative: 'Br',
     decimalDigits: 2,
     rounding: 0,
     code: 'ETB',
-    namePlural: 'Ethiopian birrs',
   },
-  {
-    name: 'British Pound Sterling',
+  GBP: {
     symbol: '£',
     symbolNative: '£',
     decimalDigits: 2,
     rounding: 0,
     code: 'GBP',
-    namePlural: 'British pounds sterling',
   },
-  {
-    name: 'Georgian Lari',
+  GEL: {
     symbol: 'GEL',
     symbolNative: 'GEL',
     decimalDigits: 2,
     rounding: 0,
     code: 'GEL',
-    namePlural: 'Georgian laris',
   },
-  {
-    name: 'Ghanaian Cedi',
+  GHS: {
     symbol: 'GH₵',
     symbolNative: 'GH₵',
     decimalDigits: 2,
     rounding: 0,
     code: 'GHS',
-    namePlural: 'Ghanaian cedis',
   },
-  {
-    name: 'Guinean Franc',
+  GNF: {
     symbol: 'FG',
     symbolNative: 'FG',
     decimalDigits: 0,
     rounding: 0,
     code: 'GNF',
-    namePlural: 'Guinean francs',
   },
-  {
-    name: 'Guatemalan Quetzal',
+  GTQ: {
     symbol: 'GTQ',
     symbolNative: 'Q',
     decimalDigits: 2,
     rounding: 0,
     code: 'GTQ',
-    namePlural: 'Guatemalan quetzals',
   },
-  {
-    name: 'Hong Kong Dollar',
+  HKD: {
     symbol: 'HK$',
     symbolNative: '$',
     decimalDigits: 2,
     rounding: 0,
     code: 'HKD',
-    namePlural: 'Hong Kong dollars',
   },
-  {
-    name: 'Honduran Lempira',
+  HNL: {
     symbol: 'HNL',
     symbolNative: 'L',
     decimalDigits: 2,
     rounding: 0,
     code: 'HNL',
-    namePlural: 'Honduran lempiras',
   },
-  {
-    name: 'Croatian Kuna',
+  HRK: {
     symbol: 'kn',
     symbolNative: 'kn',
     decimalDigits: 2,
     rounding: 0,
     code: 'HRK',
-    namePlural: 'Croatian kunas',
   },
-  {
-    name: 'Hungarian Forint',
+  HUF: {
     symbol: 'Ft',
     symbolNative: 'Ft',
     decimalDigits: 0,
     rounding: 0,
     code: 'HUF',
-    namePlural: 'Hungarian forints',
   },
-  {
-    name: 'Indonesian Rupiah',
+  IDR: {
     symbol: 'Rp',
     symbolNative: 'Rp',
     decimalDigits: 0,
     rounding: 0,
     code: 'IDR',
-    namePlural: 'Indonesian rupiahs',
   },
-  {
-    name: 'Israeli New Sheqel',
+  ILS: {
     symbol: '₪',
     symbolNative: '₪',
     decimalDigits: 2,
     rounding: 0,
     code: 'ILS',
-    namePlural: 'Israeli new sheqels',
   },
-  {
-    name: 'Indian Rupee',
+  INR: {
     symbol: '₹',
     symbolNative: '₹',
     decimalDigits: 2,
     rounding: 0,
     code: 'INR',
-    namePlural: 'Indian rupees',
   },
-  {
-    name: 'Iraqi Dinar',
+  IQD: {
     symbol: 'IQD',
     symbolNative: 'د.ع.‏',
     decimalDigits: 0,
     rounding: 0,
     code: 'IQD',
-    namePlural: 'Iraqi dinars',
   },
-  {
-    name: 'Iranian Rial',
+  IRR: {
     symbol: 'IRR',
     symbolNative: '﷼',
     decimalDigits: 0,
     rounding: 0,
     code: 'IRR',
-    namePlural: 'Iranian rials',
   },
-  {
-    name: 'Icelandic Króna',
+  ISK: {
     symbol: 'Ikr',
     symbolNative: 'kr',
     decimalDigits: 0,
     rounding: 0,
     code: 'ISK',
-    namePlural: 'Icelandic krónur',
   },
-  {
-    name: 'Jamaican Dollar',
+  JMD: {
     symbol: 'J$',
     symbolNative: '$',
     decimalDigits: 2,
     rounding: 0,
     code: 'JMD',
-    namePlural: 'Jamaican dollars',
   },
-  {
-    name: 'Jordanian Dinar',
+  JOD: {
     symbol: 'JD',
     symbolNative: 'د.أ.‏',
     decimalDigits: 3,
     rounding: 0,
     code: 'JOD',
-    namePlural: 'Jordanian dinars',
   },
-  {
-    name: 'Japanese Yen',
+  JPY: {
     symbol: '¥',
     symbolNative: '￥',
     decimalDigits: 0,
     rounding: 0,
     code: 'JPY',
-    namePlural: 'Japanese yen',
   },
-  {
-    name: 'Kenyan Shilling',
+  KES: {
     symbol: 'Ksh',
     symbolNative: 'Ksh',
     decimalDigits: 2,
     rounding: 0,
     code: 'KES',
-    namePlural: 'Kenyan shillings',
   },
-  {
-    name: 'Cambodian Riel',
+  KHR: {
     symbol: 'KHR',
     symbolNative: '៛',
     decimalDigits: 2,
     rounding: 0,
     code: 'KHR',
-    namePlural: 'Cambodian riels',
   },
-  {
-    name: 'Comorian Franc',
+  KMF: {
     symbol: 'CF',
     symbolNative: 'FC',
     decimalDigits: 0,
     rounding: 0,
     code: 'KMF',
-    namePlural: 'Comorian francs',
   },
-  {
-    name: 'South Korean Won',
+  KRW: {
     symbol: '₩',
     symbolNative: '₩',
     decimalDigits: 0,
     rounding: 0,
     code: 'KRW',
-    namePlural: 'South Korean won',
   },
-  {
-    name: 'Kuwaiti Dinar',
+  KWD: {
     symbol: 'KD',
     symbolNative: 'د.ك.‏',
     decimalDigits: 3,
     rounding: 0,
     code: 'KWD',
-    namePlural: 'Kuwaiti dinars',
   },
-  {
-    name: 'Kazakhstani Tenge',
+  KZT: {
     symbol: 'KZT',
     symbolNative: 'тңг.',
     decimalDigits: 2,
     rounding: 0,
     code: 'KZT',
-    namePlural: 'Kazakhstani tenges',
   },
-  {
-    name: 'Lebanese Pound',
+  LBP: {
     symbol: 'LB£',
     symbolNative: 'ل.ل.‏',
     decimalDigits: 0,
     rounding: 0,
     code: 'LBP',
-    namePlural: 'Lebanese pounds',
   },
-  {
-    name: 'Sri Lankan Rupee',
+  LKR: {
     symbol: 'SLRs',
     symbolNative: 'SL Re',
     decimalDigits: 2,
     rounding: 0,
     code: 'LKR',
-    namePlural: 'Sri Lankan rupees',
   },
-  {
-    name: 'Lithuanian Litas',
+  LTL: {
     symbol: 'Lt',
     symbolNative: 'Lt',
     decimalDigits: 2,
     rounding: 0,
     code: 'LTL',
-    namePlural: 'Lithuanian litai',
   },
-  {
-    name: 'Latvian Lats',
+  LVL: {
     symbol: 'Ls',
     symbolNative: 'Ls',
     decimalDigits: 2,
     rounding: 0,
     code: 'LVL',
-    namePlural: 'Latvian lati',
   },
-  {
-    name: 'Libyan Dinar',
+  LYD: {
     symbol: 'LD',
     symbolNative: 'د.ل.‏',
     decimalDigits: 3,
     rounding: 0,
     code: 'LYD',
-    namePlural: 'Libyan dinars',
   },
-  {
-    name: 'Moroccan Dirham',
+  MAD: {
     symbol: 'MAD',
     symbolNative: 'د.م.‏',
     decimalDigits: 2,
     rounding: 0,
     code: 'MAD',
-    namePlural: 'Moroccan dirhams',
   },
-  {
-    name: 'Moldovan Leu',
+  MDL: {
     symbol: 'MDL',
     symbolNative: 'MDL',
     decimalDigits: 2,
     rounding: 0,
     code: 'MDL',
-    namePlural: 'Moldovan lei',
   },
-  {
-    name: 'Malagasy Ariary',
+  MGA: {
     symbol: 'MGA',
     symbolNative: 'MGA',
     decimalDigits: 0,
     rounding: 0,
     code: 'MGA',
-    namePlural: 'Malagasy Ariaries',
   },
-  {
-    name: 'Macedonian Denar',
+  MKD: {
     symbol: 'MKD',
     symbolNative: 'MKD',
     decimalDigits: 2,
     rounding: 0,
     code: 'MKD',
-    namePlural: 'Macedonian denari',
   },
-  {
-    name: 'Myanma Kyat',
+  MMK: {
     symbol: 'MMK',
     symbolNative: 'K',
     decimalDigits: 0,
     rounding: 0,
     code: 'MMK',
-    namePlural: 'Myanma kyats',
   },
-  {
-    name: 'Macanese Pataca',
+  MOP: {
     symbol: 'MOP$',
     symbolNative: 'MOP$',
     decimalDigits: 2,
     rounding: 0,
     code: 'MOP',
-    namePlural: 'Macanese patacas',
   },
-  {
-    name: 'Mauritian Rupee',
+  MUR: {
     symbol: 'MURs',
     symbolNative: 'MURs',
     decimalDigits: 0,
     rounding: 0,
     code: 'MUR',
-    namePlural: 'Mauritian rupees',
   },
-  {
-    name: 'Mexican Peso',
+  MXN: {
     symbol: 'MX$',
     symbolNative: '$',
     decimalDigits: 2,
     rounding: 0,
     code: 'MXN',
-    namePlural: 'Mexican pesos',
   },
-  {
-    name: 'Malaysian Ringgit',
+  MYR: {
     symbol: 'RM',
     symbolNative: 'RM',
     decimalDigits: 2,
     rounding: 0,
     code: 'MYR',
-    namePlural: 'Malaysian ringgits',
   },
-  {
-    name: 'Mozambican Metical',
+  MZN: {
     symbol: 'MTn',
     symbolNative: 'MTn',
     decimalDigits: 2,
     rounding: 0,
     code: 'MZN',
-    namePlural: 'Mozambican meticals',
   },
-  {
-    name: 'Namibian Dollar',
+  NAD: {
     symbol: 'N$',
     symbolNative: 'N$',
     decimalDigits: 2,
     rounding: 0,
     code: 'NAD',
-    namePlural: 'Namibian dollars',
   },
-  {
-    name: 'Nigerian Naira',
+  NGN: {
     symbol: '₦',
     symbolNative: '₦',
     decimalDigits: 2,
     rounding: 0,
     code: 'NGN',
-    namePlural: 'Nigerian nairas',
   },
-  {
-    name: 'Nicaraguan Córdoba',
+  NIO: {
     symbol: 'C$',
     symbolNative: 'C$',
     decimalDigits: 2,
     rounding: 0,
     code: 'NIO',
-    namePlural: 'Nicaraguan córdobas',
   },
-  {
-    name: 'Norwegian Krone',
+  NOK: {
     symbol: 'Nkr',
     symbolNative: 'kr',
     decimalDigits: 2,
     rounding: 0,
     code: 'NOK',
-    namePlural: 'Norwegian kroner',
   },
-  {
-    name: 'Nepalese Rupee',
+  NPR: {
     symbol: 'NPRs',
     symbolNative: 'नेरू',
     decimalDigits: 2,
     rounding: 0,
     code: 'NPR',
-    namePlural: 'Nepalese rupees',
   },
-  {
-    name: 'New Zealand Dollar',
+  NZD: {
     symbol: 'NZ$',
     symbolNative: '$',
     decimalDigits: 2,
     rounding: 0,
     code: 'NZD',
-    namePlural: 'New Zealand dollars',
   },
-  {
-    name: 'Omani Rial',
+  OMR: {
     symbol: 'OMR',
     symbolNative: 'ر.ع.‏',
     decimalDigits: 3,
     rounding: 0,
     code: 'OMR',
-    namePlural: 'Omani rials',
   },
-  {
-    name: 'Panamanian Balboa',
+  PAB: {
     symbol: 'B/.',
     symbolNative: 'B/.',
     decimalDigits: 2,
     rounding: 0,
     code: 'PAB',
-    namePlural: 'Panamanian balboas',
   },
-  {
-    name: 'Peruvian Nuevo Sol',
+  PEN: {
     symbol: 'S/.',
     symbolNative: 'S/.',
     decimalDigits: 2,
     rounding: 0,
     code: 'PEN',
-    namePlural: 'Peruvian nuevos soles',
   },
-  {
-    name: 'Philippine Peso',
+  PHP: {
     symbol: '₱',
     symbolNative: '₱',
     decimalDigits: 2,
     rounding: 0,
     code: 'PHP',
-    namePlural: 'Philippine pesos',
   },
-  {
-    name: 'Pakistani Rupee',
+  PKR: {
     symbol: 'PKRs',
     symbolNative: '₨',
     decimalDigits: 0,
     rounding: 0,
     code: 'PKR',
-    namePlural: 'Pakistani rupees',
   },
-  {
-    name: 'Polish Zloty',
+  PLN: {
     symbol: 'zł',
     symbolNative: 'zł',
     decimalDigits: 2,
     rounding: 0,
     code: 'PLN',
-    namePlural: 'Polish zlotys',
   },
-  {
-    name: 'Paraguayan Guarani',
+  PYG: {
     symbol: '₲',
     symbolNative: '₲',
     decimalDigits: 0,
     rounding: 0,
     code: 'PYG',
-    namePlural: 'Paraguayan guaranis',
   },
-  {
-    name: 'Qatari Rial',
+  QAR: {
     symbol: 'QR',
     symbolNative: 'ر.ق.‏',
     decimalDigits: 2,
     rounding: 0,
     code: 'QAR',
-    namePlural: 'Qatari rials',
   },
-  {
-    name: 'Romanian Leu',
+  RON: {
     symbol: 'RON',
     symbolNative: 'RON',
     decimalDigits: 2,
     rounding: 0,
     code: 'RON',
-    namePlural: 'Romanian lei',
   },
-  {
-    name: 'Serbian Dinar',
+  RSD: {
     symbol: 'din.',
     symbolNative: 'дин.',
     decimalDigits: 0,
     rounding: 0,
     code: 'RSD',
-    namePlural: 'Serbian dinars',
   },
-  {
-    name: 'Russian Ruble',
+  RUB: {
     symbol: 'RUB',
     symbolNative: '₽.',
     decimalDigits: 2,
     rounding: 0,
     code: 'RUB',
-    namePlural: 'Russian rubles',
   },
-  {
-    name: 'Rwandan Franc',
+  RWF: {
     symbol: 'RWF',
     symbolNative: 'FR',
     decimalDigits: 0,
     rounding: 0,
     code: 'RWF',
-    namePlural: 'Rwandan francs',
   },
-  {
-    name: 'Saudi Riyal',
+  SAR: {
     symbol: 'SR',
     symbolNative: 'ر.س.‏',
     decimalDigits: 2,
     rounding: 0,
     code: 'SAR',
-    namePlural: 'Saudi riyals',
   },
-  {
-    name: 'Sudanese Pound',
+  SDG: {
     symbol: 'SDG',
     symbolNative: 'SDG',
     decimalDigits: 2,
     rounding: 0,
     code: 'SDG',
-    namePlural: 'Sudanese pounds',
   },
-  {
-    name: 'Swedish Krona',
+  SEK: {
     symbol: 'Skr',
     symbolNative: 'kr',
     decimalDigits: 2,
     rounding: 0,
     code: 'SEK',
-    namePlural: 'Swedish kronor',
   },
-  {
-    name: 'Singapore Dollar',
+  SGD: {
     symbol: 'S$',
     symbolNative: '$',
     decimalDigits: 2,
     rounding: 0,
     code: 'SGD',
-    namePlural: 'Singapore dollars',
   },
-  {
-    name: 'Somali Shilling',
+  SOS: {
     symbol: 'Ssh',
     symbolNative: 'Ssh',
     decimalDigits: 0,
     rounding: 0,
     code: 'SOS',
-    namePlural: 'Somali shillings',
   },
-  {
-    name: 'Syrian Pound',
+  SYP: {
     symbol: 'SY£',
     symbolNative: 'ل.س.‏',
     decimalDigits: 0,
     rounding: 0,
     code: 'SYP',
-    namePlural: 'Syrian pounds',
   },
-  {
-    name: 'Thai Baht',
+  THB: {
     symbol: '฿',
     symbolNative: '฿',
     decimalDigits: 2,
     rounding: 0,
     code: 'THB',
-    namePlural: 'Thai baht',
   },
-  {
-    name: 'Tunisian Dinar',
+  TND: {
     symbol: 'DT',
     symbolNative: 'د.ت.‏',
     decimalDigits: 3,
     rounding: 0,
     code: 'TND',
-    namePlural: 'Tunisian dinars',
   },
-  {
-    name: 'Tongan Paʻanga',
+  TOP: {
     symbol: 'T$',
     symbolNative: 'T$',
     decimalDigits: 2,
     rounding: 0,
     code: 'TOP',
-    namePlural: 'Tongan paʻanga',
   },
-  {
-    name: 'Turkish Lira',
+  TRY: {
     symbol: 'TL',
     symbolNative: 'TL',
     decimalDigits: 2,
     rounding: 0,
     code: 'TRY',
-    namePlural: 'Turkish Lira',
   },
-  {
-    name: 'Trinidad and Tobago Dollar',
+  TTD: {
     symbol: 'TT$',
     symbolNative: '$',
     decimalDigits: 2,
     rounding: 0,
     code: 'TTD',
-    namePlural: 'Trinidad and Tobago dollars',
   },
-  {
-    name: 'New Taiwan Dollar',
+  TWD: {
     symbol: 'NT$',
     symbolNative: 'NT$',
     decimalDigits: 2,
     rounding: 0,
     code: 'TWD',
-    namePlural: 'New Taiwan dollars',
   },
-  {
-    name: 'Tanzanian Shilling',
+  TZS: {
     symbol: 'TSh',
     symbolNative: 'TSh',
     decimalDigits: 0,
     rounding: 0,
     code: 'TZS',
-    namePlural: 'Tanzanian shillings',
   },
-  {
-    name: 'Ukrainian Hryvnia',
+  UAH: {
     symbol: '₴',
     symbolNative: '₴',
     decimalDigits: 2,
     rounding: 0,
     code: 'UAH',
-    namePlural: 'Ukrainian hryvnias',
   },
-  {
-    name: 'Ugandan Shilling',
+  UGX: {
     symbol: 'USh',
     symbolNative: 'USh',
     decimalDigits: 0,
     rounding: 0,
     code: 'UGX',
-    namePlural: 'Ugandan shillings',
   },
-  {
-    name: 'Uruguayan Peso',
+  UYU: {
     symbol: '$U',
     symbolNative: '$',
     decimalDigits: 2,
     rounding: 0,
     code: 'UYU',
-    namePlural: 'Uruguayan pesos',
   },
-  {
-    name: 'Uzbekistan Som',
+  UZS: {
     symbol: 'UZS',
     symbolNative: 'UZS',
     decimalDigits: 0,
     rounding: 0,
     code: 'UZS',
-    namePlural: 'Uzbekistan som',
   },
-  {
-    name: 'Venezuelan Bolívar',
+  VEF: {
     symbol: 'Bs.F.',
     symbolNative: 'Bs.F.',
     decimalDigits: 2,
     rounding: 0,
     code: 'VEF',
-    namePlural: 'Venezuelan bolívars',
   },
-  {
-    name: 'Vietnamese Dong',
+  VND: {
     symbol: '₫',
     symbolNative: '₫',
     decimalDigits: 0,
     rounding: 0,
     code: 'VND',
-    namePlural: 'Vietnamese dong',
   },
-  {
-    name: 'CFA Franc BEAC',
+  XAF: {
     symbol: 'FCFA',
     symbolNative: 'FCFA',
     decimalDigits: 0,
     rounding: 0,
     code: 'XAF',
-    namePlural: 'CFA francs BEAC',
   },
-  {
-    name: 'CFA Franc BCEAO',
+  XOF: {
     symbol: 'CFA',
     symbolNative: 'CFA',
     decimalDigits: 0,
     rounding: 0,
     code: 'XOF',
-    namePlural: 'CFA francs BCEAO',
   },
-  {
-    name: 'Yemeni Rial',
+  YER: {
     symbol: 'YR',
     symbolNative: 'ر.ي.‏',
     decimalDigits: 0,
     rounding: 0,
     code: 'YER',
-    namePlural: 'Yemeni rials',
   },
-  {
-    name: 'South African Rand',
+  ZAR: {
     symbol: 'R',
     symbolNative: 'R',
     decimalDigits: 2,
     rounding: 0,
     code: 'ZAR',
-    namePlural: 'South African rand',
   },
-  {
-    name: 'Zambian Kwacha',
+  ZMK: {
     symbol: 'ZK',
     symbolNative: 'ZK',
     decimalDigits: 0,
     rounding: 0,
     code: 'ZMK',
-    namePlural: 'Zambian kwachas',
   },
-  {
-    name: 'Zimbabwean Dollar',
+  ZWL: {
     symbol: 'ZWL$',
     symbolNative: 'ZWL$',
     decimalDigits: 0,
     rounding: 0,
     code: 'ZWL',
-    namePlural: 'Zimbabwean Dollar',
   },
-];
+};
+
+export type CurrencyCode = keyof typeof CURRENCIES;

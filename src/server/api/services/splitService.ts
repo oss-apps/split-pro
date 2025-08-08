@@ -1,10 +1,12 @@
-import { SplitType, type User } from '@prisma/client';
-import exp from 'constants';
+import { type SplitType, type User } from '@prisma/client';
 import { nanoid } from 'nanoid';
+
 import { db } from '~/server/db';
-import { pushNotification } from '~/server/notification';
 import { type SplitwiseGroup, type SplitwiseUser } from '~/types';
-import { toFixedNumber, toInteger } from '~/utils/numbers';
+import { toSafeBigInt } from '~/utils/numbers';
+
+import { sendExpensePushNotification } from './notificationService';
+import type { CreateExpense } from '~/types/expense.types';
 
 export async function joinGroup(userId: number, publicGroupId: string) {
   const group = await db.group.findUnique({
@@ -27,23 +29,26 @@ export async function joinGroup(userId: number, publicGroupId: string) {
   return group;
 }
 
-export async function createGroupExpense(
-  groupId: number,
-  paidBy: number,
-  name: string,
-  category: string,
-  amount: number,
-  splitType: SplitType,
-  currency: string,
-  participants: { userId: number; amount: number }[],
+export async function createExpense(
+  {
+    groupId,
+    paidBy,
+    name,
+    category,
+    amount,
+    splitType,
+    currency,
+    participants,
+    expenseDate,
+    fileKey,
+    transactionId,
+  }: CreateExpense,
   currentUserId: number,
-  expenseDate: Date,
-  fileKey?: string,
-  transactionId?: string
 ) {
   const operations = [];
 
-  const modifiedAmount = toInteger(amount);
+  const nonZeroParticipants =
+    participants.length > 1 ? participants.filter((p) => 0n !== p.amount) : participants;
 
   // Create expense operation
   operations.push(
@@ -53,189 +58,78 @@ export async function createGroupExpense(
         paidBy,
         name,
         category,
-        amount: modifiedAmount,
+        amount,
         splitType,
         currency,
         expenseParticipants: {
-          create: participants.map((participant) => ({
-            userId: participant.userId,
-            amount: toInteger(participant.amount),
-          })),
+          create: nonZeroParticipants,
         },
         fileKey,
         addedBy: currentUserId,
         expenseDate,
-        transactionId: transactionId ?? "",
+        transactionId: transactionId ?? '',
       },
     }),
   );
 
   // Update group balances and overall balances operations
-  participants.forEach((participant) => {
+  nonZeroParticipants.forEach((participant) => {
+    // Update payer's balance towards the participant
     if (participant.userId === paidBy) {
       return;
     }
 
-    //participant.amount will be in negative
-
-    // Update balance where participant owes to the payer
-    operations.push(
-      db.groupBalance.upsert({
-        where: {
-          groupId_currency_firendId_userId: {
+    if (groupId) {
+      operations.push(
+        db.groupBalance.upsert({
+          where: {
+            groupId_currency_firendId_userId: {
+              groupId,
+              currency,
+              userId: paidBy,
+              firendId: participant.userId,
+            },
+          },
+          update: {
+            amount: {
+              increment: -participant.amount,
+            },
+          },
+          create: {
             groupId,
             currency,
             userId: paidBy,
             firendId: participant.userId,
+            amount: -participant.amount,
           },
-        },
-        update: {
-          amount: {
-            increment: -toInteger(participant.amount),
-          },
-        },
-        create: {
-          groupId,
-          currency,
-          userId: paidBy,
-          firendId: participant.userId,
-          amount: -toInteger(participant.amount),
-        },
-      }),
-    );
+        }),
+      );
 
-    // Update balance where payer owes to the participant (opposite balance)
-    operations.push(
-      db.groupBalance.upsert({
-        where: {
-          groupId_currency_firendId_userId: {
+      // Update balance where payer owes to the participant (opposite balance)
+      operations.push(
+        db.groupBalance.upsert({
+          where: {
+            groupId_currency_firendId_userId: {
+              groupId,
+              currency,
+              firendId: paidBy,
+              userId: participant.userId,
+            },
+          },
+          update: {
+            amount: {
+              increment: participant.amount,
+            },
+          },
+          create: {
             groupId,
             currency,
+            userId: participant.userId,
             firendId: paidBy,
-            userId: participant.userId,
+            amount: participant.amount, // Negative because it's the opposite balance
           },
-        },
-        update: {
-          amount: {
-            increment: toInteger(participant.amount),
-          },
-        },
-        create: {
-          groupId,
-          currency,
-          userId: participant.userId,
-          firendId: paidBy,
-          amount: toInteger(participant.amount), // Negative because it's the opposite balance
-        },
-      }),
-    );
-
-    // Update payer's balance towards the participant
-    operations.push(
-      db.balance.upsert({
-        where: {
-          userId_currency_friendId: {
-            userId: paidBy,
-            currency,
-            friendId: participant.userId,
-          },
-        },
-        update: {
-          amount: {
-            increment: -toInteger(participant.amount),
-          },
-        },
-        create: {
-          userId: paidBy,
-          currency,
-          friendId: participant.userId,
-          amount: -toInteger(participant.amount),
-        },
-      }),
-    );
-
-    // Update participant's balance towards the payer
-    operations.push(
-      db.balance.upsert({
-        where: {
-          userId_currency_friendId: {
-            userId: participant.userId,
-            currency,
-            friendId: paidBy,
-          },
-        },
-        update: {
-          amount: {
-            increment: toInteger(participant.amount),
-          },
-        },
-        create: {
-          userId: participant.userId,
-          currency,
-          friendId: paidBy,
-          amount: toInteger(participant.amount), // Negative because it's the opposite balance
-        },
-      }),
-    );
-  });
-
-  // Execute all operations in a transaction
-  const result = await db.$transaction(operations);
-  await updateGroupExpenseForIfBalanceIsZero(
-    paidBy,
-    participants.map((p) => p.userId),
-    currency,
-  );
-  if (result[0]) {
-    sendExpensePushNotification(result[0].id).catch(console.error);
-  }
-  return result[0];
-}
-
-export async function addUserExpense(
-  paidBy: number,
-  name: string,
-  category: string,
-  amount: number,
-  splitType: SplitType,
-  currency: string,
-  participants: { userId: number; amount: number }[],
-  currentUserId: number,
-  expenseDate: Date,
-  fileKey?: string,
-  transactionId?: string
-) {
-  const operations = [];
-
-  // Create expense operation
-  operations.push(
-    db.expense.create({
-      data: {
-        paidBy,
-        name,
-        category,
-        amount: toInteger(amount),
-        splitType,
-        currency,
-        expenseParticipants: {
-          create: participants.map((participant) => ({
-            userId: participant.userId,
-            amount: toInteger(participant.amount),
-          })),
-        },
-        fileKey,
-        addedBy: currentUserId,
-        expenseDate,
-        transactionId,
-      },
-    }),
-  );
-
-  // Update group balances and overall balances operations
-  participants.forEach((participant) => {
-    // Update payer's balance towards the participant
-    if (participant.userId === paidBy) {
-      return;
+        }),
+      );
     }
 
     operations.push(
@@ -249,14 +143,14 @@ export async function addUserExpense(
         },
         update: {
           amount: {
-            increment: -toInteger(participant.amount),
+            increment: -participant.amount,
           },
         },
         create: {
           userId: paidBy,
           currency,
           friendId: participant.userId,
-          amount: -toInteger(participant.amount),
+          amount: -participant.amount,
         },
       }),
     );
@@ -273,14 +167,14 @@ export async function addUserExpense(
         },
         update: {
           amount: {
-            increment: toInteger(participant.amount),
+            increment: participant.amount,
           },
         },
         create: {
           userId: participant.userId,
           currency,
           friendId: paidBy,
-          amount: toInteger(participant.amount), // Negative because it's the opposite balance
+          amount: participant.amount, // Negative because it's the opposite balance
         },
       }),
     );
@@ -290,7 +184,7 @@ export async function addUserExpense(
   const result = await db.$transaction(operations);
   await updateGroupExpenseForIfBalanceIsZero(
     paidBy,
-    participants.map((p) => p.userId),
+    nonZeroParticipants.map((p) => p.userId),
     currency,
   );
   if (result[0]) {
@@ -299,12 +193,403 @@ export async function addUserExpense(
   return result[0];
 }
 
+export async function deleteExpense(expenseId: string, deletedBy: number) {
+  const expense = await db.expense.findUnique({
+    where: {
+      id: expenseId,
+    },
+    include: {
+      expenseParticipants: true,
+    },
+  });
+
+  const operations = [];
+
+  if (!expense) {
+    throw new Error('Expense not found');
+  }
+
+  expense.expenseParticipants
+    .filter(({ userId }) => userId !== expense.paidBy)
+    .forEach((participant) => {
+      // Update payer's balance towards the participant
+      operations.push(
+        db.balance.upsert({
+          where: {
+            userId_currency_friendId: {
+              userId: expense.paidBy,
+              currency: expense.currency,
+              friendId: participant.userId,
+            },
+          },
+          create: {
+            amount: participant.amount,
+            userId: expense.paidBy,
+            currency: expense.currency,
+            friendId: participant.userId,
+          },
+          update: {
+            amount: {
+              decrement: -participant.amount,
+            },
+          },
+        }),
+      );
+
+      // Update participant's balance towards the payer
+      operations.push(
+        db.balance.upsert({
+          where: {
+            userId_currency_friendId: {
+              userId: participant.userId,
+              currency: expense.currency,
+              friendId: expense.paidBy,
+            },
+          },
+          create: {
+            amount: -participant.amount,
+            userId: participant.userId,
+            currency: expense.currency,
+            friendId: expense.paidBy,
+          },
+          update: {
+            amount: {
+              decrement: participant.amount,
+            },
+          },
+        }),
+      );
+
+      if (expense.groupId) {
+        operations.push(
+          db.groupBalance.upsert({
+            where: {
+              groupId_currency_firendId_userId: {
+                groupId: expense.groupId,
+                currency: expense.currency,
+                userId: expense.paidBy,
+                firendId: participant.userId,
+              },
+            },
+            create: {
+              amount: participant.amount,
+              groupId: expense.groupId,
+              currency: expense.currency,
+              userId: expense.paidBy,
+              firendId: participant.userId,
+            },
+            update: {
+              amount: {
+                decrement: -participant.amount,
+              },
+            },
+          }),
+        );
+
+        operations.push(
+          db.groupBalance.upsert({
+            where: {
+              groupId_currency_firendId_userId: {
+                groupId: expense.groupId,
+                currency: expense.currency,
+                userId: participant.userId,
+                firendId: expense.paidBy,
+              },
+            },
+            create: {
+              amount: -participant.amount,
+              groupId: expense.groupId,
+              currency: expense.currency,
+              userId: participant.userId,
+              firendId: expense.paidBy,
+            },
+            update: {
+              amount: {
+                decrement: participant.amount,
+              },
+            },
+          }),
+        );
+      }
+    });
+
+  operations.push(
+    db.expense.update({
+      where: { id: expenseId },
+      data: {
+        deletedBy,
+        deletedAt: new Date(),
+      },
+    }),
+  );
+
+  await db.$transaction(operations);
+  sendExpensePushNotification(expenseId).catch(console.error);
+}
+
+export async function editExpense(
+  {
+    expenseId,
+    paidBy,
+    name,
+    category,
+    amount,
+    splitType,
+    currency,
+    participants,
+    expenseDate,
+    fileKey,
+  }: CreateExpense,
+  currentUserId: number,
+) {
+  if (!expenseId) {
+    throw new Error('Expense ID is required for editing');
+  }
+  const nonZeroParticipants =
+    participants.length > 1 ? participants.filter((p) => 0n !== p.amount) : participants;
+
+  const expense = await db.expense.findUnique({
+    where: { id: expenseId },
+    include: {
+      expenseParticipants: true,
+    },
+  });
+
+  if (!expense) {
+    throw new Error('Expense not found');
+  }
+
+  const operations = [];
+
+  // First reverse all existing balances
+  expense.expenseParticipants
+    .filter(({ userId, amount }) => userId !== expense.paidBy && 0n !== amount)
+    .forEach((participant) => {
+      operations.push(
+        db.balance.update({
+          where: {
+            userId_currency_friendId: {
+              userId: expense.paidBy,
+              currency: expense.currency,
+              friendId: participant.userId,
+            },
+          },
+          data: {
+            amount: {
+              increment: participant.amount,
+            },
+          },
+        }),
+      );
+
+      operations.push(
+        db.balance.update({
+          where: {
+            userId_currency_friendId: {
+              userId: participant.userId,
+              currency: expense.currency,
+              friendId: expense.paidBy,
+            },
+          },
+          data: {
+            amount: {
+              decrement: participant.amount,
+            },
+          },
+        }),
+      );
+
+      // Reverse group balances if it's a group expense
+      if (expense.groupId) {
+        operations.push(
+          db.groupBalance.update({
+            where: {
+              groupId_currency_firendId_userId: {
+                groupId: expense.groupId,
+                currency: expense.currency,
+                userId: expense.paidBy,
+                firendId: participant.userId,
+              },
+            },
+            data: {
+              amount: {
+                increment: participant.amount,
+              },
+            },
+          }),
+        );
+
+        operations.push(
+          db.groupBalance.update({
+            where: {
+              groupId_currency_firendId_userId: {
+                groupId: expense.groupId,
+                currency: expense.currency,
+                userId: participant.userId,
+                firendId: expense.paidBy,
+              },
+            },
+            data: {
+              amount: {
+                decrement: participant.amount,
+              },
+            },
+          }),
+        );
+      }
+    });
+
+  // Delete existing participants
+  operations.push(
+    db.expenseParticipant.deleteMany({
+      where: {
+        expenseId,
+      },
+    }),
+  );
+
+  // Update expense with new details and create new participants
+  operations.push(
+    db.expense.update({
+      where: { id: expenseId },
+      data: {
+        paidBy,
+        name,
+        category,
+        amount,
+        splitType,
+        currency,
+        expenseParticipants: {
+          create: participants,
+        },
+        fileKey,
+        expenseDate,
+        updatedBy: currentUserId,
+      },
+    }),
+  );
+
+  // Add new balances
+  nonZeroParticipants.forEach((participant) => {
+    if (participant.userId === paidBy) {
+      return;
+    }
+
+    operations.push(
+      db.balance.upsert({
+        where: {
+          userId_currency_friendId: {
+            userId: paidBy,
+            currency,
+            friendId: participant.userId,
+          },
+        },
+        create: {
+          userId: paidBy,
+          currency,
+          friendId: participant.userId,
+          amount: -participant.amount,
+        },
+        update: {
+          amount: {
+            increment: -participant.amount,
+          },
+        },
+      }),
+    );
+
+    operations.push(
+      db.balance.upsert({
+        where: {
+          userId_currency_friendId: {
+            userId: participant.userId,
+            currency,
+            friendId: paidBy,
+          },
+        },
+        create: {
+          userId: participant.userId,
+          currency,
+          friendId: paidBy,
+          amount: participant.amount,
+        },
+        update: {
+          amount: {
+            increment: participant.amount,
+          },
+        },
+      }),
+    );
+
+    // Add new group balances if it's a group expense
+    if (expense.groupId) {
+      operations.push(
+        db.groupBalance.upsert({
+          where: {
+            groupId_currency_firendId_userId: {
+              groupId: expense.groupId,
+              currency,
+              userId: paidBy,
+              firendId: participant.userId,
+            },
+          },
+          create: {
+            amount: -participant.amount,
+            groupId: expense.groupId,
+            currency,
+            userId: paidBy,
+            firendId: participant.userId,
+          },
+          update: {
+            amount: {
+              increment: -participant.amount,
+            },
+          },
+        }),
+      );
+
+      operations.push(
+        db.groupBalance.upsert({
+          where: {
+            groupId_currency_firendId_userId: {
+              groupId: expense.groupId,
+              currency,
+              userId: participant.userId,
+              firendId: paidBy,
+            },
+          },
+          create: {
+            amount: participant.amount,
+            groupId: expense.groupId,
+            currency,
+            userId: participant.userId,
+            firendId: paidBy,
+          },
+          update: {
+            amount: {
+              increment: participant.amount,
+            },
+          },
+        }),
+      );
+    }
+  });
+
+  await db.$transaction(operations);
+  await updateGroupExpenseForIfBalanceIsZero(
+    paidBy,
+    nonZeroParticipants.map((p) => p.userId),
+    currency,
+  );
+  sendExpensePushNotification(expenseId).catch(console.error);
+  return { id: expenseId }; // Return the updated expense
+}
+
 async function updateGroupExpenseForIfBalanceIsZero(
   userId: number,
-  friendIds: Array<number>,
+  friendIds: number[],
   currency: string,
 ) {
-  console.log('Checking for users with 0 balance to reflect in group');
   const balances = await db.balance.findMany({
     where: {
       userId,
@@ -316,9 +601,8 @@ async function updateGroupExpenseForIfBalanceIsZero(
     },
   });
 
-  console.log('Total balances needs to be updated:', balances.length);
-
   if (balances.length) {
+    const friendIds = balances.map((b) => b.friendId);
     await db.groupBalance.updateMany({
       where: {
         userId,
@@ -347,218 +631,6 @@ async function updateGroupExpenseForIfBalanceIsZero(
   }
 }
 
-export async function deleteExpense(expenseId: string, deletedBy: number) {
-  const expense = await db.expense.findUnique({
-    where: {
-      id: expenseId,
-    },
-    include: {
-      expenseParticipants: true,
-    },
-  });
-
-  const operations = [];
-
-  if (!expense) {
-    throw new Error('Expense not found');
-  }
-
-  for (const participant of expense.expenseParticipants) {
-    // Update payer's balance towards the participant
-    if (participant.userId === expense.paidBy) {
-      continue;
-    }
-
-    operations.push(
-      db.balance.upsert({
-        where: {
-          userId_currency_friendId: {
-            userId: expense.paidBy,
-            currency: expense.currency,
-            friendId: participant.userId,
-          },
-        },
-        create: {
-          amount: participant.amount,
-          userId: expense.paidBy,
-          currency: expense.currency,
-          friendId: participant.userId,
-        },
-        update: {
-          amount: {
-            decrement: -participant.amount,
-          },
-        },
-      }),
-    );
-
-    // Update participant's balance towards the payer
-    operations.push(
-      db.balance.upsert({
-        where: {
-          userId_currency_friendId: {
-            userId: participant.userId,
-            currency: expense.currency,
-            friendId: expense.paidBy,
-          },
-        },
-        create: {
-          amount: -participant.amount,
-          userId: participant.userId,
-          currency: expense.currency,
-          friendId: expense.paidBy,
-        },
-        update: {
-          amount: {
-            decrement: participant.amount,
-          },
-        },
-      }),
-    );
-
-    if (expense.groupId) {
-      operations.push(
-        db.groupBalance.upsert({
-          where: {
-            groupId_currency_firendId_userId: {
-              groupId: expense.groupId,
-              currency: expense.currency,
-              userId: expense.paidBy,
-              firendId: participant.userId,
-            },
-          },
-          create: {
-            amount: participant.amount,
-            groupId: expense.groupId,
-            currency: expense.currency,
-            userId: expense.paidBy,
-            firendId: participant.userId,
-          },
-          update: {
-            amount: {
-              decrement: -participant.amount,
-            },
-          },
-        }),
-      );
-
-      operations.push(
-        db.groupBalance.upsert({
-          where: {
-            groupId_currency_firendId_userId: {
-              groupId: expense.groupId,
-              currency: expense.currency,
-              userId: participant.userId,
-              firendId: expense.paidBy,
-            },
-          },
-          create: {
-            amount: -participant.amount,
-            groupId: expense.groupId,
-            currency: expense.currency,
-            userId: participant.userId,
-            firendId: expense.paidBy,
-          },
-          update: {
-            amount: {
-              decrement: participant.amount,
-            },
-          },
-        }),
-      );
-    }
-  }
-
-  operations.push(
-    db.expense.update({
-      where: { id: expenseId },
-      data: {
-        deletedBy,
-        deletedAt: new Date(),
-        transactionId: null
-      },
-    }),
-  );
-
-  await db.$transaction(operations);
-  sendExpensePushNotification(expenseId).catch(console.error);
-}
-
-export async function sendExpensePushNotification(expenseId: string) {
-  const expense = await db.expense.findUnique({
-    where: {
-      id: expenseId,
-    },
-    select: {
-      paidBy: true,
-      amount: true,
-      currency: true,
-      addedBy: true,
-      name: true,
-      deletedBy: true,
-      splitType: true,
-      deletedByUser: {
-        select: {
-          name: true,
-          email: true,
-        },
-      },
-      expenseParticipants: {
-        select: {
-          userId: true,
-        },
-      },
-      paidByUser: {
-        select: {
-          name: true,
-          email: true,
-        },
-      },
-      addedByUser: {
-        select: {
-          name: true,
-          email: true,
-        },
-      },
-    },
-  });
-
-  if (!expense) {
-    return;
-  }
-
-  const participants = expense.deletedBy
-    ? expense.expenseParticipants.map((p) => p.userId).filter((e) => e !== expense.deletedBy)
-    : expense.expenseParticipants.map((p) => p.userId).filter((e) => e !== expense.addedBy);
-
-  const subscriptions = await db.pushNotification.findMany({
-    where: {
-      userId: {
-        in: participants,
-      },
-    },
-  });
-
-  const pushData = expense.deletedBy
-    ? {
-        title: `${expense.deletedByUser?.name ?? expense.deletedByUser?.email}`,
-        message: `Deleted ${expense.name}`,
-      }
-    : expense.splitType === SplitType.SETTLEMENT
-      ? {
-          title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
-          message: `${expense.paidByUser.name ?? expense.paidByUser.email} settled up ${expense.currency} ${toFixedNumber(expense.amount)}`,
-        }
-      : {
-          title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
-          message: `${expense.paidByUser.name ?? expense.paidByUser.email} paid  ${expense.currency} ${toFixedNumber(expense.amount)} for ${expense.name}`,
-        };
-
-  const pushNotifications = subscriptions.map((s) => pushNotification(s.subscription, pushData));
-
-  await Promise.all(pushNotifications);
-}
-
 export async function getCompleteFriendsDetails(userId: number) {
   const balances = await db.balance.findMany({
     where: {
@@ -572,20 +644,17 @@ export async function getCompleteFriendsDetails(userId: number) {
   const friends = balances.reduce(
     (acc, balance) => {
       const friendId = balance.friendId;
-      if (!acc[friendId]) {
-        acc[friendId] = {
-          balances: [],
-          id: balance.friendId,
-          email: balance.friend.email,
-          name: balance.friend.name,
-        };
-      }
+      acc[friendId] ??= {
+        balances: [],
+        id: balance.friendId,
+        email: balance.friend.email,
+        name: balance.friend.name,
+      };
 
-      if (balance.amount !== 0) {
+      if (0n !== balance.amount) {
         acc[friendId]?.balances.push({
           currency: balance.currency,
-          amount:
-            balance.amount > 0 ? toFixedNumber(balance.amount) : toFixedNumber(balance.amount),
+          amount: balance.amount,
         });
       }
 
@@ -597,7 +666,7 @@ export async function getCompleteFriendsDetails(userId: number) {
         id: number;
         email?: string | null;
         name?: string | null;
-        balances: { currency: string; amount: number }[];
+        balances: { currency: string; amount: bigint }[];
       }
     >,
   );
@@ -621,6 +690,74 @@ export async function getCompleteGroupDetails(userId: number) {
   });
 
   return groups;
+}
+
+export async function recalculateGroupBalances(groupId: number) {
+  const groupExpenses = await db.expense.findMany({
+    where: {
+      groupId,
+      deletedAt: null,
+    },
+    include: {
+      expenseParticipants: true,
+    },
+  });
+
+  const operations = [];
+
+  operations.push(
+    db.groupBalance.updateMany({
+      where: {
+        groupId,
+      },
+      data: {
+        amount: 0,
+      },
+    }),
+  );
+
+  for (const groupExpense of groupExpenses) {
+    for (const participant of groupExpense.expenseParticipants) {
+      if (participant.userId === groupExpense.paidBy) {
+        continue;
+      }
+
+      operations.push(
+        db.groupBalance.update({
+          where: {
+            groupId_currency_firendId_userId: {
+              groupId,
+              currency: groupExpense.currency,
+              userId: groupExpense.paidBy,
+              firendId: participant.userId,
+            },
+          },
+          data: {
+            amount: {
+              increment: -participant.amount,
+            },
+          },
+        }),
+        db.groupBalance.update({
+          where: {
+            groupId_currency_firendId_userId: {
+              groupId,
+              currency: groupExpense.currency,
+              userId: participant.userId,
+              firendId: groupExpense.paidBy,
+            },
+          },
+          data: {
+            amount: {
+              increment: participant.amount,
+            },
+          },
+        }),
+      );
+    }
+  }
+
+  await db.$transaction(operations);
 }
 
 export async function importUserBalanceFromSplitWise(
@@ -649,7 +786,7 @@ export async function importUserBalanceFromSplitWise(
     }
 
     for (const balance of user.balance) {
-      const amount = toInteger(parseFloat(balance.amount));
+      const amount = toSafeBigInt(balance.amount);
       const currency = balance.currency_code;
       const existingBalance = await db.balance.findUnique({
         where: {
@@ -720,7 +857,7 @@ export async function importUserBalanceFromSplitWise(
   await db.$transaction(operations);
 }
 
-async function createUsersFromSplitwise(users: Array<SplitwiseUser>) {
+async function createUsersFromSplitwise(users: SplitwiseUser[]) {
   const userEmails = users.map((u) => u.email);
 
   const existingUsers = await db.user.findMany({
@@ -759,7 +896,7 @@ async function createUsersFromSplitwise(users: Array<SplitwiseUser>) {
 
 export async function importGroupFromSplitwise(
   currentUserId: number,
-  splitWiseGroups: Array<SplitwiseGroup>,
+  splitWiseGroups: SplitwiseGroup[],
 ) {
   const splitwiseUserMap: Record<string, SplitwiseUser> = {};
 
@@ -768,7 +905,6 @@ export async function importGroupFromSplitwise(
       splitwiseUserMap[member.id.toString()] = member;
     }
   }
-  console.log('splitwiseUserMap', splitwiseUserMap);
 
   const users = await createUsersFromSplitwise(Object.values(splitwiseUserMap));
 
@@ -783,31 +919,26 @@ export async function importGroupFromSplitwise(
     {} as Record<string, User>,
   );
 
-  console.log('userMap', userMap, splitWiseGroups);
+  const missingGroups = await Promise.all(
+    splitWiseGroups.map(async (group) => {
+      const dbGroup = await db.group.findUnique({
+        where: {
+          splitwiseGroupId: group.id.toString(),
+        },
+      });
 
-  const operations = [];
-  console.log('Hello world');
+      return dbGroup ? null : group;
+    }),
+  );
 
-  for (const group of splitWiseGroups) {
-    console.log('group', group);
-    const dbGroup = await db.group.findUnique({
-      where: {
-        splitwiseGroupId: group.id.toString(),
-      },
-    });
+  const operations = missingGroups
+    .filter((g) => null !== g)
+    .map((group) => {
+      const groupmembers = group.members.map((member) => ({
+        userId: userMap[member.email.toString()]!.id,
+      }));
 
-    if (dbGroup) {
-      continue;
-    }
-
-    const groupmembers = group.members.map((member) => ({
-      userId: userMap[member.email.toString()]!.id,
-    }));
-
-    console.log('groupmembers', groupmembers);
-
-    operations.push(
-      db.group.create({
+      return db.group.create({
         data: {
           name: group.name,
           splitwiseGroupId: group.id.toString(),
@@ -817,9 +948,8 @@ export async function importGroupFromSplitwise(
             create: groupmembers,
           },
         },
-      }),
-    );
-  }
+      });
+    });
 
   await db.$transaction(operations);
 }

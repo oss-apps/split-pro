@@ -1,12 +1,16 @@
 import { type User } from 'next-auth';
 import nodemailer, { type Transporter } from 'nodemailer';
+
 import { env } from '~/env';
+
 import { sendToDiscord } from './service-notification';
 
 let transporter: Transporter;
 
 const getTransporter = () => {
-  if (transporter) return transporter;
+  if (transporter) {
+    return transporter;
+  }
 
   const host = env.EMAIL_SERVER_HOST;
   const port = parseInt(env.EMAIL_SERVER_PORT ?? '');
@@ -19,14 +23,14 @@ const getTransporter = () => {
 
   const transport = {
     host,
-    secure: port === 465,
+    secure: 465 === port,
     port,
     auth: {
       user,
       pass,
     },
     tls: {
-      rejectUnauthorized: env.NODE_ENV !== 'development',
+      rejectUnauthorized: 'development' !== env.NODE_ENV,
     },
   };
 
@@ -34,27 +38,31 @@ const getTransporter = () => {
   return transporter;
 };
 
-export async function sendSignUpEmail(email: string, token: string, url: string) {
+export async function sendSignUpEmail(email: string, url: string, token: string) {
   const { host } = new URL(url);
 
   console.log(env.NODE_ENV);
 
-  if (env.NODE_ENV === 'development') {
+  if ('development' === env.NODE_ENV) {
     console.log('Sign in link : ', email, url, token);
     return true;
   }
 
   const subject = 'Sign in to SplitPro';
   const text = `Hey,\n\nYou can sign in to SplitPro by clicking the below URL:\n${url}\n\nYou can also use this OTP: ${token}\n\nThanks,\nSplitPro Team`;
-  const html = `<p>Hey,</p> <p>You can sign in to SplitPro by clicking the below URL:</p><p><a href="${url}">Sign in to ${host}</a></p><p>You can also use this OTP: <b>${token}</b></p<br /><br /><p>Thanks,</p><br/>SplitPro Team</p>`;
+  const html = `<p>Hey,</p> <p>You can sign in to SplitPro by clicking the below URL:</p><p><a href="${url}">Sign in to ${host}</a></p><p>You can also use this OTP: <b>${token}</b></p><br /><br /><p>Thanks,</p><br/>SplitPro Team</p>`;
 
   return await sendMail(email, subject, text, html);
 }
 
 export async function sendInviteEmail(email: string, name: string) {
+  if (!env.ENABLE_SENDING_INVITES) {
+    throw new Error('Sending invites is not enabled');
+  }
+
   const { host } = new URL(env.NEXTAUTH_URL);
 
-  if (env.NODE_ENV === 'development') {
+  if ('development' === env.NODE_ENV) {
     console.log('Sending invite email', email, name);
     return;
   }
@@ -69,7 +77,9 @@ export async function sendInviteEmail(email: string, name: string) {
 export async function sendFeedbackEmail(feedback: string, user: User) {
   console.log('Received feedback from: ', user.email, 'Feedback: ', feedback);
 
-  if (!env.FEEDBACK_EMAIL) return;
+  if (!env.FEEDBACK_EMAIL) {
+    return;
+  }
 
   const subject = `Feedback received on SplitPro from ${user.name}`;
   const text = `Feedback created by ${user.name} :\n\nFeedback: ${feedback}\n\nemail: ${user.email}`;

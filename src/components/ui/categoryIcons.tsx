@@ -2,11 +2,13 @@ import {
   Baby,
   Backpack,
   Banknote,
+  Bike,
   Bone,
   Bus,
   Car,
   CarTaxiFront,
   Construction,
+  DoorOpen,
   FerrisWheel,
   Flame,
   Fuel,
@@ -18,33 +20,37 @@ import {
   Hammer,
   HandIcon,
   Home,
+  Hotel,
   type LucideIcon,
+  type LucideProps,
   Music,
+  Paintbrush,
+  Paintbrush2,
   ParkingCircle,
   Phone,
   Pizza,
   Plane,
   Plug,
   Popcorn,
+  ReceiptText,
+  Shield,
   Shirt,
   ShoppingCart,
   Sofa,
   Sprout,
   Stethoscope,
   TrainFront,
+  Trash,
   Trophy,
   Utensils,
-  UtilityPole,
   Wine,
-  Zap,
-  type LucideProps,
-  Paintbrush,
-  Trash,
   Wrench,
+  Zap,
 } from 'lucide-react';
-import { type ForwardRefExoticComponent } from 'react';
 
-export const CategoryIcons: Record<string, LucideIcon> = {
+import { type CategoryItem, DEFAULT_CATEGORY } from '~/lib/category';
+
+export const CategoryIcons: Record<CategoryItem, LucideIcon> = {
   games: Gamepad2,
   movies: Popcorn,
   music: Music,
@@ -57,11 +63,11 @@ export const CategoryIcons: Record<string, LucideIcon> = {
   home: Home,
   electronics: Plug,
   furniture: Sofa,
-  supplies: Sofa,
+  supplies: Paintbrush2,
   maintenance: Construction,
   mortgage: HandIcon,
   pets: Bone,
-  rent: Home,
+  rent: DoorOpen,
   services: Hammer,
   life: Sprout,
   childcare: Baby,
@@ -69,7 +75,7 @@ export const CategoryIcons: Record<string, LucideIcon> = {
   education: GraduationCap,
   gifts: Gift,
   medical: Stethoscope,
-  taxes: Banknote,
+  taxes: ReceiptText,
   travel: Backpack,
   bus: Bus,
   train: TrainFront,
@@ -87,13 +93,18 @@ export const CategoryIcons: Record<string, LucideIcon> = {
   general: Banknote,
   cleaning: Paintbrush,
   trash: Trash,
+  insurance: Shield,
+  bicycle: Bike,
+  hotel: Hotel,
 };
 
-export const CategoryIcon: React.FC<{ category: string; className?: string }> = ({
-  category,
+export const DEFAULT_CATEGORY_ICON = CategoryIcons[DEFAULT_CATEGORY];
+
+export const CategoryIcon: React.FC<{ category?: string } & LucideProps> = ({
+  category = DEFAULT_CATEGORY,
   ...props
 }) => {
-  const Icon = CategoryIcons[category] ?? Banknote;
+  const Icon = CategoryIcons[category as CategoryItem] ?? DEFAULT_CATEGORY_ICON;
 
   return <Icon {...props} />;
 };

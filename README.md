@@ -6,13 +6,6 @@
   <h1 align="center">SplitPro</h1>
   <h2 align="center">An open source alternative to Splitwise</h2>
 
-<p align="center">
-    <a href="https://splitpro.app"><strong>To our App »</strong></a>
-    <br />
-    <br />
-  </p>
-</p>
-
 ## About
 
 SplitPro aims to provide an open-source way to share expenses with your friends.
@@ -30,9 +23,20 @@ It currently has most of the important features.
 - Push notification
 - Download your data
 - Import from splitwise
-- Bank account transactions integration
+- **NEW** simplify group debts
+- **NEW** community translations, feel free to add your language!
 
 **More features coming every day**
+
+## Versions
+
+Split Pro is aimed for self hosting mostly. To get the most recent features you can build an image from source. Stabilized changes are released as Docker images, while we also have a not so often updated cloud instance for you to try:
+
+<p align="center">
+    <a href="https://splitpro.app"><strong>To our App »</strong></a>
+    <br />
+  </p>
+</p>
 
 ---
 
@@ -50,6 +54,16 @@ I managed to find a good app [spliit.app](https://spliit.app/) by [Sebastien Cas
 
 _That's when I decided to work on this_
 
+## FAQ
+
+#### How numerically stable is the internal logic?
+
+All numbers are stored in the DB as `BigInt` data, with no floats what so ever, safeguarding your expences from rounding errors or lack of precision. This holds true for currencies with large nominal values that might outgrow the safe range of JS number type.
+
+#### How are leftover pennies handled?
+
+In case of an expense that cannot be split evenly, the leftover amounts are distributed randomly across participants. The assignment is as equal as possible, in the context of a single expense (similar to Splitwise).
+
 ## Tech stack
 
 - [NextJS](https://nextjs.org/)
@@ -64,7 +78,7 @@ _That's when I decided to work on this_
 
 ### Prerequisites
 
-- Node.js (Version: >=18.x)
+- Node.js (Version: >=22.x)
 - PostgreSQL
 - pnpm (recommended)
 
@@ -116,3 +130,9 @@ We are grateful for the support of our sponsors.
 <a href="https://hekuta.net/en" target="_blank">
   <img src="https://avatars.githubusercontent.com/u/70084358?v=4" alt="hekuta" style="width:60px;height:60px;">
 </a>
+<a href="https://github.com/igorrrpawlowski"><img src="https:&#x2F;&#x2F;github.com&#x2F;igorrrpawlowski.png" width="60px" alt="User avatar: igorrrpawlowski" /></a>
+<a href="https://github.com/probeonstimpack"><img src="https:&#x2F;&#x2F;github.com&#x2F;probeonstimpack.png" width="60px" alt="User avatar: Marcel Szmeterowicz" /></a>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=oss-apps/split-pro&type=Date)](https://star-history.com/#oss-apps/split-pro&Date)

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Button } from '../ui/button';
-import { toast } from 'sonner';
-import { env } from '~/env';
 import { Bell, BellOff, ChevronRight } from 'lucide-react';
-import { api } from '~/utils/api';
+import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { useAppStore } from '~/store/appStore';
+import { api } from '~/utils/api';
+import { useTranslation } from 'next-i18next';
+
+import { Button } from '../ui/button';
 
 const base64ToUint8Array = (base64: string) => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4);
@@ -20,12 +21,13 @@ const base64ToUint8Array = (base64: string) => {
 };
 
 export const SubscribeNotification: React.FC = () => {
+  const { t } = useTranslation('account_page');
   const updatePushSubscription = api.user.updatePushNotification.useMutation();
   const [isSubscribed, setIsSubscribed] = useState(false);
   const webPushPublicKey = useAppStore((s) => s.webPushPublicKey);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+    if ('undefined' !== typeof window && 'serviceWorker' in navigator) {
       // run only in browser
       navigator.serviceWorker.ready
         .then((reg) => {
@@ -45,12 +47,12 @@ export const SubscribeNotification: React.FC = () => {
   async function onRequestNotification() {
     try {
       const result = await Notification.requestPermission();
-      if (result === 'granted') {
-        toast.success('You will receive notifications now');
+      if ('granted' === result) {
+        toast.success(t('ui.notifications.messages.notification_granted'));
         navigator.serviceWorker.ready
           .then(async (reg) => {
             if (!webPushPublicKey) {
-              toast.error('Notification is not supported');
+              toast.error(t('ui.notifications.errors.notification_not_supported'));
               return;
             }
 
@@ -63,11 +65,13 @@ export const SubscribeNotification: React.FC = () => {
             updatePushSubscription.mutate({ subscription: JSON.stringify(sub) });
           })
           .catch((e) => {
-            toast.error('Cannot subscribe to notification');
+            console.info(e);
+            toast.error(t('ui.notifications.errors.subscribe_error'));
           });
       }
     } catch (e) {
-      toast.error('Error requesting notification');
+      console.info(e);
+      toast.error(t('ui.notifications.errors.request_error'));
     }
   }
 
@@ -80,7 +84,8 @@ export const SubscribeNotification: React.FC = () => {
         setIsSubscribed(false);
       }
     } catch (e) {
-      toast.error('Error unsubscribing notification');
+      console.info(e);
+      toast.error(t('ui.notifications.errors.unsubscribe_error'));
     }
   }
 
@@ -92,19 +97,19 @@ export const SubscribeNotification: React.FC = () => {
     <>
       <Button
         variant="ghost"
-        className="text-md w-full justify-between px-0 hover:text-foreground/80"
+        className="text-md hover:text-foreground/80 w-full justify-between px-0"
         onClick={isSubscribed ? unSubscribeNotification : onRequestNotification}
       >
         <div className="flex items-center gap-4">
           {!isSubscribed ? (
             <>
               <Bell className="h-5 w-5 text-red-400" />
-              Enable Notification
+              {t('ui.notifications.enable_notification')}
             </>
           ) : (
             <>
               <BellOff className="h-5 w-5 text-red-400" />
-              Disable notification
+              {t('ui.notifications.disable_notification')}
             </>
           )}
         </div>

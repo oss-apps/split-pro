@@ -1,7 +1,10 @@
+import { Bell } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Bell } from 'lucide-react';
+
+import { useAppStore } from '~/store/appStore';
 import { api } from '~/utils/api';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,7 +15,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from './ui/alert-dialog';
-import { useAppStore } from '~/store/appStore';
 
 const base64ToUint8Array = (base64: string) => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4);
@@ -37,7 +39,7 @@ export const NotificationModal: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+    if ('undefined' !== typeof window && 'serviceWorker' in navigator) {
       // run only in browser
       navigator.serviceWorker.ready
         .then((reg) => {
@@ -63,7 +65,7 @@ export const NotificationModal: React.FC = () => {
   async function onRequestNotification() {
     try {
       const result = await Notification.requestPermission();
-      if (result === 'granted') {
+      if ('granted' === result) {
         toast.success('You will receive notifications now');
         navigator.serviceWorker.ready
           .then(async (reg) => {
@@ -98,7 +100,7 @@ export const NotificationModal: React.FC = () => {
 
   return (
     <AlertDialog open={modalOpen}>
-      <AlertDialogContent className=" rounded-lg">
+      <AlertDialogContent className="rounded-lg">
         <AlertDialogHeader>
           <AlertDialogTitle>Enable notifications</AlertDialogTitle>
           <AlertDialogDescription>

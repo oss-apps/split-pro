@@ -1,10 +1,11 @@
-import { SplitType } from '@prisma/client';
-import { z } from 'zod';
-import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
-import { db } from '~/server/db';
-import { createGroupExpense } from '../services/splitService';
 import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
+import { z } from 'zod';
+
+import { simplifyDebts } from '~/lib/simplify';
+import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
+
+import { recalculateGroupBalances } from '../services/splitService';
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
@@ -77,10 +78,10 @@ export const groupRouter = createTRPCRouter({
     });
 
     const groupsWithBalances = sortedGroupsByLatestExpense.map((g) => {
-      const balances: Record<string, number> = {};
+      const balances: Record<string, bigint> = {};
 
       for (const balance of g.group.groupBalances) {
-        balances[balance.currency] = (balances[balance.currency] ?? 0) + balance.amount;
+        balances[balance.currency] = (balances[balance.currency] ?? 0n) + balance.amount;
       }
 
       return {
@@ -115,96 +116,6 @@ export const groupRouter = createTRPCRouter({
       return group;
     }),
 
-  addExpense: groupProcedure
-    .input(
-      z.object({
-        paidBy: z.number(),
-        name: z.string(),
-        category: z.string(),
-        amount: z.number(),
-        transactionId: z.string().optional(),
-        splitType: z.enum([
-          SplitType.ADJUSTMENT,
-          SplitType.EQUAL,
-          SplitType.PERCENTAGE,
-          SplitType.SHARE,
-          SplitType.EXACT,
-          SplitType.SETTLEMENT,
-        ]),
-        currency: z.string(),
-        participants: z.array(z.object({ userId: z.number(), amount: z.number() })),
-        fileKey: z.string().optional(),
-        expenseDate: z.date().optional(),
-      }),
-    )
-    .mutation(async ({ input, ctx }) => {
-      try {
-        const expense = await createGroupExpense(
-          input.groupId,
-          input.paidBy,
-          input.name,
-          input.category,
-          input.amount,
-          input.splitType,
-          input.currency,
-          input.participants,
-          ctx.session.user.id,
-          input.expenseDate ?? new Date(),
-          input.fileKey,
-          input.transactionId
-        );
-
-        return expense;
-      } catch (error) {
-        console.error(error);
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create expense' });
-      }
-    }),
-
-  getExpenses: groupProcedure
-    .input(z.object({ groupId: z.number() }))
-    .query(async ({ input, ctx }) => {
-      const expenses = await ctx.db.expense.findMany({
-        where: {
-          groupId: input.groupId,
-          deletedBy: null,
-        },
-        orderBy: {
-          expenseDate: 'desc',
-        },
-        include: {
-          expenseParticipants: true,
-          paidByUser: true,
-          deletedByUser: true,
-        },
-      });
-
-      return expenses;
-    }),
-
-  getExpenseDetails: groupProcedure
-    .input(z.object({ expenseId: z.string() }))
-    .query(async ({ input }) => {
-      const expense = await db.expense.findUnique({
-        where: {
-          id: input.expenseId,
-        },
-        include: {
-          expenseParticipants: {
-            include: {
-              user: true,
-            },
-          },
-          expenseNotes: true,
-          addedByUser: true,
-          paidByUser: true,
-          deletedByUser: true,
-        },
-      });
-
-      return expense;
-    }),
-
   getGroupDetails: groupProcedure.query(async ({ input, ctx }) => {
     const group = await ctx.db.group.findUnique({
       where: {
@@ -220,6 +131,10 @@ export const groupRouter = createTRPCRouter({
       },
     });
 
+    if (group?.simplifyDebts) {
+      group.groupBalances = simplifyDebts(group.groupBalances);
+    }
+
     return group;
   }),
 
@@ -231,7 +146,7 @@ export const groupRouter = createTRPCRouter({
       },
       where: {
         groupId: input.groupId,
-        deletedBy: null,
+        deletedAt: null,
       },
     });
 
@@ -241,7 +156,6 @@ export const groupRouter = createTRPCRouter({
   addMembers: groupProcedure
     .input(z.object({ userIds: z.array(z.number()) }))
     .mutation(async ({ input, ctx }) => {
-      console.log(input.userIds);
       const groupUsers = await ctx.db.groupUser.createMany({
         data: input.userIds.map((userId) => ({
           groupId: input.groupId,
@@ -252,13 +166,78 @@ export const groupRouter = createTRPCRouter({
       return groupUsers;
     }),
 
-  leaveGroup: groupProcedure
+  recalculateBalances: groupProcedure
     .input(z.object({ groupId: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      const nonZeroBalance = await ctx.db.groupBalance.findFirst({
+      const group = await ctx.db.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+      });
+
+      if (!group) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
+      }
+
+      if (group.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only creator can recalculate balances',
+        });
+      }
+
+      return recalculateGroupBalances(input.groupId);
+    }),
+
+  toggleSimplifyDebts: groupProcedure
+    .input(z.object({ groupId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const group = await ctx.db.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+      });
+
+      if (!group) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
+      }
+
+      const isInGroup = await ctx.db.groupUser.findFirst({
         where: {
           groupId: input.groupId,
           userId: ctx.session.user.id,
+        },
+      });
+
+      if (!isInGroup) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only group members can toggle Simplify Debts',
+        });
+      }
+
+      const simplifyDebts = !group.simplifyDebts;
+
+      await ctx.db.group.update({
+        where: {
+          id: input.groupId,
+        },
+        data: {
+          simplifyDebts,
+        },
+      });
+
+      return simplifyDebts;
+    }),
+
+  leaveGroup: groupProcedure
+    .input(z.object({ groupId: z.number(), userId: z.number().optional() }))
+    .mutation(async ({ input, ctx }) => {
+      const userId = input.userId ?? ctx.session.user.id;
+      const nonZeroBalance = await ctx.db.groupBalance.findFirst({
+        where: {
+          groupId: input.groupId,
+          userId,
           amount: {
             not: 0,
           },
@@ -268,7 +247,23 @@ export const groupRouter = createTRPCRouter({
       if (nonZeroBalance) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: 'You have a non-zero balance in this group',
+          message: 'User has a non-zero balance in this group',
+        });
+      }
+
+      const group = await ctx.db.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+      });
+      if (!group) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
+      }
+
+      if (group.userId !== ctx.session.user.id && userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only group creator can remove someone from the group',
         });
       }
 
@@ -276,12 +271,41 @@ export const groupRouter = createTRPCRouter({
         where: {
           groupId_userId: {
             groupId: input.groupId,
-            userId: ctx.session.user.id,
+            userId,
           },
         },
       });
 
       return groupUser;
+    }),
+
+  updateGroupDetails: groupProcedure
+    .input(z.object({ name: z.string().min(1), groupId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const group = await ctx.db.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+      });
+
+      if (!group) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
+      }
+
+      if (group.userId !== ctx.session.user.id) {
+        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Only creator can update the group' });
+      }
+
+      const updatedGroup = await ctx.db.group.update({
+        where: {
+          id: input.groupId,
+        },
+        data: {
+          name: input.name,
+        },
+      });
+
+      return updatedGroup;
     }),
 
   delete: groupProcedure
@@ -300,7 +324,7 @@ export const groupRouter = createTRPCRouter({
         throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Only creator can delete the group' });
       }
 
-      const balanceWithNonZero = group?.groupBalances.find((b) => b.amount !== 0);
+      const balanceWithNonZero = group?.groupBalances.find((b) => 0n !== b.amount);
 
       if (balanceWithNonZero) {
         throw new TRPCError({
@@ -318,3 +342,5 @@ export const groupRouter = createTRPCRouter({
       return group;
     }),
 });
+
+export type GroupRouter = typeof groupRouter;

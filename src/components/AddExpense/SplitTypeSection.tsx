@@ -1,35 +1,52 @@
-import { type Participant, useAddExpenseStore } from '~/store/addStore';
-import { AppDrawer, DrawerClose } from '../ui/drawer';
-import { UserAvatar } from '../ui/avatar';
-import { BarChart2, Check, DollarSign, Equal, Percent, Plus, X } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Input } from '../ui/input';
-import { useState } from 'react';
 import { SplitType } from '@prisma/client';
+import clsx from 'clsx';
+import {
+  BarChart2,
+  Check,
+  DollarSign,
+  Equal,
+  type LucideIcon,
+  Percent,
+  Plus,
+  X,
+} from 'lucide-react';
+import { type TFunction, useTranslation } from 'next-i18next';
+import { type ChangeEvent, useCallback, useMemo } from 'react';
+
+import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/store/addStore';
+import { removeTrailingZeros, toSafeBigInt, toUIString } from '~/utils/numbers';
+
+import { UserAvatar } from '../ui/avatar';
+import { AppDrawer, DrawerClose } from '../ui/drawer';
+import { Input } from '../ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
 export const SplitTypeSection: React.FC = () => {
+  const { t } = useTranslation('expense_details');
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const participants = useAddExpenseStore((s) => s.participants);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
   const splitType = useAddExpenseStore((s) => s.splitType);
+  const splitScreenOpen = useAddExpenseStore((s) => s.splitScreenOpen);
 
-  const { setPaidBy } = useAddExpenseStore((s) => s.actions);
+  const { setPaidBy, setSplitScreenOpen } = useAddExpenseStore((s) => s.actions);
 
   return (
-    <div className="mt-4 flex items-center justify-center text-[16px] text-gray-800 dark:text-gray-400">
-      <p className="text-[16px]">Paid by </p>
+    <div className="flex items-center justify-center text-[16px] text-gray-400 sm:mt-4">
+      <p className="text-[16px]">{t('ui.add_expense_details.split_type_section.paid_by')} </p>
       <AppDrawer
         trigger={
           <p className="overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16.5px] text-cyan-500 lg:max-w-48">
             {
-              (currentUser?.id === paidBy?.id ? 'you' : paidBy?.name ?? paidBy?.email)?.split(
-                ' ',
-              )[0]
+              (currentUser?.id === paidBy?.id
+                ? t('ui.add_expense_details.split_type_section.you')
+                : (paidBy?.name ?? paidBy?.email)
+              )?.split(' ')[0]
             }
           </p>
         }
-        title="Paid by"
+        title={t('ui.add_expense_details.split_type_section.paid_by')}
         className="h-[70vh]"
         shouldCloseOnAction
       >
@@ -50,19 +67,25 @@ export const SplitTypeSection: React.FC = () => {
         </div>
       </AppDrawer>
 
-      <p>and </p>
+      <p>{t('ui.add_expense_details.split_type_section.and')} </p>
       <AppDrawer
         trigger={
-          <div className=" max-w-32 overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16.5px] text-cyan-500 lg:max-w-48">
-            {splitType === SplitType.EQUAL ? 'split equally' : `split unequally`}
+          <div className="max-w-32 overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16.5px] text-cyan-500 lg:max-w-48">
+            {splitType === SplitType.EQUAL
+              ? t('ui.add_expense_details.split_type_section.split_equally')
+              : t('ui.add_expense_details.split_type_section.split_unequally')}
           </div>
         }
-        title={splitType.charAt(0).toUpperCase() + splitType.slice(1).toLowerCase()}
+        title={t(
+          `ui.add_expense_details.split_type_section.types.${splitType.toLowerCase()}.title`,
+        )}
         className="h-[85vh] lg:h-[70vh]"
         shouldCloseOnAction
         dismissible={false}
-        actionTitle="Save"
+        actionTitle={t('ui.add_expense_details.split_type_section.save')}
         actionDisabled={!canSplitScreenClosed}
+        open={splitScreenOpen}
+        onOpenChange={(open) => setSplitScreenOpen(open)}
       >
         <SplitExpenseForm />
       </AppDrawer>
@@ -71,322 +94,237 @@ export const SplitTypeSection: React.FC = () => {
 };
 
 const SplitExpenseForm: React.FC = () => {
+  const { t } = useTranslation('expense_details');
   const splitType = useAddExpenseStore((s) => s.splitType);
   const { setSplitType } = useAddExpenseStore((s) => s.actions);
 
+  const onTabChange = useCallback(
+    (value: string) => {
+      setSplitType(value as SplitType);
+    },
+    [setSplitType],
+  );
+
+  const splitProps = useMemo(() => getSplitProps(t), [t]);
+
   return (
-    <div>
-      <Tabs
-        value={splitType}
-        className="mx-auto mt-5 w-full"
-        onValueChange={(v) => setSplitType(v as SplitType)}
-      >
-        <TabsList className="w-full justify-between">
-          <TabsTrigger className="text-xs" value={SplitType.EQUAL}>
-            <Equal className="h-5 w-5" />
+    <Tabs value={splitType} className="mx-auto mt-5 w-full" onValueChange={onTabChange}>
+      <TabsList className="w-full justify-between">
+        {splitProps.map(({ splitType, iconComponent: Icon }) => (
+          <TabsTrigger key={splitType} value={splitType} className="text-xs">
+            <Icon className="h-5 w-5" />
           </TabsTrigger>
-          <TabsTrigger className="text-xs" value={SplitType.PERCENTAGE}>
-            <Percent className="h-5 w-5" />
-          </TabsTrigger>
-          <TabsTrigger className="text-xs" value={SplitType.EXACT}>
-            <DollarSign className="h-5 w-5" />
-          </TabsTrigger>
-          <TabsTrigger className="text-xs" value={SplitType.SHARE}>
-            <BarChart2 className="h-5 w-5" />
-          </TabsTrigger>
-          <TabsTrigger className="text-xs" value={SplitType.ADJUSTMENT}>
-            <Plus className="h-5 w-5" />
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value={SplitType.EQUAL}>
-          <SplitEqualSection />
+        ))}
+      </TabsList>
+      {splitProps.map((props) => (
+        <TabsContent key={props.splitType} value={props.splitType}>
+          <SplitSection {...props} />
         </TabsContent>
-        <TabsContent value={SplitType.PERCENTAGE}>
-          <SplitByPercentageSection />
-        </TabsContent>
-        <TabsContent value={SplitType.EXACT}>
-          <SplitByAmountSection />
-        </TabsContent>
-        <TabsContent value={SplitType.SHARE}>
-          <SplitByShareSection />
-        </TabsContent>
-        <TabsContent value={SplitType.ADJUSTMENT}>
-          <SplitByAdjustmentSection />
-        </TabsContent>
-      </Tabs>
-    </div>
+      ))}
+    </Tabs>
   );
 };
 
-const SplitEqualSection: React.FC = () => {
+interface SplitSectionPropsBase {
+  splitType: SplitType;
+  iconComponent: LucideIcon;
+  prefix: string;
+  isBoolean?: boolean;
+  fmtSummartyText: (
+    amount: bigint,
+    currency: string,
+    participants: AddExpenseState['participants'],
+    splitShares: AddExpenseState['splitShares'],
+  ) => string;
+}
+
+interface BooleanSplitSectionProps extends SplitSectionPropsBase {
+  isBoolean: true;
+  fmtShareText: null;
+  step: null;
+}
+
+interface NumericSplitSectionProps extends SplitSectionPropsBase {
+  isBoolean: false;
+  fmtShareText: (share: bigint) => string;
+  step?: number;
+}
+
+type SplitSectionProps = BooleanSplitSectionProps | NumericSplitSectionProps;
+
+const CURRENCY_TOKEN = '__CURRENCY__';
+
+const getSplitProps = (t: TFunction): SplitSectionProps[] => [
+  {
+    splitType: SplitType.EQUAL,
+    iconComponent: Equal,
+    prefix: '',
+    isBoolean: true,
+    fmtSummartyText: (amount, currency, participants, splitShares) => {
+      const totalParticipants = participants.filter(
+        (p) => 0n !== splitShares[p.id]?.[SplitType.EQUAL],
+      ).length;
+      return `${currency} ${0 < totalParticipants ? toUIString(amount / BigInt(totalParticipants)) : 0} ${t('ui.add_expense_details.split_type_section.types.equal.per_person')}`;
+    },
+    fmtShareText: null,
+    step: null,
+  },
+  {
+    splitType: SplitType.PERCENTAGE,
+    iconComponent: Percent,
+    prefix: '%',
+    isBoolean: false,
+    fmtSummartyText: (amount, currency, participants, splitShares) => {
+      const remainingPercentage =
+        10000n -
+        participants.reduce(
+          (acc, p) => acc + (splitShares[p.id]?.[SplitType.PERCENTAGE] ?? 0n),
+          0n,
+        );
+      return `${t('ui.add_expense_details.split_type_section.types.percentage.remaining')} ${toUIString(remainingPercentage, true)}%`;
+    },
+    fmtShareText: (share) => (Number(share) / 100).toString(),
+  },
+  {
+    splitType: SplitType.EXACT,
+    iconComponent: DollarSign,
+    prefix: CURRENCY_TOKEN,
+    isBoolean: false,
+    fmtSummartyText: (amount, currency, participants, splitShares) => {
+      const totalAmount = participants.reduce(
+        (acc, p) => acc + (splitShares[p.id]?.[SplitType.EXACT] ?? 0n),
+        0n,
+      );
+      return `${t('ui.add_expense_details.split_type_section.types.exact.remaining')} ${currency} ${toUIString(amount - totalAmount, true)}`;
+    },
+    fmtShareText: (share) => removeTrailingZeros(toUIString(share)),
+  },
+  {
+    splitType: SplitType.SHARE,
+    iconComponent: BarChart2,
+    prefix: t('ui.add_expense_details.split_type_section.types.share.shares'),
+    isBoolean: false,
+    fmtSummartyText: (_amount, _currency, participants, splitShares) => {
+      const totalShares = participants.reduce(
+        (acc, p) => acc + (splitShares[p.id]?.[SplitType.SHARE] ?? 0n),
+        0n,
+      );
+      return `${t('ui.add_expense_details.split_type_section.types.share.total_shares')} ${Number(totalShares) / 100}`;
+    },
+    fmtShareText: (share) => (Number(share) / 100).toString(),
+    step: 1,
+  },
+  {
+    splitType: SplitType.ADJUSTMENT,
+    iconComponent: Plus,
+    prefix: CURRENCY_TOKEN,
+    isBoolean: false,
+    fmtSummartyText: () => {
+      return ``;
+    },
+    fmtShareText: (share) => removeTrailingZeros(toUIString(share)),
+  },
+];
+
+const SplitSection: React.FC<SplitSectionProps> = ({
+  splitType,
+  prefix,
+  isBoolean,
+  fmtSummartyText,
+  fmtShareText,
+  step,
+}) => {
+  const { t } = useTranslation('expense_details');
   const participants = useAddExpenseStore((s) => s.participants);
   const currency = useAddExpenseStore((s) => s.currency);
   const amount = useAddExpenseStore((s) => s.amount);
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
-  const { addOrUpdateParticipant } = useAddExpenseStore((s) => s.actions);
+  const splitShares = useAddExpenseStore((s) => s.splitShares);
+  const { setSplitShare } = useAddExpenseStore((s) => s.actions);
 
-  const totalParticipants = participants.filter((p) => p.splitShare !== 0).length;
+  const summaryText = useMemo(
+    () => fmtSummartyText(amount, currency, participants, splitShares),
+    [amount, currency, participants, fmtSummartyText, splitShares],
+  );
+  const allSelected = useMemo(
+    () => participants.every((p) => 0n !== splitShares[p.id]?.[splitType]),
+    [participants, splitShares, splitType],
+  );
 
-  const selectAll = () => {
-    const allSelected = participants.every((p) => p.splitShare !== 0);
+  const selectAll = useCallback(() => {
     participants.forEach((p) => {
-      addOrUpdateParticipant({ ...p, splitShare: allSelected ? 0 : 1 });
+      setSplitShare(splitType, p.id, allSelected ? 0n : 1n);
     });
-  };
+  }, [participants, setSplitShare, splitType, allSelected]);
 
-  const allSelected = participants.every((p) => p.splitShare !== 0);
+  const onToggleBoolean = useCallback(
+    (userId: number) => {
+      setSplitShare(splitType, userId, 0n === splitShares[userId]?.[splitType] ? 1n : 0n);
+    },
+    [setSplitShare, splitType, splitShares],
+  );
+
+  const onChangeInput = useCallback(
+    (e: ChangeEvent<HTMLInputElement>, userId: number) => {
+      const value = e.target.value;
+      setSplitShare(
+        splitType,
+        userId,
+        value === undefined || '' === value ? 0n : toSafeBigInt(value),
+      );
+    },
+    [setSplitShare, splitType],
+  );
 
   return (
     <div className="relative mt-4 flex flex-col gap-6 px-2">
-      <div className="flex items-center">
-        <div className="mb-2 flex flex-grow justify-center">
-          <div className={`${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'}`}>
-            {currency} {(amount / totalParticipants).toFixed(2)} per person
-          </div>
+      <div className="mb-2 flex grow justify-center">
+        <div className={`${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'}`}>
+          {summaryText}
         </div>
       </div>
-      <div className="absolute right-0 top-0">
-        <button
-          className="flex items-center gap-1 whitespace-nowrap rounded-md border px-2 py-0.5"
-          onClick={selectAll}
-        >
-          {allSelected ? <X className="h-4 w-4" /> : <Check className="h-4 w-4" />}
-          <span className="text-sm">All</span>
-        </button>
-      </div>
-      {participants.map((p) => (
-        <button
-          key={p.id}
-          className="flex items-center justify-between"
-          onClick={() => addOrUpdateParticipant({ ...p, splitShare: p.splitShare === 0 ? 1 : 0 })}
-        >
-          <UserAndAmount user={p} currency={currency} />
-          {p.splitShare !== 0 ? (
-            <div>
-              <Check className="h-6 w-6 text-cyan-500" />
-            </div>
-          ) : null}
-        </button>
-      ))}
-    </div>
-  );
-};
-
-const SplitByPercentageSection: React.FC = () => {
-  const participants = useAddExpenseStore((s) => s.participants);
-  const { addOrUpdateParticipant } = useAddExpenseStore((s) => s.actions);
-  const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
-  const currency = useAddExpenseStore((s) => s.currency);
-
-  const [splitShareValue, setSplitShareValue] = useState(
-    participants.reduce(
-      (acc, p) => {
-        acc[p.id] = p.splitShare?.toString();
-        return acc;
-      },
-      {} as Record<string, string | undefined>,
-    ),
-  );
-
-  const handleSplitShareChange = (p: Participant, value: string) => {
-    setSplitShareValue({ ...splitShareValue, [p.id]: value });
-    if (value === '' || isNaN(parseFloat(value))) {
-      addOrUpdateParticipant({ ...p, splitShare: 0 });
-      return;
-    }
-    addOrUpdateParticipant({ ...p, splitShare: parseFloat(value) });
-  };
-
-  const remainingPercentage = 100 - participants.reduce((acc, p) => acc + (p.splitShare ?? 0), 0);
-
-  return (
-    <div className="mt-4 flex flex-col gap-6 px-2">
-      <div
-        className={`mb-2 text-center ${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'} t`}
-      >
-        Remaining {remainingPercentage}%
-      </div>
-      {participants.map((p) => (
-        <div key={p.id} className="flex justify-between">
-          <UserAndAmount user={p} currency={currency} />
-
-          <div className="flex items-center gap-1">
-            <Input
-              type="number"
-              value={splitShareValue[p.id]}
-              inputMode="decimal"
-              className=" w-16 text-lg"
-              onChange={(e) => handleSplitShareChange(p, e.target.value)}
-            />
-            {'  '}%
-          </div>
+      {isBoolean && (
+        <div className="absolute right-0 top-0">
+          <button
+            className="flex items-center gap-1 whitespace-nowrap rounded-md border px-2 py-0.5"
+            onClick={selectAll}
+          >
+            {allSelected ? <X className="h-4 w-4" /> : <Check className="h-4 w-4" />}
+            <span className="text-sm">{t('ui.add_expense_details.split_type_section.all')}</span>
+          </button>
         </div>
-      ))}
-    </div>
-  );
-};
-
-const SplitByAmountSection: React.FC = () => {
-  const participants = useAddExpenseStore((s) => s.participants);
-  const currency = useAddExpenseStore((s) => s.currency);
-  const amount = useAddExpenseStore((s) => s.amount);
-  const { addOrUpdateParticipant } = useAddExpenseStore((s) => s.actions);
-  const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
-
-  const [splitShareValue, setSplitShareValue] = useState(
-    participants.reduce(
-      (acc, p) => {
-        acc[p.id] = p.splitShare?.toString() ?? '';
-        return acc;
-      },
-      {} as Record<string, string | undefined>,
-    ),
-  );
-
-  const handleSplitShareChange = (p: Participant, value: string) => {
-    setSplitShareValue({ ...splitShareValue, [p.id]: value });
-    if (value === '' || isNaN(parseFloat(value))) {
-      addOrUpdateParticipant({ ...p, splitShare: 0 });
-      return;
-    }
-    const formattedValue = parseFloat(parseFloat(value).toFixed(2));
-    addOrUpdateParticipant({ ...p, splitShare: formattedValue });
-  };
-
-  const totalSplitShare = participants.reduce((acc, p) => acc + (p.splitShare ?? 0), 0);
-
-  const remainingAmount = parseFloat((amount - totalSplitShare).toFixed(2));
-
-  return (
-    <div className="mt-4 flex flex-col gap-6 px-2">
-      <div
-        className={`mb-2 text-center ${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'} t`}
-      >
-        Remaining {currency} {remainingAmount}
-      </div>
-      {participants.map((p) => (
-        <div key={p.id} className="flex justify-between">
-          <div className="flex items-center gap-2">
-            <UserAvatar user={p} size={30} />
-            {p.name ?? p.email}
+      )}
+      {participants.map((p) => {
+        const share = splitShares[p.id]?.[splitType];
+        return (
+          <div
+            key={p.id}
+            className={clsx('flex items-center justify-between', isBoolean && 'cursor-pointer')}
+            onClick={isBoolean ? () => onToggleBoolean(p.id) : undefined}
+          >
+            <UserAndAmount user={p} currency={currency} />
+            {isBoolean ? (
+              0n !== share ? (
+                <Check className="h-6 w-6 text-cyan-500" />
+              ) : null
+            ) : (
+              <div className="flex items-center gap-1">
+                <p className="text-xs">{prefix.replace(CURRENCY_TOKEN, currency)}</p>
+                <Input
+                  type="number"
+                  value={share ? fmtShareText(share) : ''}
+                  inputMode="decimal"
+                  className="ml-2 w-20 text-lg"
+                  placeholder="0"
+                  min={0}
+                  step={step ?? 0.01}
+                  onChange={(e) => onChangeInput(e, p.id)}
+                />
+              </div>
+            )}
           </div>
-          <div className="flex items-center gap-1">
-            <p className="text-xs">{currency}</p>
-            <Input
-              type="number"
-              value={splitShareValue[p.id]}
-              inputMode="decimal"
-              className=" ml-2 w-16 text-lg"
-              onChange={(e) => handleSplitShareChange(p, e.target.value)}
-            />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const SplitByShareSection: React.FC = () => {
-  const participants = useAddExpenseStore((s) => s.participants);
-  const { addOrUpdateParticipant } = useAddExpenseStore((s) => s.actions);
-  const currency = useAddExpenseStore((s) => s.currency);
-
-  const [splitShareValue, setSplitShareValue] = useState(
-    participants.reduce(
-      (acc, p) => {
-        acc[p.id] = p.splitShare?.toString();
-        return acc;
-      },
-      {} as Record<string, string | undefined>,
-    ),
-  );
-
-  const handleSplitShareChange = (p: Participant, value: string) => {
-    setSplitShareValue({ ...splitShareValue, [p.id]: value });
-    if (value === '' || isNaN(parseFloat(value))) {
-      addOrUpdateParticipant({ ...p, splitShare: 0 });
-      return;
-    }
-    addOrUpdateParticipant({ ...p, splitShare: parseFloat(value) });
-  };
-
-  const totalShare = participants.reduce((acc, p) => acc + (p.splitShare ?? 0), 0);
-
-  return (
-    <div className="mt-4 flex flex-col gap-6 px-2">
-      <div className="mb-2 text-center text-gray-300">Total shares {totalShare}</div>
-      {participants.map((p) => (
-        <div key={p.id} className="flex justify-between">
-          <UserAndAmount user={p} currency={currency} />
-          <div className="flex items-center gap-1">
-            <Input
-              type="number"
-              value={splitShareValue[p.id]}
-              inputMode="decimal"
-              className=" ml-2 w-16 text-lg"
-              onChange={(e) => handleSplitShareChange(p, e.target.value)}
-            />
-            <p className="text-xs">Share(s)</p>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const SplitByAdjustmentSection: React.FC = () => {
-  const participants = useAddExpenseStore((s) => s.participants);
-  const currency = useAddExpenseStore((s) => s.currency);
-  const amount = useAddExpenseStore((s) => s.amount);
-  const { addOrUpdateParticipant } = useAddExpenseStore((s) => s.actions);
-  const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
-
-  const [splitShareValue, setSplitShareValue] = useState(
-    participants.reduce(
-      (acc, p) => {
-        acc[p.id] = p.splitShare?.toString();
-        return acc;
-      },
-      {} as Record<string, string | undefined>,
-    ),
-  );
-
-  const handleSplitShareChange = (p: Participant, value: string) => {
-    setSplitShareValue({ ...splitShareValue, [p.id]: value });
-    if (value === '' || isNaN(parseFloat(value))) {
-      addOrUpdateParticipant({ ...p, splitShare: 0 });
-      return;
-    }
-    addOrUpdateParticipant({ ...p, splitShare: parseFloat(value) });
-  };
-
-  const remainingPercentage =
-    amount - participants.reduce((acc, p) => acc + (p.splitShare ?? 0), 0);
-
-  return (
-    <div className="mt-4 flex flex-col gap-6 px-2">
-      <div
-        className={`mb-2 text-center ${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'} t`}
-      >
-        {' '}
-        Remaining to split equally {currency} {remainingPercentage}
-      </div>
-      {participants.map((p) => (
-        <div key={p.id} className="flex justify-between">
-          <UserAndAmount user={p} currency={currency} />
-          <div className="flex items-center gap-1">
-            <p className="text-xs">{currency}</p>
-
-            <Input
-              type="number"
-              value={splitShareValue[p.id]}
-              inputMode="decimal"
-              className=" ml-2 w-16 text-lg"
-              onChange={(e) => handleSplitShareChange(p, e.target.value)}
-            />
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
@@ -398,7 +336,7 @@ export const UserAndAmount: React.FC<{ user: Participant; currency: string }> = 
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const amount = useAddExpenseStore((s) => s.amount);
 
-  const shareAmount = paidBy?.id === user.id ? (user.amount ?? 0) - amount : user.amount;
+  const shareAmount = paidBy?.id === user.id ? (user.amount ?? 0n) - amount : user.amount;
 
   return (
     <div className="flex items-center gap-2">
@@ -406,7 +344,7 @@ export const UserAndAmount: React.FC<{ user: Participant; currency: string }> = 
       <div className="flex flex-col items-start">
         <p>{user.name ?? user.email}</p>
         <p className={`'text-gray-400' text-sm text-gray-400`}>
-          {(shareAmount ?? 0) > 0 ? '-' : ''} {currency} {Math.abs(shareAmount ?? 0).toFixed(2)}
+          {0n < (shareAmount ?? 0n) ? '-' : ''} {currency} {toUIString(shareAmount)}
         </p>
       </div>
     </div>

@@ -51,6 +51,7 @@ model User {
     emailVerified       DateTime?
     image               String?
     currency            String               @default("USD")
+    preferredLanguage   String               @default("")
     accounts            Account[]
     sessions            Session[]
     groups              Group[]
@@ -64,6 +65,7 @@ model User {
     paidExpenses        Expense[]            @relation("PaidByUser")
     addedExpenses       Expense[]            @relation("AddedByUser")
     deletedExpenses     Expense[]            @relation("DeletedByUser")
+    updatedExpenses     Expense[]            @relation("UpdatedByUser")
 }
 
 model CachedBankData {
@@ -88,7 +90,7 @@ model Balance {
     userId                Int
     currency              String
     friendId              Int
-    amount                Int
+    amount                BigInt
     createdAt             DateTime @default(now())
     updatedAt             DateTime @updatedAt
     importedFromSplitwise Boolean  @default(false)
@@ -111,6 +113,7 @@ model Group {
     groupUsers       GroupUser[]
     expenses         Expense[]
     groupBalances    GroupBalance[]
+    simplifyDebts    Boolean        @default(false)
 }
 
 model GroupUser {
@@ -127,7 +130,7 @@ model GroupBalance {
     currency  String
     userId    Int
     firendId  Int
-    amount    Int
+    amount    BigInt
     updatedAt DateTime @updatedAt
     group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
     user      User     @relation(name: "GroupUserBalance", fields: [userId], references: [id], onDelete: Cascade)
@@ -151,7 +154,7 @@ model Expense {
     addedBy             Int
     name                String
     category            String
-    amount              Int
+    amount              BigInt
     splitType           SplitType            @default(EQUAL)
     expenseDate         DateTime             @default(now())
     createdAt           DateTime             @default(now())
@@ -161,10 +164,12 @@ model Expense {
     groupId             Int?
     deletedAt           DateTime?
     deletedBy           Int?
+    updatedBy           Int?
     group               Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
     paidByUser          User                 @relation(name: "PaidByUser", fields: [paidBy], references: [id], onDelete: Cascade)
     addedByUser         User                 @relation(name: "AddedByUser", fields: [addedBy], references: [id], onDelete: Cascade)
     deletedByUser       User?                @relation(name: "DeletedByUser", fields: [deletedBy], references: [id], onDelete: Cascade)
+    updatedByUser       User?                @relation(name: "UpdatedByUser", fields: [updatedBy], references: [id], onDelete: SetNull)
     expenseParticipants ExpenseParticipant[]
     expenseNotes        ExpenseNote[]
     transactionId       String?
@@ -176,7 +181,7 @@ model Expense {
 model ExpenseParticipant {
     expenseId String
     userId    Int
-    amount    Int
+    amount    BigInt
     user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
     expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
 

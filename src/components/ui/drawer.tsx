@@ -1,9 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
 
-import { cn } from '~/lib/utils';
-import { Button } from './button';
+import { useIsClient } from '~/hooks/useIsClient';
 import useMediaQuery from '~/hooks/useMediaQuery';
+import { cn } from '~/lib/utils';
+
+import { Button } from './button';
 import {
   Dialog,
   DialogClose,
@@ -13,7 +15,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './dialog';
-import { useIsClient } from '~/hooks/useIsClient';
 
 const Drawer = ({
   shouldScaleBackground = true,
@@ -35,7 +36,7 @@ const DrawerOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Overlay
     ref={ref}
-    className={cn('fixed inset-0 z-50 bg-background/80', className)}
+    className={cn('bg-background/80 fixed inset-0 z-50', className)}
     {...props}
   />
 ));
@@ -50,12 +51,12 @@ const DrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border border-gray-800 bg-background focus:outline-none',
+        'bg-background fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border border-gray-800 focus:outline-hidden',
         className,
       )}
       {...props}
     >
-      <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
+      <div className="bg-muted mx-auto mt-4 h-2 w-[100px] rounded-full" />
       {children}
     </DrawerPrimitive.Content>
   </DrawerPortal>
@@ -78,7 +79,7 @@ const DrawerTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Title
     ref={ref}
-    className={cn('text-lg font-semibold leading-none tracking-tight', className)}
+    className={cn('text-lg leading-none font-semibold tracking-tight', className)}
     {...props}
   />
 ));
@@ -90,7 +91,7 @@ const DrawerDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Description
     ref={ref}
-    className={cn('text-sm text-muted-foreground', className)}
+    className={cn('text-muted-foreground text-sm', className)}
     {...props}
   />
 ));
@@ -109,7 +110,7 @@ export {
   DrawerDescription,
 };
 
-type AppDrawerProps = {
+interface AppDrawerProps {
   children: React.ReactNode;
   trigger: React.ReactNode;
   disableTrigger?: boolean;
@@ -127,7 +128,7 @@ type AppDrawerProps = {
   dismissible?: boolean;
   actionDisabled?: boolean;
   onClose?: () => void;
-};
+}
 
 export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
   const {
@@ -155,10 +156,14 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const localOnOpenChange = (_open: boolean) => {
-    if (onOpenChange && open !== _open) onOpenChange(_open);
+    if (onOpenChange && open !== _open) {
+      onOpenChange(_open);
+    }
   };
 
-  if (!isClient) return null;
+  if (!isClient) {
+    return null;
+  }
 
   if (isDesktop) {
     return (
@@ -166,7 +171,6 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
         <DialogTrigger
           className="cursor-pointer focus:ring-0"
           onClick={(e) => {
-            console.log('button clicked');
             onTriggerClick?.(e);
           }}
           disabled={disableTrigger}
@@ -176,7 +180,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
         </DialogTrigger>
         <DialogContent
           onInteractOutside={(e) => {
-            if (dismissible === false) {
+            if (false === dismissible) {
               e.preventDefault();
             }
           }}
@@ -184,8 +188,8 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
           <DialogHeader className="mb-4">
             <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
-          <div className=" max-h-[60vh] overflow-auto px-1 py-1">{children}</div>
-          <DialogFooter className="mt-8 flex items-center gap-2 ">
+          <div className="max-h-[60vh] overflow-auto px-1 py-1">{children}</div>
+          <DialogFooter className="mt-8 flex items-center gap-2">
             {leftAction ? (
               <Button
                 variant="secondary"
@@ -194,7 +198,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
                 onClick={leftActionOnClick}
                 asChild
               >
-                {shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined ? (
+                {(shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined) ? (
                   <DialogClose>{leftAction}</DialogClose>
                 ) : (
                   leftAction
@@ -204,7 +208,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
             {actionTitle ? (
               !shouldCloseOnAction ? (
                 <Button
-                  className=" w-[100px]"
+                  className="w-[100px]"
                   onClick={actionOnClick}
                   disabled={actionDisabled}
                   size="sm"
@@ -214,7 +218,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
               ) : (
                 <DialogClose
                   onClick={actionOnClick}
-                  className="w-[100px] rounded-md bg-primary py-2 text-sm text-black disabled:opacity-50"
+                  className="bg-primary w-[100px] rounded-md py-2 text-sm text-black disabled:opacity-50"
                   disabled={actionDisabled}
                 >
                   {actionTitle}
@@ -231,37 +235,37 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
   return (
     <Drawer open={open} onOpenChange={onOpenChange} dismissible={dismissible} onClose={onClose}>
       <DrawerTrigger
-        className="flex items-center justify-center gap-2 text-center text-sm focus:outline-none focus:ring-0"
+        className="flex items-center justify-center gap-2 text-center text-sm focus:ring-0 focus:outline-hidden"
         onClick={onTriggerClick}
         asChild
       >
         {trigger}
       </DrawerTrigger>
       <DrawerContent className={className}>
-        <div className=" overflow-auto p-4 pt-2">
+        <div className="overflow-auto p-4 pt-2">
           <div className="mb-4 flex items-center justify-between">
             {leftAction ? (
               <Button
                 variant="ghost"
-                className=" px-0 text-left text-primary"
+                className="text-primary px-0 text-left"
                 onClick={leftActionOnClick}
                 asChild
               >
-                {shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined ? (
+                {(shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined) ? (
                   <DrawerClose>{leftAction}</DrawerClose>
                 ) : (
                   leftAction
                 )}
               </Button>
             ) : (
-              <div className="w-10"></div>
+              <div className="w-10" />
             )}
             <p>{title}</p>
             {actionTitle ? (
               !shouldCloseOnAction ? (
                 <Button
                   variant="ghost"
-                  className="px-0 py-2 text-primary"
+                  className="text-primary px-0 py-2"
                   onClick={actionOnClick}
                   disabled={actionDisabled}
                 >
@@ -270,7 +274,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
               ) : (
                 <DrawerClose
                   onClick={actionOnClick}
-                  className="py-2 text-sm font-medium text-primary disabled:opacity-50"
+                  className="text-primary py-2 text-sm font-medium disabled:opacity-50"
                   disabled={actionDisabled}
                 >
                   {actionTitle}

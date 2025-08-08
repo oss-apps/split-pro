@@ -3,12 +3,13 @@ name: split-pro-prod
 services:
   postgres:
     image: postgres:16
-    container_name: splitpro-db-prod
+    container_name: ${POSTGRES_CONTAINER_NAME:-splitpro-db}
     restart: always
     environment:
       - POSTGRES_USER=${POSTGRES_USER:?err}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?err}
       - POSTGRES_DB=${POSTGRES_DB:?err}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER}']
       interval: 10s
@@ -30,7 +31,6 @@ services:
       - DATABASE_URL=${DATABASE_URL:?err}
       - NEXTAUTH_URL=${NEXTAUTH_URL:?err}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:?err}
-      - AUTH_PROVIDERS=${AUTH_PROVIDERS:?err}
       - ENABLE_SENDING_INVITES=${ENABLE_SENDING_INVITES:?err}
       - FROM_EMAIL=${FROM_EMAIL}
       - EMAIL_SERVER_HOST=${EMAIL_SERVER_HOST}
@@ -43,6 +43,9 @@ services:
       - GOCARDLESS_SECRET_KEY=${GOCARDLESS_SECRET_KEY}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - AUTHENTIK_ID=${AUTHENTIK_ID}
+      - AUTHENTIK_SECRET=${AUTHENTIK_SECRET}
+      - AUTHENTIK_ISSUER=${AUTHENTIK_ISSUER}
       - R2_ACCESS_KEY=${R2_ACCESS_KEY}
       - R2_SECRET_KEY=${R2_SECRET_KEY}
       - R2_BUCKET=${R2_BUCKET}
@@ -53,6 +56,7 @@ services:
       - WEB_PUSH_EMAIL=${WEB_PUSH_EMAIL}
       - FEEDBACK_EMAIL=${FEEDBACK_EMAIL}
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
+      - DEFAULT_HOMEPAGE=${DEFAULT_HOMEPAGE}
     depends_on:
       postgres:
         condition: service_healthy

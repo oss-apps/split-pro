@@ -1,7 +1,9 @@
 import { groupRouter } from '~/server/api/routers/group';
 import { createTRPCRouter } from '~/server/api/trpc';
+
 import { userRouter } from './routers/user';
 import { gocardlessRouter } from './routers/gocardless';
+import { expenseRouter } from './routers/expense';
 
 /**
  * This is the primary router for your server.
@@ -12,6 +14,7 @@ export const appRouter = createTRPCRouter({
   group: groupRouter,
   user: userRouter,
   gocardless: gocardlessRouter,
+  expense: expenseRouter,
 });
 
 // export type definition of API

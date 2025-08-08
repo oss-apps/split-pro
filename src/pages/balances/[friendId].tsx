@@ -1,23 +1,24 @@
-import Head from 'next/head';
-import MainLayout from '~/components/Layout/MainLayout';
-import { SplitType } from '@prisma/client';
-import { api } from '~/utils/api';
-import { UserAvatar } from '~/components/ui/avatar';
-import Link from 'next/link';
 import { ChevronLeftIcon, PlusIcon } from 'lucide-react';
-import { format } from 'date-fns';
-import { Separator } from '~/components/ui/separator';
-import { Button } from '~/components/ui/button';
-import { SettleUp } from '~/components/Friend/Settleup';
-import { toUIString } from '~/utils/numbers';
-import { CategoryIcon } from '~/components/ui/categoryIcons';
+import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { type NextPageWithUser } from '~/types';
-import { motion } from 'framer-motion';
+import { useTranslation } from 'next-i18next';
+import { ExpenseList } from '~/components/Expense/ExpenseList';
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
 import { Export } from '~/components/Friend/Export';
+import { SettleUp } from '~/components/Friend/Settleup';
+import MainLayout from '~/components/Layout/MainLayout';
+import { UserAvatar } from '~/components/ui/avatar';
+import { Button } from '~/components/ui/button';
+import { Separator } from '~/components/ui/separator';
+import { type NextPageWithUser } from '~/types';
+import { api } from '~/utils/api';
+import { toUIString } from '~/utils/numbers';
+import { customServerSideTranslations } from '~/utils/i18n/server';
+import { type GetServerSideProps } from 'next';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
+  const { t } = useTranslation('friend_details');
   const router = useRouter();
   const { friendId } = router.query;
 
@@ -28,7 +29,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
     { enabled: !!_friendId },
   );
 
-  const expenses = api.user.getExpensesWithFriend.useQuery(
+  const expenses = api.expense.getExpensesWithFriend.useQuery(
     { friendId: _friendId },
     { enabled: !!_friendId },
   );
@@ -37,13 +38,13 @@ const FriendPage: NextPageWithUser = ({ user }) => {
     { enabled: !!_friendId },
   );
 
-  const youLent = balances.data?.filter((b) => b.amount > 0);
-  const youOwe = balances.data?.filter((b) => b.amount < 0);
+  const youLent = balances.data?.filter((b) => 0 < b.amount);
+  const youOwe = balances.data?.filter((b) => 0 > b.amount);
 
   return (
     <>
       <Head>
-        <title>Outstanding balances</title>
+        <title>{t('ui.expense_page.title')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
@@ -58,7 +59,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
         actions={
           <DeleteFriend
             friendId={_friendId}
-            disabled={!(youLent?.length === 0 && youOwe?.length === 0)}
+            disabled={!(0 === youLent?.length && 0 === youOwe?.length)}
           />
         }
         header={
@@ -72,21 +73,19 @@ const FriendPage: NextPageWithUser = ({ user }) => {
             </div>
           </div>
         }
+        loading={balances.isPending || expenses.isPending || friendQuery.isPending}
       >
-        {balances.isLoading ||
-        expenses.isLoading ||
-        friendQuery.isLoading ||
-        !friendQuery.data ? null : (
-          <motion.div className="mb-28" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        {!friendQuery.data ? null : (
+          <div className="transition-discrete starting:opacity-0 mb-28">
             <div className="mx-4 flex flex-wrap gap-2">
-              <div className=" text-orange-700">
-                {(youOwe?.length ?? 0) > 0 && (
+              <div className="text-orange-700">
+                {0 < (youOwe?.length ?? 0) && (
                   <>
-                    You owe{' '}
-                    {youOwe?.map((b, index) => (
-                      <span key={b.currency}>
-                        <span className=" font-semibold tracking-wide">
-                          {b.currency} {toUIString(b.amount)}
+                    {t('ui.you_owe')}{' '}
+                    {youOwe?.map((bal, index) => (
+                      <span key={bal.currency}>
+                        <span className="font-semibold tracking-wide">
+                          {bal.currency} {toUIString(bal.amount)}
                         </span>
                         {youOwe.length - 1 === index ? '' : ' + '}
                       </span>
@@ -94,15 +93,15 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   </>
                 )}
               </div>
-              <div>{(youOwe?.length ?? 0) > 0 && (youLent?.length ?? 0) > 0 ? '+' : null}</div>
-              <div className=" text-emerald-600">
-                {(youLent?.length ?? 0) > 0 && (
+              <div>{0 < (youOwe?.length ?? 0) && 0 < (youLent?.length ?? 0) ? '+' : null}</div>
+              <div className="text-emerald-600">
+                {0 < (youLent?.length ?? 0) && (
                   <>
-                    You lent{' '}
-                    {youLent?.map((b, index) => (
-                      <span key={b.currency}>
-                        <span className=" font-semibold tracking-wide">
-                          {b.currency} {toUIString(b.amount)}
+                    {t('ui.you_lent')}{' '}
+                    {youLent?.map((bal, index) => (
+                      <span key={bal.currency}>
+                        <span className="font-semibold tracking-wide">
+                          {bal.currency} {toUIString(bal.amount)}
                         </span>
                         {youLent.length - 1 === index ? '' : ' + '}
                       </span>
@@ -111,7 +110,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 )}
               </div>
             </div>
-            <div className="mb-4 mt-6 flex justify-center gap-2 px-2 ">
+            <div className="mb-4 mt-6 flex justify-center gap-2">
               {balances.data ? (
                 <SettleUp
                   balances={balances.data}
@@ -126,7 +125,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   className="w-[150px] gap-1 text-sm lg:w-[180px]"
                   disabled
                 >
-                  Settle up
+                  {t('ui.settle_up')}
                 </Button>
               )}
 
@@ -136,89 +135,28 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   variant="secondary"
                   className="w-[150px] gap-1 text-sm lg:w-[180px]"
                 >
-                  <PlusIcon className="h-4 w-4 text-gray-400" /> Add Expense
+                  <PlusIcon className="h-4 w-4 text-gray-400" /> {t('ui.add_expense')}
                 </Button>
               </Link>
               <Export
-                expenses={expenses.data ?? []}
+                expenses={expenses.data}
                 fileName={`expenses_with_${friendQuery.data?.name}`}
                 currentUserId={user.id}
                 friendName={friendQuery.data?.name ?? ''}
                 friendId={friendQuery.data?.id ?? ''}
-                disabled={!expenses.data || expenses.data.length === 0}
+                disabled={!expenses.data || 0 === expenses.data.length}
               />
-              {/* <Button size="sm" className="gap-1 text-sm lg:w-[180px]" variant="secondary">
-                <Bell className="h-4 w-4 text-gray-400" />
-                Remind
-              </Button> */}
             </div>
-            <Separator className="px-4" />
-            <div className="mx-4 mt-4 flex  flex-col gap-3">
-              {expenses.data?.map((e) => {
-                const youPaid = e.paidBy === user.id;
-                const yourExpense = e.expenseParticipants.find(
-                  (p) => p.userId === (youPaid ? friendQuery.data?.id : user.id),
-                );
-                const isSettlement = e.splitType === SplitType.SETTLEMENT;
-
-                return (
-                  <Link
-                    href={`/balances/${friendQuery.data?.id}/expenses/${e.id}`}
-                    key={e.id}
-                    className="flex items-start justify-between px-2 py-3"
-                  >
-                    <div className="flex items-center gap-3 px-1">
-                      <div className="text-xs text-gray-500">
-                        {format(e.expenseDate, 'MMM dd')
-                          .split(' ')
-                          .map((d) => (
-                            <div className="text-center" key={d}>
-                              {d}
-                            </div>
-                          ))}
-                      </div>
-                      <div>
-                        <CategoryIcon category={e.category} className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <div>
-                        {!isSettlement ? (
-                          <p className=" max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">
-                            {e.name}
-                          </p>
-                        ) : null}
-                        <p
-                          className={`flex ${isSettlement ? 'text-sm text-gray-400' : 'text-xs text-gray-500'}`}
-                        >
-                          <span className={`text-[8px] ${isSettlement ? 'mr-1' : ''} `}>
-                            {isSettlement ? '  🎉 ' : null}
-                          </span>
-                          <span>
-                            {youPaid ? 'You' : friendQuery.data?.name} paid {e.currency}{' '}
-                            {toUIString(e.amount)}{' '}
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                    {isSettlement ? null : (
-                      <div className="min-w-10 shrink-0">
-                        <div
-                          className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-700'}`}
-                        >
-                          {youPaid ? 'You lent' : 'You owe'}
-                        </div>
-                        <div
-                          className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-700'}`}
-                        >
-                          <span className="font-light ">{e.currency}</span>{' '}
-                          {toUIString(yourExpense?.amount ?? 0)}
-                        </div>
-                      </div>
-                    )}
-                  </Link>
-                );
-              })}
+            <Separator />
+            <div className="mx-4 mt-4 flex flex-col gap-3">
+              <ExpenseList
+                expenses={expenses.data}
+                contactId={_friendId}
+                isLoading={expenses.isPending}
+                userId={user.id}
+              />
             </div>
-          </motion.div>
+          </div>
         )}
       </MainLayout>
     </>
@@ -226,5 +164,15 @@ const FriendPage: NextPageWithUser = ({ user }) => {
 };
 
 FriendPage.auth = true;
+
+export const getServerSideProps: GetServerSideProps = async (context) => ({
+  props: {
+    ...(await customServerSideTranslations(context.locale, [
+      'common',
+      'friend_details',
+      'expense_details',
+    ])),
+  },
+});
 
 export default FriendPage;

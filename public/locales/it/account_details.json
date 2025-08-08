@@ -1,0 +1,15 @@
+{
+  "ui": {
+    "title": "Modifica dettagli",
+    "placeholder": "Inserisci il tuo nome",
+    "save": "Salva",
+    "close": "Chiudi"
+  },
+  "errors": {
+    "name_required": "Il nome è obbligatorio"
+  },
+  "messages": {
+    "update_success": "Dettagli aggiornati con successo",
+    "update_error": "Errore durante l'aggiornamento dei dettagli"
+  }
+}

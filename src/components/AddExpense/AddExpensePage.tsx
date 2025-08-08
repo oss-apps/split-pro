@@ -124,6 +124,8 @@ export const AddExpensePage: React.FC<{
   const [transactionId, setTransactionId] = React.useState('');
   const [multipleArray, setMultipleArray] = React.useState<TransactionAddInputModel[]>([]);
 
+  const [addMultipleExpensesLoading, setAddMultipleExpensesLoading] = React.useState(false);
+
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
   const participants = useAddExpenseStore((s) => s.participants);
@@ -186,6 +188,8 @@ export const AddExpensePage: React.FC<{
   };
 
   async function addMultipleExpenses() {
+    setAddMultipleExpensesLoading(true);
+
     const { group, paidBy, splitType } = useAddExpenseStore.getState();
     if (!paidBy) {
       return;
@@ -232,6 +236,7 @@ export const AddExpensePage: React.FC<{
     }
 
     setMultipleArray([]);
+    setAddMultipleExpensesLoading(false);
     router
       .push(`/groups/${group?.id}`)
       .then(() => resetState())
@@ -528,15 +533,18 @@ export const AddExpensePage: React.FC<{
                 </div>
               </div>
             )}
-            <GoCardlessTransactions
-              add={addViaGoCardless}
-              addMultipleExpenses={addMultipleExpenses}
-              multipleArray={multipleArray}
-              setMultipleArray={(a: TransactionAddInputModel[]) => {
-                clearFields();
-                setMultipleArray(a);
-              }}
-            />
+            {group && (
+              <GoCardlessTransactions
+                add={addViaGoCardless}
+                addMultipleExpenses={addMultipleExpenses}
+                multipleArray={multipleArray}
+                setMultipleArray={(a: TransactionAddInputModel[]) => {
+                  clearFields();
+                  setMultipleArray(a);
+                }}
+                addMultipleExpensesLoading={addMultipleExpensesLoading}
+              />
+            )}
             <div className=" flex w-full justify-center">
               <Link
                 href="https://github.com/sponsors/KMKoushik"

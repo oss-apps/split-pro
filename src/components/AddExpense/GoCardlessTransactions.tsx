@@ -11,6 +11,7 @@ type Props = {
   addMultipleExpenses: () => void;
   multipleArray: TransactionAddInputModel[];
   setMultipleArray: (a: TransactionAddInputModel[]) => void;
+  addMultipleExpensesLoading: boolean;
 };
 
 type TransactionWithPendingStatus = Transaction & {
@@ -22,6 +23,7 @@ export const GoCardlessTransactions = ({
   addMultipleExpenses,
   multipleArray,
   setMultipleArray,
+  addMultipleExpensesLoading,
 }: Props) => {
   const userQuery = api.user.me.useQuery();
   const gctransactions = api.gocardless.getTransactions.useQuery(userQuery.data?.gocardlessId);
@@ -88,8 +90,9 @@ export const GoCardlessTransactions = ({
         <Button
           variant="ghost"
           className=" px-0 text-primary"
-          disabled={(multipleArray?.length || 0) === 0}
+          disabled={(multipleArray?.length || 0) === 0 || addMultipleExpensesLoading}
           onClick={addMultipleExpenses}
+          loading={addMultipleExpensesLoading}
         >
           Submit all
         </Button>

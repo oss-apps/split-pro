@@ -195,7 +195,16 @@ export const AddExpensePage: React.FC<{
       return;
     }
 
-    for (const tempItem of multipleArray) {
+    const seen = new Set();
+    const deduplicated = multipleArray.filter((item) => {
+      if (seen.has(item.transactionId)) {
+        return false;
+      }
+      seen.add(item.transactionId);
+      return true;
+    });
+
+    for (const tempItem of deduplicated) {
       if (tempItem) {
         const _amt = Number(tempItem.amount.replace(',', '.')) ?? 0;
 

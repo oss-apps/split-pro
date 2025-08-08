@@ -78,6 +78,9 @@ export const GoCardlessTransactions = ({
           : [...multipleArray, transactionData],
       );
     } else {
+      if (alreadyAdded(item.transactionId)) {
+        return;
+      }
       add(transactionData);
       document.getElementById('mainlayout')?.scrollTo({ top: 0, behavior: 'instant' });
     }
@@ -125,7 +128,6 @@ export const GoCardlessTransactions = ({
                     className="flex items-center gap-4"
                     variant="ghost"
                     disabled={alreadyAdded(item.transactionId)}
-                    onClick={() => onTransactionRowClick(item, false)}
                   >
                     <div className="text-xs text-gray-500">
                       {format(item.bookingDate, 'MMM dd')
@@ -136,7 +138,7 @@ export const GoCardlessTransactions = ({
                           </div>
                         ))}
                     </div>
-                    <div>
+                    <div onClick={() => onTransactionRowClick(item, false)}>
                       <p
                         className={
                           'line-clamp-2 whitespace-break-spaces text-left text-sm lg:text-base' +

@@ -169,8 +169,15 @@
     },
     "edited_by": "Edited by",
     "deleted_by": "Deleted by",
+    "verified_transaction": "Verified transaction",
+    "clear": "Clear",
     "added_by": "Added by",
     "on": "on",
+    "bank_transactions": "Bank transactions",
+    "submit_all": "Submit all",
+    "pending": "Pending",
+    "no_transactions_yet": "No transactions yet",
+    "already_added": "Already added",
     "image_details": {
       "title": "Expense receipt",
       "close": "Close"

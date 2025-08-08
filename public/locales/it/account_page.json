@@ -2,6 +2,9 @@
   "ui": {
     "title": "Account",
     "change_language": "Cambia lingua",
+    "to_bank": "al conto",
+    "reconnect": "Riconnetti",
+    "connect": "Connetti",
     "change_language_details": {
       "title": "Seleziona una lingua",
       "save": "Salva",
@@ -75,6 +78,10 @@
     "star_on_github": "Metti una stella su GitHub",
     "support_us": "Supportaci",
     "follow_on_x": "Seguici su X",
-    "logout": "Esci"
+    "logout": "Esci",
+    "choose_bank_provider": "Scegli il provider del conto",
+    "select_bank_provider": "Seleziona il provider del conto",
+    "search_bank": "Cerca il conto",
+    "no_bank_providers_found": "Nessun provider del conto trovato"
   }
 }

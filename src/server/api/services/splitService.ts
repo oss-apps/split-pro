@@ -1,4 +1,4 @@
-import { type SplitType, type User } from '@prisma/client';
+
 import { nanoid } from 'nanoid';
 
 import { db } from '~/server/db';
@@ -41,6 +41,7 @@ export async function createExpense(
     participants,
     expenseDate,
     fileKey,
+    transactionId,
   }: CreateExpense,
   currentUserId: number,
 ) {
@@ -66,6 +67,7 @@ export async function createExpense(
         fileKey,
         addedBy: currentUserId,
         expenseDate,
+        transactionId: transactionId ?? '',
       },
     }),
   );

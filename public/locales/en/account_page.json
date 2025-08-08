@@ -2,6 +2,9 @@
   "ui": {
     "title": "Account",
     "change_language": "Change language",
+    "to_bank": "to bank",
+    "reconnect": "Reconnect",
+    "connect": "Connect",
     "change_language_details": {
       "title": "Select a language",
       "save": "Save",
@@ -75,6 +78,10 @@
     "star_on_github": "Star us on GitHub",
     "support_us": "Sponsor us",
     "follow_on_x": "Follow us on X",
-    "logout": "Logout"
+    "logout": "Logout",
+    "choose_bank_provider": "Choose bank provider",
+    "select_bank_provider": "Select bank provider",
+    "search_bank": "Search bank",
+    "no_bank_providers_found": "No bank providers found"
   }
 }

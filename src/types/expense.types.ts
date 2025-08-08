@@ -12,10 +12,12 @@ export type CreateExpense = Omit<
   | 'deletedBy'
   | 'expenseDate'
   | 'fileKey'
+  | 'transactionId'
 > & {
   expenseDate?: Date;
   fileKey?: string;
   expenseId?: string;
+  transactionId?: string;
   participants: Omit<ExpenseParticipant, 'expenseId'>[];
 };
 
@@ -36,6 +38,7 @@ export const createExpenseSchema = z.object({
   currency: z.string(),
   participants: z.array(z.object({ userId: z.number(), amount: z.bigint() })),
   fileKey: z.string().optional(),
+  transactionId: z.string().optional(),
   expenseDate: z.date().optional(),
   expenseId: z.string().optional(),
 }) satisfies z.ZodType<CreateExpense>;

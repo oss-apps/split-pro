@@ -62,8 +62,8 @@ export const UserInput: React.FC<{
         emailVerified: new Date(),
         image: null,
         currency: 'USD',
-        gocardlessId: null,
-        gocardlessBankId: null,
+        obapiProviderId: null,
+        bankingId: null,
         preferredLanguage: '',
       });
     }

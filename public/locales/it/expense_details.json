@@ -83,8 +83,15 @@
     },
     "edited_by": "Modificato da",
     "deleted_by": "Eliminato da",
+    "verified_transaction": "Transazione verificata",
+    "clear": "Cancella",
     "added_by": "Aggiunto da",
     "on": "il",
+    "bank_transactions": "Transazioni bancarie",
+    "submit_all": "Invia tutto",
+    "pending": "In attesa",
+    "no_transactions_yet": "Nessuna transazione",
+    "already_added": "Già aggiunto",
     "image_details": {
       "title": "Ricevuta della spesa",
       "close": "Chiudi"

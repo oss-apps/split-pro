@@ -6,8 +6,11 @@ import { cn } from '~/lib/utils';
 import { api } from '~/utils/api';
 import { Button } from '../ui/button';
 import Image from 'next/image';
+import { useTranslation } from 'next-i18next';
 
-export const GoCardlessBankAccountSelect = () => {
+export const BankAccountSelect = () => {
+  const { t } = useTranslation('account_page');
+
   const [open, setOpen] = React.useState(false);
   const userQuery = api.user.me.useQuery();
   const updateProfile = api.user.updateUserDetail.useMutation();
@@ -19,7 +22,7 @@ export const GoCardlessBankAccountSelect = () => {
   }
 
   const onSelect = async (currentValue: string) => {
-    await updateProfile.mutateAsync({ gocardlessBankId: currentValue.toUpperCase() });
+    await updateProfile.mutateAsync({ bankingId: currentValue.toUpperCase() });
     userQuery.refetch().catch((err) => console.log(err));
 
     setOpen(false);
@@ -30,17 +33,17 @@ export const GoCardlessBankAccountSelect = () => {
       trigger={
         <Button
           variant="ghost"
-          className="text-md w-full justify-between px-0 hover:text-foreground/80"
+          className="text-md hover:text-foreground/80 w-full justify-between px-0"
         >
           <div className="flex items-center gap-4">
             <Landmark className="h-5 w-5 text-blue-500" />
-            <p>Choose bank provider</p>
+            <p>{t('ui.choose_bank_provider')}</p>
           </div>
           <ChevronRight className="h-6 w-6 text-gray-500" />
         </Button>
       }
       onTriggerClick={() => setOpen(true)}
-      title="Select bank provider"
+      title={t('ui.select_bank_provider')}
       className="h-[70vh]"
       shouldCloseOnAction
       open={open}
@@ -50,8 +53,8 @@ export const GoCardlessBankAccountSelect = () => {
     >
       <div>
         <Command className="h-[50vh]">
-          <CommandInput className="text-lg" placeholder="Search bank" />
-          <CommandEmpty>No bank providers found.</CommandEmpty>
+          <CommandInput className="text-lg" placeholder={t('ui.search_bank')} />
+          <CommandEmpty>{t('ui.no_bank_providers_found')}</CommandEmpty>
           <CommandGroup className="h-full overflow-auto">
             {institutions?.data?.map((framework) => (
               <CommandItem
@@ -62,7 +65,7 @@ export const GoCardlessBankAccountSelect = () => {
                 <Check
                   className={cn(
                     'mr-2 h-4 w-4',
-                    framework.id === userQuery.data?.gocardlessBankId ? 'opacity-100' : 'opacity-0',
+                    framework.id === userQuery.data?.bankingId ? 'opacity-100' : 'opacity-0',
                   )}
                 />
                 <div className="flex gap-2">

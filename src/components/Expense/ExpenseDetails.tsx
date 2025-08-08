@@ -11,6 +11,7 @@ import { Receipt } from './Receipt';
 import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
 import type { FC } from 'react';
 import { CategoryIcon } from '../ui/categoryIcons';
+import { BadgeCheck } from 'lucide-react';
 
 interface ExpenseDetailsProps {
   user: NextUser;
@@ -60,6 +61,12 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
                 {toUIDate(expense.createdAt, { year: true })}
               </p>
             )}
+            {expense.transactionId && (
+              <p className=" flex gap-2 text-sm text-gray-500">
+                {t('ui.verified_transaction')}
+                <BadgeCheck className="h-4 w-4 text-emerald-500" />
+              </p>
+            )}
           </div>
         </div>
         <div>
@@ -86,7 +93,7 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
           {toUIString(expense.amount)}
         </p>
       </div>
-      <div className="mt-4 ml-14 flex flex-col gap-4">
+      <div className="ml-14 mt-4 flex flex-col gap-4">
         {expense.expenseParticipants
           .filter(
             (partecipant) =>

@@ -46,8 +46,8 @@ model User {
     id                  Int                  @id @default(autoincrement())
     name                String?
     email               String?              @unique
-    gocardlessId        String?
-    gocardlessBankId    String?
+    obapiProviderId     String?
+    bankingId           String?
     emailVerified       DateTime?
     image               String?
     currency            String               @default("USD")
@@ -69,13 +69,13 @@ model User {
 }
 
 model CachedBankData {
-    id           Int      @id @default(autoincrement())
-    gocardlessId String   @unique
-    data         String
-    userId       Int
-    lastFetched  DateTime
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
+    id              Int      @id @default(autoincrement())
+    obapiProviderId String   @unique
+    data            String
+    userId          Int
+    lastFetched     DateTime
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
 }
 
 model VerificationToken {

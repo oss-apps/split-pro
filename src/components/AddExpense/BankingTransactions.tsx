@@ -5,28 +5,31 @@ import { Button } from '../ui/button';
 import { Checkbox } from '../ui/checkbox';
 import { type TransactionAddInputModel } from './AddExpensePage';
 import { type Transaction } from 'nordigen-node';
+import { useTranslation } from 'next-i18next';
 
 type Props = {
   add: (obj: TransactionAddInputModel) => void;
   addMultipleExpenses: () => void;
-  multipleArray: TransactionAddInputModel[];
-  setMultipleArray: (a: TransactionAddInputModel[]) => void;
-  addMultipleExpensesLoading: boolean;
+  multipleTransactions: TransactionAddInputModel[];
+  setMultipleTransactions: (a: TransactionAddInputModel[]) => void;
+  isTransactionLoading: boolean;
 };
 
 type TransactionWithPendingStatus = Transaction & {
   pending: boolean;
 };
 
-export const GoCardlessTransactions = ({
+export const BankingTransactions = ({
   add,
   addMultipleExpenses,
-  multipleArray,
-  setMultipleArray,
-  addMultipleExpensesLoading,
+  multipleTransactions,
+  setMultipleTransactions,
+  isTransactionLoading,
 }: Props) => {
+  const { t } = useTranslation('expense_details');
+
   const userQuery = api.user.me.useQuery();
-  const gctransactions = api.gocardless.getTransactions.useQuery(userQuery.data?.gocardlessId);
+  const gctransactions = api.gocardless.getTransactions.useQuery(userQuery.data?.obapiProviderId);
 
   const expensesQuery = api.user.getOwnExpenses.useQuery();
   const gocardlessEnabled = api.gocardless.gocardlessEnabled.useQuery();
@@ -68,14 +71,14 @@ export const GoCardlessTransactions = ({
     };
 
     if (multiple) {
-      const isInMultipleArray = multipleArray?.some(
+      const isInMultipleTransactions = multipleTransactions?.some(
         (cItem) => cItem.transactionId === item.transactionId,
       );
 
-      setMultipleArray(
-        isInMultipleArray
-          ? multipleArray.filter((cItem) => cItem.transactionId !== item.transactionId)
-          : [...multipleArray, transactionData],
+      setMultipleTransactions(
+        isInMultipleTransactions
+          ? multipleTransactions.filter((cItem) => cItem.transactionId !== item.transactionId)
+          : [...multipleTransactions, transactionData],
       );
     } else {
       if (alreadyAdded(item.transactionId)) {
@@ -89,15 +92,15 @@ export const GoCardlessTransactions = ({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <p>Bank transactions</p>
+        <p>{t('ui.bank_transactions')}</p>
         <Button
           variant="ghost"
-          className=" px-0 text-primary"
-          disabled={(multipleArray?.length || 0) === 0 || addMultipleExpensesLoading}
+          className=" text-primary px-0"
+          disabled={(multipleTransactions?.length || 0) === 0 || isTransactionLoading}
           onClick={addMultipleExpenses}
-          loading={addMultipleExpensesLoading}
+          loading={isTransactionLoading}
         >
-          Submit all
+          {t('ui.submit_all')}
         </Button>
       </div>
       {gctransactions.isInitialLoading ? (
@@ -107,7 +110,7 @@ export const GoCardlessTransactions = ({
       ) : (
         <>
           {transactionsArray?.length === 0 && (
-            <div className="mt-[30vh] text-center text-gray-400">No transactions yet</div>
+            <div className="mt-[30vh] text-center text-gray-400">{t('ui.no_transactions_yet')}</div>
           )}
           {transactionsArray
             ?.filter((item) => item.transactionAmount.amount.includes('-'))
@@ -115,7 +118,7 @@ export const GoCardlessTransactions = ({
               <div className="flex items-center justify-between px-2 py-2" key={index}>
                 <div className="flex items-center gap-4">
                   <Checkbox
-                    checked={multipleArray?.some(
+                    checked={multipleTransactions?.some(
                       (cItem) => cItem.transactionId === item.transactionId,
                     )}
                     disabled={alreadyAdded(item.transactionId)}
@@ -150,9 +153,9 @@ export const GoCardlessTransactions = ({
                       <p
                         className={`line-clamp-1 flex whitespace-break-spaces text-left text-xs text-gray-500`}
                       >
-                        {item.pending && 'Pending'}{' '}
+                        {item.pending && t('ui.pending')}{' '}
                         {alreadyAdded(item.transactionId) &&
-                          `(Already added${returnGroupName(item.transactionId)})`}
+                          `(${t('ui.already_added')}${returnGroupName(item.transactionId)})`}
                       </p>
                     </div>
                   </Button>

@@ -22,7 +22,7 @@ import { SplitTypeSection } from './SplitTypeSection';
 import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
 import { toast } from 'sonner';
-import { GoCardlessTransactions } from './GoCardlessTransactions';
+import { BankingTransactions } from './BankingTransactions';
 
 export type TransactionAddInputModel = {
   date: Date;
@@ -51,6 +51,7 @@ export const AddOrEditExpensePage: React.FC<{
   const amtStr = useAddExpenseStore((s) => s.amountStr);
   const expenseDate = useAddExpenseStore((s) => s.expenseDate);
   const isExpenseSettled = useAddExpenseStore((s) => s.canSplitScreenClosed);
+  const splitShares = useAddExpenseStore((s) => s.splitShares);
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const splitType = useAddExpenseStore((s) => s.splitType);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
@@ -118,13 +119,14 @@ export const AddOrEditExpensePage: React.FC<{
 
     for (const tempItem of deduplicated) {
       if (tempItem) {
-        const _amt = Number(tempItem.amount.replace(',', '.')) ?? 0;
-        const _amtBigInt = BigInt(Math.round(_amt));
+        const normalizedAmount = tempItem.amount.replace(',', '.');
+        const _amtBigInt = BigInt(Math.round(Number(normalizedAmount) * 100));
 
         const { participants: tempParticipants } = calculateParticipantSplit(
           _amtBigInt,
           participants,
           splitType,
+          splitShares,
           paidBy,
         );
 
@@ -177,6 +179,9 @@ export const AddOrEditExpensePage: React.FC<{
       setSplitScreenOpen(true);
       return;
     }
+
+    setMultipleTransactions([]);
+    setIsTransactionLoading(false);
 
     try {
       await addExpenseMutation.mutateAsync(
@@ -324,7 +329,7 @@ export const AddOrEditExpensePage: React.FC<{
               onChange={onAmountChange}
             />
           </div>
-          <div className="h-[180px]">
+          <div className="h-auto">
             {amount && '' !== description ? (
               <>
                 <SplitTypeSection />
@@ -380,8 +385,7 @@ export const AddOrEditExpensePage: React.FC<{
               </Button>
             </div>
           </div>
-          {group && (
-            <GoCardlessTransactions
+            <BankingTransactions
               add={addViaGoCardless}
               addMultipleExpenses={addMultipleExpenses}
               multipleTransactions={multipleTransactions}
@@ -391,7 +395,6 @@ export const AddOrEditExpensePage: React.FC<{
               }}
               isTransactionLoading={isTransactionLoading}
             />
-          )}
           <div className="flex w-full justify-center">
             <Link href="https://github.com/sponsors/KMKoushik" target="_blank" className="mx-auto">
               <Button

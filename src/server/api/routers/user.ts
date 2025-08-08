@@ -42,6 +42,23 @@ export const userRouter = createTRPCRouter({
     return friends;
   }),
 
+  getOwnExpenses: protectedProcedure.query(async ({ ctx }) => {
+    const expenses = await db.expense.findMany({
+      where: {
+        paidBy: ctx.session.user.id,
+        deletedBy: null,
+      },
+      orderBy: {
+        expenseDate: 'desc',
+      },
+      include: {
+        group: true,
+      },
+    });
+
+    return expenses;
+  }),
+
   inviteFriend: protectedProcedure
     .input(z.object({ email: z.string(), sendInviteEmail: z.boolean().optional() }))
     .mutation(async ({ input, ctx: { session } }) => {
@@ -92,8 +109,8 @@ export const userRouter = createTRPCRouter({
       z.object({
         name: z.string().optional(),
         currency: z.string().optional(),
-        gocardlessId: z.string().optional(),
-        gocardlessBankId: z.string().optional(),
+        obapiProviderId: z.string().optional(),
+        bankingId: z.string().optional(),
         preferredLanguage: z.string().optional(),
       }),
     )

@@ -2,13 +2,13 @@
 ALTER TABLE "Expense" ADD COLUMN     "transactionId" TEXT;
 
 -- AlterTable
-ALTER TABLE "User" ADD COLUMN     "gocardlessBankId" TEXT,
-ADD COLUMN     "gocardlessId" TEXT;
+ALTER TABLE "User" ADD COLUMN     "bankingId" TEXT,
+ADD COLUMN     "obapiProviderId" TEXT;
 
 -- CreateTable
 CREATE TABLE "CachedBankData" (
     "id" SERIAL NOT NULL,
-    "gocardlessId" TEXT NOT NULL,
+    "obapiProviderId" TEXT NOT NULL,
     "data" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
     "lastFetched" TIMESTAMP(3) NOT NULL,
@@ -19,4 +19,4 @@ CREATE TABLE "CachedBankData" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "CachedBankData_gocardlessId_key" ON "CachedBankData"("gocardlessId");
+CREATE UNIQUE INDEX "CachedBankData_obapiProviderId_key" ON "CachedBankData"("obapiProviderId");

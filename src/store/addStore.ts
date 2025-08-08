@@ -1,6 +1,7 @@
 import { type Group, SplitType, type User } from '@prisma/client';
 import Router from 'next/router';
 import { create } from 'zustand';
+import { TransactionAddInputModel } from '~/components/AddExpense/AddExpensePage';
 
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { type CurrencyCode } from '~/lib/currency';
@@ -29,6 +30,9 @@ export interface AddExpenseState {
   canSplitScreenClosed: boolean;
   splitScreenOpen: boolean;
   expenseDate: Date | undefined;
+  transactionId: string;
+  multipleTransactions: TransactionAddInputModel[];
+  isTransactionLoading: boolean;
   actions: {
     setAmount: (amount: bigint) => void;
     setAmountStr: (amountStr: string) => void;
@@ -50,6 +54,9 @@ export interface AddExpenseState {
     resetState: () => void;
     setSplitScreenOpen: (splitScreenOpen: boolean) => void;
     setExpenseDate: (expenseDate: Date | undefined) => void;
+    setTransactionId: (transactionId: string) => void;
+    setMultipleTransactions: (multipleTransactions: TransactionAddInputModel[]) => void;
+    setIsTransactionLoading: (isTransactionLoading: boolean) => void;
   };
 }
 
@@ -79,6 +86,9 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   canSplitScreenClosed: true,
   splitScreenOpen: false,
   expenseDate: undefined,
+  transactionId: '',
+  multipleTransactions: [],
+  isTransactionLoading: false,
   actions: {
     setAmount: (amount) =>
       set((s) => ({
@@ -252,6 +262,9 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     },
     setSplitScreenOpen: (splitScreenOpen) => set({ splitScreenOpen }),
     setExpenseDate: (expenseDate) => set({ expenseDate }),
+    setTransactionId: (transactionId) => set({ transactionId }),
+    setMultipleTransactions: (multipleTransactions) => set({ multipleTransactions }),
+    setIsTransactionLoading: (isTransactionLoading) => set({ isTransactionLoading }),
   },
 }));
 

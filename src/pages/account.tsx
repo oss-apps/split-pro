@@ -25,7 +25,7 @@ import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { LoadingSpinner } from '~/components/ui/spinner';
-import { GoCardlessBankAccountSelect } from '~/components/Account/GoCardlessBankAccountSelect';
+import { BankAccountSelect } from '~/components/Account/BankAccountSelect';
 import { withI18nStaticProps } from '~/utils/i18n/server';
 import { bigIntReplacer } from '~/utils/numbers';
 
@@ -97,7 +97,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
   }, [router]);
 
   const onConnectToBank = async () => {
-    const res = await connectToBank.mutateAsync(userQuery.data?.gocardlessBankId);
+    const res = await connectToBank.mutateAsync(userQuery.data?.bankingId);
     if (res?.link) {
       window.location.href = res.link;
     }
@@ -129,8 +129,8 @@ const AccountPage: NextPageWithUser = ({ user }) => {
           <LanguagePicker />
           {gocardlessEnabled && (
             <>
-              <GoCardlessBankAccountSelect />
-              {userQuery.data?.gocardlessBankId && (
+              <BankAccountSelect />
+              {userQuery.data?.bankingId && (
                 <Button
                   onClick={onConnectToBank}
                   variant="ghost"
@@ -138,7 +138,10 @@ const AccountPage: NextPageWithUser = ({ user }) => {
                 >
                   <div className="flex items-center gap-4">
                     <CreditCard className="h-5 w-5 text-teal-500" />
-                    <p>{userQuery.data?.gocardlessId ? 'Reconnect' : 'Connect'} to bank</p>
+                    <p>
+                      {userQuery.data?.obapiProviderId ? t('ui.reconnect') : t('ui.connect')}{' '}
+                      {t('ui.to_bank')}
+                    </p>
                   </div>
                   <ChevronRight className="h-6 w-6 text-gray-500" />
                 </Button>

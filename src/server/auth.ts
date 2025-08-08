@@ -23,8 +23,8 @@ declare module 'next-auth' {
     user: DefaultSession['user'] & {
       id: number;
       currency: string;
-      gocardlessId?: string;
-      gocardlessBankId?: string;
+      obapiProviderId?: string;
+      bankingId?: string;
       preferredLanguage: string;
       // ...other properties
       // role: UserRole;
@@ -34,8 +34,8 @@ declare module 'next-auth' {
   interface User {
     id: number;
     currency: string;
-    gocardlessId?: string;
-    gocardlessBankId?: string;
+    obapiProviderId?: string;
+    bankingId?: string;
     preferredLanguage: string;
   }
 }
@@ -81,8 +81,8 @@ export const authOptions: NextAuthOptions = {
         ...session.user,
         id: user.id,
         currency: user.currency,
-        gocardlessId: user.gocardlessId,
-        gocardlessBankId: user.gocardlessBankId,
+        obapiProviderId: user.obapiProviderId,
+        bankingId: user.bankingId,
         preferredLanguage: user.preferredLanguage,
       },
     }),

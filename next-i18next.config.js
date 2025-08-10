@@ -2,7 +2,7 @@
 const config = {
   i18n: {
     defaultLocale: 'en',
-    locales: ['en', 'it'],
+    locales: ['en', 'de', 'it'],
   },
   localePath: './public/locales',
 };

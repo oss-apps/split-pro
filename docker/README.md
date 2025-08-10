@@ -64,3 +64,19 @@ Replace the placeholders with your actual database and aws details.
 ## Success
 
 You have now successfully set up Splitpro using Docker. If you encounter any issues or have further questions, please seek assistance from the community.
+
+## Migrating instance
+
+To migrate your instance it is sufficient to copy the `.env` file as well as to migrate your database.
+
+#### DB backup
+
+```bash
+docker exec -t <postgres container name> pg_dumpall -c -U postgres > splitpro_backup.sql
+```
+
+#### DB restore
+
+```bash
+cat splitpro_backup.sql | docker exec -i <postgres container name> psql -U postgres
+```

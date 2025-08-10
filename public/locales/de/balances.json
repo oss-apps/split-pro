@@ -1,0 +1,15 @@
+{
+  "meta": {
+    "title": "Ausstehende Salden"
+  },
+  "title": "Kontostände",
+  "you_owe": "Du schuldest",
+  "you_get": "Du bekommst",
+  "settled_up": "Ausgeglichen",
+  "add_expense": "Ausgabe hinzufügen",
+  "share": {
+    "title": "SplitPro",
+    "text": "Schau dir SplitPro an. Es ist eine kostenlose Open-Source-Alternative zu Splitwise",
+    "url": "https://splitpro.app"
+  }
+}

@@ -7,6 +7,7 @@ export interface SupportedLanguage {
 
 export const getSupportedLanguages = (): SupportedLanguage[] => [
   { code: 'en', name: 'English' },
+  { code: 'de', name: 'Deutsch' },
   { code: 'it', name: 'Italiano' },
 ];
 

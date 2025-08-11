@@ -21,6 +21,8 @@
         "split_unequally": "split unequally",
         "save": "Save",
         "all": "All",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
         "types": {
           "equal": {
             "title": "Equal",
@@ -33,7 +35,9 @@
           "exact": {
             "title": "Exact",
             "remaining": "Remaining",
-            "split_remaining_equally": "Split remaining equally"
+            "split_remaining_equally": "Split remaining equally",
+            "confirm_distribution": "Confirm Distribution",
+            "will_be_distributed": "will be distributed"
           },
           "share": {
             "title": "Share",

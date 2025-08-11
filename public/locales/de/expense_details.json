@@ -21,6 +21,8 @@
         "split_unequally": "ungleichmäßig teilen",
         "save": "Speichern",
         "all": "Alle",
+        "confirm": "Bestätigen",
+        "cancel": "Abbrechen",
         "types": {
           "equal": {
             "title": "Gleich",
@@ -33,7 +35,9 @@
           "exact": {
             "title": "Genau",
             "remaining": "Verbleibend",
-            "split_remaining_equally": "Rest gleichmäßig verteilen"
+            "split_remaining_equally": "Rest gleichmäßig verteilen",
+            "confirm_distribution": "Verteilung bestätigen",
+            "will_be_distributed": "wird verteilt"
           },
           "share": {
             "title": "Anteil",

@@ -11,7 +11,7 @@ import {
   X,
 } from 'lucide-react';
 import { type TFunction, useTranslation } from 'next-i18next';
-import { type ChangeEvent, useCallback, useMemo } from 'react';
+import { type ChangeEvent, useCallback, useMemo, useState } from 'react';
 
 import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/store/addStore';
 import { removeTrailingZeros, toSafeBigInt, toUIString } from '~/utils/numbers';
@@ -20,6 +20,15 @@ import { UserAvatar } from '../ui/avatar';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Button } from '../ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../ui/dialog';
 
 export const SplitTypeSection: React.FC = () => {
   const { t } = useTranslation('expense_details');
@@ -242,6 +251,8 @@ const SplitSection: React.FC<SplitSectionProps> = ({
   const splitShares = useAddExpenseStore((s) => s.splitShares);
   const { setSplitShare, distributeExactRemainderEqually } = useAddExpenseStore((s) => s.actions);
 
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
   const summaryText = useMemo(
     () => fmtSummartyText(amount, currency, participants, splitShares),
     [amount, currency, participants, fmtSummartyText, splitShares],
@@ -259,6 +270,46 @@ const SplitSection: React.FC<SplitSectionProps> = ({
     );
     return amount - total;
   }, [splitType, participants, splitShares, amount]);
+
+  const previewDistribution = useMemo(() => {
+    if (splitType !== SplitType.EXACT || exactRemaining <= 0n) {
+      return [];
+    }
+
+    const distributions: Array<{
+      participant: Participant;
+      currentAmount: bigint;
+      addedAmount: bigint;
+      finalAmount: bigint;
+    }> = [];
+    
+    let eligible = participants.filter(
+      (p) => (splitShares[p.id]?.[SplitType.EXACT] ?? 0n) > 0n,
+    );
+    if (eligible.length === 0) {
+      eligible = participants;
+    }
+    
+    const count = BigInt(eligible.length);
+    const base = exactRemaining / count;
+    let extra = exactRemaining % count;
+
+    eligible.forEach((p) => {
+      const current = splitShares[p.id]?.[SplitType.EXACT] ?? 0n;
+      const add = base + (extra > 0n ? 1n : 0n);
+      if (add > 0n) {
+        distributions.push({
+          participant: p,
+          currentAmount: current,
+          addedAmount: add,
+          finalAmount: current + add,
+        });
+      }
+      if (extra > 0n) extra -= 1n;
+    });
+
+    return distributions;
+  }, [splitType, exactRemaining, participants, splitShares]);
 
   const selectAll = useCallback(() => {
     participants.forEach((p) => {
@@ -285,6 +336,17 @@ const SplitSection: React.FC<SplitSectionProps> = ({
     [setSplitShare, splitType],
   );
 
+  const handleDistributeClick = () => {
+    if (previewDistribution.length > 0) {
+      setShowConfirmModal(true);
+    }
+  };
+
+  const handleConfirmDistribution = () => {
+    distributeExactRemainderEqually();
+    setShowConfirmModal(false);
+  };
+
   return (
     <div className="relative mt-4 flex flex-col gap-6 px-2">
       <div className="mb-2 flex grow items-center justify-center gap-3">
@@ -292,13 +354,51 @@ const SplitSection: React.FC<SplitSectionProps> = ({
         {splitType === SplitType.EXACT && exactRemaining > 0n ? (
           <button
             className="flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs whitespace-nowrap"
-            onClick={distributeExactRemainderEqually}
+            onClick={handleDistributeClick}
           >
             <Plus className="h-3.5 w-3.5" />
             <span>{t('ui.add_expense_details.split_type_section.types.exact.split_remaining_equally')}</span>
           </button>
         ) : null}
       </div>
+      
+      <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('ui.add_expense_details.split_type_section.types.exact.confirm_distribution')}</DialogTitle>
+            <DialogDescription>
+              {t('ui.add_expense_details.split_type_section.types.exact.remaining')} {currency} {toUIString(exactRemaining, true)} {t('ui.add_expense_details.split_type_section.types.exact.will_be_distributed')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 max-h-60 overflow-y-auto">
+            {previewDistribution.map(({ participant, currentAmount, addedAmount, finalAmount }) => (
+              <div key={participant.id} className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg border">
+                <div className="flex items-center gap-3">
+                  <UserAvatar user={participant} size={32} />
+                  <span className="font-medium text-sm">{participant.name ?? participant.email}</span>
+                </div>
+                <div className="text-right">
+                  <div className="text-xs text-muted-foreground">
+                    {currency} {removeTrailingZeros(toUIString(currentAmount))} + {removeTrailingZeros(toUIString(addedAmount))}
+                  </div>
+                  <div className="font-medium text-green-600 dark:text-green-400 text-sm">
+                    = {currency} {removeTrailingZeros(toUIString(finalAmount))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <DialogFooter className="flex-row justify-end gap-2">
+            <Button variant="outline" onClick={() => setShowConfirmModal(false)}>
+              {t('ui.add_expense_details.split_type_section.cancel')}
+            </Button>
+            <Button onClick={handleConfirmDistribution}>
+              {t('ui.add_expense_details.split_type_section.confirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {isBoolean && (
         <div className="absolute top-0 right-0">
           <button
@@ -312,6 +412,7 @@ const SplitSection: React.FC<SplitSectionProps> = ({
       )}
       {participants.map((p) => {
         const share = splitShares[p.id]?.[splitType];
+        
         return (
           <div
             key={p.id}

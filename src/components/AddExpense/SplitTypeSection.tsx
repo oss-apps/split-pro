@@ -328,7 +328,7 @@ const SplitSection: React.FC<SplitSectionProps> = ({
 
   return (
     <div className="relative mt-4 flex flex-col gap-6 px-2">
-      <div className="mb-2 flex grow items-center justify-center gap-3">
+      <div className="mb-2 flex flex-col items-center justify-center gap-3">
         <div className={`${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'}`}>{summaryText}</div>
         {splitType === SplitType.EXACT && exactRemaining > 0n ? (
           <button

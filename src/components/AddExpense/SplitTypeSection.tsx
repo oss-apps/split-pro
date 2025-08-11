@@ -240,7 +240,7 @@ const SplitSection: React.FC<SplitSectionProps> = ({
   const amount = useAddExpenseStore((s) => s.amount);
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
   const splitShares = useAddExpenseStore((s) => s.splitShares);
-  const { setSplitShare } = useAddExpenseStore((s) => s.actions);
+  const { setSplitShare, distributeExactRemainderEqually } = useAddExpenseStore((s) => s.actions);
 
   const summaryText = useMemo(
     () => fmtSummartyText(amount, currency, participants, splitShares),
@@ -250,6 +250,15 @@ const SplitSection: React.FC<SplitSectionProps> = ({
     () => participants.every((p) => 0n !== splitShares[p.id]?.[splitType]),
     [participants, splitShares, splitType],
   );
+
+  const exactRemaining = useMemo(() => {
+    if (splitType !== SplitType.EXACT) return 0n;
+    const total = participants.reduce(
+      (acc, p) => acc + (splitShares[p.id]?.[SplitType.EXACT] ?? 0n),
+      0n,
+    );
+    return amount - total;
+  }, [splitType, participants, splitShares, amount]);
 
   const selectAll = useCallback(() => {
     participants.forEach((p) => {
@@ -278,10 +287,17 @@ const SplitSection: React.FC<SplitSectionProps> = ({
 
   return (
     <div className="relative mt-4 flex flex-col gap-6 px-2">
-      <div className="mb-2 flex grow justify-center">
-        <div className={`${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'}`}>
-          {summaryText}
-        </div>
+      <div className="mb-2 flex grow items-center justify-center gap-3">
+        <div className={`${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'}`}>{summaryText}</div>
+        {splitType === SplitType.EXACT && exactRemaining > 0n ? (
+          <button
+            className="flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs whitespace-nowrap"
+            onClick={distributeExactRemainderEqually}
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>{t('ui.add_expense_details.split_type_section.types.exact.split_remaining_equally')}</span>
+          </button>
+        ) : null}
       </div>
       {isBoolean && (
         <div className="absolute top-0 right-0">

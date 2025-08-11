@@ -32,7 +32,8 @@
           },
           "exact": {
             "title": "Exact",
-            "remaining": "Remaining"
+            "remaining": "Remaining",
+            "split_remaining_equally": "Split remaining equally"
           },
           "share": {
             "title": "Share",

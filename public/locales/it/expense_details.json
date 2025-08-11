@@ -32,7 +32,8 @@
           },
           "exact": {
             "title": "Esatto",
-            "remaining": "Rimanenti"
+            "remaining": "Rimanenti",
+            "split_remaining_equally": "Dividi il resto equamente"
           },
           "share": {
             "title": "Condivisioni",

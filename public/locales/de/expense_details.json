@@ -32,7 +32,8 @@
           },
           "exact": {
             "title": "Genau",
-            "remaining": "Verbleibend"
+            "remaining": "Verbleibend",
+            "split_remaining_equally": "Rest gleichmäßig verteilen"
           },
           "share": {
             "title": "Anteil",

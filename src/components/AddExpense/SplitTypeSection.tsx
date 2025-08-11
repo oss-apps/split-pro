@@ -14,7 +14,7 @@ import { type TFunction, useTranslation } from 'next-i18next';
 import { type ChangeEvent, useCallback, useMemo, useState } from 'react';
 
 import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/store/addStore';
-import { removeTrailingZeros, toSafeBigInt, toUIString } from '~/utils/numbers';
+import { removeTrailingZeros, toSafeBigInt, toUIString, calculateExactRemainderDistribution } from '~/utils/numbers';
 
 import { UserAvatar } from '../ui/avatar';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
@@ -276,39 +276,18 @@ const SplitSection: React.FC<SplitSectionProps> = ({
       return [];
     }
 
-    const distributions: Array<{
-      participant: Participant;
-      currentAmount: bigint;
-      addedAmount: bigint;
-      finalAmount: bigint;
-    }> = [];
-    
-    let eligible = participants.filter(
-      (p) => (splitShares[p.id]?.[SplitType.EXACT] ?? 0n) > 0n,
+    const rawDistributions = calculateExactRemainderDistribution(
+      participants,
+      splitShares,
+      exactRemaining
     );
-    if (eligible.length === 0) {
-      eligible = participants;
-    }
-    
-    const count = BigInt(eligible.length);
-    const base = exactRemaining / count;
-    let extra = exactRemaining % count;
 
-    eligible.forEach((p) => {
-      const current = splitShares[p.id]?.[SplitType.EXACT] ?? 0n;
-      const add = base + (extra > 0n ? 1n : 0n);
-      if (add > 0n) {
-        distributions.push({
-          participant: p,
-          currentAmount: current,
-          addedAmount: add,
-          finalAmount: current + add,
-        });
-      }
-      if (extra > 0n) extra -= 1n;
-    });
-
-    return distributions;
+    return rawDistributions.map((dist) => ({
+      participant: participants.find(p => p.id === dist.participantId)!,
+      currentAmount: dist.currentAmount,
+      addedAmount: dist.addedAmount,
+      finalAmount: dist.finalAmount,
+    }));
   }, [splitType, exactRemaining, participants, splitShares]);
 
   const selectAll = useCallback(() => {

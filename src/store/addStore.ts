@@ -5,7 +5,7 @@ import { create } from 'zustand';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { type CurrencyCode } from '~/lib/currency';
 import { shuffleArray } from '~/utils/array';
-import { BigMath } from '~/utils/numbers';
+import { BigMath, calculateExactRemainderDistribution } from '~/utils/numbers';
 
 export type Participant = User & { amount?: bigint };
 type SplitShares = Record<number, Record<SplitType, bigint | undefined>>;
@@ -261,7 +261,6 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         }
 
         const splitShares: SplitShares = { ...state.splitShares };
-        // Ensure split shares exist for each participant
         state.participants.forEach((p) => {
           splitShares[p.id] ??= initSplitShares();
         });
@@ -275,21 +274,14 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
           return {};
         }
 
-        let eligible = state.participants.filter(
-          (p) => (splitShares[p.id]?.[SplitType.EXACT] ?? 0n) > 0n,
+        const distributions = calculateExactRemainderDistribution(
+          state.participants,
+          splitShares,
+          remainder
         );
-        if (eligible.length === 0) {
-          eligible = state.participants;
-        }
-        const count = BigInt(eligible.length);
-        const base = remainder / count;
-        let extra = remainder % count;
 
-        eligible.forEach((p) => {
-          const current = splitShares[p.id]?.[SplitType.EXACT] ?? 0n;
-          const add = base + (extra > 0n ? 1n : 0n);
-          splitShares[p.id]![SplitType.EXACT] = current + add;
-          if (extra > 0n) extra -= 1n;
+        distributions.forEach((dist) => {
+          splitShares[dist.participantId]![SplitType.EXACT] = dist.finalAmount;
         });
 
         return {

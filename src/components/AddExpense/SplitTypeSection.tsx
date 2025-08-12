@@ -14,7 +14,7 @@ import { type TFunction, useTranslation } from 'next-i18next';
 import { type ChangeEvent, useCallback, useMemo, useState } from 'react';
 
 import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/store/addStore';
-import { removeTrailingZeros, toSafeBigInt, toUIString, calculateExactRemainderDistribution } from '~/utils/numbers';
+import { calculateExactRemainderDistribution, removeTrailingZeros, toSafeBigInt, toUIString } from '~/utils/numbers';
 
 import { UserAvatar } from '../ui/avatar';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
@@ -249,7 +249,8 @@ const SplitSection: React.FC<SplitSectionProps> = ({
   const amount = useAddExpenseStore((s) => s.amount);
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
   const splitShares = useAddExpenseStore((s) => s.splitShares);
-  const { setSplitShare, distributeExactRemainderEqually } = useAddExpenseStore((s) => s.actions);
+  const selectedParticipantsForDistribution = useAddExpenseStore((s) => s.selectedParticipantsForDistribution);
+  const { setSplitShare, distributeExactRemainderEqually, toggleParticipantForDistribution, setAllParticipantsForDistribution } = useAddExpenseStore((s) => s.actions);
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -276,8 +277,12 @@ const SplitSection: React.FC<SplitSectionProps> = ({
       return [];
     }
 
+    const participantsToDistribute = selectedParticipantsForDistribution.size > 0
+      ? participants.filter(p => selectedParticipantsForDistribution.has(p.id))
+      : participants;
+
     const rawDistributions = calculateExactRemainderDistribution(
-      participants,
+      participantsToDistribute,
       splitShares,
       exactRemaining
     );
@@ -288,7 +293,7 @@ const SplitSection: React.FC<SplitSectionProps> = ({
       addedAmount: dist.addedAmount,
       finalAmount: dist.finalAmount,
     }));
-  }, [splitType, exactRemaining, participants, splitShares]);
+  }, [splitType, exactRemaining, participants, splitShares, selectedParticipantsForDistribution]);
 
   const selectAll = useCallback(() => {
     participants.forEach((p) => {
@@ -316,14 +321,24 @@ const SplitSection: React.FC<SplitSectionProps> = ({
   );
 
   const handleDistributeClick = () => {
-    if (previewDistribution.length > 0) {
-      setShowConfirmModal(true);
+    if (selectedParticipantsForDistribution.size === 0) {
+      setAllParticipantsForDistribution(true);
     }
+    setShowConfirmModal(true);
   };
 
   const handleConfirmDistribution = () => {
-    distributeExactRemainderEqually();
+    distributeExactRemainderEqually(selectedParticipantsForDistribution);
     setShowConfirmModal(false);
+  };
+
+  const allParticipantsSelected = useMemo(() => 
+    participants.length > 0 && participants.every(p => selectedParticipantsForDistribution.has(p.id)),
+    [participants, selectedParticipantsForDistribution]
+  );
+
+  const handleToggleAllParticipants = () => {
+    setAllParticipantsForDistribution(!allParticipantsSelected);
   };
 
   return (
@@ -349,29 +364,71 @@ const SplitSection: React.FC<SplitSectionProps> = ({
               {t('ui.add_expense_details.split_type_section.types.exact.remaining')} {currency} {toUIString(exactRemaining, true)} {t('ui.add_expense_details.split_type_section.types.exact.will_be_distributed')}
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-3 max-h-60 overflow-y-auto">
-            {previewDistribution.map(({ participant, currentAmount, addedAmount, finalAmount }) => (
-              <div key={participant.id} className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg border">
-                <div className="flex items-center gap-3">
-                  <UserAvatar user={participant} size={32} />
-                  <span className="font-medium text-sm">{participant.name ?? participant.email}</span>
-                </div>
-                <div className="text-right">
-                  <div className="text-xs text-muted-foreground">
-                    {currency} {removeTrailingZeros(toUIString(currentAmount))} + {removeTrailingZeros(toUIString(addedAmount))}
+          
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg border">
+              <span className="font-medium text-sm">Select All Participants</span>
+              <button
+                onClick={handleToggleAllParticipants}
+                className="flex items-center gap-2"
+              >
+                {allParticipantsSelected ? (
+                  <Check className="h-5 w-5 text-cyan-500" />
+                ) : (
+                  <div className="h-5 w-5 border border-gray-400 rounded" />
+                )}
+              </button>
+            </div>
+
+            <div className="space-y-3 max-h-60 overflow-y-auto">
+              {participants.map((participant) => {
+                const isSelected = selectedParticipantsForDistribution.has(participant.id);
+                const distribution = previewDistribution.find(d => d.participant.id === participant.id);
+                
+                return (
+                  <div key={participant.id} className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg border">
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => toggleParticipantForDistribution(participant.id)}
+                        className="flex items-center gap-2"
+                      >
+                        {isSelected ? (
+                          <Check className="h-5 w-5 text-cyan-500" />
+                        ) : (
+                          <div className="h-5 w-5 border border-gray-400 rounded" />
+                        )}
+                      </button>
+                      <UserAvatar user={participant} size={32} />
+                      <span className="font-medium text-sm">{participant.name ?? participant.email}</span>
+                    </div>
+                    {distribution && isSelected && (
+                      <div className="text-right">
+                        <div className="text-xs text-muted-foreground">
+                          {currency} {removeTrailingZeros(toUIString(distribution.currentAmount))} + {removeTrailingZeros(toUIString(distribution.addedAmount))}
+                        </div>
+                        <div className="font-medium text-green-600 dark:text-green-400 text-sm">
+                          = {currency} {removeTrailingZeros(toUIString(distribution.finalAmount))}
+                        </div>
+                      </div>
+                    )}
+                    {!isSelected && (
+                      <div className="text-xs text-muted-foreground">
+                        Not selected
+                      </div>
+                    )}
                   </div>
-                  <div className="font-medium text-green-600 dark:text-green-400 text-sm">
-                    = {currency} {removeTrailingZeros(toUIString(finalAmount))}
-                  </div>
-                </div>
-              </div>
-            ))}
+                );
+              })}
+            </div>
           </div>
           <DialogFooter className="flex-row justify-end gap-2">
             <Button variant="outline" onClick={() => setShowConfirmModal(false)}>
               {t('ui.add_expense_details.split_type_section.cancel')}
             </Button>
-            <Button onClick={handleConfirmDistribution}>
+            <Button 
+              onClick={handleConfirmDistribution}
+              disabled={selectedParticipantsForDistribution.size === 0}
+            >
               {t('ui.add_expense_details.split_type_section.confirm')}
             </Button>
           </DialogFooter>

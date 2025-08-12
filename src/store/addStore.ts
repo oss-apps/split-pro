@@ -29,6 +29,7 @@ export interface AddExpenseState {
   canSplitScreenClosed: boolean;
   splitScreenOpen: boolean;
   expenseDate: Date | undefined;
+  selectedParticipantsForDistribution: Set<number>;
   actions: {
     setAmount: (amount: bigint) => void;
     setAmountStr: (amountStr: string) => void;
@@ -50,7 +51,9 @@ export interface AddExpenseState {
     resetState: () => void;
     setSplitScreenOpen: (splitScreenOpen: boolean) => void;
     setExpenseDate: (expenseDate: Date | undefined) => void;
-    distributeExactRemainderEqually: () => void;
+    distributeExactRemainderEqually: (selectedParticipants?: Set<number>) => void;
+    toggleParticipantForDistribution: (userId: number) => void;
+    setAllParticipantsForDistribution: (selected: boolean) => void;
   };
 }
 
@@ -80,6 +83,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   canSplitScreenClosed: true,
   splitScreenOpen: false,
   expenseDate: undefined,
+  selectedParticipantsForDistribution: new Set(),
   actions: {
     setAmount: (amount) =>
       set((s) => ({
@@ -250,7 +254,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     },
     setSplitScreenOpen: (splitScreenOpen) => set({ splitScreenOpen }),
     setExpenseDate: (expenseDate) => set({ expenseDate }),
-    distributeExactRemainderEqually: () =>
+    distributeExactRemainderEqually: (selectedParticipants?: Set<number>) =>
       set((state) => {
         if (state.splitType !== SplitType.EXACT) {
           return {};
@@ -274,8 +278,12 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
           return {};
         }
 
+        const participantsToDistribute = selectedParticipants && selectedParticipants.size > 0
+          ? state.participants.filter(p => selectedParticipants.has(p.id))
+          : state.participants;
+
         const distributions = calculateExactRemainderDistribution(
-          state.participants,
+          participantsToDistribute,
           splitShares,
           remainder
         );
@@ -294,6 +302,23 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
           ),
           splitShares,
         };
+      }),
+    toggleParticipantForDistribution: (userId) =>
+      set((state) => {
+        const newSet = new Set(state.selectedParticipantsForDistribution);
+        if (newSet.has(userId)) {
+          newSet.delete(userId);
+        } else {
+          newSet.add(userId);
+        }
+        return { selectedParticipantsForDistribution: newSet };
+      }),
+    setAllParticipantsForDistribution: (selected) =>
+      set((state) => {
+        const newSet = selected 
+          ? new Set(state.participants.map((p) => p.id))
+          : new Set<number>();
+        return { selectedParticipantsForDistribution: newSet };
       }),
   },
 }));

@@ -97,8 +97,13 @@ export const BigMath = {
 export function calculateExactRemainderDistribution(
   participants: Array<{ id: number }>,
   splitShares: Record<number, Record<string, bigint | undefined>>,
-  remainder: bigint
-): Array<{ participantId: number; currentAmount: bigint; addedAmount: bigint; finalAmount: bigint }> {
+  remainder: bigint,
+): Array<{
+  participantId: number;
+  currentAmount: bigint;
+  addedAmount: bigint;
+  finalAmount: bigint;
+}> {
   if (remainder <= 0n) {
     return [];
   }

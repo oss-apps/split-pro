@@ -278,14 +278,15 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
           return {};
         }
 
-        const participantsToDistribute = selectedParticipants && selectedParticipants.size > 0
-          ? state.participants.filter(p => selectedParticipants.has(p.id))
-          : state.participants;
+        const participantsToDistribute =
+          selectedParticipants && selectedParticipants.size > 0
+            ? state.participants.filter((p) => selectedParticipants.has(p.id))
+            : state.participants;
 
         const distributions = calculateExactRemainderDistribution(
           participantsToDistribute,
           splitShares,
-          remainder
+          remainder,
         );
 
         distributions.forEach((dist) => {
@@ -315,9 +316,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
       }),
     setAllParticipantsForDistribution: (selected) =>
       set((state) => {
-        const newSet = selected 
-          ? new Set(state.participants.map((p) => p.id))
-          : new Set<number>();
+        const newSet = selected ? new Set(state.participants.map((p) => p.id)) : new Set<number>();
         return { selectedParticipantsForDistribution: newSet };
       }),
   },

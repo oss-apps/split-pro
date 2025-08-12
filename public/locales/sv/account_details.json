@@ -1,0 +1,15 @@
+{
+  "ui": {
+    "title": "Redigera uppgifter",
+    "placeholder": "Ange ditt namn",
+    "save": "Spara",
+    "close": "Stäng"
+  },
+  "errors": {
+    "name_required": "Namn krävs"
+  },
+  "messages": {
+    "update_success": "Uppgifter sparade",
+    "update_error": "Kunde inte spara uppgifter"
+  }
+}

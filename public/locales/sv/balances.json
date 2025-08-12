@@ -1,0 +1,15 @@
+{
+  "meta": {
+    "title": "Saldon"
+  },
+  "title": "Saldon",
+  "you_owe": "Du är skyldig",
+  "you_get": "Du får",
+  "settled_up": "Kvitt",
+  "add_expense": "Lägg till utgift",
+  "share": {
+    "title": "SplitPro",
+    "text": "Kolla in SplitPro. Det är ett gratis alternativ av Splitwise",
+    "url": "https://splitpro.app"
+  }
+}

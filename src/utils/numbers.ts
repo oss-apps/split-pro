@@ -110,18 +110,11 @@ export function calculateExactRemainderDistribution(
     finalAmount: bigint;
   }> = [];
 
-  let eligible = participants.filter(
-    (p) => (splitShares[p.id]?.EXACT ?? 0n) > 0n,
-  );
-  if (eligible.length === 0) {
-    eligible = participants;
-  }
-
-  const count = BigInt(eligible.length);
+  const count = BigInt(participants.length);
   const base = remainder / count;
   let extra = remainder % count;
 
-  eligible.forEach((p) => {
+  participants.forEach((p) => {
     const current = splitShares[p.id]?.EXACT ?? 0n;
     const add = base + (extra > 0n ? 1n : 0n);
     if (add > 0n) {

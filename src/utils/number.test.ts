@@ -1,5 +1,5 @@
 // filepath: /home/wiktor/kod/split-pro/src/utils/number.test.ts
-import { toUIString } from './numbers';
+import { toUIString, calculateExactRemainderDistribution } from './numbers';
 import type { CurrencyCode } from '../lib/currency';
 
 describe('toUIString', () => {
@@ -90,5 +90,67 @@ describe('toUIString', () => {
       const currencyCode: CurrencyCode = 'USD';
       expect(toUIString(value, true, currencyCode)).toBe('-123,456,789.00');
     });
+  });
+});
+
+describe('calculateExactRemainderDistribution', () => {
+  it('should distribute remainder equally among all participants, including those with 0 current amount', () => {
+    const participants = [
+      { id: 1 },
+      { id: 2 },
+    ];
+    const splitShares = {
+      1: { EXACT: 0n }, // person a has 0 EUR
+      2: { EXACT: 2500n }, // person b has 25 EUR
+    };
+    const remainder = 2200n; // 22 EUR remaining
+
+    const result = calculateExactRemainderDistribution(participants, splitShares, remainder);
+    
+    expect(result).toHaveLength(2);
+    expect(result).toEqual([
+      {
+        participantId: 1,
+        currentAmount: 0n,
+        addedAmount: 1100n, // 11 EUR (22/2)
+        finalAmount: 1100n,
+      },
+      {
+        participantId: 2, 
+        currentAmount: 2500n,
+        addedAmount: 1100n, // 11 EUR (22/2)
+        finalAmount: 3600n, // 25 + 11 = 36 EUR
+      },
+    ]);
+  });
+
+  it('should handle uneven remainder distribution', () => {
+    const participants = [
+      { id: 1 },
+      { id: 2 },
+      { id: 3 },
+    ];
+    const splitShares = {
+      1: { EXACT: 0n },
+      2: { EXACT: 1000n }, 
+      3: { EXACT: 500n },
+    };
+    const remainder = 1000n; // 10 EUR remaining
+
+    const result = calculateExactRemainderDistribution(participants, splitShares, remainder);
+    
+    expect(result).toHaveLength(3);
+    
+    // 10 EUR / 3 participants = 3.33... EUR each, so 2 get 3.34 and 1 gets 3.33
+    const addedAmounts = result.map(r => r.addedAmount).sort();
+    expect(addedAmounts).toEqual([333n, 333n, 334n]); // 3.33, 3.33, 3.34 EUR
+  });
+
+  it('should return empty array when remainder is 0 or negative', () => {
+    const participants = [{ id: 1 }, { id: 2 }];
+    const splitShares = { 1: { EXACT: 1000n }, 2: { EXACT: 1000n } };
+
+    expect(calculateExactRemainderDistribution(participants, splitShares, 0n)).toEqual([]);
+    expect(calculateExactRemainderDistribution(participants, splitShares, -100n)).toEqual([]);
   });
 });

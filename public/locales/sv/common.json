@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "title": "SplitPro: Dela utgifter med dina vänner gratis",
+    "description": "Dela utgifter med dina vänner gratis",
+    "application_name": "SplitPro"
+  },
+  "navigation": {
+    "app_name": "SplitPro",
+    "balances": "Saldon",
+    "groups": "Grupper",
+    "add_expense": "Lägg till utgift",
+    "add": "Lägg till",
+    "activity": "Aktivitet",
+    "account": "Konto"
+  },
+  "ui": {
+    "you": "Du",
+    "cancel": "Avbryt",
+    "confirm": "Bekräfta",
+    "edit_name": {
+      "title": "Redigera namn",
+      "placeholder": "Ange namn",
+      "close": "Stäng",
+      "save": "Spara",
+      "errors": {
+        "name_required": "Namn krävs"
+      }
+    }
+  }
+}

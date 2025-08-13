@@ -1,0 +1,16 @@
+{
+  "ui": {
+    "title": "Aktivitet",
+    "you_paid": "Du betalade",
+    "you_received": "Du fick",
+    "you_lent": "Du lånade",
+    "you_owe": "Du är skyldig",
+    "no_activity": "Inga aktiviteter ännu",
+    "not_involved": "Inte involverad",
+    "you": "Du",
+    "you_deleted_expense": "har tagit bort utgiften",
+    "you_paid_for": "betalade för",
+    "user_deleted_expense": "har tagit bort utgiften",
+    "user_paid_for": "betalade för"
+  }
+}

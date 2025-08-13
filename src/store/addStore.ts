@@ -5,7 +5,7 @@ import { create } from 'zustand';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { type CurrencyCode } from '~/lib/currency';
 import { shuffleArray } from '~/utils/array';
-import { BigMath } from '~/utils/numbers';
+import { BigMath, calculateExactRemainderDistribution } from '~/utils/numbers';
 
 export type Participant = User & { amount?: bigint };
 type SplitShares = Record<number, Record<SplitType, bigint | undefined>>;
@@ -29,6 +29,7 @@ export interface AddExpenseState {
   canSplitScreenClosed: boolean;
   splitScreenOpen: boolean;
   expenseDate: Date | undefined;
+  selectedParticipantsForDistribution: Set<number>;
   actions: {
     setAmount: (amount: bigint) => void;
     setAmountStr: (amountStr: string) => void;
@@ -50,6 +51,9 @@ export interface AddExpenseState {
     resetState: () => void;
     setSplitScreenOpen: (splitScreenOpen: boolean) => void;
     setExpenseDate: (expenseDate: Date | undefined) => void;
+    distributeExactRemainderEqually: (selectedParticipants?: Set<number>) => void;
+    toggleParticipantForDistribution: (userId: number) => void;
+    setAllParticipantsForDistribution: (selected: boolean) => void;
   };
 }
 
@@ -79,6 +83,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   canSplitScreenClosed: true,
   splitScreenOpen: false,
   expenseDate: undefined,
+  selectedParticipantsForDistribution: new Set(),
   actions: {
     setAmount: (amount) =>
       set((s) => ({
@@ -99,13 +104,10 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
       })),
     setSplitShare: (splitType, userId, share) =>
       set((state) => {
-        const splitShares = {
-          ...state.splitShares,
-          [userId]: {
-            ...state.splitShares[userId],
-            [splitType]: share,
-          },
-        } as SplitShares;
+        const splitShares: SplitShares = { ...state.splitShares };
+        const userShares = splitShares[userId] ?? initSplitShares();
+        userShares[splitType] = share;
+        splitShares[userId] = userShares;
         return {
           ...calculateParticipantSplit(
             state.amount,
@@ -252,6 +254,71 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     },
     setSplitScreenOpen: (splitScreenOpen) => set({ splitScreenOpen }),
     setExpenseDate: (expenseDate) => set({ expenseDate }),
+    distributeExactRemainderEqually: (selectedParticipants?: Set<number>) =>
+      set((state) => {
+        if (state.splitType !== SplitType.EXACT) {
+          return {};
+        }
+        const amount = state.amount;
+        if (0n === amount || state.participants.length === 0) {
+          return {};
+        }
+
+        const splitShares: SplitShares = { ...state.splitShares };
+        state.participants.forEach((p) => {
+          splitShares[p.id] ??= initSplitShares();
+        });
+
+        const totalExact = state.participants.reduce(
+          (acc, p) => acc + (splitShares[p.id]?.[SplitType.EXACT] ?? 0n),
+          0n,
+        );
+        const remainder = amount - totalExact;
+        if (remainder <= 0n) {
+          return {};
+        }
+
+        const participantsToDistribute =
+          selectedParticipants && selectedParticipants.size > 0
+            ? state.participants.filter((p) => selectedParticipants.has(p.id))
+            : state.participants;
+
+        const distributions = calculateExactRemainderDistribution(
+          participantsToDistribute,
+          splitShares,
+          remainder,
+        );
+
+        distributions.forEach((dist) => {
+          splitShares[dist.participantId]![SplitType.EXACT] = dist.finalAmount;
+        });
+
+        return {
+          ...calculateParticipantSplit(
+            state.amount,
+            state.participants,
+            state.splitType,
+            splitShares,
+            state.paidBy,
+          ),
+          splitShares,
+        };
+      }),
+    toggleParticipantForDistribution: (userId) =>
+      set((state) => {
+        const newSet = new Set(state.selectedParticipantsForDistribution);
+        if (newSet.has(userId)) {
+          newSet.delete(userId);
+        } else {
+          newSet.add(userId);
+        }
+        return { selectedParticipantsForDistribution: newSet };
+      }),
+    setAllParticipantsForDistribution: (selected) =>
+      set((state) => {
+        const newSet = selected ? new Set(state.participants.map((p) => p.id)) : new Set<number>();
+        return { selectedParticipantsForDistribution: newSet };
+      }),
   },
 }));
 
@@ -343,9 +410,14 @@ export function calculateParticipantSplit(
   return { participants: updatedParticipants, canSplitScreenClosed };
 }
 
-export const initSplitShares = (): Record<SplitType, undefined> =>
-  // @ts-expect-error TS enums/string coersion *eyeroll*
-  Object.fromEntries(Object.values(SplitType).map((type) => [type, undefined]));
+export const initSplitShares = (): Record<SplitType, bigint | undefined> => ({
+  [SplitType.EQUAL]: undefined,
+  [SplitType.PERCENTAGE]: undefined,
+  [SplitType.SHARE]: undefined,
+  [SplitType.EXACT]: undefined,
+  [SplitType.ADJUSTMENT]: undefined,
+  [SplitType.SETTLEMENT]: undefined,
+});
 
 export function calculateSplitShareBasedOnAmount(
   amount: bigint,

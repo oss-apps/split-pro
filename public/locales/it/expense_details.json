@@ -21,6 +21,8 @@
         "split_unequally": "diviso non equamente",
         "save": "Salva",
         "all": "Tutti",
+        "confirm": "Conferma",
+        "cancel": "Annulla",
         "types": {
           "equal": {
             "title": "Uguale",
@@ -32,7 +34,10 @@
           },
           "exact": {
             "title": "Esatto",
-            "remaining": "Rimanenti"
+            "remaining": "Rimanenti",
+            "split_remaining_equally": "Dividi il resto equamente",
+            "confirm_distribution": "Conferma distribuzione",
+            "will_be_distributed": "sarà distribuito"
           },
           "share": {
             "title": "Condivisioni",

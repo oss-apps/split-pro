@@ -91,5 +91,50 @@ export const BigMath = {
   },
 };
 
+/**
+ * Calculate how the exact remainder should be distributed among participants
+ */
+export function calculateExactRemainderDistribution(
+  participants: Array<{ id: number }>,
+  splitShares: Record<number, Record<string, bigint | undefined>>,
+  remainder: bigint,
+): Array<{
+  participantId: number;
+  currentAmount: bigint;
+  addedAmount: bigint;
+  finalAmount: bigint;
+}> {
+  if (remainder <= 0n) {
+    return [];
+  }
+
+  const distributions: Array<{
+    participantId: number;
+    currentAmount: bigint;
+    addedAmount: bigint;
+    finalAmount: bigint;
+  }> = [];
+
+  const count = BigInt(participants.length);
+  const base = remainder / count;
+  let extra = remainder % count;
+
+  participants.forEach((p) => {
+    const current = splitShares[p.id]?.EXACT ?? 0n;
+    const add = base + (extra > 0n ? 1n : 0n);
+    if (add > 0n) {
+      distributions.push({
+        participantId: p.id,
+        currentAmount: current,
+        addedAmount: add,
+        finalAmount: current + add,
+      });
+    }
+    if (extra > 0n) extra -= 1n;
+  });
+
+  return distributions;
+}
+
 export const bigIntReplacer = (key: string, value: any): any =>
   typeof value === 'bigint' ? value.toString() : value;

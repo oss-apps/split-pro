@@ -37,7 +37,7 @@ export const SplitTypeSection: React.FC = () => {
       <p className="text-[16px]">{t('ui.add_expense_details.split_type_section.paid_by')} </p>
       <AppDrawer
         trigger={
-          <p className="overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
+          <p className="overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16.5px] text-cyan-500 lg:max-w-48">
             {
               (currentUser?.id === paidBy?.id
                 ? t('ui.add_expense_details.split_type_section.you')
@@ -70,7 +70,7 @@ export const SplitTypeSection: React.FC = () => {
       <p>{t('ui.add_expense_details.split_type_section.and')} </p>
       <AppDrawer
         trigger={
-          <div className="max-w-32 overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
+          <div className="max-w-32 overflow-hidden text-ellipsis text-nowrap px-1.5 text-[16.5px] text-cyan-500 lg:max-w-48">
             {splitType === SplitType.EQUAL
               ? t('ui.add_expense_details.split_type_section.split_equally')
               : t('ui.add_expense_details.split_type_section.split_unequally')}
@@ -284,9 +284,9 @@ const SplitSection: React.FC<SplitSectionProps> = ({
         </div>
       </div>
       {isBoolean && (
-        <div className="absolute top-0 right-0">
+        <div className="absolute right-0 top-0">
           <button
-            className="flex items-center gap-1 rounded-md border px-2 py-0.5 whitespace-nowrap"
+            className="flex items-center gap-1 whitespace-nowrap rounded-md border px-2 py-0.5"
             onClick={selectAll}
           >
             {allSelected ? <X className="h-4 w-4" /> : <Check className="h-4 w-4" />}

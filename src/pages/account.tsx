@@ -5,10 +5,13 @@ import {
   FileDown,
   HeartHandshakeIcon,
   Star,
+  CreditCard,
 } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
+import { api } from '~/utils/api';
+import { type NextPageWithUser } from '~/types';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { i18n, useTranslation } from 'next-i18next';
@@ -22,8 +25,7 @@ import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { LoadingSpinner } from '~/components/ui/spinner';
-import { type NextPageWithUser } from '~/types';
-import { api } from '~/utils/api';
+import { BankAccountSelect } from '~/components/Account/BankAccountSelect';
 import { withI18nStaticProps } from '~/utils/i18n/server';
 import { bigIntReplacer } from '~/utils/numbers';
 
@@ -32,6 +34,8 @@ const AccountPage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
   const userQuery = api.user.me.useQuery();
   const downloadQuery = api.user.downloadData.useMutation();
+  const connectToBank = api.gocardless.connectToBank.useMutation();
+  const gocardlessEnabled = api.gocardless.gocardlessEnabled.useQuery();
   const updateDetailsMutation = api.user.updateUserDetail.useMutation();
 
   const [downloading, setDownloading] = useState(false);
@@ -92,6 +96,13 @@ const AccountPage: NextPageWithUser = ({ user }) => {
     await router.push(`${langUrl}/auth/signin`);
   }, [router]);
 
+  const onConnectToBank = async () => {
+    const res = await connectToBank.mutateAsync(userQuery.data?.bankingId);
+    if (res?.link) {
+      window.location.href = res.link;
+    }
+  };
+
   return (
     <>
       <Head>
@@ -116,6 +127,27 @@ const AccountPage: NextPageWithUser = ({ user }) => {
         </div>
         <div className="mt-8 flex flex-col gap-4">
           <LanguagePicker />
+          {gocardlessEnabled && (
+            <>
+              <BankAccountSelect />
+              {userQuery.data?.bankingId && (
+                <Button
+                  onClick={onConnectToBank}
+                  variant="ghost"
+                  className="text-md hover:text-foreground/80 w-full justify-between px-0"
+                >
+                  <div className="flex items-center gap-4">
+                    <CreditCard className="h-5 w-5 text-teal-500" />
+                    <p>
+                      {userQuery.data?.obapiProviderId ? t('ui.reconnect') : t('ui.connect')}{' '}
+                      {t('ui.to_bank')}
+                    </p>
+                  </div>
+                  <ChevronRight className="h-6 w-6 text-gray-500" />
+                </Button>
+              )}
+            </>
+          )}
           <Link href="https://twitter.com/KM_Koushik_" target="_blank">
             <Button
               variant="ghost"

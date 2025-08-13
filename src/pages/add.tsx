@@ -42,6 +42,8 @@ const AddPage: NextPageWithUser<{
       name: user.name ?? null,
       email: user.email ?? null,
       image: user.image ?? null,
+      obapiProviderId: user.obapiProviderId ?? null,
+      bankingId: user.bankingId ?? null,
     });
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);

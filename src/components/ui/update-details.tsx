@@ -24,7 +24,7 @@ export const UpdateName: React.FC<{
 }> = ({ className, defaultName, onNameSubmit }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const { t } = useTranslation('common');
+  const { t } = useTranslation('account_page');
 
   const detailForm = useForm<UpdateDetailsFormValues>({
     resolver: zodResolver(detailsSchema(t)),

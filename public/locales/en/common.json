@@ -75,14 +75,12 @@
     "settlement": "Settlement",
     "select_currency": "Select currency",
     "outstanding_balances": "Outstanding balances",
-    "share_text": "Check out SplitPro. It's an open source free alternative for Splitwise",
-    "edit_name": {
-      "title": "Edit name",
-      "placeholder": "Enter name"
-    }
+    "share_text": "Check out SplitPro. It's an open source free alternative for Splitwise"
   },
   "errors": {
     "name_required": "Name is required",
-    "saving_expense": "Error while saving expense"
+    "saving_expense": "Error while saving expense",
+    "something_went_wrong": "Something went wrong",
+    "valid_email": "Enter valid email"
   }
 }

@@ -54,7 +54,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
       <div className="flex flex-col gap-2">
         {0 < youLent.length ? (
           <div className="flex flex-wrap gap-1 text-emerald-500">
-            {t('ui.you_lent')}
+            {t('ui.expense.you.lent')}
             {youLent.map(([currency, amount], index, arr) => {
               return (
                 <React.Fragment key={currency}>
@@ -70,7 +70,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
 
         {0 < youOwe.length ? (
           <div className="text-orange-6000 flex flex-wrap gap-1 text-orange-600">
-            {t('ui.you_owe')}
+            {t('ui.expense.you.owe')}
             {youOwe.map(([currency, amount], index, arr) => {
               return (
                 <React.Fragment key={currency}>

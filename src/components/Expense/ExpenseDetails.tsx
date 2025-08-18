@@ -83,7 +83,7 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
         </button> */}
         <UserAvatar user={expense.paidByUser} size={35} />
         <p>
-          {displayName(expense.paidByUser, user.id)} {t('ui.user_paid')} {expense.currency}{' '}
+          {displayName(expense.paidByUser, user.id)} {t('ui.expense.user.paid')} {expense.currency}{' '}
           {toUIString(expense.amount)}
         </p>
       </div>
@@ -99,7 +99,7 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
               <UserAvatar user={partecipant.user} size={25} />
               <p>
                 {user.id === partecipant.userId
-                  ? t('ui.you_owe')
+                  ? t('ui.expense.you.owe')
                   : `${partecipant.user.name ?? partecipant.user.email} ${t('ui.owes')}`}{' '}
                 {expense.currency}{' '}
                 {toUIString(

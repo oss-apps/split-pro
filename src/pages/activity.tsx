@@ -29,7 +29,8 @@ function getPaymentString(
   } else if (isSettlement) {
     return (
       <div className={`${user.id === paidBy ? 'text-emerald-500' : 'text-orange-500'} text-sm`}>
-        {user.id === paidBy ? t('ui.you_paid') : t('ui.you_received')} {currency}{' '}
+        t('ui.actors.you'){' '}
+        {user.id === paidBy ? t('ui.expense.you.paid') : t('ui.expense.you.received')} {currency}{' '}
         {toUIString(amount)}
       </div>
     );
@@ -37,8 +38,8 @@ function getPaymentString(
     return (
       <div className={`${user.id === paidBy ? 'text-emerald-500' : 'text-orange-500'} text-sm`}>
         {user.id === paidBy
-          ? `${t('ui.you_lent')} ${currency} ${toUIString(BigMath.abs(expenseUserAmt))}`
-          : `${t('ui.you_owe')} ${currency} ${toUIString(expenseUserAmt)}`}
+          ? `${t('ui.actors.you')} ${t('ui.expense.you.lent')} ${currency} ${toUIString(BigMath.abs(expenseUserAmt))}`
+          : `${t('ui.actors.you')} ${t('ui.expense.you.owe')} ${currency} ${toUIString(expenseUserAmt)}`}
       </div>
     );
   }
@@ -70,7 +71,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                     <span className="font-semibold">
                       {displayName(e.expense.deletedByUser, user.id)}
                     </span>{' '}
-                    {t('ui.user_deleted_expense')}{' '}
+                    {t('ui.expense.user.deleted')}{' '}
                     <span className="font-semibold">{e.expense.name}</span>
                   </p>
                 ) : (
@@ -78,7 +79,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                     <span className="font-semibold text-gray-300">
                       {displayName(e.expense.paidByUser, user.id)}
                     </span>{' '}
-                    {t('ui.user_paid_for')}{' '}
+                    {t('ui.expense.user.paid')} {t('ui.expense.for')}
                     <span className="font-semibold text-gray-300">{e.expense.name}</span>
                   </p>
                 )}

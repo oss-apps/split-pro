@@ -60,7 +60,7 @@ const BalancePage: NextPageWithUser = () => {
                 <div className="mt-2 px-1">
                   <div className="flex items-center justify-center gap-2 text-center">
                     {/* <ArrowLeftCircleIcon className=" h-6 w-6 rotate-45 transform text-orange-700" /> */}
-                    <p className="text-sm">{t('you_owe')}</p>
+                    <p className="text-sm">{t('ui.expense.you.owe')}</p>
                   </div>
                 </div>
                 <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
@@ -81,7 +81,7 @@ const BalancePage: NextPageWithUser = () => {
               <div className="w-1/2 rounded-2xl border px-2 py-2">
                 <div className="bg-opacity-40 mt-2 flex flex-col justify-center px-1">
                   <div className="flex items-center justify-center gap-2">
-                    <p className="text-sm">{t('you_get')}</p>
+                    <p className="text-sm">{t('ui.expense.you.get')}</p>
                   </div>
                 </div>
                 <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
@@ -160,7 +160,7 @@ const FriendBalance: React.FC<{
               isPositive ? 'text-emerald-500' : 'text-orange-600',
             )}
           >
-            {isPositive ? t('you_get') : t('you_owe')}
+            {isPositive ? t('ui.expense.you.lent') : t('ui.expense.you.owe')}
           </div>
           <div className={`${isPositive ? 'text-emerald-500' : 'text-orange-600'} flex text-right`}>
             {currency} {toUIString(amount)}

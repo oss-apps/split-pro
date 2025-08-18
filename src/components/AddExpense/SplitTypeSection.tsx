@@ -34,7 +34,7 @@ export const SplitTypeSection: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center text-[16px] text-gray-400 sm:mt-4">
-      <p className="text-[16px]">{t('ui.add_expense_details.split_type_section.paid_by')} </p>
+      <p className="text-[16px]">{t('ui.expense.paid_by', { ns: 'common' })} </p>
       <AppDrawer
         trigger={
           <p className="overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
@@ -46,7 +46,7 @@ export const SplitTypeSection: React.FC = () => {
             }
           </p>
         }
-        title={t('ui.add_expense_details.split_type_section.paid_by')}
+        title={t('ui.expense.paid_by', { ns: 'common' })}
         className="h-[70vh]"
         shouldCloseOnAction
       >
@@ -72,13 +72,11 @@ export const SplitTypeSection: React.FC = () => {
         trigger={
           <div className="max-w-32 overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
             {splitType === SplitType.EQUAL
-              ? t('ui.add_expense_details.split_type_section.split_equally')
-              : t('ui.add_expense_details.split_type_section.split_unequally')}
+              ? t('ui.expense.split_equally')
+              : t('ui.expense.split_unequally')}
           </div>
         }
-        title={t(
-          `ui.add_expense_details.split_type_section.types.${splitType.toLowerCase()}.title`,
-        )}
+        title={t(`ui.expense.types.${splitType.toLowerCase()}.title`)}
         className="h-[85vh] lg:h-[70vh]"
         shouldCloseOnAction
         dismissible={false}
@@ -164,7 +162,7 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
       const totalParticipants = participants.filter(
         (p) => 0n !== splitShares[p.id]?.[SplitType.EQUAL],
       ).length;
-      return `${currency} ${0 < totalParticipants ? toUIString(amount / BigInt(totalParticipants)) : 0} ${t('ui.add_expense_details.split_type_section.types.equal.per_person')}`;
+      return `${currency} ${0 < totalParticipants ? toUIString(amount / BigInt(totalParticipants)) : 0} ${t('ui.expense.types.equal.per_person')}`;
     },
     fmtShareText: null,
     step: null,
@@ -181,7 +179,7 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
           (acc, p) => acc + (splitShares[p.id]?.[SplitType.PERCENTAGE] ?? 0n),
           0n,
         );
-      return `${t('ui.add_expense_details.split_type_section.types.percentage.remaining')} ${toUIString(remainingPercentage, true)}%`;
+      return `${t('ui.expense.types.percentage.remaining')} ${toUIString(remainingPercentage, true)}%`;
     },
     fmtShareText: (share) => (Number(share) / 100).toString(),
   },
@@ -195,21 +193,21 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
         (acc, p) => acc + (splitShares[p.id]?.[SplitType.EXACT] ?? 0n),
         0n,
       );
-      return `${t('ui.add_expense_details.split_type_section.types.exact.remaining')} ${currency} ${toUIString(amount - totalAmount, true)}`;
+      return `${t('ui.expense.types.exact.remaining')} ${currency} ${toUIString(amount - totalAmount, true)}`;
     },
     fmtShareText: (share) => removeTrailingZeros(toUIString(share)),
   },
   {
     splitType: SplitType.SHARE,
     iconComponent: BarChart2,
-    prefix: t('ui.add_expense_details.split_type_section.types.share.shares'),
+    prefix: t('ui.expense.types.share.shares'),
     isBoolean: false,
     fmtSummartyText: (_amount, _currency, participants, splitShares) => {
       const totalShares = participants.reduce(
         (acc, p) => acc + (splitShares[p.id]?.[SplitType.SHARE] ?? 0n),
         0n,
       );
-      return `${t('ui.add_expense_details.split_type_section.types.share.total_shares')} ${Number(totalShares) / 100}`;
+      return `${t('ui.expense.types.share.total_shares')} ${Number(totalShares) / 100}`;
     },
     fmtShareText: (share) => (Number(share) / 100).toString(),
     step: 1,
@@ -290,7 +288,7 @@ const SplitSection: React.FC<SplitSectionProps> = ({
             onClick={selectAll}
           >
             {allSelected ? <X className="h-4 w-4" /> : <Check className="h-4 w-4" />}
-            <span className="text-sm">{t('ui.add_expense_details.split_type_section.all')}</span>
+            <span className="text-sm">{t('ui.expense.all')}</span>
           </button>
         </div>
       )}

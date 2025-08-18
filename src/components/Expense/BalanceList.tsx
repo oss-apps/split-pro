@@ -82,17 +82,10 @@ export const BalanceList: React.FC<{
                       <>
                         <span className="text-gray-400">
                           {' '}
-                          {(() => {
-                            if (0 < totalAmount[1]) {
-                              return isCurrentUser
-                                ? t('ui.balance_list.get')
-                                : t('ui.balance_list.gets');
-                            } else {
-                              return isCurrentUser
-                                ? t('ui.balance_list.owe')
-                                : t('ui.balance_list.owes');
-                            }
-                          })()}{' '}
+                          {t(
+                            `ui.expense.${isCurrentUser ? 'you' : 'user'}.${0 < totalAmount[1] ? 'get' : 'owe'}`,
+                            { ns: 'common' },
+                          )}{' '}
                         </span>
                         <span
                           className={clsx(
@@ -128,17 +121,10 @@ export const BalanceList: React.FC<{
                               {displayName(friend, userQuery.data?.id)}
                               <span className="text-gray-400">
                                 {' '}
-                                {(() => {
-                                  if (0 > amount) {
-                                    return friend.id === userQuery.data?.id
-                                      ? t('ui.balance_list.get')
-                                      : t('ui.balance_list.gets');
-                                  } else {
-                                    return friend.id === userQuery.data?.id
-                                      ? t('ui.balance_list.owe')
-                                      : t('ui.balance_list.owes');
-                                  }
-                                })()}{' '}
+                                {t(
+                                  `ui.expense.${friend.id === userQuery.data?.id ? 'you' : 'user'}.${0 > amount ? 'get' : 'owe'}`,
+                                  { ns: 'common' },
+                                )}{' '}
                               </span>
                               <span
                                 className={clsx(
@@ -150,9 +136,9 @@ export const BalanceList: React.FC<{
                               </span>
                               <span className="text-gray-400">
                                 {' '}
-                                {0 < amount
-                                  ? t('ui.balance_list.to')
-                                  : t('ui.balance_list.from')}{' '}
+                                {t(`ui.expense.${0 < amount ? 'to' : 'from'}`, {
+                                  ns: 'common',
+                                })}{' '}
                               </span>
                               <span className="text-foreground">
                                 {displayName(user, userQuery.data?.id)}

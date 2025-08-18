@@ -11,10 +11,8 @@
       "download_as_pwa": "You can download SplitPro as a PWA to your home screen.",
       "using_ios": "If you are using iOS, checkout this",
       "using_android": "If you are using Android, checkout this",
-      "video": "video",
-      "close": "Close"
+      "video": "video"
     },
-    "or": "or",
     "add_expense": "Add expense",
     "settled_up": "Settled up"
   }

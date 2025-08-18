@@ -14,14 +14,40 @@
     "account": "Account"
   },
   "ui": {
-    "you": "You",
-    "cancel": "Cancel",
-    "confirm": "Confirm",
+    "actors": {
+      "you": "You",
+      "friends": "Friends",
+      "groups": "Groups",
+      "members": "Members",
+      "owner": "Owner",
+      "all": "All"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "submit": "Submit",
+      "close": "Close",
+      "back": "Back",
+      "save": "Save",
+      "leave": "Leave",
+      "invite": "Invite",
+      "export": "Export",
+      "import": "Import",
+      "add_expense": "Add expense",
+      "settle_up": "Settle up"
+    },
+    "or": "or",
+    "and": "and",
+    "today": "Today",
+    "delete": "Delete",
+    "edited_by": "Edited by",
+    "deleted_by": "Deleted by",
+    "added_by": "Added by",
+    "on": "on",
+    "settle_up_name": "Settle up",
     "edit_name": {
       "title": "Edit name",
       "placeholder": "Enter name",
-      "close": "Close",
-      "save": "Save",
       "errors": {
         "name_required": "Name is required"
       }

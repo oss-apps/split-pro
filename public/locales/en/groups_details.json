@@ -7,8 +7,6 @@
       "add_members_details": {
         "title": "Add members",
         "placeholder": "Enter name or email",
-        "cancel": "Cancel",
-        "save": "Save",
         "warning": "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused",
         "note": "Note: sending invite is disabled for now because of spam",
         "send_invite": "Send invite to user",
@@ -17,7 +15,6 @@
           "valid_email": "Enter valid email"
         }
       },
-      "or": "or",
       "invite_link": "Share invite link",
       "copied": "Copied"
     },
@@ -35,19 +32,14 @@
       "delete_group_details": {
         "title": "Are you absolutely sure?",
         "can_delete": "This action cannot be reversed",
-        "cant_delete": "Can't delete the group until everyone settles up the balance",
-        "cancel": "Cancel",
-        "delete": "Delete"
+        "cant_delete": "Can't delete the group until everyone settles up the balance"
       },
       "leave_group": "Leave group",
       "leave_group_details": {
         "title": "Are you absolutely sure?",
         "can_leave": "This action cannot be reversed",
-        "cant_leave": "Can't leave the group until your outstanding balance is settled",
-        "cancel": "Cancel",
-        "leave": "Leave"
+        "cant_leave": "Can't leave the group until your outstanding balance is settled"
       },
-      "owner": "owner",
       "remove_member_details": {
         "title": "Are you absolutely sure?",
         "can_remove": "You are about to remove this member from the group",
@@ -76,7 +68,6 @@
     "add_expense": "Add expense",
     "add_members": "Add members",
     "copied": "Copied",
-    "invite": "Invite",
     "you_paid": "You paid",
     "user_paid": "paid",
     "you_lent": "You lent",
@@ -91,8 +82,6 @@
     "create_group": {
       "title": "Create a group",
       "group_name_placeholder": "Group name",
-      "cancel": "Cancel",
-      "submit": "Submit",
       "errors": {
         "name_required": "Name is required"
       }

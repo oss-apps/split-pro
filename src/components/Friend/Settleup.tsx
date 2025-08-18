@@ -10,10 +10,10 @@ import { api } from '~/utils/api';
 import { BigMath, toSafeBigInt, toUIString } from '~/utils/numbers';
 
 import { FriendBalance } from './FirendBalance';
-import { UserAvatar } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
+import { EntityAvatar } from '../ui/avatar';
 
 export const SettleUp: React.FC<{
   balances: Balance[];
@@ -155,9 +155,9 @@ export const SettleUp: React.FC<{
         <div className="mt-10 flex flex-col items-center gap-6">
           <div className="flex flex-col items-center">
             <div className="flex items-center gap-5">
-              <UserAvatar user={isCurrentUserPaying ? currentUser : friend} />
+              <EntityAvatar entity={isCurrentUserPaying ? currentUser : friend} />
               <ArrowRightIcon className="h-6 w-6 text-gray-600" />
-              <UserAvatar user={isCurrentUserPaying ? friend : currentUser} />
+              <EntityAvatar entity={isCurrentUserPaying ? friend : currentUser} />
             </div>
             <p className="mt-2 text-center text-sm text-gray-400">
               {isCurrentUserPaying

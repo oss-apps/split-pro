@@ -1,20 +1,18 @@
 import { ArrowUpOnSquareIcon } from '@heroicons/react/24/outline';
-import { type User } from '@prisma/client';
-import { clsx } from 'clsx';
 import { PlusIcon } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useTranslation } from 'next-i18next';
+import { useCallback } from 'react';
+import { BalanceEntry } from '~/components/Expense/BalanceEntry';
 import InstallApp from '~/components/InstallApp';
 import MainLayout from '~/components/Layout/MainLayout';
 import { NotificationModal } from '~/components/NotificationModal';
-import { UserAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
-import { toUIString } from '~/utils/numbers';
 import { withI18nStaticProps } from '~/utils/i18n/server';
-import { useCallback } from 'react';
+import { toUIString } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser = () => {
   const { t } = useTranslation();
@@ -106,10 +104,10 @@ const BalancePage: NextPageWithUser = () => {
 
           <div className="mt-5 flex flex-col gap-8 pb-36">
             {balanceQuery.data?.balances.map((balance) => (
-              <FriendBalance
+              <BalanceEntry
                 key={balance.friend.id}
                 id={balance.friend.id}
-                friend={balance.friend}
+                entity={balance.friend}
                 amount={balance.amount}
                 isPositive={0n < balance.amount}
                 currency={balance.currency}
@@ -133,46 +131,6 @@ const BalancePage: NextPageWithUser = () => {
         </div>
       </MainLayout>
     </>
-  );
-};
-
-const FriendBalance: React.FC<{
-  friend: User;
-  amount: bigint;
-  isPositive: boolean;
-  currency: string;
-  id: number;
-  hasMore?: boolean;
-}> = ({ friend, amount, isPositive, currency, id, hasMore }) => {
-  const { t } = useTranslation();
-
-  return (
-    <Link className="flex items-center justify-between" href={`/balances/${id}`}>
-      <div className="flex items-center gap-3">
-        <UserAvatar user={friend} />
-        <div className="text-foreground">{friend.name ?? friend.email}</div>
-      </div>
-      {0n === amount ? (
-        <div>
-          <p className="text-xs">{t('ui.settled_up')}</p>
-        </div>
-      ) : (
-        <div>
-          <div
-            className={clsx(
-              'text-right text-xs',
-              isPositive ? 'text-emerald-500' : 'text-orange-600',
-            )}
-          >
-            {t('ui.actors.you')} {t(`ui.expense.you.${isPositive ? 'get' : 'owe'}`)}
-          </div>
-          <div className={`${isPositive ? 'text-emerald-500' : 'text-orange-600'} flex text-right`}>
-            {currency} {toUIString(amount)}
-            <span className="mt-0.5 text-xs">{hasMore ? '*' : ''}</span>
-          </div>
-        </div>
-      )}
-    </Link>
   );
 };
 

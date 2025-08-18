@@ -16,7 +16,7 @@ import { type ChangeEvent, useCallback, useMemo } from 'react';
 import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/store/addStore';
 import { removeTrailingZeros, toSafeBigInt, toUIString } from '~/utils/numbers';
 
-import { UserAvatar } from '../ui/avatar';
+import { EntityAvatar } from '../ui/avatar';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
@@ -58,7 +58,7 @@ export const SplitTypeSection: React.FC = () => {
               onClick={() => setPaidBy(participant)}
             >
               <div className="flex items-center gap-1">
-                <UserAvatar user={participant} size={30} />
+                <EntityAvatar entity={participant} size={30} />
                 <p className="ml-4">{participant.name ?? participant.email ?? ''}</p>
               </div>
               {participant.id === paidBy?.id ? <Check className="h-6 w-6 text-cyan-500" /> : null}
@@ -338,7 +338,7 @@ export const UserAndAmount: React.FC<{ user: Participant; currency: string }> = 
 
   return (
     <div className="flex items-center gap-2">
-      <UserAvatar user={user} size={30} />
+      <EntityAvatar entity={user} size={30} />
       <div className="flex flex-col items-start">
         <p>{user.name ?? user.email}</p>
         <p className={`'text-gray-400' text-sm text-gray-400`}>

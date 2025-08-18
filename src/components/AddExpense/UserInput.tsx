@@ -1,11 +1,11 @@
+import { useTranslation } from 'next-i18next';
 import Router from 'next/router';
 import { z } from 'zod';
-import { useTranslation } from 'next-i18next';
 
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 
-import { GroupAvatar, UserAvatar } from '../ui/avatar';
+import { EntityAvatar } from '../ui/avatar';
 
 export const UserInput: React.FC<{
   isEditing?: boolean;
@@ -71,7 +71,7 @@ export const UserInput: React.FC<{
     <div className="mt-4 flex flex-wrap gap-2 border-b pb-4">
       {group ? (
         <div className="flex items-center gap-2 rounded-full bg-slate-800 p-0.5 pr-4">
-          <GroupAvatar name={group.name} size={30} />
+          <EntityAvatar entity={group} size={30} />
           <p className="text-xs">{group.name}</p>
         </div>
       ) : (
@@ -81,7 +81,7 @@ export const UserInput: React.FC<{
               key={p.id}
               className="flex items-center gap-2 rounded-full bg-slate-800 p-0.5 pr-4"
             >
-              <UserAvatar user={p} size={30} />
+              <EntityAvatar entity={p} size={30} />
               <p className="text-xs">{p.name ?? p.email}</p>
             </div>
           ) : null,

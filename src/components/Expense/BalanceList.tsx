@@ -2,7 +2,7 @@ import type { GroupBalance, User } from '@prisma/client';
 import { clsx } from 'clsx';
 import { Info } from 'lucide-react';
 import { Fragment, useMemo } from 'react';
-import { UserAvatar } from '~/components/ui/avatar';
+import { EntityAvatar } from '~/components/ui/avatar';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
 
@@ -68,7 +68,7 @@ export const BalanceList: React.FC<{
             <AccordionItem key={user.id} value={displayName(user)}>
               <AccordionTrigger className="hover:no-underline">
                 <div className="flex items-center gap-3">
-                  <UserAvatar user={user} />
+                  <EntityAvatar entity={user} />
                   <div className="text-foreground">
                     {displayName(user, userQuery.data?.id)}
                     {Object.values(total).every((amount) => 0n === amount) ? (
@@ -116,7 +116,7 @@ export const BalanceList: React.FC<{
                           groupId={groupBalances[0]!.groupId}
                         >
                           <div className="mb-4 ml-5 flex cursor-pointer items-center gap-3 text-sm">
-                            <UserAvatar user={friend} size={20} />
+                            <EntityAvatar entity={friend} size={20} />
                             <div className="text-foreground">
                               {displayName(friend, userQuery.data?.id)}
                               <span className="text-gray-400">

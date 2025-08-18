@@ -3,7 +3,7 @@ import { type User } from 'next-auth';
 import Head from 'next/head';
 import Link from 'next/link';
 import MainLayout from '~/components/Layout/MainLayout';
-import { UserAvatar } from '~/components/ui/avatar';
+import { EntityAvatar } from '~/components/ui/avatar';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
@@ -63,7 +63,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
           {expensesQuery.data?.map((e) => (
             <Link href={`/expenses/${e.expenseId}`} key={e.expenseId} className="flex gap-2">
               <div className="mt-1">
-                <UserAvatar user={e.expense.paidByUser} size={30} />
+                <EntityAvatar entity={e.expense.paidByUser} size={30} />
               </div>
               <div>
                 {e.expense.deletedByUser ? (

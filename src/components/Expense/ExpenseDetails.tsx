@@ -5,7 +5,7 @@ import { type User as NextUser } from 'next-auth';
 import { toUIString } from '~/utils/numbers';
 
 import { toUIDate } from '~/utils/strings';
-import { UserAvatar } from '../ui/avatar';
+import { EntityAvatar } from '../ui/avatar';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
 import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
@@ -81,7 +81,7 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
         >
           Test Notification
         </button> */}
-        <UserAvatar user={expense.paidByUser} size={35} />
+        <EntityAvatar entity={expense.paidByUser} size={35} />
         <p>
           {displayName(expense.paidByUser, user.id)} {t('ui.expense.user.paid')} {expense.currency}{' '}
           {toUIString(expense.amount)}
@@ -96,7 +96,7 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
           )
           .map((partecipant) => (
             <div key={partecipant.userId} className="flex items-center gap-2 text-sm text-gray-500">
-              <UserAvatar user={partecipant.user} size={25} />
+              <EntityAvatar entity={partecipant.user} size={25} />
               <p>
                 {user.id === partecipant.userId
                   ? t('ui.expense.you.owe')

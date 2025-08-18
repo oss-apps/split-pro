@@ -10,7 +10,7 @@ import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { api } from '~/utils/api';
 
-import { UserAvatar } from '../ui/avatar';
+import { EntityAvatar } from '../ui/avatar';
 import { Input } from '../ui/input';
 
 const AddMembers: React.FC<{
@@ -166,7 +166,7 @@ const AddMembers: React.FC<{
             onClick={() => onUserSelect(friend.id)}
           >
             <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
-              <UserAvatar user={friend} />
+              <EntityAvatar entity={friend} />
               <p>{friend.name ?? friend.email}</p>
             </div>
             <div>{userIds[friend.id] ? <CheckIcon className="text-primary h-4 w-4" /> : null}</div>

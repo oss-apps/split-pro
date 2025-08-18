@@ -25,7 +25,7 @@ import AddMembers from '~/components/group/AddMembers';
 import GroupMyBalance from '~/components/group/GroupMyBalance';
 import NoMembers from '~/components/group/NoMembers';
 import MainLayout from '~/components/Layout/MainLayout';
-import { UserAvatar } from '~/components/ui/avatar';
+import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { Label } from '~/components/ui/label';
@@ -233,7 +233,7 @@ const BalancePage: NextPageWithUser<{
                   {groupDetailQuery.data?.groupUsers.map((groupUser) => (
                     <div key={groupUser.userId} className="flex items-center justify-between">
                       <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
-                        <UserAvatar user={groupUser.user} />
+                        <EntityAvatar entity={groupUser.user} />
                         <p>{displayName(groupUser.user)}</p>
                       </div>
                       {groupUser.userId === groupDetailQuery.data?.userId ? (

@@ -7,7 +7,7 @@ import { DeleteFriend } from '~/components/Friend/DeleteFriend';
 import { Export } from '~/components/Friend/Export';
 import { SettleUp } from '~/components/Friend/Settleup';
 import MainLayout from '~/components/Layout/MainLayout';
-import { UserAvatar } from '~/components/ui/avatar';
+import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
 import { type NextPageWithUser } from '~/types';
@@ -69,7 +69,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <Link href="/balances">
                 <ChevronLeftIcon className="mr-1 h-6 w-6" />
               </Link>
-              <UserAvatar user={friendQuery.data} size={25} />
+              <EntityAvatar entity={friendQuery.data} size={25} />
               {displayName(friendQuery.data)}
             </div>
           </div>

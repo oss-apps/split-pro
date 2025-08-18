@@ -7,7 +7,7 @@ import { DEFAULT_CATEGORY } from '~/lib/category';
 import { api } from '~/utils/api';
 import { BigMath, toSafeBigInt } from '~/utils/numbers';
 
-import { UserAvatar } from '../ui/avatar';
+import { EntityAvatar } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
@@ -101,9 +101,9 @@ export const GroupSettleUp: React.FC<{
       <div className="mt-10 flex flex-col items-center gap-6">
         <div className="flex flex-col items-center">
           <div className="flex items-center gap-5">
-            <UserAvatar user={sender} />
+            <EntityAvatar entity={sender} />
             <ArrowRightIcon className="h-6 w-6 text-gray-600" />
-            <UserAvatar user={receiver} />
+            <EntityAvatar entity={receiver} />
           </div>
           <p className="mt-2 text-center text-sm text-gray-400">
             {displayName(sender)} {t('ui.settle_up_details.pays')} {displayName(receiver)}

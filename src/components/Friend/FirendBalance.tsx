@@ -3,8 +3,8 @@ import clsx from 'clsx';
 
 import { toUIString } from '~/utils/numbers';
 
-import { UserAvatar } from '../ui/avatar';
 import { useTranslation } from 'next-i18next';
+import { EntityAvatar } from '../ui/avatar';
 
 export const FriendBalance: React.FC<{ user: User; balance: Balance }> = ({ user, balance }) => {
   const { t } = useTranslation();
@@ -13,7 +13,7 @@ export const FriendBalance: React.FC<{ user: User; balance: Balance }> = ({ user
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <UserAvatar user={user} size={30} />
+        <EntityAvatar entity={user} size={30} />
         <div className="text-foreground">{user.name}</div>
       </div>
       <div>

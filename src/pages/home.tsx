@@ -111,7 +111,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Users className="text-primary size-6" />
-                    <p className="text-lg font-medium">Groups and Friends</p>
+                    <p className="text-lg font-medium">{t('features.groups_and_friends.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.groups_and_friends.description')}
@@ -121,7 +121,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Banknote className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">Multiple currencies</p>
+                    <p className="text-lg font-medium">{t('features.multiple_currencies.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.multiple_currencies.description')}
@@ -133,7 +133,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Split className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">Unequal Split</p>
+                    <p className="text-lg font-medium">{t('features.unequal_split.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.unequal_split.description')}
@@ -143,7 +143,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Globe className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">PWA support</p>
+                    <p className="text-lg font-medium">{t('features.pwa_support.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.pwa_support.description')}
@@ -155,7 +155,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <FileUp className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">Upload Receipts</p>
+                    <p className="text-lg font-medium">{t('features.upload_receipts.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.upload_receipts.description')}
@@ -165,7 +165,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <GitFork className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">Open source</p>
+                    <p className="text-lg font-medium">{t('features.open_source.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.open_source.description')}
@@ -176,7 +176,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Import className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">Import from splitwise</p>
+                    <p className="text-lg font-medium">{t('features.import_splitwise.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.import_splitwise.description')}
@@ -185,7 +185,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Bell className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">Push notification</p>
+                    <p className="text-lg font-medium">{t('features.push_notifications.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.push_notifications.description')}
@@ -216,7 +216,16 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {t('footer.author_name')}
+                  KM Koushik
+                </a>
+                ,{' '}
+                <a
+                  className="text-primary"
+                  href="https://github.com/krokosik"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  krokosik
                 </a>
                 {/* <p className="text-gray-400">
                   A product of <a className="underline underline-offset-2">ossapps.dev</a>
@@ -229,7 +238,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {t('footer.twitter')}
+                  Twitter
                 </a>
                 <a
                   className="text-primary"
@@ -237,7 +246,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {t('footer.github')}
+                  GitHub
                 </a>
               </div>
             </div>

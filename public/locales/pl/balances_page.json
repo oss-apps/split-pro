@@ -1,0 +1,21 @@
+{
+  "ui": {
+    "title": "Salda",
+    "text": "Sprawdź SplitPro, darmową alternatywę open source dla Splitwise",
+    "you_owe": "Masz do zapłacenia",
+    "you_get": "Masz otrzymać",
+    "you_get_single": "Masz otrzymać",
+    "download_app": "Pobierz aplikację",
+    "download_app_details": {
+      "title": "Pobierz aplikację",
+      "download_as_pwa": "Możesz pobrać SplitPro jako PWA na swój ekran główny.",
+      "using_ios": "Jeśli używasz iOS, sprawdź ten",
+      "using_android": "Jeśli używasz Androida, sprawdź ten",
+      "video": "film",
+      "close": "Zamknij"
+    },
+    "or": "lub",
+    "add_expense": "Dodaj wydatek",
+    "settled_up": "Rozliczono"
+  }
+}

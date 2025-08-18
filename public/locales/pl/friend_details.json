@@ -1,0 +1,38 @@
+{
+  "ui": {
+    "expense_page": {
+      "title": "Zaległe salda",
+      "expense_details": "Szczegóły wydatku"
+    },
+    "you_owe": "Masz do zapłacenia",
+    "you_lent": "Pożyczono",
+    "add_expense": "Dodaj wydatek",
+    "settle_up": "Rozlicz się",
+    "settle_up_name": "Rozlicz się",
+    "settle_up_details": {
+      "select_currency": "Wybierz walutę",
+      "youre_paying": "Płacisz",
+      "is_paying_you": "płaci ci",
+      "pays": "płaci",
+      "settlement": "Rozliczenie",
+      "save": "Zapisz",
+      "back": "Wstecz",
+      "errors": {
+        "saving_expense": "Błąd podczas zapisywania wydatku"
+      }
+    },
+    "delete_details": {
+      "are_you_sure": "Czy jesteś absolutnie pewien?",
+      "cant_remove": "Nie można usunąć znajomego z zaległymi saldami. Najpierw się rozlicz",
+      "want_to_continue": "Czy na pewno chcesz kontynuować",
+      "cancel": "Anuluj",
+      "delete": "Usuń",
+      "errors": {
+        "failed_to_delete": "Nie udało się usunąć użytkownika"
+      }
+    },
+    "export": "Eksportuj",
+    "you_paid": "Zapłacono",
+    "user_paid": "płaci"
+  }
+}

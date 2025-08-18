@@ -3,8 +3,8 @@
     "title": "Zaległe salda"
   },
   "title": "Salda",
-  "you_owe": "Masz do zapłacenia",
-  "you_get": "Masz otrzymać",
+  "you_owe": "do oddania",
+  "you_get": "dostajesz",
   "settled_up": "Rozliczono",
   "add_expense": "Dodaj Wydatek",
   "share": {

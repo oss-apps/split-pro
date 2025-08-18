@@ -53,9 +53,6 @@
     }
   },
   "footer": {
-    "built_by": "Built by",
-    "author_name": "KM Koushik",
-    "twitter": "Twitter",
-    "github": "Github"
+    "built_by": "Built by"
   }
 }

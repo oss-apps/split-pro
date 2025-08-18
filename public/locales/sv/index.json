@@ -53,9 +53,6 @@
     }
   },
   "footer": {
-    "built_by": "Byggt av",
-    "author_name": "KM Koushik",
-    "twitter": "Twitter",
-    "github": "Github"
+    "built_by": "Byggt av"
   }
 }

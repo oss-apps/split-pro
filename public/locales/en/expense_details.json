@@ -12,7 +12,6 @@
       "description_placeholder": "Enter description",
       "amount_placeholder": "Enter amount",
       "split_type_section": {
-        "paid_by": "Paid by",
         "split_equally": "split equally",
         "split_unequally": "split unequally",
         "types": {
@@ -155,25 +154,10 @@
       "title": "Are you absolutely sure?",
       "text": "This action cannot be undone. This will permanently delete your expense."
     },
-    "you_paid": "You paid",
-    "user_paid": "paid",
-    "you_owe": "You owe",
-    "owes": "owes",
     "balance_list": {
       "press_balance_info": "Press on individual balance to initiate settlement",
       "are_settled_up": "are settled up",
-      "is_settled_up": "is settled up",
-      "get": "get",
-      "gets": "gets",
-      "owe": "owe",
-      "owes": "owes",
-      "to": "to",
-      "from": "from"
-    },
-    "expense_list": {
-      "you_lent": "You lent",
-      "you_owe": "You owe",
-      "not_involved": "Not involved"
+      "is_settled_up": "is settled up"
     },
     "currency": {
       "title": "Select currency",

@@ -2,9 +2,7 @@
   "ui": {
     "title": "Groups",
     "group_create_btn": "Create group",
-    "settled_up": "Settled up",
-    "you_lent": "you lent",
-    "you_owe": "you owe"
+    "settled_up": "Settled up"
   },
   "errors": {
     "required": "Name is required"

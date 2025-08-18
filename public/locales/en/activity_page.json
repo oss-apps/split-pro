@@ -1,16 +1,6 @@
 {
   "ui": {
     "title": "Activity",
-    "you_paid": "You paid",
-    "you_received": "You received",
-    "you_lent": "You lent",
-    "you_owe": "You owe",
-    "no_activity": "No activities yet",
-    "not_involved": "Not involved",
-    "you": "You",
-    "you_deleted_expense": "deleted the expense",
-    "you_paid_for": "paid for",
-    "user_deleted_expense": "deleted the expense",
-    "user_paid_for": "paid for"
+    "no_activity": "No activities yet"
   }
 }

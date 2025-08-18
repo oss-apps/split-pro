@@ -36,6 +36,28 @@
       "add_expense": "Add expense",
       "settle_up": "Settle up"
     },
+    "expense": {
+      "you": {
+        "lent": "lent",
+        "owe": "owe",
+        "paid": "paid",
+        "get": "get",
+        "received": "received",
+        "deleted": "deleted"
+      },
+      "user": {
+        "lent": "lent",
+        "owe": "owes",
+        "paid": "paid",
+        "get": "gets",
+        "received": "received",
+        "deleted": "deleted"
+      },
+      "for": "for",
+      "paid_by": "Paid by",
+      "to": "to",
+      "from": "from"
+    },
     "or": "or",
     "and": "and",
     "today": "Today",
@@ -44,6 +66,7 @@
     "deleted_by": "Deleted by",
     "added_by": "Added by",
     "on": "on",
+    "not_involved": "Not involved",
     "settle_up_name": "Settle up",
     "edit_name": {
       "title": "Edit name",

@@ -1,0 +1,61 @@
+{
+  "meta": {
+    "title": "SplitPro: Dziel wydatki ze znajomymi za darmo",
+    "description": "SplitPro: Dziel wydatki ze znajomymi za darmo"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "terms": "Warunki",
+    "privacy": "Prywatność"
+  },
+  "hero": {
+    "title_part1": "Dziel wydatki ze znajomymi",
+    "title_highlight": "za darmo",
+    "subtitle_part1": "Otwarta",
+    "subtitle_link": "open source",
+    "subtitle_part2": "alternatywa dla SplitWise",
+    "add_expense_button": "Dodaj Wydatek",
+    "star_github_button": "Oznacz nas gwiazdką na github"
+  },
+  "features": {
+    "title": "Funkcje",
+    "groups_and_friends": {
+      "title": "Grupy i Znajomi",
+      "description": "Możesz tworzyć wiele grup lub dodawać salda bezpośrednio. Wszystko zostanie skonsolidowane"
+    },
+    "multiple_currencies": {
+      "title": "Wiele walut",
+      "description": "Musisz dodać wydatek w różnej walucie dla tego samego użytkownika? Nie ma problemu!"
+    },
+    "unequal_split": {
+      "title": "Nierówny podział",
+      "description": "Zaawansowane opcje podziału. Według udziałów, procentów lub dokładnych kwot."
+    },
+    "pwa_support": {
+      "title": "Wsparcie PWA",
+      "description": "Kochasz aplikacje mobilne? Mamy cię na oku. Zainstaluj jako PWA i nawet tego nie zauważysz!"
+    },
+    "upload_receipts": {
+      "title": "Przesyłanie paragonów",
+      "description": "Przesyłaj paragony wraz z wydatkiem"
+    },
+    "open_source": {
+      "title": "Open source",
+      "description": "Co sprawia, że trudno jest stać się złym. Łatwy do samodzielnego hostowania"
+    },
+    "import_splitwise": {
+      "title": "Import z splitwise",
+      "description": "Nie musisz ręcznie migrować sald. Możesz importować użytkowników i grupy z splitwise"
+    },
+    "push_notifications": {
+      "title": "Powiadomienia push",
+      "description": "Nigdy nie przegap ważnych powiadomień. Otrzymuj powiadomienia, gdy ktoś doda wydatek lub się rozliczy"
+    }
+  },
+  "footer": {
+    "built_by": "Zbudowane przez",
+    "author_name": "KM Koushik",
+    "twitter": "Twitter",
+    "github": "Github"
+  }
+}

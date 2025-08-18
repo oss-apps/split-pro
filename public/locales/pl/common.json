@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "title": "SplitPro: Dziel wydatki ze znajomymi za darmo",
+    "description": "Dziel wydatki ze znajomymi za darmo",
+    "application_name": "SplitPro"
+  },
+  "navigation": {
+    "app_name": "SplitPro",
+    "balances": "Salda",
+    "groups": "Grupy",
+    "add_expense": "Dodaj Wydatek",
+    "add": "Dodaj",
+    "activity": "Aktywność",
+    "account": "Konto"
+  },
+  "ui": {
+    "you": "Ty",
+    "cancel": "Anuluj",
+    "confirm": "Potwierdź",
+    "edit_name": {
+      "title": "Edytuj nazwę",
+      "placeholder": "Wprowadź nazwę",
+      "close": "Zamknij",
+      "save": "Zapisz",
+      "errors": {
+        "name_required": "Nazwa jest wymagana"
+      }
+    }
+  }
+}

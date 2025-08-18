@@ -1,0 +1,80 @@
+{
+  "ui": {
+    "title": "Konto",
+    "change_language": "Zmień język",
+    "change_language_details": {
+      "title": "Wybierz język",
+      "save": "Zapisz",
+      "close": "Zamknij",
+      "messages": {
+        "language_changed": "Język zmieniony pomyślnie"
+      },
+      "errors": {
+        "language_change_failed": "Błąd podczas zmiany języka"
+      },
+      "placeholder": "Wybierz język"
+    },
+    "notifications": {
+      "enable_notification": "Włącz powiadomienia",
+      "disable_notification": "Wyłącz powiadomienia",
+      "messages": {
+        "notification_granted": "Będziesz teraz otrzymywać powiadomienia"
+      },
+      "errors": {
+        "notification_not_supported": "Powiadomienia nie są obsługiwane",
+        "subscribe_error": "Nie można zasubskrybować powiadomień",
+        "unsubscribe_error": "Błąd podczas anulowania subskrypcji powiadomień",
+        "request_error": "Błąd podczas żądania powiadomienia"
+      }
+    },
+    "download_app": "Pobierz aplikację",
+    "download_app_details": {
+      "title": "Pobierz aplikację",
+      "download_as_pwa": "Możesz pobrać SplitPro jako PWA na swój ekran główny.",
+      "using_ios": "Jeśli używasz iOS, sprawdź ten",
+      "using_android": "Jeśli używasz Androida, sprawdź ten",
+      "video": "film",
+      "close": "Zamknij"
+    },
+    "import_from_splitwise": "Importuj ze Splitwise",
+    "import_from_splitwise_details": {
+      "choose_file": "Wybierz plik",
+      "no_file_chosen": "Nie wybrano pliku",
+      "note": "Uwaga: Obecnie obsługuje tylko importowanie znajomych i grup. Nie importuje\ntransakcji. Pracujemy nad tym.",
+      "friends": "Znajomi",
+      "groups": "Grupy",
+      "members": "członkowie",
+      "follow_to_export_splitwise_data": "Kliknij ten link aby wyeksportować dane z splitwise",
+      "export_splitwise_data_button": "Eksportuj dane splitwise",
+      "import": "Importuj",
+      "cancel": "Anuluj",
+      "messages": {
+        "import_success": "Import pomyślny"
+      },
+      "errors": {
+        "import_failed": "Błąd importowania pliku"
+      }
+    },
+    "download_splitpro_data": "Pobierz dane SplitPro",
+    "submit_feedback": "Prześlij opinię",
+    "submit_feedback_details": {
+      "title": "Prześlij opinię",
+      "close": "Zamknij",
+      "submit": "Wyślij",
+      "placeholder": "Wprowadź swoją opinię"
+    },
+    "errors": {
+      "feedback_required": "Opinia jest wymagana",
+      "feedback_min_length": "Opinia powinna mieć co najmniej 10 znaków"
+    },
+    "messages": {
+      "submit_success": "Opinia wysłana",
+      "submit_error": "Nie udało się wysłać opinii"
+    },
+    "write_review": "Napisz recenzję",
+    "star_on_github": "Oznacz nas gwiazdką na GitHub",
+    "support_us": "Wesprzyj nas",
+    "follow_on_x": "Śledź nas na X",
+    "logout": "Wyloguj"
+  }
+}

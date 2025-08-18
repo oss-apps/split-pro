@@ -1,0 +1,15 @@
+{
+  "meta": {
+    "title": "Zaległe salda"
+  },
+  "title": "Salda",
+  "you_owe": "Jesteś winien",
+  "you_get": "Masz otrzymać",
+  "settled_up": "Rozliczono",
+  "add_expense": "Dodaj Wydatek",
+  "share": {
+    "title": "SplitPro",
+    "text": "Sprawdź SplitPro. To darmowa alternatywa open source dla Splitwise",
+    "url": "https://splitpro.app"
+  }
+}

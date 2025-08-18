@@ -120,7 +120,7 @@ export const SelectUserOrGroup: React.FC<{
         {filteredFriends?.length ? (
           <>
             <div className="font-normal text-gray-500">
-              {t('ui.add_expense_details.select_user_or_group.friends')}
+              {t('ui.actors.friends', { ns: 'common' })}
             </div>
             {filteredFriends.map((f) => {
               const isExisting = participants.some((p) => p.id === f.id);
@@ -156,9 +156,7 @@ export const SelectUserOrGroup: React.FC<{
         {/*Can't select multiple groups or groups with outside ppl */}
         {filteredGroups?.length && 1 === participants.length ? (
           <>
-            <div className="mt-8 text-gray-500">
-              {t('ui.add_expense_details.select_user_or_group.groups')}
-            </div>
+            <div className="mt-8 text-gray-500">{t('ui.actors.groups', { ns: 'common' })}</div>
             <div className="mt-2 flex flex-col gap-1">
               {filteredGroups.map((g) => (
                 <button

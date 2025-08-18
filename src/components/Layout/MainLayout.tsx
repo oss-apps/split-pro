@@ -162,7 +162,9 @@ const NavItemDesktop: React.FC<NavItemProps> = ({ title, Icon, link, currentPath
   return (
     <Link href={link} className={clsx('flex w-[150px] items-center gap-2 py-4')}>
       <Icon className={clsx('h-7 w-7', isActive ? 'text-cyan-500' : 'text-gray-600')} />
-      <span className={clsx('', isActive ? 'font-medium text-cyan-500' : 'text-gray-500')}>
+      <span
+        className={clsx('capitalize', isActive ? 'font-medium text-cyan-500' : 'text-gray-500')}
+      >
         {title}
       </span>
     </Link>

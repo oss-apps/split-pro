@@ -45,19 +45,20 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
             ) : null}
             {expense.updatedByUser ? (
               <p className="text-sm text-gray-500">
-                {t('ui.edited_by')} {displayName(expense.updatedByUser, user.id)} {t('ui.on')}{' '}
-                {toUIDate(expense.updatedAt, { year: true })}
+                {t('ui.edited_by', { ns: 'common' })} {displayName(expense.updatedByUser, user.id)}{' '}
+                {t('ui.on')} {toUIDate(expense.updatedAt, { year: true })}
               </p>
             ) : null}
             {expense.deletedByUser ? (
               <p className="text-sm text-orange-600">
-                {t('ui.deleted_by')} {displayName(expense.deletedByUser, user.id)} {t('ui.on')}{' '}
+                {t('ui.deleted_by', { ns: 'common' })} {displayName(expense.deletedByUser, user.id)}{' '}
+                {t('ui.on', { ns: 'common' })}{' '}
                 {toUIDate(expense.deletedAt ?? expense.createdAt, { year: true })}
               </p>
             ) : (
               <p className="text-sm text-gray-500">
-                {t('ui.added_by')} {displayName(expense.addedByUser, user.id)} {t('ui.on')}{' '}
-                {toUIDate(expense.createdAt, { year: true })}
+                {t('ui.added_by', { ns: 'common' })} {displayName(expense.addedByUser, user.id)}{' '}
+                {t('ui.on', { ns: 'common' })} {toUIDate(expense.createdAt, { year: true })}
               </p>
             )}
           </div>

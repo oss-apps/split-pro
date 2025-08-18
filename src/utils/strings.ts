@@ -8,7 +8,7 @@ export const displayName = (
   t?: TFunction,
 ): string => {
   if (currentUserId === user.id) {
-    return t ? t('ui.you', { ns: 'common' }) : 'You';
+    return t ? t('ui.actors.you', { ns: 'common' }) : 'You';
   }
   return user.name ?? user.email!;
 };

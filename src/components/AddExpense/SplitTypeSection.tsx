@@ -40,7 +40,7 @@ export const SplitTypeSection: React.FC = () => {
           <p className="overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
             {
               (currentUser?.id === paidBy?.id
-                ? t('ui.add_expense_details.split_type_section.you')
+                ? t('ui.actors.you', { ns: 'common' })
                 : (paidBy?.name ?? paidBy?.email)
               )?.split(' ')[0]
             }
@@ -67,7 +67,7 @@ export const SplitTypeSection: React.FC = () => {
         </div>
       </AppDrawer>
 
-      <p>{t('ui.add_expense_details.split_type_section.and')} </p>
+      <p>{t('ui.and', { ns: 'common' })} </p>
       <AppDrawer
         trigger={
           <div className="max-w-32 overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
@@ -82,7 +82,7 @@ export const SplitTypeSection: React.FC = () => {
         className="h-[85vh] lg:h-[70vh]"
         shouldCloseOnAction
         dismissible={false}
-        actionTitle={t('ui.add_expense_details.split_type_section.save')}
+        actionTitle={t('ui.actions.save', { ns: 'common' })}
         actionDisabled={!canSplitScreenClosed}
         open={splitScreenOpen}
         onOpenChange={(open) => setSplitScreenOpen(open)}

@@ -125,7 +125,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   className="w-[150px] gap-1 text-sm lg:w-[180px]"
                   disabled
                 >
-                  {t('ui.settle_up')}
+                  {t('ui.actions.settle_up', { ns: 'common' })}
                 </Button>
               )}
 
@@ -135,7 +135,8 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   variant="secondary"
                   className="w-[150px] gap-1 text-sm lg:w-[180px]"
                 >
-                  <PlusIcon className="h-4 w-4 text-gray-400" /> {t('ui.add_expense')}
+                  <PlusIcon className="h-4 w-4 text-gray-400" />{' '}
+                  {t('ui.actions.add_expense', { ns: 'common' })}
                 </Button>
               </Link>
               <Export

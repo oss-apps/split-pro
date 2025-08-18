@@ -106,7 +106,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
           <div className="flex gap-4">
             <Link href="/balances">
               <Button variant="ghost" className="text-primary px-0 py-0" size="sm">
-                {t('ui.cancel')}
+                {t('ui.actions.cancel', { ns: 'common' })}
               </Button>
             </Link>
           </div>
@@ -119,7 +119,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               size="sm"
               disabled={importMutation.isPending || !uploadedFile}
             >
-              {t('ui.import')}
+              {t('ui.actions.import', { ns: 'common' })}
             </Button>
           </div>
         </div>
@@ -148,7 +148,11 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             className="w-[100px]"
             size="sm"
           >
-            {importMutation.isPending ? <LoadingSpinner /> : t('ui.import')}
+            {importMutation.isPending ? (
+              <LoadingSpinner />
+            ) : (
+              t('ui.actions.import', { ns: 'common' })
+            )}
           </Button>
         </div>
         <div className="mt-4 text-sm text-gray-400">{t('ui.note')}</div>
@@ -156,7 +160,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
         {uploadedFile ? (
           <>
             <div className="mt-8 font-semibold">
-              {t('ui.friends')} ({usersWithBalance.length})
+              {t('ui.actors.friends', { ns: 'common' })} ({usersWithBalance.length})
             </div>
             {usersWithBalance.length ? (
               <div className="mt-4 flex flex-col gap-3">
@@ -196,7 +200,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               </div>
             ) : null}
             <div className="mt-8 font-semibold">
-              {t('ui.groups')} ({groups.length})
+              {t('ui.actors.groups', { ns: 'common' })} ({groups.length})
             </div>
             {groups.length ? (
               <div className="mt-4 flex flex-col gap-3">
@@ -215,7 +219,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                         </div>
                       </div>
                       <div className="flex shrink-0 flex-wrap justify-end gap-1">
-                        {group.members.length} {t('ui.members')}
+                        {group.members.length} {t('ui.actors.members', { ns: 'common' })}
                       </div>
                     </div>
                     {index !== groups.length - 1 ? <Separator className="mt-3" /> : null}

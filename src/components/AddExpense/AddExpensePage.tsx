@@ -176,7 +176,7 @@ export const AddOrEditExpensePage: React.FC<{
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <Button variant="ghost" className="text-primary px-0" onClick={onCancel}>
-          {t('ui.add_expense_details.cancel')}
+          {t('ui.actions.cancel', { ns: 'common' })}
         </Button>
         <div className="text-center">{t('ui.add_expense_details.add_new_expense')}</div>
         <Button
@@ -187,7 +187,7 @@ export const AddOrEditExpensePage: React.FC<{
           }
           onClick={addExpense}
         >
-          {t('ui.add_expense_details.save')}
+          {t('ui.actions.save', { ns: 'common' })}
         </Button>{' '}
       </div>
       <UserInput isEditing={!!expenseId} />
@@ -261,7 +261,7 @@ export const AddOrEditExpensePage: React.FC<{
                       }
                       onClick={addExpense}
                     >
-                      {t('ui.add_expense_details.submit')}
+                      {t('ui.actions.submit', { ns: 'common' })}
                     </Button>
                   </div>
                 </div>
@@ -269,7 +269,7 @@ export const AddOrEditExpensePage: React.FC<{
             ) : null}
           </div>
           <div className="flex w-full justify-center">
-            <Link href="https://github.com/sponsors/KMKoushik" target="_blank" className="mx-auto">
+            <Link href="https://github.com/sponsors/krokosik" target="_blank" className="mx-auto">
               <Button
                 variant="outline"
                 className="text-md hover:text-foreground/80 justify-between rounded-full border-pink-500"

@@ -41,7 +41,7 @@ export const GroupSettleUp: React.FC<{
 
     addExpenseMutation.mutate(
       {
-        name: t('ui.settle_up_name'),
+        name: t('ui.settle_up_name', { ns: 'common' }),
         currency: currency,
         amount: toSafeBigInt(amountStr),
         splitType: SplitType.SETTLEMENT,
@@ -123,7 +123,7 @@ export const GroupSettleUp: React.FC<{
       <div className="mt-8 hidden items-center justify-center gap-4 px-2 lg:flex">
         <DrawerClose>
           <Button size="sm" className="mx-auto" onClick={saveExpense}>
-            {t('ui.settle_up_details.save')}
+            {t('ui.actions.save', { ns: 'common' })}
           </Button>
         </DrawerClose>
       </div>

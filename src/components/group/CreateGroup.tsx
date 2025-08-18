@@ -94,11 +94,11 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
         open={drawerOpen}
         onOpenChange={handleOpenChange}
         trigger={children}
-        leftAction={t('ui.create_group.cancel')}
+        leftAction={t('ui.actions.cancel', { ns: 'common' })}
         leftActionOnClick={handleLeftActionClick}
         title={t('ui.create_group.title')}
         className="h-[70vh]"
-        actionTitle={t('ui.create_group.submit')}
+        actionTitle={t('ui.actions.submit', { ns: 'common' })}
         actionOnClick={handleActionClick}
       >
         <div className="w-full">

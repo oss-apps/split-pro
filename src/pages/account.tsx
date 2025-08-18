@@ -194,7 +194,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
           </Link>
           <AppDrawer
             trigger={downloadAppButton}
-            leftAction={t('ui.download_app_details.close')}
+            leftAction={t('ui.actions.close', { ns: 'common' })}
             title={t('ui.download_app_details.title')}
             className="h-[70vh]"
             shouldCloseOnAction

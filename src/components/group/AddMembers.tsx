@@ -108,7 +108,7 @@ const AddMembers: React.FC<{
       }
       onTriggerClick={handleTriggerClick}
       title={t('ui.no_members.add_members_details.title')}
-      leftAction={t('ui.no_members.add_members_details.cancel')}
+      leftAction={t('ui.actions.cancel', { ns: 'common' })}
       actionOnClick={handleActionClick}
       className="h-[85vh]"
       shouldCloseOnAction

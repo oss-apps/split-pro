@@ -46,16 +46,16 @@ function getPaymentString(
 }
 
 const ActivityPage: NextPageWithUser = ({ user }) => {
-  const { displayName, t } = useTranslationWithUtils(['activity_page']);
+  const { displayName, t } = useTranslationWithUtils();
   const expensesQuery = api.expense.getAllExpenses.useQuery();
 
   return (
     <>
       <Head>
-        <title>{t('ui.title')}</title>
+        <title>{t('ui.navigation.activity')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainLayout title={t('ui.title')} loading={expensesQuery.isPending}>
+      <MainLayout title={t('ui.navigation.activity')} loading={expensesQuery.isPending}>
         <div className="flex flex-col gap-4">
           {!expensesQuery.data?.length ? (
             <div className="mt-[30vh] text-center text-gray-400">{t('ui.no_activity')}</div>
@@ -79,7 +79,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                     <span className="font-semibold text-gray-300">
                       {displayName(e.expense.paidByUser, user.id)}
                     </span>{' '}
-                    {t('ui.expense.user.paid')} {t('ui.expense.for')}
+                    {t('ui.expense.user.paid')} {t('ui.expense.for')}{' '}
                     <span className="font-semibold text-gray-300">{e.expense.name}</span>
                   </p>
                 )}
@@ -108,6 +108,6 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
 
 ActivityPage.auth = true;
 
-export const getStaticProps = withI18nStaticProps(['common', 'activity_page']);
+export const getStaticProps = withI18nStaticProps(['common']);
 
 export default ActivityPage;

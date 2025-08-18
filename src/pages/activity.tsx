@@ -52,10 +52,10 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
   return (
     <>
       <Head>
-        <title>{t('ui.navigation.activity')}</title>
+        <title>{t('navigation.activity')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainLayout title={t('ui.navigation.activity')} loading={expensesQuery.isPending}>
+      <MainLayout title={t('navigation.activity')} loading={expensesQuery.isPending}>
         <div className="flex flex-col gap-4">
           {!expensesQuery.data?.length ? (
             <div className="mt-[30vh] text-center text-gray-400">{t('ui.no_activity')}</div>

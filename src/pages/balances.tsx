@@ -17,16 +17,16 @@ import { withI18nStaticProps } from '~/utils/i18n/server';
 import { useCallback } from 'react';
 
 const BalancePage: NextPageWithUser = () => {
-  const { t } = useTranslation('balances');
+  const { t } = useTranslation();
   const balanceQuery = api.expense.getBalances.useQuery();
 
   const shareWithFriends = useCallback(() => {
     if (navigator.share) {
       navigator
         .share({
-          title: t('share.title'),
-          text: t('share.text'),
-          url: t('share.url'),
+          title: t('meta.application_name'),
+          text: t('ui.share_text'),
+          url: window.location.origin,
         })
         .then(() => console.info('Successful share'))
         .catch((error) => console.error('Error sharing', error));
@@ -39,7 +39,7 @@ const BalancePage: NextPageWithUser = () => {
         <title>{t('meta.title')}</title>
       </Head>
       <MainLayout
-        title={t('title')}
+        title={t('navigation.balances')}
         actions={
           'undefined' !== typeof window && !!window.navigator?.share ? (
             <Button variant="ghost" onClick={shareWithFriends}>
@@ -60,7 +60,9 @@ const BalancePage: NextPageWithUser = () => {
                 <div className="mt-2 px-1">
                   <div className="flex items-center justify-center gap-2 text-center">
                     {/* <ArrowLeftCircleIcon className=" h-6 w-6 rotate-45 transform text-orange-700" /> */}
-                    <p className="text-sm">{t('ui.expense.you.owe')}</p>
+                    <p className="text-sm">
+                      {t('ui.actors.you')} {t('ui.expense.you.owe')}
+                    </p>
                   </div>
                 </div>
                 <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
@@ -81,7 +83,9 @@ const BalancePage: NextPageWithUser = () => {
               <div className="w-1/2 rounded-2xl border px-2 py-2">
                 <div className="bg-opacity-40 mt-2 flex flex-col justify-center px-1">
                   <div className="flex items-center justify-center gap-2">
-                    <p className="text-sm">{t('ui.expense.you.get')}</p>
+                    <p className="text-sm">
+                      {t('ui.actors.you')} {t('ui.expense.you.get')}
+                    </p>
                   </div>
                 </div>
                 <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
@@ -140,7 +144,7 @@ const FriendBalance: React.FC<{
   id: number;
   hasMore?: boolean;
 }> = ({ friend, amount, isPositive, currency, id, hasMore }) => {
-  const { t } = useTranslation('balances');
+  const { t } = useTranslation();
 
   return (
     <Link className="flex items-center justify-between" href={`/balances/${id}`}>
@@ -150,7 +154,7 @@ const FriendBalance: React.FC<{
       </div>
       {0n === amount ? (
         <div>
-          <p className="text-xs">{t('settled_up')}</p>
+          <p className="text-xs">{t('ui.settled_up')}</p>
         </div>
       ) : (
         <div>
@@ -160,7 +164,7 @@ const FriendBalance: React.FC<{
               isPositive ? 'text-emerald-500' : 'text-orange-600',
             )}
           >
-            {isPositive ? t('ui.expense.you.lent') : t('ui.expense.you.owe')}
+            {t('ui.actors.you')} {t(`ui.expense.you.${isPositive ? 'get' : 'owe'}`)}
           </div>
           <div className={`${isPositive ? 'text-emerald-500' : 'text-orange-600'} flex text-right`}>
             {currency} {toUIString(amount)}
@@ -174,6 +178,6 @@ const FriendBalance: React.FC<{
 
 BalancePage.auth = true;
 
-export const getStaticProps = withI18nStaticProps(['common', 'balances']);
+export const getStaticProps = withI18nStaticProps(['common']);
 
 export default BalancePage;

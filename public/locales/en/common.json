@@ -69,7 +69,10 @@
     "on": "on",
     "not_involved": "Not involved",
     "no_activity": "No activities yet",
+    "settled_up": "Settled up",
     "settle_up_name": "Settle up",
+    "outstanding_balances": "Outstanding balances",
+    "share_text": "Check out SplitPro. It's an open source free alternative for Splitwise",
     "edit_name": {
       "title": "Edit name",
       "placeholder": "Enter name",

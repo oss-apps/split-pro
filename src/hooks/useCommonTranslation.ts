@@ -12,12 +12,8 @@ export const useTranslationWithUtils = (namespaces?: string[]) => {
   const translation = useTranslation(namespaces);
 
   const displayName = useCallback(
-    (user: Pick<User, 'name' | 'email' | 'id'> | undefined, currentUserId?: number): string => {
-      if (!user) {
-        return '';
-      }
-      return dn(user, currentUserId, translation.t);
-    },
+    (user?: Pick<User, 'name' | 'email' | 'id'> | null, currentUserId?: number): string =>
+      dn(user, currentUserId, translation.t),
     [translation.t],
   );
   return {

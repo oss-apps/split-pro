@@ -71,14 +71,17 @@
     "no_activity": "No activities yet",
     "settled_up": "Settled up",
     "settle_up_name": "Settle up",
+    "settlement": "Settlement",
+    "select_currency": "Select currency",
     "outstanding_balances": "Outstanding balances",
     "share_text": "Check out SplitPro. It's an open source free alternative for Splitwise",
     "edit_name": {
       "title": "Edit name",
-      "placeholder": "Enter name",
-      "errors": {
-        "name_required": "Name is required"
-      }
+      "placeholder": "Enter name"
     }
+  },
+  "errors": {
+    "name_required": "Name is required",
+    "saving_expense": "Error while saving expense"
   }
 }

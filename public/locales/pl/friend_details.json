@@ -4,8 +4,8 @@
       "title": "Zaległe salda",
       "expense_details": "Szczegóły wydatku"
     },
-    "you_owe": "Jesteś winien",
-    "you_lent": "Pożyczyłeś",
+    "you_owe": "Masz do zapłacenia",
+    "you_lent": "Pożyczono",
     "add_expense": "Dodaj wydatek",
     "settle_up": "Rozlicz się",
     "settle_up_name": "Rozlicz się",
@@ -32,7 +32,7 @@
       }
     },
     "export": "Eksportuj",
-    "you_paid": "Zapłaciłeś",
-    "user_paid": "zapłacił"
+    "you_paid": "Zapłacono",
+    "user_paid": "płaci"
   }
 }

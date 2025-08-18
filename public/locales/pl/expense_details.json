@@ -162,7 +162,7 @@
       }
     },
     "delete_expense_details": {
-      "title": "Czy jesteś absolutnie pewien?",
+      "title": "Czy masz absolutną pewność?",
       "text": "Ta akcja nie może być cofnięta. To trwale usunie twój wydatek.",
       "cancel": "Anuluj",
       "delete": "Usuń"
@@ -175,24 +175,24 @@
       "title": "Paragon wydatku",
       "close": "Zamknij"
     },
-    "you_paid": "Zapłaciłeś",
+    "you_paid": "Zapłacono",
     "user_paid": "zapłacił",
-    "you_owe": "Jesteś winien",
-    "owes": "jest winien",
+    "you_owe": "Masz do zapłacenia",
+    "owes": "ma do zapłacenia",
     "balance_list": {
       "press_balance_info": "Naciśnij na poszczególne saldo aby rozpocząć rozliczenie",
       "are_settled_up": "są rozliczeni",
-      "is_settled_up": "jest rozliczony",
+      "is_settled_up": "rozliczono",
       "get": "otrzymuje",
       "gets": "otrzymuje",
-      "owe": "jest winien",
-      "owes": "jest winien",
+      "owe": "ma do zapłacenia",
+      "owes": "ma do zapłacenia",
       "to": "do",
       "from": "od"
     },
     "expense_list": {
-      "you_lent": "Pożyczyłeś",
-      "you_owe": "Jesteś winien",
+      "you_lent": "Pożyczono",
+      "you_owe": "Masz do zapłacenia",
       "not_involved": "Nie uczestniczysz"
     },
     "currency": {

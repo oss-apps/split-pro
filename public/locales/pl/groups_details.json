@@ -33,15 +33,15 @@
       "actions": "Akcje",
       "delete_group": "Usuń grupę",
       "delete_group_details": {
-        "title": "Czy jesteś absolutnie pewien?",
+        "title": "Na pewno?",
         "can_delete": "Ta akcja nie może być cofnięta",
-        "cant_delete": "Nie można usunąć grupy, dopóki wszyscy nie rozliczą się z saldami",
+        "cant_delete": "Nie można usunąć grupy, dopóki wszyscy się nie rozliczą",
         "cancel": "Anuluj",
         "delete": "Usuń"
       },
       "leave_group": "Opuść grupę",
       "leave_group_details": {
-        "title": "Czy jesteś absolutnie pewien?",
+        "title": "Na pewno?",
         "can_leave": "Ta akcja nie może być cofnięta",
         "cant_leave": "Nie możesz opuścić grupy, dopóki twoje zaległe saldo nie zostanie rozliczone",
         "cancel": "Anuluj",
@@ -49,14 +49,14 @@
       },
       "owner": "właściciel",
       "remove_member_details": {
-        "title": "Czy jesteś absolutnie pewien?",
-        "can_remove": "Zamierzasz usunąć tego członka z grupy",
-        "cant_remove": "Nie można usunąć członka, dopóki jego zaległe saldo nie zostanie rozliczone"
+        "title": "Na pewno?",
+        "can_remove": "Zamierzasz usunąć tę osobę z grupy",
+        "cant_remove": "Nie można usunąć tej osoby, dopóki nie zostanie rozliczona"
       },
       "simplify_debts": "Uprość długi",
       "recalculate_balances": "Przelicz salda",
       "recalculate_balances_details": {
-        "title": "Jesteś pewien?",
+        "title": "Na pewno?",
         "description": "Jeśli salda nie odpowiadają wydatkom, możesz je przeliczyć. Uwaga, że może to zająć trochę czasu, jeśli liczba wydatków jest duża. Salda poza grupą nie będą dotknięte."
       }
     },
@@ -77,13 +77,13 @@
     "add_members": "Dodaj członków",
     "copied": "Skopiowano",
     "invite": "Zaproś",
-    "you_paid": "Zapłaciłeś",
-    "user_paid": "zapłacił",
-    "you_lent": "Pożyczyłeś",
-    "you_owe": "Jesteś winien",
+    "you_paid": "Płacisz",
+    "user_paid": "płaci",
+    "you_lent": "Pożyczasz",
+    "you_owe": "Masz do zapłacenia",
     "all_settled_up": "Wszyscy jesteście rozliczeni",
-    "owes_you": "jest ci winien",
-    "you_owe_friend": "Jesteś winien",
+    "owes_you": "ma do zapłacenia",
+    "you_owe_friend": "Masz do zapłacenia",
     "balance": "saldo",
     "balances": "salda",
     "outstanding_balances": "Zaległe salda",

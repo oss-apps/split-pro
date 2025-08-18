@@ -15,13 +15,13 @@
     "subtitle_link": "open source",
     "subtitle_part2": "alternatywa dla SplitWise",
     "add_expense_button": "Dodaj Wydatek",
-    "star_github_button": "Oznacz nas gwiazdką na github"
+    "star_github_button": "Zostaw gwiazdkę"
   },
   "features": {
     "title": "Funkcje",
     "groups_and_friends": {
       "title": "Grupy i Znajomi",
-      "description": "Możesz tworzyć wiele grup lub dodawać salda bezpośrednio. Wszystko zostanie skonsolidowane"
+      "description": "Możesz tworzyć wiele grup lub dodawać wydatki bezpośrednio."
     },
     "multiple_currencies": {
       "title": "Wiele walut",
@@ -41,15 +41,15 @@
     },
     "open_source": {
       "title": "Open source",
-      "description": "Co sprawia, że trudno jest stać się złym. Łatwy do samodzielnego hostowania"
+      "description": "To co dostajesz, zawsze pozostanie darmowe. Łatwe do samodzielnego hostowania"
     },
     "import_splitwise": {
       "title": "Import z splitwise",
-      "description": "Nie musisz ręcznie migrować sald. Możesz importować użytkowników i grupy z splitwise"
+      "description": "Nie musisz ręcznie migrować danych. Możesz importować użytkowników i grupy ze splitwise"
     },
     "push_notifications": {
       "title": "Powiadomienia push",
-      "description": "Nigdy nie przegap ważnych powiadomień. Otrzymuj powiadomienia, gdy ktoś doda wydatek lub się rozliczy"
+      "description": "Nigdy nie przegap ważnych powiadomień. Dowiesz się, gdy ktoś doda wydatek lub się rozliczy"
     }
   },
   "footer": {

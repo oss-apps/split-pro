@@ -3,10 +3,6 @@
     "title": "Add expense",
     "title_mobile": "Add",
     "add_expense": "Add expense",
-    "expense_page": {
-      "title": "Outstanding balances",
-      "expense_details": "Expense details"
-    },
     "add_expense_details": {
       "add_new_expense": "Add new expense",
       "description_placeholder": "Enter description",

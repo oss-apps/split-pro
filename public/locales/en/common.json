@@ -43,6 +43,7 @@
         "lent": "lent",
         "owe": "owe",
         "paid": "paid",
+        "pay": "pay",
         "get": "get",
         "received": "received",
         "deleted": "deleted"
@@ -51,6 +52,7 @@
         "lent": "lent",
         "owe": "owes",
         "paid": "paid",
+        "pay": "pays",
         "get": "gets",
         "received": "received",
         "deleted": "deleted"
@@ -60,6 +62,8 @@
       "to": "to",
       "from": "from"
     },
+    "balance": "balance",
+    "balances": "balances",
     "or": "or",
     "and": "and",
     "today": "Today",
@@ -73,6 +77,7 @@
     "settled_up": "Settled up",
     "settle_up_name": "Settle up",
     "settlement": "Settlement",
+    "expense_details": "Expense details",
     "select_currency": "Select currency",
     "outstanding_balances": "Outstanding balances",
     "share_text": "Check out SplitPro. It's an open source free alternative for Splitwise"

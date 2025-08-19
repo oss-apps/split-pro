@@ -141,7 +141,7 @@ const AddMembers: React.FC<{
               <SendIcon className="mr-2 h-4 w-4" />
               {isEmail.success
                 ? t('ui.no_members.add_members_details.send_invite')
-                : t('ui.no_members.add_members_details.errors.valid_email')}
+                : t('ui.errors.valid_email', { ns: 'common' })}
             </Button>
           )}
           <Button
@@ -153,7 +153,7 @@ const AddMembers: React.FC<{
             <UserPlusIcon className="mr-2 h-4 w-4" />
             {isEmail.success
               ? t('ui.no_members.add_members_details.add_to_split_pro')
-              : t('ui.no_members.add_members_details.errors.valid_email')}
+              : t('ui.errors.valid_email', { ns: 'common' })}
           </Button>
         </div>
       </div>

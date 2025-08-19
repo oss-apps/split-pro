@@ -72,11 +72,13 @@ export const SplitTypeSection: React.FC = () => {
         trigger={
           <div className="max-w-32 overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
             {splitType === SplitType.EQUAL
-              ? t('ui.expense.split_equally')
-              : t('ui.expense.split_unequally')}
+              ? t('ui.add_expense_details.split_type_section.split_equally')
+              : t('ui.add_expense_details.split_type_section.split_unequally')}
           </div>
         }
-        title={t(`ui.expense.types.${splitType.toLowerCase()}.title`)}
+        title={t(
+          `ui.add_expense_details.split_type_section.types.${splitType.toLowerCase()}.title`,
+        )}
         className="h-[85vh] lg:h-[70vh]"
         shouldCloseOnAction
         dismissible={false}
@@ -162,7 +164,7 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
       const totalParticipants = participants.filter(
         (p) => 0n !== splitShares[p.id]?.[SplitType.EQUAL],
       ).length;
-      return `${currency} ${0 < totalParticipants ? toUIString(amount / BigInt(totalParticipants)) : 0} ${t('ui.expense.types.equal.per_person')}`;
+      return `${currency} ${0 < totalParticipants ? toUIString(amount / BigInt(totalParticipants)) : 0} ${t('ui.add_expense_details.split_type_section.types.equal.per_person')}`;
     },
     fmtShareText: null,
     step: null,
@@ -179,7 +181,7 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
           (acc, p) => acc + (splitShares[p.id]?.[SplitType.PERCENTAGE] ?? 0n),
           0n,
         );
-      return `${t('ui.expense.types.percentage.remaining')} ${toUIString(remainingPercentage, true)}%`;
+      return `${t('ui.add_expense_details.split_type_section.types.percentage.remaining')} ${toUIString(remainingPercentage, true)}%`;
     },
     fmtShareText: (share) => (Number(share) / 100).toString(),
   },
@@ -193,21 +195,21 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
         (acc, p) => acc + (splitShares[p.id]?.[SplitType.EXACT] ?? 0n),
         0n,
       );
-      return `${t('ui.expense.types.exact.remaining')} ${currency} ${toUIString(amount - totalAmount, true)}`;
+      return `${t('ui.add_expense_details.split_type_section.types.exact.remaining')} ${currency} ${toUIString(amount - totalAmount, true)}`;
     },
     fmtShareText: (share) => removeTrailingZeros(toUIString(share)),
   },
   {
     splitType: SplitType.SHARE,
     iconComponent: BarChart2,
-    prefix: t('ui.expense.types.share.shares'),
+    prefix: t('ui.add_expense_details.split_type_section.types.share.shares'),
     isBoolean: false,
     fmtSummartyText: (_amount, _currency, participants, splitShares) => {
       const totalShares = participants.reduce(
         (acc, p) => acc + (splitShares[p.id]?.[SplitType.SHARE] ?? 0n),
         0n,
       );
-      return `${t('ui.expense.types.share.total_shares')} ${Number(totalShares) / 100}`;
+      return `${t('ui.add_expense_details.split_type_section.types.share.total_shares')} ${Number(totalShares) / 100}`;
     },
     fmtShareText: (share) => (Number(share) / 100).toString(),
     step: 1,
@@ -217,9 +219,7 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
     iconComponent: Plus,
     prefix: CURRENCY_TOKEN,
     isBoolean: false,
-    fmtSummartyText: () => {
-      return ``;
-    },
+    fmtSummartyText: () => '',
     fmtShareText: (share) => removeTrailingZeros(toUIString(share)),
   },
 ];
@@ -264,7 +264,7 @@ const SplitSection: React.FC<SplitSectionProps> = ({
 
   const onChangeInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>, userId: number) => {
-      const value = e.target.value;
+      const { value } = e.target;
       setSplitShare(
         splitType,
         userId,
@@ -288,7 +288,7 @@ const SplitSection: React.FC<SplitSectionProps> = ({
             onClick={selectAll}
           >
             {allSelected ? <X className="h-4 w-4" /> : <Check className="h-4 w-4" />}
-            <span className="text-sm">{t('ui.expense.all')}</span>
+            <span className="text-sm">{t('ui.actors.all', { ns: 'common' })}</span>
           </button>
         </div>
       )}

@@ -83,8 +83,8 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
         </button> */}
         <EntityAvatar entity={expense.paidByUser} size={35} />
         <p>
-          {displayName(expense.paidByUser, user.id)} {t('ui.expense.user.paid')} {expense.currency}{' '}
-          {toUIString(expense.amount)}
+          {displayName(expense.paidByUser, user.id)} {t('ui.expense.user.paid', { ns: 'common' })}{' '}
+          {expense.currency} {toUIString(expense.amount)}
         </p>
       </div>
       <div className="mt-4 ml-14 flex flex-col gap-4">
@@ -98,9 +98,10 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
             <div key={partecipant.userId} className="flex items-center gap-2 text-sm text-gray-500">
               <EntityAvatar entity={partecipant.user} size={25} />
               <p>
-                {user.id === partecipant.userId
-                  ? t('ui.expense.you.owe')
-                  : `${partecipant.user.name ?? partecipant.user.email} ${t('ui.owes')}`}{' '}
+                {displayName(partecipant.user, user.id)}{' '}
+                {t(`ui.expense.${user.id === partecipant.userId ? 'you' : 'user'}.owe`, {
+                  ns: 'common',
+                })}{' '}
                 {expense.currency}{' '}
                 {toUIString(
                   (expense.paidBy === partecipant.userId ? (expense.amount ?? 0n) : 0n) -

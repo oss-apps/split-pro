@@ -69,7 +69,7 @@ export const SettleUp: React.FC<{
         },
         onError: (error) => {
           console.error('Error while saving expense:', error);
-          toast.error(t('ui.settle_up_details.errors.saving_expense'));
+          toast.error(t('ui.errors.saving_expense', { ns: 'common' }));
         },
       },
     );

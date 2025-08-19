@@ -101,8 +101,9 @@ const BalancePage: NextPageWithUser<{
           void groupDetailQuery.refetch();
           toast.success(t('ui.messages.balances_recalculated'));
         },
-        onError: () => {
-          toast.error(t('ui.errors.something_went_wrong'));
+        onError: (e) => {
+          toast.error(t('ui.errors.something_went_wrong', { ns: 'common' }));
+          console.error(e);
         },
       },
     );
@@ -115,8 +116,9 @@ const BalancePage: NextPageWithUser<{
         onSuccess: () => {
           router.replace('/groups').catch(console.error);
         },
-        onError: () => {
-          toast.error(t('ui.errors.something_went_wrong'));
+        onError: (e) => {
+          toast.error(t('ui.errors.something_went_wrong', { ns: 'common' }));
+          console.error(e);
         },
       },
     );
@@ -134,8 +136,9 @@ const BalancePage: NextPageWithUser<{
               groupDetailQuery.refetch().catch(console.error);
             }
           },
-          onError: () => {
-            toast.error(t('ui.errors.something_went_wrong'));
+          onError: (e) => {
+            toast.error(t('ui.errors.something_went_wrong', { ns: 'common' }));
+            console.error(e);
           },
         },
       );
@@ -152,13 +155,7 @@ const BalancePage: NextPageWithUser<{
       <MainLayout
         title={
           <div className="flex items-center">
-            <Button
-              variant="ghost"
-              onClick={async () => {
-                await router.replace(`/groups`);
-              }}
-              className="mr-2 p-0"
-            >
+            <Button variant="ghost" onClick={() => router.replace(`/groups`)} className="mr-2 p-0">
               <ChevronLeft className="h-6 w-6" />
             </Button>
             <p className="text-lg">{groupDetailQuery.data?.name}</p>
@@ -174,16 +171,16 @@ const BalancePage: NextPageWithUser<{
               <>
                 <p className="font-semibold">{t('ui.group_statistics.total_expenses')}</p>
                 <div className="mt-2 flex flex-wrap gap-1">
-                  {groupTotalQuery.data?.map((total, index, arr) => {
-                    return null != total._sum.amount ? (
+                  {groupTotalQuery.data?.map((total, index, arr) =>
+                    null != total._sum.amount ? (
                       <Fragment key={total.currency}>
                         <div className="flex flex-wrap gap-1">
                           {total.currency} {toUIString(total._sum.amount)}
                         </div>
                         {index < arr.length - 1 ? <span>+</span> : null}
                       </Fragment>
-                    ) : null;
-                  })}
+                    ) : null,
+                  )}
                 </div>
                 {expensesQuery?.data && expensesQuery.data[expensesQuery.data.length - 1] && (
                   <div className="mt-8">
@@ -237,7 +234,9 @@ const BalancePage: NextPageWithUser<{
                         <p>{displayName(groupUser.user)}</p>
                       </div>
                       {groupUser.userId === groupDetailQuery.data?.userId ? (
-                        <p className="text-sm text-gray-400">{t('ui.group_info.owner')}</p>
+                        <p className="text-sm text-gray-400">
+                          {t('ui.actors.owner', { ns: 'common' })}
+                        </p>
                       ) : (
                         isAdmin &&
                         (() => {
@@ -366,21 +365,10 @@ const BalancePage: NextPageWithUser<{
         }
         header={
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              onClick={async () => {
-                await router.replace(`/groups`);
-              }}
-              className="mr-2 p-0"
-            >
+            <Button variant="ghost" onClick={() => router.replace(`/groups`)} className="mr-2 p-0">
               <ChevronLeft className="h-6 w-6" />
             </Button>
-            <Avatar
-              size={30}
-              name={groupDetailQuery.data?.name}
-              variant="bauhaus"
-              colors={['#80C7B7', '#D9C27E', '#F4B088', '#FFA5AA', '#9D9DD3']}
-            />
+            <EntityAvatar entity={groupDetailQuery.data} size={30} />
             <p className="text-lg">{groupDetailQuery.data?.name}</p>
           </div>
         }

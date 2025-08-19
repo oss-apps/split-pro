@@ -152,21 +152,9 @@ export const AddOrEditExpensePage: React.FC<{
     [setDescription],
   );
 
-  const onCancel = useCallback(() => {
-    if (expenseId) {
-      router
-        .push((group ? '/groups/' + group.id : '') + '/expenses/' + expenseId)
-        .catch(console.error);
-    } else if (1 === participants.length) {
-      router.push('/balances').catch(console.error);
-    } else {
-      resetState();
-    }
-  }, [expenseId, group, participants.length, resetState, router]);
-
   const onAmountChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
+      const { value } = e.target;
       onUpdateAmount(value);
     },
     [onUpdateAmount],
@@ -175,10 +163,14 @@ export const AddOrEditExpensePage: React.FC<{
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <Button variant="ghost" className="text-primary px-0" onClick={onCancel}>
+        <Button variant="ghost" className="text-primary px-0" onClick={router.back}>
           {t('ui.actions.cancel', { ns: 'common' })}
         </Button>
-        <div className="text-center">{t('ui.add_expense_details.add_new_expense')}</div>
+        <div className="text-center">
+          {expenseId
+            ? t('ui.actions.edit_expense', { ns: 'common' })
+            : t('ui.actions.add_expense', { ns: 'common' })}
+        </div>
         <Button
           variant="ghost"
           className="text-primary px-0"

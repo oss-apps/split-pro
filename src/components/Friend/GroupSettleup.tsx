@@ -20,11 +20,11 @@ export const GroupSettleUp: React.FC<{
   children: ReactNode;
   groupId: number;
 }> = ({ amount, currency, friend, user, children, groupId }) => {
-  const { displayName, t } = useTranslationWithUtils(['friend_details']);
+  const { displayName, t } = useTranslationWithUtils();
   const [amountStr, setAmountStr] = useState((Number(BigMath.abs(amount)) / 100).toString());
 
   const onChangeAmount = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    const { value } = e.target;
     setAmountStr(value);
   }, []);
 
@@ -41,7 +41,7 @@ export const GroupSettleUp: React.FC<{
 
     addExpenseMutation.mutate(
       {
-        name: t('ui.settle_up_name', { ns: 'common' }),
+        name: t('ui.settle_up_name'),
         currency: currency,
         amount: toSafeBigInt(amountStr),
         splitType: SplitType.SETTLEMENT,
@@ -65,7 +65,7 @@ export const GroupSettleUp: React.FC<{
         },
         onError: (error) => {
           console.error('Error while saving expense:', error);
-          toast.error(t('ui.settle_up_details.errors.saving_expense'));
+          toast.error(t('ui.errors.saving_expense'));
         },
       },
     );
@@ -83,10 +83,10 @@ export const GroupSettleUp: React.FC<{
       <div className="flex items-center justify-between px-2">
         <DrawerClose>
           <Button size="sm" variant="ghost" className="text-cyan-500 lg:hidden">
-            {t('ui.settle_up_details.back')}
+            {t('ui.actions.back')}
           </Button>
         </DrawerClose>
-        <div className="mt-4 mb-2 text-center">{t('ui.settle_up_details.settlement')}</div>
+        <div className="mb-2 mt-4 text-center">{t('ui.settlement')}</div>
         <DrawerClose>
           <Button
             size="sm"
@@ -94,7 +94,7 @@ export const GroupSettleUp: React.FC<{
             className="text-cyan-500 lg:hidden"
             onClick={saveExpense}
           >
-            {t('ui.settle_up_details.save')}
+            {t('ui.actions.save')}
           </Button>
         </DrawerClose>
       </div>
@@ -106,7 +106,7 @@ export const GroupSettleUp: React.FC<{
             <EntityAvatar entity={receiver} />
           </div>
           <p className="mt-2 text-center text-sm text-gray-400">
-            {displayName(sender)} {t('ui.settle_up_details.pays')} {displayName(receiver)}
+            {displayName(sender)} {t('ui.expense.user.pay')} {displayName(receiver)}
           </p>
         </div>
         <div className="mt-3 flex items-center gap-2">
@@ -123,7 +123,7 @@ export const GroupSettleUp: React.FC<{
       <div className="mt-8 hidden items-center justify-center gap-4 px-2 lg:flex">
         <DrawerClose>
           <Button size="sm" className="mx-auto" onClick={saveExpense}>
-            {t('ui.actions.save', { ns: 'common' })}
+            {t('ui.actions.save')}
           </Button>
         </DrawerClose>
       </div>

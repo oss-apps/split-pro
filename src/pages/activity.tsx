@@ -29,7 +29,7 @@ function getPaymentString(
   } else if (isSettlement) {
     return (
       <div className={`${user.id === paidBy ? 'text-emerald-500' : 'text-orange-500'} text-sm`}>
-        t('ui.actors.you'){' '}
+        {t('ui.actors.you')}{' '}
         {user.id === paidBy ? t('ui.expense.you.paid') : t('ui.expense.you.received')} {currency}{' '}
         {toUIString(amount)}
       </div>

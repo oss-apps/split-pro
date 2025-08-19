@@ -60,7 +60,8 @@
     },
     "errors": {
       "group_name_update_failed": "Fehler beim Aktualisieren des Gruppennamens",
-      "setting_update_failed": "Einstellung konnte nicht aktualisiert werden"    },
+      "setting_update_failed": "Einstellung konnte nicht aktualisiert werden"
+    },
     "add_members": "Mitglieder hinzufügen",
     "copied": "Kopiert",
     "create_group": {

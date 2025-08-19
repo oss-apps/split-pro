@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useSession = (key: string): [string, (value: string) => void] => {
   const [value, setValue] = useState<string>('');
@@ -13,10 +13,13 @@ export const useSession = (key: string): [string, (value: string) => void] => {
     }
   }, [key]);
 
-  const setSessionValue = (newValue: string) => {
-    setValue(newValue);
-    sessionStorage.setItem(key, newValue);
-  };
+  const setSessionValue = useCallback(
+    (newValue: string) => {
+      setValue(newValue);
+      sessionStorage.setItem(key, newValue);
+    },
+    [key],
+  );
 
   return [value, setSessionValue];
 };

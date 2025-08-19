@@ -68,11 +68,6 @@
       "press_balance_info": "Premi sul saldo individuale per avviare il regolamento",
       "are_settled_up": "siete pari",
       "is_settled_up": "è pari"
-    },
-    "currency": {
-      "title": "Seleziona valuta",
-      "placeholder": "Seleziona valuta",
-      "no_currency_found": "Nessuna valuta trovata."
     }
   }
 }

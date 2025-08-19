@@ -21,8 +21,8 @@ export const getSupportedLanguages = (): SupportedLanguage[] => [
  * @returns Localized currency name, fallback to currency code if translation doesn't exist
  */
 export function getLocalizedCurrencyName(code: CurrencyCode, t: TFunction, plural = false): string {
-  const translationKey = `${code}.${plural ? 'name_plural' : 'name'}`;
-  const translatedName = t(translationKey, { ns: 'currencies' });
+  const translationKey = `currency_list.${code}.${plural ? 'name_plural' : 'name'}`;
+  const translatedName = t(translationKey);
 
   // Fallback to currency code if translation doesn't exist
   if (translatedName !== translationKey) {

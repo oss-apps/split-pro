@@ -68,11 +68,6 @@
       "press_balance_info": "Drücke auf einen einzelnen Saldo, um die Abrechnung zu starten",
       "are_settled_up": "sind ausgeglichen",
       "is_settled_up": "ist ausgeglichen"
-    },
-    "currencies": {
-      "title": "Währung auswählen",
-      "placeholder": "Währung auswählen",
-      "no_currency_found": "Keine Währung gefunden."
     }
   }
 }

@@ -11,15 +11,29 @@ import {
   X,
 } from 'lucide-react';
 import { type TFunction, useTranslation } from 'next-i18next';
-import { type ChangeEvent, useCallback, useMemo } from 'react';
+import { type ChangeEvent, useCallback, useMemo, useState } from 'react';
 
 import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/store/addStore';
-import { removeTrailingZeros, toSafeBigInt, toUIString } from '~/utils/numbers';
+import {
+  calculateExactRemainderDistribution,
+  removeTrailingZeros,
+  toSafeBigInt,
+  toUIString,
+} from '~/utils/numbers';
 
 import { UserAvatar } from '../ui/avatar';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Button } from '../ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../ui/dialog';
 
 export const SplitTypeSection: React.FC = () => {
   const { t } = useTranslation('expense_details');
@@ -240,7 +254,17 @@ const SplitSection: React.FC<SplitSectionProps> = ({
   const amount = useAddExpenseStore((s) => s.amount);
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
   const splitShares = useAddExpenseStore((s) => s.splitShares);
-  const { setSplitShare } = useAddExpenseStore((s) => s.actions);
+  const selectedParticipantsForDistribution = useAddExpenseStore(
+    (s) => s.selectedParticipantsForDistribution,
+  );
+  const {
+    setSplitShare,
+    distributeExactRemainderEqually,
+    toggleParticipantForDistribution,
+    setAllParticipantsForDistribution,
+  } = useAddExpenseStore((s) => s.actions);
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const summaryText = useMemo(
     () => fmtSummartyText(amount, currency, participants, splitShares),
@@ -250,6 +274,39 @@ const SplitSection: React.FC<SplitSectionProps> = ({
     () => participants.every((p) => 0n !== splitShares[p.id]?.[splitType]),
     [participants, splitShares, splitType],
   );
+
+  const exactRemaining = useMemo(() => {
+    if (splitType !== SplitType.EXACT) return 0n;
+    const total = participants.reduce(
+      (acc, p) => acc + (splitShares[p.id]?.[SplitType.EXACT] ?? 0n),
+      0n,
+    );
+    return amount - total;
+  }, [splitType, participants, splitShares, amount]);
+
+  const previewDistribution = useMemo(() => {
+    if (splitType !== SplitType.EXACT || exactRemaining <= 0n) {
+      return [];
+    }
+
+    const participantsToDistribute =
+      selectedParticipantsForDistribution.size > 0
+        ? participants.filter((p) => selectedParticipantsForDistribution.has(p.id))
+        : participants;
+
+    const rawDistributions = calculateExactRemainderDistribution(
+      participantsToDistribute,
+      splitShares,
+      exactRemaining,
+    );
+
+    return rawDistributions.map((dist) => ({
+      participant: participants.find((p) => p.id === dist.participantId)!,
+      currentAmount: dist.currentAmount,
+      addedAmount: dist.addedAmount,
+      finalAmount: dist.finalAmount,
+    }));
+  }, [splitType, exactRemaining, participants, splitShares, selectedParticipantsForDistribution]);
 
   const selectAll = useCallback(() => {
     participants.forEach((p) => {
@@ -276,13 +333,134 @@ const SplitSection: React.FC<SplitSectionProps> = ({
     [setSplitShare, splitType],
   );
 
+  const handleDistributeClick = () => {
+    if (selectedParticipantsForDistribution.size === 0) {
+      setAllParticipantsForDistribution(true);
+    }
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmDistribution = () => {
+    distributeExactRemainderEqually(selectedParticipantsForDistribution);
+    setShowConfirmModal(false);
+  };
+
+  const allParticipantsSelected = useMemo(
+    () =>
+      participants.length > 0 &&
+      participants.every((p) => selectedParticipantsForDistribution.has(p.id)),
+    [participants, selectedParticipantsForDistribution],
+  );
+
+  const handleToggleAllParticipants = () => {
+    setAllParticipantsForDistribution(!allParticipantsSelected);
+  };
+
   return (
     <div className="relative mt-4 flex flex-col gap-6 px-2">
-      <div className="mb-2 flex grow justify-center">
+      <div className="mb-2 flex flex-col items-center justify-center gap-3">
         <div className={`${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'}`}>
           {summaryText}
         </div>
+        {splitType === SplitType.EXACT && exactRemaining > 0n ? (
+          <button
+            className="flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs whitespace-nowrap"
+            onClick={handleDistributeClick}
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>
+              {t('ui.add_expense_details.split_type_section.types.exact.split_remaining_equally')}
+            </span>
+          </button>
+        ) : null}
       </div>
+
+      <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {t('ui.add_expense_details.split_type_section.types.exact.confirm_distribution')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('ui.add_expense_details.split_type_section.types.exact.remaining')} {currency}{' '}
+              {toUIString(exactRemaining, true)}{' '}
+              {t('ui.add_expense_details.split_type_section.types.exact.will_be_distributed')}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="bg-secondary/30 flex items-center justify-between rounded-lg border p-3">
+              <span className="text-sm font-medium">Select All Participants</span>
+              <button onClick={handleToggleAllParticipants} className="flex items-center gap-2">
+                {allParticipantsSelected ? (
+                  <Check className="h-5 w-5 text-cyan-500" />
+                ) : (
+                  <div className="h-5 w-5 rounded border border-gray-400" />
+                )}
+              </button>
+            </div>
+
+            <div className="max-h-60 space-y-3 overflow-y-auto">
+              {participants.map((participant) => {
+                const isSelected = selectedParticipantsForDistribution.has(participant.id);
+                const distribution = previewDistribution.find(
+                  (d) => d.participant.id === participant.id,
+                );
+
+                return (
+                  <div
+                    key={participant.id}
+                    className="bg-secondary/50 flex items-center justify-between rounded-lg border p-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => toggleParticipantForDistribution(participant.id)}
+                        className="flex items-center gap-2"
+                      >
+                        {isSelected ? (
+                          <Check className="h-5 w-5 text-cyan-500" />
+                        ) : (
+                          <div className="h-5 w-5 rounded border border-gray-400" />
+                        )}
+                      </button>
+                      <UserAvatar user={participant} size={32} />
+                      <span className="text-sm font-medium">
+                        {participant.name ?? participant.email}
+                      </span>
+                    </div>
+                    {distribution && isSelected && (
+                      <div className="text-right">
+                        <div className="text-muted-foreground text-xs">
+                          {currency} {removeTrailingZeros(toUIString(distribution.currentAmount))} +{' '}
+                          {removeTrailingZeros(toUIString(distribution.addedAmount))}
+                        </div>
+                        <div className="text-sm font-medium text-green-600 dark:text-green-400">
+                          = {currency} {removeTrailingZeros(toUIString(distribution.finalAmount))}
+                        </div>
+                      </div>
+                    )}
+                    {!isSelected && (
+                      <div className="text-muted-foreground text-xs">Not selected</div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <DialogFooter className="flex-row justify-end gap-2">
+            <Button variant="outline" onClick={() => setShowConfirmModal(false)}>
+              {t('ui.add_expense_details.split_type_section.cancel')}
+            </Button>
+            <Button
+              onClick={handleConfirmDistribution}
+              disabled={selectedParticipantsForDistribution.size === 0}
+            >
+              {t('ui.add_expense_details.split_type_section.confirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {isBoolean && (
         <div className="absolute top-0 right-0">
           <button
@@ -296,6 +474,7 @@ const SplitSection: React.FC<SplitSectionProps> = ({
       )}
       {participants.map((p) => {
         const share = splitShares[p.id]?.[splitType];
+
         return (
           <div
             key={p.id}

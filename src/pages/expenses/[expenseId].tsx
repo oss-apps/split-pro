@@ -70,7 +70,7 @@ ExpensesPage.auth = true;
 
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
-    storagePublicUrl: env.R2_PUBLIC_URL,
+    ...(env.R2_PUBLIC_URL ? { storagePublicUrl: env.R2_PUBLIC_URL } : {}),
     ...(await customServerSideTranslations(context.locale, ['common', 'expense_details'])),
   },
 });

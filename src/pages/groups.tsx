@@ -1,5 +1,5 @@
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { clsx } from 'clsx';
+import clsx from 'clsx';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';

@@ -27,15 +27,30 @@ type OTPFormValues = z.infer<ReturnType<typeof otpSchema>>;
 
 const Home: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
   const { t } = useTranslation('signin');
-  const {
-    query: { callbackUrl },
-    push,
-  } = useRouter();
+  const router = useRouter();
 
-  const [email] = useSession('splitpro-email');
+  const [email, setEmail] = useSession('splitpro-email');
+  const [locale, setLocale] = useSession('splitpro-signin-locale');
   const otpForm = useForm<OTPFormValues>({
     resolver: zodResolver(otpSchema(t)),
   });
+
+  useEffect(() => {
+    if (!locale) {
+      return;
+    }
+
+    router
+      .push(router.asPath, router.asPath, {
+        locale,
+        scroll: false,
+      })
+      .catch(console.error);
+
+    return () => {
+      setLocale('');
+    };
+  }, [locale, router, setLocale]);
 
   const onOTPSubmit = useCallback(async () => {
     if (!email) {
@@ -43,12 +58,18 @@ const Home: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
       return;
     }
 
-    await push(
-      `/api/auth/callback/email?email=${encodeURIComponent(
-        email.toLowerCase(),
-      )}&token=${otpForm.getValues().otp}${typeof callbackUrl === 'string' ? `&callbackUrl=${callbackUrl}/balances` : ''}`,
-    );
-  }, [email, otpForm, push, callbackUrl, t]);
+    const { callbackUrl } = router.query;
+
+    await router
+      .push(
+        `/api/auth/callback/email?email=${encodeURIComponent(
+          email.toLowerCase(),
+        )}&token=${otpForm.getValues().otp}${typeof callbackUrl === 'string' ? `&callbackUrl=${callbackUrl}/balances` : ''}`,
+      )
+      .finally(() => setEmail(''));
+  }, [email, otpForm, router, t, setEmail]);
+
+  const feedbackEmailLink = useMemo(() => `mailto:${feedbackEmail}`, [feedbackEmail]);
 
   return (
     <>

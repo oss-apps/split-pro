@@ -83,7 +83,7 @@ export const BalanceList: React.FC<{
                         <span className="text-gray-400">
                           {' '}
                           {t(
-                            `ui.expense.${isCurrentUser ? 'you' : 'user'}.${0 < totalAmount[1] ? 'get' : 'owe'}`,
+                            `ui.expense.${isCurrentUser ? 'you' : 'user'}.${0 < totalAmount[1] ? 'lent' : 'owe'}`,
                             { ns: 'common' },
                           )}{' '}
                         </span>
@@ -122,7 +122,7 @@ export const BalanceList: React.FC<{
                               <span className="text-gray-400">
                                 {' '}
                                 {t(
-                                  `ui.expense.${friend.id === userQuery.data?.id ? 'you' : 'user'}.${0 > amount ? 'get' : 'owe'}`,
+                                  `ui.expense.${friend.id === userQuery.data?.id ? 'you' : 'user'}.${0 > amount ? 'lent' : 'owe'}`,
                                   { ns: 'common' },
                                 )}{' '}
                               </span>

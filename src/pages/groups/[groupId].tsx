@@ -486,6 +486,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         'common',
         'groups_details',
         'expense_details',
+        'friend_details',
       ])),
       enableSendingInvites: env.ENABLE_SENDING_INVITES,
     },

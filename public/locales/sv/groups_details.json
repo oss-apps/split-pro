@@ -7,17 +7,11 @@
       "add_members_details": {
         "title": "Lägg till medlemmar",
         "placeholder": "Ange namn eller email",
-        "cancel": "Avbryt",
-        "save": "Spara",
         "warning": "Varning: Skicka inte en inbjudan om det är ogiltlig email. Använd istället lägg till i Split Pro. Ditt konto kommer att blockeras om denna funktion används felaktigt",
         "note": "Notera: Skicka inbjudan är inaktiverat för tillfället på grund av skräppost",
         "send_invite": "Skicka inbjudan till användare",
-        "add_to_split_pro": "Lägg till i Split Pro",
-        "errors": {
-          "valid_email": "Ange giltig email"
-        }
+        "add_to_split_pro": "Lägg till i Split Pro"
       },
-      "or": "eller",
       "invite_link": "Dela inbjudningslänk",
       "copied": "Kopierad"
     },
@@ -35,19 +29,14 @@
       "delete_group_details": {
         "title": "Är du helt säker?",
         "can_delete": "Denna åtgärd kan inte ångras",
-        "cant_delete": "Kan inte radera gruppen förrän alla har kvittat sina saldon",
-        "cancel": "Avbryt",
-        "delete": "Radera"
+        "cant_delete": "Kan inte radera gruppen förrän alla har kvittat sina saldon"
       },
       "leave_group": "Lämna grupp",
       "leave_group_details": {
         "title": "Är du helt säker?",
         "can_leave": "Denna åtgärd kan inte ångras",
-        "cant_leave": "Kan inte lämna gruppen förrän ditt saldo är kvittat",
-        "cancel": "Avbryt",
-        "leave": "Lämna"
+        "cant_leave": "Kan inte lämna gruppen förrän ditt saldo är kvittat"
       },
-      "owner": "ägare",
       "remove_member_details": {
         "title": "Är du helt säker?",
         "can_remove": "Du är på väg att ta bort denna medlem från gruppen",
@@ -70,40 +59,18 @@
     },
     "errors": {
       "group_name_update_failed": "Fel vid uppdatering av gruppnamn",
-      "setting_update_failed": "Misslyckades med att uppdatera inställning",
-      "something_went_wrong": "Något gick fel"
+      "setting_update_failed": "Misslyckades med att uppdatera inställning"
     },
-    "add_expense": "Lägg till utgift",
     "add_members": "Lägg till medlemmar",
     "copied": "Kopierad",
-    "invite": "Bjud in",
-    "you_paid": "Du betalade",
-    "user_paid": "betalade",
-    "you_lent": "Du lånade",
-    "you_owe": "Du är skyldig",
-    "all_settled_up": "Du är kvitt",
-    "owes_you": "är skyldig",
-    "you_owe_friend": "Du är skyldig",
-    "balance": "saldo",
-    "balances": "saldon",
-    "outstanding_balances": "Utestående saldon",
-    "expense_details": "Utgiftsdetaljer",
     "create_group": {
       "title": "Skapa en grupp",
-      "group_name_placeholder": "Gruppnamn",
-      "cancel": "Avbryt",
-      "submit": "Skicka",
-      "errors": {
-        "name_required": "Namn krävs"
-      }
+      "group_name_placeholder": "Gruppnamn"
     }
   },
   "invite_message": {
     "join_to": "Gå med",
     "in_splitpro": "i Splitpro",
     "text": "Gå med i gruppen så kan du lägga till, hantera utgifter och följa dina saldon"
-  },
-  "errors": {
-    "something_went_wrong": "Något gick fel"
   }
 }

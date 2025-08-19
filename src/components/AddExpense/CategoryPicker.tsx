@@ -10,7 +10,7 @@ export const CategoryPicker: React.FC<{
   category: string;
   onCategoryPick: (category: string) => void;
 }> = ({ category, onCategoryPick }) => {
-  const { t } = useTranslation('expense_details');
+  const { t } = useTranslation('categories');
 
   const trigger = useMemo(
     () => (
@@ -22,16 +22,11 @@ export const CategoryPicker: React.FC<{
   );
 
   return (
-    <AppDrawer
-      trigger={trigger}
-      title={t('ui.categories.title')}
-      className="h-[70vh]"
-      shouldCloseOnAction
-    >
+    <AppDrawer trigger={trigger} title={t('title')} className="h-[70vh]" shouldCloseOnAction>
       {Object.entries(CATEGORIES).map(([categoryName, categoryItems]) => (
         <div key={categoryName} className="mb-8">
           <h3 className="mb-4 text-lg font-semibold">
-            {t(`ui.categories.categories_list.${categoryName}.name`)}
+            {t(`categories_list.${categoryName}.name`)}
           </h3>
           <div className="flex flex-wrap justify-between gap-2">
             {categoryItems.map((key: string) => {
@@ -55,7 +50,7 @@ export const CategoryPicker: React.FC<{
                       />
                     </span>
                     <span className="block text-xs capitalize">
-                      {t(`ui.categories.categories_list.${categoryName}.items.${key}`)}
+                      {t(`categories_list.${categoryName}.items.${key}`, { ns: 'categories' })}
                     </span>
                   </Button>
                 </DrawerClose>

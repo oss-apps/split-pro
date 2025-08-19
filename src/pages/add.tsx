@@ -147,6 +147,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
     isStorageConfigured: !!isStorageConfigured(),
     enableSendingInvites: !!env.ENABLE_SENDING_INVITES,
-    ...(await customServerSideTranslations(context.locale, ['common', 'expense_details'])),
+    ...(await customServerSideTranslations(context.locale, [
+      'common',
+      'expense_details',
+      'categories',
+      'currencies',
+    ])),
   },
 });

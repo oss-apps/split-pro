@@ -14,17 +14,78 @@
     "account": "Account"
   },
   "ui": {
-    "you": "Tu",
-    "cancel": "Annulla",
-    "confirm": "Conferma",
-    "edit_name": {
-      "title": "Modifica nome",
-      "placeholder": "Inserisci il nome",
+    "actors": {
+      "you": "Tu",
+      "friends": "Amici",
+      "groups": "Gruppi",
+      "members": "Membri",
+      "owner": "Proprietario",
+      "all": "Tutti"
+    },
+    "actions": {
+      "cancel": "Annulla",
+      "confirm": "Conferma",
+      "submit": "Invia",
       "close": "Chiudi",
+      "back": "Indietro",
+      "create": "Crea",
       "save": "Salva",
-      "errors": {
-        "name_required": "Il nome è obbligatorio"
-      }
-    }
+      "leave": "Abbandona",
+      "invite": "Invita",
+      "export": "Esporta",
+      "import": "Importa",
+      "add_expense": "Aggiungi spesa",
+      "edit_expense": "Modifica spesa",
+      "settle_up": "Regola"
+    },
+    "expense": {
+      "you": {
+        "lent": "hai prestato",
+        "owe": "devi",
+        "paid": "hai pagato",
+        "pay": "paga",
+        "get": "ricevi",
+        "received": "hai ricevuto",
+        "deleted": "hai eliminato"
+      },
+      "user": {
+        "lent": "ha prestato",
+        "owe": "deve",
+        "paid": "ha pagato",
+        "pay": "paga",
+        "get": "riceve",
+        "received": "ha ricevuto",
+        "deleted": "ha eliminato"
+      },
+      "for": "per",
+      "paid_by": "Pagato da",
+      "to": "a",
+      "from": "da"
+    },
+    "balance": "saldo",
+    "balances": "saldi",
+    "or": "o",
+    "and": "e",
+    "today": "Oggi",
+    "delete": "Elimina",
+    "edited_by": "Modificato da",
+    "deleted_by": "Eliminato da",
+    "added_by": "Aggiunto da",
+    "on": "il",
+    "not_involved": "Non coinvolto",
+    "no_activity": "Nessuna attività ancora",
+    "settled_up": "Regolato",
+    "settle_up_name": "Regola",
+    "settlement": "Regolamento",
+    "expense_details": "Dettagli spesa",
+    "select_currency": "Seleziona valuta",
+    "outstanding_balances": "Saldi in sospeso",
+    "share_text": "Dai un'occhiata a SplitPro. È un'alternativa gratuita e open source a Splitwise"
+  },
+  "errors": {
+    "name_required": "Il nome è obbligatorio",
+    "saving_expense": "Errore durante il salvataggio della spesa",
+    "something_went_wrong": "Qualcosa è andato storto",
+    "valid_email": "Inserisci un'email valida"
   }
 }

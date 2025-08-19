@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type GetServerSideProps, type NextPage } from 'next';
 import { type ClientSafeProvider, getProviders, signIn } from 'next-auth/react';
 import { type TFunction, useTranslation } from 'next-i18next';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -116,6 +116,8 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
     [t],
   );
 
+  const feedbackEmailLink = useMemo(() => 'mailto:' + feedbackEmail, [feedbackEmail]);
+
   return (
     <>
       <main className="flex h-full flex-col justify-center lg:justify-normal">
@@ -168,7 +170,7 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
               {t('auth.trouble_logging_in')}
               <br />
               {/* oxlint-disable-next-line next/no-html-link-for-pages */}
-              <a className="underline" href={'mailto:' + feedbackEmail}>
+              <a className="underline" href={feedbackEmailLink}>
                 {feedbackEmail ?? ''}
               </a>
             </p>

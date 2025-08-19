@@ -7,17 +7,11 @@
       "add_members_details": {
         "title": "Dodaj członków",
         "placeholder": "Wprowadź imię lub email",
-        "cancel": "Anuluj",
-        "save": "Zapisz",
         "warning": "Ostrzeżenie: Nie używaj wysyłania zaproszenia, jeśli to nieprawidłowy email. Zamiast tego użyj dodaj do Split Pro. Twoje konto zostanie zablokowane, jeśli ta funkcja będzie nadużywana",
         "note": "Uwaga: wysyłanie zaproszeń jest obecnie wyłączone z powodu spamu",
         "send_invite": "Wyślij zaproszenie do użytkownika",
-        "add_to_split_pro": "Dodaj do Split Pro",
-        "errors": {
-          "valid_email": "Wprowadź prawidłowy email"
-        }
+        "add_to_split_pro": "Dodaj do Split Pro"
       },
-      "or": "lub",
       "invite_link": "Udostępnij link zaproszenia",
       "copied": "Skopiowano"
     },
@@ -35,19 +29,14 @@
       "delete_group_details": {
         "title": "Na pewno?",
         "can_delete": "Ta akcja nie może być cofnięta",
-        "cant_delete": "Nie można usunąć grupy, dopóki wszyscy się nie rozliczą",
-        "cancel": "Anuluj",
-        "delete": "Usuń"
+        "cant_delete": "Nie można usunąć grupy, dopóki wszyscy się nie rozliczą"
       },
       "leave_group": "Opuść grupę",
       "leave_group_details": {
         "title": "Na pewno?",
         "can_leave": "Ta akcja nie może być cofnięta",
-        "cant_leave": "Nie możesz opuścić grupy, dopóki twoje zaległe saldo nie zostanie rozliczone",
-        "cancel": "Anuluj",
-        "leave": "Opuść"
+        "cant_leave": "Nie możesz opuścić grupy, dopóki twoje zaległe saldo nie zostanie rozliczone"
       },
-      "owner": "właściciel",
       "remove_member_details": {
         "title": "Na pewno?",
         "can_remove": "Zamierzasz usunąć tę osobę z grupy",
@@ -70,40 +59,18 @@
     },
     "errors": {
       "group_name_update_failed": "Błąd podczas aktualizacji nazwy grupy",
-      "setting_update_failed": "Nie udało się zaktualizować ustawienia",
-      "something_went_wrong": "Coś poszło nie tak"
+      "setting_update_failed": "Nie udało się zaktualizować ustawienia"
     },
-    "add_expense": "Dodaj wydatek",
     "add_members": "Dodaj członków",
     "copied": "Skopiowano",
-    "invite": "Zaproś",
-    "you_paid": "Płacisz",
-    "user_paid": "płaci",
-    "you_lent": "Pożyczasz",
-    "you_owe": "Masz do zapłacenia",
-    "all_settled_up": "Wszyscy jesteście rozliczeni",
-    "owes_you": "ma do zapłacenia",
-    "you_owe_friend": "Masz do zapłacenia",
-    "balance": "saldo",
-    "balances": "salda",
-    "outstanding_balances": "Zaległe salda",
-    "expense_details": "Szczegóły wydatku",
     "create_group": {
       "title": "Utwórz grupę",
-      "group_name_placeholder": "Nazwa grupy",
-      "cancel": "Anuluj",
-      "submit": "Zatwierdź",
-      "errors": {
-        "name_required": "Nazwa jest wymagana"
-      }
+      "group_name_placeholder": "Nazwa grupy"
     }
   },
   "invite_message": {
-    "join_to": "Join to",
-    "in_splitpro": "in Splitpro",
-    "text": "Join to the group and you can add, manage expenses, and track your balances"
-  },
-  "errors": {
-    "something_went_wrong": "Something went wrong"
+    "join_to": "Dołącz do",
+    "in_splitpro": "w Splitpro",
+    "text": "Dołącz do grupy, a będziesz mógł dodawać i zarządzać wydatkami oraz śledzić swoje salda"
   }
 }

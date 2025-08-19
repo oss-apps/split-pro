@@ -31,7 +31,9 @@
     ],
     "prefer-default-export": "off",
     "yoda": "off",
-    "id-length": "off"
+    "id-length": "off",
+    "react_perf/jsx-no-jsx-as-prop": "off",
+    "no-nested-ternary": "off"
   },
   "overrides": [
     {

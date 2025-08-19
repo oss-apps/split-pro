@@ -5,7 +5,7 @@ import { type GetServerSideProps, type NextPage } from 'next';
 import { getProviders } from 'next-auth/react';
 import { type TFunction, useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -89,14 +89,16 @@ const Home: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
             </form>
           </Form>
 
-          <p className="text-muted-foreground mt-6 w-[300px] text-center text-sm">
-            {t('auth.trouble_logging_in')}
-            <br />
-            {/* oxlint-disable-next-line next/no-html-link-for-pages */}
-            <a className="underline" href={'mailto:' + feedbackEmail}>
-              {feedbackEmail ?? ''}
-            </a>
-          </p>
+          {feedbackEmail && (
+            <p className="text-muted-foreground mt-6 w-[300px] text-center text-sm">
+              {t('auth.trouble_logging_in')}
+              <br />
+              {/* oxlint-disable-next-line next/no-html-link-for-pages */}
+              <a className="underline" href={feedbackEmailLink}>
+                {feedbackEmail ?? ''}
+              </a>
+            </p>
+          )}
         </div>
       </main>
     </>

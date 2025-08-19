@@ -123,7 +123,7 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
     [t],
   );
 
-  const feedbackEmailLink = useMemo(() => 'mailto:' + feedbackEmail, [feedbackEmail]);
+  const feedbackEmailLink = useMemo(() => `mailto:${feedbackEmail}`, [feedbackEmail]);
 
   return (
     <>

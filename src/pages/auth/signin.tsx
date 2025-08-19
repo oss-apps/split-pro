@@ -153,7 +153,7 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
               <p className="bg-background z-10 ml-[150px] -translate-x-1/2 px-4 text-sm">
                 {t('auth.or')}
               </p>
-              <div className="absolute h-px w-[300px] bg-linear-to-r from-zinc-800 via-zinc-300 to-zinc-800" />
+              <div className="bg-linear-to-r absolute h-px w-[300px] from-zinc-800 via-zinc-300 to-zinc-800" />
             </div>
           )}
           {providers.find((provider) => 'email' === provider.id) ? (

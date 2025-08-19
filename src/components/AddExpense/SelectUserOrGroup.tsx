@@ -55,6 +55,8 @@ export const SelectUserOrGroup: React.FC<{
         emailVerified: new Date(),
         image: null,
         currency: 'USD',
+        obapiProviderId: null,
+        bankingId: null,
         preferredLanguage: '',
       });
       // add email to split pro
@@ -177,7 +179,7 @@ export const SelectUserOrGroup: React.FC<{
         ) : null}
 
         {0 === filteredFriends?.length && 0 === filteredGroups?.length ? (
-          <div className="mt-[30%] flex flex-col items-center justify-center gap-20 transition-discrete starting:opacity-0">
+          <div className="transition-discrete starting:opacity-0 mt-[30%] flex flex-col items-center justify-center gap-20">
             <Image alt="empty user image" src="/empty_img.svg" width={250} height={250} />
           </div>
         ) : null}

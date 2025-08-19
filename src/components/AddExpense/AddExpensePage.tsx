@@ -6,7 +6,7 @@ import { useTranslation } from 'next-i18next';
 
 import { type CurrencyCode } from '~/lib/currency';
 import { cn } from '~/lib/utils';
-import { useAddExpenseStore } from '~/store/addStore';
+import { calculateParticipantSplit, Participant, useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { toSafeBigInt } from '~/utils/numbers';
 
@@ -22,6 +22,16 @@ import { SplitTypeSection } from './SplitTypeSection';
 import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
 import { toast } from 'sonner';
+import { BankingTransactions } from './BankingTransactions';
+
+export type TransactionAddInputModel = {
+  date: Date;
+  description: string;
+  amount: string;
+  currency: string;
+  transactionId?: string;
+  expenseId?: string;
+};
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
@@ -29,6 +39,7 @@ export const AddOrEditExpensePage: React.FC<{
   expenseId?: string;
 }> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
   const { t } = useTranslation('expense_details');
+
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
   const participants = useAddExpenseStore((s) => s.participants);
@@ -40,9 +51,13 @@ export const AddOrEditExpensePage: React.FC<{
   const amtStr = useAddExpenseStore((s) => s.amountStr);
   const expenseDate = useAddExpenseStore((s) => s.expenseDate);
   const isExpenseSettled = useAddExpenseStore((s) => s.canSplitScreenClosed);
+  const splitShares = useAddExpenseStore((s) => s.splitShares);
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const splitType = useAddExpenseStore((s) => s.splitType);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
+  const transactionId = useAddExpenseStore((s) => s.transactionId);
+  const multipleTransactions = useAddExpenseStore((s) => s.multipleTransactions);
+  const isTransactionLoading = useAddExpenseStore((s) => s.isTransactionLoading);
 
   const {
     setCurrency,
@@ -53,6 +68,9 @@ export const AddOrEditExpensePage: React.FC<{
     resetState,
     setSplitScreenOpen,
     setExpenseDate,
+    setTransactionId,
+    setMultipleTransactions,
+    setIsTransactionLoading,
   } = useAddExpenseStore((s) => s.actions);
 
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
@@ -78,7 +96,9 @@ export const AddOrEditExpensePage: React.FC<{
     [setAmount, setAmountStr],
   );
 
-  const addExpense = useCallback(async () => {
+  const addMultipleExpenses = useCallback(async () => {
+    setIsTransactionLoading(true);
+
     if (!paidBy) {
       return;
     }
@@ -87,6 +107,81 @@ export const AddOrEditExpensePage: React.FC<{
       setSplitScreenOpen(true);
       return;
     }
+
+    const seen = new Set();
+    const deduplicated = multipleTransactions.filter((item) => {
+      if (seen.has(item.transactionId)) {
+        return false;
+      }
+      seen.add(item.transactionId);
+      return true;
+    });
+
+    for (const tempItem of deduplicated) {
+      if (tempItem) {
+        const normalizedAmount = tempItem.amount.replace(',', '.');
+        const _amtBigInt = BigInt(Math.round(Number(normalizedAmount) * 100));
+
+        const { participants: tempParticipants } = calculateParticipantSplit(
+          _amtBigInt,
+          participants,
+          splitType,
+          splitShares,
+          paidBy,
+        );
+
+        await addExpenseMutation.mutateAsync({
+          name: tempItem.description,
+          currency: tempItem.currency,
+          amount: _amtBigInt,
+          groupId: group?.id ?? null,
+          splitType,
+          participants: tempParticipants.map((p) => ({
+            userId: p.id,
+            amount: p.amount ?? 0n,
+          })),
+          paidBy: paidBy.id,
+          category,
+          fileKey,
+          expenseDate: tempItem.date,
+          expenseId: tempItem.expenseId,
+          transactionId: tempItem.transactionId,
+        });
+      }
+    }
+
+    setMultipleTransactions([]);
+    setIsTransactionLoading(false);
+    router
+      .push(group?.id ? `/groups/${group?.id}` : '/balances')
+      .then(() => resetState())
+      .catch(console.error);
+  }, [
+    setSplitScreenOpen,
+    router,
+    resetState,
+    addExpenseMutation,
+    group,
+    paidBy,
+    splitType,
+    fileKey,
+    isExpenseSettled,
+    multipleTransactions,
+  ]);
+
+  const addExpense = useCallback(async () => {
+    const { group, paidBy } = useAddExpenseStore.getState();
+    if (!paidBy) {
+      return;
+    }
+
+    if (!isExpenseSettled) {
+      setSplitScreenOpen(true);
+      return;
+    }
+
+    setMultipleTransactions([]);
+    setIsTransactionLoading(false);
 
     try {
       await addExpenseMutation.mutateAsync(
@@ -105,6 +200,7 @@ export const AddOrEditExpensePage: React.FC<{
           fileKey,
           expenseDate,
           expenseId,
+          transactionId,
         },
         {
           onSuccess: (d) => {
@@ -172,6 +268,22 @@ export const AddOrEditExpensePage: React.FC<{
     [onUpdateAmount],
   );
 
+  const addViaGoCardless = (obj: TransactionAddInputModel) => {
+    setExpenseDate(obj.date);
+    setDescription(obj.description);
+    setCurrency(obj.currency as CurrencyCode);
+    onUpdateAmount(obj.amount);
+    setTransactionId(obj.transactionId ?? '');
+  };
+
+  const clearFields = () => {
+    setAmount(0n);
+    setDescription('');
+    setAmountStr('');
+    setTransactionId('');
+    setExpenseDate(new Date());
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
@@ -217,7 +329,7 @@ export const AddOrEditExpensePage: React.FC<{
               onChange={onAmountChange}
             />
           </div>
-          <div className="h-[180px]">
+          <div className="h-auto">
             {amount && '' !== description ? (
               <>
                 <SplitTypeSection />
@@ -267,7 +379,22 @@ export const AddOrEditExpensePage: React.FC<{
                 </div>
               </>
             ) : null}
+            <div className="flex items-center justify-end gap-4">
+              <Button variant="ghost" className=" text-primary px-0" onClick={clearFields}>
+                {t('ui.clear')}
+              </Button>
+            </div>
           </div>
+            <BankingTransactions
+              add={addViaGoCardless}
+              addMultipleExpenses={addMultipleExpenses}
+              multipleTransactions={multipleTransactions}
+              setMultipleTransactions={(a: TransactionAddInputModel[]) => {
+                clearFields();
+                setMultipleTransactions(a);
+              }}
+              isTransactionLoading={isTransactionLoading}
+            />
           <div className="flex w-full justify-center">
             <Link href="https://github.com/sponsors/KMKoushik" target="_blank" className="mx-auto">
               <Button

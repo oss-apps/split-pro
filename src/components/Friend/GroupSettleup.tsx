@@ -75,11 +75,29 @@ export const GroupSettleUp: React.FC<{
     <AppDrawer
       trigger={children}
       leftAction=""
-      title={t('ui.settle_up_details.settlement')}
+      title=""
       className="h-[70vh]"
       actionTitle=""
       shouldCloseOnAction
     >
+      <div className="flex items-center justify-between px-2">
+        <DrawerClose>
+          <Button size="sm" variant="ghost" className="text-cyan-500 lg:hidden">
+            {t('ui.settle_up_details.back')}
+          </Button>
+        </DrawerClose>
+        <div className="mt-4 mb-2 text-center">{t('ui.settle_up_details.settlement')}</div>
+        <DrawerClose>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-cyan-500 lg:hidden"
+            onClick={saveExpense}
+          >
+            {t('ui.settle_up_details.save')}
+          </Button>
+        </DrawerClose>
+      </div>
       <div className="mt-10 flex flex-col items-center gap-6">
         <div className="flex flex-col items-center">
           <div className="flex items-center gap-5">

@@ -1,4 +1,3 @@
-import Avatar from 'boring-avatars';
 import { clsx } from 'clsx';
 import {
   BarChartHorizontal,
@@ -13,12 +12,12 @@ import {
   UserPlus,
   X,
 } from 'lucide-react';
+import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { Fragment, useCallback, useState } from 'react';
+import { Fragment, useCallback, useState } from 'react';
 import { toast } from 'sonner';
-import { UpdateName } from '~/components/ui/update-details';
 import { BalanceList } from '~/components/Expense/BalanceList';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
 import AddMembers from '~/components/group/AddMembers';
@@ -32,15 +31,15 @@ import { Label } from '~/components/ui/label';
 import { SimpleConfirmationDialog } from '~/components/ui/simple-confirmation-dialog';
 import { Switch } from '~/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { UpdateName } from '~/components/ui/update-details';
 import { env } from '~/env';
+import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
+import { db } from '~/server/db';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
+import { customServerSideTranslations } from '~/utils/i18n/server';
 import { toUIString } from '~/utils/numbers';
 import { toUIDate } from '~/utils/strings';
-import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
-import { customServerSideTranslations } from '~/utils/i18n/server';
-import { type GetServerSideProps } from 'next';
-import { db } from '~/server/db';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;

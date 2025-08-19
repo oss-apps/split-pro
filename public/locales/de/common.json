@@ -44,7 +44,6 @@
         "owe": "schuldest",
         "paid": "hast bezahlt",
         "pay": "bezahlst",
-        "get": "bekommst",
         "received": "hast erhalten",
         "deleted": "hast gelöscht"
       },
@@ -53,7 +52,6 @@
         "owe": "schuldet",
         "paid": "hat bezahlt",
         "pay": "bezahlt",
-        "get": "bekommt",
         "received": "hat erhalten",
         "deleted": "hat gelöscht"
       },

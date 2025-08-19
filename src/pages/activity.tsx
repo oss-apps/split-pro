@@ -71,7 +71,9 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                     <span className="font-semibold">
                       {displayName(e.expense.deletedByUser, user.id)}
                     </span>{' '}
-                    {t('ui.expense.user.deleted')}{' '}
+                    {t(
+                      `ui.expense.${e.expense.deletedByUser.id === user.id ? 'you' : 'user'}.deleted`,
+                    )}{' '}
                     <span className="font-semibold">{e.expense.name}</span>
                   </p>
                 ) : (
@@ -79,7 +81,8 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                     <span className="font-semibold text-gray-300">
                       {displayName(e.expense.paidByUser, user.id)}
                     </span>{' '}
-                    {t('ui.expense.user.paid')} {t('ui.expense.for')}{' '}
+                    {t(`ui.expense.${e.expense.paidByUser.id === user.id ? 'you' : 'user'}.paid`)}{' '}
+                    {t('ui.expense.for')}{' '}
                     <span className="font-semibold text-gray-300">{e.expense.name}</span>
                   </p>
                 )}

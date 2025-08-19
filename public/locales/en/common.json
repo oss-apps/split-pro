@@ -44,7 +44,6 @@
         "owe": "owe",
         "paid": "paid",
         "pay": "pay",
-        "get": "get",
         "received": "received",
         "deleted": "deleted"
       },
@@ -53,7 +52,6 @@
         "owe": "owes",
         "paid": "paid",
         "pay": "pays",
-        "get": "gets",
         "received": "received",
         "deleted": "deleted"
       },

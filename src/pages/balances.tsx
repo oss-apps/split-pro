@@ -82,7 +82,7 @@ const BalancePage: NextPageWithUser = () => {
                 <div className="bg-opacity-40 mt-2 flex flex-col justify-center px-1">
                   <div className="flex items-center justify-center gap-2">
                     <p className="text-sm">
-                      {t('ui.actors.you')} {t('ui.expense.you.get')}
+                      {t('ui.actors.you')} {t('ui.expense.you.lent')}
                     </p>
                   </div>
                 </div>

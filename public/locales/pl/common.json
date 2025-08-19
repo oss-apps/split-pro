@@ -40,22 +40,20 @@
     },
     "expense": {
       "you": {
-        "lent": "pożyczyłeś",
-        "owe": "jesteś winien",
-        "paid": "zapłaciłeś",
+        "lent": "odzyskujesz",
+        "owe": "masz do oddania",
+        "paid": "płacisz",
         "pay": "płacisz",
-        "get": "otrzymujesz",
-        "received": "otrzymałeś",
-        "deleted": "usunięto"
+        "received": "dostajesz",
+        "deleted": "usuwasz"
       },
       "user": {
-        "lent": "pożyczył",
-        "owe": "jest winien",
-        "paid": "zapłacił",
+        "lent": "odzyskuje",
+        "owe": "ma do oddania",
+        "paid": "płaci",
         "pay": "płaci",
-        "get": "otrzymuje",
-        "received": "otrzymał",
-        "deleted": "usunięto"
+        "received": "dostaje",
+        "deleted": "usuwa"
       },
       "for": "za",
       "paid_by": "Zapłacone przez",

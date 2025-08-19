@@ -44,7 +44,6 @@
         "owe": "devi",
         "paid": "hai pagato",
         "pay": "paga",
-        "get": "ricevi",
         "received": "hai ricevuto",
         "deleted": "hai eliminato"
       },
@@ -53,7 +52,6 @@
         "owe": "deve",
         "paid": "ha pagato",
         "pay": "paga",
-        "get": "riceve",
         "received": "ha ricevuto",
         "deleted": "ha eliminato"
       },

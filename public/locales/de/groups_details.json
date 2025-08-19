@@ -7,17 +7,10 @@
       "add_members_details": {
         "title": "Mitglieder hinzufügen",
         "placeholder": "Name oder E-Mail eingeben",
-        "cancel": "Abbrechen",
-        "save": "Speichern",
         "warning": "Warnung: Verwende 'Einladung senden' nicht bei ungültiger E-Mail. Nutze stattdessen 'Zu Split Pro hinzufügen'. Dein Konto wird bei Missbrauch gesperrt.",
         "note": "Hinweis: Das Versenden von Einladungen ist momentan wegen Spam deaktiviert.",
-        "send_invite": "Benutzer einladen",
-        "add_to_split_pro": "Zu Split Pro hinzufügen",
-        "errors": {
-          "valid_email": "Gib eine gültige E-Mail ein"
-        }
+        "send_invite": "Benutzer einladen"
       },
-      "or": "oder",
       "invite_link": "Einladungslink teilen",
       "copied": "Kopiert"
     },
@@ -43,11 +36,8 @@
       "leave_group_details": {
         "title": "Bist du dir absolut sicher?",
         "can_leave": "Diese Aktion kann nicht rückgängig gemacht werden",
-        "cant_leave": "Gruppe kann nicht verlassen werden, bis dein ausstehender Saldo ausgeglichen ist",
-        "cancel": "Abbrechen",
-        "leave": "Verlassen"
+        "cant_leave": "Gruppe kann nicht verlassen werden, bis dein ausstehender Saldo ausgeglichen ist"
       },
-      "owner": "Besitzer",
       "remove_member_details": {
         "title": "Bist du dir absolut sicher?",
         "can_remove": "Du bist dabei, dieses Mitglied aus der Gruppe zu entfernen",
@@ -70,40 +60,16 @@
     },
     "errors": {
       "group_name_update_failed": "Fehler beim Aktualisieren des Gruppennamens",
-      "setting_update_failed": "Einstellung konnte nicht aktualisiert werden",
-      "something_went_wrong": "Etwas ist schiefgelaufen"
-    },
-    "add_expense": "Ausgabe hinzufügen",
+      "setting_update_failed": "Einstellung konnte nicht aktualisiert werden"    },
     "add_members": "Mitglieder hinzufügen",
     "copied": "Kopiert",
-    "invite": "Einladen",
-    "you_paid": "Du hast bezahlt",
-    "user_paid": "hat bezahlt",
-    "you_lent": "Du hast verliehen",
-    "you_owe": "Du schuldest",
-    "all_settled_up": "Alles ausgeglichen",
-    "owes_you": "schuldet dir",
-    "you_owe_friend": "Du schuldest",
-    "balance": "Saldo",
-    "balances": "Salden",
-    "outstanding_balances": "Ausstehende Salden",
-    "expense_details": "Ausgabendetails",
     "create_group": {
-      "title": "Gruppe erstellen",
-      "group_name_placeholder": "Gruppenname",
-      "cancel": "Abbrechen",
-      "submit": "Absenden",
-      "errors": {
-        "name_required": "Name ist erforderlich"
-      }
+      "title": "Gruppe erstellen"
     }
   },
   "invite_message": {
     "join_to": "Tritt bei",
     "in_splitpro": "in SplitPro",
     "text": "Tritt der Gruppe bei und du kannst Ausgaben hinzufügen, verwalten und deine Salden verfolgen"
-  },
-  "errors": {
-    "something_went_wrong": "Etwas ist schiefgelaufen"
   }
 }

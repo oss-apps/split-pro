@@ -41,7 +41,7 @@
       "follow_to_export_splitwise_data": "Follow this link to export splitwise data",
       "export_splitwise_data_button": "Export splitwise data",
       "messages": {
-        "import_successful": "Import successful"
+        "import_success": "Import successful"
       },
       "errors": {
         "import_failed": "Error importing file"

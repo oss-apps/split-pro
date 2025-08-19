@@ -88,7 +88,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
       },
       {
         onSuccess: () => {
-          toast.success(t('ui.import_from_splitwise_details.messages.import_successful'));
+          toast.success(t('ui.import_from_splitwise_details.messages.import_success'));
           router.push('/balances').catch((err) => console.error(err));
         },
       },

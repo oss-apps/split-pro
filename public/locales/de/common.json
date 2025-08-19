@@ -14,17 +14,78 @@
     "account": "Konto"
   },
   "ui": {
-    "you": "Du",
-    "cancel": "Abbrechen",
-    "confirm": "Bestätigen",
-    "edit_name": {
-      "title": "Namen bearbeiten",
-      "placeholder": "Name eingeben",
+    "actors": {
+      "you": "Du",
+      "friends": "Freunde",
+      "groups": "Gruppen",
+      "members": "Mitglieder",
+      "owner": "Besitzer",
+      "all": "Alle"
+    },
+    "actions": {
+      "cancel": "Abbrechen",
+      "confirm": "Bestätigen",
+      "submit": "Einreichen",
       "close": "Schließen",
+      "back": "Zurück",
+      "create": "Erstellen",
       "save": "Speichern",
-      "errors": {
-        "name_required": "Name ist erforderlich"
-      }
-    }
+      "leave": "Verlassen",
+      "invite": "Einladen",
+      "export": "Exportieren",
+      "import": "Importieren",
+      "add_expense": "Ausgabe hinzufügen",
+      "edit_expense": "Ausgabe bearbeiten",
+      "settle_up": "Ausgleichen"
+    },
+    "expense": {
+      "you": {
+        "lent": "hast verliehen",
+        "owe": "schuldest",
+        "paid": "hast bezahlt",
+        "pay": "bezahlst",
+        "get": "bekommst",
+        "received": "hast erhalten",
+        "deleted": "hast gelöscht"
+      },
+      "user": {
+        "lent": "hat verliehen",
+        "owe": "schuldet",
+        "paid": "hat bezahlt",
+        "pay": "bezahlt",
+        "get": "bekommt",
+        "received": "hat erhalten",
+        "deleted": "hat gelöscht"
+      },
+      "for": "für",
+      "paid_by": "Bezahlt von",
+      "to": "an",
+      "from": "von"
+    },
+    "balance": "Saldo",
+    "balances": "Salden",
+    "or": "oder",
+    "and": "und",
+    "today": "Heute",
+    "delete": "Löschen",
+    "edited_by": "Bearbeitet von",
+    "deleted_by": "Gelöscht von",
+    "added_by": "Hinzugefügt von",
+    "on": "am",
+    "not_involved": "Nicht beteiligt",
+    "no_activity": "Noch keine Aktivitäten",
+    "settled_up": "Ausgeglichen",
+    "settle_up_name": "Ausgleichen",
+    "settlement": "Ausgleich",
+    "expense_details": "Ausgaben Details",
+    "select_currency": "Währung auswählen",
+    "outstanding_balances": "Ausstehende Salden",
+    "share_text": "Schau dir SplitPro an. Es ist eine kostenlose Open-Source-Alternative zu Splitwise."
+  },
+  "errors": {
+    "name_required": "Name ist erforderlich",
+    "saving_expense": "Fehler beim Speichern der Ausgabe",
+    "something_went_wrong": "Etwas ist schiefgelaufen",
+    "valid_email": "Gültige E-Mail-Adresse eingeben"
   }
 }

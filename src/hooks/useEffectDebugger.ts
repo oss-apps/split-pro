@@ -26,7 +26,7 @@ export const useEffectDebugger = (
   }, {});
 
   if (Object.keys(changedDeps).length) {
-    console.log('[use-effect-debugger] ', changedDeps);
+    console.table(changedDeps);
   }
 
   // oxlint-disable-next-line exhaustive-deps

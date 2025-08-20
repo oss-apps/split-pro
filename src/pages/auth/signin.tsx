@@ -68,10 +68,8 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
   feedbackEmail,
 }) => {
   const { t } = useTranslation('signin');
-  const router = useRouter();
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
   const [, setEmail] = useSession('splitpro-email');
-  const [, setLocale] = useSession('splitpro-signin-locale'); // locale is not kept upon redirect to verify-request
 
   const emailForm = useForm<EmailFormValues>({
     resolver: zodResolver(emailSchema(t)),
@@ -90,10 +88,6 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
       }
     }
   }, [error, t]);
-
-  useEffect(() => {
-    setLocale(router.locale ?? 'en');
-  }, [router.locale, setLocale]);
 
   const onEmailSubmit = useCallback(async () => {
     setEmailStatus('sending');

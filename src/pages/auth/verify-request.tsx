@@ -30,27 +30,9 @@ const Home: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
   const router = useRouter();
 
   const [email, setEmail] = useSession('splitpro-email');
-  const [locale, setLocale] = useSession('splitpro-signin-locale');
   const otpForm = useForm<OTPFormValues>({
     resolver: zodResolver(otpSchema(t)),
   });
-
-  useEffect(() => {
-    if (!locale) {
-      return;
-    }
-
-    router
-      .push(router.asPath, router.asPath, {
-        locale,
-        scroll: false,
-      })
-      .catch(console.error);
-
-    return () => {
-      setLocale('');
-    };
-  }, [locale, router, setLocale]);
 
   const onOTPSubmit = useCallback(async () => {
     if (!email) {

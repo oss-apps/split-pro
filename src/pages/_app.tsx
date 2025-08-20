@@ -29,7 +29,11 @@ const MyApp: AppType<{ session: Session | null; baseUrl: string }> = ({
   const { t, ready } = useTranslation('common');
 
   if (!ready) {
-    return null;
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <LoadingSpinner className="text-primary" />
+      </div>
+    );
   }
 
   return (

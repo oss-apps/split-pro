@@ -82,6 +82,8 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
     if (error) {
       if ('SignupDisabled' === error) {
         toast.error(t('errors.signup_disabled'), { duration: 5000 });
+      } else if ('SessionRequired' === error) {
+        return;
       } else {
         toast.error(t('errors.signin_error') + error);
         console.error('Error during sign-in:', error);

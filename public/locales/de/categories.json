@@ -1,0 +1,86 @@
+{
+  "title": "Kategorien",
+  "categories_list": {
+    "entertainment": {
+      "name": "Unterhaltung",
+      "items": {
+        "games": "Spiele",
+        "movies": "Filme",
+        "music": "Musik",
+        "sports": "Sport",
+        "other": "Unterhaltung"
+      }
+    },
+    "food": {
+      "name": "Essen & Trinken",
+      "items": {
+        "diningOut": "Auswärts essen",
+        "groceries": "Lebensmittel",
+        "liquor": "Alkohol",
+        "other": "Essen & Trinken"
+      }
+    },
+    "home": {
+      "name": "Zuhause",
+      "items": {
+        "electronics": "Elektronik",
+        "furniture": "Möbel",
+        "supplies": "Materialien",
+        "maintenance": "Wartung",
+        "mortgage": "Hypothek",
+        "pets": "Haustiere",
+        "rent": "Miete",
+        "services": "Dienstleistungen",
+        "other": "Zuhause"
+      }
+    },
+    "life": {
+      "name": "Leben",
+      "items": {
+        "childcare": "Kinderbetreuung",
+        "clothing": "Kleidung",
+        "education": "Bildung",
+        "gifts": "Geschenke",
+        "medical": "Medizinisch",
+        "taxes": "Steuern",
+        "other": "Leben",
+        "insurance": "Versicherung"
+      }
+    },
+    "travel": {
+      "name": "Reisen",
+      "items": {
+        "bus": "Bus",
+        "train": "Zug",
+        "car": "Auto",
+        "fuel": "Kraftstoff",
+        "parking": "Parken",
+        "plane": "Flugzeug",
+        "taxi": "Taxi",
+        "other": "Reisen",
+        "bicycle": "Fahrrad",
+        "hotel": "Hotel"
+      }
+    },
+    "utilities": {
+      "name": "Nebenkosten",
+      "items": {
+        "cleaning": "Reinigung",
+        "electricity": "Strom",
+        "gas": "Gas",
+        "internet": "Internet",
+        "trash": "Müll",
+        "phone": "Telefon",
+        "water": "Wasser",
+        "other": "Nebenkosten"
+      }
+    },
+    "general": {
+      "name": "Allgemein",
+      "items": {
+        "general": "Allgemein",
+        "other": "Allgemein"
+      }
+    }
+  }
+}

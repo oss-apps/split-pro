@@ -4,8 +4,6 @@
     "change_language": "Sprache ändern",
     "change_language_details": {
       "title": "Sprache auswählen",
-      "save": "Speichern",
-      "close": "Schließen",
       "messages": {
         "language_changed": "Sprache erfolgreich geändert"
       },
@@ -33,21 +31,15 @@
       "download_as_pwa": "Du kannst SplitPro als App auf deinen Startbildschirm herunterladen.",
       "using_ios": "Wenn du iOS benutzt, schau dir das an",
       "using_android": "Wenn du Android benutzt, schau dir das an",
-      "video": "Video",
-      "close": "Schließen"
+      "video": "Video"
     },
     "import_from_splitwise": "Von Splitwise importieren",
     "import_from_splitwise_details": {
       "choose_file": "Datei auswählen",
       "no_file_chosen": "Keine Datei ausgewählt",
       "note": "Hinweis: Es werden derzeit nur Freunde und Gruppen importiert. Transaktionen werden nicht importiert. Wir arbeiten daran.",
-      "friends": "Freunde",
-      "groups": "Gruppen",
-      "members": "Mitglieder",
       "follow_to_export_splitwise_data": "Folge diesem Link, um Splitwise-Daten zu exportieren",
       "export_splitwise_data_button": "Splitwise-Daten exportieren",
-      "import": "Importieren",
-      "cancel": "Abbrechen",
       "messages": {
         "import_success": "Import erfolgreich"
       },
@@ -59,8 +51,6 @@
     "submit_feedback": "Feedback senden",
     "submit_feedback_details": {
       "title": "Feedback senden",
-      "close": "Schließen",
-      "submit": "Senden",
       "placeholder": "Dein Feedback eingeben"
     },
     "errors": {
@@ -75,6 +65,10 @@
     "star_on_github": "Stern auf GitHub vergeben",
     "support_us": "Unterstütze uns",
     "follow_on_x": "Folge uns auf X",
-    "logout": "Abmelden"
+    "logout": "Abmelden",
+    "edit_name": {
+      "title": "Namen bearbeiten",
+      "placeholder": "Name eingeben"
+    }
   }
 }

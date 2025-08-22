@@ -14,17 +14,76 @@
     "account": "Konto"
   },
   "ui": {
-    "you": "Ty",
-    "cancel": "Anuluj",
-    "confirm": "Potwierdź",
-    "edit_name": {
-      "title": "Edytuj nazwę",
-      "placeholder": "Wprowadź nazwę",
+    "actors": {
+      "you": "Ty",
+      "friends": "Znajomi",
+      "groups": "Grupy",
+      "members": "Członkowie",
+      "owner": "Właściciel",
+      "all": "Wszyscy"
+    },
+    "actions": {
+      "cancel": "Anuluj",
+      "confirm": "Potwierdź",
+      "submit": "Wyślij",
       "close": "Zamknij",
+      "back": "Wstecz",
+      "create": "Utwórz",
       "save": "Zapisz",
-      "errors": {
-        "name_required": "Nazwa jest wymagana"
-      }
-    }
+      "leave": "Opuść",
+      "invite": "Zaproś",
+      "export": "Eksportuj",
+      "import": "Importuj",
+      "add_expense": "Dodaj wydatek",
+      "edit_expense": "Edytuj wydatek",
+      "settle_up": "Rozlicz"
+    },
+    "expense": {
+      "you": {
+        "lent": "odzyskujesz",
+        "owe": "masz do oddania",
+        "paid": "płacisz",
+        "pay": "płacisz",
+        "received": "dostajesz",
+        "deleted": "usuwasz"
+      },
+      "user": {
+        "lent": "odzyskuje",
+        "owe": "ma do oddania",
+        "paid": "płaci",
+        "pay": "płaci",
+        "received": "dostaje",
+        "deleted": "usuwa"
+      },
+      "for": "za",
+      "paid_by": "Zapłacone przez",
+      "to": "do",
+      "from": "od"
+    },
+    "balance": "saldo",
+    "balances": "salda",
+    "or": "lub",
+    "and": "i",
+    "today": "Dzisiaj",
+    "delete": "Usuń",
+    "edited_by": "Edytowane przez",
+    "deleted_by": "Usunięte przez",
+    "added_by": "Dodane przez",
+    "on": "dnia",
+    "not_involved": "Nie uczestniczy",
+    "no_activity": "Brak aktywności",
+    "settled_up": "Rozliczone",
+    "settle_up_name": "Rozlicz",
+    "settlement": "Rozliczenie",
+    "expense_details": "Szczegóły wydatku",
+    "select_currency": "Wybierz walutę",
+    "outstanding_balances": "Zaległe salda",
+    "share_text": "Sprawdź SplitPro. To darmowa alternatywa open source dla Splitwise"
+  },
+  "errors": {
+    "name_required": "Nazwa jest wymagana",
+    "saving_expense": "Błąd podczas zapisywania wydatku",
+    "something_went_wrong": "Coś poszło nie tak",
+    "valid_email": "Wprowadź prawidłowy email"
   }
 }

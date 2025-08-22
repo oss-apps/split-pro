@@ -3,14 +3,14 @@ import { format, isToday } from 'date-fns';
 import { type TFunction } from 'next-i18next';
 
 export const displayName = (
-  user: Pick<User, 'name' | 'email' | 'id'>,
+  user?: Pick<User, 'name' | 'email' | 'id'> | null,
   currentUserId?: number,
   t?: TFunction,
 ): string => {
-  if (currentUserId === user.id) {
-    return t ? t('ui.you', { ns: 'common' }) : 'You';
+  if (currentUserId === user?.id) {
+    return t ? t('ui.actors.you', { ns: 'common' }) : 'You';
   }
-  return user.name ?? user.email!;
+  return user?.name ?? user?.email ?? '';
 };
 
 export const toUIDate = (date: Date, { useToday = false, year = false } = {}): string =>

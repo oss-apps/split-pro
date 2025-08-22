@@ -11,8 +11,8 @@ import { Input } from './input';
 const detailsSchema = (t: TFunction) =>
   z.object({
     name: z
-      .string({ required_error: t('ui.edit_name.errors.name_required') })
-      .min(1, { message: t('ui.edit_name.errors.name_required') }),
+      .string({ required_error: t('ui.errors.name_required', { ns: 'common' }) })
+      .min(1, { message: t('ui.errors.name_required', { ns: 'common' }) }),
   });
 
 type UpdateDetailsFormValues = z.infer<ReturnType<typeof detailsSchema>>;
@@ -24,7 +24,7 @@ export const UpdateName: React.FC<{
 }> = ({ className, defaultName, onNameSubmit }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const { t } = useTranslation('common');
+  const { t } = useTranslation('account_page');
 
   const detailForm = useForm<UpdateDetailsFormValues>({
     resolver: zodResolver(detailsSchema(t)),
@@ -69,11 +69,11 @@ export const UpdateName: React.FC<{
       trigger={trigger}
       open={drawerOpen}
       onOpenChange={handleOpenChange}
-      leftAction={t('ui.edit_name.close')}
+      leftAction={t('ui.actions.close', { ns: 'common' })}
       title={t('ui.edit_name.title')}
       shouldCloseOnAction={false}
       className="h-[80vh]"
-      actionTitle={t('ui.edit_name.save')}
+      actionTitle={t('ui.actions.save', { ns: 'common' })}
       actionOnClick={handleOnActionClick}
     >
       <Form {...detailForm}>

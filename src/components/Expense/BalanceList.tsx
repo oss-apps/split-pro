@@ -2,7 +2,7 @@ import type { GroupBalance, User } from '@prisma/client';
 import { clsx } from 'clsx';
 import { Info } from 'lucide-react';
 import { Fragment, useMemo } from 'react';
-import { UserAvatar } from '~/components/ui/avatar';
+import { EntityAvatar } from '~/components/ui/avatar';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
 
@@ -68,7 +68,7 @@ export const BalanceList: React.FC<{
             <AccordionItem key={user.id} value={displayName(user)}>
               <AccordionTrigger className="hover:no-underline">
                 <div className="flex items-center gap-3">
-                  <UserAvatar user={user} />
+                  <EntityAvatar entity={user} />
                   <div className="text-foreground">
                     {displayName(user, userQuery.data?.id)}
                     {Object.values(total).every((amount) => 0n === amount) ? (
@@ -82,17 +82,10 @@ export const BalanceList: React.FC<{
                       <>
                         <span className="text-gray-400">
                           {' '}
-                          {(() => {
-                            if (0 < totalAmount[1]) {
-                              return isCurrentUser
-                                ? t('ui.balance_list.get')
-                                : t('ui.balance_list.gets');
-                            } else {
-                              return isCurrentUser
-                                ? t('ui.balance_list.owe')
-                                : t('ui.balance_list.owes');
-                            }
-                          })()}{' '}
+                          {t(
+                            `ui.expense.${isCurrentUser ? 'you' : 'user'}.${0 < totalAmount[1] ? 'lent' : 'owe'}`,
+                            { ns: 'common' },
+                          )}{' '}
                         </span>
                         <span
                           className={clsx(
@@ -123,22 +116,15 @@ export const BalanceList: React.FC<{
                           groupId={groupBalances[0]!.groupId}
                         >
                           <div className="mb-4 ml-5 flex cursor-pointer items-center gap-3 text-sm">
-                            <UserAvatar user={friend} size={20} />
+                            <EntityAvatar entity={friend} size={20} />
                             <div className="text-foreground">
                               {displayName(friend, userQuery.data?.id)}
                               <span className="text-gray-400">
                                 {' '}
-                                {(() => {
-                                  if (0 > amount) {
-                                    return friend.id === userQuery.data?.id
-                                      ? t('ui.balance_list.get')
-                                      : t('ui.balance_list.gets');
-                                  } else {
-                                    return friend.id === userQuery.data?.id
-                                      ? t('ui.balance_list.owe')
-                                      : t('ui.balance_list.owes');
-                                  }
-                                })()}{' '}
+                                {t(
+                                  `ui.expense.${friend.id === userQuery.data?.id ? 'you' : 'user'}.${0 > amount ? 'lent' : 'owe'}`,
+                                  { ns: 'common' },
+                                )}{' '}
                               </span>
                               <span
                                 className={clsx(
@@ -150,9 +136,9 @@ export const BalanceList: React.FC<{
                               </span>
                               <span className="text-gray-400">
                                 {' '}
-                                {0 < amount
-                                  ? t('ui.balance_list.to')
-                                  : t('ui.balance_list.from')}{' '}
+                                {t(`ui.expense.${0 < amount ? 'to' : 'from'}`, {
+                                  ns: 'common',
+                                })}{' '}
                               </span>
                               <span className="text-foreground">
                                 {displayName(user, userQuery.data?.id)}

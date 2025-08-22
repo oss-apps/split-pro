@@ -15,8 +15,8 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form'
 const groupSchema = (t: TFunction) =>
   z.object({
     name: z
-      .string({ required_error: t('ui.create_group.errors.name_required') })
-      .min(1, { message: t('ui.create_group.errors.name_required') }),
+      .string({ required_error: t('ui.errors.name_required', { ns: 'common' }) })
+      .min(1, { message: t('ui.errors.name_required', { ns: 'common' }) }),
   });
 
 type CreateGroupFormValues = z.infer<ReturnType<typeof groupSchema>>;
@@ -94,11 +94,11 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
         open={drawerOpen}
         onOpenChange={handleOpenChange}
         trigger={children}
-        leftAction={t('ui.create_group.cancel')}
+        leftAction={t('ui.actions.cancel', { ns: 'common' })}
         leftActionOnClick={handleLeftActionClick}
         title={t('ui.create_group.title')}
         className="h-[70vh]"
-        actionTitle={t('ui.create_group.submit')}
+        actionTitle={t('ui.actions.submit', { ns: 'common' })}
         actionOnClick={handleActionClick}
       >
         <div className="w-full">

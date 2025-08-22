@@ -22,7 +22,7 @@ import { LanguageSelector } from '~/components/ui/language-selector';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 
 export default function Home({ isCloud }: { isCloud: boolean }) {
-  const { t } = useTranslation('index');
+  const { t } = useTranslation('home');
 
   return (
     <>
@@ -275,6 +275,6 @@ const MobileScreenShot = () => (
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
     isCloud: env.NEXTAUTH_URL.includes('splitpro.app'),
-    ...(await customServerSideTranslations(context.locale, ['index', 'common'])),
+    ...(await customServerSideTranslations(context.locale, ['home', 'common'])),
   },
 });

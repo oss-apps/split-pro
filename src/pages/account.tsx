@@ -18,7 +18,7 @@ import { SubscribeNotification } from '~/components/Account/SubscribeNotificatio
 import { UpdateName } from '~/components/ui/update-details';
 import { LanguagePicker } from '~/components/Account/LanguagePicker';
 import MainLayout from '~/components/Layout/MainLayout';
-import { UserAvatar } from '~/components/ui/avatar';
+import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { LoadingSpinner } from '~/components/ui/spinner';
@@ -100,7 +100,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
       <MainLayout title={t('ui.title')} header={header}>
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <UserAvatar user={user} size={50} />
+            <EntityAvatar entity={user} size={50} />
             <div>
               <div className="text-xl font-semibold">{userQuery.data?.name}</div>
               <div className="text-sm text-gray-500">{user.email}</div>
@@ -194,7 +194,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
           </Link>
           <AppDrawer
             trigger={downloadAppButton}
-            leftAction={t('ui.download_app_details.close')}
+            leftAction={t('ui.actions.close', { ns: 'common' })}
             title={t('ui.download_app_details.title')}
             className="h-[70vh]"
             shouldCloseOnAction

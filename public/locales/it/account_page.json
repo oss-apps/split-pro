@@ -4,8 +4,6 @@
     "change_language": "Cambia lingua",
     "change_language_details": {
       "title": "Seleziona una lingua",
-      "save": "Salva",
-      "close": "Chiudi",
       "messages": {
         "language_changed": "Lingua cambiata con successo"
       },
@@ -33,21 +31,15 @@
       "download_as_pwa": "Puoi scaricare SplitPro come PWA sulla tua home screen.",
       "using_ios": "Se utilizzi iOS, guarda questo",
       "using_android": "Se utilizzi Android, guarda questo",
-      "video": "video",
-      "close": "Chiudi"
+      "video": "video"
     },
     "import_from_splitwise": "Importa da Splitwise",
     "import_from_splitwise_details": {
       "choose_file": "Scegli file",
       "no_file_chosen": "Nessun file scelto",
-      "note": "Nota: al momento supporta solo l'importazione di amici e gruppi. Non importerà\ntransazioni. Ci stiamo lavorando.",
-      "friends": "Amici",
-      "groups": "Gruppi",
-      "members": "membri",
+      "note": "Nota: al momento supporta solo l'importazione di amici e gruppi. Non importerà transazioni. Ci stiamo lavorando.",
       "follow_to_export_splitwise_data": "Segui questo link per esportare i dati splitwise",
       "export_splitwise_data_button": "Esporta dati Splitwise",
-      "import": "Importa",
-      "cancel": "Annulla",
       "messages": {
         "import_success": "Importazione riuscita"
       },
@@ -59,22 +51,24 @@
     "submit_feedback": "Invia feedback",
     "submit_feedback_details": {
       "title": "Invia feedback",
-      "close": "Chiudi",
-      "submit": "Invia",
       "placeholder": "Inserisci il tuo feedback"
-    },
-    "messages": {
-      "submit_success": "Feedback inviato",
-      "submit_error": "Invio del feedback fallito"
     },
     "errors": {
       "feedback_required": "Il feedback è obbligatorio",
       "feedback_min_length": "Il feedback deve contenere almeno 10 caratteri"
     },
+    "messages": {
+      "submit_success": "Feedback inviato",
+      "submit_error": "Invio del feedback fallito"
+    },
     "write_review": "Scrivi una recensione",
     "star_on_github": "Metti una stella su GitHub",
     "support_us": "Supportaci",
     "follow_on_x": "Seguici su X",
-    "logout": "Esci"
+    "logout": "Esci",
+    "edit_name": {
+      "title": "Modifica nome",
+      "placeholder": "Inserisci il nome"
+    }
   }
 }

@@ -36,7 +36,7 @@ export const SimpleConfirmationDialog: React.FC<
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>{t('ui.cancel')}</AlertDialogCancel>
+          <AlertDialogCancel>{t('ui.actions.cancel', { ns: 'common' })}</AlertDialogCancel>
           {hasPermission && (
             <form
               onSubmit={async (e) => {
@@ -52,7 +52,7 @@ export const SimpleConfirmationDialog: React.FC<
                 disabled={loading}
                 loading={loading}
               >
-                {t('ui.confirm')}
+                {t('ui.actions.confirm', { ns: 'common' })}
               </Button>
             </form>
           )}

@@ -16,7 +16,7 @@ import { type ChangeEvent, useCallback, useMemo } from 'react';
 import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/store/addStore';
 import { removeTrailingZeros, toSafeBigInt, toUIString } from '~/utils/numbers';
 
-import { UserAvatar } from '../ui/avatar';
+import { EntityAvatar } from '../ui/avatar';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
@@ -34,19 +34,19 @@ export const SplitTypeSection: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center text-[16px] text-gray-400 sm:mt-4">
-      <p className="text-[16px]">{t('ui.add_expense_details.split_type_section.paid_by')} </p>
+      <p className="text-[16px]">{t('ui.expense.paid_by', { ns: 'common' })} </p>
       <AppDrawer
         trigger={
           <p className="overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
             {
               (currentUser?.id === paidBy?.id
-                ? t('ui.add_expense_details.split_type_section.you')
+                ? t('ui.actors.you', { ns: 'common' })
                 : (paidBy?.name ?? paidBy?.email)
               )?.split(' ')[0]
             }
           </p>
         }
-        title={t('ui.add_expense_details.split_type_section.paid_by')}
+        title={t('ui.expense.paid_by', { ns: 'common' })}
         className="h-[70vh]"
         shouldCloseOnAction
       >
@@ -58,7 +58,7 @@ export const SplitTypeSection: React.FC = () => {
               onClick={() => setPaidBy(participant)}
             >
               <div className="flex items-center gap-1">
-                <UserAvatar user={participant} size={30} />
+                <EntityAvatar entity={participant} size={30} />
                 <p className="ml-4">{participant.name ?? participant.email ?? ''}</p>
               </div>
               {participant.id === paidBy?.id ? <Check className="h-6 w-6 text-cyan-500" /> : null}
@@ -67,7 +67,7 @@ export const SplitTypeSection: React.FC = () => {
         </div>
       </AppDrawer>
 
-      <p>{t('ui.add_expense_details.split_type_section.and')} </p>
+      <p>{t('ui.and', { ns: 'common' })} </p>
       <AppDrawer
         trigger={
           <div className="max-w-32 overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
@@ -82,7 +82,7 @@ export const SplitTypeSection: React.FC = () => {
         className="h-[85vh] lg:h-[70vh]"
         shouldCloseOnAction
         dismissible={false}
-        actionTitle={t('ui.add_expense_details.split_type_section.save')}
+        actionTitle={t('ui.actions.save', { ns: 'common' })}
         actionDisabled={!canSplitScreenClosed}
         open={splitScreenOpen}
         onOpenChange={(open) => setSplitScreenOpen(open)}
@@ -219,9 +219,7 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
     iconComponent: Plus,
     prefix: CURRENCY_TOKEN,
     isBoolean: false,
-    fmtSummartyText: () => {
-      return ``;
-    },
+    fmtSummartyText: () => '',
     fmtShareText: (share) => removeTrailingZeros(toUIString(share)),
   },
 ];
@@ -266,7 +264,7 @@ const SplitSection: React.FC<SplitSectionProps> = ({
 
   const onChangeInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>, userId: number) => {
-      const value = e.target.value;
+      const { value } = e.target;
       setSplitShare(
         splitType,
         userId,
@@ -290,7 +288,7 @@ const SplitSection: React.FC<SplitSectionProps> = ({
             onClick={selectAll}
           >
             {allSelected ? <X className="h-4 w-4" /> : <Check className="h-4 w-4" />}
-            <span className="text-sm">{t('ui.add_expense_details.split_type_section.all')}</span>
+            <span className="text-sm">{t('ui.actors.all', { ns: 'common' })}</span>
           </button>
         </div>
       )}
@@ -340,7 +338,7 @@ export const UserAndAmount: React.FC<{ user: Participant; currency: string }> = 
 
   return (
     <div className="flex items-center gap-2">
-      <UserAvatar user={user} size={30} />
+      <EntityAvatar entity={user} size={30} />
       <div className="flex flex-col items-start">
         <p>{user.name ?? user.email}</p>
         <p className={`'text-gray-400' text-sm text-gray-400`}>

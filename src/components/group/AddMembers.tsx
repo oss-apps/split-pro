@@ -10,7 +10,7 @@ import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { api } from '~/utils/api';
 
-import { UserAvatar } from '../ui/avatar';
+import { EntityAvatar } from '../ui/avatar';
 import { Input } from '../ui/input';
 
 const AddMembers: React.FC<{
@@ -108,7 +108,7 @@ const AddMembers: React.FC<{
       }
       onTriggerClick={handleTriggerClick}
       title={t('ui.no_members.add_members_details.title')}
-      leftAction={t('ui.no_members.add_members_details.cancel')}
+      leftAction={t('ui.actions.cancel', { ns: 'common' })}
       actionOnClick={handleActionClick}
       className="h-[85vh]"
       shouldCloseOnAction
@@ -141,7 +141,7 @@ const AddMembers: React.FC<{
               <SendIcon className="mr-2 h-4 w-4" />
               {isEmail.success
                 ? t('ui.no_members.add_members_details.send_invite')
-                : t('ui.no_members.add_members_details.errors.valid_email')}
+                : t('ui.errors.valid_email', { ns: 'common' })}
             </Button>
           )}
           <Button
@@ -153,7 +153,7 @@ const AddMembers: React.FC<{
             <UserPlusIcon className="mr-2 h-4 w-4" />
             {isEmail.success
               ? t('ui.no_members.add_members_details.add_to_split_pro')
-              : t('ui.no_members.add_members_details.errors.valid_email')}
+              : t('ui.errors.valid_email', { ns: 'common' })}
           </Button>
         </div>
       </div>
@@ -166,7 +166,7 @@ const AddMembers: React.FC<{
             onClick={() => onUserSelect(friend.id)}
           >
             <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
-              <UserAvatar user={friend} />
+              <EntityAvatar entity={friend} />
               <p>{friend.name ?? friend.email}</p>
             </div>
             <div>{userIds[friend.id] ? <CheckIcon className="text-primary h-4 w-4" /> : null}</div>

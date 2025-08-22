@@ -151,7 +151,7 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
           {providers && 2 === providers.length && (
             <div className="mt-6 flex w-[300px] items-center justify-between gap-2">
               <p className="bg-background z-10 ml-[150px] -translate-x-1/2 px-4 text-sm">
-                {t('auth.or')}
+                {t('ui.or', { ns: 'common' })}
               </p>
               <div className="absolute h-px w-[300px] bg-linear-to-r from-zinc-800 via-zinc-300 to-zinc-800" />
             </div>

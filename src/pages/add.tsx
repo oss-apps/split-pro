@@ -120,7 +120,11 @@ const AddPage: NextPageWithUser<{
   return (
     <>
       <Head>
-        <title>{_expenseId ? t('meta.title_edit') : t('meta.title')}</title>
+        <title>
+          {_expenseId
+            ? t('ui.actions.edit_expense', { ns: 'common' })
+            : t('ui.actions.add_expense', { ns: 'common' })}
+        </title>
       </Head>
       <MainLayout hideAppBar>
         {currentUser && (!_expenseId || expenseQuery.data) && (
@@ -145,8 +149,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => ({
     enableSendingInvites: !!env.ENABLE_SENDING_INVITES,
     ...(await customServerSideTranslations(context.locale, [
       'common',
-      'add_page',
       'expense_details',
+      'categories',
+      'currencies',
     ])),
   },
 });

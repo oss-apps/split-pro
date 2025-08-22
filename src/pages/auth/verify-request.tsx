@@ -84,7 +84,7 @@ const Home: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
               <FormField control={otpForm.control} name="otp" render={OTPInput} />
 
               <Button className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100">
-                {t('auth.submit')}
+                {t('ui.actions.submit', { ns: 'common' })}
               </Button>
             </form>
           </Form>

@@ -1,4 +1,3 @@
-import Avatar from 'boring-avatars';
 import { clsx } from 'clsx';
 import {
   BarChartHorizontal,
@@ -13,34 +12,34 @@ import {
   UserPlus,
   X,
 } from 'lucide-react';
+import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { Fragment, useCallback, useState } from 'react';
+import { Fragment, useCallback, useState } from 'react';
 import { toast } from 'sonner';
-import { UpdateName } from '~/components/ui/update-details';
 import { BalanceList } from '~/components/Expense/BalanceList';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
 import AddMembers from '~/components/group/AddMembers';
 import GroupMyBalance from '~/components/group/GroupMyBalance';
 import NoMembers from '~/components/group/NoMembers';
 import MainLayout from '~/components/Layout/MainLayout';
-import { UserAvatar } from '~/components/ui/avatar';
+import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { Label } from '~/components/ui/label';
 import { SimpleConfirmationDialog } from '~/components/ui/simple-confirmation-dialog';
 import { Switch } from '~/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { UpdateName } from '~/components/ui/update-details';
 import { env } from '~/env';
+import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
+import { db } from '~/server/db';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
+import { customServerSideTranslations } from '~/utils/i18n/server';
 import { toUIString } from '~/utils/numbers';
 import { toUIDate } from '~/utils/strings';
-import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
-import { customServerSideTranslations } from '~/utils/i18n/server';
-import { type GetServerSideProps } from 'next';
-import { db } from '~/server/db';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
@@ -101,8 +100,9 @@ const BalancePage: NextPageWithUser<{
           void groupDetailQuery.refetch();
           toast.success(t('ui.messages.balances_recalculated'));
         },
-        onError: () => {
-          toast.error(t('ui.errors.something_went_wrong'));
+        onError: (e) => {
+          toast.error(t('ui.errors.something_went_wrong', { ns: 'common' }));
+          console.error(e);
         },
       },
     );
@@ -115,8 +115,9 @@ const BalancePage: NextPageWithUser<{
         onSuccess: () => {
           router.replace('/groups').catch(console.error);
         },
-        onError: () => {
-          toast.error(t('ui.errors.something_went_wrong'));
+        onError: (e) => {
+          toast.error(t('ui.errors.something_went_wrong', { ns: 'common' }));
+          console.error(e);
         },
       },
     );
@@ -134,8 +135,9 @@ const BalancePage: NextPageWithUser<{
               groupDetailQuery.refetch().catch(console.error);
             }
           },
-          onError: () => {
-            toast.error(t('ui.errors.something_went_wrong'));
+          onError: (e) => {
+            toast.error(t('ui.errors.something_went_wrong', { ns: 'common' }));
+            console.error(e);
           },
         },
       );
@@ -152,13 +154,7 @@ const BalancePage: NextPageWithUser<{
       <MainLayout
         title={
           <div className="flex items-center">
-            <Button
-              variant="ghost"
-              onClick={async () => {
-                await router.replace(`/groups`);
-              }}
-              className="mr-2 p-0"
-            >
+            <Button variant="ghost" onClick={() => router.replace(`/groups`)} className="mr-2 p-0">
               <ChevronLeft className="h-6 w-6" />
             </Button>
             <p className="text-lg">{groupDetailQuery.data?.name}</p>
@@ -174,16 +170,16 @@ const BalancePage: NextPageWithUser<{
               <>
                 <p className="font-semibold">{t('ui.group_statistics.total_expenses')}</p>
                 <div className="mt-2 flex flex-wrap gap-1">
-                  {groupTotalQuery.data?.map((total, index, arr) => {
-                    return null != total._sum.amount ? (
+                  {groupTotalQuery.data?.map((total, index, arr) =>
+                    null != total._sum.amount ? (
                       <Fragment key={total.currency}>
                         <div className="flex flex-wrap gap-1">
                           {total.currency} {toUIString(total._sum.amount)}
                         </div>
                         {index < arr.length - 1 ? <span>+</span> : null}
                       </Fragment>
-                    ) : null;
-                  })}
+                    ) : null,
+                  )}
                 </div>
                 {expensesQuery?.data && expensesQuery.data[expensesQuery.data.length - 1] && (
                   <div className="mt-8">
@@ -233,11 +229,13 @@ const BalancePage: NextPageWithUser<{
                   {groupDetailQuery.data?.groupUsers.map((groupUser) => (
                     <div key={groupUser.userId} className="flex items-center justify-between">
                       <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
-                        <UserAvatar user={groupUser.user} />
+                        <EntityAvatar entity={groupUser.user} />
                         <p>{displayName(groupUser.user)}</p>
                       </div>
                       {groupUser.userId === groupDetailQuery.data?.userId ? (
-                        <p className="text-sm text-gray-400">{t('ui.group_info.owner')}</p>
+                        <p className="text-sm text-gray-400">
+                          {t('ui.actors.owner', { ns: 'common' })}
+                        </p>
                       ) : (
                         isAdmin &&
                         (() => {
@@ -366,21 +364,10 @@ const BalancePage: NextPageWithUser<{
         }
         header={
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              onClick={async () => {
-                await router.replace(`/groups`);
-              }}
-              className="mr-2 p-0"
-            >
+            <Button variant="ghost" onClick={() => router.replace(`/groups`)} className="mr-2 p-0">
               <ChevronLeft className="h-6 w-6" />
             </Button>
-            <Avatar
-              size={30}
-              name={groupDetailQuery.data?.name}
-              variant="bauhaus"
-              colors={['#80C7B7', '#D9C27E', '#F4B088', '#FFA5AA', '#9D9DD3']}
-            />
+            <EntityAvatar entity={groupDetailQuery.data} size={30} />
             <p className="text-lg">{groupDetailQuery.data?.name}</p>
           </div>
         }
@@ -402,7 +389,7 @@ const BalancePage: NextPageWithUser<{
             <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b pb-4">
               <Link href={`/add?groupId=${groupId}`}>
                 <Button size="sm" className="gap-1 text-sm lg:w-[180px]">
-                  {t('ui.add_expense')}
+                  {t('ui.actions.add_expense', { ns: 'common' })}
                 </Button>
               </Link>
               <Button size="sm" className="gap-1 text-sm" variant="secondary">
@@ -427,7 +414,8 @@ const BalancePage: NextPageWithUser<{
                   </>
                 ) : (
                   <>
-                    <Share className="size-4 text-gray-400" /> {t('ui.invite')}
+                    <Share className="size-4 text-gray-400" />{' '}
+                    {t('ui.actions.invite', { ns: 'common' })}
                   </>
                 )}
               </Button>

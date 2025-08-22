@@ -152,21 +152,9 @@ export const AddOrEditExpensePage: React.FC<{
     [setDescription],
   );
 
-  const onCancel = useCallback(() => {
-    if (expenseId) {
-      router
-        .push((group ? '/groups/' + group.id : '') + '/expenses/' + expenseId)
-        .catch(console.error);
-    } else if (1 === participants.length) {
-      router.push('/balances').catch(console.error);
-    } else {
-      resetState();
-    }
-  }, [expenseId, group, participants.length, resetState, router]);
-
   const onAmountChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
+      const { value } = e.target;
       onUpdateAmount(value);
     },
     [onUpdateAmount],
@@ -175,10 +163,14 @@ export const AddOrEditExpensePage: React.FC<{
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <Button variant="ghost" className="text-primary px-0" onClick={onCancel}>
-          {t('ui.add_expense_details.cancel')}
+        <Button variant="ghost" className="text-primary px-0" onClick={router.back}>
+          {t('ui.actions.cancel', { ns: 'common' })}
         </Button>
-        <div className="text-center">{t('ui.add_expense_details.add_new_expense')}</div>
+        <div className="text-center">
+          {expenseId
+            ? t('ui.actions.edit_expense', { ns: 'common' })
+            : t('ui.actions.add_expense', { ns: 'common' })}
+        </div>
         <Button
           variant="ghost"
           className="text-primary px-0"
@@ -187,7 +179,7 @@ export const AddOrEditExpensePage: React.FC<{
           }
           onClick={addExpense}
         >
-          {t('ui.add_expense_details.save')}
+          {t('ui.actions.save', { ns: 'common' })}
         </Button>{' '}
       </div>
       <UserInput isEditing={!!expenseId} />
@@ -261,7 +253,7 @@ export const AddOrEditExpensePage: React.FC<{
                       }
                       onClick={addExpense}
                     >
-                      {t('ui.add_expense_details.submit')}
+                      {t('ui.actions.submit', { ns: 'common' })}
                     </Button>
                   </div>
                 </div>
@@ -269,7 +261,7 @@ export const AddOrEditExpensePage: React.FC<{
             ) : null}
           </div>
           <div className="flex w-full justify-center">
-            <Link href="https://github.com/sponsors/KMKoushik" target="_blank" className="mx-auto">
+            <Link href="https://github.com/sponsors/krokosik" target="_blank" className="mx-auto">
               <Button
                 variant="outline"
                 className="text-md hover:text-foreground/80 justify-between rounded-full border-pink-500"

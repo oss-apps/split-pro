@@ -14,17 +14,76 @@
     "account": "Konto"
   },
   "ui": {
-    "you": "Du",
-    "cancel": "Avbryt",
-    "confirm": "Bekräfta",
-    "edit_name": {
-      "title": "Redigera namn",
-      "placeholder": "Ange namn",
+    "actors": {
+      "you": "Du",
+      "friends": "Vänner",
+      "groups": "Grupper",
+      "members": "Medlemmar",
+      "owner": "Ägare",
+      "all": "Alla"
+    },
+    "actions": {
+      "cancel": "Avbryt",
+      "confirm": "Bekräfta",
+      "submit": "Skicka",
       "close": "Stäng",
+      "back": "Tillbaka",
+      "create": "Skapa",
       "save": "Spara",
-      "errors": {
-        "name_required": "Namn krävs"
-      }
-    }
+      "leave": "Lämna",
+      "invite": "Bjud in",
+      "export": "Exportera",
+      "import": "Importera",
+      "add_expense": "Lägg till utgift",
+      "edit_expense": "Redigera utgift",
+      "settle_up": "Gör kvitt"
+    },
+    "expense": {
+      "you": {
+        "lent": "lånade ut",
+        "owe": "är skyldig",
+        "paid": "betalade",
+        "pay": "betala",
+        "received": "fick",
+        "deleted": "raderade"
+      },
+      "user": {
+        "lent": "lånade ut",
+        "owe": "är skyldig",
+        "paid": "betalade",
+        "pay": "betalar",
+        "received": "fick",
+        "deleted": "raderade"
+      },
+      "for": "för",
+      "paid_by": "Betald av",
+      "to": "till",
+      "from": "från"
+    },
+    "balance": "saldo",
+    "balances": "saldon",
+    "or": "eller",
+    "and": "och",
+    "today": "Idag",
+    "delete": "Radera",
+    "edited_by": "Redigerad av",
+    "deleted_by": "Raderad av",
+    "added_by": "Tillagd av",
+    "on": "på",
+    "not_involved": "Inte involverad",
+    "no_activity": "Inga aktiviteter än",
+    "settled_up": "Kvitt",
+    "settle_up_name": "Gör kvitt",
+    "settlement": "Kvittning",
+    "expense_details": "Utgiftsdetaljer",
+    "select_currency": "Välj valuta",
+    "outstanding_balances": "Saldon",
+    "share_text": "Kolla in SplitPro. Det är ett gratis open source-alternativ till Splitwise"
+  },
+  "errors": {
+    "name_required": "Namn krävs",
+    "saving_expense": "Fel vid sparande av utgift",
+    "something_went_wrong": "Något gick fel",
+    "valid_email": "Ange giltig e-post"
   }
 }

@@ -1,0 +1,559 @@
+{
+  "title": "Waluty",
+  "placeholder": "Wybierz walutę",
+  "no_currency_found": "Nie znaleziono waluty.",
+  "currency_list": {
+    "CAD": {
+      "name": "Dolar kanadyjski",
+      "name_plural": "Dolary kanadyjskie"
+    },
+    "EUR": {
+      "name": "Euro",
+      "name_plural": "Euro"
+    },
+    "AED": {
+      "name": "Dirham ZEA",
+      "name_plural": "Dirhamy ZEA"
+    },
+    "AFN": {
+      "name": "Afgani afgańskie",
+      "name_plural": "Afgani afgańskie"
+    },
+    "ALL": {
+      "name": "Lek albański",
+      "name_plural": "Leki albańskie"
+    },
+    "AMD": {
+      "name": "Dram armeński",
+      "name_plural": "Dramy armeńskie"
+    },
+    "ARS": {
+      "name": "Peso argentyńskie",
+      "name_plural": "Pesos argentyńskie"
+    },
+    "AUD": {
+      "name": "Dolar australijski",
+      "name_plural": "Dolary australijskie"
+    },
+    "AZN": {
+      "name": "Manat azerbejdżański",
+      "name_plural": "Manaty azerbejdżańskie"
+    },
+    "BAM": {
+      "name": "Marka wymienialna BiH",
+      "name_plural": "Marki wymienialne BiH"
+    },
+    "BDT": {
+      "name": "Taka bangladeska",
+      "name_plural": "Taki bangladeskie"
+    },
+    "BGN": {
+      "name": "Lew bułgarski",
+      "name_plural": "Lewy bułgarskie"
+    },
+    "BHD": {
+      "name": "Dinar bahrajński",
+      "name_plural": "Dinary bahrajńskie"
+    },
+    "BIF": {
+      "name": "Frank burundyjski",
+      "name_plural": "Franki burundyjskie"
+    },
+    "BND": {
+      "name": "Dolar brunejski",
+      "name_plural": "Dolary brunejskie"
+    },
+    "BOB": {
+      "name": "Boliviano boliwijskie",
+      "name_plural": "Boliviano boliwijskie"
+    },
+    "BRL": {
+      "name": "Real brazylijski",
+      "name_plural": "Reale brazylijskie"
+    },
+    "BWP": {
+      "name": "Pula botswańska",
+      "name_plural": "Pule botswańskie"
+    },
+    "BYN": {
+      "name": "Rubel białoruski",
+      "name_plural": "Ruble białoruskie"
+    },
+    "BZD": {
+      "name": "Dolar belizeński",
+      "name_plural": "Dolary belizeńskie"
+    },
+    "CDF": {
+      "name": "Frank kongijski",
+      "name_plural": "Franki kongijskie"
+    },
+    "CHF": {
+      "name": "Frank szwajcarski",
+      "name_plural": "Franki szwajcarskie"
+    },
+    "CLP": {
+      "name": "Peso chilijskie",
+      "name_plural": "Pesos chilijskie"
+    },
+    "CNY": {
+      "name": "Juan chiński",
+      "name_plural": "Juany chińskie"
+    },
+    "COP": {
+      "name": "Peso kolumbijskie",
+      "name_plural": "Pesos kolumbijskie"
+    },
+    "CRC": {
+      "name": "Colón kostarykański",
+      "name_plural": "Colóny kostarykańskie"
+    },
+    "CVE": {
+      "name": "Escudo Zielonego Przylądka",
+      "name_plural": "Escudo Zielonego Przylądka"
+    },
+    "CZK": {
+      "name": "Korona czeska",
+      "name_plural": "Korony czeskie"
+    },
+    "DJF": {
+      "name": "Frank dżibutyjski",
+      "name_plural": "Franki dżibutyjskie"
+    },
+    "DKK": {
+      "name": "Korona duńska",
+      "name_plural": "Korony duńskie"
+    },
+    "DOP": {
+      "name": "Peso dominikańskie",
+      "name_plural": "Pesos dominikańskie"
+    },
+    "DZD": {
+      "name": "Dinar algierski",
+      "name_plural": "Dinary algierskie"
+    },
+    "EEK": {
+      "name": "Korona estońska",
+      "name_plural": "Korony estońskie"
+    },
+    "EGP": {
+      "name": "Funt egipski",
+      "name_plural": "Funty egipskie"
+    },
+    "ERN": {
+      "name": "Nakfa erytrejska",
+      "name_plural": "Nakfy erytrejskie"
+    },
+    "ETB": {
+      "name": "Birr etiopski",
+      "name_plural": "Birry etiopskie"
+    },
+    "GBP": {
+      "name": "Funt szterling",
+      "name_plural": "Funty szterling"
+    },
+    "GEL": {
+      "name": "Lari gruzińskie",
+      "name_plural": "Lari gruzińskie"
+    },
+    "GHS": {
+      "name": "Cedi ghańskie",
+      "name_plural": "Cedi ghańskie"
+    },
+    "GNF": {
+      "name": "Frank gwinejski",
+      "name_plural": "Franki gwinejskie"
+    },
+    "GTQ": {
+      "name": "Quetzal gwatemalski",
+      "name_plural": "Quetzale gwatemalskie"
+    },
+    "HKD": {
+      "name": "Dolar hongkoński",
+      "name_plural": "Dolary hongkońskie"
+    },
+    "HNL": {
+      "name": "Lempira honduraska",
+      "name_plural": "Lempiry honduraskie"
+    },
+    "HRK": {
+      "name": "Kuna chorwacka",
+      "name_plural": "Kuny chorwackie"
+    },
+    "HUF": {
+      "name": "Forint węgierski",
+      "name_plural": "Forinty węgierskie"
+    },
+    "IDR": {
+      "name": "Rupia indonezyjska",
+      "name_plural": "Rupie indonezyjskie"
+    },
+    "ILS": {
+      "name": "Nowy szekel izraelski",
+      "name_plural": "Nowe szekle izraelskie"
+    },
+    "INR": {
+      "name": "Rupia indyjska",
+      "name_plural": "Rupie indyjskie"
+    },
+    "IQD": {
+      "name": "Dinar iracki",
+      "name_plural": "Dinary irackie"
+    },
+    "IRR": {
+      "name": "Rial irański",
+      "name_plural": "Riale irańskie"
+    },
+    "ISK": {
+      "name": "Korona islandzka",
+      "name_plural": "Korony islandzkie"
+    },
+    "JMD": {
+      "name": "Dolar jamajski",
+      "name_plural": "Dolary jamajskie"
+    },
+    "JOD": {
+      "name": "Dinar jordański",
+      "name_plural": "Dinary jordańskie"
+    },
+    "JPY": {
+      "name": "Jen japoński",
+      "name_plural": "Jeny japońskie"
+    },
+    "KES": {
+      "name": "Szyling kenijski",
+      "name_plural": "Szylingi kenijskie"
+    },
+    "KHR": {
+      "name": "Riel kambodżański",
+      "name_plural": "Riele kambodżańskie"
+    },
+    "KMF": {
+      "name": "Frank komoryjski",
+      "name_plural": "Franki komoryjskie"
+    },
+    "KRW": {
+      "name": "Won południowokoreański",
+      "name_plural": "Wony południowokoreańskie"
+    },
+    "KWD": {
+      "name": "Dinar kuwejcki",
+      "name_plural": "Dinary kuwejckie"
+    },
+    "KZT": {
+      "name": "Tenge kazachstańskie",
+      "name_plural": "Tenge kazachstańskie"
+    },
+    "LAK": {
+      "name": "Kip laotański",
+      "name_plural": "Kipy laotańskie"
+    },
+    "LBP": {
+      "name": "Funt libański",
+      "name_plural": "Funty libańskie"
+    },
+    "LKR": {
+      "name": "Rupia lankijska",
+      "name_plural": "Rupie lankijskie"
+    },
+    "LRD": {
+      "name": "Dolar liberyjski",
+      "name_plural": "Dolary liberyjskie"
+    },
+    "LSL": {
+      "name": "Loti lesotyjskie",
+      "name_plural": "Loti lesotyjskie"
+    },
+    "LYD": {
+      "name": "Dinar libijski",
+      "name_plural": "Dinary libijskie"
+    },
+    "MAD": {
+      "name": "Dirham marokański",
+      "name_plural": "Dirhamy marokańskie"
+    },
+    "MDL": {
+      "name": "Lej mołdawski",
+      "name_plural": "Leje mołdawskie"
+    },
+    "MGA": {
+      "name": "Ariary malgaskie",
+      "name_plural": "Ariary malgaskie"
+    },
+    "MKD": {
+      "name": "Denar macedoński",
+      "name_plural": "Denary macedońskie"
+    },
+    "MMK": {
+      "name": "Kyat birmański",
+      "name_plural": "Kyaty birmańskie"
+    },
+    "MNT": {
+      "name": "Tugrik mongolski",
+      "name_plural": "Tugriki mongolskie"
+    },
+    "MOP": {
+      "name": "Pataca makańska",
+      "name_plural": "Patace makańskie"
+    },
+    "MUR": {
+      "name": "Rupia maurytyjska",
+      "name_plural": "Rupie maurytyjskie"
+    },
+    "MVR": {
+      "name": "Rufiyaa malediwska",
+      "name_plural": "Rufiyaa malediwskie"
+    },
+    "MWK": {
+      "name": "Kwacha malawijska",
+      "name_plural": "Kwacha malawijskie"
+    },
+    "MXN": {
+      "name": "Peso meksykańskie",
+      "name_plural": "Pesos meksykańskie"
+    },
+    "MYR": {
+      "name": "Ringgit malezyjski",
+      "name_plural": "Ringgity malezyjskie"
+    },
+    "MZN": {
+      "name": "Metical mozambicki",
+      "name_plural": "Meticale mozambickie"
+    },
+    "NAD": {
+      "name": "Dolar namibijski",
+      "name_plural": "Dolary namibijskie"
+    },
+    "NGN": {
+      "name": "Naira nigeryjska",
+      "name_plural": "Nairy nigeryjskie"
+    },
+    "NIO": {
+      "name": "Córdoba nikaraguańska",
+      "name_plural": "Córdoby nikaraguańskie"
+    },
+    "NOK": {
+      "name": "Korona norweska",
+      "name_plural": "Korony norweskie"
+    },
+    "NPR": {
+      "name": "Rupia nepalska",
+      "name_plural": "Rupie nepalskie"
+    },
+    "NZD": {
+      "name": "Dolar nowozelandzki",
+      "name_plural": "Dolary nowozelandzkie"
+    },
+    "OMR": {
+      "name": "Rial omański",
+      "name_plural": "Riale omańskie"
+    },
+    "PAB": {
+      "name": "Balboa panamska",
+      "name_plural": "Balboa panamskie"
+    },
+    "PEN": {
+      "name": "Sol peruwiański",
+      "name_plural": "Sole peruwiańskie"
+    },
+    "PGK": {
+      "name": "Kina papuaska",
+      "name_plural": "Kiny papuaskie"
+    },
+    "PHP": {
+      "name": "Peso filipińskie",
+      "name_plural": "Pesos filipińskie"
+    },
+    "PKR": {
+      "name": "Rupia pakistańska",
+      "name_plural": "Rupie pakistańskie"
+    },
+    "PLN": {
+      "name": "Złoty polski",
+      "name_plural": "Złote polskie"
+    },
+    "PYG": {
+      "name": "Guarani paragwajskie",
+      "name_plural": "Guarani paragwajskie"
+    },
+    "QAR": {
+      "name": "Rial katarski",
+      "name_plural": "Riale katarskie"
+    },
+    "RON": {
+      "name": "Lej rumuński",
+      "name_plural": "Leje rumuńskie"
+    },
+    "RSD": {
+      "name": "Dinar serbski",
+      "name_plural": "Dinary serbskie"
+    },
+    "RUB": {
+      "name": "Rubel rosyjski",
+      "name_plural": "Ruble rosyjskie"
+    },
+    "RWF": {
+      "name": "Frank rwandyjski",
+      "name_plural": "Franki rwandyjskie"
+    },
+    "SAR": {
+      "name": "Rial saudyjski",
+      "name_plural": "Riale saudyjskie"
+    },
+    "SBD": {
+      "name": "Dolar Wysp Salomona",
+      "name_plural": "Dolary Wysp Salomona"
+    },
+    "SCR": {
+      "name": "Rupia seszelska",
+      "name_plural": "Rupie seszelskie"
+    },
+    "SDG": {
+      "name": "Funt sudański",
+      "name_plural": "Funty sudańskie"
+    },
+    "SEK": {
+      "name": "Korona szwedzka",
+      "name_plural": "Korony szwedzkie"
+    },
+    "SGD": {
+      "name": "Dolar singapurski",
+      "name_plural": "Dolary singapurskie"
+    },
+    "SHP": {
+      "name": "Funt Św. Heleny",
+      "name_plural": "Funty Św. Heleny"
+    },
+    "SLL": {
+      "name": "Leone sierraleoński",
+      "name_plural": "Leone sierraleońskie"
+    },
+    "SOS": {
+      "name": "Szyling somalijski",
+      "name_plural": "Szylingi somalijskie"
+    },
+    "SRD": {
+      "name": "Dolar surinamski",
+      "name_plural": "Dolary surinamskie"
+    },
+    "SSP": {
+      "name": "Funt południowosudański",
+      "name_plural": "Funty południowosudańskie"
+    },
+    "STD": {
+      "name": "Dobra Św. Tomasza i Książęcej",
+      "name_plural": "Dobry Św. Tomasza i Książęcej"
+    },
+    "SYP": {
+      "name": "Funt syryjski",
+      "name_plural": "Funty syryjskie"
+    },
+    "SZL": {
+      "name": "Lilangeni suazilandzkiego",
+      "name_plural": "Lilangeni suazilandzkie"
+    },
+    "THB": {
+      "name": "Baht tajski",
+      "name_plural": "Bahty tajskie"
+    },
+    "TJS": {
+      "name": "Somoni tadżyckie",
+      "name_plural": "Somoni tadżyckie"
+    },
+    "TMT": {
+      "name": "Manat turkmeński",
+      "name_plural": "Manaty turkmeńskie"
+    },
+    "TND": {
+      "name": "Dinar tunezyjski",
+      "name_plural": "Dinary tunezyjskie"
+    },
+    "TOP": {
+      "name": "Paʻanga tongijskie",
+      "name_plural": "Paʻanga tongijskie"
+    },
+    "TRY": {
+      "name": "Lira turecka",
+      "name_plural": "Liry tureckie"
+    },
+    "TTD": {
+      "name": "Dolar Trynidadu i Tobago",
+      "name_plural": "Dolary Trynidadu i Tobago"
+    },
+    "TWD": {
+      "name": "Nowy dolar tajwański",
+      "name_plural": "Nowe dolary tajwańskie"
+    },
+    "TZS": {
+      "name": "Szyling tanzański",
+      "name_plural": "Szylingi tanzańskie"
+    },
+    "UAH": {
+      "name": "Hrywna ukraińska",
+      "name_plural": "Hrywny ukraińskie"
+    },
+    "UGX": {
+      "name": "Szyling ugandyjski",
+      "name_plural": "Szylingi ugandyjskie"
+    },
+    "USD": {
+      "name": "Dolar amerykański",
+      "name_plural": "Dolary amerykańskie"
+    },
+    "UYU": {
+      "name": "Peso urugwajskie",
+      "name_plural": "Pesos urugwajskie"
+    },
+    "UZS": {
+      "name": "Som uzbecki",
+      "name_plural": "Somy uzbeckie"
+    },
+    "VEF": {
+      "name": "Bolívar wenezuelski",
+      "name_plural": "Bolívary wenezuelskie"
+    },
+    "VND": {
+      "name": "Dong wietnamski",
+      "name_plural": "Dongi wietnamskie"
+    },
+    "VUV": {
+      "name": "Vatu vanuackie",
+      "name_plural": "Vatu vanuackie"
+    },
+    "WST": {
+      "name": "Tala samoańskie",
+      "name_plural": "Tala samoańskie"
+    },
+    "XAF": {
+      "name": "Frank CFA BEAC",
+      "name_plural": "Franki CFA BEAC"
+    },
+    "XCD": {
+      "name": "Dolar wschodniokaraibski",
+      "name_plural": "Dolary wschodniokaraibskie"
+    },
+    "XOF": {
+      "name": "Frank CFA BCEAO",
+      "name_plural": "Franki CFA BCEAO"
+    },
+    "XPF": {
+      "name": "Frank CFP",
+      "name_plural": "Franki CFP"
+    },
+    "YER": {
+      "name": "Rial jemeński",
+      "name_plural": "Riale jemeńskie"
+    },
+    "ZAR": {
+      "name": "Rand południowoafrykański",
+      "name_plural": "Randy południowoafrykańskie"
+    },
+    "ZMW": {
+      "name": "Kwacha zambijska",
+      "name_plural": "Kwacha zambijskie"
+    },
+    "ZWL": {
+      "name": "Dolar zimbabweński",
+      "name_plural": "Dolary zimbabweńskie"
+    }
+  }
+}

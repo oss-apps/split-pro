@@ -17,9 +17,9 @@ import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
 
 const ImportSpliwisePage: NextPageWithUser = () => {
-  const { t } = useTranslation('import_splitwise');
-  const [usersWithBalance, setUsersWithBalance] = useState<Array<SplitwiseUser>>([]);
-  const [groups, setGroups] = useState<Array<SplitwiseGroup>>([]);
+  const { t } = useTranslation('account_page');
+  const [usersWithBalance, setUsersWithBalance] = useState<SplitwiseUser[]>([]);
+  const [groups, setGroups] = useState<SplitwiseGroup[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<Record<string, boolean>>({});
   const [selectedGroups, setSelectedGroups] = useState<Record<string, boolean>>({});
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -27,7 +27,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
   const router = useRouter();
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
+    const { files } = event.target;
 
     const file = files?.[0];
 
@@ -74,7 +74,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
       );
     } catch (e) {
       console.error(e);
-      toast.error(t('ui.errors.import_failed'));
+      toast.error(t('ui.import_from_splitwise_details.errors.import_failed'));
     }
   };
 
@@ -88,7 +88,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
       },
       {
         onSuccess: () => {
-          toast.success(t('ui.messages.import_successful'));
+          toast.success(t('ui.import_from_splitwise_details.messages.import_success'));
           router.push('/balances').catch((err) => console.error(err));
         },
       },
@@ -98,7 +98,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
   return (
     <>
       <Head>
-        <title>{t('meta.title')}</title>
+        <title>{t('ui.import_from_splitwise')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout hideAppBar>
@@ -106,11 +106,11 @@ const ImportSpliwisePage: NextPageWithUser = () => {
           <div className="flex gap-4">
             <Link href="/balances">
               <Button variant="ghost" className="text-primary px-0 py-0" size="sm">
-                {t('ui.cancel')}
+                {t('ui.actions.cancel', { ns: 'common' })}
               </Button>
             </Link>
           </div>
-          <div className="font-medium">{t('ui.title')}</div>
+          <div className="font-medium">{t('ui.import_from_splitwise')}</div>
           <div className="flex gap-4">
             <Button
               onClick={onImport}
@@ -119,7 +119,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               size="sm"
               disabled={importMutation.isPending || !uploadedFile}
             >
-              {t('ui.import')}
+              {t('ui.actions.import', { ns: 'common' })}
             </Button>
           </div>
         </div>
@@ -128,10 +128,14 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             <div className="flex cursor-pointer px-3 py-[6px]">
               <div className="flex items-center border-r pr-4">
                 <PaperClipIcon className="mr-2 h-4 w-4" />{' '}
-                <span className="hidden text-sm md:block">{t('ui.choose_file')}</span>
+                <span className="hidden text-sm md:block">
+                  {t('ui.import_from_splitwise_details.choose_file')}
+                </span>
               </div>
               <div className="pl-4 text-gray-400">
-                {uploadedFile ? uploadedFile.name : t('ui.no_file_chosen')}
+                {uploadedFile
+                  ? uploadedFile.name
+                  : t('ui.import_from_splitwise_details.no_file_chosen')}
               </div>
             </div>
             <Input
@@ -148,15 +152,21 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             className="w-[100px]"
             size="sm"
           >
-            {importMutation.isPending ? <LoadingSpinner /> : t('ui.import')}
+            {importMutation.isPending ? (
+              <LoadingSpinner />
+            ) : (
+              t('ui.actions.import', { ns: 'common' })
+            )}
           </Button>
         </div>
-        <div className="mt-4 text-sm text-gray-400">{t('ui.note')}</div>
+        <div className="mt-4 text-sm text-gray-400">
+          {t('ui.import_from_splitwise_details.note')}
+        </div>
 
         {uploadedFile ? (
           <>
             <div className="mt-8 font-semibold">
-              {t('ui.friends')} ({usersWithBalance.length})
+              {t('ui.actors.friends', { ns: 'common' })} ({usersWithBalance.length})
             </div>
             {usersWithBalance.length ? (
               <div className="mt-4 flex flex-col gap-3">
@@ -196,7 +206,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               </div>
             ) : null}
             <div className="mt-8 font-semibold">
-              {t('ui.groups')} ({groups.length})
+              {t('ui.actors.groups', { ns: 'common' })} ({groups.length})
             </div>
             {groups.length ? (
               <div className="mt-4 flex flex-col gap-3">
@@ -215,7 +225,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                         </div>
                       </div>
                       <div className="flex shrink-0 flex-wrap justify-end gap-1">
-                        {group.members.length} {t('ui.members')}
+                        {group.members.length} {t('ui.actors.members', { ns: 'common' })}
                       </div>
                     </div>
                     {index !== groups.length - 1 ? <Separator className="mt-3" /> : null}
@@ -226,11 +236,11 @@ const ImportSpliwisePage: NextPageWithUser = () => {
           </>
         ) : (
           <div className="mt-20 flex flex-col items-center justify-center gap-4">
-            {t('ui.follow_to_export_splitwise_data')}
+            {t('ui.import_from_splitwise_details.follow_to_export_splitwise_data')}
             <Link href="https://export-splitwise.vercel.app/" target="_blank">
               <Button>
                 <DownloadCloud className="mr-2 text-gray-800" />
-                {t('ui.export_splitwise_data_button')}
+                {t('ui.import_from_splitwise_details.export_splitwise_data_button')}
               </Button>
             </Link>
           </div>
@@ -242,6 +252,6 @@ const ImportSpliwisePage: NextPageWithUser = () => {
 
 ImportSpliwisePage.auth = true;
 
-export const getStaticProps = withI18nStaticProps(['common', 'import_splitwise']);
+export const getStaticProps = withI18nStaticProps(['common', 'account_page']);
 
 export default ImportSpliwisePage;

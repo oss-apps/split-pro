@@ -4,8 +4,6 @@
     "change_language": "Ändra språk",
     "change_language_details": {
       "title": "Välj ett språk",
-      "save": "Spara",
-      "close": "Stäng",
       "messages": {
         "language_changed": "Språk ändrat"
       },
@@ -33,21 +31,15 @@
       "download_as_pwa": "Du kan ladda ner SplitPro som en PWA till din hemskärm.",
       "using_ios": "Om du använder iOS, kolla in denna",
       "using_android": "Om du använder Android, kolla in denna",
-      "video": "video",
-      "close": "Stäng"
+      "video": "video"
     },
     "import_from_splitwise": "Importera från Splitwise",
     "import_from_splitwise_details": {
       "choose_file": "Välj fil",
       "no_file_chosen": "Ingen fil vald",
       "note": "Notera: Vi stödjer för närvarande endast import av vänner och grupper. Transaktioner kommer inte importeras. Vi arbetar på det.",
-      "friends": "Vänner",
-      "groups": "Grupper",
-      "members": "medlemmar",
       "follow_to_export_splitwise_data": "Följ denna länk för att exportera splitwise data",
       "export_splitwise_data_button": "Exportera splitwise data",
-      "import": "Importera",
-      "cancel": "Avbryt",
       "messages": {
         "import_success": "Import lyckades"
       },
@@ -59,8 +51,6 @@
     "submit_feedback": "Skicka feedback",
     "submit_feedback_details": {
       "title": "Skicka feedback",
-      "close": "Stäng",
-      "submit": "Skicka",
       "placeholder": "Skriv din feedback"
     },
     "errors": {
@@ -75,6 +65,10 @@
     "star_on_github": "Betygsätt oss på GitHub",
     "support_us": "Sponsra oss",
     "follow_on_x": "Följ oss på X",
-    "logout": "Logga ut"
+    "logout": "Logga ut",
+    "edit_name": {
+      "title": "Redigera namn",
+      "placeholder": "Ange namn"
+    }
   }
 }

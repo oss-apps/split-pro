@@ -86,7 +86,7 @@ export const GroupSettleUp: React.FC<{
             {t('ui.actions.back')}
           </Button>
         </DrawerClose>
-        <div className="mb-2 mt-4 text-center">{t('ui.settlement')}</div>
+        <div className="mt-4 mb-2 text-center">{t('ui.settlement')}</div>
         <DrawerClose>
           <Button
             size="sm"

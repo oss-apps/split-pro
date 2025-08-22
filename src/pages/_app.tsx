@@ -19,6 +19,7 @@ import { useAppStore } from '~/store/appStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 
+// oxlint-disable-next-line new-cap
 const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });
 const toastOptions = { duration: 1500 };
 
@@ -118,12 +119,18 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
       if (!data.user.preferredLanguage) {
         // If user has no preferred language, set it to the current locale
         const currentLocale = router.locale ?? 'en';
+
+        // oxlint-disable-next-line exhaustive-deps
         updateUser
           .mutateAsync({
             preferredLanguage: currentLocale,
           })
           .catch(console.error);
-      } else if (data.user.preferredLanguage && data.user.preferredLanguage !== router.locale) {
+      } else if (
+        data.user.preferredLanguage &&
+        router.locale &&
+        data.user.preferredLanguage !== router.locale
+      ) {
         // Set user's preferred language by changing the locale
         router
           .push(router.asPath, router.asPath, {
@@ -133,7 +140,7 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
           .catch(console.error);
       }
     }
-  }, [status, data?.user, setCurrency, router, updateUser]);
+  }, [status, data?.user.currency, data?.user.preferredLanguage, setCurrency, router]);
 
   if ('loading' === status) {
     return (

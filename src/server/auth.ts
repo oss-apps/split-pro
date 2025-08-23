@@ -23,7 +23,7 @@ declare module 'next-auth' {
     user: DefaultSession['user'] & {
       id: number;
       currency: string;
-      preferredLanguage?: string;
+      preferredLanguage: string;
       // ...other properties
       // role: UserRole;
     };
@@ -32,7 +32,7 @@ declare module 'next-auth' {
   interface User {
     id: number;
     currency: string;
-    preferredLanguage?: string;
+    preferredLanguage: string;
   }
 }
 

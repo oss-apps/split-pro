@@ -33,7 +33,7 @@ import { Switch } from '~/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { UpdateName } from '~/components/ui/update-details';
 import { env } from '~/env';
-import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { db } from '~/server/db';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';

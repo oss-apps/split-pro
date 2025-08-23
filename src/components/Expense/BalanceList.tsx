@@ -8,7 +8,7 @@ import { BigMath, toUIString } from '~/utils/numbers';
 
 import { GroupSettleUp } from '../Friend/GroupSettleup';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
-import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 interface UserWithBalance {
   user: User;

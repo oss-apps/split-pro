@@ -8,7 +8,7 @@ import { toUIDate } from '~/utils/strings';
 import { EntityAvatar } from '../ui/avatar';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
-import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import type { FC } from 'react';
 import { CategoryIcon } from '../ui/categoryIcons';
 

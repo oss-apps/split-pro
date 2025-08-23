@@ -15,7 +15,7 @@ import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { type GetServerSideProps } from 'next';
-import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
   const { t, displayName } = useTranslationWithUtils();

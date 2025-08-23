@@ -82,8 +82,9 @@ const AccountPage: NextPageWithUser = ({ user }) => {
   );
 
   const onSignOut = useCallback(async () => {
-    await signOut();
-  }, []);
+    await signOut({ redirect: false });
+    void router.push('/auth/signin', '/auth/signin', { locale: 'default' });
+  }, [router]);
 
   return (
     <>

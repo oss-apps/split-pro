@@ -235,7 +235,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       error: typeof error === 'string' ? error : '',
       feedbackEmail: env.FEEDBACK_EMAIL ?? '',
       providers: Object.values(providers ?? {}),
-      callbackUrl,
+      callbackUrl: callbackUrl && !Array.isArray(callbackUrl) ? callbackUrl : '',
     },
   };
 };

@@ -82,14 +82,8 @@ const AccountPage: NextPageWithUser = ({ user }) => {
   );
 
   const onSignOut = useCallback(async () => {
-    // Keep current language at logout by specifying callbackUrl with locale
-    let langUrl = '';
-    if (i18n) {
-      langUrl = i18n.language === 'en' ? '' : `/${i18n.language}`;
-    }
-    console.info(`Logging out, redirecting to: ${langUrl}/auth/signin`);
     await signOut({ redirect: false });
-    await router.push(`${langUrl}/auth/signin`);
+    void router.push('/auth/signin', '/auth/signin', { locale: 'default' });
   }, [router]);
 
   return (

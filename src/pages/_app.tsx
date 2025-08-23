@@ -29,7 +29,11 @@ const MyApp: AppType<{ session: Session | null; baseUrl: string }> = ({
   const { t, ready } = useTranslation('common');
 
   if (!ready) {
-    return null;
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <LoadingSpinner className="text-primary" />
+      </div>
+    );
   }
 
   return (
@@ -89,7 +93,7 @@ const MyApp: AppType<{ session: Session | null; baseUrl: string }> = ({
 };
 
 const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, pageProps }) => {
-  const { status, data } = useSession({ required: true });
+  const { status, data, update } = useSession({ required: true });
   const [showSpinner, setShowSpinner] = useState(false);
   const updateUser = api.user.updateUserDetail.useMutation();
   const router = useRouter();
@@ -112,16 +116,26 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
   }, [webPushPublicKey, setWebPushPublicKey]);
 
   useEffect(() => {
-    if ('authenticated' === status) {
+    if ('authenticated' === status && data.user) {
       setCurrency(data.user.currency as CurrencyCode);
 
       if (!data.user.preferredLanguage) {
         // If user has no preferred language, set it to the current locale
         const currentLocale = router.locale ?? 'en';
+
+        data.user.preferredLanguage = currentLocale;
         updateUser
           .mutateAsync({
             preferredLanguage: currentLocale,
           })
+          .then(() =>
+            update({
+              user: {
+                ...data.user,
+                preferredLanguage: currentLocale,
+              },
+            }),
+          )
           .catch(console.error);
       } else if (data.user.preferredLanguage && data.user.preferredLanguage !== router.locale) {
         // Set user's preferred language by changing the locale
@@ -133,7 +147,7 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
           .catch(console.error);
       }
     }
-  }, [status, data?.user, setCurrency, router, updateUser]);
+  }, [status, data?.user, setCurrency, router, updateUser, update]);
 
   if ('loading' === status) {
     return (
@@ -146,7 +160,7 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
   return <Page user={data.user} {...pageProps} />;
 };
 
-export const getServerSideProps = async () => ({
+export const getServerSideProps = () => ({
   props: {
     baseUrl: env.NEXTAUTH_URL,
   },

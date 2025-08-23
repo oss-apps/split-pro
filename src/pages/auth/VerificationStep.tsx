@@ -1,20 +1,14 @@
 // oxlint-disable no-html-link-for-pages
 import { zodResolver } from '@hookform/resolvers/zod';
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
-import { type GetServerSideProps, type NextPage } from 'next';
-import { getProviders } from 'next-auth/react';
 import { type TFunction, useTranslation } from 'next-i18next';
-import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo } from 'react';
+import { type FC, useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { Button } from '~/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '~/components/ui/form';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '~/components/ui/input-otp';
-import { env } from '~/env';
-import { useSession } from '~/hooks/useSession';
-import { customServerSideTranslations } from '~/utils/i18n/server';
 
 const otpSchema = (t: TFunction) =>
   z.object({
@@ -25,49 +19,29 @@ const otpSchema = (t: TFunction) =>
 
 type OTPFormValues = z.infer<ReturnType<typeof otpSchema>>;
 
-const Home: NextPage<{ feedbackEmail: string }> = ({ feedbackEmail }) => {
-  const { t } = useTranslation('signin');
-  const router = useRouter();
+interface VerificationStepProps {
+  feedbackEmail?: string;
+  email: string;
+  callbackUrl?: string;
+}
 
-  const [email, setEmail] = useSession('splitpro-email');
-  const [locale, setLocale] = useSession('splitpro-signin-locale');
+const VerificationStep: FC<VerificationStepProps> = ({ feedbackEmail, email, callbackUrl }) => {
+  const { t } = useTranslation('signin');
+
   const otpForm = useForm<OTPFormValues>({
     resolver: zodResolver(otpSchema(t)),
   });
 
-  useEffect(() => {
-    if (!locale) {
-      return;
-    }
-
-    router
-      .push(router.asPath, router.asPath, {
-        locale,
-        scroll: false,
-      })
-      .catch(console.error);
-
-    return () => {
-      setLocale('');
-    };
-  }, [locale, router, setLocale]);
-
-  const onOTPSubmit = useCallback(async () => {
+  const onOTPSubmit = useCallback(() => {
     if (!email) {
       toast.error(t('errors.email_invalid'));
       return;
     }
 
-    const { callbackUrl } = router.query;
-
-    await router
-      .push(
-        `/api/auth/callback/email?email=${encodeURIComponent(
-          email.toLowerCase(),
-        )}&token=${otpForm.getValues().otp}${typeof callbackUrl === 'string' ? `&callbackUrl=${callbackUrl}/balances` : ''}`,
-      )
-      .finally(() => setEmail(''));
-  }, [email, otpForm, router, t, setEmail]);
+    window.location.href = `/api/auth/callback/email?email=${encodeURIComponent(
+      email,
+    )}&token=${otpForm.getValues().otp}${callbackUrl ? `&callbackUrl=${callbackUrl}` : ''}`;
+  }, [email, otpForm, callbackUrl, t]);
 
   const feedbackEmailLink = useMemo(() => `mailto:${feedbackEmail}`, [feedbackEmail]);
 
@@ -130,24 +104,4 @@ const OTPInput = ({ field }) => (
   </FormItem>
 );
 
-export default Home;
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const providers = await getProviders();
-
-  if (!Object.values(providers ?? {}).find((provider) => 'email' === provider.id)) {
-    return {
-      redirect: {
-        destination: '/auth/signin',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      ...(await customServerSideTranslations(context.locale, ['common', 'signin'])),
-      feedbackEmail: env.FEEDBACK_EMAIL ?? '',
-    },
-  };
-};
+export default VerificationStep;

@@ -23,6 +23,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = 
   const handleLanguageChange = useCallback(
     async (languageCode: string) => {
       try {
+        await fetch(`/api/locale?locale=${languageCode}`);
         await router.push(router.asPath, router.asPath, {
           locale: languageCode,
           scroll: false,

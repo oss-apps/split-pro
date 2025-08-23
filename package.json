@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
-    "just-build": "next build",
+    "build": "next build --no-lint",
+    "just-build": "next build --no-lint",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:dev": "prisma migrate dev",
@@ -14,7 +14,7 @@
     "dev": "next dev --turbopack",
     "postinstall": "prisma generate",
     "generate": "prisma generate",
-    "lint": "oxlint && next lint",
+    "lint": "oxlint --type-aware",
     "start": "sleep 3 && pnpm prisma:prod && next start",
     "start-with-latest-migrations": "prisma migrate deploy && next start",
     "d": "pnpm dx && pnpm dev",
@@ -75,10 +75,10 @@
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
     "@types/web-push": "^3.6.3",
-    "eslint": "^9.29.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "oxlint": "^1.12.0",
+    "oxlint-tsgolint": "^0.0.4",
     "postcss": "^8.4.31",
     "prettier": "^3.2.4",
     "prettier-plugin-tailwindcss": "^0.6.12",
@@ -87,8 +87,7 @@
     "tailwindcss": "^4.1.10",
     "ts-node": "^10.9.2",
     "tsx": "^4.7.1",
-    "typescript": "~5.7.2",
-    "typescript-eslint": "^8.34.0"
+    "typescript": "~5.7.2"
   },
   "ct3aMetadata": {
     "initVersion": "7.25.2"

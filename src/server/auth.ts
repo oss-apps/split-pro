@@ -32,7 +32,7 @@ declare module 'next-auth' {
   interface User {
     id: number;
     currency: string;
-    preferredLanguage: string;
+    preferredLanguage?: string;
   }
 }
 

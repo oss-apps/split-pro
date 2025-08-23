@@ -37,7 +37,6 @@ declare module 'next-auth' {
 }
 
 const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapter => {
-  const [db] = args;
   const prismaAdapter = PrismaAdapter(...args);
 
   return {
@@ -58,25 +57,6 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
       return prismaCreateUser(user);
     },
-    // fix for https://github.com/nextauthjs/next-auth/issues/4495
-    deleteSession: async (sessionToken: string) => {
-      try {
-        const session = await db.session.findUnique({
-          where: { sessionToken },
-        });
-
-        if (!session) {
-          return null;
-        }
-
-        return await db.session.delete({
-          where: { sessionToken },
-        });
-      } catch (error) {
-        console.error('Failed to delete session', error);
-        return null;
-      }
-    },
   } as Adapter;
 };
 
@@ -88,7 +68,6 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
 export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/auth/signin',
-    verifyRequest: '/auth/verify-request',
   },
   callbacks: {
     session: ({ session, user }) => ({

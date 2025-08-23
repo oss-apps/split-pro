@@ -2,7 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type GetServerSideProps, type NextPage } from 'next';
 import { type ClientSafeProvider, getProviders, signIn } from 'next-auth/react';
 import { type TFunction, useTranslation } from 'next-i18next';
-import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -19,9 +18,9 @@ import {
 import { Input } from '~/components/ui/input';
 import { LanguageSelector } from '~/components/ui/language-selector';
 import { env } from '~/env';
-import { useSession } from '~/hooks/useSession';
 import { getServerAuthSession } from '~/server/auth';
 import { customServerSideTranslations } from '~/utils/i18n/server';
+import VerificationStep from './VerificationStep';
 
 const providerSvgs = {
   github: (
@@ -62,14 +61,15 @@ const emailSchema = (t: TFunction) =>
 
 type EmailFormValues = z.infer<ReturnType<typeof emailSchema>>;
 
-const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSafeProvider[] }> = ({
-  error,
-  providers,
-  feedbackEmail,
-}) => {
+const Home: NextPage<{
+  error: string;
+  feedbackEmail: string;
+  providers: ClientSafeProvider[];
+  callbackUrl?: string;
+}> = ({ error, providers, feedbackEmail, callbackUrl }) => {
   const { t } = useTranslation('signin');
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
-  const [, setEmail] = useSession('splitpro-email');
+  const [showVerificationStep, setShowVerificationStep] = useState(false);
 
   const emailForm = useForm<EmailFormValues>({
     resolver: zodResolver(emailSchema(t)),
@@ -94,12 +94,28 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
   const onEmailSubmit = useCallback(async () => {
     setEmailStatus('sending');
     const email = emailForm.getValues().email.toLowerCase();
-    setEmail(email);
-    await signIn('email', { email });
+    setShowVerificationStep(true);
+    await signIn('email', { email, callbackUrl, redirect: false });
     setEmailStatus('success');
-  }, [emailForm, setEmail]);
+  }, [emailForm, setShowVerificationStep, callbackUrl]);
 
-  const handleProviderSignIn = useCallback((providerId: string) => () => signIn(providerId), []);
+  useEffect(() => {
+    const onPop = (e: PopStateEvent) => {
+      if (showVerificationStep) {
+        e.preventDefault();
+        setShowVerificationStep(false);
+      }
+    };
+    window.addEventListener('popstate', onPop);
+    return () => {
+      window.removeEventListener('popstate', onPop);
+    };
+  }, [showVerificationStep]);
+
+  const handleProviderSignIn = useCallback(
+    (providerId: string) => () => signIn(providerId, { callbackUrl }),
+    [callbackUrl],
+  );
 
   const field = useCallback(
     ({ field }: any) => (
@@ -120,6 +136,16 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
   );
 
   const feedbackEmailLink = useMemo(() => `mailto:${feedbackEmail}`, [feedbackEmail]);
+
+  if (showVerificationStep) {
+    return (
+      <VerificationStep
+        feedbackEmail={feedbackEmail}
+        email={emailForm.getValues().email}
+        callbackUrl={callbackUrl}
+      />
+    );
+  }
 
   return (
     <>
@@ -209,6 +235,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       error: typeof error === 'string' ? error : '',
       feedbackEmail: env.FEEDBACK_EMAIL ?? '',
       providers: Object.values(providers ?? {}),
+      callbackUrl,
     },
   };
 };

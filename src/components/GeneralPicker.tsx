@@ -1,6 +1,6 @@
 import { Check } from 'lucide-react';
 import React from 'react';
-import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from './command';
+import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from './ui/command';
 import { AppDrawer, DrawerClose } from '~/components/ui/drawer';
 import { cn } from '~/lib/utils';
 

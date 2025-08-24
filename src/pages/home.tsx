@@ -18,7 +18,7 @@ import { BackgroundGradient } from '~/components/ui/background-gradient';
 import { Button } from '~/components/ui/button';
 import { env } from '~/env';
 
-import { LanguageSelector } from '~/components/ui/language-selector';
+import { LanguageSelector } from '~/components/LanguageSelector';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 
 export default function Home({ isCloud }: { isCloud: boolean }) {

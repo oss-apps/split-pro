@@ -47,5 +47,5 @@
       }
     }
   ],
-  "ignorePatterns": ["prisma/seed.ts"]
+  "ignorePatterns": ["prisma/seed.ts", "src/components/ui/*"]
 }

@@ -11,8 +11,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from './alert-dialog';
-import { Button, type buttonVariants } from './button';
+} from './ui/alert-dialog';
+import { Button, type buttonVariants } from './ui/button';
 
 export const SimpleConfirmationDialog: React.FC<
   {

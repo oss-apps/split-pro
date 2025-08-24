@@ -1,5 +1,5 @@
 import { SplitType } from '@prisma/client';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import {
   BarChart2,
   Check,
@@ -341,7 +341,7 @@ export const UserAndAmount: React.FC<{ user: Participant; currency: string }> = 
       <EntityAvatar entity={user} size={30} />
       <div className="flex flex-col items-start">
         <p>{user.name ?? user.email}</p>
-        <p className={`'text-gray-400' text-sm text-gray-400`}>
+        <p className="'text-gray-400' text-sm text-gray-400">
           {0n < (shareAmount ?? 0n) ? '-' : ''} {currency} {toUIString(shareAmount)}
         </p>
       </div>

@@ -69,7 +69,7 @@ export const SplitTypeSection: React.FC = () => {
       <p>{t('ui.and', { ns: 'common' })} </p>
       <AppDrawer
         trigger={
-          <div className="max-w-32 overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
+          <div className="max-w-40 overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 md:max-w-48 lg:max-w-56">
             {generateSplitDescription(splitType, participants, splitShares, paidBy, currentUser)}
           </div>
         }

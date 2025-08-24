@@ -38,7 +38,7 @@ export function generateSplitDescription(
   if (selectedParticipants.length === 1) {
     const beneficiary = selectedParticipants[0];
     const beneficiaryName = beneficiary?.name?.split(' ')[0] || beneficiary?.email || 'someone';
-    return t('ui.add_expense_details.split_type_section.paid_for', { name: beneficiaryName });
+    return `${t('common:ui.expense.user.paid')} ${t('common:ui.expense.for')} ${beneficiaryName}`;
   }
   
   // Case 2: Splitting with multiple people

@@ -10,7 +10,6 @@
       "split_type_section": {
         "split_equally": "split equally",
         "split_unequally": "split unequally",
-        "paid_for": "paid for {{name}}",
         "split_equally_count": "split equally ({{count}})",
         "types": {
           "equal": {

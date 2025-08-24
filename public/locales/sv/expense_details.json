@@ -10,7 +10,6 @@
       "split_type_section": {
         "split_equally": "dela lika",
         "split_unequally": "dela ojämnt",
-        "paid_for": "betalt för {{name}}",
         "split_equally_count": "delat lika ({{count}})",
         "types": {
           "equal": {

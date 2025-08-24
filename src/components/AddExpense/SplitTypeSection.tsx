@@ -10,20 +10,20 @@ import {
   Plus,
   X,
 } from 'lucide-react';
-import { type TFunction, useTranslation } from 'next-i18next';
 import { type ChangeEvent, useCallback, useMemo } from 'react';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/store/addStore';
 import { removeTrailingZeros, toSafeBigInt, toUIString } from '~/utils/numbers';
 
+import { type TFunction, useTranslation } from 'next-i18next';
 import { EntityAvatar } from '../ui/avatar';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 export const SplitTypeSection: React.FC = () => {
-  const { t, displayName } = useTranslationWithUtils(['expense_details']);
+  const { t, displayName, generateSplitDescription } = useTranslationWithUtils(['expense_details']);
   const isNegative = useAddExpenseStore((s) => s.isNegative);
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const participants = useAddExpenseStore((s) => s.participants);
@@ -31,6 +31,7 @@ export const SplitTypeSection: React.FC = () => {
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
   const splitType = useAddExpenseStore((s) => s.splitType);
   const splitScreenOpen = useAddExpenseStore((s) => s.splitScreenOpen);
+  const splitShares = useAddExpenseStore((s) => s.splitShares);
 
   const { setPaidBy, setSplitScreenOpen } = useAddExpenseStore((s) => s.actions);
 
@@ -68,10 +69,8 @@ export const SplitTypeSection: React.FC = () => {
       <p>{t('ui.and', { ns: 'common' })} </p>
       <AppDrawer
         trigger={
-          <div className="max-w-32 overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
-            {splitType === SplitType.EQUAL
-              ? t('ui.add_expense_details.split_type_section.split_equally')
-              : t('ui.add_expense_details.split_type_section.split_unequally')}
+          <div className="max-w-40 overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 md:max-w-48 lg:max-w-56">
+            {generateSplitDescription(splitType, participants, splitShares, paidBy, currentUser)}
           </div>
         }
         title={t(

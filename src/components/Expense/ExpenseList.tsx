@@ -6,7 +6,6 @@ import React from 'react';
 import { CategoryIcon } from '~/components/ui/categoryIcons';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { toUIString } from '~/utils/numbers';
-import { toUIDate } from '~/utils/strings';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 export const ExpenseList: React.FC<{
@@ -18,7 +17,7 @@ export const ExpenseList: React.FC<{
   isGroup?: boolean;
   isLoading?: boolean;
 }> = ({ userId, isGroup = false, expenses = [], contactId, isLoading }) => {
-  const { displayName, t } = useTranslationWithUtils(['expense_details']);
+  const { displayName, toUIDate, t } = useTranslationWithUtils(['expense_details']);
 
   return (
     <>

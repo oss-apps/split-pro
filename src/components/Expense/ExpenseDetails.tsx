@@ -4,7 +4,6 @@ import { type User as NextUser } from 'next-auth';
 
 import { toUIString } from '~/utils/numbers';
 
-import { toUIDate } from '~/utils/strings';
 import { EntityAvatar } from '../ui/avatar';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
@@ -25,7 +24,7 @@ interface ExpenseDetailsProps {
 }
 
 const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
-  const { displayName, t } = useTranslationWithUtils(['expense_details']);
+  const { displayName, toUIDate, t } = useTranslationWithUtils(['expense_details']);
   return (
     <>
       <div className="mb-4 flex items-start justify-between gap-2">

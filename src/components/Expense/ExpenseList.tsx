@@ -23,7 +23,7 @@ export const ExpenseList: React.FC<{
   return (
     <>
       {expenses.map((e) => {
-        const youPaid = e.paidBy === userId;
+        const youPaid = e.paidBy === userId && e.amount >= 0n;
         const yourExpense = e.expenseParticipants.find(
           (partecipant) => partecipant.userId === userId,
         );
@@ -55,7 +55,8 @@ export const ExpenseList: React.FC<{
                   className={`flex text-center ${isSettlement ? 'text-sm text-gray-400' : 'text-xs text-gray-500'}`}
                 >
                   <span className="text-[10px]">{isSettlement ? '  🎉  ' : null}</span>
-                  {displayName(e.paidByUser, userId)} {t('ui.expense.user.paid', { ns: 'common' })}{' '}
+                  {displayName(e.paidByUser, userId)}{' '}
+                  {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`, { ns: 'common' })}{' '}
                   {e.currency} {toUIString(e.amount)}
                 </p>
               </div>

@@ -83,7 +83,8 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
         </button> */}
         <EntityAvatar entity={expense.paidByUser} size={35} />
         <p>
-          {displayName(expense.paidByUser, user.id)} {t('ui.expense.user.paid', { ns: 'common' })}{' '}
+          {displayName(expense.paidByUser, user.id)}{' '}
+          {t(`ui.expense.user.${expense.amount < 0 ? 'received' : 'paid'}`, { ns: 'common' })}{' '}
           {expense.currency} {toUIString(expense.amount)}
         </p>
       </div>
@@ -99,9 +100,12 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
               <EntityAvatar entity={partecipant.user} size={25} />
               <p>
                 {displayName(partecipant.user, user.id)}{' '}
-                {t(`ui.expense.${user.id === partecipant.userId ? 'you' : 'user'}.owe`, {
-                  ns: 'common',
-                })}{' '}
+                {t(
+                  `ui.expense.${user.id === partecipant.userId ? 'you' : 'user'}.${expense.amount < 0 ? 'received' : 'owe'}`,
+                  {
+                    ns: 'common',
+                  },
+                )}{' '}
                 {expense.currency}{' '}
                 {toUIString(
                   (expense.paidBy === partecipant.userId ? (expense.amount ?? 0n) : 0n) -

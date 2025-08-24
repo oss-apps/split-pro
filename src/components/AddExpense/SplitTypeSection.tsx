@@ -20,9 +20,11 @@ import { EntityAvatar } from '../ui/avatar';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 export const SplitTypeSection: React.FC = () => {
-  const { t } = useTranslation('expense_details');
+  const { t, displayName } = useTranslationWithUtils(['expense_details']);
+  const isNegative = useAddExpenseStore((s) => s.isNegative);
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const participants = useAddExpenseStore((s) => s.participants);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
@@ -34,16 +36,13 @@ export const SplitTypeSection: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center text-[16px] text-gray-400 sm:mt-4">
-      <p className="text-[16px]">{t('ui.expense.paid_by', { ns: 'common' })} </p>
+      <p className="text-[16px]">
+        {t(`ui.expense.${isNegative ? 'received_by' : 'paid_by'}`, { ns: 'common' })}{' '}
+      </p>
       <AppDrawer
         trigger={
           <p className="overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
-            {
-              (currentUser?.id === paidBy?.id
-                ? t('ui.actors.you', { ns: 'common' })
-                : (paidBy?.name ?? paidBy?.email)
-              )?.split(' ')[0]
-            }
+            {displayName(paidBy, currentUser?.id)}
           </p>
         }
         title={t('ui.expense.paid_by', { ns: 'common' })}
@@ -66,7 +65,6 @@ export const SplitTypeSection: React.FC = () => {
           ))}
         </div>
       </AppDrawer>
-
       <p>{t('ui.and', { ns: 'common' })} </p>
       <AppDrawer
         trigger={

@@ -70,7 +70,7 @@
     },
     "balance_list": {
       "press_balance_info": "Naciśnij na poszczególne saldo aby rozpocząć rozliczenie",
-      "are_settled_up": "są rozliczeni",
+      "are_settled_up": "rozliczono",
       "is_settled_up": "rozliczono"
     },
     "expense_list": {

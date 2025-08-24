@@ -12,7 +12,7 @@
         "send_invite": "Wyślij zaproszenie do użytkownika",
         "add_to_split_pro": "Dodaj do Split Pro"
       },
-      "invite_link": "Udostępnij link zaproszenia",
+      "invite_link": "Udostępnij link",
       "copied": "Skopiowano"
     },
     "group_statistics": {
@@ -47,6 +47,13 @@
       "recalculate_balances_details": {
         "title": "Na pewno?",
         "description": "Jeśli salda nie odpowiadają wydatkom, możesz je przeliczyć. Uwaga, że może to zająć trochę czasu, jeśli liczba wydatków jest duża. Salda poza grupą nie będą dotknięte."
+      },
+      "archive_group": "Zarchiwizuj grupę",
+      "archived": "Zarchiwizowano",
+      "archive_group_details": {
+        "title": "Na pewno chcesz zarchiwizować tę grupę?",
+        "can_archive": "Ta grupa zostanie zarchiwizowana i ukryta z głównej listy grup. Nadal będziesz mógł uzyskać do niej dostęp później, jeśli będzie to potrzebne.",
+        "cant_archive": "Nie można zarchiwizować grupy z zaległymi saldami. Wszystkie salda muszą być najpierw rozliczone."
       }
     },
     "tabs": {
@@ -55,7 +62,8 @@
     },
     "messages": {
       "group_name_updated": "Zaktualizowano nazwę grupy",
-      "balances_recalculated": "Salda przeliczone pomyślnie"
+      "balances_recalculated": "Salda przeliczone pomyślnie",
+      "group_archived": "Grupa została pomyślnie zarchiwizowana"
     },
     "errors": {
       "group_name_update_failed": "Błąd podczas aktualizacji nazwy grupy",

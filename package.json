@@ -22,7 +22,16 @@
     "dx:up": "docker compose -f docker/dev/compose.yml up -d",
     "dx:down": "docker compose -f docker/dev/compose.yml down",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,md,yml,yaml}": [
+      "prettier --write"
+    ],
+    "*.{js,jsx,ts,tsx}": [
+      "oxlint --type-aware --fix"
+    ]
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.515.0",
@@ -75,8 +84,10 @@
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
     "@types/web-push": "^3.6.3",
+    "husky": "^9.1.7",
     "jest": "30.0.5",
     "jest-environment-jsdom": "30.0.5",
+    "lint-staged": "^16.1.5",
     "oxlint": "^1.12.0",
     "oxlint-tsgolint": "^0.0.4",
     "postcss": "^8.4.31",

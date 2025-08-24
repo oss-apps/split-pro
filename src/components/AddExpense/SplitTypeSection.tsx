@@ -15,6 +15,7 @@ import { type ChangeEvent, useCallback, useMemo } from 'react';
 
 import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/store/addStore';
 import { removeTrailingZeros, toSafeBigInt, toUIString } from '~/utils/numbers';
+import { generateSplitDescription } from '~/utils/splitDescriptions';
 
 import { EntityAvatar } from '../ui/avatar';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
@@ -31,6 +32,7 @@ export const SplitTypeSection: React.FC = () => {
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
   const splitType = useAddExpenseStore((s) => s.splitType);
   const splitScreenOpen = useAddExpenseStore((s) => s.splitScreenOpen);
+  const splitShares = useAddExpenseStore((s) => s.splitShares);
 
   const { setPaidBy, setSplitScreenOpen } = useAddExpenseStore((s) => s.actions);
 
@@ -69,9 +71,7 @@ export const SplitTypeSection: React.FC = () => {
       <AppDrawer
         trigger={
           <div className="max-w-32 overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
-            {splitType === SplitType.EQUAL
-              ? t('ui.add_expense_details.split_type_section.split_equally')
-              : t('ui.add_expense_details.split_type_section.split_unequally')}
+            {generateSplitDescription(splitType, participants, splitShares, paidBy, currentUser, t)}
           </div>
         }
         title={t(

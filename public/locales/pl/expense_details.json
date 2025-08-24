@@ -14,6 +14,8 @@
       "split_type_section": {
         "split_equally": "podziel równo",
         "split_unequally": "podziel nierówno",
+        "paid_for": "zapłacone za {{name}}",
+        "split_equally_count": "podzielone równo ({{count}})",
         "types": {
           "equal": {
             "title": "Równo",

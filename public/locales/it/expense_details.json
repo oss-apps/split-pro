@@ -10,6 +10,8 @@
       "split_type_section": {
         "split_equally": "diviso equamente",
         "split_unequally": "diviso non equamente",
+        "paid_for": "pagato per {{name}}",
+        "split_equally_count": "diviso equamente ({{count}})",
         "types": {
           "equal": {
             "title": "Uguale",

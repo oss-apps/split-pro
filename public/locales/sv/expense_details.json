@@ -10,7 +10,6 @@
       "split_type_section": {
         "split_equally": "dela lika",
         "split_unequally": "dela ojämnt",
-        "split_equally_count": "delat lika ({{count}})",
         "types": {
           "equal": {
             "title": "Jämnt",

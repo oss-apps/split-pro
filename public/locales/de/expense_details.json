@@ -11,7 +11,6 @@
       "split_type_section": {
         "split_equally": "gleichmäßig teilen",
         "split_unequally": "ungleichmäßig teilen",
-        "split_equally_count": "gleichmäßig geteilt ({{count}})",
         "types": {
           "equal": {
             "title": "Gleich",

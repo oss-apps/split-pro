@@ -7,7 +7,6 @@ import { EntityAvatar } from '~/components/ui/avatar';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
-import { toUIDate } from '~/utils/strings';
 import { type TFunction } from 'next-i18next';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { withI18nStaticProps } from '~/utils/i18n/server';
@@ -46,7 +45,7 @@ function getPaymentString(
 }
 
 const ActivityPage: NextPageWithUser = ({ user }) => {
-  const { displayName, t } = useTranslationWithUtils();
+  const { displayName, t, toUIDate } = useTranslationWithUtils();
   const expensesQuery = api.expense.getAllExpenses.useQuery();
 
   return (

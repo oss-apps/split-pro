@@ -28,10 +28,10 @@ import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { Label } from '~/components/ui/label';
-import { SimpleConfirmationDialog } from '~/components/ui/simple-confirmation-dialog';
+import { SimpleConfirmationDialog } from '~/components/SimpleConfirmationDialog';
 import { Switch } from '~/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
-import { UpdateName } from '~/components/ui/update-details';
+import { UpdateName } from '~/components/Account/UpdateName';
 import { env } from '~/env';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { db } from '~/server/db';
@@ -63,8 +63,7 @@ const BalancePage: NextPageWithUser<{
     if (!groupDetailQuery.data) {
       return;
     }
-    const inviteLink =
-      window.location.origin + '/join-group?groupId=' + groupDetailQuery.data.publicId;
+    const inviteLink = `${window.location.origin}/join-group?groupId=${groupDetailQuery.data.publicId}`;
 
     if (navigator.share) {
       navigator

@@ -32,7 +32,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
       <MainLayout
         title={
           <div className="flex items-center gap-2">
-            <Link href={`/activity`}>
+            <Link href="/activity">
               <ChevronLeftIcon className="mr-1 h-6 w-6" />
             </Link>
             <p className="text-[16px] font-normal">{t('ui.expense_details', { ns: 'common' })}</p>

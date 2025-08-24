@@ -5,6 +5,7 @@ import { env } from '~/env';
 
 import { sendToDiscord } from './service-notification';
 
+// oxlint-disable-next-line init-declarations
 let transporter: Transporter;
 
 const getTransporter = () => {

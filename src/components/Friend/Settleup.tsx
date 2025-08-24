@@ -9,7 +9,7 @@ import { DEFAULT_CATEGORY } from '~/lib/category';
 import { api } from '~/utils/api';
 import { BigMath, toSafeBigInt, toUIString } from '~/utils/numbers';
 
-import { FriendBalance } from './FirendBalance';
+import { FriendBalance } from './FriendBalance';
 import { Button } from '../ui/button';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';

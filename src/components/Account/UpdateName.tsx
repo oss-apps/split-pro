@@ -4,9 +4,9 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { type TFunction, useTranslation } from 'next-i18next';
 import { z } from 'zod';
-import { AppDrawer } from './drawer';
-import { Form, FormControl, FormField, FormItem, FormMessage } from './form';
-import { Input } from './input';
+import { AppDrawer } from '../ui/drawer';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
+import { Input } from '../ui/input';
 
 const detailsSchema = (t: TFunction) =>
   z.object({

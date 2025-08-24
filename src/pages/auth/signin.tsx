@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import { LanguageSelector } from '~/components/ui/language-selector';
+import { LanguageSelector } from '~/components/LanguageSelector';
 import { env } from '~/env';
 import { getServerAuthSession } from '~/server/auth';
 import { customServerSideTranslations } from '~/utils/i18n/server';

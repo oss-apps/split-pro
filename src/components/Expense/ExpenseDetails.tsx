@@ -44,19 +44,22 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
             ) : null}
             {expense.updatedByUser ? (
               <p className="text-sm text-gray-500">
-                {t('ui.edited_by', { ns: 'common' })} {displayName(expense.updatedByUser, user.id)}{' '}
-                {t('ui.on')} {toUIDate(expense.updatedAt, { year: true })}
+                {t('ui.edited_by', { ns: 'common' })}{' '}
+                {displayName(expense.updatedByUser, user.id, 'accusativus')} {t('ui.on')}{' '}
+                {toUIDate(expense.updatedAt, { year: true })}
               </p>
             ) : null}
             {expense.deletedByUser ? (
               <p className="text-sm text-orange-600">
-                {t('ui.deleted_by', { ns: 'common' })} {displayName(expense.deletedByUser, user.id)}{' '}
+                {t('ui.deleted_by', { ns: 'common' })}{' '}
+                {displayName(expense.deletedByUser, user.id, 'accusativus')}{' '}
                 {t('ui.on', { ns: 'common' })}{' '}
                 {toUIDate(expense.deletedAt ?? expense.createdAt, { year: true })}
               </p>
             ) : (
               <p className="text-sm text-gray-500">
-                {t('ui.added_by', { ns: 'common' })} {displayName(expense.addedByUser, user.id)}{' '}
+                {t('ui.added_by', { ns: 'common' })}{' '}
+                {displayName(expense.addedByUser, user.id, 'accusativus')}{' '}
                 {t('ui.on', { ns: 'common' })} {toUIDate(expense.createdAt, { year: true })}
               </p>
             )}
@@ -83,7 +86,10 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
         <EntityAvatar entity={expense.paidByUser} size={35} />
         <p>
           {displayName(expense.paidByUser, user.id)}{' '}
-          {t(`ui.expense.user.${expense.amount < 0 ? 'received' : 'paid'}`, { ns: 'common' })}{' '}
+          {t(
+            `ui.expense.${expense.paidByUser.id === user.id ? 'you' : 'user'}.${expense.amount < 0 ? 'received' : 'paid'}`,
+            { ns: 'common' },
+          )}{' '}
           {expense.currency} {toUIString(expense.amount)}
         </p>
       </div>

@@ -16,6 +16,8 @@
   "ui": {
     "actors": {
       "you": "You",
+      "you_dativus": "You",
+      "you_accusativus": "You",
       "friends": "Friends",
       "groups": "Groups",
       "members": "Members",

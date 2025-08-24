@@ -16,6 +16,8 @@
   "ui": {
     "actors": {
       "you": "Du",
+      "you_dativus": "Dig",
+      "you_accusativus": "Dig",
       "friends": "Vänner",
       "groups": "Grupper",
       "members": "Medlemmar",

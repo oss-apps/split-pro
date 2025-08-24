@@ -93,7 +93,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
                 {Object.entries(balances).map(([currency, amount]) => (
                   <div key={currency}>
                     {0 < amount
-                      ? `${friend?.name} ${t('ui.expense.user.owe')} ${t('ui.actors.you').toLowerCase()}`
+                      ? `${friend?.name} ${t('ui.expense.user.owe')} ${t('ui.actors.you_dativus').toLowerCase()}`
                       : `${t('ui.actors.you')} ${t('ui.expense.you.owe')} ${friend?.name}`}{' '}
                     {toUIString(amount)} {currency}
                   </div>

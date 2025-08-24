@@ -141,7 +141,7 @@ export const BalanceList: React.FC<{
                                 })}{' '}
                               </span>
                               <span className="text-foreground">
-                                {displayName(user, userQuery.data?.id)}
+                                {displayName(user, userQuery.data?.id, 'accusativus')}
                               </span>
                             </div>
                           </div>

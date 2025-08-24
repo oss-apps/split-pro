@@ -8,12 +8,13 @@ export type ParametersExceptTranslation<F> = F extends (t: TFunction, ...rest: i
   : never;
 
 export const displayName = (
-  t?: TFunction,
+  t: TFunction,
   user?: Pick<User, 'name' | 'email' | 'id'> | null,
   currentUserId?: number,
+  useCase?: 'dativus' | 'accusativus',
 ): string => {
   if (currentUserId === user?.id) {
-    return t ? t('ui.actors.you', { ns: 'common' }) : 'You';
+    return t(`ui.actors.you${useCase ? `_${useCase}` : ''}`, { ns: 'common' });
   }
   return user?.name ?? user?.email ?? '';
 };
@@ -23,7 +24,9 @@ export const toUIDate = (
   date: Date,
   { useToday = false, year = false } = {},
 ): string =>
-  useToday && isToday(date) ? t('ui.today') : format(date, year ? 'dd MMM yyyy' : 'MMM dd');
+  useToday && isToday(date)
+    ? t('ui.today', { ns: 'common' })
+    : format(date, year ? 'dd MMM yyyy' : 'MMM dd');
 
 export function generateSplitDescription(
   t: TFunction,

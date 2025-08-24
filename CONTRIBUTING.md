@@ -44,6 +44,29 @@ The development branch is <code>main</code>. All pull requests should be made ag
 
 This projects implements `oxlint` for linting. When developing please make sure to have an IDE integration enabled and watch out not to introduce new warnings. It is also nice to follow the boy scout rule and leave the code you modify with a little less warnings. Checks are enforced on CI for linting, formatting and typing, so run necessary checks before pushing.
 
+## Pre-commit Hooks
+
+This project uses [Husky](https://typicode.github.io/husky/) and [lint-staged](https://github.com/okonet/lint-staged) to automatically run code quality checks before each commit:
+
+- **Prettier**: Automatically formats code according to the project's style guide
+- **oxlint**: Runs linting checks and automatically fixes issues where possible
+
+The pre-commit hooks are automatically installed when you run `pnpm install`. If you need to manually set them up:
+
+```bash
+pnpm exec husky install
+```
+
+### Bypassing pre-commit hooks
+
+In rare cases where you need to bypass the pre-commit checks, you can use:
+
+```bash
+git commit --no-verify -m "your commit message"
+```
+
+**Note:** Only use `--no-verify` when absolutely necessary, as it skips important code quality checks.
+
 ## Building
 
 > **Note**

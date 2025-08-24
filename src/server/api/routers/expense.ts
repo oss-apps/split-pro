@@ -81,6 +81,19 @@ export const expenseRouter = createTRPCRouter({
         await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
       }
 
+      if (input.groupId) {
+        const group = await db.group.findUnique({
+          where: { id: input.groupId },
+          select: { archivedAt: true },
+        });
+        if (!group) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group not found' });
+        }
+        if (group.archivedAt) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
+        }
+      }
+
       try {
         const expense = input.expenseId
           ? await editExpense(input, ctx.session.user.id)
@@ -280,6 +293,28 @@ export const expenseRouter = createTRPCRouter({
     .input(z.object({ expenseId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
+
+      const expense = await db.expense.findUnique({
+        where: { id: input.expenseId },
+        select: { groupId: true },
+      });
+
+      if (!expense) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Expense not found' });
+      }
+
+      if (expense.groupId) {
+        const group = await db.group.findUnique({
+          where: { id: expense.groupId },
+          select: { archivedAt: true },
+        });
+        if (!group) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group not found' });
+        }
+        if (group.archivedAt) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
+        }
+      }
 
       await deleteExpense(input.expenseId, ctx.session.user.id);
     }),

@@ -15,6 +15,7 @@ interface NoMembersProps {
 const NoMembers: React.FC<NoMembersProps> = ({ group, enableSendingInvites }) => {
   const { t } = useTranslation('groups_details');
   const [isCopied, setIsCopied] = useState(false);
+  const isArchived = !!group.archivedAt;
 
   async function copyToClipboard() {
     const inviteLink = `${window.location.origin}/join-group?groupId=${group.publicId}`;
@@ -28,14 +29,18 @@ const NoMembers: React.FC<NoMembersProps> = ({ group, enableSendingInvites }) =>
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4">
       <p className="mb-4 text-center text-gray-500">{t('ui.no_members.no_members')}</p>
-      <Button className="w-[200px]">
+      <Button className="w-[200px]" disabled={isArchived}>
         <AddMembers group={group} enableSendingInvites={enableSendingInvites}>
           <UserPlus className="text-primary-foreground h-5 w-5" />
           <p>{t('ui.no_members.add_members')}</p>
         </AddMembers>
       </Button>
-      <p className="text-gray-400">{t('ui.no_members.or')}</p>
-      <Button className="flex w-[200px] items-center gap-2" onClick={copyToClipboard}>
+      <p className="text-gray-400">{t('common:ui.or')}</p>
+      <Button
+        className="flex w-[200px] items-center gap-2"
+        onClick={copyToClipboard}
+        disabled={isArchived}
+      >
         {!isCopied ? (
           <>
             <Share className="h-5 w-5" />

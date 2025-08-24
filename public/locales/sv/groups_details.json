@@ -47,6 +47,13 @@
       "recalculate_balances_details": {
         "title": "Är du säker?",
         "description": "Om saldon inte matchar utgifter, kan du räkna om dem. Notera att det kan ta tid om antalet utgifter är stort. Saldon utanför gruppen påverkas inte."
+      },
+      "archive_group": "Arkivera grupp",
+      "archived": "Arkiverad",
+      "archive_group_details": {
+        "title": "Är du säker på att du vill arkivera denna grupp?",
+        "can_archive": "Denna grupp kommer att arkiveras och döljas från din huvudlista över grupper. Du kan fortfarande komma åt den senare om det behövs.",
+        "cant_archive": "Kan inte arkivera grupp med utestående saldon. Alla saldon måste kvittas först."
       }
     },
     "tabs": {
@@ -55,7 +62,8 @@
     },
     "messages": {
       "group_name_updated": "Gruppnamn uppdaterat",
-      "balances_recalculated": "Saldon omräknade"
+      "balances_recalculated": "Saldon omräknade",
+      "group_archived": "Grupp arkiverad framgångsrikt"
     },
     "errors": {
       "group_name_update_failed": "Fel vid uppdatering av gruppnamn",

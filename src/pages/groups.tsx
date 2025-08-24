@@ -3,7 +3,7 @@ import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import { useMemo } from 'react';
 import { BalanceEntry } from '~/components/Expense/BalanceEntry';
-import { CreateGroup } from '~/components/Group/CreateGroup';
+import { CreateGroup } from '~/components/group/CreateGroup';
 import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
 import { type NextPageWithUser } from '~/types';

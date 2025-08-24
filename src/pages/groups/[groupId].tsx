@@ -63,8 +63,7 @@ const BalancePage: NextPageWithUser<{
     if (!groupDetailQuery.data) {
       return;
     }
-    const inviteLink =
-      window.location.origin + '/join-group?groupId=' + groupDetailQuery.data.publicId;
+    const inviteLink = `${window.location.origin}/join-group?groupId=${groupDetailQuery.data.publicId}`;
 
     if (navigator.share) {
       navigator

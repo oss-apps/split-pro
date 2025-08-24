@@ -78,7 +78,7 @@ const minCashFlow = (graph: bigint[][]): bigint[][] => {
   for (let i = 0; i < n; ++i) {
     for (let j = 0; j < n; ++j) {
       const diff = graph[j]![i]! - graph[i]![j]!;
-      amounts[i] = amounts[i]! + diff;
+      amounts[i]! += diff;
     }
   }
   return solveTransaction(amounts);
@@ -99,12 +99,9 @@ const solveTransaction = (amounts: bigint[]): bigint[][] => {
 
     const debtor = maxDebitEntry.key;
     const creditor = maxCreditEntry.key;
-    let owed_amount;
+    let owed_amount = maxCreditEntry.value;
 
-    if (0n === transaction_val) {
-      owed_amount = maxCreditEntry.value;
-    } else if (0 > transaction_val) {
-      owed_amount = maxCreditEntry.value;
+    if (0 > transaction_val) {
       maxDebitEntry.value = transaction_val;
       minQ.push(maxDebitEntry);
       minQ.sort(compareAsc);

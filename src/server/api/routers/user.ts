@@ -208,7 +208,7 @@ export const userRouter = createTRPCRouter({
     }),
 
   downloadData: protectedProcedure.mutation(async ({ ctx }) => {
-    const user = ctx.session.user;
+    const { user } = ctx.session;
 
     const friends = await getCompleteFriendsDetails(user.id);
     const groups = await getCompleteGroupDetails(user.id);

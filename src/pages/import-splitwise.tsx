@@ -181,7 +181,10 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                           }}
                         />
                         <div className="flex">
-                          <p>{`${user.first_name}${user.last_name ? ' ' + user.last_name : ''}`}</p>
+                          <p>
+                            {user.first_name}
+                            {user.last_name ? ` ${user.last_name}` : ''}
+                          </p>
                         </div>
                       </div>
                       <div className="flex flex-wrap justify-end gap-1">

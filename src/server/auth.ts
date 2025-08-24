@@ -100,7 +100,7 @@ export const authOptions: NextAuthOptions = {
       // Check if the user's name is empty
       if ((!user.name || '' === user.name.trim()) && user.email) {
         // Define the logic to update the user's name here
-        const updatedName = user.email.split('@')[0];
+        const [updatedName] = user.email.split('@');
 
         // Use your database client to update the user's name
         await db.user.update({

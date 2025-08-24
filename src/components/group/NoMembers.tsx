@@ -34,7 +34,7 @@ const NoMembers: React.FC<NoMembersProps> = ({ group, enableSendingInvites }) =>
           <p>{t('ui.no_members.add_members')}</p>
         </AddMembers>
       </Button>
-      <p className="text-gray-400">{t('ui.no_members.or')}</p>
+      <p className="text-gray-400">{t('common:ui.or')}</p>
       <Button className="flex w-[200px] items-center gap-2" onClick={copyToClipboard}>
         {!isCopied ? (
           <>

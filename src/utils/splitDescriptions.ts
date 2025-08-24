@@ -33,25 +33,19 @@ export function generateSplitDescription(
   if (selectedParticipants.length === 0) {
     return t('ui.add_expense_details.split_type_section.split_equally');
   }
-
-  const isPaidByCurrentUser = paidBy.id === currentUser.id;
-  const isPaidByInSplit = selectedParticipants.some(p => p.id === paidBy.id);
   
-  // Only handle cases where current user is paying
-  if (isPaidByCurrentUser) {
-    // Case 1: Paying for exactly one person (including yourself or someone else)
-    if (selectedParticipants.length === 1) {
-      const beneficiary = selectedParticipants[0];
-      const beneficiaryName = beneficiary?.name?.split(' ')[0] || beneficiary?.email || 'someone';
-      return t('ui.add_expense_details.split_type_section.paid_for', { name: beneficiaryName });
-    }
-    
-    // Case 2: Splitting with multiple people (regardless of whether you're included)
-    if (selectedParticipants.length > 1) {
-      return t('ui.add_expense_details.split_type_section.split_equally_count', { 
-        count: selectedParticipants.length 
-      });
-    }
+  // Case 1: Paying for exactly one person
+  if (selectedParticipants.length === 1) {
+    const beneficiary = selectedParticipants[0];
+    const beneficiaryName = beneficiary?.name?.split(' ')[0] || beneficiary?.email || 'someone';
+    return t('ui.add_expense_details.split_type_section.paid_for', { name: beneficiaryName });
+  }
+  
+  // Case 2: Splitting with multiple people
+  if (selectedParticipants.length > 1) {
+    return t('ui.add_expense_details.split_type_section.split_equally_count', { 
+      count: selectedParticipants.length 
+    });
   }
 
   // Fallback to default for all other cases

@@ -150,7 +150,6 @@ const BalancePage: NextPageWithUser<{
     <>
       <Head>
         <title>{t('ui.title')}</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
         title={

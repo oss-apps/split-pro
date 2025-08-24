@@ -15,7 +15,7 @@ import { type ChangeEvent, useCallback, useMemo } from 'react';
 
 import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/store/addStore';
 import { removeTrailingZeros, toSafeBigInt, toUIString } from '~/utils/numbers';
-import { generateSplitDescription } from '~/utils/splitDescriptions';
+import { generateSplitDescription } from '~/utils/strings';
 
 import { EntityAvatar } from '../ui/avatar';
 import { AppDrawer, DrawerClose } from '../ui/drawer';

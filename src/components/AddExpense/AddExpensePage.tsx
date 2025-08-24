@@ -31,6 +31,7 @@ export const AddOrEditExpensePage: React.FC<{
   const { t } = useTranslation('expense_details');
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
+  const isNegative = useAddExpenseStore((s) => s.isNegative);
   const participants = useAddExpenseStore((s) => s.participants);
   const group = useAddExpenseStore((s) => s.group);
   const currency = useAddExpenseStore((s) => s.currency);
@@ -88,17 +89,19 @@ export const AddOrEditExpensePage: React.FC<{
       return;
     }
 
+    const sign = isNegative ? -1n : 1n;
+
     try {
       await addExpenseMutation.mutateAsync(
         {
           name: description,
           currency,
-          amount,
+          amount: amount * sign,
           groupId: group?.id ?? null,
           splitType,
           participants: participants.map((p) => ({
             userId: p.id,
-            amount: p.amount ?? 0n,
+            amount: (p.amount ?? 0n) * sign,
           })),
           paidBy: paidBy.id,
           category,
@@ -130,6 +133,7 @@ export const AddOrEditExpensePage: React.FC<{
     setSplitScreenOpen,
     description,
     currency,
+    isNegative,
     amount,
     participants,
     category,
@@ -205,7 +209,6 @@ export const AddOrEditExpensePage: React.FC<{
               type="number"
               inputMode="decimal"
               value={amtStr}
-              min="0"
               onChange={onAmountChange}
             />
           </div>

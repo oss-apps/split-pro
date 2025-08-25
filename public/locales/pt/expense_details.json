@@ -24,9 +24,9 @@
             "remaining": "Restante"
           },
           "share": {
-            "title": "Share",
-            "total_shares": "Total shares",
-            "shares": "Share(s)"
+            "title": "Quota",
+            "total_shares": "Total de quotas",
+            "shares": "quota(s)"
           },
           "adjustment": {
             "title": "Ajustes",

@@ -47,6 +47,13 @@
       "recalculate_balances_details": {
         "title": "Tens a certeza?",
         "description": "Se os saldos não corresponderem às despesas, podes recalculá-los. Nota que pode demorar algum tempo se o número de despesas for grande. Os saldos fora do grupo não serão afetados."
+      },
+      "archive_group": "Arquivar grupo",
+      "archived": "Arquivado",
+      "archive_group_details": {
+        "title": "Tens a certeza que queres arquivar este grupo?",
+        "can_archive": "Este grupo será arquivado e ocultado da tua lista principal de grupos. Podes ainda aceder a ele mais tarde, se necessário.",
+        "cant_archive": "Não é possível arquivar um grupo com saldos em aberto. Todos os saldos devem ser liquidadas primeiro."
       }
     },
     "tabs": {

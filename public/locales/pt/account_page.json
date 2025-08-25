@@ -1,0 +1,74 @@
+{
+  "ui": {
+    "title": "Conta",
+    "change_language": "Alterar idioma",
+    "change_language_details": {
+      "title": "Seleciona um idioma",
+      "messages": {
+        "language_changed": "Idioma alterado com sucesso"
+      },
+      "errors": {
+        "language_change_failed": "Erro ao alterar idioma"
+      },
+      "placeholder": "Seleciona um idioma"
+    },
+    "notifications": {
+      "enable_notification": "Ativar notificações",
+      "disable_notification": "Desativar notificações",
+      "messages": {
+        "notification_granted": "Irás receber notificações agora"
+      },
+      "errors": {
+        "notification_not_supported": "Notificação não suportada",
+        "subscribe_error": "Não foi possivel subscrever notificações",
+        "unsubscribe_error": "Erro no cancelamento da subscrição da notificação",
+        "request_error": "Erro requisitando notificação"
+      }
+    },
+    "download_app": "Descarregar app",
+    "download_app_details": {
+      "title": "Descarregar app",
+      "download_as_pwa": "Poderás descarregar o SplitPro como PWA",
+      "using_ios": "Se estás a usar iOS, vê isto",
+      "using_android": "Se estás a usar  Android, vê isto",
+      "video": "vídeo"
+    },
+    "import_from_splitwise": "Importar do Splitwise",
+    "import_from_splitwise_details": {
+      "choose_file": "Selecionar ficheiro",
+      "no_file_chosen": "Ficheiro não selecionado",
+      "note": "Nota: Ainda só temos suporte a importar amigos e grupos. A transações não serão importadas. Estamos a trabalhar nisso.",
+      "follow_to_export_splitwise_data": "Acede a este link para exportar os dados do Splitwise",
+      "export_splitwise_data_button": "Exportar dados do Splitwise",
+      "messages": {
+        "import_success": "Importar com sucesso"
+      },
+      "errors": {
+        "import_failed": "Error ao importar ficheiro"
+      }
+    },
+    "download_splitpro_data": "Descarregar dados do SplitPro",
+    "submit_feedback": "Submeter feedback",
+    "submit_feedback_details": {
+      "title": "Submeter feedback",
+      "placeholder": "Insere o teu feedback"
+    },
+    "errors": {
+      "feedback_required": "Feedback é obrigatório",
+      "feedback_min_length": "Feedback deve conter pelo menos 10 caracteres"
+    },
+    "messages": {
+      "submit_success": "Feedback submetido",
+      "submit_error": "Falha ao submeter feedback"
+    },
+    "write_review": "Escreve uma review",
+    "star_on_github": "Visita-nos no GitHub",
+    "support_us": "Patrocina-nos",
+    "follow_on_x": "Segue-nos no X",
+    "logout": "Terminar Sessão",
+    "edit_name": {
+      "title": "Editar nome",
+      "placeholder": "Inserir nome"
+    }
+  }
+}

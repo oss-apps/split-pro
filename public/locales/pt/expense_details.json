@@ -1,27 +1,27 @@
 {
   "ui": {
-    "title": "Add expense",
-    "title_mobile": "Add",
-    "add_expense": "Add expense",
+    "title": "Adicionar despesa",
+    "title_mobile": "Adicionar",
+    "add_expense": "Adicionar despesa",
     "add_expense_details": {
-      "add_new_expense": "Add new expense",
-      "description_placeholder": "Enter description",
-      "amount_placeholder": "Enter amount",
+      "add_new_expense": "Adicionar nova despesa",
+      "description_placeholder": "Insira a descrição",
+      "amount_placeholder": "Insira o valor",
       "split_type_section": {
-        "split_equally": "split equally",
-        "split_unequally": "split unequally",
+        "split_equally": "dividir igualmente",
+        "split_unequally": "dividir desigualmente",
         "types": {
           "equal": {
-            "title": "Equal",
-            "per_person": "per person"
+            "title": "Igual",
+            "per_person": "por pessoa"
           },
           "percentage": {
-            "title": "Percentage",
-            "remaining": "Remaining"
+            "title": "Percentagem",
+            "remaining": "Restante"
           },
           "exact": {
-            "title": "Exact",
-            "remaining": "Remaining"
+            "title": "Exato",
+            "remaining": "Restante"
           },
           "share": {
             "title": "Share",
@@ -29,45 +29,45 @@
             "shares": "Share(s)"
           },
           "adjustment": {
-            "title": "Adjustment",
-            "remaining_to_split_equally": "Remaining to split eauqlly"
+            "title": "Ajustes",
+            "remaining_to_split_equally": "Restante para dividir igualmente"
           }
         }
       },
-      "pick_a_date": "Pick a date",
+      "pick_a_date": "Selecionar uma data",
       "upload_file": {
         "messages": {
-          "upload_success": "File uploaded successfully"
+          "upload_success": "Arquivo enviado com sucesso"
         },
         "errors": {
-          "less_than": "File should be less than",
-          "upload_failed": "Failed to upload file",
-          "uploading_error": "Error uploading file"
+          "less_than": "O ficheiro deve ter menos de",
+          "upload_failed": "Falha ao carregar o ficheiro",
+          "uploading_error": "Erro ao carregar o ficheiro"
         }
       },
-      "sponsor_us": "Sponsor us",
+      "sponsor_us": "Patrocine-nos",
       "user_input": {
-        "cannot_change_group": "Cannot change group while editing",
-        "remove_group": "Press delete to remove group",
-        "add_more_friends": "Search friends, groups or add email",
-        "search_friends": "Search friends, groups or add email"
+        "cannot_change_group": "Não é possível mudar de grupo enquanto edita",
+        "remove_group": "Pressione delete para remover o grupo",
+        "add_more_friends": "Pesquisar amigos, grupos ou adicionar email",
+        "search_friends": "Pesquisar amigos, grupos ou adicionar email"
       },
       "select_user_or_group": {
-        "only_one_group_time": "You can have only one group at a time",
-        "warning": "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused",
-        "note": "Note: sending invite is disabled for now because of spam",
-        "send_invite": "Send invite to user",
-        "add_to_split_pro": "Add to Split Pro"
+        "only_one_group_time": "Só podes ter um grupo de cada vez",
+        "warning": "Atenção: Não uses o envio de convite se for um email inválido. Usa a opção de adicionar ao Split Pro em vez disso. A tua conta será bloqueada se esta funcionalidade for mal utilizada.",
+        "note": "Nota: opção de envio de convite está desativa para já devido ao spam",
+        "send_invite": "Enviar convite para o utilizador",
+        "add_to_split_pro": "Adicionar ao Split Pro"
       }
     },
     "delete_expense_details": {
-      "title": "Are you absolutely sure?",
-      "text": "This action cannot be undone. This will permanently delete your expense."
+      "title": "Tens mesmo a certeza?",
+      "text": "Esta ação não pode ser desfeita. Isto irá eliminar permanentemente a tua despesa."
     },
     "balance_list": {
-      "press_balance_info": "Press on individual balance to initiate settlement",
-      "are_settled_up": "are settled up",
-      "is_settled_up": "is settled up"
+      "press_balance_info": "Pressione o saldo individual para iniciar o acerto",
+      "are_settled_up": "estão acertados",
+      "is_settled_up": "está acertado"
     }
   }
 }

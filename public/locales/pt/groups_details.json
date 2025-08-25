@@ -1,76 +1,76 @@
 {
   "ui": {
-    "title": "Group outstanding balances",
+    "title": "Saldos em aberto do grupo",
     "no_members": {
-      "no_members": "No members in the group yet.",
-      "add_members": "Add members",
+      "no_members": "Não existem membros neste grupo.",
+      "add_members": "Adicionar membros",
       "add_members_details": {
-        "title": "Add members",
-        "placeholder": "Enter name or email",
-        "warning": "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused",
-        "note": "Note: sending invite is disabled for now because of spam",
-        "send_invite": "Send invite to user",
-        "add_to_split_pro": "Add to Split Pro"
+        "title": "Adicionar membros",
+        "placeholder": "Insira o nome ou email",
+        "warning": "Atenção: Não uses o envio de convite se for um email inválido. Usa a opção de adicionar ao Split Pro em vez disso. A tua conta será bloqueada se esta funcionalidade for mal utilizada.",
+        "note": "Nota: opção de envio de convite está desativa para já devido ao spam",
+        "send_invite": "Enviar convite para o utilizador",
+        "add_to_split_pro": "Adicionar ao Split Pro"
       },
-      "invite_link": "Share invite link",
-      "copied": "Copied"
+      "invite_link": "Partilhar link de convite",
+      "copied": "Copiado"
     },
     "group_statistics": {
-      "title": "Group statistics",
-      "total_expenses": "Total expenses",
-      "first_expense": "First expense"
+      "title": "Estatísticas do grupo",
+      "total_expenses": "Total de despesas",
+      "first_expense": "Primeira despesa"
     },
     "group_info": {
-      "title": "Group info",
-      "members": "Members",
-      "group_created": "Group created",
-      "actions": "Actions",
-      "delete_group": "Delete group",
+      "title": "Informações do grupo",
+      "members": "Membros",
+      "group_created": "Grupo criado",
+      "actions": "Ações",
+      "delete_group": "Eliminar grupo",
       "delete_group_details": {
-        "title": "Are you absolutely sure?",
-        "can_delete": "This action cannot be reversed",
-        "cant_delete": "Can't delete the group until everyone settles up the balance"
+        "title": "Tens a certeza?",
+        "can_delete": "Esta ação não pode ser desfeita",
+        "cant_delete": "Não é possível eliminar o grupo até que todos acerte o saldo"
       },
-      "leave_group": "Leave group",
+      "leave_group": "Sair do grupo",
       "leave_group_details": {
-        "title": "Are you absolutely sure?",
-        "can_leave": "This action cannot be reversed",
-        "cant_leave": "Can't leave the group until your outstanding balance is settled"
+        "title": "Tens mesmo a certeza?",
+        "can_leave": "Esta ação não pode ser desfeita",
+        "cant_leave": "Não é possível sair do grupo até que o seu saldo em aberto seja liquidado"
       },
       "remove_member_details": {
-        "title": "Are you absolutely sure?",
-        "can_remove": "You are about to remove this member from the group",
-        "cant_remove": "Can't remove member until their outstanding balance is settled"
+        "title": "Tens mesmo a certeza?",
+        "can_remove": "Estás prestes a remover este membro do grupo",
+        "cant_remove": "Não é possível remover o membro até que o seu saldo em aberto seja liquidado"
       },
-      "simplify_debts": "Simplify debts",
-      "recalculate_balances": "Recalculate balances",
+      "simplify_debts": "Simplificar dívidas",
+      "recalculate_balances": "Recalcular saldos",
       "recalculate_balances_details": {
-        "title": "Are you sure?",
-        "description": "If balances do not match expenses, you can recalculate them. Note that it may take some time if the expense count is large. Balances outside the group will not be affected."
+        "title": "Tens a certeza?",
+        "description": "Se os saldos não corresponderem às despesas, podes recalculá-los. Nota que pode demorar algum tempo se o número de despesas for grande. Os saldos fora do grupo não serão afetados."
       }
     },
     "tabs": {
-      "expenses": "Expenses",
-      "balances": "Balances"
+      "expenses": "Despesas",
+      "balances": "Saldos"
     },
     "messages": {
-      "group_name_updated": "Updated group name",
-      "balances_recalculated": "Balances recalculated successfully"
+      "group_name_updated": "Nome do grupo atualizado",
+      "balances_recalculated": "Saldos recalculados com sucesso"
     },
     "errors": {
-      "group_name_update_failed": "Error in updating group name",
-      "setting_update_failed": "Failed to update setting"
+      "group_name_update_failed": "Erro ao atualizar o nome do grupo",
+      "setting_update_failed": "Falha ao atualizar a configuração"
     },
-    "add_members": "Add members",
-    "copied": "Copied",
+    "add_members": "Adicionar membros",
+    "copied": "Copiado",
     "create_group": {
-      "title": "Create a group",
-      "group_name_placeholder": "Group name"
+      "title": "Criar um grupo",
+      "group_name_placeholder": "Nome do grupo"
     }
   },
   "invite_message": {
-    "join_to": "Join to",
-    "in_splitpro": "in Splitpro",
-    "text": "Join to the group and you can add, manage expenses, and track your balances"
+    "join_to": "Junte-se a",
+    "in_splitpro": "no Splitpro",
+    "text": "Junte-se ao grupo e poderá adicionar, gerir despesas e acompanhar os seus saldos"
   }
 }

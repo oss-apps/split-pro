@@ -1,74 +1,74 @@
 {
   "ui": {
-    "title": "Account",
-    "change_language": "Change language",
+    "title": "Conta",
+    "change_language": "Alterar idioma",
     "change_language_details": {
-      "title": "Select a language",
+      "title": "Seleciona um idioma",
       "messages": {
-        "language_changed": "Language changed successfully"
+        "language_changed": "Idioma alterado com sucesso"
       },
       "errors": {
-        "language_change_failed": "Error changing language"
+        "language_change_failed": "Erro ao alterar idioma"
       },
-      "placeholder": "Select a language"
+      "placeholder": "Seleciona um idioma"
     },
     "notifications": {
-      "enable_notification": "Enable notification",
-      "disable_notification": "Disable notification",
+      "enable_notification": "Ativar notificações",
+      "disable_notification": "Desativar notificações",
       "messages": {
-        "notification_granted": "You will receive notifications now"
+        "notification_granted": "Irás receber notificações agora"
       },
       "errors": {
-        "notification_not_supported": "Notification is not supported",
-        "subscribe_error": "Cannot subscribe to notification",
-        "unsubscribe_error": "Error unsubscribing notification",
-        "request_error": "Error requesting notification"
+        "notification_not_supported": "Notificação não suportada",
+        "subscribe_error": "Não foi possivel subscrever notificações",
+        "unsubscribe_error": "Erro no cancelamento da subscrição da notificação",
+        "request_error": "Erro requisitando notificação"
       }
     },
-    "download_app": "Download app",
+    "download_app": "Descarregar app",
     "download_app_details": {
-      "title": "Download app",
-      "download_as_pwa": "You can download SplitPro as a PWA to your home screen.",
-      "using_ios": "If you are using iOS, checkout this",
-      "using_android": "If you are using Android, checkout this",
-      "video": "video"
+      "title": "Descarregar app",
+      "download_as_pwa": "Poderás descarregar o SplitPro como PWA",
+      "using_ios": "Se estás a usar iOS, vê isto",
+      "using_android": "Se estás a usar  Android, vê isto",
+      "video": "vídeo"
     },
-    "import_from_splitwise": "Import from Splitwise",
+    "import_from_splitwise": "Importar do Splitwise",
     "import_from_splitwise_details": {
-      "choose_file": "Choose file",
-      "no_file_chosen": "No file chosen",
-      "note": "Note: It currently only supports importing friends and groups. It will not import transactions. We are working on it.",
-      "follow_to_export_splitwise_data": "Follow this link to export splitwise data",
-      "export_splitwise_data_button": "Export splitwise data",
+      "choose_file": "Selecionar ficheiro",
+      "no_file_chosen": "Ficheiro não selecionado",
+      "note": "Nota: Ainda só temos suporte a importar amigos e grupos. A transações não serão importadas. Estamos a trabalhar nisso.",
+      "follow_to_export_splitwise_data": "Acede a este link para exportar os dados do Splitwise",
+      "export_splitwise_data_button": "Exportar dados do Splitwise",
       "messages": {
-        "import_success": "Import successful"
+        "import_success": "Importar com sucesso"
       },
       "errors": {
-        "import_failed": "Error importing file"
+        "import_failed": "Error ao importar ficheiro"
       }
     },
-    "download_splitpro_data": "Download SplitPro data",
-    "submit_feedback": "Submit feedback",
+    "download_splitpro_data": "Descarregar dados do SplitPro",
+    "submit_feedback": "Submeter feedback",
     "submit_feedback_details": {
-      "title": "Submit feedback",
-      "placeholder": "Enter your feedback"
+      "title": "Submeter feedback",
+      "placeholder": "Insere o teu feedback"
     },
     "errors": {
-      "feedback_required": "Feedback is required",
-      "feedback_min_length": "Feedback should be at least 10 characters"
+      "feedback_required": "Feedback é obrigatório",
+      "feedback_min_length": "Feedback deve conter pelo menos 10 caracteres"
     },
     "messages": {
-      "submit_success": "Feedback submitted",
-      "submit_error": "Failed to submit feedback"
+      "submit_success": "Feedback submetido",
+      "submit_error": "Falha ao submeter feedback"
     },
-    "write_review": "Write a review",
-    "star_on_github": "Star us on GitHub",
-    "support_us": "Sponsor us",
-    "follow_on_x": "Follow us on X",
-    "logout": "Logout",
+    "write_review": "Escreve uma review",
+    "star_on_github": "Visita-nos no GitHub",
+    "support_us": "Patrocina-nos",
+    "follow_on_x": "Segue-nos no X",
+    "logout": "Terminar Sessão",
     "edit_name": {
-      "title": "Edit name",
-      "placeholder": "Enter name"
+      "title": "Editar nome",
+      "placeholder": "Inserir nome"
     }
   }
 }

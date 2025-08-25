@@ -1,22 +1,22 @@
 {
   "title": "SplitPro",
   "auth": {
-    "continue_with": "Continue with {{provider}}",
-    "email_placeholder": "Enter your email",
-    "send_magic_link": "Send magic link",
-    "sending": "Sending...",
-    "otp_sent": "We have sent an email with the OTP. Please check your inbox and click the link in the email to sign in.",
-    "trouble_logging_in": "Trouble logging in? Contact"
+    "continue_with": "Continuar com {{provider}}",
+    "email_placeholder": "Inserir email",
+    "send_magic_link": "Enviar link mágico",
+    "sending": "A enviar...",
+    "otp_sent": "Enviámos uma mensagem de email com o OTP. Por favor, verifica a tua caixa de entrada e clica no link no seu interior para te autenticares.",
+    "trouble_logging_in": "Problemas com a autenticação? Contacta-nos"
   },
   "validation": {
-    "email_required": "Email is required",
-    "email_invalid": "Invalid email",
-    "otp_required": "OTP is required",
-    "otp_invalid": "Invalid OTP"
+    "email_required": "Email é obrigatório",
+    "email_invalid": "Email inválido",
+    "otp_required": "OTP é obrigatório",
+    "otp_invalid": "OTP inválido"
   },
   "errors": {
-    "signup_disabled": "Signup of new accounts is disabled on this instance",
-    "signin_error": "An error occurred while signing in: ",
-    "email_invalid": "Email is invalid, please try the signin flow again."
+    "signup_disabled": "Criação de novas contas encontra-se desativo para esta instância",
+    "signin_error": "Ocorreu um erro durante a autenticação: ",
+    "email_invalid": "Endereço de Email inválido, por favor tenta novamente."
   }
 }

@@ -1,58 +1,58 @@
 {
   "meta": {
-    "title": "SplitPro: Split Expenses with your friends for free",
-    "description": "SplitPro: Split Expenses with your friends for free"
+    "title": "SplitPro: Divide as tuas despesas com os teus amigos gratuitamente",
+    "description": "SplitPro: Divide as tuas despesas com os teus amigos gratuitamente"
   },
   "nav": {
     "app_name": "SplitPro",
-    "terms": "Terms",
-    "privacy": "Privacy"
+    "terms": "Termos",
+    "privacy": "Privacidade"
   },
   "hero": {
     "title_part1": "Split Expenses with your friends for",
-    "title_highlight": "free",
-    "subtitle_part1": "An",
-    "subtitle_link": "open source",
-    "subtitle_part2": "alternative to SplitWise",
-    "add_expense_button": "Add Expense",
+    "title_highlight": "gratuito",
+    "subtitle_part1": "Um",
+    "subtitle_link": "código aberto",
+    "subtitle_part2": "alternativa ao SplitWise",
+    "add_expense_button": "Adicionar Despesa",
     "star_github_button": "Star us on github"
   },
   "features": {
-    "title": "Features",
+    "title": "Funcionalidades",
     "groups_and_friends": {
-      "title": "Groups and Friends",
-      "description": "Can create multiple groups or add balance directly. Everything will be consolidated"
+      "title": "Grupos e Amigos",
+      "description": "Podes adicionar multiplos grupos e adicionar despesas diretamente. Tudo será consolidado"
     },
     "multiple_currencies": {
-      "title": "Multiple currencies",
-      "description": "Need to add expense with different currency for same user? No problem!"
+      "title": "Multiplas moedas",
+      "description": "Necessitas de adicionar despesas em várias moedas para o mesmo utilizador? Sem problema!"
     },
     "unequal_split": {
-      "title": "Unequal Split",
-      "description": "Advanced split options. By shares, percentage or exact amounts."
+      "title": "Divisão Costumizada",
+      "description": "Opções de divisão avançadas. Por quotas, percentagem ou montantes exatos."
     },
     "pwa_support": {
-      "title": "PWA support",
-      "description": "Love mobile apps? We got you covered. Install it as a PWA and you won't even notice!"
+      "title": "Suporte a PWA",
+      "description": "Adoras apps móveis? Nós tratámos disso. Instala como PWA e tu nem vais notar a diferença!"
     },
     "upload_receipts": {
-      "title": "Upload Receipts",
-      "description": "Upload receipts along with the expense"
+      "title": "Carregar recibos",
+      "description": "Anexa os recibos às despesas"
     },
     "open_source": {
-      "title": "Open source",
-      "description": "Which makes it hard to become evil. Easy to self host"
+      "title": "Código aberto",
+      "description": "Por uma maior transparência para todos. Fácil de usar como self host"
     },
     "import_splitwise": {
-      "title": "Import from splitwise",
-      "description": "Don't have to manually migrate balances. You can import users and groups from splitwise"
+      "title": "Importar do splitwise",
+      "description": "Não tens de migrar as despesas manualmente. Poderás importar utilizadores e grupos do splitwise"
     },
     "push_notifications": {
-      "title": "Push notification",
-      "description": "Never miss important notifications. Get notified when someone adds an expense or settles up"
+      "title": "Notificações Push",
+      "description": "Nunca percas notificações importantes. Sê notificado quando alguém adiciona uma despesa ou paga a sua dívida"
     }
   },
   "footer": {
-    "built_by": "Built by"
+    "built_by": "Construído por"
   }
 }

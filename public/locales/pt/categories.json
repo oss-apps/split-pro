@@ -1,85 +1,85 @@
 {
-  "title": "Categories",
+  "title": "Categorias",
   "categories_list": {
     "entertainment": {
-      "name": "Entertainment",
+      "name": "Entretenimento",
       "items": {
-        "games": "Games",
-        "movies": "Movies",
-        "music": "Music",
-        "sports": "Sports",
-        "other": "Entertainment"
+        "games": "Jogos",
+        "movies": "Filmes",
+        "music": "Música",
+        "sports": "Desportos",
+        "other": "Entretenimento"
       }
     },
     "food": {
-      "name": "Food & Drinks",
+      "name": "Comida & Bebidas",
       "items": {
-        "diningOut": "Dining Out",
-        "groceries": "Groceries",
-        "liquor": "Liquor",
-        "other": "Food & Drinks"
+        "diningOut": "Jantar Fora",
+        "groceries": "Mercearia",
+        "liquor": "Bebidas Alcoólicas",
+        "other": "Comida & Bebidas"
       }
     },
     "home": {
-      "name": "Home",
+      "name": "Casa",
       "items": {
-        "electronics": "Electronics",
-        "furniture": "Furniture",
-        "supplies": "Supplies",
-        "maintenance": "Maintenance",
-        "mortgage": "Mortgage",
-        "pets": "Pets",
-        "rent": "Rent",
-        "services": "Services",
-        "other": "Home"
+        "electronics": "Eletrónica",
+        "furniture": "Mobília",
+        "supplies": "Suprimentos",
+        "maintenance": "Manutenção",
+        "mortgage": "Hipoteca",
+        "pets": "Animais de Estimação",
+        "rent": "Arrendamento",
+        "services": "Serviços",
+        "other": "Casa"
       }
     },
     "life": {
-      "name": "Life",
+      "name": "Vida",
       "items": {
-        "childcare": "Childcare",
-        "clothing": "Clothing",
-        "education": "Education",
-        "gifts": "Gifts",
-        "medical": "Medical",
-        "taxes": "Taxes",
-        "other": "Life",
-        "insurance": "Insurance"
+        "childcare": "Cuidado Infantil",
+        "clothing": "Vestuário",
+        "education": "Educação",
+        "gifts": "Presentes",
+        "medical": "Saúde",
+        "taxes": "Impostos",
+        "other": "Vida",
+        "insurance": "Seguro"
       }
     },
     "travel": {
-      "name": "Travel",
+      "name": "Viagem",
       "items": {
-        "bus": "Bus",
-        "train": "Train",
-        "car": "Car",
-        "fuel": "Fuel",
-        "parking": "Parking",
-        "plane": "Plane",
-        "taxi": "Taxi",
-        "other": "Travel",
-        "bicycle": "Bicycle",
+        "bus": "Autocarro",
+        "train": "Comboio",
+        "car": "Carro",
+        "fuel": "Combustível",
+        "parking": "Estacionamento",
+        "plane": "Avião",
+        "taxi": "Táxi",
+        "other": "Viagem",
+        "bicycle": "Bicicleta",
         "hotel": "Hotel"
       }
     },
     "utilities": {
-      "name": "Utilities",
+      "name": "Utilidades",
       "items": {
-        "cleaning": "Cleaning",
-        "electricity": "Electricity",
-        "gas": "Gas",
+        "cleaning": "Limpeza",
+        "electricity": "Eletricidade",
+        "gas": "Gás",
         "internet": "Internet",
-        "trash": "Trash",
-        "phone": "Phone",
-        "water": "Water",
-        "other": "Utilities"
+        "trash": "Lixo",
+        "phone": "Telefone",
+        "water": "Água",
+        "other": "Utilidades"
       }
     },
     "general": {
-      "name": "General",
+      "name": "Geral",
       "items": {
-        "general": "General",
-        "other": "General"
+        "general": "Geral",
+        "other": "Geral"
       }
     }
   }

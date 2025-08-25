@@ -4,7 +4,6 @@ import { type User as NextUser } from 'next-auth';
 
 import { toUIString } from '~/utils/numbers';
 
-import { toUIDate } from '~/utils/strings';
 import { EntityAvatar } from '../ui/avatar';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
@@ -25,7 +24,7 @@ interface ExpenseDetailsProps {
 }
 
 const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
-  const { displayName, t } = useTranslationWithUtils(['expense_details']);
+  const { displayName, toUIDate, t } = useTranslationWithUtils(['expense_details']);
   return (
     <>
       <div className="mb-4 flex items-start justify-between gap-2">
@@ -45,19 +44,22 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
             ) : null}
             {expense.updatedByUser ? (
               <p className="text-sm text-gray-500">
-                {t('ui.edited_by', { ns: 'common' })} {displayName(expense.updatedByUser, user.id)}{' '}
-                {t('ui.on')} {toUIDate(expense.updatedAt, { year: true })}
+                {t('ui.edited_by', { ns: 'common' })}{' '}
+                {displayName(expense.updatedByUser, user.id, 'accusativus')} {t('ui.on')}{' '}
+                {toUIDate(expense.updatedAt, { year: true })}
               </p>
             ) : null}
             {expense.deletedByUser ? (
               <p className="text-sm text-orange-600">
-                {t('ui.deleted_by', { ns: 'common' })} {displayName(expense.deletedByUser, user.id)}{' '}
+                {t('ui.deleted_by', { ns: 'common' })}{' '}
+                {displayName(expense.deletedByUser, user.id, 'accusativus')}{' '}
                 {t('ui.on', { ns: 'common' })}{' '}
                 {toUIDate(expense.deletedAt ?? expense.createdAt, { year: true })}
               </p>
             ) : (
               <p className="text-sm text-gray-500">
-                {t('ui.added_by', { ns: 'common' })} {displayName(expense.addedByUser, user.id)}{' '}
+                {t('ui.added_by', { ns: 'common' })}{' '}
+                {displayName(expense.addedByUser, user.id, 'accusativus')}{' '}
                 {t('ui.on', { ns: 'common' })} {toUIDate(expense.createdAt, { year: true })}
               </p>
             )}
@@ -83,7 +85,11 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
         </button> */}
         <EntityAvatar entity={expense.paidByUser} size={35} />
         <p>
-          {displayName(expense.paidByUser, user.id)} {t('ui.expense.user.paid', { ns: 'common' })}{' '}
+          {displayName(expense.paidByUser, user.id)}{' '}
+          {t(
+            `ui.expense.${expense.paidByUser.id === user.id ? 'you' : 'user'}.${expense.amount < 0 ? 'received' : 'paid'}`,
+            { ns: 'common' },
+          )}{' '}
           {expense.currency} {toUIString(expense.amount)}
         </p>
       </div>
@@ -99,9 +105,12 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
               <EntityAvatar entity={partecipant.user} size={25} />
               <p>
                 {displayName(partecipant.user, user.id)}{' '}
-                {t(`ui.expense.${user.id === partecipant.userId ? 'you' : 'user'}.owe`, {
-                  ns: 'common',
-                })}{' '}
+                {t(
+                  `ui.expense.${user.id === partecipant.userId ? 'you' : 'user'}.${expense.amount < 0 ? 'received' : 'owe'}`,
+                  {
+                    ns: 'common',
+                  },
+                )}{' '}
                 {expense.currency}{' '}
                 {toUIString(
                   (expense.paidBy === partecipant.userId ? (expense.amount ?? 0n) : 0n) -

@@ -47,6 +47,13 @@
       "recalculate_balances_details": {
         "title": "Sei sicuro?",
         "description": "Se i saldi non corrispondono alle spese, puoi ricalcolarli. Nota che potrebbe richiedere del tempo se il numero di spese è elevato. I saldi esterni al gruppo non saranno interessati."
+      },
+      "archive_group": "Archivia gruppo",
+      "archived": "Archiviato",
+      "archive_group_details": {
+        "title": "Sei sicuro di voler archiviare questo gruppo?",
+        "can_archive": "Questo gruppo verrà archiviato e nascosto dalla tua lista principale dei gruppi. Potrai comunque accedervi più tardi se necessario.",
+        "cant_archive": "Non è possibile archiviare un gruppo con saldi in sospeso. Tutti i saldi devono essere saldati prima."
       }
     },
     "tabs": {
@@ -55,7 +62,8 @@
     },
     "messages": {
       "group_name_updated": "Nome del gruppo aggiornato",
-      "balances_recalculated": "Saldi ricalcolati con successo"
+      "balances_recalculated": "Saldi ricalcolati con successo",
+      "group_archived": "Gruppo archiviato con successo"
     },
     "errors": {
       "group_name_update_failed": "Errore nell'aggiornamento del nome del gruppo",

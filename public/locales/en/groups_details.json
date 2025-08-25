@@ -47,6 +47,13 @@
       "recalculate_balances_details": {
         "title": "Are you sure?",
         "description": "If balances do not match expenses, you can recalculate them. Note that it may take some time if the expense count is large. Balances outside the group will not be affected."
+      },
+      "archive_group": "Archive group",
+      "archived": "Archived",
+      "archive_group_details": {
+        "title": "Are you sure you want to archive this group?",
+        "can_archive": "This group will be archived and hidden from your main groups list. You can still access it later if needed.",
+        "cant_archive": "Cannot archive group with outstanding balances. All balances must be settled first."
       }
     },
     "tabs": {
@@ -55,7 +62,8 @@
     },
     "messages": {
       "group_name_updated": "Updated group name",
-      "balances_recalculated": "Balances recalculated successfully"
+      "balances_recalculated": "Balances recalculated successfully",
+      "group_archived": "Group archived successfully"
     },
     "errors": {
       "group_name_update_failed": "Error in updating group name",

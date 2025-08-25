@@ -2,6 +2,7 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 import { env } from '~/env';
+import { FILE_SIZE_LIMIT } from '~/lib/constants';
 
 let S3: S3Client | null = null;
 
@@ -26,11 +27,15 @@ const getClient = () => {
   return S3;
 };
 
-export const getDocumentUploadUrl = async (key: string, fileType: string, fileSize?: number) => {
+export const getDocumentUploadUrl = async (key: string, fileType: string, fileSize: number) => {
   const s3Client = getClient();
 
   if (!s3Client) {
     throw new Error('R2 is not configured');
+  }
+
+  if (fileSize > FILE_SIZE_LIMIT) {
+    throw new Error(`File size exceeds limit of ${FILE_SIZE_LIMIT}`);
   }
 
   const url = await getSignedUrl(

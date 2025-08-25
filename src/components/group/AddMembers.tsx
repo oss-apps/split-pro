@@ -109,6 +109,7 @@ const AddMembers: React.FC<{
       onTriggerClick={handleTriggerClick}
       title={t('ui.no_members.add_members_details.title')}
       leftAction={t('ui.actions.cancel', { ns: 'common' })}
+      actionTitle={t('ui.actions.save', { ns: 'common' })}
       actionOnClick={handleActionClick}
       className="h-[85vh]"
       shouldCloseOnAction
@@ -141,7 +142,7 @@ const AddMembers: React.FC<{
               <SendIcon className="mr-2 h-4 w-4" />
               {isEmail.success
                 ? t('ui.no_members.add_members_details.send_invite')
-                : t('ui.errors.valid_email', { ns: 'common' })}
+                : t('common:errors.valid_email')}
             </Button>
           )}
           <Button
@@ -153,7 +154,7 @@ const AddMembers: React.FC<{
             <UserPlusIcon className="mr-2 h-4 w-4" />
             {isEmail.success
               ? t('ui.no_members.add_members_details.add_to_split_pro')
-              : t('ui.errors.valid_email', { ns: 'common' })}
+              : t('common:errors.valid_email')}
           </Button>
         </div>
       </div>

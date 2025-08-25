@@ -1,11 +1,19 @@
-import { type User } from '@prisma/client';
 import { useTranslation } from 'next-i18next';
-import { useCallback } from 'react';
-import { displayName as dn } from '~/utils/strings';
+import { useCallback, useMemo } from 'react';
+import {
+  type ParametersExceptTranslation,
+  displayName as dn,
+  generateSplitDescription as gsd,
+  toUIDate as tUD,
+} from '~/utils/strings';
 
 export const useTranslationWithUtils = (
   namespaces?: string[],
-): ReturnType<typeof useTranslation> & { displayName: typeof displayName } => {
+): ReturnType<typeof useTranslation> & {
+  displayName: typeof displayName;
+  generateSplitDescription: typeof generateSplitDescription;
+  toUIDate: typeof toUIDate;
+} => {
   if (!namespaces || namespaces.length === 0) {
     namespaces = ['common'];
   } else if (!namespaces.includes('common')) {
@@ -14,14 +22,23 @@ export const useTranslationWithUtils = (
   const translation = useTranslation(namespaces);
 
   const displayName = useCallback(
-    (user?: Pick<User, 'name' | 'email' | 'id'> | null, currentUserId?: number): string =>
-      dn(user, currentUserId, translation.t),
+    (...args: ParametersExceptTranslation<typeof dn>): string => dn(translation.t, ...args),
+    [translation.t],
+  );
+
+  const generateSplitDescription = useCallback(
+    (...args: ParametersExceptTranslation<typeof gsd>): string => gsd(translation.t, ...args),
+    [translation.t],
+  );
+
+  const toUIDate = useCallback(
+    (...args: ParametersExceptTranslation<typeof tUD>): string => tUD(translation.t, ...args),
     [translation.t],
   );
 
   // @ts-ignore
-  return {
-    ...translation,
-    displayName,
-  };
+  return useMemo(
+    () => ({ ...translation, displayName, generateSplitDescription, toUIDate }),
+    [translation, displayName, generateSplitDescription, toUIDate],
+  );
 };

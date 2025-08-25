@@ -28,12 +28,11 @@ const user2: User = createMockUser(2, 'Bob', 'bob@example.com');
 const user3: User = createMockUser(3, 'Charlie', 'charlie@example.com');
 
 // Create participants with initial amounts
-const createParticipants = (users: User[], amounts: bigint[] = []): Participant[] => {
-  return users.map((user, index) => ({
+const createParticipants = (users: User[], amounts: bigint[] = []): Participant[] =>
+  users.map((user, index) => ({
     ...user,
     amount: amounts[index] ?? 0n,
   }));
-};
 
 // Helper to create split shares structure
 const createSplitShares = (participants: Participant[], splitType: SplitType, shares: bigint[]) => {

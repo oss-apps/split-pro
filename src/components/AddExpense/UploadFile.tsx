@@ -10,8 +10,8 @@ import { api } from '~/utils/api';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
-const getImgHeightAndWidth = (file: File) => {
-  return new Promise<{ width: number; height: number }>((resolve, reject) => {
+const getImgHeightAndWidth = (file: File) =>
+  new Promise<{ width: number; height: number }>((resolve, reject) => {
     const img = new Image();
     img.src = URL.createObjectURL(file);
     img.onload = () => {
@@ -22,7 +22,6 @@ const getImgHeightAndWidth = (file: File) => {
       reject(error);
     };
   });
-};
 
 export const UploadFile: React.FC = () => {
   const { t } = useTranslation('expense_details');
@@ -32,7 +31,7 @@ export const UploadFile: React.FC = () => {
   const getUploadUrl = api.expense.getUploadUrl.useMutation();
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
+    const { files } = event.target;
 
     const file = files?.[0];
 
@@ -42,8 +41,7 @@ export const UploadFile: React.FC = () => {
 
     if (file.size > FILE_SIZE_LIMIT) {
       toast.error(
-        t('ui.add_expense_details.upload_file.errors.less_than') +
-          ` ${FILE_SIZE_LIMIT / 1024 / 1024}MB`,
+        `${t('ui.add_expense_details.upload_file.errors.less_than')} ${FILE_SIZE_LIMIT / 1024 / 1024}MB`,
       );
       return;
     }

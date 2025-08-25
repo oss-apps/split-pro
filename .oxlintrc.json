@@ -36,7 +36,8 @@
     "react_perf/jsx-no-jsx-as-prop": "off",
     "no-nested-ternary": "off",
     "typescript/no-confusing-void-expression": "off",
-    "typescript/no-misused-spread": "warn"
+    "typescript/no-misused-spread": "warn",
+    "func-names": "off"
   },
   "overrides": [
     {
@@ -47,5 +48,5 @@
       }
     }
   ],
-  "ignorePatterns": ["prisma/seed.ts"]
+  "ignorePatterns": ["prisma/seed.ts", "src/components/ui/*"]
 }

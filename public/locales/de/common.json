@@ -16,6 +16,8 @@
   "ui": {
     "actors": {
       "you": "Du",
+      "you_dativus": "Dir",
+      "you_accusativus": "Dich",
       "friends": "Freunde",
       "groups": "Gruppen",
       "members": "Mitglieder",
@@ -57,6 +59,7 @@
       },
       "for": "für",
       "paid_by": "Bezahlt von",
+      "received_by": "Erhalten von",
       "to": "an",
       "from": "von"
     },

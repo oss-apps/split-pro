@@ -16,6 +16,8 @@
   "ui": {
     "actors": {
       "you": "Du",
+      "you_dativus": "Dig",
+      "you_accusativus": "Dig",
       "friends": "Vänner",
       "groups": "Grupper",
       "members": "Medlemmar",
@@ -57,6 +59,7 @@
       },
       "for": "för",
       "paid_by": "Betald av",
+      "received_by": "Mottagen av",
       "to": "till",
       "from": "från"
     },

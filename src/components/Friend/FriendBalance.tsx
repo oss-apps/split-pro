@@ -1,5 +1,5 @@
 import { type Balance, type User } from '@prisma/client';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import { toUIString } from '~/utils/numbers';
 

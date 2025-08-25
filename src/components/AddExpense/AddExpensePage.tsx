@@ -10,7 +10,6 @@ import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { toSafeBigInt } from '~/utils/numbers';
 
-import { toUIDate } from '~/utils/strings';
 import { Button } from '../ui/button';
 import { Calendar } from '../ui/calendar';
 import { Input } from '../ui/input';
@@ -22,15 +21,17 @@ import { SplitTypeSection } from './SplitTypeSection';
 import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
 import { toast } from 'sonner';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
   expenseId?: string;
 }> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
-  const { t } = useTranslation('expense_details');
+  const { t, toUIDate } = useTranslationWithUtils(['expense_details']);
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
+  const isNegative = useAddExpenseStore((s) => s.isNegative);
   const participants = useAddExpenseStore((s) => s.participants);
   const group = useAddExpenseStore((s) => s.group);
   const currency = useAddExpenseStore((s) => s.currency);
@@ -88,17 +89,19 @@ export const AddOrEditExpensePage: React.FC<{
       return;
     }
 
+    const sign = isNegative ? -1n : 1n;
+
     try {
       await addExpenseMutation.mutateAsync(
         {
           name: description,
           currency,
-          amount,
+          amount: amount * sign,
           groupId: group?.id ?? null,
           splitType,
           participants: participants.map((p) => ({
             userId: p.id,
-            amount: p.amount ?? 0n,
+            amount: (p.amount ?? 0n) * sign,
           })),
           paidBy: paidBy.id,
           category,
@@ -130,6 +133,7 @@ export const AddOrEditExpensePage: React.FC<{
     setSplitScreenOpen,
     description,
     currency,
+    isNegative,
     amount,
     participants,
     category,
@@ -205,7 +209,6 @@ export const AddOrEditExpensePage: React.FC<{
               type="number"
               inputMode="decimal"
               value={amtStr}
-              min="0"
               onChange={onAmountChange}
             />
           </div>

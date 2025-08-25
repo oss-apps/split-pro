@@ -1,5 +1,5 @@
 import { SplitType } from '@prisma/client';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import {
   BarChart2,
   Check,
@@ -10,40 +10,40 @@ import {
   Plus,
   X,
 } from 'lucide-react';
-import { type TFunction, useTranslation } from 'next-i18next';
 import { type ChangeEvent, useCallback, useMemo } from 'react';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/store/addStore';
 import { removeTrailingZeros, toSafeBigInt, toUIString } from '~/utils/numbers';
 
+import { type TFunction, useTranslation } from 'next-i18next';
 import { EntityAvatar } from '../ui/avatar';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
 export const SplitTypeSection: React.FC = () => {
-  const { t } = useTranslation('expense_details');
+  const { t, displayName, generateSplitDescription } = useTranslationWithUtils(['expense_details']);
+  const isNegative = useAddExpenseStore((s) => s.isNegative);
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const participants = useAddExpenseStore((s) => s.participants);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
   const splitType = useAddExpenseStore((s) => s.splitType);
   const splitScreenOpen = useAddExpenseStore((s) => s.splitScreenOpen);
+  const splitShares = useAddExpenseStore((s) => s.splitShares);
 
   const { setPaidBy, setSplitScreenOpen } = useAddExpenseStore((s) => s.actions);
 
   return (
     <div className="flex items-center justify-center text-[16px] text-gray-400 sm:mt-4">
-      <p className="text-[16px]">{t('ui.expense.paid_by', { ns: 'common' })} </p>
+      <p className="text-[16px]">
+        {t(`ui.expense.${isNegative ? 'received_by' : 'paid_by'}`, { ns: 'common' })}{' '}
+      </p>
       <AppDrawer
         trigger={
           <p className="overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
-            {
-              (currentUser?.id === paidBy?.id
-                ? t('ui.actors.you', { ns: 'common' })
-                : (paidBy?.name ?? paidBy?.email)
-              )?.split(' ')[0]
-            }
+            {displayName(paidBy, currentUser?.id)}
           </p>
         }
         title={t('ui.expense.paid_by', { ns: 'common' })}
@@ -66,14 +66,11 @@ export const SplitTypeSection: React.FC = () => {
           ))}
         </div>
       </AppDrawer>
-
       <p>{t('ui.and', { ns: 'common' })} </p>
       <AppDrawer
         trigger={
-          <div className="max-w-32 overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
-            {splitType === SplitType.EQUAL
-              ? t('ui.add_expense_details.split_type_section.split_equally')
-              : t('ui.add_expense_details.split_type_section.split_unequally')}
+          <div className="max-w-40 overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 md:max-w-48 lg:max-w-56">
+            {generateSplitDescription(splitType, participants, splitShares, paidBy, currentUser)}
           </div>
         }
         title={t(
@@ -341,7 +338,7 @@ export const UserAndAmount: React.FC<{ user: Participant; currency: string }> = 
       <EntityAvatar entity={user} size={30} />
       <div className="flex flex-col items-start">
         <p>{user.name ?? user.email}</p>
-        <p className={`'text-gray-400' text-sm text-gray-400`}>
+        <p className="'text-gray-400' text-sm text-gray-400">
           {0n < (shareAmount ?? 0n) ? '-' : ''} {currency} {toUIString(shareAmount)}
         </p>
       </div>

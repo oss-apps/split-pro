@@ -13,6 +13,7 @@ type SplitShares = Record<number, Record<SplitType, bigint | undefined>>;
 export interface AddExpenseState {
   amount: bigint;
   amountStr: string;
+  isNegative: boolean;
   currentUser: User | undefined;
   splitType: SplitType;
   group: Group | undefined;
@@ -56,6 +57,7 @@ export interface AddExpenseState {
 export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   amount: 0n,
   amountStr: '',
+  isNegative: false,
   splitType: SplitType.EQUAL,
   participants: [],
   group: undefined,
@@ -80,11 +82,22 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   splitScreenOpen: false,
   expenseDate: undefined,
   actions: {
-    setAmount: (amount) =>
-      set((s) => ({
-        amount,
-        ...calculateParticipantSplit(amount, s.participants, s.splitType, s.splitShares, s.paidBy),
-      })),
+    setAmount: (realAmount) =>
+      set((s) => {
+        const isNegative = realAmount < 0n;
+        const amount = BigMath.abs(realAmount);
+        return {
+          amount,
+          isNegative,
+          ...calculateParticipantSplit(
+            amount,
+            s.participants,
+            s.splitType,
+            s.splitShares,
+            s.paidBy,
+          ),
+        };
+      }),
     setAmountStr: (amountStr) => set({ amountStr }),
     setSplitType: (splitType) =>
       set((state) => ({

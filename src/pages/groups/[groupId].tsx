@@ -1,5 +1,6 @@
 import { clsx } from 'clsx';
 import {
+  Archive,
   BarChartHorizontal,
   Check,
   ChevronLeft,
@@ -28,10 +29,10 @@ import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { Label } from '~/components/ui/label';
-import { SimpleConfirmationDialog } from '~/components/ui/simple-confirmation-dialog';
+import { SimpleConfirmationDialog } from '~/components/SimpleConfirmationDialog';
 import { Switch } from '~/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
-import { UpdateName } from '~/components/ui/update-details';
+import { UpdateName } from '~/components/Account/UpdateName';
 import { env } from '~/env';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { db } from '~/server/db';
@@ -39,12 +40,11 @@ import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { toUIString } from '~/utils/numbers';
-import { toUIDate } from '~/utils/strings';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
 }> = ({ user, enableSendingInvites }) => {
-  const { displayName, t } = useTranslationWithUtils(['groups_details']);
+  const { displayName, toUIDate, t } = useTranslationWithUtils(['groups_details']);
   const router = useRouter();
   const groupId = parseInt(router.query.groupId as string);
 
@@ -53,6 +53,7 @@ const BalancePage: NextPageWithUser<{
   const expensesQuery = api.expense.getGroupExpenses.useQuery({ groupId });
   const deleteGroupMutation = api.group.delete.useMutation();
   const leaveGroupMutation = api.group.leaveGroup.useMutation();
+  const toggleArchiveMutation = api.group.toggleArchive.useMutation();
   const toggleSimplifyDebtsMutation = api.group.toggleSimplifyDebts.useMutation();
   const updateGroupDetailsMutation = api.group.updateGroupDetails.useMutation();
   const recalculateGroupBalancesMutation = api.group.recalculateBalances.useMutation();
@@ -63,8 +64,7 @@ const BalancePage: NextPageWithUser<{
     if (!groupDetailQuery.data) {
       return;
     }
-    const inviteLink =
-      window.location.origin + '/join-group?groupId=' + groupDetailQuery.data.publicId;
+    const inviteLink = `${window.location.origin}/join-group?groupId=${groupDetailQuery.data.publicId}`;
 
     if (navigator.share) {
       navigator
@@ -85,7 +85,8 @@ const BalancePage: NextPageWithUser<{
   }, [groupDetailQuery.data, t]);
 
   const isAdmin = groupDetailQuery.data?.userId === user.id;
-  const canDelete =
+  const isArchived = !!groupDetailQuery.data?.archivedAt;
+  const canDeleteOrArchive =
     groupDetailQuery.data?.userId === user.id &&
     !groupDetailQuery.data?.groupBalances.find((bal) => 0n !== bal.amount);
   const canLeave = !groupDetailQuery.data?.groupBalances.find(
@@ -149,7 +150,6 @@ const BalancePage: NextPageWithUser<{
     <>
       <Head>
         <title>{t('ui.title')}</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout
         title={
@@ -316,15 +316,39 @@ const BalancePage: NextPageWithUser<{
                       </Button>
                     </SimpleConfirmationDialog>
                   )}
+                  <Label className="flex cursor-pointer items-center justify-between">
+                    <p className="flex items-center">
+                      <Archive className="mr-2 size-4" /> {t('ui.group_info.archive_group')}
+                    </p>
+                    <Switch
+                      id="archive-group"
+                      checked={groupDetailQuery.data?.archivedAt !== null}
+                      onCheckedChange={() => {
+                        toggleArchiveMutation.mutate(
+                          { groupId },
+                          {
+                            onSuccess: () => {
+                              void groupDetailQuery.refetch();
+                            },
+                            onError: (error) => {
+                              toast.error(error.message);
+                            },
+                          },
+                        );
+                      }}
+                    />
+                  </Label>
                   {isAdmin ? (
                     <SimpleConfirmationDialog
-                      title={canDelete ? t('ui.group_info.delete_group_details.title') : ''}
+                      title={
+                        canDeleteOrArchive ? t('ui.group_info.delete_group_details.title') : ''
+                      }
                       description={
-                        canDelete
+                        canDeleteOrArchive
                           ? t('ui.group_info.delete_group_details.can_delete')
                           : t('ui.group_info.delete_group_details.cant_delete')
                       }
-                      hasPermission={canDelete}
+                      hasPermission={canDeleteOrArchive}
                       onConfirm={onGroupDelete}
                       loading={deleteGroupMutation.isPending}
                       variant="destructive"
@@ -380,6 +404,14 @@ const BalancePage: NextPageWithUser<{
         ) : (
           <div className="transition-discrete starting:opacity-0">
             <div className="mb-4">
+              {isArchived && (
+                <div className="mb-4 flex justify-center gap-2 overflow-y-auto pb-4">
+                  <p>
+                    {t('ui.group_info.archived')} {t('common:ui.on')}{' '}
+                    {toUIDate(groupDetailQuery.data!.archivedAt!)}
+                  </p>
+                </div>
+              )}
               <GroupMyBalance
                 userId={user.id}
                 groupBalances={groupDetailQuery.data?.groupBalances}
@@ -388,11 +420,11 @@ const BalancePage: NextPageWithUser<{
             </div>
             <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b pb-4">
               <Link href={`/add?groupId=${groupId}`}>
-                <Button size="sm" className="gap-1 text-sm lg:w-[180px]">
+                <Button size="sm" className="gap-1 text-sm lg:w-[180px]" disabled={isArchived}>
                   {t('ui.actions.add_expense', { ns: 'common' })}
                 </Button>
               </Link>
-              <Button size="sm" className="gap-1 text-sm" variant="secondary">
+              <Button size="sm" className="gap-1 text-sm" variant="secondary" disabled={isArchived}>
                 {groupDetailQuery.data ? (
                   <AddMembers
                     group={groupDetailQuery.data}
@@ -407,6 +439,7 @@ const BalancePage: NextPageWithUser<{
                 className="gap-1 text-sm lg:w-[180px]"
                 variant="secondary"
                 onClick={inviteMembers}
+                disabled={isArchived}
               >
                 {isInviteCopied ? (
                   <>

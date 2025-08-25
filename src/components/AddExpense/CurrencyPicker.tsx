@@ -4,7 +4,7 @@ import { useTranslation } from 'next-i18next';
 import { CURRENCIES, type CurrencyCode } from '~/lib/currency';
 import { getLocalizedCurrencyName } from '~/utils/i18n/client';
 
-import { GeneralPicker } from '../ui/picker';
+import { GeneralPicker } from '../GeneralPicker';
 
 function CurrencyPickerInner({
   currentCurrency = 'USD',

@@ -48,6 +48,13 @@
       "recalculate_balances_details": {
         "title": "Bist du sicher?",
         "description": "Wenn die Salden nicht mit den Ausgaben übereinstimmen, kannst du sie neu berechnen. Das kann je nach Anzahl der Ausgaben etwas dauern. Salden außerhalb der Gruppe werden nicht beeinflusst."
+      },
+      "archive_group": "Archiviere Gruppe",
+      "archived": "Archiviert",
+      "archive_group_details": {
+        "title": "Bist du sicher, dass du diese Gruppe archivieren möchtest?",
+        "can_archive": "Diese Gruppe wird archiviert und aus deiner Hauptgruppen-Liste ausgeblendet. Du kannst später noch darauf zugreifen, falls nötig.",
+        "cant_archive": "Gruppe mit ausstehenden Salden kann nicht archiviert werden. Alle Salden müssen zuerst ausgeglichen werden."
       }
     },
     "tabs": {
@@ -56,7 +63,8 @@
     },
     "messages": {
       "group_name_updated": "Gruppenname aktualisiert",
-      "balances_recalculated": "Salden erfolgreich neu berechnet"
+      "balances_recalculated": "Salden erfolgreich neu berechnet",
+      "group_archived": "Gruppe erfolgreich archiviert"
     },
     "errors": {
       "group_name_update_failed": "Fehler beim Aktualisieren des Gruppennamens",

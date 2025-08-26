@@ -33,7 +33,7 @@ export const SplitTypeSection: React.FC = () => {
   const splitScreenOpen = useAddExpenseStore((s) => s.splitScreenOpen);
   const splitShares = useAddExpenseStore((s) => s.splitShares);
 
-  const { setPaidBy, setSplitScreenOpen } = useAddExpenseStore((s) => s.actions);
+  const { setSplitScreenOpen } = useAddExpenseStore((s) => s.actions);
 
   return (
     <div className="flex items-center justify-center text-[16px] text-gray-400 sm:mt-4">
@@ -52,17 +52,11 @@ export const SplitTypeSection: React.FC = () => {
       >
         <div className="flex flex-col gap-6 overflow-auto">
           {participants.map((participant) => (
-            <DrawerClose
+            <PayerRow
               key={participant.id}
-              className="flex items-center justify-between px-2"
-              onClick={() => setPaidBy(participant)}
-            >
-              <div className="flex items-center gap-1">
-                <EntityAvatar entity={participant} size={30} />
-                <p className="ml-4">{displayName(participant, currentUser?.id)}</p>
-              </div>
-              {participant.id === paidBy?.id ? <Check className="h-6 w-6 text-cyan-500" /> : null}
-            </DrawerClose>
+              p={participant}
+              isPaying={participant.id === paidBy?.id}
+            />
           ))}
         </div>
       </AppDrawer>
@@ -78,7 +72,7 @@ export const SplitTypeSection: React.FC = () => {
         )}
         className="h-[85vh] lg:h-[70vh]"
         shouldCloseOnAction
-        dismissible={false}
+        dismissible={canSplitScreenClosed}
         actionTitle={t('ui.actions.save', { ns: 'common' })}
         actionDisabled={!canSplitScreenClosed}
         open={splitScreenOpen}
@@ -87,6 +81,24 @@ export const SplitTypeSection: React.FC = () => {
         <SplitExpenseForm />
       </AppDrawer>
     </div>
+  );
+};
+
+const PayerRow = ({ p, isPaying }: { p: Participant; isPaying: boolean }) => {
+  const { displayName } = useTranslationWithUtils();
+  const currentUser = useAddExpenseStore((s) => s.currentUser);
+  const { setPaidBy } = useAddExpenseStore((s) => s.actions);
+
+  const onClick = useCallback(() => setPaidBy(p), [p, setPaidBy]);
+
+  return (
+    <DrawerClose className="flex items-center justify-between px-2" onClick={onClick}>
+      <div className="flex items-center gap-1">
+        <EntityAvatar entity={p} size={30} />
+        <p className="ml-4">{displayName(p, currentUser?.id)}</p>
+      </div>
+      {isPaying ? <Check className="h-6 w-6 text-cyan-500" /> : null}
+    </DrawerClose>
   );
 };
 

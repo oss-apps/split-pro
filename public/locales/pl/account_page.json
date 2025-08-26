@@ -66,6 +66,10 @@
     "support_us": "Wesprzyj nas",
     "follow_on_x": "Śledź nas na X",
     "logout": "Wyloguj",
+    "choose_bank_provider": "Wybierz bank",
+    "select_bank_provider": "Wybierz bank",
+    "search_bank": "Wyszukaj bank",
+    "no_bank_providers_found": "Nie znaleziono banków",
     "edit_name": {
       "title": "Edytuj nazwę",
       "placeholder": "Wprowadź nazwę"

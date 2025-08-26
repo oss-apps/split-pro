@@ -68,6 +68,13 @@
       "press_balance_info": "Tryck på enskild saldo för att göra kvitt",
       "are_settled_up": "är kvitt",
       "is_settled_up": "är kvitt"
-    }
+    },
+    "verified_transaction": "Verifierad transaktion",
+    "clear": "Rensa",
+    "bank_transactions": "Transaktioner",
+    "submit_all": "Skicka alla",
+    "pending": "Väntande",
+    "no_transactions_yet": "Inga transaktioner ännu",
+    "already_added": "Redan tillagd"
   }
 }

@@ -68,6 +68,13 @@
       "press_balance_info": "Drücke auf einen einzelnen Saldo, um die Abrechnung zu starten",
       "are_settled_up": "sind ausgeglichen",
       "is_settled_up": "ist ausgeglichen"
-    }
+    },
+    "verified_transaction": "Verifizierte Transaktion",
+    "clear": "Löschen",
+    "bank_transactions": "Transaktionen",
+    "submit_all": "Alle senden",
+    "pending": "Ausstehend",
+    "no_transactions_yet": "Noch keine Transaktionen",
+    "already_added": "Bereits hinzugefügt"
   }
 }

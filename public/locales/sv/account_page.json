@@ -66,6 +66,10 @@
     "support_us": "Sponsra oss",
     "follow_on_x": "Följ oss på X",
     "logout": "Logga ut",
+    "choose_bank_provider": "Välj bank",
+    "select_bank_provider": "Välj bank",
+    "search_bank": "Sök bank",
+    "no_bank_providers_found": "Ingen bank hittades",
     "edit_name": {
       "title": "Redigera namn",
       "placeholder": "Ange namn"

@@ -1,0 +1,84 @@
+{
+  "ui": {
+    "title": "Zaległe salda grupy",
+    "no_members": {
+      "no_members": "Brak członków w grupie.",
+      "add_members": "Dodaj członków",
+      "add_members_details": {
+        "title": "Dodaj członków",
+        "placeholder": "Wprowadź imię lub email",
+        "warning": "Ostrzeżenie: Nie używaj wysyłania zaproszenia, jeśli to nieprawidłowy email. Zamiast tego użyj dodaj do Split Pro. Twoje konto zostanie zablokowane, jeśli ta funkcja będzie nadużywana",
+        "note": "Uwaga: wysyłanie zaproszeń jest obecnie wyłączone z powodu spamu",
+        "send_invite": "Wyślij zaproszenie do użytkownika",
+        "add_to_split_pro": "Dodaj do Split Pro"
+      },
+      "invite_link": "Udostępnij link",
+      "copied": "Skopiowano"
+    },
+    "group_statistics": {
+      "title": "Statystyki grupy",
+      "total_expenses": "Całkowite wydatki",
+      "first_expense": "Pierwszy wydatek"
+    },
+    "group_info": {
+      "title": "Informacje o grupie",
+      "members": "Członkowie",
+      "group_created": "Grupa utworzona",
+      "actions": "Akcje",
+      "delete_group": "Usuń grupę",
+      "delete_group_details": {
+        "title": "Na pewno?",
+        "can_delete": "Ta akcja nie może być cofnięta",
+        "cant_delete": "Nie można usunąć grupy, dopóki wszyscy się nie rozliczą"
+      },
+      "leave_group": "Opuść grupę",
+      "leave_group_details": {
+        "title": "Na pewno?",
+        "can_leave": "Ta akcja nie może być cofnięta",
+        "cant_leave": "Nie możesz opuścić grupy, dopóki twoje zaległe saldo nie zostanie rozliczone"
+      },
+      "remove_member_details": {
+        "title": "Na pewno?",
+        "can_remove": "Zamierzasz usunąć tę osobę z grupy",
+        "cant_remove": "Nie można usunąć tej osoby, dopóki nie zostanie rozliczona"
+      },
+      "simplify_debts": "Uprość długi",
+      "recalculate_balances": "Przelicz salda",
+      "recalculate_balances_details": {
+        "title": "Na pewno?",
+        "description": "Jeśli salda nie odpowiadają wydatkom, możesz je przeliczyć. Uwaga, że może to zająć trochę czasu, jeśli liczba wydatków jest duża. Salda poza grupą nie będą dotknięte."
+      },
+      "archive_group": "Zarchiwizuj grupę",
+      "archived": "Zarchiwizowano",
+      "archive_group_details": {
+        "title": "Na pewno chcesz zarchiwizować tę grupę?",
+        "can_archive": "Ta grupa zostanie zarchiwizowana i ukryta z głównej listy grup. Nadal będziesz mógł uzyskać do niej dostęp później, jeśli będzie to potrzebne.",
+        "cant_archive": "Nie można zarchiwizować grupy z zaległymi saldami. Wszystkie salda muszą być najpierw rozliczone."
+      }
+    },
+    "tabs": {
+      "expenses": "Wydatki",
+      "balances": "Salda"
+    },
+    "messages": {
+      "group_name_updated": "Zaktualizowano nazwę grupy",
+      "balances_recalculated": "Salda przeliczone pomyślnie",
+      "group_archived": "Grupa została pomyślnie zarchiwizowana"
+    },
+    "errors": {
+      "group_name_update_failed": "Błąd podczas aktualizacji nazwy grupy",
+      "setting_update_failed": "Nie udało się zaktualizować ustawienia"
+    },
+    "add_members": "Dodaj członków",
+    "copied": "Skopiowano",
+    "create_group": {
+      "title": "Utwórz grupę",
+      "group_name_placeholder": "Nazwa grupy"
+    }
+  },
+  "invite_message": {
+    "join_to": "Dołącz do",
+    "in_splitpro": "w Splitpro",
+    "text": "Dołącz do grupy, a będziesz mógł dodawać i zarządzać wydatkami oraz śledzić swoje salda"
+  }
+}

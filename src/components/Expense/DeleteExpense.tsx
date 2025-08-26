@@ -7,13 +7,13 @@ import { toast } from 'sonner';
 import { api } from '~/utils/api';
 
 import { Button } from '../ui/button';
-import { SimpleConfirmationDialog } from '../ui/simple-confirmation-dialog';
+import { SimpleConfirmationDialog } from '../SimpleConfirmationDialog';
 
 export const DeleteExpense: React.FC<{
   expenseId: string;
   friendId?: number;
   groupId?: number;
-}> = ({ expenseId, friendId, groupId }) => {
+}> = ({ expenseId }) => {
   const { t } = useTranslation('expense_details');
   const router = useRouter();
 
@@ -31,17 +31,8 @@ export const DeleteExpense: React.FC<{
       }
       return;
     }
-    if (groupId) {
-      await router.replace(`/groups/${groupId}`);
-      return;
-    }
-    if (friendId) {
-      await router.replace(`/balances/${friendId}`);
-      return;
-    }
-
-    await router.replace(`/balances`);
-  }, [groupId, friendId, expenseId, deleteExpenseMutation, router]);
+    router.back();
+  }, [expenseId, deleteExpenseMutation, router]);
 
   return (
     <SimpleConfirmationDialog

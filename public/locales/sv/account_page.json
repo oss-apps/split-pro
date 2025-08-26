@@ -1,0 +1,74 @@
+{
+  "ui": {
+    "title": "Konto",
+    "change_language": "Ändra språk",
+    "change_language_details": {
+      "title": "Välj ett språk",
+      "messages": {
+        "language_changed": "Språk ändrat"
+      },
+      "errors": {
+        "language_change_failed": "Fel vid ändring av språk"
+      },
+      "placeholder": "Välj ett språk"
+    },
+    "notifications": {
+      "enable_notification": "Aktivera notifikationer",
+      "disable_notification": "Inaktivera notifikationer",
+      "messages": {
+        "notification_granted": "Du kommer att få notifikationer nu"
+      },
+      "errors": {
+        "notification_not_supported": "Notifikationer stöds inte",
+        "subscribe_error": "Kan inte prenumerera på notifikationer",
+        "unsubscribe_error": "Fel vid avslutning av prenumeration",
+        "request_error": "Fel vid begäran om notifikationer"
+      }
+    },
+    "download_app": "Ladda ner app",
+    "download_app_details": {
+      "title": "Ladda ner app",
+      "download_as_pwa": "Du kan ladda ner SplitPro som en PWA till din hemskärm.",
+      "using_ios": "Om du använder iOS, kolla in denna",
+      "using_android": "Om du använder Android, kolla in denna",
+      "video": "video"
+    },
+    "import_from_splitwise": "Importera från Splitwise",
+    "import_from_splitwise_details": {
+      "choose_file": "Välj fil",
+      "no_file_chosen": "Ingen fil vald",
+      "note": "Notera: Vi stödjer för närvarande endast import av vänner och grupper. Transaktioner kommer inte importeras. Vi arbetar på det.",
+      "follow_to_export_splitwise_data": "Följ denna länk för att exportera splitwise data",
+      "export_splitwise_data_button": "Exportera splitwise data",
+      "messages": {
+        "import_success": "Import lyckades"
+      },
+      "errors": {
+        "import_failed": "Fel vid import"
+      }
+    },
+    "download_splitpro_data": "Ladda ner SplitPro data",
+    "submit_feedback": "Skicka feedback",
+    "submit_feedback_details": {
+      "title": "Skicka feedback",
+      "placeholder": "Skriv din feedback"
+    },
+    "errors": {
+      "feedback_required": "Feedback krävs",
+      "feedback_min_length": "Feedback måste vara minst 10 tecken"
+    },
+    "messages": {
+      "submit_success": "Feedback skickat",
+      "submit_error": "Kunde inte skicka feedback"
+    },
+    "write_review": "Skriv en recension",
+    "star_on_github": "Betygsätt oss på GitHub",
+    "support_us": "Sponsra oss",
+    "follow_on_x": "Följ oss på X",
+    "logout": "Logga ut",
+    "edit_name": {
+      "title": "Redigera namn",
+      "placeholder": "Ange namn"
+    }
+  }
+}

@@ -5,7 +5,7 @@ import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { api } from '~/utils/api';
 import { getSupportedLanguages } from '~/utils/i18n/client';
-import { GeneralPicker } from '../ui/picker';
+import { GeneralPicker } from '../GeneralPicker';
 
 export const LanguagePicker: React.FC = () => {
   const router = useRouter();

@@ -2,13 +2,12 @@ import { ChevronLeftIcon, PlusIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useTranslation } from 'next-i18next';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
 import { Export } from '~/components/Friend/Export';
 import { SettleUp } from '~/components/Friend/Settleup';
 import MainLayout from '~/components/Layout/MainLayout';
-import { UserAvatar } from '~/components/ui/avatar';
+import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
 import { type NextPageWithUser } from '~/types';
@@ -16,9 +15,10 @@ import { api } from '~/utils/api';
 import { toUIString } from '~/utils/numbers';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { type GetServerSideProps } from 'next';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
-  const { t } = useTranslation('friend_details');
+  const { t, displayName } = useTranslationWithUtils();
   const router = useRouter();
   const { friendId } = router.query;
 
@@ -44,8 +44,9 @@ const FriendPage: NextPageWithUser = ({ user }) => {
   return (
     <>
       <Head>
-        <title>{t('ui.expense_page.title')}</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>
+          {displayName(friendQuery.data)} | {t('ui.outstanding_balances')}
+        </title>
       </Head>
       <MainLayout
         title={
@@ -53,7 +54,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
             <Link href="/balances">
               <ChevronLeftIcon className="mr-1 h-6 w-6" />
             </Link>
-            <p className="text-lg font-normal">{friendQuery.data?.name}</p>
+            <p className="text-lg font-normal">{displayName(friendQuery.data)}</p>
           </div>
         }
         actions={
@@ -68,8 +69,8 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <Link href="/balances">
                 <ChevronLeftIcon className="mr-1 h-6 w-6" />
               </Link>
-              <UserAvatar user={friendQuery.data} size={25} />
-              {friendQuery.data?.name}
+              <EntityAvatar entity={friendQuery.data} size={25} />
+              {displayName(friendQuery.data)}
             </div>
           </div>
         }
@@ -81,7 +82,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <div className="text-orange-700">
                 {0 < (youOwe?.length ?? 0) && (
                   <>
-                    {t('ui.you_owe')}{' '}
+                    {t('ui.actors.you')} {t('ui.expense.you.owe')}{' '}
                     {youOwe?.map((bal, index) => (
                       <span key={bal.currency}>
                         <span className="font-semibold tracking-wide">
@@ -97,7 +98,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <div className="text-emerald-600">
                 {0 < (youLent?.length ?? 0) && (
                   <>
-                    {t('ui.you_lent')}{' '}
+                    {t('ui.actors.you')} {t('ui.expense.you.lent')}{' '}
                     {youLent?.map((bal, index) => (
                       <span key={bal.currency}>
                         <span className="font-semibold tracking-wide">
@@ -125,7 +126,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   className="w-[150px] gap-1 text-sm lg:w-[180px]"
                   disabled
                 >
-                  {t('ui.settle_up')}
+                  {t('ui.actions.settle_up')}
                 </Button>
               )}
 
@@ -135,14 +136,14 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   variant="secondary"
                   className="w-[150px] gap-1 text-sm lg:w-[180px]"
                 >
-                  <PlusIcon className="h-4 w-4 text-gray-400" /> {t('ui.add_expense')}
+                  <PlusIcon className="h-4 w-4 text-gray-400" /> {t('ui.actions.add_expense')}
                 </Button>
               </Link>
               <Export
                 expenses={expenses.data}
-                fileName={`expenses_with_${friendQuery.data?.name}`}
+                fileName={`expenses_with_${displayName(friendQuery.data)}`}
                 currentUserId={user.id}
-                friendName={friendQuery.data?.name ?? ''}
+                friendName={displayName(friendQuery.data) ?? ''}
                 friendId={friendQuery.data?.id ?? ''}
                 disabled={!expenses.data || 0 === expenses.data.length}
               />
@@ -167,11 +168,7 @@ FriendPage.auth = true;
 
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
-    ...(await customServerSideTranslations(context.locale, [
-      'common',
-      'friend_details',
-      'expense_details',
-    ])),
+    ...(await customServerSideTranslations(context.locale, ['common', 'expense_details'])),
   },
 });
 

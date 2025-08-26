@@ -1,0 +1,22 @@
+{
+  "title": "SplitPro",
+  "auth": {
+    "continue_with": "Kontynuuj z {{provider}}",
+    "email_placeholder": "Wprowadź swój email",
+    "send_magic_link": "Wyślij magiczny link",
+    "sending": "Wysyłanie...",
+    "otp_sent": "Wysłaliśmy email z kodem OTP. Sprawdź swoją skrzynkę odbiorczą i kliknij link w emailu, aby się zalogować.",
+    "trouble_logging_in": "Problemy z logowaniem? Skontaktuj się"
+  },
+  "validation": {
+    "email_required": "Email jest wymagany",
+    "email_invalid": "Nieprawidłowy email",
+    "otp_required": "Kod OTP jest wymagany",
+    "otp_invalid": "Nieprawidłowy kod OTP"
+  },
+  "errors": {
+    "signup_disabled": "Rejestracja nowych kont jest wyłączona w tej instancji",
+    "signin_error": "Wystąpił błąd podczas logowania: ",
+    "email_invalid": "Email jest nieprawidłowy, spróbuj ponownie proces logowania."
+  }
+}

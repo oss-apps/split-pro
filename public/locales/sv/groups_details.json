@@ -1,0 +1,84 @@
+{
+  "ui": {
+    "title": "Saldon",
+    "no_members": {
+      "no_members": "Inga medlemmar i gruppen ännu.",
+      "add_members": "Lägg till medlemmar",
+      "add_members_details": {
+        "title": "Lägg till medlemmar",
+        "placeholder": "Ange namn eller email",
+        "warning": "Varning: Skicka inte en inbjudan om det är ogiltlig email. Använd istället lägg till i Split Pro. Ditt konto kommer att blockeras om denna funktion används felaktigt",
+        "note": "Notera: Skicka inbjudan är inaktiverat för tillfället på grund av skräppost",
+        "send_invite": "Skicka inbjudan till användare",
+        "add_to_split_pro": "Lägg till i Split Pro"
+      },
+      "invite_link": "Dela inbjudningslänk",
+      "copied": "Kopierad"
+    },
+    "group_statistics": {
+      "title": "Gruppstatistik",
+      "total_expenses": "Totala utgifter",
+      "first_expense": "Första utgiften"
+    },
+    "group_info": {
+      "title": "Gruppinfo",
+      "members": "Medlemmar",
+      "group_created": "Grupp skapad",
+      "actions": "Åtgärder",
+      "delete_group": "Radera grupp",
+      "delete_group_details": {
+        "title": "Är du helt säker?",
+        "can_delete": "Denna åtgärd kan inte ångras",
+        "cant_delete": "Kan inte radera gruppen förrän alla har kvittat sina saldon"
+      },
+      "leave_group": "Lämna grupp",
+      "leave_group_details": {
+        "title": "Är du helt säker?",
+        "can_leave": "Denna åtgärd kan inte ångras",
+        "cant_leave": "Kan inte lämna gruppen förrän ditt saldo är kvittat"
+      },
+      "remove_member_details": {
+        "title": "Är du helt säker?",
+        "can_remove": "Du är på väg att ta bort denna medlem från gruppen",
+        "cant_remove": "Kan inte ta bort medlem förrän deras utestående saldo är kvittat"
+      },
+      "simplify_debts": "Förenkla skulder",
+      "recalculate_balances": "Räkna om saldon",
+      "recalculate_balances_details": {
+        "title": "Är du säker?",
+        "description": "Om saldon inte matchar utgifter, kan du räkna om dem. Notera att det kan ta tid om antalet utgifter är stort. Saldon utanför gruppen påverkas inte."
+      },
+      "archive_group": "Arkivera grupp",
+      "archived": "Arkiverad",
+      "archive_group_details": {
+        "title": "Är du säker på att du vill arkivera denna grupp?",
+        "can_archive": "Denna grupp kommer att arkiveras och döljas från din huvudlista över grupper. Du kan fortfarande komma åt den senare om det behövs.",
+        "cant_archive": "Kan inte arkivera grupp med utestående saldon. Alla saldon måste kvittas först."
+      }
+    },
+    "tabs": {
+      "expenses": "Utgifter",
+      "balances": "Saldon"
+    },
+    "messages": {
+      "group_name_updated": "Gruppnamn uppdaterat",
+      "balances_recalculated": "Saldon omräknade",
+      "group_archived": "Grupp arkiverad framgångsrikt"
+    },
+    "errors": {
+      "group_name_update_failed": "Fel vid uppdatering av gruppnamn",
+      "setting_update_failed": "Misslyckades med att uppdatera inställning"
+    },
+    "add_members": "Lägg till medlemmar",
+    "copied": "Kopierad",
+    "create_group": {
+      "title": "Skapa en grupp",
+      "group_name_placeholder": "Gruppnamn"
+    }
+  },
+  "invite_message": {
+    "join_to": "Gå med",
+    "in_splitpro": "i Splitpro",
+    "text": "Gå med i gruppen så kan du lägga till, hantera utgifter och följa dina saldon"
+  }
+}

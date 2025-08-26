@@ -81,11 +81,13 @@ export const NotificationModal: React.FC = () => {
           })
           .catch(() => {
             toast.error('Cannot subscribe to notification');
+            console.error(e);
           });
         setModalOpen(false);
       }
     } catch (e) {
       toast.error('Error requesting notification');
+      console.error(e);
     }
   }
 

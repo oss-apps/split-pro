@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type GetServerSideProps, type NextPage } from 'next';
 import { type ClientSafeProvider, getProviders, signIn } from 'next-auth/react';
 import { type TFunction, useTranslation } from 'next-i18next';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -16,11 +16,11 @@ import {
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import { LanguageSelector } from '~/components/ui/language-selector';
+import { LanguageSelector } from '~/components/LanguageSelector';
 import { env } from '~/env';
-import { useSession } from '~/hooks/useSession';
 import { getServerAuthSession } from '~/server/auth';
 import { customServerSideTranslations } from '~/utils/i18n/server';
+import VerificationStep from './VerificationStep';
 
 const providerSvgs = {
   github: (
@@ -61,14 +61,15 @@ const emailSchema = (t: TFunction) =>
 
 type EmailFormValues = z.infer<ReturnType<typeof emailSchema>>;
 
-const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSafeProvider[] }> = ({
-  error,
-  providers,
-  feedbackEmail,
-}) => {
+const Home: NextPage<{
+  error: string;
+  feedbackEmail: string;
+  providers: ClientSafeProvider[];
+  callbackUrl?: string;
+}> = ({ error, providers, feedbackEmail, callbackUrl }) => {
   const { t } = useTranslation('signin');
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
-  const [, setEmail] = useSession('splitpro-email');
+  const [showVerificationStep, setShowVerificationStep] = useState(false);
 
   const emailForm = useForm<EmailFormValues>({
     resolver: zodResolver(emailSchema(t)),
@@ -81,6 +82,8 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
     if (error) {
       if ('SignupDisabled' === error) {
         toast.error(t('errors.signup_disabled'), { duration: 5000 });
+      } else if ('SessionRequired' === error) {
+        return;
       } else {
         toast.error(t('errors.signin_error') + error);
         console.error('Error during sign-in:', error);
@@ -91,12 +94,28 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
   const onEmailSubmit = useCallback(async () => {
     setEmailStatus('sending');
     const email = emailForm.getValues().email.toLowerCase();
-    setEmail(email);
-    await signIn('email', { email });
+    setShowVerificationStep(true);
+    await signIn('email', { email, callbackUrl, redirect: false });
     setEmailStatus('success');
-  }, [emailForm, setEmail]);
+  }, [emailForm, setShowVerificationStep, callbackUrl]);
 
-  const handleProviderSignIn = useCallback((providerId: string) => () => signIn(providerId), []);
+  useEffect(() => {
+    const onPop = (e: PopStateEvent) => {
+      if (showVerificationStep) {
+        e.preventDefault();
+        setShowVerificationStep(false);
+      }
+    };
+    window.addEventListener('popstate', onPop);
+    return () => {
+      window.removeEventListener('popstate', onPop);
+    };
+  }, [showVerificationStep]);
+
+  const handleProviderSignIn = useCallback(
+    (providerId: string) => () => signIn(providerId, { callbackUrl }),
+    [callbackUrl],
+  );
 
   const field = useCallback(
     ({ field }: any) => (
@@ -115,6 +134,18 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
     ),
     [t],
   );
+
+  const feedbackEmailLink = useMemo(() => `mailto:${feedbackEmail}`, [feedbackEmail]);
+
+  if (showVerificationStep) {
+    return (
+      <VerificationStep
+        feedbackEmail={feedbackEmail}
+        email={emailForm.getValues().email}
+        callbackUrl={callbackUrl}
+      />
+    );
+  }
 
   return (
     <>
@@ -142,7 +173,7 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
           {providers && 2 === providers.length && (
             <div className="mt-6 flex w-[300px] items-center justify-between gap-2">
               <p className="bg-background z-10 ml-[150px] -translate-x-1/2 px-4 text-sm">
-                {t('auth.or')}
+                {t('ui.or', { ns: 'common' })}
               </p>
               <div className="bg-linear-to-r absolute h-px w-[300px] from-zinc-800 via-zinc-300 to-zinc-800" />
             </div>
@@ -168,7 +199,7 @@ const Home: NextPage<{ error: string; feedbackEmail: string; providers: ClientSa
               {t('auth.trouble_logging_in')}
               <br />
               {/* oxlint-disable-next-line next/no-html-link-for-pages */}
-              <a className="underline" href={'mailto:' + feedbackEmail}>
+              <a className="underline" href={feedbackEmailLink}>
                 {feedbackEmail ?? ''}
               </a>
             </p>
@@ -187,10 +218,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { callbackUrl, error } = context.query;
 
   if (session) {
+    const redirectUrl = env.DEFAULT_HOMEPAGE == '/home' ? '/balances' : env.DEFAULT_HOMEPAGE;
+    const destination = callbackUrl && !Array.isArray(callbackUrl) ? callbackUrl : redirectUrl;
+
     return {
       redirect: {
-        destination:
-          callbackUrl && !Array.isArray(callbackUrl) ? callbackUrl : env.DEFAULT_HOMEPAGE,
+        destination: destination ?? '/balances',
         permanent: false,
       },
     };
@@ -202,6 +235,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       error: typeof error === 'string' ? error : '',
       feedbackEmail: env.FEEDBACK_EMAIL ?? '',
       providers: Object.values(providers ?? {}),
+      callbackUrl: callbackUrl && !Array.isArray(callbackUrl) ? callbackUrl : '',
     },
   };
 };

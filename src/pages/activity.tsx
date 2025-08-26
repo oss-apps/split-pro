@@ -3,13 +3,12 @@ import { type User } from 'next-auth';
 import Head from 'next/head';
 import Link from 'next/link';
 import MainLayout from '~/components/Layout/MainLayout';
-import { UserAvatar } from '~/components/ui/avatar';
+import { EntityAvatar } from '~/components/ui/avatar';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
-import { toUIDate } from '~/utils/strings';
 import { type TFunction } from 'next-i18next';
-import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { withI18nStaticProps } from '~/utils/i18n/server';
 
 function getPaymentString(
@@ -29,7 +28,8 @@ function getPaymentString(
   } else if (isSettlement) {
     return (
       <div className={`${user.id === paidBy ? 'text-emerald-500' : 'text-orange-500'} text-sm`}>
-        {user.id === paidBy ? t('ui.you_paid') : t('ui.you_received')} {currency}{' '}
+        {t('ui.actors.you')}{' '}
+        {user.id === paidBy ? t('ui.expense.you.paid') : t('ui.expense.you.received')} {currency}{' '}
         {toUIString(amount)}
       </div>
     );
@@ -37,24 +37,24 @@ function getPaymentString(
     return (
       <div className={`${user.id === paidBy ? 'text-emerald-500' : 'text-orange-500'} text-sm`}>
         {user.id === paidBy
-          ? `${t('ui.you_lent')} ${currency} ${toUIString(BigMath.abs(expenseUserAmt))}`
-          : `${t('ui.you_owe')} ${currency} ${toUIString(expenseUserAmt)}`}
+          ? `${t('ui.actors.you')} ${t('ui.expense.you.lent')} ${currency} ${toUIString(BigMath.abs(expenseUserAmt))}`
+          : `${t('ui.actors.you')} ${t('ui.expense.you.owe')} ${currency} ${toUIString(expenseUserAmt)}`}
       </div>
     );
   }
 }
 
 const ActivityPage: NextPageWithUser = ({ user }) => {
-  const { displayName, t } = useTranslationWithUtils(['activity_page']);
+  const { displayName, t, toUIDate } = useTranslationWithUtils();
   const expensesQuery = api.expense.getAllExpenses.useQuery();
 
   return (
     <>
       <Head>
-        <title>{t('ui.title')}</title>
+        <title>{t('navigation.activity')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainLayout title={t('ui.title')} loading={expensesQuery.isPending}>
+      <MainLayout title={t('navigation.activity')} loading={expensesQuery.isPending}>
         <div className="flex flex-col gap-4">
           {!expensesQuery.data?.length ? (
             <div className="mt-[30vh] text-center text-gray-400">{t('ui.no_activity')}</div>
@@ -62,7 +62,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
           {expensesQuery.data?.map((e) => (
             <Link href={`/expenses/${e.expenseId}`} key={e.expenseId} className="flex gap-2">
               <div className="mt-1">
-                <UserAvatar user={e.expense.paidByUser} size={30} />
+                <EntityAvatar entity={e.expense.paidByUser} size={30} />
               </div>
               <div>
                 {e.expense.deletedByUser ? (
@@ -70,7 +70,9 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                     <span className="font-semibold">
                       {displayName(e.expense.deletedByUser, user.id)}
                     </span>{' '}
-                    {t('ui.user_deleted_expense')}{' '}
+                    {t(
+                      `ui.expense.${e.expense.deletedByUser.id === user.id ? 'you' : 'user'}.deleted`,
+                    )}{' '}
                     <span className="font-semibold">{e.expense.name}</span>
                   </p>
                 ) : (
@@ -78,7 +80,8 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                     <span className="font-semibold text-gray-300">
                       {displayName(e.expense.paidByUser, user.id)}
                     </span>{' '}
-                    {t('ui.user_paid_for')}{' '}
+                    {t(`ui.expense.${e.expense.paidByUser.id === user.id ? 'you' : 'user'}.paid`)}{' '}
+                    {t('ui.expense.for')}{' '}
                     <span className="font-semibold text-gray-300">{e.expense.name}</span>
                   </p>
                 )}
@@ -107,6 +110,6 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
 
 ActivityPage.auth = true;
 
-export const getStaticProps = withI18nStaticProps(['common', 'activity_page']);
+export const getStaticProps = withI18nStaticProps(['common']);
 
 export default ActivityPage;

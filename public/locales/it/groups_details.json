@@ -1,23 +1,17 @@
 {
   "ui": {
-    "title": "Saldi in sospesa del gruppo",
+    "title": "Saldi in sospeso del gruppo",
     "no_members": {
       "no_members": "Nessun membro nel gruppo ancora.",
       "add_members": "Aggiungi membri",
       "add_members_details": {
         "title": "Aggiungi membri",
         "placeholder": "Inserisci il nome o l'email",
-        "cancel": "Annulla",
-        "save": "Salva",
-        "warning": "Attenzione: non usare \"Invia invito\" se l'email non è valida. Usa, invece, \"Aggiungi a Split Pro\". Il tuo account verrà bloccato se questa funzione viene utilizzata in modo improprio",
+        "warning": "Attenzione: non usare \"Invia invito\" se l'email non è valida. Usa invece \"Aggiungi a Split Pro\". Il tuo account verrà bloccato se questa funzione viene utilizzata in modo improprio",
         "note": "Nota: l'invio di inviti è disabilitato per ora a causa dello spam",
-        "send_invite": "Invia invito",
-        "add_to_split_pro": "Aggiungi a Split Pro",
-        "errors": {
-          "valid_email": "Inserisci una mail valida"
-        }
+        "send_invite": "Invia invito all'utente",
+        "add_to_split_pro": "Aggiungi a Split Pro"
       },
-      "or": "oppure",
       "invite_link": "Condividi il link d'invito",
       "copied": "Copiato"
     },
@@ -33,21 +27,16 @@
       "actions": "Azioni",
       "delete_group": "Elimina gruppo",
       "delete_group_details": {
-        "title": "Sei sicuro di voler eliminare questo gruppo?",
+        "title": "Sei assolutamente sicuro?",
         "can_delete": "L'azione non sarà reversibile",
-        "cant_delete": "Non è possibile eliminare il gruppo finché tutti non saldano il saldo",
-        "cancel": "Annulla",
-        "delete": "Elimina"
+        "cant_delete": "Non è possibile eliminare il gruppo finché tutti non saldano il saldo"
       },
       "leave_group": "Abbandona gruppo",
       "leave_group_details": {
-        "title": "Sei sicuro di voler abbandonare questo gruppo?",
+        "title": "Sei assolutamente sicuro?",
         "can_leave": "L'azione non sarà reversibile",
-        "cant_leave": "Non puoi lasciare il gruppo finché il saldo in sospeso non sarà saldato",
-        "cancel": "Annulla",
-        "leave": "Abbandona"
+        "cant_leave": "Non puoi lasciare il gruppo finché il saldo in sospeso non sarà saldato"
       },
-      "owner": "proprietario",
       "remove_member_details": {
         "title": "Sei assolutamente sicuro?",
         "can_remove": "Stai per rimuovere questo membro dal gruppo",
@@ -58,6 +47,13 @@
       "recalculate_balances_details": {
         "title": "Sei sicuro?",
         "description": "Se i saldi non corrispondono alle spese, puoi ricalcolarli. Nota che potrebbe richiedere del tempo se il numero di spese è elevato. I saldi esterni al gruppo non saranno interessati."
+      },
+      "archive_group": "Archivia gruppo",
+      "archived": "Archiviato",
+      "archive_group_details": {
+        "title": "Sei sicuro di voler archiviare questo gruppo?",
+        "can_archive": "Questo gruppo verrà archiviato e nascosto dalla tua lista principale dei gruppi. Potrai comunque accedervi più tardi se necessario.",
+        "cant_archive": "Non è possibile archiviare un gruppo con saldi in sospeso. Tutti i saldi devono essere saldati prima."
       }
     },
     "tabs": {
@@ -66,44 +62,23 @@
     },
     "messages": {
       "group_name_updated": "Nome del gruppo aggiornato",
-      "balances_recalculated": "Saldi ricalcolati con successo"
+      "balances_recalculated": "Saldi ricalcolati con successo",
+      "group_archived": "Gruppo archiviato con successo"
     },
     "errors": {
       "group_name_update_failed": "Errore nell'aggiornamento del nome del gruppo",
-      "setting_update_failed": "Errore nell'aggiornamento dell'impostazione",
-      "something_went_wrong": "Qualcosa è andato storto"
+      "setting_update_failed": "Errore nell'aggiornamento dell'impostazione"
     },
-    "add_expense": "Nuova spesa",
-    "add_members": "Nuovi membri",
+    "add_members": "Aggiungi membri",
     "copied": "Copiato",
-    "invite": "Invita",
-    "you_paid": "Hai pagato",
-    "user_paid": "ha pagato",
-    "you_lent": "Hai prestato",
-    "you_owe": "Devi",
-    "all_settled_up": "Non hai debiti in sospeso",
-    "owes_you": "ti deve",
-    "you_owe_friend": "Devi a",
-    "balance": "saldo",
-    "balances": "saldi",
-    "outstanding_balances": "Saldi in sospeso",
-    "expense_details": "Dettagli spesa",
     "create_group": {
       "title": "Crea un gruppo",
-      "group_name_placeholder": "Nome del gruppo",
-      "cancel": "Annulla",
-      "submit": "Invia",
-      "errors": {
-        "name_required": "Il nome è obbligatorio"
-      }
+      "group_name_placeholder": "Nome del gruppo"
     }
   },
   "invite_message": {
     "join_to": "Unisciti a",
-    "in_splitpro": "su Splitpro",
-    "text": "Unendoti al gruppo potrai aggiungere, gestire le spese e tenere traccia dei tuoi saldi"
-  },
-  "errors": {
-    "something_went_wrong": "Qualcosa è andato storto"
+    "in_splitpro": "in Splitpro",
+    "text": "Unisciti al gruppo e potrai aggiungere, gestire spese e tracciare i tuoi saldi"
   }
 }

@@ -2,15 +2,15 @@ import { CheckIcon } from '@heroicons/react/24/outline';
 import { UserPlusIcon } from '@heroicons/react/24/solid';
 import { type Group, type GroupUser, type User } from '@prisma/client';
 import { SendIcon } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 import React from 'react';
 import { z } from 'zod';
-import { useTranslation } from 'next-i18next';
 
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 
-import { GroupAvatar, UserAvatar } from '../ui/avatar';
+import { EntityAvatar } from '../ui/avatar';
 import { Button } from '../ui/button';
 
 export const SelectUserOrGroup: React.FC<{
@@ -122,7 +122,7 @@ export const SelectUserOrGroup: React.FC<{
         {filteredFriends?.length ? (
           <>
             <div className="font-normal text-gray-500">
-              {t('ui.add_expense_details.select_user_or_group.friends')}
+              {t('ui.actors.friends', { ns: 'common' })}
             </div>
             {filteredFriends.map((f) => {
               const isExisting = participants.some((p) => p.id === f.id);
@@ -141,7 +141,7 @@ export const SelectUserOrGroup: React.FC<{
                   }}
                 >
                   <div className="flex items-center gap-4">
-                    <UserAvatar user={f} size={35} />
+                    <EntityAvatar entity={f} size={35} />
                     <div>{f.name ?? f.email}</div>
                   </div>
                   {participants.some((p) => p.id === f.id) ? (
@@ -158,9 +158,7 @@ export const SelectUserOrGroup: React.FC<{
         {/*Can't select multiple groups or groups with outside ppl */}
         {filteredGroups?.length && 1 === participants.length ? (
           <>
-            <div className="mt-8 text-gray-500">
-              {t('ui.add_expense_details.select_user_or_group.groups')}
-            </div>
+            <div className="mt-8 text-gray-500">{t('ui.actors.groups', { ns: 'common' })}</div>
             <div className="mt-2 flex flex-col gap-1">
               {filteredGroups.map((g) => (
                 <button
@@ -169,7 +167,7 @@ export const SelectUserOrGroup: React.FC<{
                   onClick={() => onGroupSelect(g.group)}
                 >
                   <div className="flex items-center gap-4">
-                    <GroupAvatar name={g.group.name} size={35} />
+                    <EntityAvatar entity={g.group} size={35} />
                     <p>{g.group.name}</p>
                   </div>
                 </button>

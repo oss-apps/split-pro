@@ -1,12 +1,12 @@
-
+import { type User } from '@prisma/client';
 import { nanoid } from 'nanoid';
 
 import { db } from '~/server/db';
 import { type SplitwiseGroup, type SplitwiseUser } from '~/types';
 import { toSafeBigInt } from '~/utils/numbers';
 
-import { sendExpensePushNotification } from './notificationService';
 import type { CreateExpense } from '~/types/expense.types';
+import { sendExpensePushNotification } from './notificationService';
 
 export async function joinGroup(userId: number, publicGroupId: string) {
   const group = await db.group.findUnique({
@@ -643,10 +643,10 @@ export async function getCompleteFriendsDetails(userId: number) {
 
   const friends = balances.reduce(
     (acc, balance) => {
-      const friendId = balance.friendId;
+      const { friendId } = balance;
       acc[friendId] ??= {
         balances: [],
-        id: balance.friendId,
+        id: friendId,
         email: balance.friend.email,
         name: balance.friend.name,
       };
@@ -881,7 +881,7 @@ async function createUsersFromSplitwise(users: SplitwiseUser[]) {
   await db.user.createMany({
     data: newUsers.map((u) => ({
       email: u.email,
-      name: `${u.first_name}${u.last_name ? ' ' + u.last_name : ''}`,
+      name: `${u.first_name}${u.last_name ? ` ${u.last_name}` : ''}`,
     })),
   });
 

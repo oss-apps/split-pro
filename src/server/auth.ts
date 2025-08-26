@@ -45,7 +45,7 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
 
   return {
     ...prismaAdapter,
-    createUser: async (user: Omit<AdapterUser, 'id'>): Promise<AdapterUser> => {
+    createUser: (user: Omit<AdapterUser, 'id'>): Promise<AdapterUser> => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const prismaCreateUser = prismaAdapter.createUser;
 
@@ -61,7 +61,7 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
       return prismaCreateUser(user);
     },
-  };
+  } as Adapter;
 };
 
 /**
@@ -72,7 +72,6 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
 export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/auth/signin',
-    verifyRequest: '/auth/verify-request',
   },
   callbacks: {
     session: ({ session, user }) => ({
@@ -107,7 +106,7 @@ export const authOptions: NextAuthOptions = {
       // Check if the user's name is empty
       if ((!user.name || '' === user.name.trim()) && user.email) {
         // Define the logic to update the user's name here
-        const updatedName = user.email.split('@')[0];
+        const [updatedName] = user.email.split('@');
 
         // Use your database client to update the user's name
         await db.user.update({

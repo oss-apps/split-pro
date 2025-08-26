@@ -49,49 +49,54 @@ export const groupRouter = createTRPCRouter({
     return groups;
   }),
 
-  getAllGroupsWithBalances: protectedProcedure.query(async ({ ctx }) => {
-    const groups = await ctx.db.groupUser.findMany({
-      where: {
-        userId: ctx.session.user.id,
-      },
-      include: {
-        group: {
-          include: {
-            groupBalances: {
-              where: { userId: ctx.session.user.id },
-            },
-            expenses: {
-              orderBy: {
-                createdAt: 'desc',
+  getAllGroupsWithBalances: protectedProcedure
+    .input(z.object({ getArchived: z.boolean() }).optional())
+    .query(async ({ ctx, input }) => {
+      const groups = await ctx.db.groupUser.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          group: {
+            archivedAt: input?.getArchived ? { not: null } : null,
+          },
+        },
+        include: {
+          group: {
+            include: {
+              groupBalances: {
+                where: { userId: ctx.session.user.id },
               },
-              take: 1,
+              expenses: {
+                orderBy: {
+                  createdAt: 'desc',
+                },
+                take: 1,
+              },
             },
           },
         },
-      },
-    });
+      });
 
-    const sortedGroupsByLatestExpense = groups.sort((a, b) => {
-      const aDate = a.group.expenses[0]?.createdAt ?? new Date(0);
-      const bDate = b.group.expenses[0]?.createdAt ?? new Date(0);
-      return bDate.getTime() - aDate.getTime();
-    });
+      const sortedGroupsByLatestExpense = groups.sort((a, b) => {
+        const aDate = a.group.expenses[0]?.createdAt ?? new Date(0);
+        const bDate = b.group.expenses[0]?.createdAt ?? new Date(0);
+        return bDate.getTime() - aDate.getTime();
+      });
 
-    const groupsWithBalances = sortedGroupsByLatestExpense.map((g) => {
-      const balances: Record<string, bigint> = {};
+      const groupsWithBalances = sortedGroupsByLatestExpense.map((g) => {
+        const balances: Record<string, bigint> = {};
 
-      for (const balance of g.group.groupBalances) {
-        balances[balance.currency] = (balances[balance.currency] ?? 0n) + balance.amount;
-      }
+        for (const balance of g.group.groupBalances) {
+          balances[balance.currency] = (balances[balance.currency] ?? 0n) + balance.amount;
+        }
 
-      return {
-        ...g.group,
-        balances,
-      };
-    });
+        return {
+          ...g.group,
+          balances,
+        };
+      });
 
-    return groupsWithBalances;
-  }),
+      return groupsWithBalances;
+    }),
 
   joinGroup: protectedProcedure
     .input(z.object({ groupId: z.string() }))
@@ -302,6 +307,64 @@ export const groupRouter = createTRPCRouter({
         },
         data: {
           name: input.name,
+        },
+      });
+
+      return updatedGroup;
+    }),
+
+  toggleArchive: groupProcedure
+    .input(z.object({ groupId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const group = await ctx.db.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+        include: {
+          groupBalances: true,
+        },
+      });
+
+      if (!group) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
+      }
+
+      // Check if user is a member of the group
+      const isInGroup = await ctx.db.groupUser.findFirst({
+        where: {
+          groupId: input.groupId,
+          userId: ctx.session.user.id,
+        },
+      });
+
+      if (!isInGroup) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only group members can archive/unarchive the group',
+        });
+      }
+
+      const isArchiving = !group.archivedAt;
+
+      // Only check balances when archiving (not when unarchiving)
+      if (isArchiving) {
+        const balanceWithNonZero = group.groupBalances.find((b) => 0n !== b.amount);
+
+        if (balanceWithNonZero) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message:
+              'Cannot archive group with outstanding balances. All balances must be settled first.',
+          });
+        }
+      }
+
+      const updatedGroup = await ctx.db.group.update({
+        where: {
+          id: input.groupId,
+        },
+        data: {
+          archivedAt: isArchiving ? new Date() : null,
         },
       });
 

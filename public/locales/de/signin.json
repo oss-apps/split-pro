@@ -1,0 +1,22 @@
+{
+  "title": "SplitPro",
+  "auth": {
+    "continue_with": "Weiter mit {{provider}}",
+    "email_placeholder": "Mailadresse eingeben",
+    "send_magic_link": "Sende Magic Link",
+    "sending": "Senden...",
+    "otp_sent": "Wir haben dir eine Mail mit dem Einmalpasswort geschickt. Schau im Posteingang und folge dem Link in der Email um dich anzumelden",
+    "trouble_logging_in": "Probleme beim anmelden? Kontakt"
+  },
+  "validation": {
+    "email_required": "Email wird benötigt",
+    "email_invalid": "Ungültige Email",
+    "otp_required": "Einmalpasswort wird benötigt",
+    "otp_invalid": "Ungültiges Einmalpassowrt"
+  },
+  "errors": {
+    "signup_disabled": "Neuanmeldung ist in dieser Instanz deaktiviert",
+    "signin_error": "Beim Anmelden ist ein Fehler aufgetreten: ",
+    "email_invalid": "Ungüötige Mailadresse. Bitte starte den Anmeldevorgang neu"
+  }
+}

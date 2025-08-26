@@ -14,17 +14,79 @@
     "account": "Account"
   },
   "ui": {
-    "you": "You",
-    "cancel": "Cancel",
-    "confirm": "Confirm",
-    "edit_name": {
-      "title": "Edit name",
-      "placeholder": "Enter name",
+    "actors": {
+      "you": "You",
+      "you_dativus": "You",
+      "you_accusativus": "You",
+      "friends": "Friends",
+      "groups": "Groups",
+      "members": "Members",
+      "owner": "Owner",
+      "all": "All"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "submit": "Submit",
       "close": "Close",
+      "back": "Back",
+      "create": "Create",
       "save": "Save",
-      "errors": {
-        "name_required": "Name is required"
-      }
-    }
+      "leave": "Leave",
+      "invite": "Invite",
+      "export": "Export",
+      "import": "Import",
+      "add_expense": "Add expense",
+      "edit_expense": "Edit expense",
+      "settle_up": "Settle up"
+    },
+    "expense": {
+      "you": {
+        "lent": "lent",
+        "owe": "owe",
+        "paid": "paid",
+        "pay": "pay",
+        "received": "received",
+        "deleted": "deleted"
+      },
+      "user": {
+        "lent": "lent",
+        "owe": "owes",
+        "paid": "paid",
+        "pay": "pays",
+        "received": "received",
+        "deleted": "deleted"
+      },
+      "for": "for",
+      "paid_by": "Paid by",
+      "received_by": "Received by",
+      "to": "to",
+      "from": "from"
+    },
+    "balance": "balance",
+    "balances": "balances",
+    "or": "or",
+    "and": "and",
+    "today": "Today",
+    "delete": "Delete",
+    "edited_by": "Edited by",
+    "deleted_by": "Deleted by",
+    "added_by": "Added by",
+    "on": "on",
+    "not_involved": "Not involved",
+    "no_activity": "No activities yet",
+    "settled_up": "Settled up",
+    "settle_up_name": "Settle up",
+    "settlement": "Settlement",
+    "expense_details": "Expense details",
+    "select_currency": "Select currency",
+    "outstanding_balances": "Outstanding balances",
+    "share_text": "Check out SplitPro. It's an open source free alternative for Splitwise"
+  },
+  "errors": {
+    "name_required": "Name is required",
+    "saving_expense": "Error while saving expense",
+    "something_went_wrong": "Something went wrong",
+    "valid_email": "Enter valid email"
   }
 }

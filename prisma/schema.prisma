@@ -108,6 +108,7 @@ model Group {
     defaultCurrency  String         @default("USD")
     createdAt        DateTime       @default(now())
     updatedAt        DateTime       @updatedAt
+    archivedAt       DateTime?
     splitwiseGroupId String?        @unique
     createdBy        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
     groupUsers       GroupUser[]

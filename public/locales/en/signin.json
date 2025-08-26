@@ -2,12 +2,10 @@
   "title": "SplitPro",
   "auth": {
     "continue_with": "Continue with {{provider}}",
-    "or": "or",
     "email_placeholder": "Enter your email",
     "send_magic_link": "Send magic link",
     "sending": "Sending...",
     "otp_sent": "We have sent an email with the OTP. Please check your inbox and click the link in the email to sign in.",
-    "submit": "Submit",
     "trouble_logging_in": "Trouble logging in? Contact"
   },
   "validation": {

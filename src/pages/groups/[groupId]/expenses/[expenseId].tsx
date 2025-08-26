@@ -28,8 +28,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   return (
     <>
       <Head>
-        <title>{t('ui.outstanding_balances')}</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>{expenseQuery.data?.name ?? ''}</title>
       </Head>
       <MainLayout
         title={
@@ -37,7 +36,9 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
             <Link href={`/groups/${groupId}`}>
               <ChevronLeftIcon className="mr-1 h-6 w-6" />
             </Link>
-            <p className="w-full text-center text-[16px] font-normal">{t('ui.expense_details')}</p>
+            <p className="w-full text-center text-[16px] font-normal">
+              {t('ui.expense_details', { ns: 'common' })}
+            </p>
             <div />
           </div>
         }

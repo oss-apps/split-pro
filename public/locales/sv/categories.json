@@ -1,0 +1,86 @@
+{
+  "title": "Kategorier",
+  "categories_list": {
+    "entertainment": {
+      "name": "Underhållning",
+      "items": {
+        "games": "Spel",
+        "movies": "Filmer",
+        "music": "Musik",
+        "sports": "Sport",
+        "other": "Underhållning"
+      }
+    },
+    "food": {
+      "name": "Mat & Dryck",
+      "items": {
+        "diningOut": "Restaurang",
+        "groceries": "Matvaror",
+        "liquor": "Dryck",
+        "other": "Mat & Dryck"
+      }
+    },
+    "home": {
+      "name": "Hem",
+      "items": {
+        "electronics": "Elektronik",
+        "furniture": "Möbler",
+        "supplies": "Tillbehör",
+        "maintenance": "Underhåll",
+        "mortgage": "Lån",
+        "pets": "Husdjur",
+        "rent": "Hyra",
+        "services": "Tjänster",
+        "other": "Hem"
+      }
+    },
+    "life": {
+      "name": "Liv",
+      "items": {
+        "childcare": "Barnvård",
+        "clothing": "Kläder",
+        "education": "Utbildning",
+        "gifts": "Gåvor",
+        "medical": "Medicin",
+        "taxes": "Skatter",
+        "other": "Liv",
+        "insurance": "Försäkring"
+      }
+    },
+    "travel": {
+      "name": "Resor",
+      "items": {
+        "bus": "Buss",
+        "train": "Tåg",
+        "car": "Bil",
+        "fuel": "Bränsle",
+        "parking": "Parkering",
+        "plane": "Flyg",
+        "taxi": "Taxi",
+        "other": "Resor",
+        "bicycle": "Cykel",
+        "hotel": "Hotell"
+      }
+    },
+    "utilities": {
+      "name": "Verktyg",
+      "items": {
+        "cleaning": "Tvätt",
+        "electricity": "El",
+        "gas": "Gas",
+        "internet": "Internet",
+        "trash": "Avfall",
+        "phone": "Telefon",
+        "water": "Vatten",
+        "other": "Verktyg"
+      }
+    },
+    "general": {
+      "name": "Allmänt",
+      "items": {
+        "general": "Allmänt",
+        "other": "Allmänt"
+      }
+    }
+  }
+}

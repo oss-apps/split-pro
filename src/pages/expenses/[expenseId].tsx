@@ -27,16 +27,15 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   return (
     <>
       <Head>
-        <title>{t('ui.expense_page.title')}</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>{expenseQuery.data?.name ?? ''}</title>
       </Head>
       <MainLayout
         title={
           <div className="flex items-center gap-2">
-            <Link href={`/activity`}>
+            <Link href="/activity">
               <ChevronLeftIcon className="mr-1 h-6 w-6" />
             </Link>
-            <p className="text-[16px] font-normal">{t('ui.expense_page.expense_details')}</p>
+            <p className="text-[16px] font-normal">{t('ui.expense_details', { ns: 'common' })}</p>
           </div>
         }
         actions={

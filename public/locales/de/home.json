@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "title": "SplitPro: Teile Ausgaben mit deinen Freunden. Kostenlos.",
+    "description": "SplitPro: Teile Ausgaben mit deinen Freunden. Kostenlos."
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "terms": "Bedingungen",
+    "privacy": "Datenschutz"
+  },
+  "hero": {
+    "title_part1": "Teile Ausgaben mit deinen Freunden.",
+    "title_highlight": "Kostenlos",
+    "subtitle_part1": "Eine",
+    "subtitle_link": "open source",
+    "subtitle_part2": "Alternative zu SplitWise",
+    "add_expense_button": "Ausgabe hinzufügen",
+    "star_github_button": "Star us on github"
+  },
+  "features": {
+    "title": "Funktionen",
+    "groups_and_friends": {
+      "title": "Gruppen und Freunde",
+      "description": "Du kannst mehrere Gruppen erstellen oder direkt Salden hinzufügen. Alles wird konsolidiert."
+    },
+    "multiple_currencies": {
+      "title": "Mehrere Währungen",
+      "description": "Möchtest du Ausgaben in verschiedenen Währungen für denselben Nutzer hinzufügen? Kein Problem!"
+    },
+    "unequal_split": {
+      "title": "Ungleiche Aufteilung",
+      "description": "Erweiterte Aufteilungsoptionen. Nach Anteilen, Prozent oder exakten Beträgen."
+    },
+    "pwa_support": {
+      "title": "PWA Unterstützung",
+      "description": "Liebst du mobile Apps? Wir haben dich abgedeckt. Installiere es als PWA und du wirst es kaum merken!"
+    },
+    "upload_receipts": {
+      "title": "Belege hochladen",
+      "description": "Lade Belege zusammen mit der Ausgabe hoch"
+    },
+    "open_source": {
+      "title": "Open Source",
+      "description": "Das macht es schwer böse zu werden. Einfach selbst zu hosten."
+    },
+    "import_splitwise": {
+      "title": "Importiere von Splitwise",
+      "description": "Du musst Salden nicht manuell migrieren. Du kannst Nutzer und Gruppen von Splitwise importieren."
+    },
+    "push_notifications": {
+      "title": "Push-Benachrichtigungen",
+      "description": "Verpasse keine wichtigen Benachrichtigungen. Erhalte Meldungen, wenn jemand eine Ausgabe hinzufügt oder ausgleicht."
+    }
+  },
+  "footer": {
+    "built_by": "Built by"
+  }
+}

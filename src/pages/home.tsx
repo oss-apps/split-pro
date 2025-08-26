@@ -19,11 +19,11 @@ import { BackgroundGradient } from '~/components/ui/background-gradient';
 import { Button } from '~/components/ui/button';
 import { env } from '~/env';
 
-import { LanguageSelector } from '~/components/ui/language-selector';
+import { LanguageSelector } from '~/components/LanguageSelector';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 
 export default function Home({ isCloud }: { isCloud: boolean }) {
-  const { t } = useTranslation('index');
+  const { t } = useTranslation('home');
 
   return (
     <>
@@ -44,7 +44,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
         </Head>
       )}
       <main className="min-h-screen">
-        <nav className="sticky mx-auto flex max-w-5xl items-center justify-between px-4 py-4 lg:px-0 lg:py-5">
+        <nav className="sticky z-40 mx-auto flex max-w-5xl items-center justify-between px-4 py-4 lg:px-0 lg:py-5">
           <div className="flex items-center gap-2">
             <p className="text-2xl font-medium">{t('nav.app_name')}</p>
           </div>
@@ -90,8 +90,8 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 98 96" className="size-4">
                       <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
+                        fillRule="evenodd"
+                        clipRule="evenodd"
                         d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"
                         fill="#fff"
                       />
@@ -112,7 +112,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Users className="text-primary size-6" />
-                    <p className="text-lg font-medium">Groups and Friends</p>
+                    <p className="text-lg font-medium">{t('features.groups_and_friends.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.groups_and_friends.description')}
@@ -122,7 +122,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Banknote className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">Multiple currencies</p>
+                    <p className="text-lg font-medium">{t('features.multiple_currencies.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.multiple_currencies.description')}
@@ -134,7 +134,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Split className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">Unequal Split</p>
+                    <p className="text-lg font-medium">{t('features.unequal_split.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.unequal_split.description')}
@@ -144,7 +144,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Globe className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">PWA support</p>
+                    <p className="text-lg font-medium">{t('features.pwa_support.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.pwa_support.description')}
@@ -156,7 +156,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <FileUp className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">Upload Receipts</p>
+                    <p className="text-lg font-medium">{t('features.upload_receipts.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.upload_receipts.description')}
@@ -166,7 +166,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <GitFork className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">Open source</p>
+                    <p className="text-lg font-medium">{t('features.open_source.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.open_source.description')}
@@ -177,7 +177,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Import className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">Import from splitwise</p>
+                    <p className="text-lg font-medium">{t('features.import_splitwise.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.import_splitwise.description')}
@@ -186,7 +186,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
                     <Bell className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">Push notification</p>
+                    <p className="text-lg font-medium">{t('features.push_notifications.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.push_notifications.description')}
@@ -229,7 +229,16 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {t('footer.author_name')}
+                  KM Koushik
+                </a>
+                ,{' '}
+                <a
+                  className="text-primary"
+                  href="https://github.com/krokosik"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  krokosik
                 </a>
                 {/* <p className="text-gray-400">
                   A product of <a className="underline underline-offset-2">ossapps.dev</a>
@@ -242,7 +251,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {t('footer.twitter')}
+                  Twitter
                 </a>
                 <a
                   className="text-primary"
@@ -250,7 +259,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {t('footer.github')}
+                  GitHub
                 </a>
               </div>
             </div>
@@ -279,6 +288,6 @@ const MobileScreenShot = () => (
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
     isCloud: env.NEXTAUTH_URL.includes('splitpro.app'),
-    ...(await customServerSideTranslations(context.locale, ['index', 'common'])),
+    ...(await customServerSideTranslations(context.locale, ['home', 'common'])),
   },
 });

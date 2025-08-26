@@ -4,7 +4,7 @@ import { useTranslation } from 'next-i18next';
 import { CURRENCIES, type CurrencyCode } from '~/lib/currency';
 import { getLocalizedCurrencyName } from '~/utils/i18n/client';
 
-import { GeneralPicker } from '../ui/picker';
+import { GeneralPicker } from '../GeneralPicker';
 
 function CurrencyPickerInner({
   currentCurrency = 'USD',
@@ -13,7 +13,7 @@ function CurrencyPickerInner({
   currentCurrency: CurrencyCode;
   onCurrencyPick: (currency: CurrencyCode) => void;
 }) {
-  const { t } = useTranslation('expense_details');
+  const { t } = useTranslation('currencies');
 
   const onSelect = useCallback(
     (currentValue: string) => {
@@ -54,9 +54,9 @@ function CurrencyPickerInner({
   return (
     <GeneralPicker
       trigger={trigger}
-      title={t('ui.currency.title')}
-      placeholderText={t('ui.currency.placeholder')}
-      noOptionsText={t('ui.currency.no_currency_found')}
+      title={t('title')}
+      placeholderText={t('placeholder')}
+      noOptionsText={t('no_currency_found')}
       onSelect={onSelect}
       items={Object.values(CURRENCIES)}
       extractValue={extractValue}

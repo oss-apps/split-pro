@@ -6,8 +6,7 @@ import React from 'react';
 import { CategoryIcon } from '~/components/ui/categoryIcons';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { toUIString } from '~/utils/numbers';
-import { toUIDate } from '~/utils/strings';
-import { useTranslationWithUtils } from '~/hooks/useCommonTranslation';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 export const ExpenseList: React.FC<{
   userId: number;
@@ -18,12 +17,12 @@ export const ExpenseList: React.FC<{
   isGroup?: boolean;
   isLoading?: boolean;
 }> = ({ userId, isGroup = false, expenses = [], contactId, isLoading }) => {
-  const { displayName, t } = useTranslationWithUtils(['expense_details']);
+  const { displayName, toUIDate, t } = useTranslationWithUtils(['expense_details']);
 
   return (
     <>
       {expenses.map((e) => {
-        const youPaid = e.paidBy === userId;
+        const youPaid = e.paidBy === userId && e.amount >= 0n;
         const yourExpense = e.expenseParticipants.find(
           (partecipant) => partecipant.userId === userId,
         );
@@ -55,8 +54,9 @@ export const ExpenseList: React.FC<{
                   className={`flex text-center ${isSettlement ? 'text-sm text-gray-400' : 'text-xs text-gray-500'}`}
                 >
                   <span className="text-[10px]">{isSettlement ? '  🎉  ' : null}</span>
-                  {displayName(e.paidByUser, userId)} {t('ui.user_paid')} {e.currency}{' '}
-                  {toUIString(e.amount)}
+                  {displayName(e.paidByUser, userId)}{' '}
+                  {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`, { ns: 'common' })}{' '}
+                  {e.currency} {toUIString(e.amount)}
                 </p>
               </div>
             </div>
@@ -67,7 +67,8 @@ export const ExpenseList: React.FC<{
                     <div
                       className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
                     >
-                      {youPaid ? t('ui.expense_list.you_lent') : t('ui.expense_list.you_owe')}
+                      {t('ui.actors.you', { ns: 'common' })}{' '}
+                      {t(`ui.expense.you.${youPaid ? 'lent' : 'owe'}`, { ns: 'common' })}
                     </div>
                     <div
                       className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
@@ -78,7 +79,9 @@ export const ExpenseList: React.FC<{
                   </>
                 ) : (
                   <div>
-                    <p className="text-xs text-gray-400">{t('ui.expense_list.not_involved')}</p>
+                    <p className="text-xs text-gray-400">
+                      {t('ui.not_involved', { ns: 'common' })}
+                    </p>
                   </div>
                 )}
               </div>

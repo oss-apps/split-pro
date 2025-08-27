@@ -5,7 +5,6 @@
     "add_expense": "Ausgabe hinzufügen",
     "add_expense_details": {
       "add_new_expense": "Neue Ausgabe hinzufügen",
-
       "description_placeholder": "Beschreibung eingeben",
       "amount_placeholder": "Betrag eingeben",
       "split_type_section": {
@@ -66,8 +65,18 @@
     },
     "balance_list": {
       "press_balance_info": "Drücke auf einen einzelnen Saldo, um die Abrechnung zu starten",
-      "are_settled_up": "sind ausgeglichen",
+      "are_settled_up": "bist ausgeglichen",
       "is_settled_up": "ist ausgeglichen"
+    },
+    "errors": {
+      "amount_required": "Betrag eingeben",
+      "description_required": "Beschreibung eingeben",
+      "group_required": "Gruppe eingeben"
+    },
+    "no_members": {
+      "add_members_details": {
+        "add_to_split_pro": "Nutzer hinzufügen"
+      }
     }
   }
 }

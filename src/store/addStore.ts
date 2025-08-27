@@ -119,6 +119,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
             [splitType]: share,
           },
         } as SplitShares;
+
         return {
           ...calculateParticipantSplit(
             state.amount,
@@ -140,24 +141,28 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         const userIndex = participants.findIndex((p) => p.id === user.id);
         if (-1 !== userIndex) {
           participants[userIndex] = user;
-          splitShares[user.id] = initSplitShares();
         } else {
           participants.push({ ...user });
+          splitShares[user.id] = initSplitShares();
         }
-        return calculateParticipantSplit(
-          state.amount,
-          participants,
-          state.splitType,
+        return {
           splitShares,
-          state.paidBy,
-        );
+          ...calculateParticipantSplit(
+            state.amount,
+            participants,
+            state.splitType,
+            splitShares,
+            state.paidBy,
+          ),
+        };
       }),
     setParticipants: (participants, splitType) =>
       set((state) => {
-        const splitShares = participants.reduce((res, p) => {
+        const splitShares = participants.reduce<SplitShares>((res, p) => {
           res[p.id] = initSplitShares();
           return res;
-        }, {} as SplitShares);
+        }, {});
+
         if (splitType) {
           calculateSplitShareBasedOnAmount(
             state.amount,
@@ -240,12 +245,16 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     setCurrentUser: (currentUser) =>
       set((s) => {
         const cUser = s.participants.find((p) => p.id === currentUser.id);
+        const splitShares = { ...s.splitShares };
         const participants = [...s.participants];
 
         if (!cUser) {
           participants.push(currentUser);
         }
-        return { currentUser, paidBy: currentUser, participants };
+        if (!splitShares[currentUser.id]) {
+          splitShares[currentUser.id] = initSplitShares();
+        }
+        return { currentUser, splitShares, paidBy: currentUser, participants };
       }),
     setDescription: (description) => set({ description }),
     setFileUploading: (isFileUploading) => set({ isFileUploading }),

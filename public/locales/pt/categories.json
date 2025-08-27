@@ -1,0 +1,86 @@
+{
+  "title": "Categorias",
+  "categories_list": {
+    "entertainment": {
+      "name": "Entretenimento",
+      "items": {
+        "games": "Jogos",
+        "movies": "Filmes",
+        "music": "Música",
+        "sports": "Desportos",
+        "other": "Entretenimento"
+      }
+    },
+    "food": {
+      "name": "Comida & Bebidas",
+      "items": {
+        "diningOut": "Jantar Fora",
+        "groceries": "Mercearia",
+        "liquor": "Bebidas Alcoólicas",
+        "other": "Comida & Bebidas"
+      }
+    },
+    "home": {
+      "name": "Casa",
+      "items": {
+        "electronics": "Eletrónica",
+        "furniture": "Mobília",
+        "supplies": "Suprimentos",
+        "maintenance": "Manutenção",
+        "mortgage": "Hipoteca",
+        "pets": "Animais de Estimação",
+        "rent": "Arrendamento",
+        "services": "Serviços",
+        "other": "Casa"
+      }
+    },
+    "life": {
+      "name": "Vida",
+      "items": {
+        "childcare": "Cuidado Infantil",
+        "clothing": "Vestuário",
+        "education": "Educação",
+        "gifts": "Presentes",
+        "medical": "Saúde",
+        "taxes": "Impostos",
+        "other": "Vida",
+        "insurance": "Seguro"
+      }
+    },
+    "travel": {
+      "name": "Viagem",
+      "items": {
+        "bus": "Autocarro",
+        "train": "Comboio",
+        "car": "Carro",
+        "fuel": "Combustível",
+        "parking": "Estacionamento",
+        "plane": "Avião",
+        "taxi": "Táxi",
+        "other": "Viagem",
+        "bicycle": "Bicicleta",
+        "hotel": "Hotel"
+      }
+    },
+    "utilities": {
+      "name": "Utilidades",
+      "items": {
+        "cleaning": "Limpeza",
+        "electricity": "Eletricidade",
+        "gas": "Gás",
+        "internet": "Internet",
+        "trash": "Lixo",
+        "phone": "Telefone",
+        "water": "Água",
+        "other": "Utilidades"
+      }
+    },
+    "general": {
+      "name": "Geral",
+      "items": {
+        "general": "Geral",
+        "other": "Geral"
+      }
+    }
+  }
+}

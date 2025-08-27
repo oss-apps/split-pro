@@ -1,0 +1,73 @@
+{
+  "ui": {
+    "title": "Adicionar despesa",
+    "title_mobile": "Adicionar",
+    "add_expense": "Adicionar despesa",
+    "add_expense_details": {
+      "add_new_expense": "Adicionar nova despesa",
+      "description_placeholder": "Insira a descrição",
+      "amount_placeholder": "Insira o valor",
+      "split_type_section": {
+        "split_equally": "dividir igualmente",
+        "split_unequally": "dividir desigualmente",
+        "types": {
+          "equal": {
+            "title": "Igual",
+            "per_person": "por pessoa"
+          },
+          "percentage": {
+            "title": "Percentagem",
+            "remaining": "Restante"
+          },
+          "exact": {
+            "title": "Exato",
+            "remaining": "Restante"
+          },
+          "share": {
+            "title": "Quota",
+            "total_shares": "Total de quotas",
+            "shares": "quota(s)"
+          },
+          "adjustment": {
+            "title": "Ajustes",
+            "remaining_to_split_equally": "Restante para dividir igualmente"
+          }
+        }
+      },
+      "pick_a_date": "Selecionar uma data",
+      "upload_file": {
+        "messages": {
+          "upload_success": "Arquivo enviado com sucesso"
+        },
+        "errors": {
+          "less_than": "O ficheiro deve ter menos de",
+          "upload_failed": "Falha ao carregar o ficheiro",
+          "uploading_error": "Erro ao carregar o ficheiro"
+        }
+      },
+      "sponsor_us": "Patrocine-nos",
+      "user_input": {
+        "cannot_change_group": "Não é possível mudar de grupo enquanto edita",
+        "remove_group": "Pressione delete para remover o grupo",
+        "add_more_friends": "Pesquisar amigos, grupos ou adicionar email",
+        "search_friends": "Pesquisar amigos, grupos ou adicionar email"
+      },
+      "select_user_or_group": {
+        "only_one_group_time": "Só podes ter um grupo de cada vez",
+        "warning": "Atenção: Não uses o envio de convite se for um email inválido. Usa a opção de adicionar ao Split Pro em vez disso. A tua conta será bloqueada se esta funcionalidade for mal utilizada.",
+        "note": "Nota: opção de envio de convite está desativa para já devido ao spam",
+        "send_invite": "Enviar convite para o utilizador",
+        "add_to_split_pro": "Adicionar ao Split Pro"
+      }
+    },
+    "delete_expense_details": {
+      "title": "Tens mesmo a certeza?",
+      "text": "Esta ação não pode ser desfeita. Isto irá eliminar permanentemente a tua despesa."
+    },
+    "balance_list": {
+      "press_balance_info": "Pressione o saldo individual para iniciar o acerto",
+      "are_settled_up": "estão acertados",
+      "is_settled_up": "está acertado"
+    }
+  }
+}

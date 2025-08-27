@@ -33,7 +33,7 @@ export const SplitTypeSection: React.FC = () => {
   const splitScreenOpen = useAddExpenseStore((s) => s.splitScreenOpen);
   const splitShares = useAddExpenseStore((s) => s.splitShares);
 
-  const { setPaidBy, setSplitScreenOpen } = useAddExpenseStore((s) => s.actions);
+  const { setSplitScreenOpen } = useAddExpenseStore((s) => s.actions);
 
   return (
     <div className="flex items-center justify-center text-[16px] text-gray-400 sm:mt-4">
@@ -52,17 +52,11 @@ export const SplitTypeSection: React.FC = () => {
       >
         <div className="flex flex-col gap-6 overflow-auto">
           {participants.map((participant) => (
-            <DrawerClose
+            <PayerRow
               key={participant.id}
-              className="flex items-center justify-between px-2"
-              onClick={() => setPaidBy(participant)}
-            >
-              <div className="flex items-center gap-1">
-                <EntityAvatar entity={participant} size={30} />
-                <p className="ml-4">{participant.name ?? participant.email ?? ''}</p>
-              </div>
-              {participant.id === paidBy?.id ? <Check className="h-6 w-6 text-cyan-500" /> : null}
-            </DrawerClose>
+              p={participant}
+              isPaying={participant.id === paidBy?.id}
+            />
           ))}
         </div>
       </AppDrawer>
@@ -78,15 +72,33 @@ export const SplitTypeSection: React.FC = () => {
         )}
         className="h-[85vh] lg:h-[70vh]"
         shouldCloseOnAction
-        dismissible={false}
+        dismissible={canSplitScreenClosed}
         actionTitle={t('ui.actions.save', { ns: 'common' })}
         actionDisabled={!canSplitScreenClosed}
         open={splitScreenOpen}
-        onOpenChange={(open) => setSplitScreenOpen(open)}
+        onOpenChange={setSplitScreenOpen}
       >
         <SplitExpenseForm />
       </AppDrawer>
     </div>
+  );
+};
+
+const PayerRow = ({ p, isPaying }: { p: Participant; isPaying: boolean }) => {
+  const { displayName } = useTranslationWithUtils();
+  const currentUser = useAddExpenseStore((s) => s.currentUser);
+  const { setPaidBy } = useAddExpenseStore((s) => s.actions);
+
+  const onClick = useCallback(() => setPaidBy(p), [p, setPaidBy]);
+
+  return (
+    <DrawerClose className="flex items-center justify-between px-2" onClick={onClick}>
+      <div className="flex items-center gap-1">
+        <EntityAvatar entity={p} size={30} />
+        <p className="ml-4">{displayName(p, currentUser?.id)}</p>
+      </div>
+      {isPaying ? <Check className="h-6 w-6 text-cyan-500" /> : null}
+    </DrawerClose>
   );
 };
 
@@ -144,7 +156,7 @@ interface BooleanSplitSectionProps extends SplitSectionPropsBase {
 interface NumericSplitSectionProps extends SplitSectionPropsBase {
   isBoolean: false;
   fmtShareText: (share: bigint) => string;
-  step?: number;
+  step: number | null;
 }
 
 type SplitSectionProps = BooleanSplitSectionProps | NumericSplitSectionProps;
@@ -181,6 +193,7 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
       return `${t('ui.add_expense_details.split_type_section.types.percentage.remaining')} ${toUIString(remainingPercentage, true)}%`;
     },
     fmtShareText: (share) => (Number(share) / 100).toString(),
+    step: null,
   },
   {
     splitType: SplitType.EXACT,
@@ -195,6 +208,7 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
       return `${t('ui.add_expense_details.split_type_section.types.exact.remaining')} ${currency} ${toUIString(amount - totalAmount, true)}`;
     },
     fmtShareText: (share) => removeTrailingZeros(toUIString(share)),
+    step: null,
   },
   {
     splitType: SplitType.SHARE,
@@ -218,17 +232,11 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
     isBoolean: false,
     fmtSummartyText: () => '',
     fmtShareText: (share) => removeTrailingZeros(toUIString(share)),
+    step: null,
   },
 ];
 
-const SplitSection: React.FC<SplitSectionProps> = ({
-  splitType,
-  prefix,
-  isBoolean,
-  fmtSummartyText,
-  fmtShareText,
-  step,
-}) => {
+const SplitSection: React.FC<SplitSectionProps> = (props) => {
   const { t } = useTranslation('expense_details');
   const participants = useAddExpenseStore((s) => s.participants);
   const currency = useAddExpenseStore((s) => s.currency);
@@ -236,6 +244,8 @@ const SplitSection: React.FC<SplitSectionProps> = ({
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
   const splitShares = useAddExpenseStore((s) => s.splitShares);
   const { setSplitShare } = useAddExpenseStore((s) => s.actions);
+
+  const { fmtSummartyText, splitType, isBoolean } = props;
 
   const summaryText = useMemo(
     () => fmtSummartyText(amount, currency, participants, splitShares),
@@ -274,9 +284,7 @@ const SplitSection: React.FC<SplitSectionProps> = ({
   return (
     <div className="relative mt-4 flex flex-col gap-6 px-2">
       <div className="mb-2 flex grow justify-center">
-        <div className={`${canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'}`}>
-          {summaryText}
-        </div>
+        <div className={canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'}>{summaryText}</div>
       </div>
       {isBoolean && (
         <div className="absolute top-0 right-0">
@@ -289,37 +297,77 @@ const SplitSection: React.FC<SplitSectionProps> = ({
           </button>
         </div>
       )}
-      {participants.map((p) => {
-        const share = splitShares[p.id]?.[splitType];
-        return (
-          <div
-            key={p.id}
-            className={clsx('flex items-center justify-between', isBoolean && 'cursor-pointer')}
-            onClick={isBoolean ? () => onToggleBoolean(p.id) : undefined}
-          >
-            <UserAndAmount user={p} currency={currency} />
-            {isBoolean ? (
-              0n !== share ? (
-                <Check className="h-6 w-6 text-cyan-500" />
-              ) : null
-            ) : (
-              <div className="flex items-center gap-1">
-                <p className="text-xs">{prefix.replace(CURRENCY_TOKEN, currency)}</p>
-                <Input
-                  type="number"
-                  value={share ? fmtShareText(share) : ''}
-                  inputMode="decimal"
-                  className="ml-2 w-20 text-lg"
-                  placeholder="0"
-                  min={0}
-                  step={step ?? 0.01}
-                  onChange={(e) => onChangeInput(e, p.id)}
-                />
-              </div>
-            )}
-          </div>
-        );
-      })}
+      {participants.map((p) => (
+        <ParticipantRow
+          key={p.id}
+          p={p}
+          share={splitShares[p.id]?.[splitType]}
+          currency={currency}
+          onToggleBoolean={onToggleBoolean}
+          onChangeInput={onChangeInput}
+          {...props}
+        />
+      ))}
+    </div>
+  );
+};
+
+const ParticipantRow = ({
+  p,
+  prefix,
+  isBoolean,
+  share,
+  currency,
+  onToggleBoolean,
+  onChangeInput,
+  fmtShareText,
+  step,
+}: {
+  p: Participant;
+  share?: bigint;
+  currency: string;
+  onToggleBoolean: (userId: number) => void;
+  onChangeInput: (e: ChangeEvent<HTMLInputElement>, userId: number) => void;
+} & SplitSectionProps) => {
+  const onClick = useCallback(() => {
+    if (isBoolean) {
+      onToggleBoolean(p.id);
+    }
+  }, [isBoolean, onToggleBoolean, p.id]);
+
+  const onInputChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      onChangeInput(e, p.id);
+    },
+    [onChangeInput, p.id],
+  );
+
+  return (
+    <div
+      key={p.id}
+      className={clsx('flex items-center justify-between', isBoolean && 'cursor-pointer')}
+      onClick={onClick}
+    >
+      <UserAndAmount user={p} currency={currency} />
+      {isBoolean ? (
+        0n !== share ? (
+          <Check className="h-6 w-6 text-cyan-500" />
+        ) : null
+      ) : (
+        <div className="flex items-center gap-1">
+          <p className="text-xs">{prefix.replace(CURRENCY_TOKEN, currency)}</p>
+          <Input
+            type="number"
+            value={share ? fmtShareText(share) : ''}
+            inputMode="decimal"
+            className="ml-2 w-20 text-lg"
+            placeholder="0"
+            min={0}
+            step={step ?? 0.01}
+            onChange={onInputChange}
+          />
+        </div>
+      )}
     </div>
   );
 };

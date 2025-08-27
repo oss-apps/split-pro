@@ -2,11 +2,10 @@ import { CalendarIcon, HeartHandshakeIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useCallback } from 'react';
-import { useTranslation } from 'next-i18next';
 
-import { type CurrencyCode } from '~/lib/currency';
+import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
 import { cn } from '~/lib/utils';
-import { calculateParticipantSplit, Participant, useAddExpenseStore } from '~/store/addStore';
+import { calculateParticipantSplit, useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { toSafeBigInt } from '~/utils/numbers';
 
@@ -23,15 +22,7 @@ import { UserInput } from './UserInput';
 import { toast } from 'sonner';
 import { BankingTransactions } from './BankingTransactions';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-
-export type TransactionAddInputModel = {
-  date: Date;
-  description: string;
-  amount: string;
-  currency: string;
-  transactionId?: string;
-  expenseId?: string;
-};
+import type { TransactionAddInputModel } from '~/types';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
@@ -117,7 +108,7 @@ export const AddOrEditExpensePage: React.FC<{
       return true;
     });
 
-    for (const tempItem of deduplicated) {
+    const expensePromises = deduplicated.map(async (tempItem) => {
       if (tempItem) {
         const normalizedAmount = tempItem.amount.replace(',', '.');
         const _amtBigInt = BigInt(Math.round(Number(normalizedAmount) * 100));
@@ -130,7 +121,7 @@ export const AddOrEditExpensePage: React.FC<{
           paidBy,
         );
 
-        await addExpenseMutation.mutateAsync({
+        return addExpenseMutation.mutateAsync({
           name: tempItem.description,
           currency: tempItem.currency,
           amount: _amtBigInt,
@@ -148,7 +139,10 @@ export const AddOrEditExpensePage: React.FC<{
           transactionId: tempItem.transactionId,
         });
       }
-    }
+      return Promise.resolve();
+    });
+
+    await Promise.all(expensePromises);
 
     setMultipleTransactions([]);
     setIsTransactionLoading(false);
@@ -167,6 +161,11 @@ export const AddOrEditExpensePage: React.FC<{
     fileKey,
     isExpenseSettled,
     multipleTransactions,
+    participants,
+    category,
+    setIsTransactionLoading,
+    splitShares,
+    setMultipleTransactions,
   ]);
 
   const addExpense = useCallback(async () => {
@@ -242,6 +241,9 @@ export const AddOrEditExpensePage: React.FC<{
     splitType,
     fileKey,
     isExpenseSettled,
+    setMultipleTransactions,
+    transactionId,
+    setIsTransactionLoading,
   ]);
 
   const handleDescriptionChange = useCallback(
@@ -259,21 +261,36 @@ export const AddOrEditExpensePage: React.FC<{
     [onUpdateAmount],
   );
 
-  const addViaGoCardless = (obj: TransactionAddInputModel) => {
-    setExpenseDate(obj.date);
-    setDescription(obj.description);
-    setCurrency(obj.currency as CurrencyCode);
-    onUpdateAmount(obj.amount);
-    setTransactionId(obj.transactionId ?? '');
-  };
+  const addViaBankTransaction = useCallback(
+    (obj: TransactionAddInputModel) => {
+      setExpenseDate(obj.date);
+      setDescription(obj.description);
+      if (isCurrencyCode(obj.currency)) {
+        setCurrency(obj.currency);
+      } else {
+        console.warn(`Invalid currency code: ${obj.currency}`);
+      }
+      onUpdateAmount(obj.amount);
+      setTransactionId(obj.transactionId ?? '');
+    },
+    [setExpenseDate, setDescription, setCurrency, onUpdateAmount, setTransactionId],
+  );
 
-  const clearFields = () => {
+  const clearFields = useCallback(() => {
     setAmount(0n);
     setDescription('');
     setAmountStr('');
     setTransactionId('');
     setExpenseDate(new Date());
-  };
+  }, [setAmount, setDescription, setAmountStr, setTransactionId, setExpenseDate]);
+
+  const handleSetMultipleTransactions = useCallback(
+    (a: TransactionAddInputModel[]) => {
+      clearFields();
+      setMultipleTransactions(a);
+    },
+    [clearFields, setMultipleTransactions],
+  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -380,13 +397,10 @@ export const AddOrEditExpensePage: React.FC<{
             </div>
           </div>
           <BankingTransactions
-            add={addViaGoCardless}
+            add={addViaBankTransaction}
             addMultipleExpenses={addMultipleExpenses}
             multipleTransactions={multipleTransactions}
-            setMultipleTransactions={(a: TransactionAddInputModel[]) => {
-              clearFields();
-              setMultipleTransactions(a);
-            }}
+            setMultipleTransactions={handleSetMultipleTransactions}
             isTransactionLoading={isTransactionLoading}
           />
           <div className="flex w-full justify-center">

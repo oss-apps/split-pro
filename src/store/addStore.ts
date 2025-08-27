@@ -1,10 +1,10 @@
 import { type Group, SplitType, type User } from '@prisma/client';
 import Router from 'next/router';
 import { create } from 'zustand';
-import { TransactionAddInputModel } from '~/components/AddExpense/AddExpensePage';
 
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { type CurrencyCode } from '~/lib/currency';
+import type { TransactionAddInputModel } from '~/types';
 import { shuffleArray } from '~/utils/array';
 import { BigMath } from '~/utils/numbers';
 
@@ -122,13 +122,13 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
       })),
     setSplitShare: (splitType, userId, share) =>
       set((state) => {
-        const splitShares = {
+        const splitShares: SplitShares = {
           ...state.splitShares,
           [userId]: {
             ...state.splitShares[userId],
             [splitType]: share,
           },
-        } as SplitShares;
+        };
         return {
           ...calculateParticipantSplit(
             state.amount,
@@ -164,10 +164,10 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
       }),
     setParticipants: (participants, splitType) =>
       set((state) => {
-        const splitShares = participants.reduce((res, p) => {
+        const splitShares = participants.reduce<SplitShares>((res, p) => {
           res[p.id] = initSplitShares();
           return res;
-        }, {} as SplitShares);
+        }, {});
         if (splitType) {
           calculateSplitShareBasedOnAmount(
             state.amount,

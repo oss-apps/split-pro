@@ -36,6 +36,15 @@ export interface SplitwiseGroup {
   members: SplitwiseUser[];
 }
 
+export interface TransactionAddInputModel {
+  date: Date;
+  description: string;
+  amount: string;
+  currency: string;
+  transactionId?: string;
+  expenseId?: string;
+}
+
 const SplitwisePictureSchema = z.object({
   small: z.string(),
   medium: z.string(),

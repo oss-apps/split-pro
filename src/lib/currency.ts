@@ -835,3 +835,7 @@ export const CURRENCIES = {
 };
 
 export type CurrencyCode = keyof typeof CURRENCIES;
+
+export function isCurrencyCode(value: string): value is CurrencyCode {
+  return value in CURRENCIES;
+}

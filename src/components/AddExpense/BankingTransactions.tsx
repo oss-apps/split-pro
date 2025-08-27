@@ -1,19 +1,20 @@
+import { useCallback } from 'react';
 import { api } from '~/utils/api';
 import { LoadingSpinner } from '../ui/spinner';
-import { format } from 'date-fns';
 import { Button } from '../ui/button';
 import { Checkbox } from '../ui/checkbox';
-import { type TransactionAddInputModel } from './AddExpensePage';
 import { type Transaction } from 'nordigen-node';
-import { useTranslation } from 'next-i18next';
+import type { TransactionAddInputModel } from '~/types';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { cn } from '~/lib/utils';
 
-type Props = {
+interface Props {
   add: (obj: TransactionAddInputModel) => void;
   addMultipleExpenses: () => void;
   multipleTransactions: TransactionAddInputModel[];
   setMultipleTransactions: (a: TransactionAddInputModel[]) => void;
   isTransactionLoading: boolean;
-};
+}
 
 type TransactionWithPendingStatus = Transaction & {
   pending: boolean;
@@ -26,7 +27,7 @@ export const BankingTransactions = ({
   setMultipleTransactions,
   isTransactionLoading,
 }: Props) => {
-  const { t } = useTranslation('expense_details');
+  const { t, toUIDate } = useTranslationWithUtils(['expense_details']);
 
   const userQuery = api.user.me.useQuery();
   const gctransactions = api.gocardless.getTransactions.useQuery(userQuery.data?.obapiProviderId);
@@ -36,7 +37,7 @@ export const BankingTransactions = ({
 
   const returnTransactionsArray = (): TransactionWithPendingStatus[] => {
     const transactions = gctransactions?.data?.transactions;
-    if (!transactions) return [];
+    if (!transactions) {return [];}
 
     const mapTransactions = (items: Transaction[], pendingStatus: boolean) =>
       items?.map((cItem) => ({ ...cItem, pending: pendingStatus })) || [];
@@ -47,8 +48,11 @@ export const BankingTransactions = ({
     return [...pending, ...booked];
   };
 
-  const alreadyAdded = (transactionId: string) =>
-    expensesQuery?.data?.some((item) => item.transactionId === transactionId) ?? false;
+  const alreadyAdded = useCallback(
+    (transactionId: string) =>
+      expensesQuery?.data?.some((item) => item.transactionId === transactionId) ?? false,
+    [expensesQuery?.data],
+  );
 
   const returnGroupName = (transactionId: string) => {
     const transaction = expensesQuery?.data?.find((item) => item.transactionId === transactionId);
@@ -61,33 +65,46 @@ export const BankingTransactions = ({
 
   const transactionsArray = returnTransactionsArray();
 
-  const onTransactionRowClick = (item: TransactionWithPendingStatus, multiple: boolean) => {
-    const transactionData = {
-      date: new Date(item.bookingDate),
-      amount: item.transactionAmount.amount.replace('-', ''),
-      currency: item.transactionAmount.currency,
-      description: item.remittanceInformationUnstructured,
-      transactionId: item.transactionId,
-    };
+  const onTransactionRowClick = useCallback(
+    (item: TransactionWithPendingStatus, multiple: boolean) => {
+      const transactionData = {
+        date: new Date(item.bookingDate),
+        amount: item.transactionAmount.amount.replace('-', ''),
+        currency: item.transactionAmount.currency,
+        description: item.remittanceInformationUnstructured,
+        transactionId: item.transactionId,
+      };
 
-    if (multiple) {
-      const isInMultipleTransactions = multipleTransactions?.some(
-        (cItem) => cItem.transactionId === item.transactionId,
-      );
+      if (multiple) {
+        const isInMultipleTransactions = multipleTransactions?.some(
+          (cItem) => cItem.transactionId === item.transactionId,
+        );
 
-      setMultipleTransactions(
-        isInMultipleTransactions
-          ? multipleTransactions.filter((cItem) => cItem.transactionId !== item.transactionId)
-          : [...multipleTransactions, transactionData],
-      );
-    } else {
-      if (alreadyAdded(item.transactionId)) {
-        return;
+        setMultipleTransactions(
+          isInMultipleTransactions
+            ? multipleTransactions.filter((cItem) => cItem.transactionId !== item.transactionId)
+            : [...multipleTransactions, transactionData],
+        );
+      } else {
+        if (alreadyAdded(item.transactionId)) {
+          return;
+        }
+        add(transactionData);
+        document.getElementById('mainlayout')?.scrollTo({ top: 0, behavior: 'instant' });
       }
-      add(transactionData);
-      document.getElementById('mainlayout')?.scrollTo({ top: 0, behavior: 'instant' });
-    }
-  };
+    },
+    [multipleTransactions, setMultipleTransactions, add, alreadyAdded],
+  );
+
+  const createCheckboxHandler = useCallback(
+    (item: TransactionWithPendingStatus) => () => onTransactionRowClick(item, true),
+    [onTransactionRowClick],
+  );
+
+  const createClickHandler = useCallback(
+    (item: TransactionWithPendingStatus) => () => onTransactionRowClick(item, false),
+    [onTransactionRowClick],
+  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -95,7 +112,7 @@ export const BankingTransactions = ({
         <p>{t('ui.bank_transactions')}</p>
         <Button
           variant="ghost"
-          className=" text-primary px-0"
+          className="text-primary px-0"
           disabled={(multipleTransactions?.length || 0) === 0 || isTransactionLoading}
           onClick={addMultipleExpenses}
           loading={isTransactionLoading}
@@ -122,9 +139,7 @@ export const BankingTransactions = ({
                       (cItem) => cItem.transactionId === item.transactionId,
                     )}
                     disabled={alreadyAdded(item.transactionId)}
-                    onCheckedChange={() => {
-                      onTransactionRowClick(item, true);
-                    }}
+                    onCheckedChange={createCheckboxHandler(item)}
                     className="h-6 w-6 md:h-4 md:w-4"
                   />
                   <Button
@@ -133,7 +148,7 @@ export const BankingTransactions = ({
                     disabled={alreadyAdded(item.transactionId)}
                   >
                     <div className="text-xs text-gray-500">
-                      {format(item.bookingDate, 'MMM dd')
+                      {toUIDate(new Date(item.bookingDate), { useToday: true })
                         .split(' ')
                         .map((d) => (
                           <div className="text-center" key={d}>
@@ -141,17 +156,17 @@ export const BankingTransactions = ({
                           </div>
                         ))}
                     </div>
-                    <div onClick={() => onTransactionRowClick(item, false)}>
+                    <div onClick={createClickHandler(item)}>
                       <p
-                        className={
-                          'line-clamp-2 whitespace-break-spaces text-left text-sm lg:text-base' +
-                          (alreadyAdded(item.transactionId) ? ' line-through' : '')
-                        }
+                        className={cn(
+                          'line-clamp-2 text-left text-sm whitespace-break-spaces lg:text-base',
+                          alreadyAdded(item.transactionId) && 'line-through',
+                        )}
                       >
                         {item.remittanceInformationUnstructured}
                       </p>
                       <p
-                        className={`line-clamp-1 flex whitespace-break-spaces text-left text-xs text-gray-500`}
+                        className="line-clamp-1 flex text-left text-xs whitespace-break-spaces text-gray-500"
                       >
                         {item.pending && t('ui.pending')}{' '}
                         {alreadyAdded(item.transactionId) &&
@@ -164,7 +179,7 @@ export const BankingTransactions = ({
                   <div
                     className={`text-right ${alreadyAdded(item.transactionId) ? 'text-red-500' : 'text-emerald-600'}`}
                   >
-                    <span className="font-light ">{item.transactionAmount.currency}</span>{' '}
+                    <span className="font-light">{item.transactionAmount.currency}</span>{' '}
                     {item.transactionAmount.amount}
                   </div>
                 </div>

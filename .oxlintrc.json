@@ -34,6 +34,7 @@
     "new-cap": "off",
     "id-length": "off",
     "react_perf/jsx-no-jsx-as-prop": "off",
+    "react_perf/jsx-no-new-function-as-prop": "warn",
     "no-nested-ternary": "off",
     "typescript/no-confusing-void-expression": "off",
     "typescript/no-misused-spread": "warn",

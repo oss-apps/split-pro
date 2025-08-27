@@ -239,22 +239,6 @@ export const groupRouter = createTRPCRouter({
     .input(z.object({ groupId: z.number(), userId: z.number().optional() }))
     .mutation(async ({ input, ctx }) => {
       const userId = input.userId ?? ctx.session.user.id;
-      const nonZeroBalance = await ctx.db.groupBalance.findFirst({
-        where: {
-          groupId: input.groupId,
-          userId,
-          amount: {
-            not: 0,
-          },
-        },
-      });
-
-      if (nonZeroBalance) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'User has a non-zero balance in this group',
-        });
-      }
 
       const group = await ctx.db.group.findUnique({
         where: {
@@ -269,6 +253,21 @@ export const groupRouter = createTRPCRouter({
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Only group creator can remove someone from the group',
+        });
+      }
+
+      const groupBalances = await ctx.db.groupBalance.findMany({
+        where: {
+          groupId: input.groupId,
+        },
+      });
+
+      const finalGroupBalances = group.simplifyDebts ? simplifyDebts(groupBalances) : groupBalances;
+
+      if (finalGroupBalances.some((b) => b.userId === userId && 0n !== b.amount)) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'User has a non-zero balance in this group',
         });
       }
 
@@ -348,6 +347,10 @@ export const groupRouter = createTRPCRouter({
 
       // Only check balances when archiving (not when unarchiving)
       if (isArchiving) {
+        if (group?.simplifyDebts) {
+          group.groupBalances = simplifyDebts(group.groupBalances);
+        }
+
         const balanceWithNonZero = group.groupBalances.find((b) => 0n !== b.amount);
 
         if (balanceWithNonZero) {
@@ -385,6 +388,10 @@ export const groupRouter = createTRPCRouter({
 
       if (group?.userId !== ctx.session.user.id) {
         throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Only creator can delete the group' });
+      }
+
+      if (group?.simplifyDebts) {
+        group.groupBalances = simplifyDebts(group.groupBalances);
       }
 
       const balanceWithNonZero = group?.groupBalances.find((b) => 0n !== b.amount);

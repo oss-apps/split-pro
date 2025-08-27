@@ -66,7 +66,7 @@ export function generateSplitDescription(
 
   // Case 2: Splitting with multiple people
   if (selectedParticipants.length > 1) {
-    return `t('ui.add_expense_details.split_type_section.split_equally') (${selectedParticipants.length})`;
+    return `${t('ui.add_expense_details.split_type_section.split_equally')} (${selectedParticipants.length})`;
   }
 
   // Fallback to default for all other cases

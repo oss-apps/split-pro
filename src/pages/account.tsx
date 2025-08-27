@@ -7,18 +7,20 @@ import {
   HeartHandshakeIcon,
   Star,
 } from 'lucide-react';
+import type { GetServerSideProps } from 'next';
+import { signOut } from 'next-auth/react';
+import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { signOut } from 'next-auth/react';
 import { api } from '~/utils/api';
 import { type NextPageWithUser } from '~/types';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/router';
+import { LanguagePicker } from '~/components/Account/LanguagePicker';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
 import { UpdateName } from '~/components/Account/UpdateName';
-import { LanguagePicker } from '~/components/Account/LanguagePicker';
 import MainLayout from '~/components/Layout/MainLayout';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
@@ -26,10 +28,15 @@ import { AppDrawer } from '~/components/ui/drawer';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { BankAccountSelect } from '~/components/Account/BankAccountSelect';
 import { withI18nStaticProps } from '~/utils/i18n/server';
+import { env } from '~/env';
+import { customServerSideTranslations } from '~/utils/i18n/server';
 import { bigIntReplacer } from '~/utils/numbers';
-import { useTranslation } from 'next-i18next';
 
-const AccountPage: NextPageWithUser = ({ user }) => {
+const AccountPage: NextPageWithUser<{ isCloud: boolean; feedBackPossible: boolean }> = ({
+  user,
+  isCloud,
+  feedBackPossible,
+}) => {
   const { t } = useTranslation('account_page');
   const router = useRouter();
   const userQuery = api.user.me.useQuery();
@@ -121,6 +128,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
         </div>
         <div className="mt-8 flex flex-col gap-4">
           <LanguagePicker />
+
           {gocardlessEnabled && (
             <>
               <BankAccountSelect />
@@ -142,35 +150,39 @@ const AccountPage: NextPageWithUser = ({ user }) => {
               )}
             </>
           )}
-          <Link href="https://twitter.com/KM_Koushik_" target="_blank">
-            <Button
-              variant="ghost"
-              className="text-md hover:text-foreground/80 w-full justify-between px-0"
-            >
-              <div className="flex items-center gap-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 1200 1227"
-                  fill="none"
-                  className="h-5 w-5 px-1"
-                >
-                  <g clipPath="url(#clip0_1_2)">
-                    <path
-                      d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"
-                      fill="white"
-                    />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_1_2">
-                      <rect width="1200" height="1227" fill="white" />
-                    </clipPath>
-                  </defs>
-                </svg>
-                {t('ui.follow_on_x')}
-              </div>
-              <ChevronRight className="h-6 w-6 text-gray-500" />
-            </Button>
-          </Link>
+
+          {isCloud && (
+            <Link href="https://twitter.com/KM_Koushik_" target="_blank">
+              <Button
+                variant="ghost"
+                className="text-md hover:text-foreground/80 w-full justify-between px-0"
+              >
+                <div className="flex items-center gap-4">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 1200 1227"
+                    fill="none"
+                    className="h-5 w-5 px-1"
+                  >
+                    <g clipPath="url(#clip0_1_2)">
+                      <path
+                        d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"
+                        fill="white"
+                      />
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_1_2">
+                        <rect width="1200" height="1227" fill="white" />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                  {t('ui.follow_on_x')}
+                </div>
+                <ChevronRight className="h-6 w-6 text-gray-500" />
+              </Button>
+            </Link>
+          )}
+
           <Link href="https://github.com/oss-apps/split-pro" target="_blank">
             <Button
               variant="ghost"
@@ -192,7 +204,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
               <ChevronRight className="h-6 w-6 text-gray-500" />
             </Button>
           </Link>
-          <Link href="https://github.com/sponsors/KMKoushik" target="_blank">
+          <Link href="https://github.com/sponsors/krokosik" target="_blank">
             <Button
               variant="ghost"
               className="text-md hover:text-foreground/80 w-full justify-between px-0"
@@ -204,7 +216,7 @@ const AccountPage: NextPageWithUser = ({ user }) => {
               <ChevronRight className="h-6 w-6 text-gray-500" />
             </Button>
           </Link>
-          <SubmitFeedback />
+          {feedBackPossible && <SubmitFeedback />}
           <SubscribeNotification />
           <Link href="https://www.producthunt.com/products/splitpro/reviews/new" target="_blank">
             <Button
@@ -295,6 +307,12 @@ const AccountPage: NextPageWithUser = ({ user }) => {
 
 AccountPage.auth = true;
 
-export const getStaticProps = withI18nStaticProps(['common', 'account_page']);
+export const getServerSideProps: GetServerSideProps = async (context) => ({
+  props: {
+    feedbackPossible: !!env.FEEDBACK_EMAIL,
+    isCloud: env.NEXTAUTH_URL.includes('splitpro.app'),
+    ...(await customServerSideTranslations(context.locale, ['account_page', 'common'])),
+  },
+});
 
 export default AccountPage;

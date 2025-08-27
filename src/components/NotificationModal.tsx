@@ -79,7 +79,7 @@ export const NotificationModal: React.FC = () => {
 
             updatePushSubscription.mutate({ subscription: JSON.stringify(sub) });
           })
-          .catch(() => {
+          .catch((e) => {
             toast.error('Cannot subscribe to notification');
             console.error(e);
           });

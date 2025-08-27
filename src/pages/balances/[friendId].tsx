@@ -22,7 +22,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
   const { friendId } = router.query;
 
-  const _friendId = parseInt(friendId as string);
+  const _friendId = parseInt(Array.isArray(friendId) ? (friendId[0] ?? '') : (friendId ?? ''));
 
   const friendQuery = api.user.getFriend.useQuery(
     { friendId: _friendId },
@@ -77,7 +77,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
         loading={balances.isPending || expenses.isPending || friendQuery.isPending}
       >
         {!friendQuery.data ? null : (
-          <div className="transition-discrete starting:opacity-0 mb-28">
+          <div className="mb-28 transition-discrete starting:opacity-0">
             <div className="mx-4 flex flex-wrap gap-2">
               <div className="text-orange-700">
                 {0 < (youOwe?.length ?? 0) && (
@@ -111,7 +111,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 )}
               </div>
             </div>
-            <div className="mb-4 mt-6 flex justify-center gap-2">
+            <div className="mt-6 mb-4 flex justify-center gap-2">
               {balances.data ? (
                 <SettleUp
                   balances={balances.data}

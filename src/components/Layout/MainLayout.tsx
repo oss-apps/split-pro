@@ -77,7 +77,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({
             currentPath={currentPath}
           />
         </nav>
-        <div className="w-full overflow-auto lg:border-x lg:border-gray-200 dark:lg:border-gray-900 lg:px-6" id="mainlayout">
+        <div
+          className="w-full overflow-auto lg:border-x lg:border-gray-200 lg:px-6 dark:lg:border-gray-900"
+          id="mainlayout"
+        >
           {title ? (
             <div className="mb-2 flex items-center justify-between px-4 py-4">
               <div className="text-3xl font-bold text-black dark:text-gray-200">{title}</div>

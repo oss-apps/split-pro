@@ -5,9 +5,9 @@ declare module 'nordigen-node' {
     bookingDate: string;
     valueDate: string;
     transactionAmount: {
-      amount: string
-      currency: string
-    }
+      amount: string;
+      currency: string;
+    };
     remittanceInformationUnstructured: string;
     remittanceInformationStructured: string;
     additionalInformation: string;
@@ -16,25 +16,25 @@ declare module 'nordigen-node' {
 
   interface GetTransactions {
     transactions: {
-      booked: Transaction[]
-      pending: Transaction[]
-    }
+      booked: Transaction[];
+      pending: Transaction[];
+    };
   }
 
   interface Requisition {
-    id: string,
-    created: string,
-    redirect: string,
-    status: string,
-    institution_id: string,
-    agreement?: string,
-    reference: string,
-    accounts: string[],
-    user_language: string,
-    link: string,
-    ssn: string | null,
-    account_selection: boolean,
-    redirect_immediate: boolean
+    id: string;
+    created: string;
+    redirect: string;
+    status: string;
+    institution_id: string;
+    agreement?: string;
+    reference: string;
+    accounts: string[];
+    user_language: string;
+    link: string;
+    ssn: string | null;
+    account_selection: boolean;
+    redirect_immediate: boolean;
   }
 
   interface Account {
@@ -42,42 +42,39 @@ declare module 'nordigen-node' {
   }
 
   interface Init {
-    id: string
-    link: string
+    id: string;
+    link: string;
   }
 
   interface Institution {
-    id: string
-    name: string
-    bic: string
-    transaction_total_days: string
-    countries: string[]
-    logo: string
+    id: string;
+    name: string;
+    bic: string;
+    transaction_total_days: string;
+    countries: string[];
+    logo: string;
   }
 
   export default class NordigenClient {
-    constructor(options: {
-      secretId?: string;
-      secretKey?: string;
-    });
+    constructor(options: { secretId?: string; secretKey?: string });
 
-    generateToken(): Promise<void>
-    account(accountId: string): Account
-    initSession({
-      redirectUrl: string,
-      institutionId: string,
-      referenceId: string,
-      user_language: string,
-      redirect_immediate: boolean,
-      account_selection: boolean,
-    }): Promise<Init>
+    generateToken(): Promise<void>;
+    account(accountId: string): Account;
+    initSession(options: {
+      redirectUrl: string;
+      institutionId: string;
+      referenceId: string;
+      user_language: string;
+      redirect_immediate: boolean;
+      account_selection: boolean;
+    }): Promise<Init>;
 
     requisition: {
       getRequisitionById(requisitionId: string): Promise<Requisition>;
     };
 
     institution: {
-      getInstitutions(options?: {country?: string}): Promise<Institution[]>;
+      getInstitutions(options?: { country?: string }): Promise<Institution[]>;
     };
   }
 }

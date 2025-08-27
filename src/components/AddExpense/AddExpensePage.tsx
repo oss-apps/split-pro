@@ -23,6 +23,7 @@ import { toast } from 'sonner';
 import { BankingTransactions } from './BankingTransactions';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import type { TransactionAddInputModel } from '~/types';
+import { useTranslation } from 'next-i18next';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;

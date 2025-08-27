@@ -4,7 +4,7 @@ import { type Group, type GroupUser, type User } from '@prisma/client';
 import { SendIcon } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { z } from 'zod';
 
 import { useAddExpenseStore } from '~/store/addStore';
@@ -36,44 +36,59 @@ export const SelectUserOrGroup: React.FC<{
     (f.name ?? f.email)?.toLowerCase().includes(nameOrEmail.toLowerCase()),
   );
 
-  function onAddEmailClick(invite = false) {
-    if (isEmail.success) {
-      addFriendMutation.mutate(
-        { email: nameOrEmail, sendInviteEmail: invite },
-        {
-          onSuccess: (user) => {
-            removeParticipant(-1);
-            addOrUpdateParticipant(user);
-            setNameOrEmail('');
+  const onAddEmailClick = useCallback(
+    (invite = false) => {
+      if (isEmail.success) {
+        addFriendMutation.mutate(
+          { email: nameOrEmail, sendInviteEmail: invite },
+          {
+            onSuccess: (user) => {
+              removeParticipant(-1);
+              addOrUpdateParticipant(user);
+              setNameOrEmail('');
+            },
           },
-        },
-      );
-      addOrUpdateParticipant({
-        id: -1,
-        name: nameOrEmail,
-        email: nameOrEmail,
-        emailVerified: new Date(),
-        image: null,
-        currency: 'USD',
-        obapiProviderId: null,
-        bankingId: null,
-        preferredLanguage: '',
-      });
-      // add email to split pro
-    }
-  }
+        );
+        addOrUpdateParticipant({
+          id: -1,
+          name: nameOrEmail,
+          email: nameOrEmail,
+          emailVerified: new Date(),
+          image: null,
+          currency: 'USD',
+          obapiProviderId: null,
+          bankingId: null,
+          preferredLanguage: '',
+        });
+        // add email to split pro
+      }
+    },
+    [
+      isEmail.success,
+      nameOrEmail,
+      addFriendMutation,
+      addOrUpdateParticipant,
+      setNameOrEmail,
+      removeParticipant,
+    ],
+  );
 
-  function onGroupSelect(group: Group & { groupUsers: (GroupUser & { user: User })[] }) {
-    setGroup(group);
-    const { currentUser } = useAddExpenseStore.getState();
-    if (currentUser) {
-      setParticipants([
-        currentUser,
-        ...group.groupUsers.map((gu) => gu.user).filter((u) => u.id !== currentUser.id),
-      ]);
-    }
-    setNameOrEmail('');
-  }
+  const onGroupSelect = useCallback(
+    (group: Group & { groupUsers: (GroupUser & { user: User })[] }) => {
+      setGroup(group);
+      const { currentUser } = useAddExpenseStore.getState();
+      if (currentUser) {
+        setParticipants([
+          currentUser,
+          ...group.groupUsers.map((gu) => gu.user).filter((u) => u.id !== currentUser.id),
+        ]);
+      }
+      setNameOrEmail('');
+    },
+    [setGroup, setParticipants, setNameOrEmail],
+  );
+
+  const handleAddEmailClickFalse = useCallback(() => onAddEmailClick(false), [onAddEmailClick]);
 
   if (group) {
     return (
@@ -101,7 +116,7 @@ export const SelectUserOrGroup: React.FC<{
               className="mt-4 w-full text-cyan-500 hover:text-cyan-500"
               variant="outline"
               disabled={!isEmail.success}
-              onClick={() => onAddEmailClick(false)}
+              onClick={handleAddEmailClickFalse}
             >
               <SendIcon className="mr-2 h-4 w-4" />
               {t('ui.add_expense_details.select_user_or_group.send_invite')}
@@ -111,7 +126,7 @@ export const SelectUserOrGroup: React.FC<{
             className="mt-4 w-full text-cyan-500 hover:text-cyan-500"
             variant="outline"
             disabled={!isEmail.success}
-            onClick={() => onAddEmailClick(false)}
+            onClick={handleAddEmailClickFalse}
           >
             <UserPlusIcon className="mr-2 h-4 w-4" />
             {t('ui.add_expense_details.select_user_or_group.add_to_split_pro')}
@@ -127,18 +142,20 @@ export const SelectUserOrGroup: React.FC<{
             {filteredFriends.map((f) => {
               const isExisting = participants.some((p) => p.id === f.id);
 
+              const handleFriendClick = useCallback(() => {
+                if (isExisting) {
+                  removeParticipant(f.id);
+                } else {
+                  addOrUpdateParticipant(f);
+                }
+                setNameOrEmail('');
+              }, [isExisting, f]);
+
               return (
                 <button
                   key={f.id}
                   className="flex w-full items-center justify-between border-b border-gray-900 py-4"
-                  onClick={() => {
-                    if (isExisting) {
-                      removeParticipant(f.id);
-                    } else {
-                      addOrUpdateParticipant(f);
-                    }
-                    setNameOrEmail('');
-                  }}
+                  onClick={handleFriendClick}
                 >
                   <div className="flex items-center gap-4">
                     <EntityAvatar entity={f} size={35} />
@@ -160,24 +177,28 @@ export const SelectUserOrGroup: React.FC<{
           <>
             <div className="mt-8 text-gray-500">{t('ui.actors.groups', { ns: 'common' })}</div>
             <div className="mt-2 flex flex-col gap-1">
-              {filteredGroups.map((g) => (
-                <button
-                  key={g.groupId}
-                  className="border-b border-gray-900 py-4"
-                  onClick={() => onGroupSelect(g.group)}
-                >
-                  <div className="flex items-center gap-4">
-                    <EntityAvatar entity={g.group} size={35} />
-                    <p>{g.group.name}</p>
-                  </div>
-                </button>
-              ))}
+              {filteredGroups.map((g) => {
+                const handleGroupClick = useCallback(() => onGroupSelect(g.group), [g.group]);
+
+                return (
+                  <button
+                    key={g.groupId}
+                    className="border-b border-gray-900 py-4"
+                    onClick={handleGroupClick}
+                  >
+                    <div className="flex items-center gap-4">
+                      <EntityAvatar entity={g.group} size={35} />
+                      <p>{g.group.name}</p>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </>
         ) : null}
 
         {0 === filteredFriends?.length && 0 === filteredGroups?.length ? (
-          <div className="transition-discrete starting:opacity-0 mt-[30%] flex flex-col items-center justify-center gap-20">
+          <div className="mt-[30%] flex flex-col items-center justify-center gap-20 transition-discrete starting:opacity-0">
             <Image alt="empty user image" src="/empty_img.svg" width={250} height={250} />
           </div>
         ) : null}

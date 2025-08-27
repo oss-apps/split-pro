@@ -166,7 +166,9 @@ const Home: NextPage<{
                 onClick={handleProviderSignIn(provider.id)}
                 key={provider.id}
               >
-                {providerSvgs[provider.id as keyof typeof providerSvgs]}
+                {provider.id in providerSvgs
+                  ? providerSvgs[provider.id as keyof typeof providerSvgs]
+                  : null}
                 {t('auth.continue_with', { provider: provider.name })}
               </Button>
             ))}
@@ -175,7 +177,7 @@ const Home: NextPage<{
               <p className="bg-background z-10 ml-[150px] -translate-x-1/2 px-4 text-sm">
                 {t('ui.or', { ns: 'common' })}
               </p>
-              <div className="bg-linear-to-r absolute h-px w-[300px] from-zinc-800 via-zinc-300 to-zinc-800" />
+              <div className="absolute h-px w-[300px] bg-linear-to-r from-zinc-800 via-zinc-300 to-zinc-800" />
             </div>
           )}
           {providers.find((provider) => 'email' === provider.id) ? (

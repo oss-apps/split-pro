@@ -37,7 +37,9 @@ export const BankingTransactions = ({
 
   const returnTransactionsArray = (): TransactionWithPendingStatus[] => {
     const transactions = gctransactions?.data?.transactions;
-    if (!transactions) {return [];}
+    if (!transactions) {
+      return [];
+    }
 
     const mapTransactions = (items: Transaction[], pendingStatus: boolean) =>
       items?.map((cItem) => ({ ...cItem, pending: pendingStatus })) || [];
@@ -165,9 +167,7 @@ export const BankingTransactions = ({
                       >
                         {item.remittanceInformationUnstructured}
                       </p>
-                      <p
-                        className="line-clamp-1 flex text-left text-xs whitespace-break-spaces text-gray-500"
-                      >
+                      <p className="line-clamp-1 flex text-left text-xs whitespace-break-spaces text-gray-500">
                         {item.pending && t('ui.pending')}{' '}
                         {alreadyAdded(item.transactionId) &&
                           `(${t('ui.already_added')}${returnGroupName(item.transactionId)})`}

@@ -65,7 +65,7 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
               </p>
             )}
             {expense.transactionId && (
-              <p className=" flex gap-2 text-sm text-gray-500">
+              <p className="flex gap-2 text-sm text-gray-500">
                 {t('ui.verified_transaction')}
                 <BadgeCheck className="h-4 w-4 text-emerald-500" />
               </p>
@@ -100,7 +100,7 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
           {expense.currency} {toUIString(expense.amount)}
         </p>
       </div>
-      <div className="ml-14 mt-4 flex flex-col gap-4">
+      <div className="mt-4 ml-14 flex flex-col gap-4">
         {expense.expenseParticipants
           .filter(
             (partecipant) =>

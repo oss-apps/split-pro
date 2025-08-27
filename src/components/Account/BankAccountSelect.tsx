@@ -37,7 +37,9 @@ export const BankAccountSelect = () => {
 
   const handleOpenChange = useCallback(
     (openVal: boolean) => {
-      if (openVal !== open) {setOpen(openVal);}
+      if (openVal !== open) {
+        setOpen(openVal);
+      }
     },
     [open],
   );

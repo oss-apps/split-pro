@@ -57,7 +57,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
         <div className="mx-auto mt-20 flex w-full items-start justify-center gap-16 px-4 lg:max-w-5xl lg:px-0">
           <div>
             <div className="mb-32 text-center lg:mb-0 lg:h-[70vh] lg:text-left">
-              <h1 className="lg:leading-16 max-w-3xl text-center text-2xl font-semibold leading-loose text-gray-100 lg:text-left lg:text-5xl">
+              <h1 className="max-w-3xl text-center text-2xl leading-loose font-semibold text-gray-100 lg:text-left lg:text-5xl lg:leading-16">
                 {t('hero.title_part1')}{' '}
                 <span className="text-primary font-bold">{t('hero.title_highlight')}</span>.
               </h1>
@@ -102,7 +102,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
               </div>
               <div className="mt-40" />
             </div>
-            <div className="mb-20 mt-8 flex justify-center lg:hidden">
+            <div className="mt-8 mb-20 flex justify-center lg:hidden">
               <MobileScreenShot />
             </div>
             <div className="flex flex-col gap-20 text-center lg:text-left">
@@ -207,7 +207,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
               </div>
             </div>
 
-            <div className="mb-20 mt-24 flex flex-col gap-8 text-center lg:text-left">
+            <div className="mt-24 mb-20 flex flex-col gap-8 text-center lg:text-left">
               <a
                 href="https://www.producthunt.com/posts/splitpro?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-splitpro"
                 target="_blank"

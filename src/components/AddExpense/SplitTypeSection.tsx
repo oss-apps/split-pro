@@ -43,7 +43,7 @@ export const SplitTypeSection: React.FC = () => {
       <AppDrawer
         trigger={
           <p className="overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
-            {displayName(paidBy, currentUser?.id)}
+            {displayName(paidBy, currentUser?.id, 'dativus')}
           </p>
         }
         title={t('ui.expense.paid_by', { ns: 'common' })}

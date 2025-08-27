@@ -1,11 +1,11 @@
 import {
   ChevronRight,
+  CreditCard,
   Download,
   DownloadCloud,
   FileDown,
   HeartHandshakeIcon,
   Star,
-  CreditCard,
 } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -14,7 +14,6 @@ import { api } from '~/utils/api';
 import { type NextPageWithUser } from '~/types';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
@@ -28,6 +27,7 @@ import { LoadingSpinner } from '~/components/ui/spinner';
 import { BankAccountSelect } from '~/components/Account/BankAccountSelect';
 import { withI18nStaticProps } from '~/utils/i18n/server';
 import { bigIntReplacer } from '~/utils/numbers';
+import { useTranslation } from 'next-i18next';
 
 const AccountPage: NextPageWithUser = ({ user }) => {
   const { t } = useTranslation('account_page');

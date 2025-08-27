@@ -70,6 +70,9 @@
     "select_bank_provider": "Välj bank",
     "search_bank": "Sök bank",
     "no_bank_providers_found": "Ingen bank hittades",
+    "to_bank": "bank",
+    "reconnect": "Återanslut",
+    "connect": "Anslut",
     "edit_name": {
       "title": "Redigera namn",
       "placeholder": "Ange namn"

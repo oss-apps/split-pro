@@ -125,7 +125,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         const splitShares: SplitShares = {
           ...state.splitShares,
           [userId]: {
-            ...state.splitShares[userId],
+            ...(state.splitShares[userId] ?? initSplitShares()),
             [splitType]: share,
           },
         };

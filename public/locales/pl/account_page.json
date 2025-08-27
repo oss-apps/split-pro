@@ -70,6 +70,9 @@
     "select_bank_provider": "Wybierz bank",
     "search_bank": "Wyszukaj bank",
     "no_bank_providers_found": "Nie znaleziono banków",
+    "to_bank": "do banku",
+    "reconnect": "Znowu połącz",
+    "connect": "Połącz",
     "edit_name": {
       "title": "Edytuj nazwę",
       "placeholder": "Wprowadź nazwę"

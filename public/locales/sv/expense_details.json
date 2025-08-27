@@ -73,7 +73,7 @@
     "clear": "Rensa",
     "bank_transactions": "Transaktioner",
     "submit_all": "Skicka alla",
-    "pending": "Väntande",
+    "pending": "Reserverad",
     "no_transactions_yet": "Inga transaktioner ännu",
     "already_added": "Redan tillagd"
   }

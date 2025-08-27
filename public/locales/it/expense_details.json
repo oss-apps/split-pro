@@ -64,29 +64,17 @@
       "title": "Sei sicuro di voler eliminare questa spesa?",
       "text": "L'azione eliminerà definitivamente la spesa e non sarà reversibile"
     },
-    "edited_by": "Modificato da",
-    "deleted_by": "Eliminato da",
-    "verified_transaction": "Transazione verificata",
-    "clear": "Cancella",
-    "added_by": "Aggiunto da",
-    "on": "il",
-    "bank_transactions": "Transazioni bancarie",
-    "submit_all": "Invia tutto",
-    "pending": "In attesa",
-    "no_transactions_yet": "Nessuna transazione",
-    "already_added": "Già aggiunto",
-    "image_details": {
-      "title": "Ricevuta della spesa",
-      "close": "Chiudi"
-    },
-    "you_paid": "Hai pagato",
-    "user_paid": "ha pagato",
-    "you_owe": "Devi",
-    "owes": "deve",
     "balance_list": {
       "press_balance_info": "Premi sul saldo individuale per avviare il regolamento",
       "are_settled_up": "siete pari",
       "is_settled_up": "è pari"
-    }
+    },
+    "verified_transaction": "Transazione verificata",
+    "clear": "Cancella",
+    "bank_transactions": "Transazioni bancarie",
+    "submit_all": "Invia tutto",
+    "pending": "In attesa",
+    "no_transactions_yet": "Nessuna transazione",
+    "already_added": "Già aggiunto"
   }
 }

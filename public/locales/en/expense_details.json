@@ -64,29 +64,17 @@
       "title": "Are you absolutely sure?",
       "text": "This action cannot be undone. This will permanently delete your expense."
     },
-    "edited_by": "Edited by",
-    "deleted_by": "Deleted by",
-    "added_by": "Added by",
-    "on": "on",
+    "balance_list": {
+      "press_balance_info": "Press on individual balance to initiate settlement",
+      "are_settled_up": "are settled up",
+      "is_settled_up": "is settled up"
+    },
     "verified_transaction": "Verified transaction",
     "clear": "Clear",
     "bank_transactions": "Bank transactions",
     "submit_all": "Submit all",
     "pending": "Pending",
     "no_transactions_yet": "No transactions yet",
-    "already_added": "Already added",
-    "image_details": {
-      "title": "Expense receipt",
-      "close": "Close"
-    },
-    "you_paid": "You paid",
-    "user_paid": "paid",
-    "you_owe": "You owe",
-    "owes": "owes",
-    "balance_list": {
-      "press_balance_info": "Press on individual balance to initiate settlement",
-      "are_settled_up": "are settled up",
-      "is_settled_up": "is settled up"
-    }
+    "already_added": "Already added"
   }
 }

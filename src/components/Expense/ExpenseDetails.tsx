@@ -45,7 +45,7 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
             {expense.updatedByUser ? (
               <p className="text-sm text-gray-500">
                 {t('ui.edited_by', { ns: 'common' })}{' '}
-                {displayName(expense.updatedByUser, user.id, 'dativus')}
+                {displayName(expense.updatedByUser, user.id, 'dativus')}{' '}
                 {t('ui.on', { ns: 'common' })}{' '}
                 {toUIDate(expense.updatedAt, { year: true })}
               </p>

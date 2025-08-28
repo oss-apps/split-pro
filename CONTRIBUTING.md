@@ -2,6 +2,12 @@
 
 If you plan to contribute to Splitpro, please take a moment to feel awesome ✨ People like you are what open source is about ♥. Any contributions, no matter how big or small, are highly appreciated.
 
+## Adding a new locale
+
+If you speak a language that is missing here or spot some mistakes in the translations, feel free to submit a PR, not much coding knowledge required! The process involves copying the files in `public/locales/en` and creating a new folder with your locale. Then it is a matter of updating the values themselves and adding your locale in the [config](./next-i18next.config.js) and [client](./src/utils/i18n/client.ts).
+
+Before submitting a PR, please run the local environment and check that it looks alright in the UI. Also, by submitting a PR, you assume the role of a maintainer of the translation, as possibly no one else will be able to check it.
+
 ## Before getting started
 
 - Before jumping into a PR be sure to search [existing PRs](https://github.com/oss-apps/split-pro/pulls) or [issues](https://github.com/oss-apps/split-pro/issues) for an open or closed item that relates to your submission.

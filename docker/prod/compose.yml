@@ -28,6 +28,7 @@ services:
       - ${PORT:-3000}:${PORT:-3000}
     environment:
       - PORT=${PORT:-3000}
+      # - HOSTNAME=0.0.0.0 # This is sometimes needed with reverse proxy setups. Uncomment when you encounter issues.
       - DATABASE_URL=${DATABASE_URL:?err}
       - NEXTAUTH_URL=${NEXTAUTH_URL:?err}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:?err}

@@ -50,6 +50,14 @@
     "push_notifications": {
       "title": "Push-Benachrichtigungen",
       "description": "Verpasse keine wichtigen Benachrichtigungen. Erhalte Meldungen, wenn jemand eine Ausgabe hinzufügt oder ausgleicht."
+    },
+    "debt_simplification": {
+      "title": "Schuldenvereinfachung",
+      "description": "Vereinfache automatisch Gruppenschulden, um die Anzahl der notwendigen Transaktionen zwischen Freunden zu reduzieren"
+    },
+    "i18": {
+      "title": "Internationalisierung",
+      "description": "Verfügbar in mehreren Sprachen, um das Teilen von Ausgaben weltweit zugänglich zu machen"
     }
   },
   "footer": {

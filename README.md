@@ -23,7 +23,7 @@ It currently has most of the important features.
 - Push notification
 - Download your data
 - Import from splitwise
-- **NEW** simplify group debts
+- simplify group debts
 - **NEW** community translations, feel free to add your language!
 
 **More features coming every day**

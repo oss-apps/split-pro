@@ -50,6 +50,14 @@
     "push_notifications": {
       "title": "Powiadomienia push",
       "description": "Nigdy nie przegap ważnych powiadomień. Dowiesz się, gdy ktoś doda wydatek lub się rozliczy"
+    },
+    "debt_simplification": {
+      "title": "Upraszczanie Długów",
+      "description": "Automatycznie uprość długi grupowe, aby zmniejszyć liczbę transakcji potrzebnych między znajomymi"
+    },
+    "i18": {
+      "title": "Internacjonalizacja",
+      "description": "Dostępne w wielu językach, aby dzielenie wydatków było dostępne na całym świecie"
     }
   },
   "footer": {

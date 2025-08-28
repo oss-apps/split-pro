@@ -50,6 +50,14 @@
     "push_notifications": {
       "title": "Notificações Push",
       "description": "Nunca percas notificações importantes. Sê notificado quando alguém adiciona uma despesa ou paga a sua dívida"
+    },
+    "debt_simplification": {
+      "title": "Simplificação de Dívidas",
+      "description": "Simplifica automaticamente as dívidas do grupo para reduzir o número de transações necessárias entre amigos"
+    },
+    "i18": {
+      "title": "Internacionalização",
+      "description": "Disponível em múltiplas línguas para tornar a divisão de despesas acessível em todo o mundo"
     }
   },
   "footer": {

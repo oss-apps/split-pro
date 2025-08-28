@@ -16,8 +16,8 @@
   "ui": {
     "actors": {
       "you": "Ty",
-      "you_dativus": "Tobie",
-      "you_accusativus": "Ciebie",
+      "you_dativus": "Ciebie",
+      "you_accusativus": "Tobie",
       "friends": "Znajomi",
       "groups": "Grupy",
       "members": "Członkowie",
@@ -27,7 +27,7 @@
     "actions": {
       "cancel": "Anuluj",
       "confirm": "Potwierdź",
-      "submit": "Wyślij",
+      "submit": "Zapisz",
       "close": "Zamknij",
       "back": "Wstecz",
       "create": "Utwórz",

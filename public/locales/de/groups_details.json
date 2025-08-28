@@ -2,14 +2,14 @@
   "ui": {
     "title": "Ausstehende Gruppensalden",
     "no_members": {
-      "no_members": "Noch keine Mitglieder in der Gruppe.",
-      "add_members": "Mitglieder hinzufügen",
+      "no_members": "Diese Gruppe hat noch keine Mitglieder.",
+      "add_members": "Mitglied hinzufügen",
       "add_members_details": {
-        "title": "Mitglieder hinzufügen",
+        "title": "Mitglied hinzufügen",
         "placeholder": "Name oder E-Mail eingeben",
-        "warning": "Warnung: Verwende 'Einladung senden' nicht bei ungültiger E-Mail. Nutze stattdessen 'Zu Split Pro hinzufügen'. Dein Konto wird bei Missbrauch gesperrt.",
+        "warning": "Warnung: Verwende 'Einladung senden' nicht bei ungültiger E-Mail. Nutze stattdessen 'Benutzer hinzufügen'. Dein Konto wird bei Missbrauch gesperrt.",
         "note": "Hinweis: Das Versenden von Einladungen ist momentan wegen Spam deaktiviert.",
-        "send_invite": "Benutzer einladen"
+        "send_invite": "Einladung senden"
       },
       "invite_link": "Einladungslink teilen",
       "copied": "Kopiert"
@@ -73,7 +73,13 @@
     "add_members": "Mitglieder hinzufügen",
     "copied": "Kopiert",
     "create_group": {
-      "title": "Gruppe erstellen"
+      "title": "Gruppe erstellen",
+      "group_name_placeholder": "Name der Gruppe"
+    },
+    "add_expense_details": {
+      "select_user_or_group": {
+        "add_to_split_pro": "Benutzer hinzufügen"
+      }
     }
   },
   "invite_message": {

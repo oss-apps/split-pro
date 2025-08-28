@@ -68,6 +68,9 @@
       "press_balance_info": "Press on individual balance to initiate settlement",
       "are_settled_up": "are settled up",
       "is_settled_up": "is settled up"
+    },
+    "errors": {
+      "amount_required": ""
     }
   }
 }

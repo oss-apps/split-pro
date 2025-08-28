@@ -5,7 +5,7 @@ import { useTranslation } from 'next-i18next';
 import { AddOrEditExpensePage } from '~/components/AddExpense/AddExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
 import { env } from '~/env';
-import { type CurrencyCode } from '~/lib/currency';
+import { parseCurrencyCode } from '~/lib/currency';
 import { isStorageConfigured } from '~/server/storage';
 import { useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
@@ -100,7 +100,7 @@ const AddPage: NextPageWithUser<{
       setGroup(expenseQuery.data.group);
     }
     setPaidBy(expenseQuery.data.paidByUser);
-    setCurrency(expenseQuery.data.currency as CurrencyCode);
+    setCurrency(parseCurrencyCode(expenseQuery.data.currency));
     setAmountStr((Number(expenseQuery.data.amount) / 100).toString());
     setDescription(expenseQuery.data.name);
     setCategory(expenseQuery.data.category);

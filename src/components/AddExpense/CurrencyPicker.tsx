@@ -1,9 +1,8 @@
 import { memo, useCallback, useMemo } from 'react';
-import { useTranslation } from 'next-i18next';
 
-import { CURRENCIES, type CurrencyCode } from '~/lib/currency';
-import { getLocalizedCurrencyName } from '~/utils/i18n/client';
+import { CURRENCIES, type CurrencyCode, parseCurrencyCode } from '~/lib/currency';
 
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { GeneralPicker } from '../GeneralPicker';
 
 function CurrencyPickerInner({
@@ -13,12 +12,11 @@ function CurrencyPickerInner({
   currentCurrency: CurrencyCode;
   onCurrencyPick: (currency: CurrencyCode) => void;
 }) {
-  const { t } = useTranslation('currencies');
+  const { t, getCurrencyName } = useTranslationWithUtils(['currencies']);
 
   const onSelect = useCallback(
     (currentValue: string) => {
-      const currency = currentValue ?? 'USD';
-      onCurrencyPick(currency as CurrencyCode);
+      onCurrencyPick(parseCurrencyCode(currentValue));
     },
     [onCurrencyPick],
   );
@@ -40,7 +38,7 @@ function CurrencyPickerInner({
   );
   const renderCurrency = useCallback(
     (currency: { code: CurrencyCode }) => {
-      const translatedName = getLocalizedCurrencyName(currency.code, t);
+      const translatedName = getCurrencyName(currency.code);
       return (
         <>
           <p>{translatedName}</p>
@@ -48,7 +46,7 @@ function CurrencyPickerInner({
         </>
       );
     },
-    [t],
+    [getCurrencyName],
   );
 
   return (

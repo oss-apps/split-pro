@@ -1,6 +1,7 @@
 import { SplitType, type User } from '@prisma/client';
 import { format, isToday } from 'date-fns';
 import { type TFunction } from 'next-i18next';
+import type { CurrencyCode } from '~/lib/currency';
 import { type AddExpenseState, type Participant } from '~/store/addStore';
 
 export type ParametersExceptTranslation<F> = F extends (t: TFunction, ...rest: infer R) => any
@@ -71,4 +72,15 @@ export function generateSplitDescription(
 
   // Fallback to default for all other cases
   return t('ui.add_expense_details.split_type_section.split_equally');
+}
+
+export function getCurrencyName(t: TFunction, code: CurrencyCode, plural = false): string {
+  const translationKey = `currencies:currency_list.${code}.${plural ? 'name_plural' : 'name'}`;
+  const translatedName = t(translationKey);
+
+  if (translatedName !== translationKey) {
+    return translatedName;
+  }
+
+  return code;
 }

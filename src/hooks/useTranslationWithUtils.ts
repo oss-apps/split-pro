@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
 import {
   type ParametersExceptTranslation,
   displayName as dn,
+  getCurrencyName as gCN,
   generateSplitDescription as gsd,
   toUIDate as tUD,
 } from '~/utils/strings';
@@ -13,6 +14,7 @@ export const useTranslationWithUtils = (
   displayName: typeof displayName;
   generateSplitDescription: typeof generateSplitDescription;
   toUIDate: typeof toUIDate;
+  getCurrencyName: typeof getCurrencyName;
 } => {
   if (!namespaces || namespaces.length === 0) {
     namespaces = ['common'];
@@ -36,9 +38,14 @@ export const useTranslationWithUtils = (
     [translation.t],
   );
 
+  const getCurrencyName = useCallback(
+    (...args: ParametersExceptTranslation<typeof gCN>): string => gCN(translation.t, ...args),
+    [translation.t],
+  );
+
   // @ts-ignore
   return useMemo(
-    () => ({ ...translation, displayName, generateSplitDescription, toUIDate }),
-    [translation, displayName, generateSplitDescription, toUIDate],
+    () => ({ ...translation, displayName, generateSplitDescription, toUIDate, getCurrencyName }),
+    [translation, displayName, generateSplitDescription, toUIDate, getCurrencyName],
   );
 };

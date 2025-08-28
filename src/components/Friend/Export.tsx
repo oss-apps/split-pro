@@ -83,13 +83,7 @@ export const Export: React.FC<ExportCSVProps> = ({
   };
 
   return (
-    <Button
-      size="sm"
-      variant="secondary"
-      className="w-[150px] gap-1 text-sm lg:w-[180px]"
-      onClick={exportToCSV}
-      disabled={disabled}
-    >
+    <Button size="sm" variant="secondary" responsiveIcon onClick={exportToCSV} disabled={disabled}>
       <Download className="h-4 w-4 text-white" size={20} /> Export
     </Button>
   );

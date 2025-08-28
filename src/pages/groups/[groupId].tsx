@@ -8,6 +8,7 @@ import {
   DoorOpen,
   Info,
   Merge,
+  PlusIcon,
   Share,
   Trash2,
   UserPlus,
@@ -420,11 +421,11 @@ const BalancePage: NextPageWithUser<{
             </div>
             <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b pb-4">
               <Link href={`/add?groupId=${groupId}`}>
-                <Button size="sm" className="gap-1 text-sm lg:w-[180px]" disabled={isArchived}>
-                  {t('ui.actions.add_expense', { ns: 'common' })}
+                <Button size="sm" className="w-40 gap-1 text-sm lg:w-[180px]" disabled={isArchived}>
+                  <PlusIcon className="size-4" /> {t('ui.actions.add_expense', { ns: 'common' })}
                 </Button>
               </Link>
-              <Button size="sm" className="gap-1 text-sm" variant="secondary" disabled={isArchived}>
+              <Button size="sm" responsiveIcon variant="secondary" disabled={isArchived}>
                 {groupDetailQuery.data ? (
                   <AddMembers
                     group={groupDetailQuery.data}
@@ -436,14 +437,14 @@ const BalancePage: NextPageWithUser<{
               </Button>
               <Button
                 size="sm"
-                className="gap-1 text-sm lg:w-[180px]"
+                responsiveIcon
                 variant="secondary"
                 onClick={inviteMembers}
                 disabled={isArchived}
               >
                 {isInviteCopied ? (
                   <>
-                    <Check className="size-4 text-gray-400" /> {t('ui.copied')}
+                    <Check className="size-4" /> {t('ui.copied')}
                   </>
                 ) : (
                   <>

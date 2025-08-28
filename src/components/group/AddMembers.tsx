@@ -103,9 +103,7 @@ const AddMembers: React.FC<{
 
   return (
     <AppDrawer
-      trigger={
-        <div className="flex items-center justify-center gap-2 lg:w-[180px]">{children}</div>
-      }
+      trigger={<>{children}</>}
       onTriggerClick={handleTriggerClick}
       title={t('ui.no_members.add_members_details.title')}
       leftAction={t('ui.actions.cancel', { ns: 'common' })}

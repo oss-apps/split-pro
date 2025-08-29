@@ -1,3 +1,5 @@
+import { resolve } from 'path';
+
 /** @type {import('next-i18next').UserConfig} */
 const config = {
   i18n: {
@@ -5,7 +7,7 @@ const config = {
     locales: ['default', 'en', 'de', 'it', 'pl', 'pt', 'sv'],
     localeDetection: false,
   },
-  localePath: './public/locales',
+  localePath: resolve('./public/locales'),
 };
 
 export default config;

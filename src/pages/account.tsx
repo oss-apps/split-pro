@@ -41,7 +41,7 @@ const AccountPage: NextPageWithUser<{
   const router = useRouter();
   const userQuery = api.user.me.useQuery();
   const downloadQuery = api.user.downloadData.useMutation();
-  const connectToBank = api.gocardless.connectToBank.useMutation();
+  const connectToBank = api.bankTransactions.connectToBank.useMutation();
   const updateDetailsMutation = api.user.updateUserDetail.useMutation();
 
   const [downloading, setDownloading] = useState(false);

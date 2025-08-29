@@ -17,7 +17,7 @@ export const BankAccountSelect = ({
 
   const userQuery = api.user.me.useQuery();
   const updateProfile = api.user.updateUserDetail.useMutation();
-  const institutions = api.gocardless.getInstitutions.useQuery();
+  const institutions = api.bankTransactions.getInstitutions.useQuery();
 
   if (!bankConnectionEnabled) {
     return null;

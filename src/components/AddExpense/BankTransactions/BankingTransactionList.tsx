@@ -29,7 +29,9 @@ export const BankingTransactionList: React.FC<{
   const { t } = useTranslationWithUtils(['expense_details']);
 
   const userQuery = api.user.me.useQuery();
-  const gctransactions = api.gocardless.getTransactions.useQuery(userQuery.data?.obapiProviderId);
+  const gctransactions = api.bankTransactions.getTransactions.useQuery(
+    userQuery.data?.obapiProviderId,
+  );
 
   const expensesQuery = api.user.getOwnExpenses.useQuery();
 

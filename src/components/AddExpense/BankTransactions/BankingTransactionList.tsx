@@ -36,10 +36,11 @@ export const BankingTransactionList: React.FC<{
   const expensesQuery = api.user.getOwnExpenses.useQuery();
 
   const returnTransactionsArray = (): TransactionWithPendingStatus[] => {
-    const transactions = gctransactions?.data?.transactions;
-    if (!transactions) {
+    const data = gctransactions?.data;
+    if (!data || Array.isArray(data) || !data.transactions) {
       return [];
     }
+    const transactions = data.transactions;
 
     const mapTransactions = (items: Transaction[], pendingStatus: boolean) =>
       items?.map((cItem) => ({ ...cItem, pending: pendingStatus })) || [];

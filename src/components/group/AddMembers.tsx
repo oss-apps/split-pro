@@ -15,7 +15,7 @@ import { Input } from '../ui/input';
 
 const AddMembers: React.FC<{
   enableSendingInvites: boolean;
-  group: Group & { groupUsers: GroupUser[] };
+  group: (Group & { groupUsers: GroupUser[] }) | null | undefined;
   children: React.ReactNode;
 }> = ({ group, children, enableSendingInvites }) => {
   const { t } = useTranslation('groups_details');
@@ -28,6 +28,10 @@ const AddMembers: React.FC<{
   const addFriendMutation = api.user.inviteFriend.useMutation();
 
   const utils = api.useUtils();
+
+  if (!group) {
+    return null;
+  }
 
   const groupUserMap = group.groupUsers.reduce(
     (acc, gu) => {
@@ -103,7 +107,7 @@ const AddMembers: React.FC<{
 
   return (
     <AppDrawer
-      trigger={<>{children}</>}
+      trigger={children}
       onTriggerClick={handleTriggerClick}
       title={t('ui.no_members.add_members_details.title')}
       leftAction={t('ui.actions.cancel', { ns: 'common' })}

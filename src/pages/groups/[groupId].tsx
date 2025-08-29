@@ -425,16 +425,13 @@ const BalancePage: NextPageWithUser<{
                   <PlusIcon className="size-4" /> {t('ui.actions.add_expense', { ns: 'common' })}
                 </Button>
               </Link>
-              <Button size="sm" responsiveIcon variant="secondary" disabled={isArchived}>
-                {groupDetailQuery.data ? (
-                  <AddMembers
-                    group={groupDetailQuery.data}
-                    enableSendingInvites={enableSendingInvites}
-                  >
-                    <UserPlus className="size-4 text-gray-400" /> {t('ui.add_members')}
-                  </AddMembers>
-                ) : null}
-              </Button>
+
+              <AddMembers group={groupDetailQuery.data} enableSendingInvites={enableSendingInvites}>
+                <Button size="sm" responsiveIcon variant="secondary" disabled={isArchived}>
+                  <UserPlus className="size-4 text-gray-400" /> {t('ui.add_members')}
+                </Button>
+              </AddMembers>
+
               <Button
                 size="sm"
                 responsiveIcon

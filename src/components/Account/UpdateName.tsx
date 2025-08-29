@@ -77,7 +77,7 @@ export const UpdateName: React.FC<{
       actionOnClick={handleOnActionClick}
     >
       <Form {...detailForm}>
-        <form className="mt-4 flex w-full items-start gap-4">
+        <form className="mt-4 flex w-full items-start gap-4" onSubmit={handleOnActionClick}>
           <FormField control={detailForm.control} name="name" render={field} />
         </form>
       </Form>

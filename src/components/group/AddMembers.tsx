@@ -103,7 +103,7 @@ const AddMembers: React.FC<{
 
   return (
     <AppDrawer
-      trigger={<>{children}</>}
+      trigger={<span>{children}</span>}
       onTriggerClick={handleTriggerClick}
       title={t('ui.no_members.add_members_details.title')}
       leftAction={t('ui.actions.cancel', { ns: 'common' })}

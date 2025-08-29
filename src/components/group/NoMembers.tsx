@@ -29,12 +29,13 @@ const NoMembers: React.FC<NoMembersProps> = ({ group, enableSendingInvites }) =>
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4">
       <p className="mb-4 text-center text-gray-500">{t('ui.no_members.no_members')}</p>
-      <Button className="w-[200px]" disabled={isArchived}>
-        <AddMembers group={group} enableSendingInvites={enableSendingInvites}>
-          <UserPlus className="text-primary-foreground h-5 w-5" />
-          <p>{t('ui.no_members.add_members')}</p>
-        </AddMembers>
-      </Button>
+
+      <AddMembers group={group} enableSendingInvites={enableSendingInvites}>
+        <Button className="w-[200px]" disabled={isArchived} responsiveIcon>
+          <UserPlus className="text-primary-foreground" /> {t('ui.no_members.add_members')}
+        </Button>
+      </AddMembers>
+
       <p className="text-gray-400">{t('common:ui.or')}</p>
       <Button
         className="flex w-[200px] items-center gap-2"

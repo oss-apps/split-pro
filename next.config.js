@@ -16,7 +16,7 @@ const nextConfig = {
    *
    * @see https://github.com/vercel/next.js/issues/41980
    */
-  i18n: i18nConfig.i18n,
+  ...i18nConfig,
   images: {
     remotePatterns: [
       {

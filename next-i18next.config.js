@@ -1,11 +1,13 @@
-/** @type {import('next-i18next').UserConfig} */
+import { resolve } from 'path';
+
+/** @type {import('next').NextConfig} */
 const config = {
   i18n: {
     defaultLocale: 'default',
     locales: ['default', 'en', 'de', 'it', 'pl', 'pt', 'sv'],
     localeDetection: false,
   },
-  localePath: './public/locales',
+  localePath: resolve('./public/locales'),
 };
 
 export default config;

@@ -16,7 +16,7 @@
   "ui": {
     "actors": {
       "you": "Tu",
-      "you_dativus": "Tu",
+      "you_dativus": "Te",
       "you_accusativus": "Tu",
       "friends": "Amici",
       "groups": "Gruppi",

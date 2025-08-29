@@ -31,7 +31,7 @@ const NoMembers: React.FC<NoMembersProps> = ({ group, enableSendingInvites }) =>
       <p className="mb-4 text-center text-gray-500">{t('ui.no_members.no_members')}</p>
 
       <AddMembers group={group} enableSendingInvites={enableSendingInvites}>
-        <Button className="w-[200px]" disabled={isArchived} responsiveIcon>
+        <Button className="w-[200px]" disabled={isArchived}>
           <UserPlus className="text-primary-foreground" /> {t('ui.no_members.add_members')}
         </Button>
       </AddMembers>

@@ -426,16 +426,11 @@ const BalancePage: NextPageWithUser<{
                 </Button>
               </Link>
 
-              {groupDetailQuery.data ? (
-                <AddMembers
-                  group={groupDetailQuery.data}
-                  enableSendingInvites={enableSendingInvites}
-                >
-                  <Button size="sm" responsiveIcon variant="secondary" disabled={isArchived}>
-                    <UserPlus className="size-4 text-gray-400" /> {t('ui.add_members')}
-                  </Button>
-                </AddMembers>
-              ) : null}
+              <AddMembers group={groupDetailQuery.data} enableSendingInvites={enableSendingInvites}>
+                <Button size="sm" responsiveIcon variant="secondary" disabled={isArchived}>
+                  <UserPlus className="size-4 text-gray-400" /> {t('ui.add_members')}
+                </Button>
+              </AddMembers>
 
               <Button
                 size="sm"

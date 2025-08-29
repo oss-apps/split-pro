@@ -38,7 +38,13 @@ declare module 'nordigen-node' {
   }
 
   interface Account {
-    getTransactions(): Promise<GetTransactions>;
+    getTransactions({
+      dateFrom,
+      dateTo,
+    }: {
+      dateFrom: string;
+      dateTo: string;
+    }): Promise<GetTransactions>;
   }
 
   interface Init {

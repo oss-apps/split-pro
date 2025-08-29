@@ -8,40 +8,23 @@ import { Button } from '../ui/button';
 import Image from 'next/image';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
-export const BankAccountSelect = () => {
+export const BankAccountSelect = ({ gocardlessEnabled }: { gocardlessEnabled: boolean }) => {
   const { t } = useTranslationWithUtils(['account_page']);
 
-  const [open, setOpen] = React.useState(false);
   const userQuery = api.user.me.useQuery();
   const updateProfile = api.user.updateUserDetail.useMutation();
   const institutions = api.gocardless.getInstitutions.useQuery();
-  const gocardlessEnabled = api.gocardless.gocardlessEnabled.useQuery();
 
   if (!gocardlessEnabled) {
-    return <></>;
+    return null;
   }
 
   const onSelect = useCallback(
     async (currentValue: string) => {
       await updateProfile.mutateAsync({ bankingId: currentValue.toUpperCase() });
       userQuery.refetch().catch((err) => console.error(err));
-
-      setOpen(false);
     },
     [updateProfile, userQuery],
-  );
-
-  const handleTriggerClick = useCallback(() => {
-    setOpen(true);
-  }, []);
-
-  const handleOpenChange = useCallback(
-    (openVal: boolean) => {
-      if (openVal !== open) {
-        setOpen(openVal);
-      }
-    },
-    [open],
   );
 
   return (
@@ -58,42 +41,36 @@ export const BankAccountSelect = () => {
           <ChevronRight className="h-6 w-6 text-gray-500" />
         </Button>
       }
-      onTriggerClick={handleTriggerClick}
       title={t('ui.select_bank_provider')}
       className="h-[70vh]"
-      shouldCloseOnAction
-      open={open}
-      onOpenChange={handleOpenChange}
     >
-      <div>
-        <Command className="h-[50vh]">
-          <CommandInput className="text-lg" placeholder={t('ui.search_bank')} />
-          <CommandEmpty>{t('ui.no_bank_providers_found')}</CommandEmpty>
-          <CommandGroup className="h-full overflow-auto">
-            {institutions?.data?.map((framework) => (
-              <CommandItem key={framework.id} value={framework.id} onSelect={onSelect}>
-                <Check
-                  className={cn(
-                    'mr-2 h-4 w-4',
-                    framework.id === userQuery.data?.bankingId ? 'opacity-100' : 'opacity-0',
-                  )}
+      <Command className="h-[50vh]">
+        <CommandInput className="text-lg" placeholder={t('ui.search_bank')} />
+        <CommandEmpty>{t('ui.no_bank_providers_found')}</CommandEmpty>
+        <CommandGroup className="h-full overflow-auto">
+          {institutions?.data?.map((framework) => (
+            <CommandItem key={framework.id} value={framework.id} onSelect={onSelect}>
+              <Check
+                className={cn(
+                  'mr-2 h-4 w-4',
+                  framework.id === userQuery.data?.bankingId ? 'opacity-100' : 'opacity-0',
+                )}
+              />
+              <div className="flex gap-2">
+                <Image
+                  alt={framework.name}
+                  src={framework.logo}
+                  width={20}
+                  height={20}
+                  objectFit="contain"
+                  className="rounded-sm"
                 />
-                <div className="flex gap-2">
-                  <Image
-                    alt={framework.name}
-                    src={framework.logo}
-                    width={20}
-                    height={20}
-                    objectFit="contain"
-                    className="rounded-sm"
-                  />
-                  <p>{framework.name}</p>
-                </div>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </Command>
-      </div>
+                <p>{framework.name}</p>
+              </div>
+            </CommandItem>
+          ))}
+        </CommandGroup>
+      </Command>
     </AppDrawer>
   );
 };

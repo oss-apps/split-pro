@@ -1,39 +1,37 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { api } from '~/utils/api';
-import { LoadingSpinner } from '../ui/spinner';
-import { Button } from '../ui/button';
-import { Checkbox } from '../ui/checkbox';
+import { LoadingSpinner } from '../../ui/spinner';
+import { Button } from '../../ui/button';
 import { type Transaction } from 'nordigen-node';
 import type { TransactionAddInputModel } from '~/types';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-import { cn } from '~/lib/utils';
+import { BankTransactionItem } from './BankTransactionItem';
 
-interface Props {
+export type TransactionWithPendingStatus = Transaction & {
+  pending: boolean;
+};
+
+export const BankingTransactionList: React.FC<{
   add: (obj: TransactionAddInputModel) => void;
   addMultipleExpenses: () => void;
   multipleTransactions: TransactionAddInputModel[];
   setMultipleTransactions: (a: TransactionAddInputModel[]) => void;
   isTransactionLoading: boolean;
-}
-
-type TransactionWithPendingStatus = Transaction & {
-  pending: boolean;
-};
-
-export const BankingTransactions = ({
+  gocardlessEnabled: boolean;
+}> = ({
   add,
   addMultipleExpenses,
   multipleTransactions,
   setMultipleTransactions,
   isTransactionLoading,
-}: Props) => {
-  const { t, toUIDate } = useTranslationWithUtils(['expense_details']);
+  gocardlessEnabled,
+}) => {
+  const { t } = useTranslationWithUtils(['expense_details']);
 
   const userQuery = api.user.me.useQuery();
   const gctransactions = api.gocardless.getTransactions.useQuery(userQuery.data?.obapiProviderId);
 
   const expensesQuery = api.user.getOwnExpenses.useQuery();
-  const gocardlessEnabled = api.gocardless.gocardlessEnabled.useQuery();
 
   const returnTransactionsArray = (): TransactionWithPendingStatus[] => {
     const transactions = gctransactions?.data?.transactions;
@@ -62,7 +60,7 @@ export const BankingTransactions = ({
   };
 
   if (!gocardlessEnabled) {
-    return <></>;
+    return null;
   }
 
   const transactionsArray = returnTransactionsArray();
@@ -98,16 +96,6 @@ export const BankingTransactions = ({
     [multipleTransactions, setMultipleTransactions, add, alreadyAdded],
   );
 
-  const createCheckboxHandler = useCallback(
-    (item: TransactionWithPendingStatus) => () => onTransactionRowClick(item, true),
-    [onTransactionRowClick],
-  );
-
-  const createClickHandler = useCallback(
-    (item: TransactionWithPendingStatus) => () => onTransactionRowClick(item, false),
-    [onTransactionRowClick],
-  );
-
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
@@ -134,56 +122,15 @@ export const BankingTransactions = ({
           {transactionsArray
             ?.filter((item) => item.transactionAmount.amount.includes('-'))
             .map((item, index) => (
-              <div className="flex items-center justify-between px-2 py-2" key={index}>
-                <div className="flex items-center gap-4">
-                  <Checkbox
-                    checked={multipleTransactions?.some(
-                      (cItem) => cItem.transactionId === item.transactionId,
-                    )}
-                    disabled={alreadyAdded(item.transactionId)}
-                    onCheckedChange={createCheckboxHandler(item)}
-                    className="h-6 w-6 md:h-4 md:w-4"
-                  />
-                  <Button
-                    className="flex items-center gap-4"
-                    variant="ghost"
-                    disabled={alreadyAdded(item.transactionId)}
-                  >
-                    <div className="text-xs text-gray-500">
-                      {toUIDate(new Date(item.bookingDate), { useToday: true })
-                        .split(' ')
-                        .map((d) => (
-                          <div className="text-center" key={d}>
-                            {d}
-                          </div>
-                        ))}
-                    </div>
-                    <div onClick={createClickHandler(item)}>
-                      <p
-                        className={cn(
-                          'line-clamp-2 text-left text-sm whitespace-break-spaces lg:text-base',
-                          alreadyAdded(item.transactionId) && 'line-through',
-                        )}
-                      >
-                        {item.remittanceInformationUnstructured}
-                      </p>
-                      <p className="line-clamp-1 flex text-left text-xs whitespace-break-spaces text-gray-500">
-                        {item.pending && t('ui.pending')}{' '}
-                        {alreadyAdded(item.transactionId) &&
-                          `(${t('ui.already_added')}${returnGroupName(item.transactionId)})`}
-                      </p>
-                    </div>
-                  </Button>
-                </div>
-                <div className="min-w-10 shrink-0">
-                  <div
-                    className={`text-right ${alreadyAdded(item.transactionId) ? 'text-red-500' : 'text-emerald-600'}`}
-                  >
-                    <span className="font-light">{item.transactionAmount.currency}</span>{' '}
-                    {item.transactionAmount.amount}
-                  </div>
-                </div>
-              </div>
+              <BankTransactionItem
+                key={index}
+                index={index}
+                item={item}
+                alreadyAdded={alreadyAdded(item.transactionId)}
+                onTransactionRowClick={onTransactionRowClick}
+                groupName={returnGroupName(item.transactionId)}
+                multipleTransactions={multipleTransactions}
+              />
             ))}
         </>
       )}

@@ -26,23 +26,21 @@ import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { LoadingSpinner } from '~/components/ui/spinner';
-import { BankAccountSelect } from '~/components/Account/BankAccountSelect';
-import { withI18nStaticProps } from '~/utils/i18n/server';
 import { env } from '~/env';
 import { customServerSideTranslations } from '~/utils/i18n/server';
+import { BankAccountSelect } from '~/components/Account/BankAccountSelect';
 import { bigIntReplacer } from '~/utils/numbers';
 
-const AccountPage: NextPageWithUser<{ isCloud: boolean; feedBackPossible: boolean }> = ({
-  user,
-  isCloud,
-  feedBackPossible,
-}) => {
+const AccountPage: NextPageWithUser<{
+  isCloud: boolean;
+  feedBackPossible: boolean;
+  gocardlessEnabled: boolean;
+}> = ({ user, isCloud, feedBackPossible, gocardlessEnabled }) => {
   const { t } = useTranslation('account_page');
   const router = useRouter();
   const userQuery = api.user.me.useQuery();
   const downloadQuery = api.user.downloadData.useMutation();
   const connectToBank = api.gocardless.connectToBank.useMutation();
-  const gocardlessEnabled = api.gocardless.gocardlessEnabled.useQuery();
   const updateDetailsMutation = api.user.updateUserDetail.useMutation();
 
   const [downloading, setDownloading] = useState(false);
@@ -97,12 +95,12 @@ const AccountPage: NextPageWithUser<{ isCloud: boolean; feedBackPossible: boolea
     void router.push('/auth/signin', '/auth/signin', { locale: 'default' });
   }, [router]);
 
-  const onConnectToBank = async () => {
+  const onConnectToBank = useCallback(async () => {
     const res = await connectToBank.mutateAsync(userQuery.data?.bankingId);
     if (res?.link) {
       window.location.href = res.link;
     }
-  };
+  }, [connectToBank, userQuery.data?.bankingId]);
 
   return (
     <>
@@ -131,7 +129,7 @@ const AccountPage: NextPageWithUser<{ isCloud: boolean; feedBackPossible: boolea
 
           {gocardlessEnabled && (
             <>
-              <BankAccountSelect />
+              <BankAccountSelect gocardlessEnabled={gocardlessEnabled} />
               {userQuery.data?.bankingId && (
                 <Button
                   onClick={onConnectToBank}
@@ -311,6 +309,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
     feedbackPossible: !!env.FEEDBACK_EMAIL,
     isCloud: env.NEXTAUTH_URL.includes('splitpro.app'),
+    gocardlessEnabled: !!(
+      env.GOCARDLESS_SECRET_ID &&
+      env.GOCARDLESS_SECRET_KEY &&
+      env.GOCARDLESS_COUNTRY
+    ),
     ...(await customServerSideTranslations(context.locale, ['account_page', 'common'])),
   },
 });

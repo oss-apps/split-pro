@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useCallback } from 'react';
 
-import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
+import { type CurrencyCode } from '~/lib/currency';
 import { cn } from '~/lib/utils';
-import { calculateParticipantSplit, useAddExpenseStore } from '~/store/addStore';
+import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { toSafeBigInt } from '~/utils/numbers';
 
@@ -20,10 +20,9 @@ import { SplitTypeSection } from './SplitTypeSection';
 import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
 import { toast } from 'sonner';
-import { BankingTransactions } from './BankingTransactions';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-import type { TransactionAddInputModel } from '~/types';
 import { useTranslation } from 'next-i18next';
+import AddBankTransactions from './AddBankTransactions';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
@@ -43,13 +42,10 @@ export const AddOrEditExpensePage: React.FC<{
   const amtStr = useAddExpenseStore((s) => s.amountStr);
   const expenseDate = useAddExpenseStore((s) => s.expenseDate);
   const isExpenseSettled = useAddExpenseStore((s) => s.canSplitScreenClosed);
-  const splitShares = useAddExpenseStore((s) => s.splitShares);
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const splitType = useAddExpenseStore((s) => s.splitType);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
   const transactionId = useAddExpenseStore((s) => s.transactionId);
-  const multipleTransactions = useAddExpenseStore((s) => s.multipleTransactions);
-  const isTransactionLoading = useAddExpenseStore((s) => s.isTransactionLoading);
 
   const {
     setCurrency,
@@ -87,87 +83,6 @@ export const AddOrEditExpensePage: React.FC<{
     },
     [setAmount, setAmountStr],
   );
-
-  const addMultipleExpenses = useCallback(async () => {
-    setIsTransactionLoading(true);
-
-    if (!paidBy) {
-      return;
-    }
-
-    if (!isExpenseSettled) {
-      setSplitScreenOpen(true);
-      return;
-    }
-
-    const seen = new Set();
-    const deduplicated = multipleTransactions.filter((item) => {
-      if (seen.has(item.transactionId)) {
-        return false;
-      }
-      seen.add(item.transactionId);
-      return true;
-    });
-
-    const expensePromises = deduplicated.map(async (tempItem) => {
-      if (tempItem) {
-        const normalizedAmount = tempItem.amount.replace(',', '.');
-        const _amtBigInt = BigInt(Math.round(Number(normalizedAmount) * 100));
-
-        const { participants: tempParticipants } = calculateParticipantSplit(
-          _amtBigInt,
-          participants,
-          splitType,
-          splitShares,
-          paidBy,
-        );
-
-        return addExpenseMutation.mutateAsync({
-          name: tempItem.description,
-          currency: tempItem.currency,
-          amount: _amtBigInt,
-          groupId: group?.id ?? null,
-          splitType,
-          participants: tempParticipants.map((p) => ({
-            userId: p.id,
-            amount: p.amount ?? 0n,
-          })),
-          paidBy: paidBy.id,
-          category,
-          fileKey,
-          expenseDate: tempItem.date,
-          expenseId: tempItem.expenseId,
-          transactionId: tempItem.transactionId,
-        });
-      }
-      return Promise.resolve();
-    });
-
-    await Promise.all(expensePromises);
-
-    setMultipleTransactions([]);
-    setIsTransactionLoading(false);
-    router
-      .push(group?.id ? `/groups/${group?.id}` : '/balances')
-      .then(() => resetState())
-      .catch(console.error);
-  }, [
-    setSplitScreenOpen,
-    router,
-    resetState,
-    addExpenseMutation,
-    group,
-    paidBy,
-    splitType,
-    fileKey,
-    isExpenseSettled,
-    multipleTransactions,
-    participants,
-    category,
-    setIsTransactionLoading,
-    splitShares,
-    setMultipleTransactions,
-  ]);
 
   const addExpense = useCallback(async () => {
     const { group, paidBy } = useAddExpenseStore.getState();
@@ -262,21 +177,6 @@ export const AddOrEditExpensePage: React.FC<{
     [onUpdateAmount],
   );
 
-  const addViaBankTransaction = useCallback(
-    (obj: TransactionAddInputModel) => {
-      setExpenseDate(obj.date);
-      setDescription(obj.description);
-      if (isCurrencyCode(obj.currency)) {
-        setCurrency(obj.currency);
-      } else {
-        console.warn(`Invalid currency code: ${obj.currency}`);
-      }
-      onUpdateAmount(obj.amount);
-      setTransactionId(obj.transactionId ?? '');
-    },
-    [setExpenseDate, setDescription, setCurrency, onUpdateAmount, setTransactionId],
-  );
-
   const clearFields = useCallback(() => {
     setAmount(0n);
     setDescription('');
@@ -284,14 +184,6 @@ export const AddOrEditExpensePage: React.FC<{
     setTransactionId('');
     setExpenseDate(new Date());
   }, [setAmount, setDescription, setAmountStr, setTransactionId, setExpenseDate]);
-
-  const handleSetMultipleTransactions = useCallback(
-    (a: TransactionAddInputModel[]) => {
-      clearFields();
-      setMultipleTransactions(a);
-    },
-    [clearFields, setMultipleTransactions],
-  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -397,13 +289,7 @@ export const AddOrEditExpensePage: React.FC<{
               </Button>
             </div>
           </div>
-          <BankingTransactions
-            add={addViaBankTransaction}
-            addMultipleExpenses={addMultipleExpenses}
-            multipleTransactions={multipleTransactions}
-            setMultipleTransactions={handleSetMultipleTransactions}
-            isTransactionLoading={isTransactionLoading}
-          />
+          <AddBankTransactions clearFields={clearFields} onUpdateAmount={onUpdateAmount} />
           <SponsorUs />
         </>
       )}

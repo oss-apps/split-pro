@@ -2,6 +2,9 @@ import { env } from '~/env';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 import { z } from 'zod';
 import NordigenClient, { type GetTransactions } from 'nordigen-node';
+import { format, subDays } from 'date-fns';
+import { getDbCachedData, setDbCachedData } from '../services/dbCache';
+import type { CachedBankData } from '@prisma/client';
 
 const client = new NordigenClient({
   secretId: env.GOCARDLESS_SECRET_ID,
@@ -12,7 +15,9 @@ export const gocardlessRouter = createTRPCRouter({
   getTransactions: protectedProcedure
     .input(z.string().optional())
     .query(async ({ input: requisitionId, ctx }) => {
-      if (!requisitionId) return;
+      if (!requisitionId) {
+        return;
+      }
 
       await client.generateToken();
 
@@ -20,36 +25,36 @@ export const gocardlessRouter = createTRPCRouter({
 
       const accountId = requisitionData.accounts[0];
 
-      const cachedData = await ctx.db.cachedBankData.findUnique({
+      const cachedData = await getDbCachedData<CachedBankData, 'cachedBankData'>({
+        key: 'cachedBankData',
         where: { obapiProviderId: accountId, userId: ctx.session.user.id },
       });
 
       if (cachedData) {
-        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        if (cachedData.lastFetched > twentyFourHoursAgo) {
-          if (!cachedData.data) {
-            throw new Error('Failed to fetch cached transactions');
-          }
-          return JSON.parse(cachedData.data) as GetTransactions;
+        if (!cachedData.data) {
+          throw new Error('Failed to fetch cached transactions');
         }
+        return JSON.parse(cachedData.data) as GetTransactions;
       }
 
       const account = client.account(accountId ?? '');
 
-      const transactions = await account.getTransactions();
+      const intervalInDays = env.GOCARDLESS_INTERVAL_IN_DAYS ?? 30;
+      // Date needs to be in YYYY-MM-DD format according to Nordigen.
+      // TODO: In future make it possible to filter on datefrom.
+      const transactions = await account.getTransactions({
+        dateTo: format(new Date(), 'yyyy-MM-dd'),
+        dateFrom: format(subDays(new Date(), intervalInDays), 'yyyy-MM-dd'),
+      });
 
       if (!transactions) {
         throw new Error('Failed to fetch transactions');
       }
 
-      await ctx.db.cachedBankData.upsert({
-        where: { obapiProviderId: accountId, userId: ctx.session.user.id },
-        update: {
-          data: JSON.stringify(transactions),
-          lastFetched: new Date(),
-          userId: ctx.session.user.id,
-        },
-        create: {
+      await setDbCachedData({
+        key: 'cachedBankData',
+        where: { obapiProviderId: accountId ?? '', userId: ctx.session.user.id },
+        data: {
           obapiProviderId: accountId ?? '',
           data: JSON.stringify(transactions),
           lastFetched: new Date(),
@@ -62,7 +67,9 @@ export const gocardlessRouter = createTRPCRouter({
   connectToBank: protectedProcedure
     .input(z.string().optional())
     .mutation(async ({ input: institutionId, ctx }) => {
-      if (!institutionId) return;
+      if (!institutionId) {
+        return;
+      }
 
       await client.generateToken();
 
@@ -106,8 +113,5 @@ export const gocardlessRouter = createTRPCRouter({
     }
 
     return institutionsData;
-  }),
-  gocardlessEnabled: publicProcedure.query(async () => {
-    return env.GOCARDLESS_ENABLED ?? false;
   }),
 });

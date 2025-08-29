@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 
-/** @type {import('next').NextConfig} */
+/** @type {import('next-i18next').UserConfig} */
 const config = {
   i18n: {
     defaultLocale: 'default',

@@ -12,8 +12,8 @@ import { customServerSideTranslations } from '~/utils/i18n/server';
 const AddBankTransactions: React.FC<{
   clearFields: () => void;
   onUpdateAmount: (amount: string) => void;
-  gocardlessEnabled?: boolean;
-}> = ({ clearFields, onUpdateAmount, gocardlessEnabled }) => {
+  bankConnectionEnabled: boolean;
+}> = ({ clearFields, onUpdateAmount, bankConnectionEnabled }) => {
   const participants = useAddExpenseStore((s) => s.participants);
   const group = useAddExpenseStore((s) => s.group);
   const category = useAddExpenseStore((s) => s.category);
@@ -149,20 +149,9 @@ const AddBankTransactions: React.FC<{
       multipleTransactions={multipleTransactions}
       setMultipleTransactions={handleSetMultipleTransactions}
       isTransactionLoading={isTransactionLoading}
-      gocardlessEnabled={!!gocardlessEnabled}
+      bankConnectionEnabled={bankConnectionEnabled}
     />
   );
 };
-
-export const getServerSideProps: GetServerSideProps = async (context) => ({
-  props: {
-    gocardlessEnabled: !!(
-      env.GOCARDLESS_SECRET_ID &&
-      env.GOCARDLESS_SECRET_KEY &&
-      env.GOCARDLESS_COUNTRY
-    ),
-    ...(await customServerSideTranslations(context.locale, ['expense_details', 'common'])),
-  },
-});
 
 export default AddBankTransactions;

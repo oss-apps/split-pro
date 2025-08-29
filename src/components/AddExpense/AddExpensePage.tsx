@@ -28,7 +28,8 @@ export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
   expenseId?: string;
-}> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
+  bankConnectionEnabled: boolean;
+}> = ({ isStorageConfigured, enableSendingInvites, expenseId, bankConnectionEnabled }) => {
   const { t, toUIDate } = useTranslationWithUtils(['expense_details']);
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
@@ -289,7 +290,11 @@ export const AddOrEditExpensePage: React.FC<{
               </Button>
             </div>
           </div>
-          <AddBankTransactions clearFields={clearFields} onUpdateAmount={onUpdateAmount} />
+          <AddBankTransactions
+            clearFields={clearFields}
+            onUpdateAmount={onUpdateAmount}
+            bankConnectionEnabled={bankConnectionEnabled}
+          />
           <SponsorUs />
         </>
       )}

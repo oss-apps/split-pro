@@ -8,14 +8,18 @@ import { Button } from '../ui/button';
 import Image from 'next/image';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
-export const BankAccountSelect = ({ gocardlessEnabled }: { gocardlessEnabled: boolean }) => {
+export const BankAccountSelect = ({
+  bankConnectionEnabled,
+}: {
+  bankConnectionEnabled: boolean;
+}) => {
   const { t } = useTranslationWithUtils(['account_page']);
 
   const userQuery = api.user.me.useQuery();
   const updateProfile = api.user.updateUserDetail.useMutation();
   const institutions = api.gocardless.getInstitutions.useQuery();
 
-  if (!gocardlessEnabled) {
+  if (!bankConnectionEnabled) {
     return null;
   }
 

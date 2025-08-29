@@ -30,12 +30,13 @@ import { env } from '~/env';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { BankAccountSelect } from '~/components/Account/BankAccountSelect';
 import { bigIntReplacer } from '~/utils/numbers';
+import { isBankConnectionConfigured } from '~/server/bankTransactions';
 
 const AccountPage: NextPageWithUser<{
   isCloud: boolean;
   feedBackPossible: boolean;
-  gocardlessEnabled: boolean;
-}> = ({ user, isCloud, feedBackPossible, gocardlessEnabled }) => {
+  bankConnectionEnabled: boolean;
+}> = ({ user, isCloud, feedBackPossible, bankConnectionEnabled }) => {
   const { t } = useTranslation('account_page');
   const router = useRouter();
   const userQuery = api.user.me.useQuery();
@@ -127,9 +128,9 @@ const AccountPage: NextPageWithUser<{
         <div className="mt-8 flex flex-col gap-4">
           <LanguagePicker />
 
-          {gocardlessEnabled && (
+          {bankConnectionEnabled && (
             <>
-              <BankAccountSelect gocardlessEnabled={gocardlessEnabled} />
+              <BankAccountSelect bankConnectionEnabled={bankConnectionEnabled} />
               {userQuery.data?.bankingId && (
                 <Button
                   onClick={onConnectToBank}
@@ -309,11 +310,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
     feedbackPossible: !!env.FEEDBACK_EMAIL,
     isCloud: env.NEXTAUTH_URL.includes('splitpro.app'),
-    gocardlessEnabled: !!(
-      env.GOCARDLESS_SECRET_ID &&
-      env.GOCARDLESS_SECRET_KEY &&
-      env.GOCARDLESS_COUNTRY
-    ),
+    bankConnectionEnabled: !!isBankConnectionConfigured(),
     ...(await customServerSideTranslations(context.locale, ['account_page', 'common'])),
   },
 });

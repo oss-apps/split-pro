@@ -17,14 +17,14 @@ export const BankingTransactionList: React.FC<{
   multipleTransactions: TransactionAddInputModel[];
   setMultipleTransactions: (a: TransactionAddInputModel[]) => void;
   isTransactionLoading: boolean;
-  gocardlessEnabled: boolean;
+  bankConnectionEnabled: boolean;
 }> = ({
   add,
   addMultipleExpenses,
   multipleTransactions,
   setMultipleTransactions,
   isTransactionLoading,
-  gocardlessEnabled,
+  bankConnectionEnabled,
 }) => {
   const { t } = useTranslationWithUtils(['expense_details']);
 
@@ -59,7 +59,7 @@ export const BankingTransactionList: React.FC<{
     return transaction?.group?.name ? ` to ${transaction.group.name}` : '';
   };
 
-  if (!gocardlessEnabled) {
+  if (!bankConnectionEnabled) {
     return null;
   }
 

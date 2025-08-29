@@ -12,7 +12,7 @@ const goCardlessClient = new NordigenClient({
   secretKey: env.GOCARDLESS_SECRET_KEY,
 });
 
-// When adding more, please modal the output so the components are reusable.
+// When adding more, please model the output so the components are reusable.
 export const bankTransactionsRouter = createTRPCRouter({
   getTransactions: protectedProcedure
     .input(z.string().optional())

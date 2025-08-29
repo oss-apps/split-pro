@@ -21,7 +21,7 @@ export const BalanceEntry: React.FC<{
   return (
     <Link className="flex items-center justify-between" href={`${currentRoute}/${id}`}>
       <div className="flex items-center gap-3">
-        <EntityAvatar entity={entity} />
+        <EntityAvatar entity={entity} size={35} />
         <div className="text-foreground">{entity.name ?? entity.email}</div>
       </div>
       {0n === amount ? (

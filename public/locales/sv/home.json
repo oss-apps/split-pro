@@ -58,6 +58,10 @@
     "i18": {
       "title": "Internationalisering",
       "description": "Tillgänglig på flera språk för att göra utgiftsdelning tillgänglig över hela världen"
+    },
+    "bank_connection": {
+      "title": "Bankanslutning",
+      "description": "Lägg till utgifter snabbare med en integration till GoCardless bankkontotransaktions-API"
     }
   },
   "footer": {

@@ -58,6 +58,10 @@
     "i18": {
       "title": "Internationalisierung",
       "description": "Verfügbar in mehreren Sprachen, um das Teilen von Ausgaben weltweit zugänglich zu machen"
+    },
+    "bank_connection": {
+      "title": "Bankverbindung",
+      "description": "Füge Ausgaben schneller hinzu mit einer Integration in GoCardless Bankkonto-Transaktions-API"
     }
   },
   "footer": {

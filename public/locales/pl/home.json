@@ -58,6 +58,10 @@
     "i18": {
       "title": "Internacjonalizacja",
       "description": "Dostępne w wielu językach, aby dzielenie wydatków było dostępne na całym świecie"
+    },
+    "bank_connection": {
+      "title": "Połączenie Bankowe",
+      "description": "Dodawaj wydatki szybciej dzięki integracji do API transakcji kont bankowych GoCardless"
     }
   },
   "footer": {

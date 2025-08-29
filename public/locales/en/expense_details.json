@@ -75,6 +75,9 @@
     "submit_all": "Submit all",
     "pending": "Pending",
     "no_transactions_yet": "No transactions yet",
-    "already_added": "Already added"
+    "already_added": "Already added",
+    "errors": {
+      "amount_required": ""
+    }
   }
 }

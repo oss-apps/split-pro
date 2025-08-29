@@ -50,6 +50,14 @@
     "push_notifications": {
       "title": "Push-notifikationer",
       "description": "Missa aldrig viktiga notifikationer. Få meddelanden när någon lägger till en utgift eller kvittar"
+    },
+    "debt_simplification": {
+      "title": "Skuldförenkling",
+      "description": "Förenkla automatiskt gruppskulder för att minska antalet transaktioner som behövs mellan vänner"
+    },
+    "i18": {
+      "title": "Internationalisering",
+      "description": "Tillgänglig på flera språk för att göra utgiftsdelning tillgänglig över hela världen"
     }
   },
   "footer": {

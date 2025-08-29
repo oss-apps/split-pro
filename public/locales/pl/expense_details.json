@@ -12,8 +12,8 @@
       "description_placeholder": "Wprowadź opis",
       "amount_placeholder": "Wprowadź kwotę",
       "split_type_section": {
-        "split_equally": "podziel równo",
-        "split_unequally": "podziel nierówno",
+        "split_equally": "podzielone równo",
+        "split_unequally": "podzielone nierówno",
         "types": {
           "equal": {
             "title": "Równo",

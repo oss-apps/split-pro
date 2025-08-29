@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "title": "SplitPro: Divide as tuas despesas com os teus amigos gratuitamente",
+    "description": "SplitPro: Divide as tuas despesas com os teus amigos gratuitamente",
+    "application_name": "SplitPro"
+  },
+  "navigation": {
+    "app_name": "SplitPro",
+    "balances": "Balancetes",
+    "groups": "Grupos",
+    "add_expense": "Adicionar Despesa",
+    "add": "Adicionar",
+    "activity": "Atividade",
+    "account": "Conta"
+  },
+  "ui": {
+    "actors": {
+      "you": "Tu",
+      "you_dativus": "Tu",
+      "you_accusativus": "Tu",
+      "friends": "Amigos",
+      "groups": "Grupos",
+      "members": "Membros",
+      "owner": "Proprietário",
+      "all": "Todos"
+    },
+    "actions": {
+      "cancel": "Cancelar",
+      "confirm": "Confirmar",
+      "submit": "Submeter",
+      "close": "Fechar",
+      "back": "Voltar",
+      "create": "Criar",
+      "save": "Salvar",
+      "leave": "Sair",
+      "invite": "Convidar",
+      "export": "Exportar",
+      "import": "Importar",
+      "add_expense": "Adicionar despesa",
+      "edit_expense": "Editar despesa",
+      "settle_up": "Acertar contas"
+    },
+    "expense": {
+      "you": {
+        "lent": "emprestaste",
+        "owe": "deves",
+        "paid": "pagaste",
+        "pay": "pagar",
+        "received": "recebeste",
+        "deleted": "apagaste"
+      },
+      "user": {
+        "lent": "emprestou",
+        "owe": "deve",
+        "paid": "pagou",
+        "pay": "pagar",
+        "received": "recebeu",
+        "deleted": "apagou"
+      },
+      "for": "por",
+      "paid_by": "Pago por",
+      "received_by": "Recebido por",
+      "to": "para",
+      "from": "de"
+    },
+    "balance": "saldo",
+    "balances": "saldos",
+    "or": "ou",
+    "and": "e",
+    "today": "Hoje",
+    "delete": "Eliminar",
+    "edited_by": "Editado por",
+    "deleted_by": "Eliminado por",
+    "added_by": "Adicionado por",
+    "on": "em",
+    "not_involved": "Não envolvido",
+    "no_activity": "Ainda sem atividade",
+    "settled_up": "Acertou contas",
+    "settle_up_name": "Acertar contas",
+    "settlement": "Acerto de contas",
+    "expense_details": "Detalhes da despesa",
+    "select_currency": "Selecionar moeda",
+    "outstanding_balances": "Saldos em aberto",
+    "share_text": "Testa o SplitPro. É uma alternativa gratuita ao Splitwise"
+  },
+  "errors": {
+    "name_required": "O nome é obrigatório",
+    "saving_expense": "Erro ao salvar despesa",
+    "something_went_wrong": "Algo deu errado",
+    "valid_email": "Insira um email válido"
+  }
+}

@@ -38,13 +38,40 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   loading?: boolean;
+  responsiveIcon?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, children, loading, ...props }, ref) => {
+  (
+    {
+      className = '',
+      variant = 'default',
+      size,
+      asChild = false,
+      responsiveIcon = false,
+      children,
+      loading,
+      ...props
+    },
+    ref,
+  ) => {
     const Comp = asChild ? SlotPrimitive.Slot : 'button';
     return (
-      <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props}>
+      <Comp
+        className={cn(
+          buttonVariants({
+            variant,
+            size,
+            className:
+              className +
+              (responsiveIcon
+                ? 'responsive-icon xs:gap-1 xs:text-sm xs:w-40 w-auto lg:w-[180px]'
+                : ''),
+          }),
+        )}
+        ref={ref}
+        {...props}
+      >
         {loading ? <LoadingSpinner /> : children}
       </Comp>
     );

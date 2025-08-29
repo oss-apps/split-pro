@@ -50,6 +50,14 @@
     "push_notifications": {
       "title": "Push notification",
       "description": "Never miss important notifications. Get notified when someone adds an expense or settles up"
+    },
+    "debt_simplification": {
+      "title": "Debt Simplification",
+      "description": "Automatically simplify group debts to reduce the number of transactions needed between friends"
+    },
+    "i18": {
+      "title": "Internationalization",
+      "description": "Available in multiple languages to make expense splitting accessible worldwide"
     }
   },
   "footer": {

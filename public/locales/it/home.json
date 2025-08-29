@@ -50,6 +50,14 @@
     "push_notifications": {
       "title": "Notifiche push",
       "description": "Non perdere mai le notifiche importanti. Ricevi notifiche quando qualcuno aggiunge una spesa o un saldo"
+    },
+    "debt_simplification": {
+      "title": "Semplificazione Debiti",
+      "description": "Semplifica automaticamente i debiti di gruppo per ridurre il numero di transazioni necessarie tra amici"
+    },
+    "i18": {
+      "title": "Internazionalizzazione",
+      "description": "Disponibile in più lingue per rendere la divisione delle spese accessibile in tutto il mondo"
     }
   },
   "footer": {

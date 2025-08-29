@@ -7,6 +7,7 @@ import {
   Globe,
   Import,
   Landmark,
+  Merge,
   Split,
   Users,
 } from 'lucide-react';
@@ -196,12 +197,29 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
               <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
                 <div className="flex flex-col gap-1 lg:w-1/2">
                   <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Landmark className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">Bank account transactions</p>
+                    <Merge className="text-primary h-6 w-6" />
+                    <p className="text-lg font-medium">{t('features.debt_simplification.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
-                    Add expenses faster with a integration to GoCardless bank account transactions
-                    api
+                    {t('features.debt_simplification.description')}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-1 lg:w-1/2">
+                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
+                    <Globe className="text-primary h-6 w-6" />
+                    <p className="text-lg font-medium">{t('features.i18.title')}</p>
+                  </div>
+                  <p className="px-4 text-gray-400 lg:px-0">{t('features.i18.description')}</p>
+                </div>
+              </div>
+              <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
+                <div className="flex flex-col gap-1 lg:w-1/2">
+                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
+                    <Landmark className="text-primary h-6 w-6" />
+                    <p className="text-lg font-medium">{t('features.bank_connection.title')}</p>
+                  </div>
+                  <p className="px-4 text-gray-400 lg:px-0">
+                    {t('features.bank_connection.description')}
                   </p>
                 </div>
               </div>
@@ -264,7 +282,7 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
               </div>
             </div>
           </div>
-          <div className="sticky top-40 hidden shrink-0 lg:flex">
+          <div className="sticky top-20 hidden shrink-0 lg:flex">
             <MobileScreenShot />
           </div>
         </div>

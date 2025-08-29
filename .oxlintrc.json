@@ -37,7 +37,8 @@
     "no-nested-ternary": "off",
     "typescript/no-confusing-void-expression": "off",
     "typescript/no-misused-spread": "warn",
-    "func-names": "off"
+    "func-names": "off",
+    "prefer-destructuring": "off"
   },
   "overrides": [
     {

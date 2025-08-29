@@ -27,7 +27,7 @@
     "actions": {
       "cancel": "Abbrechen",
       "confirm": "Bestätigen",
-      "submit": "Einreichen",
+      "submit": "Speichern",
       "close": "Schließen",
       "back": "Zurück",
       "create": "Erstellen",
@@ -42,7 +42,7 @@
     },
     "expense": {
       "you": {
-        "lent": "hast verliehen",
+        "lent": "hast ausgegeben",
         "owe": "schuldest",
         "paid": "hast bezahlt",
         "pay": "bezahlst",
@@ -50,7 +50,7 @@
         "deleted": "hast gelöscht"
       },
       "user": {
-        "lent": "hat verliehen",
+        "lent": "hat ausgegeben",
         "owe": "schuldet",
         "paid": "hat bezahlt",
         "pay": "bezahlt",

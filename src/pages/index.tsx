@@ -2,7 +2,7 @@ import { type GetServerSideProps } from 'next';
 
 import { env } from '~/env';
 
-export default function Home() {
+export default function Index() {
   return null;
 }
 

@@ -3,6 +3,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --breakpoint-xs: 30rem;
+
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -75,6 +77,15 @@
   }
   @media (width >= 1400px) {
     max-width: 1400px;
+  }
+}
+
+@utility responsive-icon {
+  @media (width < --theme(--breakpoint-xs)) {
+    font-size: 0;
+    svg {
+      font-size: initial;
+    }
   }
 }
 

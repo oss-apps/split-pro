@@ -112,31 +112,10 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               </div>
             </div>
             <div className="mt-6 mb-4 flex justify-center gap-2">
-              {balances.data ? (
-                <SettleUp
-                  balances={balances.data}
-                  key={`${friendQuery.data?.id}-${balances.data.length}`}
-                  friend={friendQuery.data}
-                  currentUser={user}
-                />
-              ) : (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="w-[150px] gap-1 text-sm lg:w-[180px]"
-                  disabled
-                >
-                  {t('ui.actions.settle_up')}
-                </Button>
-              )}
-
+              <SettleUp balances={balances.data} friend={friendQuery.data} currentUser={user} />
               <Link href={`/add?friendId=${friendQuery.data.id}`}>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className="w-[150px] gap-1 text-sm lg:w-[180px]"
-                >
-                  <PlusIcon className="h-4 w-4 text-gray-400" /> {t('ui.actions.add_expense')}
+                <Button size="sm" variant="secondary" responsiveIcon>
+                  <PlusIcon className="size-4" /> {t('ui.actions.add_expense')}
                 </Button>
               </Link>
               <Export

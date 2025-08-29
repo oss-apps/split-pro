@@ -1,5 +1,5 @@
 import { type Balance, SplitType, type User } from '@prisma/client';
-import { ArrowRightIcon } from 'lucide-react';
+import { ArrowRightIcon, HandCoins } from 'lucide-react';
 import { type User as NextUser } from 'next-auth';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
@@ -16,11 +16,19 @@ import { Input } from '../ui/input';
 import { EntityAvatar } from '../ui/avatar';
 
 export const SettleUp: React.FC<{
-  balances: Balance[];
+  balances?: Balance[];
   friend: User;
   currentUser: NextUser;
 }> = ({ balances, friend, currentUser }) => {
   const { t } = useTranslation('friend_details');
+  if (!balances) {
+    return (
+      <Button size="sm" variant="outline" responsiveIcon disabled>
+        <span className="xs:inline hidden">{t('ui.actions.settle_up')}</span>
+      </Button>
+    );
+  }
+
   const [balanceToSettle, setBalanceToSettle] = useState<Balance | undefined>(
     1 < balances.length ? undefined : balances[0],
   );
@@ -83,7 +91,7 @@ export const SettleUp: React.FC<{
           className="flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500 px-3 text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 focus-visible:outline-hidden lg:w-[180px]"
           disabled={!balances.length}
         >
-          {t('ui.actions.settle_up', { ns: 'common' })}
+          <HandCoins className="size-4" /> {t('ui.actions.settle_up', { ns: 'common' })}
         </Button>
       }
       disableTrigger={!balances?.length}

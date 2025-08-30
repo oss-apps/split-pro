@@ -54,7 +54,7 @@ export const BankTransactionItem: React.FC<{
                 alreadyAdded && 'line-through',
               )}
             >
-              {item.remittanceInformationUnstructured}
+              {item.description}
             </p>
             <p className="line-clamp-1 flex text-left text-xs whitespace-break-spaces text-gray-500">
               {item.pending && t('ui.pending')}{' '}

@@ -30,7 +30,7 @@ import { env } from '~/env';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { BankAccountSelect } from '~/components/Account/BankAccountSelect';
 import { bigIntReplacer } from '~/utils/numbers';
-import { isBankConnectionConfigured } from '~/server/bankTransactions';
+import { isBankConnectionConfigured } from '~/server/bankTransactionHelper';
 
 const AccountPage: NextPageWithUser<{
   isCloud: boolean;
@@ -98,8 +98,8 @@ const AccountPage: NextPageWithUser<{
 
   const onConnectToBank = useCallback(async () => {
     const res = await connectToBank.mutateAsync(userQuery.data?.bankingId);
-    if (res?.link) {
-      window.location.href = res.link;
+    if (res?.authLink) {
+      window.location.href = res.authLink;
     }
   }, [connectToBank, userQuery.data?.bankingId]);
 

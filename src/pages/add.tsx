@@ -12,7 +12,7 @@ import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { type GetServerSideProps } from 'next';
-import { isBankConnectionConfigured } from '~/server/bankTransactions';
+import { isBankConnectionConfigured } from '~/server/bankTransactionHelper';
 
 const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;

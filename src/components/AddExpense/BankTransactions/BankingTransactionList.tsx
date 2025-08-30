@@ -2,12 +2,12 @@ import React, { useCallback } from 'react';
 import { api } from '~/utils/api';
 import { LoadingSpinner } from '../../ui/spinner';
 import { Button } from '../../ui/button';
-import { type Transaction } from 'nordigen-node';
 import type { TransactionAddInputModel } from '~/types';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { BankTransactionItem } from './BankTransactionItem';
+import type { TransactionOutputItem } from '~/server/bankTransactionHelper';
 
-export type TransactionWithPendingStatus = Transaction & {
+export type TransactionWithPendingStatus = TransactionOutputItem & {
   pending: boolean;
 };
 
@@ -29,24 +29,24 @@ export const BankingTransactionList: React.FC<{
   const { t } = useTranslationWithUtils(['expense_details']);
 
   const userQuery = api.user.me.useQuery();
-  const gctransactions = api.bankTransactions.getTransactions.useQuery(
+  const transactions = api.bankTransactions.getTransactions.useQuery(
     userQuery.data?.obapiProviderId,
   );
 
   const expensesQuery = api.user.getOwnExpenses.useQuery();
 
   const returnTransactionsArray = (): TransactionWithPendingStatus[] => {
-    const data = gctransactions?.data;
-    if (!data || Array.isArray(data) || !data.transactions) {
+    const data = transactions?.data?.transactions;
+
+    if (!data) {
       return [];
     }
-    const transactions = data.transactions;
 
-    const mapTransactions = (items: Transaction[], pendingStatus: boolean) =>
+    const mapTransactions = (items: TransactionOutputItem[], pendingStatus: boolean) =>
       items?.map((cItem) => ({ ...cItem, pending: pendingStatus })) || [];
 
-    const pending = mapTransactions(transactions.pending, true);
-    const booked = mapTransactions(transactions.booked, false);
+    const pending = mapTransactions(data.pending, true);
+    const booked = mapTransactions(data.booked, false);
 
     return [...pending, ...booked];
   };
@@ -74,7 +74,7 @@ export const BankingTransactionList: React.FC<{
         date: new Date(item.bookingDate),
         amount: item.transactionAmount.amount.replace('-', ''),
         currency: item.transactionAmount.currency,
-        description: item.remittanceInformationUnstructured,
+        description: item.description,
         transactionId: item.transactionId,
       };
 
@@ -113,7 +113,7 @@ export const BankingTransactionList: React.FC<{
           {t('ui.submit_all')}
         </Button>
       </div>
-      {gctransactions.isInitialLoading ? (
+      {transactions?.isLoading ? (
         <div className="mt-10 flex justify-center">
           <LoadingSpinner className="text-primary" />
         </div>
@@ -126,7 +126,7 @@ export const BankingTransactionList: React.FC<{
             ?.filter((item) => item.transactionAmount.amount.includes('-'))
             .map((item, index) => (
               <BankTransactionItem
-                key={index}
+                key={item.transactionId}
                 index={index}
                 item={item}
                 alreadyAdded={alreadyAdded(item.transactionId)}

@@ -5,9 +5,6 @@ import { calculateParticipantSplit, useAddExpenseStore } from '~/store/addStore'
 import type { TransactionAddInputModel } from '~/types';
 import { api } from '~/utils/api';
 import { BankingTransactionList } from './BankTransactions/BankingTransactionList';
-import type { GetServerSideProps } from 'next';
-import { env } from '~/env';
-import { customServerSideTranslations } from '~/utils/i18n/server';
 
 const AddBankTransactions: React.FC<{
   clearFields: () => void;

@@ -69,6 +69,13 @@
       "are_settled_up": "are settled up",
       "is_settled_up": "is settled up"
     },
+    "verified_transaction": "Verified transaction",
+    "clear": "Clear",
+    "bank_transactions": "Bank transactions",
+    "submit_all": "Submit all",
+    "pending": "Pending",
+    "no_transactions_yet": "No transactions yet",
+    "already_added": "Already added",
     "errors": {
       "amount_required": ""
     }

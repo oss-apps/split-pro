@@ -58,6 +58,10 @@
     "i18": {
       "title": "Internationalization",
       "description": "Available in multiple languages to make expense splitting accessible worldwide"
+    },
+    "bank_connection": {
+      "title": "Bank connection",
+      "description": "Add expenses faster with a integration to GoCardless bank account transactions api"
     }
   },
   "footer": {

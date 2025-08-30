@@ -41,6 +41,7 @@ export async function createExpense(
     participants,
     expenseDate,
     fileKey,
+    transactionId,
   }: CreateExpense,
   currentUserId: number,
 ) {
@@ -66,6 +67,7 @@ export async function createExpense(
         fileKey,
         addedBy: currentUserId,
         expenseDate,
+        transactionId: transactionId ?? '',
       },
     }),
   );

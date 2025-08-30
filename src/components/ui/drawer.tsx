@@ -179,7 +179,6 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
           {trigger}
         </DialogTrigger>
         <DialogContent
-          className=""
           onInteractOutside={(e) => {
             if (false === dismissible) {
               e.preventDefault();

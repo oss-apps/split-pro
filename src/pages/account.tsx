@@ -1,5 +1,6 @@
 import {
   ChevronRight,
+  CreditCard,
   Download,
   DownloadCloud,
   FileDown,
@@ -11,9 +12,11 @@ import { signOut } from 'next-auth/react';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { api } from '~/utils/api';
+import { type NextPageWithUser } from '~/types';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
+import { useRouter } from 'next/router';
 import { LanguagePicker } from '~/components/Account/LanguagePicker';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
@@ -24,20 +27,21 @@ import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { env } from '~/env';
-import { type NextPageWithUser } from '~/types';
-import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
+import { BankAccountSelect } from '~/components/Account/BankAccountSelect';
 import { bigIntReplacer } from '~/utils/numbers';
+import { isBankConnectionConfigured } from '~/server/bankTransactionHelper';
 
-const AccountPage: NextPageWithUser<{ isCloud: boolean; feedBackPossible: boolean }> = ({
-  user,
-  isCloud,
-  feedBackPossible,
-}) => {
+const AccountPage: NextPageWithUser<{
+  isCloud: boolean;
+  feedBackPossible: boolean;
+  bankConnectionEnabled: boolean;
+}> = ({ user, isCloud, feedBackPossible, bankConnectionEnabled }) => {
   const { t } = useTranslation('account_page');
   const router = useRouter();
   const userQuery = api.user.me.useQuery();
   const downloadQuery = api.user.downloadData.useMutation();
+  const connectToBank = api.bankTransactions.connectToBank.useMutation();
   const updateDetailsMutation = api.user.updateUserDetail.useMutation();
 
   const [downloading, setDownloading] = useState(false);
@@ -92,6 +96,13 @@ const AccountPage: NextPageWithUser<{ isCloud: boolean; feedBackPossible: boolea
     void router.push('/auth/signin', '/auth/signin', { locale: 'default' });
   }, [router]);
 
+  const onConnectToBank = useCallback(async () => {
+    const res = await connectToBank.mutateAsync(userQuery.data?.bankingId);
+    if (res?.authLink) {
+      window.location.href = res.authLink;
+    }
+  }, [connectToBank, userQuery.data?.bankingId]);
+
   return (
     <>
       <Head>
@@ -116,6 +127,28 @@ const AccountPage: NextPageWithUser<{ isCloud: boolean; feedBackPossible: boolea
         </div>
         <div className="mt-8 flex flex-col gap-4">
           <LanguagePicker />
+
+          {bankConnectionEnabled && (
+            <>
+              <BankAccountSelect bankConnectionEnabled={bankConnectionEnabled} />
+              {userQuery.data?.bankingId && (
+                <Button
+                  onClick={onConnectToBank}
+                  variant="ghost"
+                  className="text-md hover:text-foreground/80 w-full justify-between px-0"
+                >
+                  <div className="flex items-center gap-4">
+                    <CreditCard className="h-5 w-5 text-teal-500" />
+                    <p>
+                      {userQuery.data?.obapiProviderId ? t('ui.reconnect') : t('ui.connect')}{' '}
+                      {t('ui.to_bank')}
+                    </p>
+                  </div>
+                  <ChevronRight className="h-6 w-6 text-gray-500" />
+                </Button>
+              )}
+            </>
+          )}
 
           {isCloud && (
             <Link href="https://twitter.com/KM_Koushik_" target="_blank">
@@ -277,6 +310,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
     feedbackPossible: !!env.FEEDBACK_EMAIL,
     isCloud: env.NEXTAUTH_URL.includes('splitpro.app'),
+    bankConnectionEnabled: !!isBankConnectionConfigured(),
     ...(await customServerSideTranslations(context.locale, ['account_page', 'common'])),
   },
 });

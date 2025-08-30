@@ -68,6 +68,13 @@
       "press_balance_info": "Premi sul saldo individuale per avviare il regolamento",
       "are_settled_up": "siete pari",
       "is_settled_up": "è pari"
-    }
+    },
+    "verified_transaction": "Transazione verificata",
+    "clear": "Cancella",
+    "bank_transactions": "Transazioni bancarie",
+    "submit_all": "Invia tutto",
+    "pending": "In attesa",
+    "no_transactions_yet": "Nessuna transazione",
+    "already_added": "Già aggiunto"
   }
 }

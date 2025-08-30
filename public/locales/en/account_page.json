@@ -66,6 +66,13 @@
     "support_us": "Sponsor us",
     "follow_on_x": "Follow us on X",
     "logout": "Logout",
+    "choose_bank_provider": "Choose bank provider",
+    "select_bank_provider": "Select bank provider",
+    "search_bank": "Search bank",
+    "no_bank_providers_found": "No bank providers found",
+    "to_bank": "to bank",
+    "reconnect": "Reconnect",
+    "connect": "Connect",
     "edit_name": {
       "title": "Edit name",
       "placeholder": "Enter name"

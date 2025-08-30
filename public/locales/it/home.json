@@ -58,6 +58,10 @@
     "i18": {
       "title": "Internazionalizzazione",
       "description": "Disponibile in più lingue per rendere la divisione delle spese accessibile in tutto il mondo"
+    },
+    "bank_connection": {
+      "title": "Connessione Bancaria",
+      "description": "Aggiungi spese più velocemente con un'integrazione alla API di transazioni dei conti bancari di GoCardless"
     }
   },
   "footer": {

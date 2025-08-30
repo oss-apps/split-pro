@@ -82,6 +82,13 @@
       "group_required": "Grupa jest wymagana",
       "amount_required": "Kwota jest wymagana",
       "description_required": "Opis jest wymagany"
-    }
+    },
+    "verified_transaction": "Transakcja zweryfikowana",
+    "clear": "Wyczyść",
+    "bank_transactions": "Transakcje",
+    "submit_all": "Wyślij wszystkie",
+    "pending": "Oczekuje",
+    "no_transactions_yet": "Brak transakcji",
+    "already_added": "Dodane"
   }
 }

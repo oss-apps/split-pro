@@ -166,7 +166,9 @@ const Home: NextPage<{
                 onClick={handleProviderSignIn(provider.id)}
                 key={provider.id}
               >
-                {providerSvgs[provider.id as keyof typeof providerSvgs]}
+                {provider.id in providerSvgs
+                  ? providerSvgs[provider.id as keyof typeof providerSvgs]
+                  : null}
                 {t('auth.continue_with', { provider: provider.name })}
               </Button>
             ))}

@@ -10,6 +10,7 @@
     "db:studio": "prisma studio",
     "db:dev": "prisma migrate dev",
     "db:seed": "prisma db seed",
+    "db:cron": "prisma db execute --file prisma/pg_cron_setup.sql --schema prisma/schema.prisma",
     "prisma:prod": "prisma migrate deploy",
     "dev": "next dev --turbopack",
     "postinstall": "prisma generate",

@@ -12,11 +12,12 @@ SELECT cron.schedule(
   $$
 );
 
-SELECT cron.schedule(
-  'cleanup_cached_bank_data_minute',
-  '* * * * *',
-  $$
-  DELETE FROM "CachedBankData"
-  WHERE "lastFetched" < NOW() - INTERVAL '2 days'
-  $$
-);
+-- For testing purposes only
+-- SELECT cron.schedule(
+--   'cleanup_cached_bank_data_minute',
+--   '* * * * *',
+--   $$
+--   DELETE FROM "CachedBankData"
+--   WHERE "lastFetched" < NOW() - INTERVAL '2 days'
+--   $$
+-- );

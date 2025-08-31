@@ -10,6 +10,7 @@ import { Receipt } from './Receipt';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import type { FC } from 'react';
 import { CategoryIcon } from '../ui/categoryIcons';
+import { BadgeCheck } from 'lucide-react';
 
 interface ExpenseDetailsProps {
   user: NextUser;
@@ -61,6 +62,12 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ user, expense, storagePublicU
                 {t('ui.added_by', { ns: 'common' })}{' '}
                 {displayName(expense.addedByUser, user.id, 'dativus')}{' '}
                 {t('ui.on', { ns: 'common' })} {toUIDate(expense.createdAt, { year: true })}
+              </p>
+            )}
+            {expense.transactionId && (
+              <p className="flex gap-2 text-sm text-gray-500">
+                {t('ui.verified_transaction')}
+                <BadgeCheck className="h-4 w-4 text-emerald-500" />
               </p>
             )}
           </div>

@@ -2,7 +2,9 @@ name: split-pro-dev
 
 services:
   postgres:
-    image: postgres:16
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: ${POSTGRES_CONTAINER_NAME:-splitpro-db}
     restart: always
     environment:
@@ -14,6 +16,10 @@ services:
       - database:/var/lib/postgresql/data
     ports:
       - '${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}'
+    command: >
+      postgres
+      -c shared_preload_libraries=pg_cron
+      -c cron.database_name=${POSTGRES_DB:-splitpro}
 
   minio:
     image: minio/minio

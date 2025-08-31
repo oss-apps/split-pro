@@ -2,7 +2,6 @@ import { CalendarIcon, HeartHandshakeIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useCallback } from 'react';
-import { useTranslation } from 'next-i18next';
 
 import { type CurrencyCode } from '~/lib/currency';
 import { cn } from '~/lib/utils';
@@ -22,12 +21,15 @@ import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
 import { toast } from 'sonner';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { useTranslation } from 'next-i18next';
+import AddBankTransactions from './AddBankTransactions';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
   expenseId?: string;
-}> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
+  bankConnectionEnabled: boolean;
+}> = ({ isStorageConfigured, enableSendingInvites, expenseId, bankConnectionEnabled }) => {
   const { t, toUIDate } = useTranslationWithUtils(['expense_details']);
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
@@ -44,6 +46,7 @@ export const AddOrEditExpensePage: React.FC<{
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const splitType = useAddExpenseStore((s) => s.splitType);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
+  const transactionId = useAddExpenseStore((s) => s.transactionId);
 
   const {
     setCurrency,
@@ -54,6 +57,9 @@ export const AddOrEditExpensePage: React.FC<{
     resetState,
     setSplitScreenOpen,
     setExpenseDate,
+    setTransactionId,
+    setMultipleTransactions,
+    setIsTransactionLoading,
   } = useAddExpenseStore((s) => s.actions);
 
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
@@ -80,6 +86,7 @@ export const AddOrEditExpensePage: React.FC<{
   );
 
   const addExpense = useCallback(async () => {
+    const { group, paidBy } = useAddExpenseStore.getState();
     if (!paidBy) {
       return;
     }
@@ -88,6 +95,9 @@ export const AddOrEditExpensePage: React.FC<{
       setSplitScreenOpen(true);
       return;
     }
+
+    setMultipleTransactions([]);
+    setIsTransactionLoading(false);
 
     const sign = isNegative ? -1n : 1n;
 
@@ -108,6 +118,7 @@ export const AddOrEditExpensePage: React.FC<{
           fileKey,
           expenseDate,
           expenseId,
+          transactionId,
         },
         {
           onSuccess: (d) => {
@@ -147,6 +158,9 @@ export const AddOrEditExpensePage: React.FC<{
     splitType,
     fileKey,
     isExpenseSettled,
+    setMultipleTransactions,
+    transactionId,
+    setIsTransactionLoading,
   ]);
 
   const handleDescriptionChange = useCallback(
@@ -163,6 +177,14 @@ export const AddOrEditExpensePage: React.FC<{
     },
     [onUpdateAmount],
   );
+
+  const clearFields = useCallback(() => {
+    setAmount(0n);
+    setDescription('');
+    setAmountStr('');
+    setTransactionId('');
+    setExpenseDate(new Date());
+  }, [setAmount, setDescription, setAmountStr, setTransactionId, setExpenseDate]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -212,7 +234,7 @@ export const AddOrEditExpensePage: React.FC<{
               onChange={onAmountChange}
             />
           </div>
-          <div className="h-[180px]">
+          <div className="h-auto">
             {amount && '' !== description ? (
               <>
                 <SplitTypeSection />
@@ -262,7 +284,17 @@ export const AddOrEditExpensePage: React.FC<{
                 </div>
               </>
             ) : null}
+            <div className="flex items-center justify-end gap-4">
+              <Button variant="ghost" className="text-primary px-0" onClick={clearFields}>
+                {t('ui.clear')}
+              </Button>
+            </div>
           </div>
+          <AddBankTransactions
+            clearFields={clearFields}
+            onUpdateAmount={onUpdateAmount}
+            bankConnectionEnabled={bankConnectionEnabled}
+          />
           <SponsorUs />
         </>
       )}

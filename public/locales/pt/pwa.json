@@ -1,0 +1,19 @@
+{
+  "ui": {
+    "download_button": "Baixar aplicativo",
+    "or": "ou",
+    "drawer": {
+      "title": "Baixar aplicativo",
+      "left_action": "Fechar",
+      "description": "Você pode instalar o SplitPro como PWA na tela inicial",
+      "ios": {
+        "text": "Se você usa iOS, veja este",
+        "link_text": "vídeo"
+      },
+      "android": {
+        "text": "Se você usa Android, veja este",
+        "link_text": "vídeo"
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "ui": {
+    "download_button": "Scarica l'app",
+    "or": "oppure",
+    "drawer": {
+      "title": "Scarica l'app",
+      "left_action": "Chiudi",
+      "description": "Puoi installare SplitPro come PWA sulla schermata Home",
+      "ios": {
+        "text": "Se usi iOS, guarda questo",
+        "link_text": "video"
+      },
+      "android": {
+        "text": "Se usi Android, guarda questo",
+        "link_text": "video"
+      }
+    }
+  }
+}

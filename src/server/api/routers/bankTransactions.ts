@@ -29,7 +29,10 @@ export const bankTransactionsRouter = createTRPCRouter({
     )
     .mutation(async ({ input: institutionId, ctx }) => {
       if (whichBankConnectionConfigured() === 'GOCARDLESS') {
-        const res = await gocardless.connectToBank(institutionId);
+        const res = await gocardless.connectToBank(
+          institutionId,
+          ctx.session.user.preferredLanguage,
+        );
 
         if (!res) {
           throw new Error('Failed to link to bank');

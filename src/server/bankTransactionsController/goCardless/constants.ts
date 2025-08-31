@@ -1,7 +1,7 @@
 export const GOCARDLESS_CONSTANTS = {
   DEFAULT_INTERVAL_DAYS: 30,
   RANDOM_ID_LENGTH: 60,
-  // Date needs to be in YYYY-MM-DD format according to Nordigen.
+  DEFAULT_LANGUAGE: 'EN',
   DATE_FORMAT: 'yyyy-MM-dd',
 } as const;
 

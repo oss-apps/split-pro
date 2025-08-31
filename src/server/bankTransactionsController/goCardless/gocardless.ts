@@ -62,7 +62,7 @@ export const gocardless = {
 
     return formattedTransactions;
   },
-  connectToBank: async (institutionId?: string) => {
+  connectToBank: async (institutionId?: string, preferredLanguage?: string) => {
     if (!institutionId) {
       return;
     }
@@ -73,7 +73,7 @@ export const gocardless = {
       redirectUrl: env.NEXTAUTH_URL,
       institutionId: institutionId,
       referenceId: generateRandomId(),
-      user_language: 'SV',
+      user_language: preferredLanguage?.toUpperCase() ?? GOCARDLESS_CONSTANTS.DEFAULT_LANGUAGE,
       redirect_immediate: false,
       account_selection: false,
     });

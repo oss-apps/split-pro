@@ -5,7 +5,7 @@ import {
   TransactionOutput,
   whichBankConnectionConfigured,
 } from '~/server/bankTransactionHelper';
-import { gocardless } from '~/server/bankTransactionsController/gocardless';
+import { gocardless } from '~/server/bankTransactionsController/goCardless/gocardless';
 
 // When adding more, please model the output so the components are reusable.
 export const bankTransactionsRouter = createTRPCRouter({

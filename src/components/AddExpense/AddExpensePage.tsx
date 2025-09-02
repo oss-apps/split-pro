@@ -237,7 +237,12 @@ export const AddOrEditExpensePage: React.FC<{
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0">
-                        <Calendar mode="single" selected={expenseDate} onSelect={setExpenseDate} />
+                        <Calendar
+                          fixedWeeks
+                          mode="single"
+                          selected={expenseDate}
+                          onSelect={setExpenseDate}
+                        />
                       </PopoverContent>
                     </Popover>
                   </div>

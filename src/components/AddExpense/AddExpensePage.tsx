@@ -236,7 +236,7 @@ export const AddOrEditExpensePage: React.FC<{
                           )}
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent align="center" className="w-auto p-0">
+                      <PopoverContent className="w-auto p-0">
                         <Calendar
                           fixedWeeks
                           mode="single"

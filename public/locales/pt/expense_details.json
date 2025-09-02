@@ -68,6 +68,9 @@
       "press_balance_info": "Pressione o saldo individual para iniciar o acerto",
       "are_settled_up": "estão acertados",
       "is_settled_up": "está acertado"
+    },
+    "errors": {
+      "amount_required": ""
     }
   }
 }

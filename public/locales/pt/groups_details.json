@@ -62,7 +62,8 @@
     },
     "messages": {
       "group_name_updated": "Nome do grupo atualizado",
-      "balances_recalculated": "Saldos recalculados com sucesso"
+      "balances_recalculated": "Saldos recalculados com sucesso",
+      "group_archived": "Grupo arquivado com sucesso"
     },
     "errors": {
       "group_name_update_failed": "Erro ao atualizar o nome do grupo",

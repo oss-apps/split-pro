@@ -52,7 +52,7 @@
       "user": {
         "lent": "emprestou",
         "owe": "deve",
-        "paid": "pagou",
+        "paid": "pagaste",
         "pay": "pagar",
         "received": "recebeu",
         "deleted": "apagou"

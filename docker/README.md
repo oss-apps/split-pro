@@ -20,7 +20,7 @@ This setup includes PostgreSQL and the Splitpro application.
 5. Run the following command to start the containers:
 
 ```
-docker-compose --env-file ./.env up -d
+docker-compose up -d
 ```
 
 This will start the PostgreSQL database and the Splitpro application containers.

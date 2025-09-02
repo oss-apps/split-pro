@@ -29,31 +29,7 @@ services:
     environment:
       - PORT=${PORT:-3000}
       # - HOSTNAME=0.0.0.0 # Uncomment this, to have the server listen on all network interfaces. Needed when you want to connect to split-pro via docker internal networks, e.g. for reverse proxy setups.
-      - DATABASE_URL=${DATABASE_URL:?err}
-      - NEXTAUTH_URL=${NEXTAUTH_URL:?err}
-      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:?err}
-      - ENABLE_SENDING_INVITES=${ENABLE_SENDING_INVITES:?err}
-      - FROM_EMAIL=${FROM_EMAIL}
-      - EMAIL_SERVER_HOST=${EMAIL_SERVER_HOST}
-      - EMAIL_SERVER_PORT=${EMAIL_SERVER_PORT}
-      - EMAIL_SERVER_USER=${EMAIL_SERVER_USER}
-      - EMAIL_SERVER_PASSWORD=${EMAIL_SERVER_PASSWORD}
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - AUTHENTIK_ID=${AUTHENTIK_ID}
-      - AUTHENTIK_SECRET=${AUTHENTIK_SECRET}
-      - AUTHENTIK_ISSUER=${AUTHENTIK_ISSUER}
-      - R2_ACCESS_KEY=${R2_ACCESS_KEY}
-      - R2_SECRET_KEY=${R2_SECRET_KEY}
-      - R2_BUCKET=${R2_BUCKET}
-      - R2_URL=${R2_URL}
-      - R2_PUBLIC_URL=${R2_PUBLIC_URL}
-      - WEB_PUSH_PRIVATE_KEY=${WEB_PUSH_PRIVATE_KEY}
-      - WEB_PUSH_PUBLIC_KEY=${WEB_PUSH_PUBLIC_KEY}
-      - WEB_PUSH_EMAIL=${WEB_PUSH_EMAIL}
-      - FEEDBACK_EMAIL=${FEEDBACK_EMAIL}
-      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
-      - DEFAULT_HOMEPAGE=${DEFAULT_HOMEPAGE}
+    env_file: .env
     depends_on:
       postgres:
         condition: service_healthy

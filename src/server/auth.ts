@@ -207,6 +207,7 @@ function getProviders() {
       wellKnown: env.OIDC_WELL_KNOWN_URL,
       authorization: { params: { scope: 'openid email profile' } },
       idToken: true,
+      allowDangerousEmailAccountLinking: env.OIDC_ALLOW_DANGEROUS_EMAIL_LINKING,
       profile(profile) {
         // This function expects a "standard" next-auth user but we override
         // what a next-auth user is above.  The expected next-auth user must be

@@ -136,6 +136,6 @@ const BalancePage: NextPageWithUser = () => {
 
 BalancePage.auth = true;
 
-export const getStaticProps = withI18nStaticProps(['common', 'pwa']);
+export const getStaticProps = withI18nStaticProps(['common', 'account_page']);
 
 export default BalancePage;

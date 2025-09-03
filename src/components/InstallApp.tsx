@@ -6,7 +6,7 @@ import { Button } from './ui/button';
 import { AppDrawer } from './ui/drawer';
 
 const InstallApp: React.FC = () => {
-  const { t } = useTranslation('pwa');
+  const { t } = useTranslation('account_page');
   const [isStandalone, setIsStandalone] = useState(false);
 
   function isAppStandalone() {
@@ -26,7 +26,7 @@ const InstallApp: React.FC = () => {
     () => (
       <Button className="w-[250px]">
         <Download className="mr-2 h-5 w-5 text-black" />
-        {t('ui.download_button')}
+        {t('ui.download_app')}
       </Button>
     ),
     [t],
@@ -46,41 +46,41 @@ const InstallApp: React.FC = () => {
     <>
       <AppDrawer
         trigger={DownloadButton}
-        leftAction={t('ui.drawer.left_action')}
-        title={t('ui.drawer.title')}
+        leftAction={t('ui.actions.close', { ns: 'common' })}
+        title={t('ui.download_app_details.title')}
         className="h-[70vh]"
         shouldCloseOnAction
       >
         <div className="flex flex-col gap-8">
-          <p>{t('ui.drawer.description')}</p>
+          <p>{t('ui.download_app_details.download_as_pwa')}</p>
 
           <p>
-            {t('ui.drawer.ios.text')}{' '}
+            {t('ui.download_app_details.using_ios')}{' '}
             <a
               className="text-cyan-500 underline"
               href="https://youtube.com/shorts/MQHeLOjr350"
               target="_blank"
               rel="noreferrer"
             >
-              {t('ui.drawer.ios.link_text')}
+              {t('ui.download_app_details.video')}
             </a>
           </p>
 
           <p>
-            {t('ui.drawer.android.text')}{' '}
+            {t('ui.download_app_details.using_android')}{' '}
             <a
               className="text-cyan-500 underline"
               href="https://youtube.com/shorts/04n7oKGzgOs"
               target="_blank"
               rel="noreferrer"
             >
-              {t('ui.drawer.android.link_text')}
+              {t('ui.download_app_details.video')}
             </a>
           </p>
         </div>
       </AppDrawer>
 
-      <p>{t('ui.or')}</p>
+      <p>{t('ui.or', { ns: 'common' })}</p>
     </>
   );
 };

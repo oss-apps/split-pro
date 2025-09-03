@@ -4,14 +4,16 @@ import { useTranslation } from 'next-i18next';
 
 import { Button } from '../ui/button';
 import { AppDrawer } from '../ui/drawer';
+import useIsPwa from '~/hooks/useIsPwa';
 
 interface DownloadAppDrawerProps {
-  trigger?: ReactNode;
+  children?: ReactNode;
   className?: string;
 }
 
-export const DownloadAppDrawer: React.FC<DownloadAppDrawerProps> = ({ trigger, className }) => {
+export const DownloadAppDrawer: React.FC<DownloadAppDrawerProps> = ({ children, className }) => {
   const { t } = useTranslation('account_page');
+  const isStandalone = useIsPwa();
 
   const DefaultTrigger = useMemo(
     () => (
@@ -23,9 +25,13 @@ export const DownloadAppDrawer: React.FC<DownloadAppDrawerProps> = ({ trigger, c
     [t],
   );
 
+  if (isStandalone) {
+    return null;
+  }
+
   return (
     <AppDrawer
-      trigger={trigger ?? DefaultTrigger}
+      trigger={children ?? DefaultTrigger}
       leftAction={t('ui.actions.close', { ns: 'common' })}
       title={t('ui.download_app_details.title')}
       className={className ?? 'h-[70vh]'}

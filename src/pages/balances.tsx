@@ -5,7 +5,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useCallback } from 'react';
 import { BalanceEntry } from '~/components/Expense/BalanceEntry';
-import InstallApp from '~/components/InstallApp';
+import DownloadAppDrawer from '~/components/Account/DownloadAppDrawer';
+import { useIsPwa } from '~/hooks/useIsPwa';
 import MainLayout from '~/components/Layout/MainLayout';
 import { NotificationModal } from '~/components/NotificationModal';
 import { Button } from '~/components/ui/button';
@@ -16,6 +17,7 @@ import { toUIString } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser = () => {
   const { t } = useTranslation();
+  const isPwa = useIsPwa();
   const balanceQuery = api.expense.getBalances.useQuery();
 
   const shareWithFriends = useCallback(() => {
@@ -117,7 +119,8 @@ const BalancePage: NextPageWithUser = () => {
 
             {!balanceQuery.isPending && !balanceQuery.data?.balances.length ? (
               <div className="mt-[40vh] flex -translate-y-[130%] flex-col items-center justify-center gap-6">
-                <InstallApp />
+                <DownloadAppDrawer />
+                {!isPwa && <p>{t('ui.or', { ns: 'common' })}</p>}
 
                 <Link href="/add">
                   <Button className="w-[250px]">

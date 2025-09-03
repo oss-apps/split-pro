@@ -196,7 +196,7 @@ const AccountPage: NextPageWithUser<{ isCloud: boolean; feedBackPossible: boolea
               <ChevronRight className="h-6 w-6 text-gray-500" />
             </Button>
           </Link>
-          <DownloadAppDrawer trigger={downloadAppButton} />
+          <DownloadAppDrawer>{downloadAppButton}</DownloadAppDrawer>
           <Button
             variant="ghost"
             className="text-md hover:text-foreground/80 w-full justify-between px-0"

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import DownloadAppDrawer from './Account/DownloadAppDrawer';
+import { DownloadAppDrawer } from './Account/DownloadAppDrawer';
 
 const InstallApp: React.FC = () => {
   const { t } = useTranslation('account_page');

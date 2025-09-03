@@ -135,6 +135,7 @@ enum SplitType {
     SHARE
     ADJUSTMENT
     SETTLEMENT
+    CURRENCY_EXCHANGE
 }
 
 model Expense {
@@ -184,6 +185,16 @@ model ExpenseNote {
     createdAt   DateTime @default(now())
     createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
     expense     Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+}
+
+model ExchangeRateCache {
+    currencyFrom String
+    currencyTo   String
+    date         DateTime
+    rate         Float
+    insertedAt   DateTime @default(now())
+
+    @@id([currencyFrom, currencyTo, date])
 }
 
 model PushNotification {

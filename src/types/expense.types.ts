@@ -32,6 +32,7 @@ export const createExpenseSchema = z.object({
     SplitType.SHARE,
     SplitType.EXACT,
     SplitType.SETTLEMENT,
+    SplitType.CURRENCY_EXCHANGE,
   ]),
   currency: z.string(),
   participants: z.array(z.object({ userId: z.number(), amount: z.bigint() })),

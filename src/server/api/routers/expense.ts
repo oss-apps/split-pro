@@ -9,7 +9,6 @@ import { db } from '~/server/db';
 import { getDocumentUploadUrl } from '~/server/storage';
 import { BigMath } from '~/utils/numbers';
 
-// import { sendExpensePushNotification } from '../services/notificationService';
 import { createExpenseSchema } from '~/types/expense.types';
 import { createExpense, deleteExpense, editExpense } from '../services/splitService';
 
@@ -28,25 +27,22 @@ export const expenseRouter = createTRPCRouter({
     });
 
     const balances = balancesRaw
-      .reduce(
-        (acc, current) => {
-          const existing = acc.findIndex((item) => item.friendId === current.friendId);
-          if (-1 === existing) {
-            acc.push(current);
-          } else {
-            const existingItem = acc[existing];
-            if (existingItem) {
-              if (BigMath.abs(existingItem.amount) > BigMath.abs(current.amount)) {
-                acc[existing] = { ...existingItem, hasMore: true };
-              } else {
-                acc[existing] = { ...current, hasMore: true };
-              }
+      .reduce<((typeof balancesRaw)[number] & { hasMore?: boolean })[]>((acc, current) => {
+        const existing = acc.findIndex((item) => item.friendId === current.friendId);
+        if (-1 === existing) {
+          acc.push(current);
+        } else {
+          const existingItem = acc[existing];
+          if (existingItem) {
+            if (BigMath.abs(existingItem.amount) > BigMath.abs(current.amount)) {
+              acc[existing] = { ...existingItem, hasMore: true };
+            } else {
+              acc[existing] = { ...current, hasMore: true };
             }
           }
-          return acc;
-        },
-        [] as ((typeof balancesRaw)[number] & { hasMore?: boolean })[],
-      )
+        }
+        return acc;
+      }, [])
       .sort((a, b) => Number(BigMath.abs(b.amount) - BigMath.abs(a.amount)));
 
     const cumulatedBalances = await db.balance.groupBy({

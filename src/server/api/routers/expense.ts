@@ -9,8 +9,10 @@ import { db } from '~/server/db';
 import { getDocumentUploadUrl } from '~/server/storage';
 import { BigMath } from '~/utils/numbers';
 
-import { createExpenseSchema } from '~/types/expense.types';
+import { createExpenseSchema, getCurrencyRateSchema } from '~/types/expense.types';
 import { createExpense, deleteExpense, editExpense } from '../services/splitService';
+import { getExchangeRates } from '../services/currencyRateService';
+import { isCurrencyCode } from '~/lib/currency';
 
 export const expenseRouter = createTRPCRouter({
   getBalances: protectedProcedure.query(async ({ ctx }) => {
@@ -314,6 +316,57 @@ export const expenseRouter = createTRPCRouter({
 
       await deleteExpense(input.expenseId, ctx.session.user.id);
     }),
+
+  getCurrencyRate: protectedProcedure.input(getCurrencyRateSchema).query(async ({ ctx, input }) => {
+    const { from, to, date } = input;
+
+    if (!isCurrencyCode(from) || !isCurrencyCode(to)) {
+      throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid currency code' });
+    }
+
+    const cachedRate = await ctx.db.currencyRateCache.findUnique({
+      where: {
+        from_to_date: { from, to, date },
+      },
+    });
+
+    if (cachedRate) {
+      return { rate: cachedRate.rate };
+    }
+
+    const reverseCachedRate = await ctx.db.currencyRateCache.findUnique({
+      where: {
+        from_to_date: { from: to, to: from, date },
+      },
+    });
+
+    if (reverseCachedRate) {
+      return { rate: 1 / reverseCachedRate.rate };
+    }
+
+    const data = await getExchangeRates(from, to, date);
+
+    await Promise.all(
+      Object.entries(data.rates).map(([to, rate]) =>
+        ctx.db.currencyRateCache.upsert({
+          where: {
+            from_to_date: { from: data.base, to, date },
+          },
+          create: {
+            from,
+            to,
+            date,
+            rate,
+          },
+          update: {
+            rate,
+          },
+        }),
+      ),
+    );
+
+    return { rate: data.base === from ? data.rates[to] : 1 / data.rates[from]! };
+  }),
 });
 
 const validateEditExpensePermission = async (expenseId: string, userId: number): Promise<void> => {

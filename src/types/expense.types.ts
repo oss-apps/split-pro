@@ -40,3 +40,9 @@ export const createExpenseSchema = z.object({
   expenseDate: z.date().optional(),
   expenseId: z.string().optional(),
 }) satisfies z.ZodType<CreateExpense>;
+
+export const getCurrencyRateSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  date: z.date().transform((date) => new Date(date.toDateString())),
+});

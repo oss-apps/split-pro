@@ -21,7 +21,7 @@ import { UpdateName } from '~/components/Account/UpdateName';
 import MainLayout from '~/components/Layout/MainLayout';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
-import { AppDrawer } from '~/components/ui/drawer';
+import DownloadAppDrawer from '~/components/Account/DownloadAppDrawer';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { env } from '~/env';
 import { type NextPageWithUser } from '~/types';
@@ -196,41 +196,7 @@ const AccountPage: NextPageWithUser<{ isCloud: boolean; feedBackPossible: boolea
               <ChevronRight className="h-6 w-6 text-gray-500" />
             </Button>
           </Link>
-          <AppDrawer
-            trigger={downloadAppButton}
-            leftAction={t('ui.actions.close', { ns: 'common' })}
-            title={t('ui.download_app_details.title')}
-            className="h-[70vh]"
-            shouldCloseOnAction
-          >
-            <div className="flex flex-col gap-8">
-              <p>{t('ui.download_app_details.download_as_pwa')}</p>
-
-              <p>
-                {t('ui.download_app_details.using_ios')}{' '}
-                <a
-                  className="text-cyan-500 underline"
-                  href="https://youtube.com/shorts/MQHeLOjr350"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {t('ui.download_app_details.video')}
-                </a>
-              </p>
-
-              <p>
-                {t('ui.download_app_details.using_android')}{' '}
-                <a
-                  className="text-cyan-500 underline"
-                  href="https://youtube.com/shorts/04n7oKGzgOs"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {t('ui.download_app_details.video')}
-                </a>
-              </p>
-            </div>
-          </AppDrawer>
+          <DownloadAppDrawer trigger={downloadAppButton} />
           <Button
             variant="ghost"
             className="text-md hover:text-foreground/80 w-full justify-between px-0"

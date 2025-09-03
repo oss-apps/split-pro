@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "title": "SplitPro: Divide gastos con tus amigos gratis",
+    "description": "SplitPro: Divide gastos con tus amigos gratis"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "terms": "Términos",
+    "privacy": "Privacidad"
+  },
+  "hero": {
+    "title_part1": "Divide gastos con tus amigos",
+    "title_highlight": "gratis",
+    "subtitle_part1": "Una alternativa de",
+    "subtitle_link": "código abierto",
+    "subtitle_part2": "a SplitWise",
+    "add_expense_button": "Añadir Gasto",
+    "star_github_button": "Danos una estrella en GitHub"
+  },
+  "features": {
+    "title": "Características",
+    "groups_and_friends": {
+      "title": "Grupos y Amigos",
+      "description": "Puedes crear múltiples grupos o añadir saldo directamente. Todo se consolidará"
+    },
+    "multiple_currencies": {
+      "title": "Múltiples monedas",
+      "description": "¿Necesitas añadir un gasto con una moneda diferente para el mismo usuario? ¡No hay problema!"
+    },
+    "unequal_split": {
+      "title": "División Desigual",
+      "description": "Opciones avanzadas de división. Por cuotas, porcentaje o cantidades exactas."
+    },
+    "pwa_support": {
+      "title": "Soporte PWA",
+      "description": "¿Te encantan las aplicaciones móviles? Te tenemos cubierto. ¡Instálala como una PWA y ni siquiera lo notarás!"
+    },
+    "upload_receipts": {
+      "title": "Subir Recibos",
+      "description": "Sube recibos junto con el gasto"
+    },
+    "open_source": {
+      "title": "Código abierto",
+      "description": "Lo que hace difícil que se vuelva malvado. Fácil de autoalojar"
+    },
+    "import_splitwise": {
+      "title": "Importar desde Splitwise",
+      "description": "No tienes que migrar saldos manualmente. Puedes importar usuarios y grupos desde Splitwise"
+    },
+    "push_notifications": {
+      "title": "Notificaciones push",
+      "description": "Nunca te pierdas notificaciones importantes. Recibe notificaciones cuando alguien añade un gasto o liquida"
+    },
+    "debt_simplification": {
+      "title": "Simplificación de Deudas",
+      "description": "Simplifica automáticamente las deudas del grupo para reducir el número de transacciones necesarias entre amigos"
+    },
+    "i18": {
+      "title": "Internacionalización",
+      "description": "Disponible en múltiples idiomas para hacer que la división de gastos sea accesible en todo el mundo"
+    }
+  },
+  "footer": {
+    "built_by": "Construido por"
+  }
+}

@@ -1,14 +1,15 @@
 import { ArrowUpOnSquareIcon } from '@heroicons/react/24/outline';
-import { PlusIcon } from 'lucide-react';
+import { Download, PlusIcon } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useCallback } from 'react';
+import DownloadAppDrawer from '~/components/Account/DownloadAppDrawer';
 import { BalanceEntry } from '~/components/Expense/BalanceEntry';
-import InstallApp from '~/components/InstallApp';
 import MainLayout from '~/components/Layout/MainLayout';
 import { NotificationModal } from '~/components/NotificationModal';
 import { Button } from '~/components/ui/button';
+import { useIsPwa } from '~/hooks/useIsPwa';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
@@ -16,6 +17,7 @@ import { toUIString } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser = () => {
   const { t } = useTranslation();
+  const isPwa = useIsPwa();
   const balanceQuery = api.expense.getBalances.useQuery();
 
   const shareWithFriends = useCallback(() => {
@@ -117,8 +119,13 @@ const BalancePage: NextPageWithUser = () => {
 
             {!balanceQuery.isPending && !balanceQuery.data?.balances.length ? (
               <div className="mt-[40vh] flex -translate-y-[130%] flex-col items-center justify-center gap-6">
-                <InstallApp />
-
+                <DownloadAppDrawer>
+                  <Button className="w-[250px]">
+                    <Download className="mr-2 h-5 w-5 text-black" />
+                    {t('account_page:ui.download_app')}
+                  </Button>
+                </DownloadAppDrawer>
+                {!isPwa && <p>{t('ui.or', { ns: 'common' })}</p>}
                 <Link href="/add">
                   <Button className="w-[250px]">
                     <PlusIcon className="mr-2 h-5 w-5 text-black" />
@@ -136,6 +143,6 @@ const BalancePage: NextPageWithUser = () => {
 
 BalancePage.auth = true;
 
-export const getStaticProps = withI18nStaticProps(['common']);
+export const getStaticProps = withI18nStaticProps(['common', 'account_page']);
 
 export default BalancePage;

@@ -11,6 +11,7 @@ import { api } from '~/utils/api';
 import { AppDrawer } from '../ui/drawer';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
 import { Textarea } from '../ui/textarea';
+import { AccountButton } from './AccountButton';
 
 const feedbackSchema = (t: TFunction) =>
   z.object({
@@ -49,13 +50,10 @@ export const SubmitFeedback: React.FC = () => {
 
   const trigger = useMemo(
     () => (
-      <div className="hover:text-foreground/80 flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300">
-        <div className="flex items-center gap-4 text-[16px]">
-          <MessageSquare className="h-5 w-5 text-green-500" />
-          {t('ui.submit_feedback')}
-        </div>
-        <ChevronRight className="h-6x w-6 text-gray-500" />
-      </div>
+      <AccountButton>
+        <MessageSquare className="h-5 w-5 text-green-500" />
+        {t('ui.submit_feedback')}
+      </AccountButton>
     ),
     [t],
   );

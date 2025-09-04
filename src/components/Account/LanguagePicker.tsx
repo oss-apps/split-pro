@@ -1,13 +1,12 @@
-import { ChevronRight, Languages } from 'lucide-react';
-import React, { useCallback, useMemo } from 'react';
-import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
+import React, { type PropsWithChildren, useCallback, useMemo } from 'react';
+import { toast } from 'sonner';
 import { api } from '~/utils/api';
 import { getSupportedLanguages } from '~/utils/i18n/client';
 import { GeneralPicker } from '../GeneralPicker';
 
-export const LanguagePicker: React.FC = () => {
+export const LanguagePicker: React.FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter();
   const { i18n, t } = useTranslation('account_page');
   const updateUser = api.user.updateUserDetail.useMutation();
@@ -34,19 +33,6 @@ export const LanguagePicker: React.FC = () => {
     [router, t, updateUser],
   );
 
-  const trigger = useMemo(
-    () => (
-      <div className="hover:text-foreground/80 flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300">
-        <div className="flex items-center gap-4">
-          <Languages className="h-5 w-5 text-green-500" />
-          {t('ui.change_language')}
-        </div>
-        <ChevronRight className="h-6 w-6 text-gray-500" />
-      </div>
-    ),
-    [t],
-  );
-
   const extractKey = useCallback((language: { code: string }) => language.code, []);
   const selected = useCallback(
     (language: { code: string }) => i18n.language === language.code,
@@ -56,7 +42,7 @@ export const LanguagePicker: React.FC = () => {
 
   return (
     <GeneralPicker
-      trigger={trigger}
+      trigger={children}
       title={t('ui.change_language_details.title')}
       placeholderText={t('ui.change_language_details.placeholder')}
       noOptionsText={t('ui.change_language_details.no_currency_found')}

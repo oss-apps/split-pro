@@ -24,13 +24,10 @@ export const BalanceList: React.FC<{
   const userQuery = api.user.me.useQuery();
 
   const userMap = useMemo(() => {
-    const res = users.reduce(
-      (acc, user) => {
-        acc[user.id] = { user, balances: {}, total: {} };
-        return acc;
-      },
-      {} as Record<number, UserWithBalance>,
-    );
+    const res = users.reduce<Record<number, UserWithBalance>>((acc, user) => {
+      acc[user.id] = { user, balances: {}, total: {} };
+      return acc;
+    }, {});
     groupBalances
       .filter(({ amount }) => 0 < BigMath.abs(amount))
       .forEach((balance) => {

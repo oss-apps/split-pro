@@ -119,7 +119,7 @@ export const BalanceList: React.FC<{
                               <span className="text-gray-400">
                                 {' '}
                                 {t(
-                                  `ui.expense.${friend.id === userQuery.data?.id ? 'you' : 'user'}.${0 > amount ? 'lent' : 'owe'}`,
+                                  `ui.expense.${friend.id === userQuery.data?.id ? 'you' : 'user'}.${0 > amount ? 'get' : 'pay'}`,
                                   { ns: 'common' },
                                 )}{' '}
                               </span>

@@ -1,0 +1,86 @@
+{
+  "title": "Categorías",
+  "categories_list": {
+    "entertainment": {
+      "name": "Entretenimiento",
+      "items": {
+        "games": "Juegos",
+        "movies": "Películas",
+        "music": "Música",
+        "sports": "Deportes",
+        "other": "Entretenimiento"
+      }
+    },
+    "food": {
+      "name": "Comida y Bebidas",
+      "items": {
+        "diningOut": "Comer afuera",
+        "groceries": "Comestibles",
+        "liquor": "Bebidas alcohólicas",
+        "other": "Comida y Bebidas"
+      }
+    },
+    "home": {
+      "name": "Hogar",
+      "items": {
+        "electronics": "Electrónica",
+        "furniture": "Muebles",
+        "supplies": "Suministros",
+        "maintenance": "Mantenimiento",
+        "mortgage": "Hipoteca",
+        "pets": "Mascotas",
+        "rent": "Alquiler",
+        "services": "Servicios",
+        "other": "Hogar"
+      }
+    },
+    "life": {
+      "name": "Vida",
+      "items": {
+        "childcare": "Cuidado de niños",
+        "clothing": "Ropa",
+        "education": "Educación",
+        "gifts": "Regalos",
+        "medical": "Médico",
+        "taxes": "Impuestos",
+        "other": "Vida",
+        "insurance": "Seguro"
+      }
+    },
+    "travel": {
+      "name": "Viajes",
+      "items": {
+        "bus": "Colectivo",
+        "train": "Tren",
+        "car": "Auto",
+        "fuel": "Combustible",
+        "parking": "Estacionamiento",
+        "plane": "Avión",
+        "taxi": "Taxi",
+        "other": "Viajes",
+        "bicycle": "Bicicleta",
+        "hotel": "Hotel"
+      }
+    },
+    "utilities": {
+      "name": "Servicios",
+      "items": {
+        "cleaning": "Limpieza",
+        "electricity": "Electricidad",
+        "gas": "Gas",
+        "internet": "Internet",
+        "trash": "Basura",
+        "phone": "Teléfono",
+        "water": "Agua",
+        "other": "Servicios"
+      }
+    },
+    "general": {
+      "name": "General",
+      "items": {
+        "general": "General",
+        "other": "General"
+      }
+    }
+  }
+}

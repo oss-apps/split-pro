@@ -1,0 +1,84 @@
+{
+  "ui": {
+    "title": "Saldos pendientes del grupo",
+    "no_members": {
+      "no_members": "Aún no hay miembros en el grupo.",
+      "add_members": "Añadir miembros",
+      "add_members_details": {
+        "title": "Añadir miembros",
+        "placeholder": "Introduce nombre o correo electrónico",
+        "warning": "Advertencia: No uses enviar invitación si el correo electrónico no es válido. Usa añadir a Split Pro en su lugar. Tu cuenta será bloqueada si se abusa de esta función",
+        "note": "Nota: el envío de invitaciones está deshabilitado por ahora debido al spam",
+        "send_invite": "Enviar invitación al usuario",
+        "add_to_split_pro": "Añadir a Split Pro"
+      },
+      "invite_link": "Compartir enlace de invitación",
+      "copied": "Copiado"
+    },
+    "group_statistics": {
+      "title": "Estadísticas del grupo",
+      "total_expenses": "Gastos totales",
+      "first_expense": "Primer gasto"
+    },
+    "group_info": {
+      "title": "Información del grupo",
+      "members": "Miembros",
+      "group_created": "Grupo creado",
+      "actions": "Acciones",
+      "delete_group": "Eliminar grupo",
+      "delete_group_details": {
+        "title": "¿Estás absolutamente seguro?",
+        "can_delete": "Esta acción no se puede revertir",
+        "cant_delete": "No se puede eliminar el grupo hasta que todos liquiden el saldo"
+      },
+      "leave_group": "Abandonar grupo",
+      "leave_group_details": {
+        "title": "¿Estás absolutamente seguro?",
+        "can_leave": "Esta acción no se puede revertir",
+        "cant_leave": "No se puede abandonar el grupo hasta que tu saldo pendiente esté liquidado"
+      },
+      "remove_member_details": {
+        "title": "¿Estás absolutamente seguro?",
+        "can_remove": "Estás a punto de eliminar a este miembro del grupo",
+        "cant_remove": "No se puede eliminar al miembro hasta que su saldo pendiente esté liquidado"
+      },
+      "simplify_debts": "Simplificar deudas",
+      "recalculate_balances": "Recalcular saldos",
+      "recalculate_balances_details": {
+        "title": "¿Estás seguro?",
+        "description": "Si los saldos no coinciden con los gastos, puedes recalculalos. Ten en cuenta que puede llevar algún tiempo si la cantidad de gastos es grande. Los saldos fuera del grupo no se verán afectados."
+      },
+      "archive_group": "Archivar grupo",
+      "archived": "Archivado",
+      "archive_group_details": {
+        "title": "¿Estás seguro de que quieres archivar este grupo?",
+        "can_archive": "Este grupo será archivado y ocultado de tu lista principal de grupos. Podrás acceder a él más tarde si es necesario.",
+        "cant_archive": "No se puede archivar el grupo con saldos pendientes. Todos los saldos deben liquidarse primero."
+      }
+    },
+    "tabs": {
+      "expenses": "Gastos",
+      "balances": "Saldos"
+    },
+    "messages": {
+      "group_name_updated": "Nombre del grupo actualizado",
+      "balances_recalculated": "Saldos recalculados exitosamente",
+      "group_archived": "Grupo archivado exitosamente"
+    },
+    "errors": {
+      "group_name_update_failed": "Error al actualizar el nombre del grupo",
+      "setting_update_failed": "Error al actualizar la configuración"
+    },
+    "add_members": "Añadir miembros",
+    "copied": "Copiado",
+    "create_group": {
+      "title": "Crear un grupo",
+      "group_name_placeholder": "Nombre del grupo"
+    }
+  },
+  "invite_message": {
+    "join_to": "Únete a",
+    "in_splitpro": "en Splitpro",
+    "text": "Únete al grupo y podrás añadir, gestionar gastos y seguir tus saldos"
+  }
+}

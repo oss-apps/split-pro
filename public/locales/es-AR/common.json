@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "title": "SplitPro: Dividí gastos con tus amigos gratis",
+    "description": "Dividí gastos con tus amigos gratis",
+    "application_name": "SplitPro"
+  },
+  "navigation": {
+    "app_name": "SplitPro",
+    "balances": "Saldos",
+    "groups": "Grupos",
+    "add_expense": "Agregar Gasto",
+    "add": "Agregar",
+    "activity": "Actividad",
+    "account": "Cuenta"
+  },
+  "ui": {
+    "actors": {
+      "you": "Vos",
+      "you_dativus": "A vos",
+      "you_accusativus": "A vos",
+      "friends": "Amigos",
+      "groups": "Grupos",
+      "members": "Miembros",
+      "owner": "Propietario",
+      "all": "Todos"
+    },
+    "actions": {
+      "cancel": "Cancelar",
+      "confirm": "Confirmar",
+      "submit": "Enviar",
+      "close": "Cerrar",
+      "back": "Volver",
+      "create": "Crear",
+      "save": "Guardar",
+      "leave": "Salir",
+      "invite": "Invitar",
+      "export": "Exportar",
+      "import": "Importar",
+      "add_expense": "Agregar gasto",
+      "edit_expense": "Editar gasto",
+      "settle_up": "Liquidar"
+    },
+    "expense": {
+      "you": {
+        "lent": "prestaste",
+        "owe": "debés",
+        "paid": "pagaste",
+        "pay": "pagar",
+        "received": "recibiste",
+        "deleted": "eliminaste"
+      },
+      "user": {
+        "lent": "prestó",
+        "owe": "debe",
+        "paid": "pagó",
+        "pay": "paga",
+        "received": "recibió",
+        "deleted": "eliminó"
+      },
+      "for": "para",
+      "paid_by": "Pagado por",
+      "received_by": "Recibido por",
+      "to": "a",
+      "from": "de"
+    },
+    "balance": "saldo",
+    "balances": "saldos",
+    "or": "o",
+    "and": "y",
+    "today": "Hoy",
+    "delete": "Eliminar",
+    "edited_by": "Editado por",
+    "deleted_by": "Eliminado por",
+    "added_by": "Agregado por",
+    "on": "el",
+    "not_involved": "No involucrado",
+    "no_activity": "Aún no hay actividades",
+    "settled_up": "Liquidado",
+    "settle_up_name": "Liquidar",
+    "settlement": "Liquidación",
+    "expense_details": "Detalles del gasto",
+    "select_currency": "Seleccionar moneda",
+    "outstanding_balances": "Saldos pendientes",
+    "share_text": "Echale un vistazo a SplitPro. Es una alternativa gratuita de código abierto a Splitwise"
+  },
+  "errors": {
+    "name_required": "El nombre es requerido",
+    "saving_expense": "Error al guardar el gasto",
+    "something_went_wrong": "Algo salió mal",
+    "valid_email": "Ingresá un correo electrónico válido"
+  }
+}

@@ -10,4 +10,6 @@ export const getSupportedLanguages = (): SupportedLanguage[] => [
   { code: 'pl', name: 'Polski' },
   { code: 'pt', name: 'Portuguese' },
   { code: 'sv', name: 'Svenska' },
+  { code: 'es-MX', name: 'Spanish (Mexico)' },
+  { code: 'es-AR', name: 'Spanish (Argentina)' },
 ];

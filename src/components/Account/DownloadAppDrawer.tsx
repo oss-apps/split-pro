@@ -1,13 +1,11 @@
-import { Download } from 'lucide-react';
-import { type ReactNode, useMemo } from 'react';
 import { useTranslation } from 'next-i18next';
+import { type ReactNode } from 'react';
 
-import { Button } from '../ui/button';
+import { useIsPwa } from '~/hooks/useIsPwa';
 import { AppDrawer } from '../ui/drawer';
-import useIsPwa from '~/hooks/useIsPwa';
 
 interface DownloadAppDrawerProps {
-  children?: ReactNode;
+  children: ReactNode;
   className?: string;
 }
 
@@ -15,23 +13,13 @@ export const DownloadAppDrawer: React.FC<DownloadAppDrawerProps> = ({ children, 
   const { t } = useTranslation('account_page');
   const isStandalone = useIsPwa();
 
-  const DefaultTrigger = useMemo(
-    () => (
-      <Button className="w-[250px]">
-        <Download className="mr-2 h-5 w-5 text-black" />
-        {t('ui.download_app')}
-      </Button>
-    ),
-    [t],
-  );
-
   if (isStandalone) {
     return null;
   }
 
   return (
     <AppDrawer
-      trigger={children ?? DefaultTrigger}
+      trigger={children}
       leftAction={t('ui.actions.close', { ns: 'common' })}
       title={t('ui.download_app_details.title')}
       className={className ?? 'h-[70vh]'}

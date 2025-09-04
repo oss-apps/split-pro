@@ -7,7 +7,7 @@ export function useIsPwa(): boolean {
     try {
       const isIOSStandalone =
         typeof navigator !== 'undefined' && 'standalone' in navigator
-          ? (navigator as unknown as { standalone?: boolean }).standalone === true
+          ? !!navigator.standalone
           : false;
 
       const isDisplayModeStandalone =
@@ -23,5 +23,3 @@ export function useIsPwa(): boolean {
 
   return isPwa;
 }
-
-export default useIsPwa;

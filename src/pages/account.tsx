@@ -4,6 +4,7 @@ import {
   DownloadCloud,
   FileDown,
   HeartHandshakeIcon,
+  Languages,
   Star,
 } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
@@ -12,22 +13,24 @@ import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
+import { DownloadAppDrawer } from '~/components/Account/DownloadAppDrawer';
 import { LanguagePicker } from '~/components/Account/LanguagePicker';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
 import { UpdateName } from '~/components/Account/UpdateName';
 import MainLayout from '~/components/Layout/MainLayout';
 import { EntityAvatar } from '~/components/ui/avatar';
-import { Button } from '~/components/ui/button';
-import DownloadAppDrawer from '~/components/Account/DownloadAppDrawer';
+import { Button, ButtonProps } from '~/components/ui/button';
+import { SiGithub, SiX } from '@icons-pack/react-simple-icons';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { env } from '~/env';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { bigIntReplacer } from '~/utils/numbers';
+import { AccountButton } from '~/components/Account/AccountButton';
 
 const AccountPage: NextPageWithUser<{ isCloud: boolean; feedBackPossible: boolean }> = ({
   user,
@@ -74,19 +77,6 @@ const AccountPage: NextPageWithUser<{ isCloud: boolean; feedBackPossible: boolea
 
   const header = useMemo(() => <div className="text-3xl font-semibold">Account</div>, []);
 
-  const downloadAppButton = useMemo(
-    () => (
-      <div className="hover:text-foreground/80 flex w-full justify-between px-0 py-2 text-[16px] font-medium text-gray-300">
-        <div className="flex items-center gap-4">
-          <Download className="h-5 w-5 text-blue-500" />
-          {t('ui.download_app')}
-        </div>
-        <ChevronRight className="h-6x w-6 text-gray-500" />
-      </div>
-    ),
-    [t],
-  );
-
   const onSignOut = useCallback(async () => {
     await signOut({ redirect: false });
     void router.push('/auth/signin', '/auth/signin', { locale: 'default' });
@@ -115,50 +105,55 @@ const AccountPage: NextPageWithUser<{ isCloud: boolean; feedBackPossible: boolea
           )}
         </div>
         <div className="mt-8 flex flex-col gap-4">
-          <LanguagePicker />
+          <LanguagePicker>
+            <AccountButton>
+              <Languages className="size-5 text-green-500" />
+              {t('ui.change_language')}
+            </AccountButton>
+          </LanguagePicker>
 
           {isCloud && (
+            <AccountButton href="https://twitter.com/KM_Koushik_">
               <SiX className="size-5" />
+              {t('ui.follow_on_x')}
+            </AccountButton>
+          )}
+
+          <AccountButton href="https://github.com/oss-apps/split-pro">
             <SiGithub className="size-5" />
+            {t('ui.star_on_github')}
+          </AccountButton>
+
+          <AccountButton href="https://github.com/sponsors/krokosik">
+            <HeartHandshakeIcon className="size-5 text-pink-600" />
+            {t('ui.support_us')}
+          </AccountButton>
+
           {feedBackPossible && <SubmitFeedback />}
+
           <SubscribeNotification />
-          <Link href="https://www.producthunt.com/products/splitpro/reviews/new" target="_blank">
-            <Button
-              variant="ghost"
-              className="text-md hover:text-foreground/80 w-full justify-between px-0"
-            >
-              <div className="flex items-center gap-4">
-                <Star className="h-5 w-5 text-yellow-400" />
-                {t('ui.write_review')}
-              </div>
-              <ChevronRight className="h-6 w-6 text-gray-500" />
-            </Button>
-          </Link>
-          <DownloadAppDrawer>{downloadAppButton}</DownloadAppDrawer>
-          <Button
-            variant="ghost"
-            className="text-md hover:text-foreground/80 w-full justify-between px-0"
-            onClick={downloadData}
-            disabled={downloading}
-          >
-            <div className="flex items-center gap-4">
-              <FileDown className="h-5 w-5 text-teal-500" />
-              {t('ui.download_splitpro_data')}
-            </div>
-            {downloading ? <LoadingSpinner /> : <ChevronRight className="h-6 w-6 text-gray-500" />}
-          </Button>
-          <Link href="/import-splitwise">
-            <Button
-              variant="ghost"
-              className="text-md hover:text-foreground/80 w-full justify-between px-0"
-            >
-              <div className="flex items-center gap-4">
-                <DownloadCloud className="h-5 w-5 text-violet-500" />
-                {t('ui.import_from_splitwise')}
-              </div>
-              <ChevronRight className="h-6 w-6 text-gray-500" />
-            </Button>
-          </Link>
+
+          <AccountButton href="https://www.producthunt.com/products/splitpro/reviews/new">
+            <Star className="size-5 text-yellow-400" />
+            {t('ui.write_review')}
+          </AccountButton>
+
+          <DownloadAppDrawer>
+            <AccountButton>
+              <Download className="size-5 text-blue-500" />
+              {t('ui.download_app')}
+            </AccountButton>
+          </DownloadAppDrawer>
+
+          <AccountButton onClick={downloadData} disabled={downloading} loading={downloading}>
+            <FileDown className="size-5 text-teal-500" />
+            {t('ui.download_splitpro_data')}
+          </AccountButton>
+
+          <AccountButton href="/import-splitwise">
+            <DownloadCloud className="size-5 text-violet-500" />
+            {t('ui.import_from_splitwise')}
+          </AccountButton>
         </div>
 
         <div className="mt-2 flex justify-center">

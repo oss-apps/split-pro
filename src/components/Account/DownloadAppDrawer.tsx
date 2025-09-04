@@ -55,5 +55,3 @@ export const DownloadAppDrawer: React.FC<DownloadAppDrawerProps> = ({ children, 
     </AppDrawer>
   );
 };
-
-export default DownloadAppDrawer;

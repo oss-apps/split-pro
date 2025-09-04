@@ -6,6 +6,7 @@ import { api } from '~/utils/api';
 import { useTranslation } from 'next-i18next';
 
 import { Button } from '../ui/button';
+import { AccountButton } from './AccountButton';
 
 const base64ToUint8Array = (base64: string) => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4);
@@ -94,27 +95,18 @@ export const SubscribeNotification: React.FC = () => {
   }
 
   return (
-    <>
-      <Button
-        variant="ghost"
-        className="text-md hover:text-foreground/80 w-full justify-between px-0"
-        onClick={isSubscribed ? unSubscribeNotification : onRequestNotification}
-      >
-        <div className="flex items-center gap-4">
-          {!isSubscribed ? (
-            <>
-              <Bell className="h-5 w-5 text-red-400" />
-              {t('ui.notifications.enable_notification')}
-            </>
-          ) : (
-            <>
-              <BellOff className="h-5 w-5 text-red-400" />
-              {t('ui.notifications.disable_notification')}
-            </>
-          )}
-        </div>
-        <ChevronRight className="h-6 w-6 text-gray-500" />
-      </Button>
-    </>
+    <AccountButton onClick={isSubscribed ? unSubscribeNotification : onRequestNotification}>
+      {!isSubscribed ? (
+        <>
+          <Bell className="h-5 w-5 text-red-400" />
+          {t('ui.notifications.enable_notification')}
+        </>
+      ) : (
+        <>
+          <BellOff className="h-5 w-5 text-red-400" />
+          {t('ui.notifications.disable_notification')}
+        </>
+      )}
+    </AccountButton>
   );
 };

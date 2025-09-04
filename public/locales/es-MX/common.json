@@ -46,6 +46,7 @@
         "owe": "debes",
         "paid": "pagaste",
         "pay": "pagar",
+        "get": "recibes",
         "received": "recibiste",
         "deleted": "eliminaste"
       },
@@ -54,6 +55,7 @@
         "owe": "debe",
         "paid": "pagó",
         "pay": "paga",
+        "get": "recibe",
         "received": "recibió",
         "deleted": "eliminó"
       },

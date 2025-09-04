@@ -46,6 +46,7 @@
         "owe": "masz do oddania",
         "paid": "płacisz",
         "pay": "płacisz",
+        "get": "dostajesz",
         "received": "dostajesz",
         "deleted": "usuwasz"
       },
@@ -54,6 +55,7 @@
         "owe": "ma do oddania",
         "paid": "płaci",
         "pay": "płaci",
+        "get": "dostaje",
         "received": "dostaje",
         "deleted": "usuwa"
       },

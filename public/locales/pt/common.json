@@ -46,14 +46,16 @@
         "owe": "deves",
         "paid": "pagaste",
         "pay": "pagar",
+        "get": "recebes",
         "received": "recebeste",
         "deleted": "apagaste"
       },
       "user": {
         "lent": "emprestou",
         "owe": "deve",
-        "paid": "pagaste",
-        "pay": "pagar",
+        "paid": "pagou",
+        "pay": "paga",
+        "get": "recebe",
         "received": "recebeu",
         "deleted": "apagou"
       },

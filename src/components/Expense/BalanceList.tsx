@@ -1,6 +1,6 @@
 import type { GroupBalance, User } from '@prisma/client';
 import { clsx } from 'clsx';
-import { HandCoins, Info } from 'lucide-react';
+import { DollarSign, HandCoins, Info } from 'lucide-react';
 import { Fragment, useMemo } from 'react';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { api } from '~/utils/api';
@@ -10,6 +10,7 @@ import { GroupSettleUp } from '../Friend/GroupSettleup';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { Button } from '../ui/button';
+import { CurrencyConversion } from '../Friend/CurrencyConversion';
 
 interface UserWithBalance {
   user: User;
@@ -134,17 +135,30 @@ export const BalanceList: React.FC<{
                             </span>
                           </div>
                         </div>
-                        <GroupSettleUp
-                          friend={friend}
-                          user={user}
-                          amount={amount}
-                          currency={currency}
-                          groupId={groupBalances[0]!.groupId}
-                        >
-                          <Button size="icon" variant="secondary" className="size-8">
-                            <HandCoins className="size-4" />
-                          </Button>
-                        </GroupSettleUp>
+                        <div className="flex gap-2">
+                          <GroupSettleUp
+                            friend={friend}
+                            user={user}
+                            amount={amount}
+                            currency={currency}
+                            groupId={groupBalances[0]!.groupId}
+                          >
+                            <Button size="icon" variant="secondary" className="size-8">
+                              <HandCoins className="size-4" />
+                            </Button>
+                          </GroupSettleUp>
+                          <CurrencyConversion
+                            friend={friend}
+                            user={user}
+                            amount={amount}
+                            currency={currency}
+                            groupId={groupBalances[0]!.groupId}
+                          >
+                            <Button size="icon" variant="secondary" className="size-8">
+                              <DollarSign className="size-4" />
+                            </Button>
+                          </CurrencyConversion>
+                        </div>
                       </div>
                     ))}
                   </Fragment>

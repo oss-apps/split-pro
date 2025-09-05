@@ -12,6 +12,7 @@ export type CreateExpense = Omit<
   | 'deletedBy'
   | 'expenseDate'
   | 'fileKey'
+  | 'otherConversion'
 > & {
   expenseDate?: Date;
   fileKey?: string;
@@ -32,7 +33,7 @@ export const createExpenseSchema = z.object({
     SplitType.SHARE,
     SplitType.EXACT,
     SplitType.SETTLEMENT,
-    SplitType.CURRENCY_EXCHANGE,
+    SplitType.CURRENCY_CONVERSION,
   ]),
   currency: z.string(),
   participants: z.array(z.object({ userId: z.number(), amount: z.bigint() })),

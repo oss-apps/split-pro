@@ -83,7 +83,13 @@
     "expense_details": "Expense details",
     "select_currency": "Select currency",
     "outstanding_balances": "Outstanding balances",
-    "share_text": "Check out SplitPro. It's an open source free alternative for Splitwise"
+    "share_text": "Check out SplitPro. It's an open source free alternative for Splitwise",
+    "currency_conversion": {
+      "title": "Currency conversion",
+      "description": "Convert the amount to a different currency.",
+      "amount_to_receive": "Amount to receive",
+      "exchange_rate": "Exchange rate"
+    }
   },
   "errors": {
     "name_required": "Name is required",

@@ -39,6 +39,9 @@ const providerSvgs = {
   keycloak: <SiKeycloak />,
 };
 
+const providerTypeGuard = (providerId: string): providerId is keyof typeof providerSvgs =>
+  providerId in providerSvgs;
+
 const emailSchema = (t: TFunction) =>
   z.object({
     email: z
@@ -153,7 +156,7 @@ const Home: NextPage<{
                 onClick={handleProviderSignIn(provider.id)}
                 key={provider.id}
               >
-                {providerSvgs[provider.id as keyof typeof providerSvgs]}
+                {providerTypeGuard(provider.id) && providerSvgs[provider.id]}
                 {t('auth.continue_with', { provider: provider.name })}
               </Button>
             ))}

@@ -12,6 +12,7 @@ export type CreateExpense = Omit<
   | 'deletedBy'
   | 'expenseDate'
   | 'fileKey'
+  | 'otherConversion'
 > & {
   expenseDate?: Date;
   fileKey?: string;
@@ -32,6 +33,7 @@ export const createExpenseSchema = z.object({
     SplitType.SHARE,
     SplitType.EXACT,
     SplitType.SETTLEMENT,
+    SplitType.CURRENCY_CONVERSION,
   ]),
   currency: z.string(),
   participants: z.array(z.object({ userId: z.number(), amount: z.bigint() })),
@@ -39,3 +41,20 @@ export const createExpenseSchema = z.object({
   expenseDate: z.date().optional(),
   expenseId: z.string().optional(),
 }) satisfies z.ZodType<CreateExpense>;
+
+export const createCurrencyConversionSchema = z.object({
+  paidBy: z.number(),
+  amount: z.bigint(),
+  from: z.string(),
+  to: z.string(),
+  groupId: z.number().nullable(),
+  participants: z.array(z.object({ userId: z.number(), amount: z.bigint() })),
+  expenseDate: z.date().optional(),
+  expenseId: z.string().optional(),
+});
+
+export const getCurrencyRateSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  date: z.date().transform((date) => new Date(date.toDateString())),
+});

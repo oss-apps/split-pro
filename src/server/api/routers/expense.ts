@@ -9,9 +9,15 @@ import { db } from '~/server/db';
 import { getDocumentUploadUrl } from '~/server/storage';
 import { BigMath } from '~/utils/numbers';
 
-// import { sendExpensePushNotification } from '../services/notificationService';
-import { createExpenseSchema } from '~/types/expense.types';
+import {
+  createCurrencyConversionSchema,
+  createExpenseSchema,
+  getCurrencyRateSchema,
+} from '~/types/expense.types';
 import { createExpense, deleteExpense, editExpense } from '../services/splitService';
+import { getCurrencyRates } from '../services/currencyRateService';
+import { isCurrencyCode } from '~/lib/currency';
+import { SplitType } from '@prisma/client';
 
 export const expenseRouter = createTRPCRouter({
   getBalances: protectedProcedure.query(async ({ ctx }) => {
@@ -28,25 +34,22 @@ export const expenseRouter = createTRPCRouter({
     });
 
     const balances = balancesRaw
-      .reduce(
-        (acc, current) => {
-          const existing = acc.findIndex((item) => item.friendId === current.friendId);
-          if (-1 === existing) {
-            acc.push(current);
-          } else {
-            const existingItem = acc[existing];
-            if (existingItem) {
-              if (BigMath.abs(existingItem.amount) > BigMath.abs(current.amount)) {
-                acc[existing] = { ...existingItem, hasMore: true };
-              } else {
-                acc[existing] = { ...current, hasMore: true };
-              }
+      .reduce<((typeof balancesRaw)[number] & { hasMore?: boolean })[]>((acc, current) => {
+        const existing = acc.findIndex((item) => item.friendId === current.friendId);
+        if (-1 === existing) {
+          acc.push(current);
+        } else {
+          const existingItem = acc[existing];
+          if (existingItem) {
+            if (BigMath.abs(existingItem.amount) > BigMath.abs(current.amount)) {
+              acc[existing] = { ...existingItem, hasMore: true };
+            } else {
+              acc[existing] = { ...current, hasMore: true };
             }
           }
-          return acc;
-        },
-        [] as ((typeof balancesRaw)[number] & { hasMore?: boolean })[],
-      )
+        }
+        return acc;
+      }, [])
       .sort((a, b) => Number(BigMath.abs(b.amount) - BigMath.abs(a.amount)));
 
     const cumulatedBalances = await db.balance.groupBy({
@@ -80,6 +83,9 @@ export const expenseRouter = createTRPCRouter({
       if (input.expenseId) {
         await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
       }
+      if (input.splitType === SplitType.CURRENCY_CONVERSION) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
+      }
 
       if (input.groupId) {
         const group = await db.group.findUnique({
@@ -100,6 +106,33 @@ export const expenseRouter = createTRPCRouter({
           : await createExpense(input, ctx.session.user.id);
 
         return expense;
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create expense' });
+      }
+    }),
+
+  addOrEditCurrencyConversion: protectedProcedure
+    .input(createCurrencyConversionSchema)
+    .mutation(async ({ input, ctx }) => {
+      if (input.expenseId) {
+        await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
+      }
+
+      if (input.groupId) {
+        const group = await db.group.findUnique({
+          where: { id: input.groupId },
+          select: { archivedAt: true },
+        });
+        if (!group) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group not found' });
+        }
+        if (group.archivedAt) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
+        }
+      }
+
+      try {
       } catch (error) {
         console.error(error);
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create expense' });
@@ -318,6 +351,57 @@ export const expenseRouter = createTRPCRouter({
 
       await deleteExpense(input.expenseId, ctx.session.user.id);
     }),
+
+  getCurrencyRate: protectedProcedure.input(getCurrencyRateSchema).query(async ({ ctx, input }) => {
+    const { from, to, date } = input;
+
+    if (!isCurrencyCode(from) || !isCurrencyCode(to)) {
+      throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid currency code' });
+    }
+
+    const cachedRate = await ctx.db.currencyRateCache.findUnique({
+      where: {
+        from_to_date: { from, to, date },
+      },
+    });
+
+    if (cachedRate) {
+      return { rate: cachedRate.rate };
+    }
+
+    const reverseCachedRate = await ctx.db.currencyRateCache.findUnique({
+      where: {
+        from_to_date: { from: to, to: from, date },
+      },
+    });
+
+    if (reverseCachedRate) {
+      return { rate: 1 / reverseCachedRate.rate };
+    }
+
+    const data = await getCurrencyRates(from, to, date);
+
+    await Promise.all(
+      Object.entries(data.rates).map(([to, rate]) =>
+        ctx.db.currencyRateCache.upsert({
+          where: {
+            from_to_date: { from: data.base, to, date },
+          },
+          create: {
+            from,
+            to,
+            date,
+            rate,
+          },
+          update: {
+            rate,
+          },
+        }),
+      ),
+    );
+
+    return { rate: data.base === from ? data.rates[to] : 1 / data.rates[from]! };
+  }),
 });
 
 const validateEditExpensePermission = async (expenseId: string, userId: number): Promise<void> => {

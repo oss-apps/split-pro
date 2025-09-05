@@ -11,6 +11,7 @@ await import('./src/env.js');
 const nextConfig = {
   reactStrictMode: true,
   output: process.env.DOCKER_OUTPUT ? 'standalone' : undefined,
+  transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core'],
   /**
    * If you are using `appDir` then you must comment the below `i18n` config out.
    *

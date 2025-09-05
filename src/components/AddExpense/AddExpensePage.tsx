@@ -22,6 +22,7 @@ import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
 import { toast } from 'sonner';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { DateSelector } from './DateSelector';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
@@ -218,34 +219,12 @@ export const AddOrEditExpensePage: React.FC<{
                 <SplitTypeSection />
 
                 <div className="mt-4 flex items-center justify-between sm:mt-10">
-                  <div className="flex flex-wrap items-center gap-4">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className={cn(
-                            'justify-start px-0 text-left font-normal',
-                            !expenseDate && 'text-muted-foreground',
-                          )}
-                        >
-                          <CalendarIcon className="text-primary mr-2 h-6 w-6" />
-                          {expenseDate ? (
-                            toUIDate(expenseDate, { useToday: true })
-                          ) : (
-                            <span>{t('ui.add_expense_details.pick_a_date')}</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          fixedWeeks
-                          mode="single"
-                          selected={expenseDate}
-                          onSelect={setExpenseDate}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
+                  <DateSelector
+                    mode="single"
+                    required
+                    selected={expenseDate}
+                    onSelect={setExpenseDate}
+                  />
                   <div className="flex items-center gap-4">
                     {isStorageConfigured ? <UploadFile /> : null}
                     <Button

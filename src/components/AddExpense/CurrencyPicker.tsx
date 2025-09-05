@@ -6,9 +6,11 @@ import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { GeneralPicker } from '../GeneralPicker';
 
 function CurrencyPickerInner({
+  className,
   currentCurrency = 'USD',
   onCurrencyPick,
 }: {
+  className?: string;
   currentCurrency: CurrencyCode;
   onCurrencyPick: (currency: CurrencyCode) => void;
 }) {
@@ -51,6 +53,7 @@ function CurrencyPickerInner({
 
   return (
     <GeneralPicker
+      className={className}
       trigger={trigger}
       title={t('title')}
       placeholderText={t('placeholder')}

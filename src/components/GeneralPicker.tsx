@@ -5,6 +5,7 @@ import { AppDrawer, DrawerClose } from '~/components/ui/drawer';
 import { cn } from '~/lib/utils';
 
 export const GeneralPicker: React.FC<{
+  className?: string;
   trigger: React.ReactNode;
   onSelect: (value: string) => void;
   items: any[];
@@ -16,6 +17,7 @@ export const GeneralPicker: React.FC<{
   noOptionsText: string;
   title: string;
 }> = ({
+  className,
   trigger,
   onSelect,
   items,
@@ -27,7 +29,12 @@ export const GeneralPicker: React.FC<{
   title,
   selected,
 }) => (
-  <AppDrawer trigger={trigger} title={title} className="h-[40vh]" shouldCloseOnAction>
+  <AppDrawer
+    trigger={trigger}
+    title={title}
+    className={cn('h-[40vh]', className)}
+    shouldCloseOnAction
+  >
     <Command className="h-[50vh]">
       <CommandInput className="text-lg" placeholder={placeholderText} />
       <CommandList>

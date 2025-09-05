@@ -62,11 +62,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           buttonVariants({
             variant,
             size,
-            className:
-              className +
-              (responsiveIcon
+            className: cn(
+              className,
+              responsiveIcon
                 ? 'responsive-icon xs:gap-1 xs:text-sm xs:w-40 w-auto lg:w-[180px]'
-                : ''),
+                : '',
+            ),
           }),
         )}
         ref={ref}

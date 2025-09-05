@@ -21,12 +21,22 @@ import { env } from '~/env';
 import { getServerAuthSession } from '~/server/auth';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import VerificationStep from './VerificationStep';
-import { SiAuthentik, SiGithub, SiGoogle } from '@icons-pack/react-simple-icons';
+import {
+  SiAuth0,
+  SiAuthelia,
+  SiAuthentik,
+  SiGithub,
+  SiGoogle,
+  SiKeycloak,
+} from '@icons-pack/react-simple-icons';
 
 const providerSvgs = {
   github: <SiGithub />,
   google: <SiGoogle />,
   authentik: <SiAuthentik />,
+  authelia: <SiAuthelia />,
+  auth0: <SiAuth0 />,
+  keycloak: <SiKeycloak />,
 };
 
 const emailSchema = (t: TFunction) =>

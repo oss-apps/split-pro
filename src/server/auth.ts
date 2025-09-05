@@ -199,7 +199,7 @@ function getProviders() {
 
   if (env.OIDC_CLIENT_ID && env.OIDC_CLIENT_SECRET && env.OIDC_WELL_KNOWN_URL) {
     providersList.push({
-      id: 'oidc',
+      id: env.OIDC_NAME?.toLowerCase() ?? 'oidc',
       name: env.OIDC_NAME ?? 'OIDC',
       clientId: env.OIDC_CLIENT_ID,
       clientSecret: env.OIDC_CLIENT_SECRET,

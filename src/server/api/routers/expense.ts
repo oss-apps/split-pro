@@ -9,10 +9,15 @@ import { db } from '~/server/db';
 import { getDocumentUploadUrl } from '~/server/storage';
 import { BigMath } from '~/utils/numbers';
 
-import { createExpenseSchema, getCurrencyRateSchema } from '~/types/expense.types';
+import {
+  createCurrencyConversionSchema,
+  createExpenseSchema,
+  getCurrencyRateSchema,
+} from '~/types/expense.types';
 import { createExpense, deleteExpense, editExpense } from '../services/splitService';
 import { getCurrencyRates } from '../services/currencyRateService';
 import { isCurrencyCode } from '~/lib/currency';
+import { SplitType } from '@prisma/client';
 
 export const expenseRouter = createTRPCRouter({
   getBalances: protectedProcedure.query(async ({ ctx }) => {
@@ -78,6 +83,9 @@ export const expenseRouter = createTRPCRouter({
       if (input.expenseId) {
         await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
       }
+      if (input.splitType === SplitType.CURRENCY_CONVERSION) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
+      }
 
       if (input.groupId) {
         const group = await db.group.findUnique({
@@ -98,6 +106,33 @@ export const expenseRouter = createTRPCRouter({
           : await createExpense(input, ctx.session.user.id);
 
         return expense;
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create expense' });
+      }
+    }),
+
+  addOrEditCurrencyConversion: protectedProcedure
+    .input(createCurrencyConversionSchema)
+    .mutation(async ({ input, ctx }) => {
+      if (input.expenseId) {
+        await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
+      }
+
+      if (input.groupId) {
+        const group = await db.group.findUnique({
+          where: { id: input.groupId },
+          select: { archivedAt: true },
+        });
+        if (!group) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group not found' });
+        }
+        if (group.archivedAt) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
+        }
+      }
+
+      try {
       } catch (error) {
         console.error(error);
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create expense' });

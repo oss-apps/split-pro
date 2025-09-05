@@ -4,15 +4,22 @@ import { CURRENCIES, type CurrencyCode, parseCurrencyCode } from '~/lib/currency
 
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { GeneralPicker } from '../GeneralPicker';
+import { FRANKFURTER_CURRENCIES } from '~/server/api/services/currencyRateService';
+
+const FRANKFURTER_FILTERED_CURRENCIES = Object.fromEntries(
+  Object.entries(CURRENCIES).filter(([code]) => FRANKFURTER_CURRENCIES.includes(code)),
+);
 
 function CurrencyPickerInner({
   className,
   currentCurrency = 'USD',
   onCurrencyPick,
+  showOnlyFrankfurter = false,
 }: {
   className?: string;
   currentCurrency: CurrencyCode;
   onCurrencyPick: (currency: CurrencyCode) => void;
+  showOnlyFrankfurter?: boolean;
 }) {
   const { t, getCurrencyName } = useTranslationWithUtils(['currencies']);
 
@@ -59,7 +66,7 @@ function CurrencyPickerInner({
       placeholderText={t('placeholder')}
       noOptionsText={t('no_currency_found')}
       onSelect={onSelect}
-      items={Object.values(CURRENCIES)}
+      items={Object.values(showOnlyFrankfurter ? FRANKFURTER_FILTERED_CURRENCIES : CURRENCIES)}
       extractValue={extractValue}
       extractKey={extractKey}
       selected={selected}

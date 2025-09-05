@@ -13,7 +13,7 @@ export const getCurrencyRates = async (
   to: CurrencyCode,
   date?: Date,
 ): Promise<RateResponse> => {
-  if (frankfurterCurrencies.includes(from) && frankfurterCurrencies.includes(to)) {
+  if (FRANKFURTER_CURRENCIES.includes(from) && FRANKFURTER_CURRENCIES.includes(to)) {
     return frankfurterFetchRates(from, to, date);
   } else if (from === 'USD' || to === 'USD') {
     return oxrFetchRates(date);
@@ -59,7 +59,7 @@ async function oxrFetchRates(date?: Date): Promise<RateResponse> {
 }
 
 // Check with https://api.frankfurter.dev/v1/currencies
-const frankfurterCurrencies = [
+export const FRANKFURTER_CURRENCIES = [
   'AUD',
   'BGN',
   'BRL',

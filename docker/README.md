@@ -80,3 +80,7 @@ docker exec -t <postgres container name> pg_dumpall -c -U postgres > splitpro_ba
 ```bash
 cat splitpro_backup.sql | docker exec -i <postgres container name> psql -U postgres
 ```
+
+## Authentication
+
+We use NextAuth for authentication providers, offering email, Google and Authentik providers out of the box. Other providers can be customized as OIDC providers, but remember that an OIDC callback is needed. Set up yout `NEXTAUTH_URL` and then a callback address of `https://${NEXTAUTH_URL}/api/auth/callback/oidc`.

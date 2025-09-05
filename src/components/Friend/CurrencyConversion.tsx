@@ -11,6 +11,9 @@ import { DateSelector } from '../AddExpense/DateSelector';
 import { AppDrawer } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { env } from '~/env';
+import { useAppStore } from '~/store/appStore';
+import { useAddExpenseStore } from '~/store/addStore';
+import { Button } from '../ui/button';
 
 export const CurrencyConversion: React.FC<{
   amount: bigint;
@@ -22,9 +25,8 @@ export const CurrencyConversion: React.FC<{
 }> = ({ amount, currency, friend, user, children, groupId }) => {
   const { t } = useTranslationWithUtils();
   const [amountStr, setAmountStr] = useState((Number(BigMath.abs(amount)) / 100).toString());
-  const [targetCurrency, setTargetCurrency] = useState<CurrencyCode>(
-    isCurrencyCode(currency) ? currency : 'USD',
-  );
+  const preferredCurrency = useAddExpenseStore((state) => state.currency);
+  const [targetCurrency, setTargetCurrency] = useState<CurrencyCode>(preferredCurrency);
   const [rateDate, setRateDate] = useState<Date>(new Date());
   const getCurrencyRate = api.expense.getCurrencyRate.useQuery(
     { from: currency, to: targetCurrency, date: rateDate },
@@ -133,7 +135,9 @@ export const CurrencyConversion: React.FC<{
             onChange={onChangeTargetAmount}
             disabled={getCurrencyRate.isPending || currency === targetCurrency}
           />
-          <p className="text-lg">{currency}</p>
+          <Button variant="outline" className="w-[70px] rounded-lg py-2 text-base" disabled>
+            {currency}
+          </Button>
 
           <DateSelector
             mode="single"

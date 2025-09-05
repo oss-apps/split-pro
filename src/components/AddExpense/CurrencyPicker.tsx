@@ -5,6 +5,7 @@ import { CURRENCIES, type CurrencyCode, parseCurrencyCode } from '~/lib/currency
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { GeneralPicker } from '../GeneralPicker';
 import { FRANKFURTER_CURRENCIES } from '~/server/api/services/currencyRateService';
+import { Button } from '../ui/button';
 
 const FRANKFURTER_FILTERED_CURRENCIES = Object.fromEntries(
   Object.entries(CURRENCIES).filter(([code]) => FRANKFURTER_CURRENCIES.includes(code)),
@@ -32,9 +33,9 @@ function CurrencyPickerInner({
 
   const trigger = useMemo(
     () => (
-      <div className="flex w-[70px] justify-center rounded-lg border py-2 text-center text-base">
+      <Button variant="outline" className="w-[70px] rounded-lg py-2 text-base">
         {currentCurrency}
-      </div>
+      </Button>
     ),
     [currentCurrency],
   );

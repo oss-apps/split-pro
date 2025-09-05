@@ -135,33 +135,36 @@ enum SplitType {
     SHARE
     ADJUSTMENT
     SETTLEMENT
-    CURRENCY_EXCHANGE
+    CURRENCY_CONVERSION
 }
 
 model Expense {
-    id                  String               @id @default(cuid())
-    paidBy              Int
-    addedBy             Int
-    name                String
-    category            String
-    amount              BigInt
-    splitType           SplitType            @default(EQUAL)
-    expenseDate         DateTime             @default(now())
-    createdAt           DateTime             @default(now())
-    updatedAt           DateTime             @updatedAt
-    currency            String
-    fileKey             String?
-    groupId             Int?
-    deletedAt           DateTime?
-    deletedBy           Int?
-    updatedBy           Int?
-    group               Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
-    paidByUser          User                 @relation(name: "PaidByUser", fields: [paidBy], references: [id], onDelete: Cascade)
-    addedByUser         User                 @relation(name: "AddedByUser", fields: [addedBy], references: [id], onDelete: Cascade)
-    deletedByUser       User?                @relation(name: "DeletedByUser", fields: [deletedBy], references: [id], onDelete: Cascade)
-    updatedByUser       User?                @relation(name: "UpdatedByUser", fields: [updatedBy], references: [id], onDelete: SetNull)
-    expenseParticipants ExpenseParticipant[]
-    expenseNotes        ExpenseNote[]
+    id                      String               @id @default(cuid())
+    paidBy                  Int
+    addedBy                 Int
+    name                    String
+    category                String
+    amount                  BigInt
+    splitType               SplitType            @default(EQUAL)
+    expenseDate             DateTime             @default(now())
+    createdAt               DateTime             @default(now())
+    updatedAt               DateTime             @updatedAt
+    currency                String
+    fileKey                 String?
+    groupId                 Int?
+    deletedAt               DateTime?
+    deletedBy               Int?
+    updatedBy               Int?
+    otherConversion         String?              @unique
+    group                   Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
+    paidByUser              User                 @relation(name: "PaidByUser", fields: [paidBy], references: [id], onDelete: Cascade)
+    addedByUser             User                 @relation(name: "AddedByUser", fields: [addedBy], references: [id], onDelete: Cascade)
+    deletedByUser           User?                @relation(name: "DeletedByUser", fields: [deletedBy], references: [id], onDelete: Cascade)
+    updatedByUser           User?                @relation(name: "UpdatedByUser", fields: [updatedBy], references: [id], onDelete: SetNull)
+    conversionTo            Expense?             @relation(name: "CurrencyConversion", fields: [otherConversion], references: [id], onDelete: Cascade)
+    conversionFrom          Expense?             @relation(name: "CurrencyConversion")
+    expenseParticipants     ExpenseParticipant[]
+    expenseNotes            ExpenseNote[]
 
     @@index([groupId])
     @@index([paidBy])
@@ -187,14 +190,14 @@ model ExpenseNote {
     expense     Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
 }
 
-model ExchangeRateCache {
-    currencyFrom String
-    currencyTo   String
+model CurrencyRateCache {
+    from String
+    to   String
     date         DateTime
     rate         Float
     insertedAt   DateTime @default(now())
 
-    @@id([currencyFrom, currencyTo, date])
+    @@id([from, to, date])
 }
 
 model PushNotification {

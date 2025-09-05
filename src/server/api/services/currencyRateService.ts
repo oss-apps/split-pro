@@ -8,7 +8,7 @@ export interface RateResponse {
 
 class ProviderMissingError extends Error {}
 
-export const getExchangeRates = async (
+export const getCurrencyRates = async (
   from: CurrencyCode,
   to: CurrencyCode,
   date?: Date,

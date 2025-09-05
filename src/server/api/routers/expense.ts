@@ -11,7 +11,7 @@ import { BigMath } from '~/utils/numbers';
 
 import { createExpenseSchema, getCurrencyRateSchema } from '~/types/expense.types';
 import { createExpense, deleteExpense, editExpense } from '../services/splitService';
-import { getExchangeRates } from '../services/currencyRateService';
+import { getCurrencyRates } from '../services/currencyRateService';
 import { isCurrencyCode } from '~/lib/currency';
 
 export const expenseRouter = createTRPCRouter({
@@ -344,7 +344,7 @@ export const expenseRouter = createTRPCRouter({
       return { rate: 1 / reverseCachedRate.rate };
     }
 
-    const data = await getExchangeRates(from, to, date);
+    const data = await getCurrencyRates(from, to, date);
 
     await Promise.all(
       Object.entries(data.rates).map(([to, rate]) =>

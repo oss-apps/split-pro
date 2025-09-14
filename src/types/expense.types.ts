@@ -17,6 +17,7 @@ export type CreateExpense = Omit<
   expenseDate?: Date;
   fileKey?: string;
   expenseId?: string;
+  otherConversion?: string;
   participants: Omit<ExpenseParticipant, 'expenseId'>[];
 };
 
@@ -40,6 +41,7 @@ export const createExpenseSchema = z.object({
   fileKey: z.string().optional(),
   expenseDate: z.date().optional(),
   expenseId: z.string().optional(),
+  otherConversion: z.string().optional(),
 }) satisfies z.ZodType<CreateExpense>;
 
 export const createCurrencyConversionSchema = z.object({

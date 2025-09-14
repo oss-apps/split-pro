@@ -41,6 +41,7 @@ export async function createExpense(
     participants,
     expenseDate,
     fileKey,
+    otherConversion,
   }: CreateExpense,
   currentUserId: number,
 ) {

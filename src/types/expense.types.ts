@@ -45,13 +45,13 @@ export const createExpenseSchema = z.object({
 }) satisfies z.ZodType<CreateExpense>;
 
 export const createCurrencyConversionSchema = z.object({
-  paidBy: z.number(),
   amount: z.bigint(),
   from: z.string(),
   to: z.string(),
+  rate: z.number().positive(),
+  submittedBy: z.number(),
+  friendId: z.number().nullable(),
   groupId: z.number().nullable(),
-  participants: z.array(z.object({ userId: z.number(), amount: z.bigint() })),
-  expenseDate: z.date().optional(),
   expenseId: z.string().optional(),
 });
 

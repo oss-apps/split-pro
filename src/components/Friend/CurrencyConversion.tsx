@@ -12,6 +12,7 @@ import { Input } from '../ui/input';
 import { env } from '~/env';
 import { useAddExpenseStore } from '~/store/addStore';
 import { Button } from '../ui/button';
+import { toast } from 'sonner';
 
 export const CurrencyConversion: React.FC<{
   amount: bigint;
@@ -20,8 +21,11 @@ export const CurrencyConversion: React.FC<{
   user: User;
   children: ReactNode;
   groupId: number;
-}> = ({ amount, currency, friend: _friend, user: _user, children, groupId: _groupId }) => {
+}> = ({ amount, currency, friend, user, children, groupId }) => {
   const { t } = useTranslationWithUtils();
+
+  const addOrEditCurrencyConversionMutation = api.expense.addOrEditCurrencyConversion.useMutation();
+
   const [amountStr, setAmountStr] = useState((Number(BigMath.abs(amount)) / 100).toString());
   const preferredCurrency = useAddExpenseStore((state) => state.currency);
   const { setCurrency } = useAddExpenseStore((state) => state.actions);
@@ -98,6 +102,34 @@ export const CurrencyConversion: React.FC<{
     [rate],
   );
 
+  const onSave = useCallback(async () => {
+    try {
+      await addOrEditCurrencyConversionMutation.mutateAsync({
+        amount,
+        rate: Number(rate),
+        from: currency,
+        to: targetCurrency,
+        friendId: friend.id,
+        groupId,
+        submittedBy: user.id,
+      });
+      toast.success(t('ui.currency_conversion.success_toast'));
+    } catch (error) {
+      console.error(error);
+      toast.error(t('ui.currency_conversion.error_toast'));
+    }
+  }, [
+    addOrEditCurrencyConversionMutation,
+    targetCurrency,
+    amount,
+    rate,
+    currency,
+    friend.id,
+    groupId,
+    user.id,
+    t,
+  ]);
+
   return (
     <AppDrawer
       trigger={children}
@@ -106,6 +138,7 @@ export const CurrencyConversion: React.FC<{
       className="h-[70vh]"
       actionTitle={t('ui.actions.save')}
       shouldCloseOnAction
+      actionOnClick={onSave}
       actionDisabled={
         !isCurrencyCode(targetCurrency) ||
         !amountStr ||

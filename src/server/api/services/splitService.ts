@@ -67,6 +67,13 @@ export async function createExpense(
         fileKey,
         addedBy: currentUserId,
         expenseDate,
+        conversionFrom: otherConversion
+          ? {
+              connect: {
+                id: otherConversion ?? null,
+              },
+            }
+          : undefined,
       },
     }),
   );

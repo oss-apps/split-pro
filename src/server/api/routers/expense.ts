@@ -197,6 +197,20 @@ export const expenseRouter = createTRPCRouter({
             {
               deletedBy: null,
             },
+            {
+              OR: [
+                {
+                  NOT: {
+                    splitType: SplitType.CURRENCY_CONVERSION,
+                  },
+                },
+                {
+                  NOT: {
+                    otherConversion: null,
+                  },
+                },
+              ],
+            },
           ],
         },
         orderBy: {
@@ -216,6 +230,7 @@ export const expenseRouter = createTRPCRouter({
             },
           },
           paidByUser: true,
+          conversionFrom: true,
         },
       });
 
@@ -229,6 +244,18 @@ export const expenseRouter = createTRPCRouter({
         where: {
           groupId: input.groupId,
           deletedBy: null,
+          OR: [
+            {
+              NOT: {
+                splitType: SplitType.CURRENCY_CONVERSION,
+              },
+            },
+            {
+              NOT: {
+                otherConversion: null,
+              },
+            },
+          ],
         },
         orderBy: {
           expenseDate: 'desc',
@@ -237,10 +264,10 @@ export const expenseRouter = createTRPCRouter({
           expenseParticipants: true,
           paidByUser: true,
           deletedByUser: true,
+          conversionTo: true,
         },
       });
 
-      console.log(expenses.at(-1)?.name, expenses.at(-1)?.expenseParticipants);
       return expenses;
     }),
 

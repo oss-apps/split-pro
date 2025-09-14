@@ -11,6 +11,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '..
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { Button } from '../ui/button';
 import { CurrencyConversion } from '../Friend/CurrencyConversion';
+import { CURRENCY_CONVERSION_ICON, SETTLEUP_ICON } from '../ui/categoryIcons';
 
 interface UserWithBalance {
   user: User;
@@ -144,7 +145,7 @@ export const BalanceList: React.FC<{
                             groupId={groupBalances[0]!.groupId}
                           >
                             <Button size="icon" variant="secondary" className="size-8">
-                              <HandCoins className="size-4" />
+                              <SETTLEUP_ICON className="size-4" />
                             </Button>
                           </GroupSettleUp>
                           <CurrencyConversion
@@ -155,7 +156,7 @@ export const BalanceList: React.FC<{
                             groupId={groupBalances[0]!.groupId}
                           >
                             <Button size="icon" variant="secondary" className="size-8">
-                              <DollarSign className="size-4" />
+                              <CURRENCY_CONVERSION_ICON className="size-4" />
                             </Button>
                           </CurrencyConversion>
                         </div>

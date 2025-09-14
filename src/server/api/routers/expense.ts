@@ -113,16 +113,17 @@ export const expenseRouter = createTRPCRouter({
       }
     }),
 
-  addOrEditCurrencyConversion: protectedProcedure
+  addCurrencyConversion: protectedProcedure
     .input(createCurrencyConversionSchema)
     .mutation(async ({ input, ctx }) => {
       const { amount, rate, from, to, senderId, receiverId, groupId } = input;
 
       const amountTo = BigMath.roundDiv(amount * BigInt(Math.round(rate * 10000)), 10000n);
+      const name = `${from} → ${to} @ ${rate}`;
 
       const expenseFrom = await createExpense(
         {
-          name: `1: ${from} → ${to} @ ${rate}`,
+          name,
           currency: from,
           amount,
           paidBy: receiverId,
@@ -147,7 +148,7 @@ export const expenseRouter = createTRPCRouter({
 
       const expenseTo = await createExpense(
         {
-          name: `2: ${from} → ${to} @ ${rate}`,
+          name,
           currency: to,
           amount: amountTo,
           paidBy: receiverId,
@@ -290,6 +291,15 @@ export const expenseRouter = createTRPCRouter({
           deletedByUser: true,
           updatedByUser: true,
           group: true,
+          conversionTo: {
+            include: {
+              expenseParticipants: {
+                include: {
+                  user: true,
+                },
+              },
+            },
+          },
         },
       });
 

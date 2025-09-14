@@ -24,7 +24,7 @@ export const CurrencyConversion: React.FC<{
 }> = ({ amount, currency, sender, receiver, children, groupId }) => {
   const { t } = useTranslationWithUtils();
 
-  const addOrEditCurrencyConversionMutation = api.expense.addOrEditCurrencyConversion.useMutation();
+  const addOrEditCurrencyConversionMutation = api.expense.addCurrencyConversion.useMutation();
   const utils = api.useUtils();
 
   const [amountStr, setAmountStr] = useState((Number(BigMath.abs(amount)) / 100).toString());

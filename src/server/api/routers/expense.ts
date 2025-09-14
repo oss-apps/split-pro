@@ -18,6 +18,7 @@ import { createExpense, deleteExpense, editExpense } from '../services/splitServ
 import { getCurrencyRates } from '../services/currencyRateService';
 import { isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
+import { DEFAULT_CATEGORY } from '~/lib/category';
 
 export const expenseRouter = createTRPCRouter({
   getBalances: protectedProcedure.query(async ({ ctx }) => {
@@ -115,28 +116,58 @@ export const expenseRouter = createTRPCRouter({
   addOrEditCurrencyConversion: protectedProcedure
     .input(createCurrencyConversionSchema)
     .mutation(async ({ input, ctx }) => {
-      if (input.expenseId) {
-        await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
-      }
+      const { amount, rate, from, to, senderId, receiverId, groupId } = input;
 
-      if (input.groupId) {
-        const group = await db.group.findUnique({
-          where: { id: input.groupId },
-          select: { archivedAt: true },
+      const amountTo = BigMath.roundDiv(amount * BigInt(Math.round(rate * 10000)), 10000n);
+
+      const expenseFrom = await createExpense(
+        {
+          name: `1: ${from} → ${to} @ ${rate}`,
+          currency: from,
+          amount,
+          paidBy: receiverId,
+          splitType: SplitType.CURRENCY_CONVERSION,
+          category: DEFAULT_CATEGORY,
+          participants: [
+            { userId: senderId, amount: -amount },
+            { userId: receiverId, amount: amount },
+          ],
+          groupId,
+          expenseDate: new Date(),
+        },
+        ctx.session.user.id,
+      );
+
+      if (!expenseFrom) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to create currency conversion record',
         });
-        if (!group) {
-          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group not found' });
-        }
-        if (group.archivedAt) {
-          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
-        }
       }
 
-      try {
-      } catch (error) {
-        console.error(error);
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create expense' });
-      }
+      const expenseTo = await createExpense(
+        {
+          name: `2: ${from} → ${to} @ ${rate}`,
+          currency: to,
+          amount: amountTo,
+          paidBy: receiverId,
+          splitType: SplitType.CURRENCY_CONVERSION,
+          category: DEFAULT_CATEGORY,
+          participants: [
+            { userId: senderId, amount: amountTo },
+            { userId: receiverId, amount: -amountTo },
+          ],
+          groupId,
+          expenseDate: new Date(),
+          otherConversion: expenseFrom.id,
+        },
+        ctx.session.user.id,
+      );
+
+      return {
+        ...expenseFrom,
+        otherConversion: expenseTo?.id,
+      };
     }),
 
   getExpensesWithFriend: protectedProcedure
@@ -209,6 +240,7 @@ export const expenseRouter = createTRPCRouter({
         },
       });
 
+      console.log(expenses.at(-1)?.name, expenses.at(-1)?.expenseParticipants);
       return expenses;
     }),
 

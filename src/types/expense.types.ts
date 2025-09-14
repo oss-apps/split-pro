@@ -49,8 +49,8 @@ export const createCurrencyConversionSchema = z.object({
   from: z.string(),
   to: z.string(),
   rate: z.number().positive(),
-  submittedBy: z.number(),
-  friendId: z.number().nullable(),
+  senderId: z.number(),
+  receiverId: z.number(),
   groupId: z.number().nullable(),
   expenseId: z.string().optional(),
 });

@@ -148,8 +148,8 @@ export const BalanceList: React.FC<{
                             </Button>
                           </GroupSettleUp>
                           <CurrencyConversion
-                            friend={friend}
-                            user={user}
+                            sender={0 < amount ? friend : user}
+                            receiver={0 < amount ? user : friend}
                             amount={amount}
                             currency={currency}
                             groupId={groupBalances[0]!.groupId}

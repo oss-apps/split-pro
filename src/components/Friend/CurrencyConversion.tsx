@@ -17,14 +17,15 @@ import { toast } from 'sonner';
 export const CurrencyConversion: React.FC<{
   amount: bigint;
   currency: string;
-  friend: User;
-  user: User;
+  sender: User;
+  receiver: User;
   children: ReactNode;
   groupId: number;
-}> = ({ amount, currency, friend, user, children, groupId }) => {
+}> = ({ amount, currency, sender, receiver, children, groupId }) => {
   const { t } = useTranslationWithUtils();
 
   const addOrEditCurrencyConversionMutation = api.expense.addOrEditCurrencyConversion.useMutation();
+  const utils = api.useUtils();
 
   const [amountStr, setAmountStr] = useState((Number(BigMath.abs(amount)) / 100).toString());
   const preferredCurrency = useAddExpenseStore((state) => state.currency);
@@ -109,11 +110,12 @@ export const CurrencyConversion: React.FC<{
         rate: Number(rate),
         from: currency,
         to: targetCurrency,
-        friendId: friend.id,
+        senderId: sender.id,
+        receiverId: receiver.id,
         groupId,
-        submittedBy: user.id,
       });
       toast.success(t('ui.currency_conversion.success_toast'));
+      utils.invalidate().catch(console.error);
     } catch (error) {
       console.error(error);
       toast.error(t('ui.currency_conversion.error_toast'));
@@ -124,10 +126,11 @@ export const CurrencyConversion: React.FC<{
     amount,
     rate,
     currency,
-    friend.id,
+    sender.id,
+    receiver.id,
     groupId,
-    user.id,
     t,
+    utils,
   ]);
 
   return (

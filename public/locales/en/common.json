@@ -88,7 +88,9 @@
       "title": "Currency conversion",
       "description": "Convert the amount to a different currency.",
       "amount_to_receive": "Amount to receive",
-      "exchange_rate": "Exchange rate"
+      "exchange_rate": "Exchange rate",
+      "success_toast": "Currency conversion set successfully",
+      "error_toast": "Error while setting currency conversion"
     }
   },
   "errors": {

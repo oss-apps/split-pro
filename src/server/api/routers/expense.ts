@@ -113,25 +113,26 @@ export const expenseRouter = createTRPCRouter({
       }
     }),
 
-  addCurrencyConversion: protectedProcedure
+  addOrEditCurrencyConversion: protectedProcedure
     .input(createCurrencyConversionSchema)
     .mutation(async ({ input, ctx }) => {
-      const { amount, rate, from, to, senderId, receiverId, groupId } = input;
+      const { amount, rate, from, to, senderId, receiverId, groupId, expenseId } = input;
 
       const amountTo = BigMath.roundDiv(amount * BigInt(Math.round(rate * 10000)), 10000n);
       const name = `${from} → ${to} @ ${rate}`;
 
-      const expenseFrom = await createExpense(
+      const expenseFrom = await (expenseId ? editExpense : createExpense)(
         {
+          expenseId,
           name,
           currency: from,
           amount,
-          paidBy: receiverId,
+          paidBy: senderId,
           splitType: SplitType.CURRENCY_CONVERSION,
           category: DEFAULT_CATEGORY,
           participants: [
-            { userId: senderId, amount: -amount },
-            { userId: receiverId, amount: amount },
+            { userId: senderId, amount: amount },
+            { userId: receiverId, amount: -amount },
           ],
           groupId,
           expenseDate: new Date(),
@@ -142,33 +143,54 @@ export const expenseRouter = createTRPCRouter({
       if (!expenseFrom) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to create currency conversion record',
+          message: 'Failed to upsert currency conversion record',
         });
       }
 
-      const expenseTo = await createExpense(
-        {
-          name,
-          currency: to,
-          amount: amountTo,
-          paidBy: receiverId,
-          splitType: SplitType.CURRENCY_CONVERSION,
-          category: DEFAULT_CATEGORY,
-          participants: [
-            { userId: senderId, amount: amountTo },
-            { userId: receiverId, amount: -amountTo },
-          ],
-          groupId,
-          expenseDate: new Date(),
-          otherConversion: expenseFrom.id,
-        },
-        ctx.session.user.id,
-      );
-
-      return {
-        ...expenseFrom,
-        otherConversion: expenseTo?.id,
+      const otherConversionParams = {
+        name,
+        currency: to,
+        amount: amountTo,
+        paidBy: receiverId,
+        splitType: SplitType.CURRENCY_CONVERSION,
+        category: DEFAULT_CATEGORY,
+        participants: [
+          { userId: senderId, amount: -amountTo },
+          { userId: receiverId, amount: amountTo },
+        ],
+        groupId,
+        expenseDate: new Date(),
       };
+
+      if (expenseId) {
+        const expense = await db.expense.findFirst({
+          select: { otherConversion: true },
+          where: {
+            id: expenseId,
+          },
+        });
+
+        if (expense?.otherConversion) {
+          await editExpense(
+            {
+              expenseId: expense.otherConversion,
+              ...otherConversionParams,
+            },
+            ctx.session.user.id,
+          );
+          return {
+            ...expenseFrom,
+          };
+        }
+      } else {
+        await createExpense(
+          {
+            ...otherConversionParams,
+            otherConversion: expenseFrom.id,
+          },
+          ctx.session.user.id,
+        );
+      }
     }),
 
   getExpensesWithFriend: protectedProcedure

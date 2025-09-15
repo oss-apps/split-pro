@@ -53,6 +53,7 @@ export const createCurrencyConversionSchema = z.object({
   receiverId: z.number(),
   groupId: z.number().nullable(),
   expenseId: z.string().optional(),
+  otherExpenseId: z.string().optional(),
 });
 
 export const getCurrencyRateSchema = z.object({

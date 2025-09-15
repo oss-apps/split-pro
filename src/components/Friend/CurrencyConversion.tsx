@@ -2,7 +2,7 @@ import { type User } from '@prisma/client';
 import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { api } from '~/utils/api';
-import { BigMath } from '~/utils/numbers';
+import { BigMath, toSafeBigInt } from '~/utils/numbers';
 
 import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
 import { CurrencyPicker } from '../AddExpense/CurrencyPicker';
@@ -16,18 +16,22 @@ import { toast } from 'sonner';
 
 export const CurrencyConversion: React.FC<{
   amount: bigint;
+  editingRate?: number;
   currency: string;
   sender: User;
   receiver: User;
   children: ReactNode;
-  groupId: number;
-}> = ({ amount, currency, sender, receiver, children, groupId }) => {
+  expenseId?: string;
+  groupId: number | null;
+}> = ({ amount, editingRate, currency, sender, receiver, children, groupId, expenseId }) => {
   const { t } = useTranslationWithUtils();
 
-  const addOrEditCurrencyConversionMutation = api.expense.addCurrencyConversion.useMutation();
+  const addOrEditCurrencyConversionMutation = api.expense.addOrEditCurrencyConversion.useMutation();
   const utils = api.useUtils();
 
-  const [amountStr, setAmountStr] = useState((Number(BigMath.abs(amount)) / 100).toString());
+  const [amountStr, setAmountStr] = useState('');
+  const [rate, setRate] = useState('');
+  const [targetAmountStr, setTargetAmountStr] = useState('');
   const preferredCurrency = useAddExpenseStore((state) => state.currency);
   const { setCurrency } = useAddExpenseStore((state) => state.actions);
   const [targetCurrency, setTargetCurrency] = useState<CurrencyCode>(preferredCurrency);
@@ -38,33 +42,29 @@ export const CurrencyConversion: React.FC<{
   );
 
   useEffect(() => {
+    setAmountStr((Number(BigMath.abs(amount)) / 100).toString());
+    setRate(editingRate ? editingRate.toFixed(4) : '');
+  }, [amount, editingRate]);
+
+  useEffect(() => {
     if (getCurrencyRate.data?.rate) {
-      setRate(Number(getCurrencyRate.data.rate).toFixed(4));
+      setRate(getCurrencyRate.data.rate.toFixed(4));
     }
   }, [getCurrencyRate.data, amountStr]);
 
-  const [rate, setRate] = useState('');
-  const [targetAmountStr, setTargetAmountStr] = useState('');
   const dateDisabled = useMemo(() => ({ after: new Date() }), []);
 
   useEffect(() => {
     setTargetAmountStr((Number(amountStr) * Number(rate)).toFixed(2));
   }, [amountStr, rate]);
 
-  const onChangeAmount = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = e.target;
-      if (
-        Number(value) < 0 ||
-        Number.isNaN(Number(value)) ||
-        Number(value) > Number(BigMath.abs(amount)) / 100
-      ) {
-        return;
-      }
-      setAmountStr(value);
-    },
-    [amount],
-  );
+  const onChangeAmount = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    if (Number(value) < 0 || Number.isNaN(Number(value))) {
+      return;
+    }
+    setAmountStr(value);
+  }, []);
 
   const onChangeRate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(',', '.');
@@ -106,13 +106,14 @@ export const CurrencyConversion: React.FC<{
   const onSave = useCallback(async () => {
     try {
       await addOrEditCurrencyConversionMutation.mutateAsync({
-        amount,
+        amount: toSafeBigInt(amountStr),
         rate: Number(rate),
         from: currency,
         to: targetCurrency,
         senderId: sender.id,
         receiverId: receiver.id,
         groupId,
+        expenseId,
       });
       toast.success(t('ui.currency_conversion.success_toast'));
       utils.invalidate().catch(console.error);
@@ -123,11 +124,12 @@ export const CurrencyConversion: React.FC<{
   }, [
     addOrEditCurrencyConversionMutation,
     targetCurrency,
-    amount,
+    amountStr,
     rate,
     currency,
     sender.id,
     receiver.id,
+    expenseId,
     groupId,
     t,
     utils,

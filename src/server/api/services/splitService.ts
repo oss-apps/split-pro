@@ -215,6 +215,10 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
     throw new Error('Expense not found');
   }
 
+  if (expense.otherConversion) {
+    await deleteExpense(expense.otherConversion, deletedBy);
+  }
+
   expense.expenseParticipants
     .filter(({ userId }) => userId !== expense.paidBy)
     .forEach((participant) => {

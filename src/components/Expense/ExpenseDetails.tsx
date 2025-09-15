@@ -10,7 +10,12 @@ import { EntityAvatar } from '../ui/avatar';
 import { CategoryIcon } from '../ui/categoryIcons';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
-import React from 'react';
+import React, { useCallback } from 'react';
+import { CurrencyConversion } from '../Friend/CurrencyConversion';
+import { Button } from '../ui/button';
+import { PencilIcon } from 'lucide-react';
+import { useAddExpenseStore } from '~/store/addStore';
+import { isCurrencyCode } from '~/lib/currency';
 
 type ExpenseDetailsOutput = NonNullable<inferRouterOutputs<ExpenseRouter>['getExpenseDetails']>;
 
@@ -129,6 +134,41 @@ const ExpenseParticipantEntry: React.FC<{
         {currency} {toUIString(participant.amount)}
       </p>
     </div>
+  );
+};
+
+export const EditCurrencyConversion: React.FC<{ expense: ExpenseDetailsOutput }> = ({
+  expense,
+}) => {
+  const { setCurrency } = useAddExpenseStore((s) => s.actions);
+
+  const onClick = useCallback(() => {
+    if (expense.conversionTo && isCurrencyCode(expense.conversionTo.currency)) {
+      setCurrency(expense.conversionTo.currency);
+    }
+  }, [expense, setCurrency]);
+
+  const sender = expense.paidByUser;
+  const receiver = expense.expenseParticipants.find((p) => p.userId !== expense.paidBy)?.user;
+
+  if (!sender || !receiver) {
+    return null;
+  }
+
+  return (
+    <CurrencyConversion
+      amount={expense.amount}
+      currency={expense.currency}
+      sender={sender}
+      receiver={receiver}
+      groupId={expense.groupId}
+      expenseId={expense.id}
+      editingRate={Math.abs(Number(expense.conversionTo?.amount) / Number(expense.amount))}
+    >
+      <Button variant="ghost" onClick={onClick}>
+        <PencilIcon className="mr-1 h-4 w-4" />
+      </Button>
+    </CurrencyConversion>
   );
 };
 

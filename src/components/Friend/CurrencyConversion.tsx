@@ -284,7 +284,8 @@ export const CurrencyConversion: React.FC<{
                   className="mx-auto"
                   currentCurrency={targetCurrency}
                   onCurrencyPick={onChangeTargetCurrency}
-                  showOnlyFrankfurter={currency !== 'USD' || !env.NEXT_PUBLIC_OXR_AVAILABLE}
+                  // Client env vars with pages router only work after next build :/
+                  showOnlyFrankfurter={env.NEXT_PUBLIC_FRANKFURTER_USED}
                 />
               </div>
             </div>

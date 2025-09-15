@@ -15,7 +15,7 @@ import {
   getCurrencyRateSchema,
 } from '~/types/expense.types';
 import { createExpense, deleteExpense, editExpense } from '../services/splitService';
-import { getCurrencyRates } from '../services/currencyRateService';
+import { currencyRateProvider } from '../services/currencyRateService';
 import { isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
@@ -443,55 +443,16 @@ export const expenseRouter = createTRPCRouter({
       await deleteExpense(input.expenseId, ctx.session.user.id);
     }),
 
-  getCurrencyRate: protectedProcedure.input(getCurrencyRateSchema).query(async ({ ctx, input }) => {
+  getCurrencyRate: protectedProcedure.input(getCurrencyRateSchema).query(async ({ input }) => {
     const { from, to, date } = input;
 
     if (!isCurrencyCode(from) || !isCurrencyCode(to)) {
       throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid currency code' });
     }
 
-    const cachedRate = await ctx.db.currencyRateCache.findUnique({
-      where: {
-        from_to_date: { from, to, date },
-      },
-    });
+    const rate = await currencyRateProvider.getCurrencyRate(from, to, date);
 
-    if (cachedRate) {
-      return { rate: cachedRate.rate };
-    }
-
-    const reverseCachedRate = await ctx.db.currencyRateCache.findUnique({
-      where: {
-        from_to_date: { from: to, to: from, date },
-      },
-    });
-
-    if (reverseCachedRate) {
-      return { rate: 1 / reverseCachedRate.rate };
-    }
-
-    const data = await getCurrencyRates(from, to, date);
-
-    await Promise.all(
-      Object.entries(data.rates).map(([to, rate]) =>
-        ctx.db.currencyRateCache.upsert({
-          where: {
-            from_to_date: { from: data.base, to, date },
-          },
-          create: {
-            from,
-            to,
-            date,
-            rate,
-          },
-          update: {
-            rate,
-          },
-        }),
-      ),
-    );
-
-    return { rate: data.base === from ? data.rates[to] : 1 / data.rates[from]! };
+    return { rate };
   }),
 });
 

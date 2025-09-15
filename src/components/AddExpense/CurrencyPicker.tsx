@@ -1,10 +1,14 @@
 import { memo, useCallback, useMemo } from 'react';
 
-import { CURRENCIES, type CurrencyCode, parseCurrencyCode } from '~/lib/currency';
+import {
+  CURRENCIES,
+  type CurrencyCode,
+  FRANKFURTER_CURRENCIES,
+  parseCurrencyCode,
+} from '~/lib/currency';
 
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { GeneralPicker } from '../GeneralPicker';
-import { FRANKFURTER_CURRENCIES } from '~/server/api/services/currencyRateService';
 import { Button } from '../ui/button';
 
 const FRANKFURTER_FILTERED_CURRENCIES = Object.fromEntries(

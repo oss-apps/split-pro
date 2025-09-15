@@ -61,6 +61,24 @@
       "submit_success": "Feedback submitted",
       "submit_error": "Failed to submit feedback"
     },
+    "system_info": {
+      "title": "Generate bug report info",
+      "dialog": {
+        "title": "System Information for Bug Report",
+        "description": "Copy this information when reporting issues on GitHub. It helps developers understand your environment."
+      },
+      "placeholder": "System information will appear here...",
+      "buttons": {
+        "copy": "Copy to Clipboard",
+        "close": "Close"
+      },
+      "messages": {
+        "copied_success": "System information copied to clipboard!"
+      },
+      "errors": {
+        "copy_failed": "Failed to copy to clipboard"
+      }
+    },
     "write_review": "Write a review",
     "star_on_github": "Star us on GitHub",
     "support_us": "Sponsor us",

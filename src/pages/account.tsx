@@ -19,6 +19,7 @@ import { DownloadAppDrawer } from '~/components/Account/DownloadAppDrawer';
 import { LanguagePicker } from '~/components/Account/LanguagePicker';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
+import { SystemInfoButton } from '~/components/Account/SystemInfoButton';
 import { UpdateName } from '~/components/Account/UpdateName';
 import MainLayout from '~/components/Layout/MainLayout';
 import { EntityAvatar } from '~/components/ui/avatar';
@@ -123,6 +124,8 @@ const AccountPage: NextPageWithUser<{ isCloud: boolean; feedBackPossible: boolea
             <SiGithub className="size-5" />
             {t('ui.star_on_github')}
           </AccountButton>
+
+          <SystemInfoButton />
 
           <AccountButton href="https://github.com/sponsors/krokosik">
             <HeartHandshakeIcon className="size-5 text-pink-600" />

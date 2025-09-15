@@ -61,6 +61,24 @@
       "submit_success": "Feedback gesendet",
       "submit_error": "Fehler beim Senden des Feedbacks"
     },
+    "system_info": {
+      "title": "Bug-Report-Info generieren",
+      "dialog": {
+        "title": "Systeminformationen für Bug-Report",
+        "description": "Kopiere diese Informationen beim Melden von Problemen auf GitHub. Das hilft den Entwicklern, deine Umgebung zu verstehen."
+      },
+      "placeholder": "Systeminformationen werden hier angezeigt...",
+      "buttons": {
+        "copy": "In Zwischenablage kopieren",
+        "close": "Schließen"
+      },
+      "messages": {
+        "copied_success": "Systeminformationen in die Zwischenablage kopiert!"
+      },
+      "errors": {
+        "copy_failed": "Fehler beim Kopieren in die Zwischenablage"
+      }
+    },
     "write_review": "Eine Bewertung schreiben",
     "star_on_github": "Stern auf GitHub vergeben",
     "support_us": "Unterstütze uns",

@@ -7,7 +7,7 @@ import { Calendar } from '../ui/calendar';
 import type { DayPickerProps, PropsSingleRequired } from 'react-day-picker';
 
 export const DateSelector: React.FC<DayPickerProps & PropsSingleRequired> = (calendarProps) => {
-  const { t, toUIDate } = useTranslationWithUtils();
+  const { t, toUIDate } = useTranslationWithUtils(['expense_details']);
 
   return (
     <div className="flex flex-wrap items-center gap-4">

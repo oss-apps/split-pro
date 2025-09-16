@@ -80,6 +80,7 @@
     "husky": "^9.1.7",
     "jest": "30.0.5",
     "jest-environment-jsdom": "30.0.5",
+    "jiti": "^2.5.1",
     "lint-staged": "^16.1.5",
     "oxlint": "^1.15.0",
     "oxlint-tsgolint": "^0.2.0",

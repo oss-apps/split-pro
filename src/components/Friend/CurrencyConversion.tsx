@@ -12,6 +12,7 @@ import { DateSelector } from '../AddExpense/DateSelector';
 import { Button } from '../ui/button';
 import { AppDrawer } from '../ui/drawer';
 import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 
 export const CurrencyConversion: React.FC<{
   amount: bigint;
@@ -151,9 +152,8 @@ export const CurrencyConversion: React.FC<{
         targetCurrency === currency
       }
     >
-      <div className="mt-6 flex flex-col items-center gap-6">
+      <div className="flex flex-col items-center gap-2 sm:mt-6">
         <div className="flex max-w-xl flex-col items-center gap-2 text-center">
-          <p className="text-sm text-gray-500">{t('ui.currency_conversion.description')}</p>
           {targetCurrency === currency && (
             <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1 text-xs text-amber-700">
               Currency conversion only works for different currencies
@@ -162,123 +162,31 @@ export const CurrencyConversion: React.FC<{
         </div>
 
         <div className="w-full">
-          <div className="mx-auto grid w-full max-w-3xl grid-cols-1 place-items-center gap-x-4 gap-y-16 sm:grid-cols-3">
+          <div className="mx-auto grid w-full max-w-3xl grid-cols-1 place-items-center gap-x-4 gap-y-4 sm:grid-cols-3 sm:gap-y-16">
             {/* From amount */}
-            <div className="w-full max-w-[240px]">
-              <label className="mb-1 block text-xs font-medium tracking-wide text-gray-500 capitalize">
-                Amount
-              </label>
-              <div className="relative">
-                <Input
-                  aria-label="Amount"
-                  type="number"
-                  step="0.01"
-                  min={0}
-                  value={amountStr}
-                  inputMode="decimal"
-                  className="h-11 w-full rounded-lg pr-14 text-right text-base shadow-sm"
-                  onChange={onChangeAmount}
-                />
-                <span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-sm text-gray-500">
-                  {currency}
-                </span>
-              </div>
-            </div>
-
-            {/* Rate */}
-            <div className="w-full max-w-[240px]">
-              <label className="mb-1 block text-xs font-medium tracking-wide text-gray-500 capitalize">
-                Rate
-              </label>
-              <div className="relative flex">
-                <Input
-                  aria-label="Rate"
-                  type="number"
-                  step="0.0001"
-                  min={0}
-                  value={rate}
-                  inputMode="numeric"
-                  className="h-11 w-full rounded-lg pr-4 text-right text-base shadow-sm"
-                  onChange={onChangeRate}
-                  disabled={getCurrencyRate.isPending || currency === targetCurrency}
-                />
-                {getCurrencyRate.isPending && (
-                  <span className="pointer-events-none absolute -bottom-5 left-0 text-[11px] text-gray-500">
-                    Fetching rate…
-                  </span>
-                )}
-                {!!rate && (
-                  <>
-                    <span className="pointer-events-none absolute -bottom-5 left-0 text-[11px] text-gray-500">
-                      1 {currency} = {Number(rate).toFixed(4)} {targetCurrency}
-                    </span>
-                    <span className="pointer-events-none absolute -bottom-10 left-0 text-[11px] text-gray-500">
-                      1 {targetCurrency} = {(1 / Number(rate)).toFixed(4)} {currency}
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* To amount */}
-            <div className="w-full max-w-[240px]">
-              <label className="mb-1 block text-xs font-medium tracking-wide text-gray-500 capitalize">
-                Converted amount
-              </label>
-              <div className="relative">
-                <Input
-                  aria-label="Converted amount"
-                  type="number"
-                  step="0.01"
-                  min={0}
-                  value={targetAmountStr}
-                  inputMode="decimal"
-                  className="h-11 w-full rounded-lg pr-14 text-right text-base shadow-sm"
-                  onChange={onChangeTargetAmount}
-                  disabled={getCurrencyRate.isPending || currency === targetCurrency}
-                />
-                <span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-sm text-gray-500">
-                  {targetCurrency}
-                </span>
-              </div>
-            </div>
-
-            {/* From currency (read-only) */}
-            <div className="w-full max-w-[240px]">
-              <label className="mb-1 block text-xs font-medium tracking-wide text-gray-500 capitalize">
-                From
-              </label>
-              <div className="flex w-full justify-center">
-                <Button variant="outline" className="h-11 w-[70px] rounded-lg text-base" disabled>
+            <div className="flex w-full max-w-[240px] items-end gap-2 sm:col-span-2">
+              <div className="flex flex-col gap-2">
+                <Label>From</Label>
+                <Button variant="outline" className="text-base" disabled>
                   {currency}
                 </Button>
               </div>
+              <Input
+                aria-label="Amount"
+                type="number"
+                step="0.01"
+                min={0}
+                value={amountStr}
+                inputMode="decimal"
+                onChange={onChangeAmount}
+              />
             </div>
 
-            {/* Date */}
-            <div className="w-full max-w-[240px]">
-              <label className="mb-1 block text-xs font-medium tracking-wide text-gray-500 capitalize">
-                Fetch rate from
-              </label>
-              <div className="flex h-11 items-center justify-center">
-                <DateSelector
-                  mode="single"
-                  required
-                  disabled={dateDisabled}
-                  selected={rateDate}
-                  onSelect={setRateDate}
-                />
-              </div>
-            </div>
-
-            {/* To currency */}
-            <div className="w-full max-w-[240px]">
-              <label className="mb-1 block text-xs font-medium tracking-wide text-gray-500 capitalize">
-                To
-              </label>
-              <div className="flex h-11 items-center justify-center">
+            <div className="flex w-full max-w-[240px] items-end gap-2 sm:col-span-2">
+              <div className="flex flex-col gap-2">
+                <Label>To</Label>
                 {editingTargetCurrency ? (
-                  <Button variant="outline" className="h-11 w-[70px] rounded-lg text-base" disabled>
+                  <Button variant="outline" className="text-base" disabled>
                     {editingTargetCurrency}
                   </Button>
                 ) : (
@@ -290,6 +198,62 @@ export const CurrencyConversion: React.FC<{
                     showOnlyFrankfurter={env.NEXT_PUBLIC_FRANKFURTER_USED}
                   />
                 )}
+              </div>
+              <Input
+                aria-label="Converted Amount"
+                type="number"
+                step="0.01"
+                min={0}
+                value={targetAmountStr}
+                inputMode="decimal"
+                onChange={onChangeTargetAmount}
+                disabled={getCurrencyRate.isPending || currency === targetCurrency}
+              />
+            </div>
+
+            {/* Rate */}
+            <div className="flex w-full max-w-[240px] items-start sm:col-start-3 sm:row-span-2 sm:row-start-1 sm:h-full sm:flex-col sm:justify-between">
+              <div className="flex w-1/2 flex-col gap-2 sm:w-full">
+                <Label>Rate</Label>
+                <div className="flex flex-col">
+                  <Input
+                    aria-label="Rate"
+                    type="number"
+                    step="0.0001"
+                    min={0}
+                    value={rate}
+                    inputMode="numeric"
+                    onChange={onChangeRate}
+                    disabled={getCurrencyRate.isPending || currency === targetCurrency}
+                  />
+                  {getCurrencyRate.isPending && (
+                    <span className="pointer-events-none text-xs text-gray-500">
+                      Fetching rate…
+                    </span>
+                  )}
+                  {!!rate && (
+                    <>
+                      <span className="pointer-events-none text-xs text-gray-500">
+                        1 {currency} = {Number(rate).toFixed(4)} {targetCurrency}
+                      </span>
+                      <span className="pointer-events-none text-xs text-gray-500">
+                        1 {targetCurrency} = {(1 / Number(rate)).toFixed(4)} {currency}
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
+              <div className="flex w-1/2 flex-col items-end gap-2 sm:w-full sm:items-start">
+                <Label>Fetch from</Label>
+                <div className="flex h-11 items-center justify-center">
+                  <DateSelector
+                    mode="single"
+                    required
+                    disabled={dateDisabled}
+                    selected={rateDate}
+                    onSelect={setRateDate}
+                  />
+                </div>
               </div>
             </div>
           </div>

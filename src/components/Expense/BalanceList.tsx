@@ -1,16 +1,15 @@
 import type { GroupBalance, User } from '@prisma/client';
 import { clsx } from 'clsx';
-import { DollarSign, HandCoins, Info } from 'lucide-react';
-import { Fragment, useMemo } from 'react';
+import { type ComponentProps, Fragment, useCallback, useMemo } from 'react';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { api } from '~/utils/api';
 import { BigMath, toUIString } from '~/utils/numbers';
 
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { GroupSettleUp } from '../Friend/GroupSettleup';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
-import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { Button } from '../ui/button';
-import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { CURRENCY_CONVERSION_ICON, SETTLEUP_ICON } from '../ui/categoryIcons';
 
 interface UserWithBalance {
@@ -25,6 +24,9 @@ export const BalanceList: React.FC<{
 }> = ({ groupBalances = [], users = [] }) => {
   const { displayName, t } = useTranslationWithUtils(['expense_details']);
   const userQuery = api.user.me.useQuery();
+
+  const addOrEditCurrencyConversionMutation = api.expense.addOrEditCurrencyConversion.useMutation();
+  const apiUtils = api.useUtils();
 
   const userMap = useMemo(() => {
     const res = users.reduce<Record<number, UserWithBalance>>((acc, user) => {
@@ -101,67 +103,88 @@ export const BalanceList: React.FC<{
 
                 return (
                   <Fragment key={friendId}>
-                    {Object.entries(perFriendBalances).map(([currency, amount]) => (
-                      <div
-                        key={friendId + currency}
-                        className="flex h-12 w-full items-center justify-between border-t-2"
-                      >
-                        <div className="ml-5 flex cursor-pointer items-center gap-3 text-sm">
-                          <EntityAvatar entity={friend} size={20} />
-                          <div className="text-foreground">
-                            {displayName(friend, userQuery.data?.id)}
-                            <span className="text-gray-400">
-                              {' '}
-                              {t(
-                                `ui.expense.${friend.id === userQuery.data?.id ? 'you' : 'user'}.${0 > amount ? 'get' : 'pay'}`,
-                                { ns: 'common' },
-                              )}{' '}
-                            </span>
-                            <span
-                              className={clsx(
-                                'text-right',
-                                0 < amount ? 'text-emerald-500' : 'text-orange-600',
-                              )}
+                    {Object.entries(perFriendBalances).map(([currency, amount]) => {
+                      if (0n === amount) {
+                        return null;
+                      }
+
+                      const sender = 0 < amount ? friend : user;
+                      const receiver = 0 < amount ? user : friend;
+
+                      const onSubmit: ComponentProps<typeof CurrencyConversion>['onSubmit'] =
+                        useCallback(
+                          async (data) => {
+                            await addOrEditCurrencyConversionMutation.mutateAsync({
+                              ...data,
+                              senderId: sender.id,
+                              receiverId: receiver.id,
+                              groupId: groupBalances[0]!.groupId,
+                            });
+                            await apiUtils.invalidate();
+                          },
+                          [sender.id, receiver.id],
+                        );
+
+                      return (
+                        <div
+                          key={friendId + currency}
+                          className="flex h-12 w-full items-center justify-between border-t-2"
+                        >
+                          <div className="ml-5 flex cursor-pointer items-center gap-3 text-sm">
+                            <EntityAvatar entity={friend} size={20} />
+                            <div className="text-foreground">
+                              {displayName(friend, userQuery.data?.id)}
+                              <span className="text-gray-400">
+                                {' '}
+                                {t(
+                                  `ui.expense.${friend.id === userQuery.data?.id ? 'you' : 'user'}.${0 > amount ? 'get' : 'pay'}`,
+                                  { ns: 'common' },
+                                )}{' '}
+                              </span>
+                              <span
+                                className={clsx(
+                                  'text-right',
+                                  0 < amount ? 'text-emerald-500' : 'text-orange-600',
+                                )}
+                              >
+                                {toUIString(amount)} {currency}
+                              </span>
+                              <span className="xs:inline hidden text-gray-400">
+                                {' '}
+                                {t(`ui.expense.${0 < amount ? 'to' : 'from'}`, {
+                                  ns: 'common',
+                                })}{' '}
+                              </span>
+                              <span className="xs:inline text-foreground hidden">
+                                {displayName(user, userQuery.data?.id, 'accusativus')}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <GroupSettleUp
+                              friend={friend}
+                              user={user}
+                              amount={amount}
+                              currency={currency}
+                              groupId={groupBalances[0]!.groupId}
                             >
-                              {toUIString(amount)} {currency}
-                            </span>
-                            <span className="xs:inline hidden text-gray-400">
-                              {' '}
-                              {t(`ui.expense.${0 < amount ? 'to' : 'from'}`, {
-                                ns: 'common',
-                              })}{' '}
-                            </span>
-                            <span className="xs:inline text-foreground hidden">
-                              {displayName(user, userQuery.data?.id, 'accusativus')}
-                            </span>
+                              <Button size="icon" variant="secondary" className="size-8">
+                                <SETTLEUP_ICON className="size-4" />
+                              </Button>
+                            </GroupSettleUp>
+                            <CurrencyConversion
+                              onSubmit={onSubmit}
+                              amount={amount}
+                              currency={currency}
+                            >
+                              <Button size="icon" variant="secondary" className="size-8">
+                                <CURRENCY_CONVERSION_ICON className="size-4" />
+                              </Button>
+                            </CurrencyConversion>
                           </div>
                         </div>
-                        <div className="flex gap-2">
-                          <GroupSettleUp
-                            friend={friend}
-                            user={user}
-                            amount={amount}
-                            currency={currency}
-                            groupId={groupBalances[0]!.groupId}
-                          >
-                            <Button size="icon" variant="secondary" className="size-8">
-                              <SETTLEUP_ICON className="size-4" />
-                            </Button>
-                          </GroupSettleUp>
-                          <CurrencyConversion
-                            sender={0 < amount ? friend : user}
-                            receiver={0 < amount ? user : friend}
-                            amount={amount}
-                            currency={currency}
-                            groupId={groupBalances[0]!.groupId}
-                          >
-                            <Button size="icon" variant="secondary" className="size-8">
-                              <CURRENCY_CONVERSION_ICON className="size-4" />
-                            </Button>
-                          </CurrencyConversion>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </Fragment>
                 );
               })}

@@ -4,18 +4,19 @@ import { type User as NextUser } from 'next-auth';
 import { toUIString } from '~/utils/numbers';
 
 import type { inferRouterOutputs } from '@trpc/server';
+import { PencilIcon } from 'lucide-react';
+import React, { type ComponentProps, useCallback } from 'react';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { isCurrencyCode } from '~/lib/currency';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
+import { useAddExpenseStore } from '~/store/addStore';
+import { api } from '~/utils/api';
+import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { EntityAvatar } from '../ui/avatar';
+import { Button } from '../ui/button';
 import { CategoryIcon } from '../ui/categoryIcons';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
-import React, { useCallback } from 'react';
-import { CurrencyConversion } from '../Friend/CurrencyConversion';
-import { Button } from '../ui/button';
-import { PencilIcon } from 'lucide-react';
-import { useAddExpenseStore } from '~/store/addStore';
-import { isCurrencyCode } from '~/lib/currency';
 
 type ExpenseDetailsOutput = NonNullable<inferRouterOutputs<ExpenseRouter>['getExpenseDetails']>;
 
@@ -142,6 +143,9 @@ export const EditCurrencyConversion: React.FC<{ expense: ExpenseDetailsOutput }>
 }) => {
   const { setCurrency } = useAddExpenseStore((s) => s.actions);
 
+  const addOrEditCurrencyConversionMutation = api.expense.addOrEditCurrencyConversion.useMutation();
+  const apiUtils = api.useUtils();
+
   const onClick = useCallback(() => {
     if (expense.conversionTo && isCurrencyCode(expense.conversionTo.currency)) {
       setCurrency(expense.conversionTo.currency);
@@ -151,18 +155,36 @@ export const EditCurrencyConversion: React.FC<{ expense: ExpenseDetailsOutput }>
   const sender = expense.paidByUser;
   const receiver = expense.expenseParticipants.find((p) => p.userId !== expense.paidBy)?.user;
 
-  if (!sender || !receiver) {
+  if (!sender || !receiver || !isCurrencyCode(expense.currency)) {
     return null;
   }
+
+  const onSubmit: ComponentProps<typeof CurrencyConversion>['onSubmit'] = useCallback(
+    async (data) => {
+      await addOrEditCurrencyConversionMutation.mutateAsync({
+        ...data,
+        senderId: sender.id,
+        receiverId: receiver.id,
+        groupId: expense.groupId,
+        expenseId: expense.id,
+      });
+      await apiUtils.invalidate();
+    },
+    [
+      addOrEditCurrencyConversionMutation,
+      sender.id,
+      receiver.id,
+      expense.groupId,
+      expense.id,
+      apiUtils,
+    ],
+  );
 
   return (
     <CurrencyConversion
       amount={expense.amount}
       currency={expense.currency}
-      sender={sender}
-      receiver={receiver}
-      groupId={expense.groupId}
-      expenseId={expense.id}
+      onSubmit={onSubmit}
       editingRate={Math.abs(Number(expense.conversionTo?.amount) / Number(expense.amount))}
     >
       <Button variant="ghost" onClick={onClick}>

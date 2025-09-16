@@ -1,33 +1,31 @@
-import { type User } from '@prisma/client';
 import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { api } from '~/utils/api';
 import { BigMath, toSafeBigInt } from '~/utils/numbers';
 
+import { toast } from 'sonner';
+import { env } from '~/env';
 import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
+import { useAddExpenseStore } from '~/store/addStore';
 import { CurrencyPicker } from '../AddExpense/CurrencyPicker';
 import { DateSelector } from '../AddExpense/DateSelector';
+import { Button } from '../ui/button';
 import { AppDrawer } from '../ui/drawer';
 import { Input } from '../ui/input';
-import { env } from '~/env';
-import { useAddExpenseStore } from '~/store/addStore';
-import { Button } from '../ui/button';
-import { toast } from 'sonner';
 
 export const CurrencyConversion: React.FC<{
   amount: bigint;
   editingRate?: number;
   currency: string;
-  sender: User;
-  receiver: User;
   children: ReactNode;
-  expenseId?: string;
-  groupId: number | null;
-}> = ({ amount, editingRate, currency, sender, receiver, children, groupId, expenseId }) => {
+  onSubmit: (data: {
+    from: CurrencyCode;
+    to: CurrencyCode;
+    amount: bigint;
+    rate: number;
+  }) => Promise<void> | void;
+}> = ({ amount, editingRate, currency, children, onSubmit }) => {
   const { t } = useTranslationWithUtils();
-
-  const addOrEditCurrencyConversionMutation = api.expense.addOrEditCurrencyConversion.useMutation();
-  const utils = api.useUtils();
 
   const [amountStr, setAmountStr] = useState('');
   const [rate, setRate] = useState('');
@@ -112,35 +110,18 @@ export const CurrencyConversion: React.FC<{
 
   const onSave = useCallback(async () => {
     try {
-      await addOrEditCurrencyConversionMutation.mutateAsync({
+      await onSubmit({
         amount: toSafeBigInt(amountStr),
         rate: Number(rate),
-        from: currency,
+        from: currency as CurrencyCode,
         to: targetCurrency,
-        senderId: sender.id,
-        receiverId: receiver.id,
-        groupId,
-        expenseId,
       });
       toast.success(t('ui.currency_conversion.success_toast'));
-      utils.invalidate().catch(console.error);
     } catch (error) {
       console.error(error);
       toast.error(t('ui.currency_conversion.error_toast'));
     }
-  }, [
-    addOrEditCurrencyConversionMutation,
-    targetCurrency,
-    amountStr,
-    rate,
-    currency,
-    sender.id,
-    receiver.id,
-    expenseId,
-    groupId,
-    t,
-    utils,
-  ]);
+  }, [onSubmit, targetCurrency, amountStr, rate, currency, t]);
 
   return (
     <AppDrawer

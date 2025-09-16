@@ -24,7 +24,8 @@ It currently has most of the important features.
 - Download your data
 - Import from splitwise
 - simplify group debts
-- **NEW** community translations, feel free to add your language!
+- community translations, feel free to add your language!
+- **UNRELEASED** currency conversion, quickly convert expenses and group balances
 
 **More features coming every day**
 
@@ -63,6 +64,14 @@ All numbers are stored in the DB as `BigInt` data, with no floats what so ever, 
 #### How are leftover pennies handled?
 
 In case of an expense that cannot be split evenly, the leftover amounts are distributed randomly across participants. The assignment is as equal as possible, in the context of a single expense (similar to Splitwise).
+
+#### Currency rate providers
+
+Currency rate APIs are usually paywalled or rate limited, except for banking institutions. We provide 3 providers, with a developer friendly interface for adding new ones, if you are in need of more capabilities. To save your rate limits, we cache each API call in the DB and try to get as much rates as possible in a single request.
+
+- [frankfurter](https://frankfurter.dev/) - completely free, but has a limited set of currencies. Check by fetching https://api.frankfurter.dev/v1/currencies
+- [Open Exchange Rates](https://openexchangerates.org/) - very capable with a generous 1000 requests/day. Requires an account and an API key. While the free version only allows USD as the base currency, we simply join the rates together. Fetching ALL rates for a single day means one API call, so unless you want to do hundreds of searches in the past, you should be fine.
+- [NBP](https://api.nbp.pl/en.html) - the central bank of Poland. Similiar case as OXR, but uses PLN as base currency and does not require an account/API key. They do state that there is an API rate limit, but without a number, so it is to be reported.
 
 ## Tech stack
 

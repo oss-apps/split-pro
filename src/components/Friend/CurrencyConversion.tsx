@@ -42,6 +42,13 @@ export const CurrencyConversion: React.FC<{
   );
 
   useEffect(() => {
+    if (getCurrencyRate.isPending) {
+      setRate('');
+      setTargetAmountStr('');
+    }
+  }, [getCurrencyRate.isPending]);
+
+  useEffect(() => {
     setAmountStr((Number(BigMath.abs(amount)) / 100).toString());
     setRate(editingRate ? editingRate.toFixed(4) : '');
   }, [amount, editingRate]);
@@ -261,7 +268,7 @@ export const CurrencyConversion: React.FC<{
             {/* Date */}
             <div className="w-full max-w-[240px]">
               <label className="mb-1 block text-xs font-medium tracking-wide text-gray-500 capitalize">
-                Date
+                Fetch rate from
               </label>
               <div className="flex h-11 items-center justify-center">
                 <DateSelector

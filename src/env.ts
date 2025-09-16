@@ -51,7 +51,9 @@ export const env = createEnv({
     FEEDBACK_EMAIL: z.string().optional(),
     DISCORD_WEBHOOK_URL: z.string().optional(),
     DEFAULT_HOMEPAGE: z.string().default('/home'),
-    CURRENCY_RATE_PROVIDER: z.enum(['frankfurter', 'openexchangerates']).default('frankfurter'),
+    CURRENCY_RATE_PROVIDER: z
+      .enum(['frankfurter', 'openexchangerates', 'nbp'])
+      .default('frankfurter'),
     OPEN_EXCHANGE_RATES_APP_ID: z.string().optional(),
     OIDC_NAME: z.string().optional(),
     OIDC_CLIENT_ID: z.string().optional(),

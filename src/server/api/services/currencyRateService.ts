@@ -1,4 +1,4 @@
-import { format, isToday } from 'date-fns';
+import { format, getISODay, isToday, subDays } from 'date-fns';
 import { env } from '~/env';
 import type { CurrencyCode } from '~/lib/currency';
 import { db } from '~/server/db';
@@ -172,9 +172,70 @@ class OpenExchangeRatesProvider extends CurrencyRateProvider {
   }
 }
 
+class NbpProvider extends CurrencyRateProvider {
+  providerName = 'nbp';
+  intermediateBase: CurrencyCode = 'PLN';
+
+  async fetchRates(from: CurrencyCode, to: CurrencyCode, date?: Date): Promise<RateResponse> {
+    const key = !date || isToday(date) ? '' : format(date, 'yyyy-MM-dd');
+
+    const response = await this.getBothTables(key);
+
+    return {
+      base: 'PLN',
+      rates: Object.fromEntries(response.rates.map((rate) => [rate.code, rate.mid])),
+    };
+  }
+
+  private async getBothTables(date: string) {
+    const [tableA, tableB] = await Promise.all([
+      this.getRates('A', date),
+      this.getRates('B', date),
+    ]);
+
+    return {
+      ...tableA[0],
+      rates: [...(tableA[0]?.rates || []), ...(tableB[0]?.rates || [])],
+    };
+  }
+
+  private async getRates(
+    table: 'A' | 'B',
+    date: string,
+  ): Promise<
+    {
+      table: string;
+      no: string;
+      effectiveDate: string;
+      rates: { currency: string; code: string; mid: number }[];
+    }[]
+  > {
+    const response = await fetch(
+      `https://api.nbp.pl/api/exchangerates/tables/${table}/${date}/?format=json`,
+    );
+    if (!response.ok) {
+      if (table === 'A') {
+        throw new Error(response.statusText || 'Failed to fetch exchange rates');
+      } else {
+        // table B is published weekly on Wednesdays
+        const currentIsoDay = getISODay(date);
+        const previousWednesday = subDays(
+          date,
+          currentIsoDay >= 3 ? currentIsoDay - 3 : 7 - (3 - currentIsoDay),
+        );
+        return this.getRates(table, format(previousWednesday, 'yyyy-MM-dd'));
+      }
+    }
+
+    return response.json();
+  }
+}
+
 export const currencyRateProvider = (() => {
   if (env.CURRENCY_RATE_PROVIDER === 'openexchangerates' && env.OPEN_EXCHANGE_RATES_APP_ID) {
     return new OpenExchangeRatesProvider();
+  } else if (env.CURRENCY_RATE_PROVIDER === 'nbp') {
+    return new NbpProvider();
   }
 
   return new FrankfurterProvider();

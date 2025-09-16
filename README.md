@@ -71,7 +71,7 @@ Currency rate APIs are usually paywalled or rate limited, except for banking ins
 
 - [frankfurter](https://frankfurter.dev/) - completely free, but has a limited set of currencies. Check by fetching https://api.frankfurter.dev/v1/currencies
 - [Open Exchange Rates](https://openexchangerates.org/) - very capable with a generous 1000 requests/day. Requires an account and an API key. While the free version only allows USD as the base currency, we simply join the rates together. Fetching ALL rates for a single day means one API call, so unless you want to do hundreds of searches in the past, you should be fine.
-- [NBP](https://api.nbp.pl/en.html) - the central bank of Poland. Similiar case as OXR, but uses PLN as base currency and does not require an account/API key. They do state that there is an API rate limit, but without a number, so it is to be reported.
+- [NBP](https://api.nbp.pl/en.html) - the central bank of Poland. Similiar case as OXR, but uses PLN as base currency and does not require an account/API key. The downside is that while table A has the most relevant (for Poland) currencies and is updated daily, table B with all the remaining ones is only published on Wednesdays. So if you need these currencies, the rates might be out of date. They also state that there is an API rate limit, but without a number, so it is to be reported.
 
 ## Tech stack
 

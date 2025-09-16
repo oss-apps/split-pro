@@ -27,6 +27,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Apply prettier formatting
+        run: pnpm prettier --check .
+
+      - name: Run lint
+        run: pnpm lint
+
       - name: Run tsc
         run: pnpm tsc --noEmit
 

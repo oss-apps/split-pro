@@ -39,7 +39,7 @@ abstract class CurrencyRateProvider {
             from_to_date: { from: data.base, to, date },
           },
           create: {
-            from,
+            from: data.base,
             to,
             date,
             rate,
@@ -64,39 +64,16 @@ abstract class CurrencyRateProvider {
     to: CurrencyCode,
     date: Date = new Date(),
   ): Promise<number | undefined> {
-    const cachedRate = await db.currencyRateCache.findUnique({
-      where: {
-        from_to_date: { from, to, date },
-      },
-    });
+    const cachedRate = await this.getCache(from, to, date);
 
     if (cachedRate) {
-      void db.currencyRateCache.update({
-        where: {
-          from_to_date: { from, to, date },
-        },
-        data: {
-          insertedAt: new Date(),
-        },
-      });
       return cachedRate.rate;
     }
 
-    const reverseCachedRate = await db.currencyRateCache.findUnique({
-      where: {
-        from_to_date: { from: to, to: from, date },
-      },
-    });
+    const reverseCachedRate = await this.getCache(to, from, date);
 
     if (reverseCachedRate) {
-      void db.currencyRateCache.update({
-        where: {
-          from_to_date: { from: to, to: from, date },
-        },
-        data: {
-          insertedAt: new Date(),
-        },
-      });
+      void this.upsertCache(from, to, date, 1 / reverseCachedRate.rate);
       return 1 / reverseCachedRate.rate;
     }
 
@@ -109,24 +86,46 @@ abstract class CurrencyRateProvider {
     const rateToIntermediate = await this.checkCache(this.intermediateBase!, to, date);
 
     if (rateFromIntermediate && rateToIntermediate) {
-      void db.currencyRateCache.update({
-        where: {
-          from_to_date: { from: this.intermediateBase!, to: from, date },
-        },
-        data: {
-          insertedAt: new Date(),
-        },
-      });
-      void db.currencyRateCache.update({
-        where: {
-          from_to_date: { from: this.intermediateBase!, to, date },
-        },
-        data: {
-          insertedAt: new Date(),
-        },
-      });
-      return rateFromIntermediate / rateToIntermediate;
+      const rate = rateToIntermediate / rateFromIntermediate;
+      void this.upsertCache(from, to, date, rate);
+      return rate;
     }
+  }
+
+  private upsertCache(from: CurrencyCode, to: CurrencyCode, date: Date, rate: number) {
+    return db.currencyRateCache.upsert({
+      where: {
+        from_to_date: { from, to, date },
+      },
+      create: {
+        from,
+        to,
+        date,
+        rate,
+      },
+      update: {
+        rate,
+      },
+    });
+  }
+
+  private async getCache(from: CurrencyCode, to: CurrencyCode, date: Date) {
+    const result = await db.currencyRateCache.findUnique({
+      where: {
+        from_to_date: { from, to, date },
+      },
+    });
+    if (result) {
+      void db.currencyRateCache.update({
+        where: {
+          from_to_date: { from, to, date },
+        },
+        data: {
+          insertedAt: new Date(),
+        },
+      });
+    }
+    return result;
   }
 }
 
@@ -157,7 +156,7 @@ class OpenExchangeRatesProvider extends CurrencyRateProvider {
     if (!process.env.OPEN_EXCHANGE_RATES_APP_ID) {
       throw new ProviderMissingError('Open Exchange Rates API key not provided');
     }
-    const key = !date || isToday(date) ? 'latest' : `hitorical/${format(date, 'yyyy-MM-dd')}`;
+    const key = !date || isToday(date) ? 'latest' : `historical/${format(date, 'yyyy-MM-dd')}`;
 
     // sadly the free tier supports only USD as base currency
     const response = await fetch(

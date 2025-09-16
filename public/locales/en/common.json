@@ -36,6 +36,7 @@
       "invite": "Invite",
       "export": "Export",
       "import": "Import",
+      "fetch": "Fetch",
       "add_expense": "Add expense",
       "edit_expense": "Edit expense",
       "settle_up": "Settle up"
@@ -89,6 +90,8 @@
       "description": "Convert the amount to a different currency.",
       "amount_to_receive": "Amount to receive",
       "exchange_rate": "Exchange rate",
+      "fetching_rate": "Fetching rate...",
+      "rate": "Rate",
       "success_toast": "Currency conversion set successfully",
       "error_toast": "Error while setting currency conversion"
     }
@@ -97,6 +100,7 @@
     "name_required": "Name is required",
     "saving_expense": "Error while saving expense",
     "something_went_wrong": "Something went wrong",
-    "valid_email": "Enter valid email"
+    "valid_email": "Enter valid email",
+    "invalid_currency_code": "Invalid currency code {{code}}"
   }
 }

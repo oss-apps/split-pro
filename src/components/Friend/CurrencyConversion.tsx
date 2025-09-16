@@ -116,7 +116,7 @@ export const CurrencyConversion: React.FC<{
   const onSave = useCallback(async () => {
     try {
       if (!isCurrencyCode(currency)) {
-        toast.error(t('ui.currency_conversion.select_target_currency_toast'));
+        toast.error(t('errors.invalid_currency_code', { code: currency }));
         return;
       }
 
@@ -148,25 +148,16 @@ export const CurrencyConversion: React.FC<{
         !rate ||
         Number(rate) <= 0 ||
         Number(amountStr) <= 0 ||
-        Number(targetAmountStr) <= 0 ||
-        targetCurrency === currency
+        Number(targetAmountStr) <= 0
       }
     >
       <div className="flex flex-col items-center gap-2 sm:mt-6">
-        <div className="flex max-w-xl flex-col items-center gap-2 text-center">
-          {targetCurrency === currency && (
-            <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1 text-xs text-amber-700">
-              Currency conversion only works for different currencies
-            </div>
-          )}
-        </div>
-
         <div className="w-full">
           <div className="mx-auto grid w-full max-w-3xl grid-cols-1 place-items-center gap-x-4 gap-y-4 sm:grid-cols-3 sm:gap-y-16">
             {/* From amount */}
             <div className="flex w-full max-w-[240px] items-end gap-2 sm:col-span-2">
               <div className="flex flex-col gap-2">
-                <Label>From</Label>
+                <Label className="capitalize">{t('ui.expense.from')}</Label>
                 <Button variant="outline" className="text-base" disabled>
                   {currency}
                 </Button>
@@ -184,7 +175,7 @@ export const CurrencyConversion: React.FC<{
 
             <div className="flex w-full max-w-[240px] items-end gap-2 sm:col-span-2">
               <div className="flex flex-col gap-2">
-                <Label>To</Label>
+                <Label className="capitalize">{t('ui.expense.to')}</Label>
                 {editingTargetCurrency ? (
                   <Button variant="outline" className="text-base" disabled>
                     {editingTargetCurrency}
@@ -214,7 +205,7 @@ export const CurrencyConversion: React.FC<{
             {/* Rate */}
             <div className="flex w-full max-w-[240px] items-start sm:col-start-3 sm:row-span-2 sm:row-start-1 sm:h-full sm:flex-col sm:justify-between">
               <div className="flex w-1/2 flex-col gap-2 sm:w-full">
-                <Label>Rate</Label>
+                <Label className="capitalize">{t('ui.currency_conversion.rate')}</Label>
                 <div className="flex flex-col">
                   <Input
                     aria-label="Rate"
@@ -228,7 +219,7 @@ export const CurrencyConversion: React.FC<{
                   />
                   {getCurrencyRate.isPending && (
                     <span className="pointer-events-none text-xs text-gray-500">
-                      Fetching rate…
+                      {t('ui.currency_conversion.fetching_rate')}
                     </span>
                   )}
                   {!!rate && (
@@ -244,7 +235,9 @@ export const CurrencyConversion: React.FC<{
                 </div>
               </div>
               <div className="flex w-1/2 flex-col items-end gap-2 sm:w-full sm:items-start">
-                <Label>Fetch from</Label>
+                <Label className="capitalize">
+                  {t('ui.actions.fetch')} {t('ui.expense.from')}
+                </Label>
                 <div className="flex h-11 items-center justify-center">
                   <DateSelector
                     mode="single"

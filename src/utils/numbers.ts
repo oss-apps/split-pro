@@ -50,6 +50,10 @@ export function removeTrailingZeros(num: string) {
   return num;
 }
 
+export function currencyConversion(amount: bigint, rate: number) {
+  return BigMath.roundDiv(amount * BigInt(Math.round(rate * 10000)), 10000n);
+}
+
 export const BigMath = {
   abs(x: bigint) {
     return 0n > x ? -x : x;

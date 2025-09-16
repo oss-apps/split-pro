@@ -7,7 +7,7 @@ import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { getDocumentUploadUrl } from '~/server/storage';
-import { BigMath } from '~/utils/numbers';
+import { BigMath, currencyConversion } from '~/utils/numbers';
 
 import {
   createCurrencyConversionSchema,
@@ -118,7 +118,7 @@ export const expenseRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { amount, rate, from, to, senderId, receiverId, groupId, expenseId } = input;
 
-      const amountTo = BigMath.roundDiv(amount * BigInt(Math.round(rate * 10000)), 10000n);
+      const amountTo = currencyConversion(amount, rate);
       const name = `${from} → ${to} @ ${rate}`;
 
       const expenseFrom = await (expenseId ? editExpense : createExpense)(

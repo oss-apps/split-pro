@@ -16,6 +16,7 @@ import { Input } from '../ui/input';
 export const CurrencyConversion: React.FC<{
   amount: bigint;
   editingRate?: number;
+  editingTargetCurrency?: CurrencyCode;
   currency: string;
   children: ReactNode;
   onSubmit: (data: {
@@ -24,7 +25,7 @@ export const CurrencyConversion: React.FC<{
     amount: bigint;
     rate: number;
   }) => Promise<void> | void;
-}> = ({ amount, editingRate, currency, children, onSubmit }) => {
+}> = ({ amount, editingRate, editingTargetCurrency, currency, children, onSubmit }) => {
   const { t } = useTranslationWithUtils();
 
   const [amountStr, setAmountStr] = useState('');
@@ -49,7 +50,10 @@ export const CurrencyConversion: React.FC<{
   useEffect(() => {
     setAmountStr((Number(BigMath.abs(amount)) / 100).toString());
     setRate(editingRate ? editingRate.toFixed(4) : '');
-  }, [amount, editingRate]);
+    if (editingTargetCurrency) {
+      setTargetCurrency(editingTargetCurrency);
+    }
+  }, [amount, editingRate, editingTargetCurrency]);
 
   useEffect(() => {
     if (getCurrencyRate.data?.rate) {
@@ -110,10 +114,15 @@ export const CurrencyConversion: React.FC<{
 
   const onSave = useCallback(async () => {
     try {
+      if (!isCurrencyCode(currency)) {
+        toast.error(t('ui.currency_conversion.select_target_currency_toast'));
+        return;
+      }
+
       await onSubmit({
         amount: toSafeBigInt(amountStr),
         rate: Number(rate),
-        from: currency as CurrencyCode,
+        from: currency,
         to: targetCurrency,
       });
       toast.success(t('ui.currency_conversion.success_toast'));
@@ -268,13 +277,19 @@ export const CurrencyConversion: React.FC<{
                 To
               </label>
               <div className="flex h-11 items-center justify-center">
-                <CurrencyPicker
-                  className="mx-auto"
-                  currentCurrency={targetCurrency}
-                  onCurrencyPick={onChangeTargetCurrency}
-                  // Client env vars with pages router only work after next build :/
-                  showOnlyFrankfurter={env.NEXT_PUBLIC_FRANKFURTER_USED}
-                />
+                {editingTargetCurrency ? (
+                  <Button variant="outline" className="h-11 w-[70px] rounded-lg text-base" disabled>
+                    {editingTargetCurrency}
+                  </Button>
+                ) : (
+                  <CurrencyPicker
+                    className="mx-auto"
+                    currentCurrency={targetCurrency}
+                    onCurrencyPick={onChangeTargetCurrency}
+                    // Client env vars with pages router only work after next build :/
+                    showOnlyFrankfurter={env.NEXT_PUBLIC_FRANKFURTER_USED}
+                  />
+                )}
               </div>
             </div>
           </div>

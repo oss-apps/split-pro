@@ -43,8 +43,7 @@ const AddPage: NextPageWithUser<{
       email: user.email ?? null,
       image: user.image ?? null,
     });
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [setCurrentUser, user]);
 
   const router = useRouter();
   const { friendId, groupId, expenseId } = router.query;
@@ -80,16 +79,14 @@ const AddPage: NextPageWithUser<{
       ]);
       useAddExpenseStore.setState({ showFriends: false });
     }
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupId, groupQuery.isPending, groupQuery.data, currentUser]);
+  }, [groupId, groupQuery.isPending, groupQuery.data, currentUser, setGroup, setParticipants]);
 
   useEffect(() => {
     if (friendId && currentUser && friendQuery.data) {
       setParticipants([currentUser, friendQuery.data]);
       useAddExpenseStore.setState({ showFriends: false });
     }
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [friendId, friendQuery.isPending, friendQuery.data, currentUser]);
+  }, [friendId, friendQuery.isPending, friendQuery.data, currentUser, setParticipants]);
 
   useEffect(() => {
     if (!_expenseId || !expenseQuery.data) {
@@ -114,8 +111,19 @@ const AddPage: NextPageWithUser<{
     );
     useAddExpenseStore.setState({ showFriends: false });
     setExpenseDate(expenseQuery.data.expenseDate);
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [_expenseId, expenseQuery.data]);
+  }, [
+    _expenseId,
+    expenseQuery.data,
+    setAmount,
+    setAmountStr,
+    setCategory,
+    setCurrency,
+    setDescription,
+    setExpenseDate,
+    setGroup,
+    setPaidBy,
+    setParticipants,
+  ]);
 
   return (
     <>

@@ -1,16 +1,20 @@
 import { PHASE_DEVELOPMENT_SERVER, PHASE_PRODUCTION_BUILD } from 'next/constants.js';
 import i18nConfig from './next-i18next.config.js';
+import { fileURLToPath } from 'node:url';
+import { createJiti } from 'jiti';
+const jiti = createJiti(fileURLToPath(import.meta.url));
 
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
  */
-await import('./src/env.js');
+await jiti.import('./src/env');
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   output: process.env.DOCKER_OUTPUT ? 'standalone' : undefined,
+  transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core'],
   /**
    * If you are using `appDir` then you must comment the below `i18n` config out.
    *

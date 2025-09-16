@@ -1,34 +1,34 @@
-import { CalendarIcon, HeartHandshakeIcon } from 'lucide-react';
+import { HeartHandshakeIcon } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useCallback } from 'react';
-import { useTranslation } from 'next-i18next';
+import React, { useCallback, useMemo } from 'react';
 
 import { type CurrencyCode } from '~/lib/currency';
-import { cn } from '~/lib/utils';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
-import { toSafeBigInt } from '~/utils/numbers';
+import { currencyConversion, toSafeBigInt, toUIString } from '~/utils/numbers';
 
+import { toast } from 'sonner';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { Button } from '../ui/button';
-import { Calendar } from '../ui/calendar';
 import { Input } from '../ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { CategoryPicker } from './CategoryPicker';
 import { CurrencyPicker } from './CurrencyPicker';
+import { DateSelector } from './DateSelector';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { SplitTypeSection } from './SplitTypeSection';
 import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
-import { toast } from 'sonner';
-import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { CurrencyConversion } from '../Friend/CurrencyConversion';
+import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
   expenseId?: string;
 }> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
-  const { t, toUIDate } = useTranslationWithUtils(['expense_details']);
+  const { t } = useTranslationWithUtils(['expense_details']);
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
   const isNegative = useAddExpenseStore((s) => s.isNegative);
@@ -60,12 +60,13 @@ export const AddOrEditExpensePage: React.FC<{
   const updateProfile = api.user.updateUserDetail.useMutation();
 
   const onCurrencyPick = useCallback(
-    (currency: CurrencyCode) => {
-      updateProfile.mutate({ currency });
+    (newCurrency: CurrencyCode) => {
+      updateProfile.mutate({ currency: newCurrency });
 
-      setCurrency(currency);
+      previousCurrencyRef.current = currency;
+      setCurrency(newCurrency);
     },
-    [setCurrency, updateProfile],
+    [currency, setCurrency, updateProfile],
   );
 
   const router = useRouter();
@@ -160,9 +161,45 @@ export const AddOrEditExpensePage: React.FC<{
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
       onUpdateAmount(value);
+      previousCurrencyRef.current = null;
     },
     [onUpdateAmount],
   );
+
+  const previousCurrencyRef = React.useRef<CurrencyCode | null>(null);
+
+  const onConvertAmount: React.ComponentProps<typeof CurrencyConversion>['onSubmit'] = useCallback(
+    ({ amount: absAmount, rate }) => {
+      const targetAmount = (absAmount >= 0n ? 1n : -1n) * currencyConversion(absAmount, rate);
+      onUpdateAmount(toUIString(targetAmount));
+      previousCurrencyRef.current = null;
+    },
+    [onUpdateAmount],
+  );
+
+  const currencyConversionComponent = useMemo(() => {
+    if (
+      currency === previousCurrencyRef.current ||
+      previousCurrencyRef.current === null ||
+      !amount ||
+      0n === amount
+    ) {
+      return null;
+    }
+
+    return (
+      <CurrencyConversion
+        onSubmit={onConvertAmount}
+        amount={amount}
+        currency={previousCurrencyRef.current}
+        editingTargetCurrency={currency}
+      >
+        <Button size="icon" variant="secondary" className="size-8">
+          <CURRENCY_CONVERSION_ICON className="size-4" />
+        </Button>
+      </CurrencyConversion>
+    );
+  }, [amount, currency, onConvertAmount]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -210,6 +247,7 @@ export const AddOrEditExpensePage: React.FC<{
               inputMode="decimal"
               value={amtStr}
               onChange={onAmountChange}
+              rightIcon={currencyConversionComponent}
             />
           </div>
           <div className="h-[180px]">
@@ -218,34 +256,12 @@ export const AddOrEditExpensePage: React.FC<{
                 <SplitTypeSection />
 
                 <div className="mt-4 flex items-center justify-between sm:mt-10">
-                  <div className="flex flex-wrap items-center gap-4">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className={cn(
-                            'justify-start px-0 text-left font-normal',
-                            !expenseDate && 'text-muted-foreground',
-                          )}
-                        >
-                          <CalendarIcon className="text-primary mr-2 h-6 w-6" />
-                          {expenseDate ? (
-                            toUIDate(expenseDate, { useToday: true })
-                          ) : (
-                            <span>{t('ui.add_expense_details.pick_a_date')}</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          fixedWeeks
-                          mode="single"
-                          selected={expenseDate}
-                          onSelect={setExpenseDate}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
+                  <DateSelector
+                    mode="single"
+                    required
+                    selected={expenseDate}
+                    onSelect={setExpenseDate}
+                  />
                   <div className="flex items-center gap-4">
                     {isStorageConfigured ? <UploadFile /> : null}
                     <Button

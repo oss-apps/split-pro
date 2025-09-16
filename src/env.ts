@@ -51,6 +51,10 @@ export const env = createEnv({
     FEEDBACK_EMAIL: z.string().optional(),
     DISCORD_WEBHOOK_URL: z.string().optional(),
     DEFAULT_HOMEPAGE: z.string().default('/home'),
+    CURRENCY_RATE_PROVIDER: z
+      .enum(['frankfurter', 'openexchangerates', 'nbp'])
+      .default('frankfurter'),
+    OPEN_EXCHANGE_RATES_APP_ID: z.string().optional(),
     OIDC_NAME: z.string().optional(),
     OIDC_CLIENT_ID: z.string().optional(),
     OIDC_CLIENT_SECRET: z.string().optional(),
@@ -63,7 +67,9 @@ export const env = createEnv({
    * isn't built with invalid env vars. To expose them to the client, prefix them with
    * `NEXT_PUBLIC_`.
    */
-  client: {},
+  client: {
+    NEXT_PUBLIC_FRANKFURTER_USED: z.boolean().default(false),
+  },
 
   /**
    * You can't destruct `process.env` as a regular object in the Next.js edge runtimes (e.g.
@@ -101,11 +107,14 @@ export const env = createEnv({
     FEEDBACK_EMAIL: process.env.FEEDBACK_EMAIL,
     DISCORD_WEBHOOK_URL: process.env.DISCORD_WEBHOOK_URL,
     DEFAULT_HOMEPAGE: process.env.DEFAULT_HOMEPAGE,
+    CURRENCY_RATE_PROVIDER: process.env.CURRENCY_RATE_PROVIDER,
+    OPEN_EXCHANGE_RATES_APP_ID: process.env.OPEN_EXCHANGE_RATES_APP_ID,
     OIDC_NAME: process.env.OIDC_NAME,
     OIDC_CLIENT_ID: process.env.OIDC_CLIENT_ID,
     OIDC_CLIENT_SECRET: process.env.OIDC_CLIENT_SECRET,
     OIDC_WELL_KNOWN_URL: process.env.OIDC_WELL_KNOWN_URL,
     OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: !!process.env.OIDC_ALLOW_DANGEROUS_EMAIL_LINKING,
+    NEXT_PUBLIC_FRANKFURTER_USED: process.env.CURRENCY_RATE_PROVIDER === 'frankfurter',
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

@@ -2,7 +2,6 @@ name: Check
 
 on:
   - push
-  - pull_request
 
 jobs:
   check:
@@ -28,14 +27,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Check code formatting
+      - name: Apply prettier formatting
         run: pnpm prettier --check .
-
-      - name: Run tsc
-        run: pnpm tsc --noEmit
 
       - name: Run lint
         run: pnpm lint
+
+      - name: Run tsc
+        run: pnpm tsc --noEmit
 
       - name: Run tests
         run: pnpm test

@@ -41,6 +41,7 @@ export async function createExpense(
     participants,
     expenseDate,
     fileKey,
+    otherConversion,
   }: CreateExpense,
   currentUserId: number,
 ) {
@@ -66,6 +67,13 @@ export async function createExpense(
         fileKey,
         addedBy: currentUserId,
         expenseDate,
+        conversionFrom: otherConversion
+          ? {
+              connect: {
+                id: otherConversion ?? null,
+              },
+            }
+          : undefined,
       },
     }),
   );
@@ -205,6 +213,10 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
 
   if (!expense) {
     throw new Error('Expense not found');
+  }
+
+  if (expense.otherConversion) {
+    await deleteExpense(expense.otherConversion, deletedBy);
   }
 
   expense.expenseParticipants

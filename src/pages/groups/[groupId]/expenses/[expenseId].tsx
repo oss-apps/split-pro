@@ -6,13 +6,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { DeleteExpense } from '~/components/Expense/DeleteExpense';
-import ExpenseDetails from '~/components/Expense/ExpenseDetails';
+import ExpenseDetails, { EditCurrencyConversion } from '~/components/Expense/ExpenseDetails';
 import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { type GetServerSideProps } from 'next';
+import { SplitType } from '@prisma/client';
 
 const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   user,
@@ -48,11 +49,15 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
               expenseId={expenseId}
               groupId={expenseQuery.data?.groupId ?? undefined}
             />
-            <Link href={`/add?expenseId=${expenseId}`}>
-              <Button variant="ghost">
-                <PencilIcon className="mr-1 h-4 w-4" />
-              </Button>
-            </Link>
+            {expenseQuery.data?.splitType !== SplitType.CURRENCY_CONVERSION ? (
+              <Link href={`/add?expenseId=${expenseId}`}>
+                <Button variant="ghost">
+                  <PencilIcon className="mr-1 h-4 w-4" />
+                </Button>
+              </Link>
+            ) : (
+              <EditCurrencyConversion expense={expenseQuery.data} />
+            )}
           </div>
         }
         loading={expenseQuery.isPending}

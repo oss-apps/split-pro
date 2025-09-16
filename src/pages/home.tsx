@@ -2,6 +2,7 @@ import {
   ArrowRight,
   Banknote,
   Bell,
+  DollarSign,
   FileUp,
   GitFork,
   Globe,
@@ -202,6 +203,18 @@ export default function Home({ isCloud }: { isCloud: boolean }) {
                     <p className="text-lg font-medium">{t('features.i18.title')}</p>
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">{t('features.i18.description')}</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
+                <div className="flex flex-col gap-1 lg:w-1/2">
+                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
+                    <DollarSign className="text-primary h-6 w-6" />
+                    <p className="text-lg font-medium">{t('features.currency_conversion.title')}</p>
+                  </div>
+                  <p className="px-4 text-gray-400 lg:px-0">
+                    {t('features.currency_conversion.description')}
+                  </p>
                 </div>
               </div>
             </div>

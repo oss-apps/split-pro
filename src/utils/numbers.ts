@@ -50,6 +50,10 @@ export function removeTrailingZeros(num: string) {
   return num;
 }
 
+export function currencyConversion(amount: bigint, rate: number) {
+  return BigMath.roundDiv(amount * BigInt(Math.round(rate * 10000)), 10000n);
+}
+
 export const BigMath = {
   abs(x: bigint) {
     return 0n > x ? -x : x;
@@ -88,6 +92,22 @@ export const BigMath = {
       }
       return value;
     }
+  },
+  roundDiv(x: bigint, y: bigint) {
+    if (0n === y) {
+      throw new Error('Division by zero');
+    }
+    const absRemainderDoubled = (BigMath.abs(x) % BigMath.abs(y)) * 2n;
+    const q = x / y;
+    return (
+      q +
+      (absRemainderDoubled < BigMath.abs(y) ||
+      (absRemainderDoubled === BigMath.abs(y) && q % 2n === 0n)
+        ? 0n
+        : x > 0n === y > 0n
+          ? 1n
+          : -1n)
+    );
   },
 };
 

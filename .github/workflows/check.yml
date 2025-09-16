@@ -6,17 +6,13 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    permissions: {}
     env:
       SKIP_ENV_VALIDATION: true
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
         name: Install pnpm
@@ -36,12 +32,9 @@ jobs:
         run: pnpm prettier --write .
 
       - name: Commit prettier fixes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git diff --staged --quiet || git commit -n -m "Apply prettier formatting fixes"
-          git push
+        uses: autofix-ci/action@v1
+        with:
+          commit-message: "Apply Prettier format"
 
       - name: Run tsc
         run: pnpm tsc --noEmit

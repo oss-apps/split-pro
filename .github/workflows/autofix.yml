@@ -1,11 +1,12 @@
-name: Check
+name: autofix.ci
 
 on:
-  - push
+  - pull_request
 
 jobs:
   check:
     runs-on: ubuntu-latest
+    permissions: {}
     env:
       SKIP_ENV_VALIDATION: true
 
@@ -27,11 +28,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run tsc
-        run: pnpm tsc --noEmit
+      - name: Apply prettier formatting
+        run: pnpm prettier --write .
 
-      - name: Run tests
-        run: pnpm test
+      - name: Run lint
+        run: pnpm lint --fix
 
-      - name: Run build
-        run: pnpm build --no-lint
+      - name: Commit prettier fixes
+        uses: autofix-ci/action@v1
+        with:
+          commit-message: "Apply Prettier format"

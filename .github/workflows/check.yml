@@ -1,18 +1,22 @@
 name: Check
 
 on:
-  - push
   - pull_request
 
 jobs:
   check:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       SKIP_ENV_VALIDATION: true
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
         name: Install pnpm
@@ -28,8 +32,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Check code formatting
-        run: pnpm prettier --check .
+      - name: Apply prettier formatting
+        run: pnpm prettier --write .
+
+      - name: Commit prettier fixes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git diff --staged --quiet || git commit -m "Apply prettier formatting fixes"
+          git push
 
       - name: Run tsc
         run: pnpm tsc --noEmit

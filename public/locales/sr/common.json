@@ -1,1 +1,12 @@
-{}
+{
+    "meta": {
+        "title": "SplitPro: Besplatno podeli troškove sa svojim prijateljima",
+        "description": "Besplatno podeli troškove sa svojim prijateljima",
+        "application_name": "SplitPro"
+    },
+    "navigation": {
+        "app_name": "SplitPro",
+        "balances": "Stanja",
+        "groups": "Grupe"
+    }
+}

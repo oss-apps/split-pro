@@ -1,5 +1,5 @@
+import { SiGithub, SiX } from '@icons-pack/react-simple-icons';
 import {
-  ChevronRight,
   Download,
   DownloadCloud,
   FileDown,
@@ -11,10 +11,10 @@ import type { GetServerSideProps } from 'next';
 import { signOut } from 'next-auth/react';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
+import { AccountButton } from '~/components/Account/AccountButton';
 import { DownloadAppDrawer } from '~/components/Account/DownloadAppDrawer';
 import { LanguagePicker } from '~/components/Account/LanguagePicker';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
@@ -22,15 +22,12 @@ import { SubscribeNotification } from '~/components/Account/SubscribeNotificatio
 import { UpdateName } from '~/components/Account/UpdateName';
 import MainLayout from '~/components/Layout/MainLayout';
 import { EntityAvatar } from '~/components/ui/avatar';
-import { Button, ButtonProps } from '~/components/ui/button';
-import { SiGithub, SiX } from '@icons-pack/react-simple-icons';
-import { LoadingSpinner } from '~/components/ui/spinner';
+import { Button } from '~/components/ui/button';
 import { env } from '~/env';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { bigIntReplacer } from '~/utils/numbers';
-import { AccountButton } from '~/components/Account/AccountButton';
 
 const AccountPage: NextPageWithUser<{ feedBackPossible: boolean }> = ({
   user,

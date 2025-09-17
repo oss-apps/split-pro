@@ -11,8 +11,8 @@ import { Input } from '../ui/input';
 const detailsSchema = (t: TFunction) =>
   z.object({
     name: z
-      .string({ required_error: t('ui.errors.name_required', { ns: 'common' }) })
-      .min(1, { message: t('ui.errors.name_required', { ns: 'common' }) }),
+      .string({ required_error: t('errors.name_required') })
+      .min(1, { message: t('errors.name_required') }),
   });
 
 type UpdateDetailsFormValues = z.infer<ReturnType<typeof detailsSchema>>;
@@ -24,7 +24,7 @@ export const UpdateName: React.FC<{
 }> = ({ className, defaultName, onNameSubmit }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const { t } = useTranslation('account_page');
+  const { t } = useTranslation();
 
   const detailForm = useForm<UpdateDetailsFormValues>({
     resolver: zodResolver(detailsSchema(t)),
@@ -56,7 +56,7 @@ export const UpdateName: React.FC<{
     ({ field }: any) => (
       <FormItem className="w-full">
         <FormControl>
-          <Input className="text-lg" placeholder={t('ui.edit_name.placeholder')} {...field} />
+          <Input className="text-lg" placeholder={t('account.edit_name.placeholder')} {...field} />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -69,11 +69,11 @@ export const UpdateName: React.FC<{
       trigger={trigger}
       open={drawerOpen}
       onOpenChange={handleOpenChange}
-      leftAction={t('ui.actions.close', { ns: 'common' })}
-      title={t('ui.edit_name.title')}
+      leftAction={t('actions.close')}
+      title={t('account.edit_name.title')}
       shouldCloseOnAction={false}
       className="h-[80vh]"
-      actionTitle={t('ui.actions.save', { ns: 'common' })}
+      actionTitle={t('actions.save')}
       actionOnClick={handleOnActionClick}
     >
       <Form {...detailForm}>

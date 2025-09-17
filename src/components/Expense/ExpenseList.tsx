@@ -58,7 +58,7 @@ export const ExpenseList: React.FC<{
 };
 
 const Expense: ExpenseComponent = ({ e, userId }) => {
-  const { displayName, toUIDate, t } = useTranslationWithUtils(['expense_details']);
+  const { displayName, toUIDate, t } = useTranslationWithUtils();
 
   const youPaid = e.paidBy === userId && e.amount >= 0n;
   const yourExpense = e.expenseParticipants.find((partecipant) => partecipant.userId === userId);
@@ -75,8 +75,8 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
           <p className="max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">{e.name}</p>
           <p className="flex text-center text-xs text-gray-500">
             {displayName(e.paidByUser, userId)}{' '}
-            {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`, { ns: 'common' })}{' '}
-            {e.currency} {toUIString(e.amount)}
+            {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`)} {e.currency}{' '}
+            {toUIString(e.amount)}
           </p>
         </div>
       </div>
@@ -86,8 +86,7 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
             <div
               className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
             >
-              {t('ui.actors.you', { ns: 'common' })}{' '}
-              {t(`ui.expense.you.${youPaid ? 'lent' : 'owe'}`, { ns: 'common' })}
+              {t('actors.you')} {t(`ui.expense.you.${youPaid ? 'lent' : 'owe'}`)}
             </div>
             <div className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}>
               <span className="font-light">{e.currency}</span> {toUIString(yourExpenseAmount)}
@@ -95,7 +94,7 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
           </>
         ) : (
           <div>
-            <p className="text-xs text-gray-400">{t('ui.not_involved', { ns: 'common' })}</p>
+            <p className="text-xs text-gray-400">{t('ui.not_involved')}</p>
           </div>
         )}
       </div>
@@ -104,7 +103,7 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
 };
 
 const Settlement: ExpenseComponent = ({ e, userId }) => {
-  const { displayName, toUIDate, t } = useTranslationWithUtils(['expense_details']);
+  const { displayName, toUIDate, t } = useTranslationWithUtils();
 
   const receiverId = e.expenseParticipants.find((p) => p.userId !== e.paidBy)?.userId;
   const userDetails = api.user.getUserDetails.useQuery({ userId: receiverId! });
@@ -118,9 +117,8 @@ const Settlement: ExpenseComponent = ({ e, userId }) => {
       <div>
         <p className="flex text-center text-sm text-gray-400">
           {displayName(e.paidByUser, userId)}{' '}
-          {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`, { ns: 'common' })}{' '}
-          {e.currency} {toUIString(e.amount)} {t('common:ui.expense.to')}{' '}
-          {displayName(userDetails.data, userId)}
+          {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`)} {e.currency}{' '}
+          {toUIString(e.amount)} {t('ui.expense.to')} {displayName(userDetails.data, userId)}
         </p>
       </div>
     </div>
@@ -128,7 +126,7 @@ const Settlement: ExpenseComponent = ({ e, userId }) => {
 };
 
 const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
-  const { displayName, toUIDate, t } = useTranslationWithUtils(['expense_details']);
+  const { displayName, toUIDate, t } = useTranslationWithUtils();
 
   const receiverId = e.expenseParticipants.find((p) => p.userId !== e.paidBy)?.userId;
   const userDetails = api.user.getUserDetails.useQuery({ userId: receiverId! });
@@ -146,7 +144,7 @@ const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
           {toUIString(e.conversionTo.amount)}
         </p>
         <p className="flex text-center text-xs text-gray-500">
-          {t('common:ui.expense.for')} {displayName(e.paidByUser, userId)} {t('common:ui.and')}{' '}
+          {t('ui.expense.for')} {displayName(e.paidByUser, userId)} {t('ui.and')}{' '}
           {displayName(userDetails.data, userId)}
         </p>
       </div>

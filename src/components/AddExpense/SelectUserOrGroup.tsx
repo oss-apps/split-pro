@@ -16,7 +16,7 @@ import { Button } from '../ui/button';
 export const SelectUserOrGroup: React.FC<{
   enableSendingInvites: boolean;
 }> = ({ enableSendingInvites }) => {
-  const { t } = useTranslation('expense_details');
+  const { t } = useTranslation();
   const nameOrEmail = useAddExpenseStore((s) => s.nameOrEmail);
   const participants = useAddExpenseStore((s) => s.participants);
   const group = useAddExpenseStore((s) => s.group);
@@ -76,7 +76,7 @@ export const SelectUserOrGroup: React.FC<{
   if (group) {
     return (
       <div className="mt-4 text-center text-red-500">
-        {t('ui.add_expense_details.select_user_or_group.only_one_group_time')}
+        {t('expense_details.add_expense_details.select_user_or_group.only_one_group_time')}
       </div>
     );
   }
@@ -87,10 +87,12 @@ export const SelectUserOrGroup: React.FC<{
         <div>
           {enableSendingInvites ? (
             <div className="mt-1 text-orange-600">
-              {isEmail.success ? t('ui.add_expense_details.select_user_or_group.warning') : null}
+              {isEmail.success
+                ? t('expense_details.add_expense_details.select_user_or_group.warning')
+                : null}
             </div>
           ) : (
-            <div>{t('ui.add_expense_details.select_user_or_group.note')}</div>
+            <div>{t('expense_details.add_expense_details.select_user_or_group.note')}</div>
           )}
         </div>
         <div className="flex justify-center gap-4">
@@ -102,7 +104,7 @@ export const SelectUserOrGroup: React.FC<{
               onClick={() => onAddEmailClick(false)}
             >
               <SendIcon className="mr-2 h-4 w-4" />
-              {t('ui.add_expense_details.select_user_or_group.send_invite')}
+              {t('expense_details.add_expense_details.select_user_or_group.send_invite')}
             </Button>
           )}
           <Button
@@ -112,16 +114,14 @@ export const SelectUserOrGroup: React.FC<{
             onClick={() => onAddEmailClick(false)}
           >
             <UserPlusIcon className="mr-2 h-4 w-4" />
-            {t('ui.add_expense_details.select_user_or_group.add_to_split_pro')}
+            {t('expense_details.add_expense_details.select_user_or_group.add_to_split_pro')}
           </Button>
         </div>
       </div>
       <div className="mt-2">
         {filteredFriends?.length ? (
           <>
-            <div className="font-normal text-gray-500">
-              {t('ui.actors.friends', { ns: 'common' })}
-            </div>
+            <div className="font-normal text-gray-500">{t('actors.friends')}</div>
             {filteredFriends.map((f) => {
               const isExisting = participants.some((p) => p.id === f.id);
 
@@ -156,7 +156,7 @@ export const SelectUserOrGroup: React.FC<{
         {/*Can't select multiple groups or groups with outside ppl */}
         {filteredGroups?.length && 1 === participants.length ? (
           <>
-            <div className="mt-8 text-gray-500">{t('ui.actors.groups', { ns: 'common' })}</div>
+            <div className="mt-8 text-gray-500">{t('actors.groups')}</div>
             <div className="mt-2 flex flex-col gap-1">
               {filteredGroups.map((g) => (
                 <button

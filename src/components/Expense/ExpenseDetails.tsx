@@ -27,7 +27,7 @@ interface ExpenseDetailsProps {
 }
 
 const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
-  const { displayName, toUIDate, t } = useTranslationWithUtils(['expense_details']);
+  const { displayName, toUIDate, t } = useTranslationWithUtils();
 
   return (
     <>
@@ -48,23 +48,19 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
             ) : null}
             {expense.updatedByUser ? (
               <p className="text-sm text-gray-500">
-                {t('ui.edited_by', { ns: 'common' })}{' '}
-                {displayName(expense.updatedByUser, user.id, 'dativus')}{' '}
-                {t('ui.on', { ns: 'common' })} {toUIDate(expense.updatedAt, { year: true })}
+                {t('ui.edited_by')} {displayName(expense.updatedByUser, user.id, 'dativus')}{' '}
+                {t('ui.on')} {toUIDate(expense.updatedAt, { year: true })}
               </p>
             ) : null}
             {expense.deletedByUser ? (
               <p className="text-sm text-orange-600">
-                {t('ui.deleted_by', { ns: 'common' })}{' '}
-                {displayName(expense.deletedByUser, user.id, 'dativus')}{' '}
-                {t('ui.on', { ns: 'common' })}{' '}
-                {toUIDate(expense.deletedAt ?? expense.createdAt, { year: true })}
+                {t('ui.deleted_by')} {displayName(expense.deletedByUser, user.id, 'dativus')}{' '}
+                {t('ui.on')} {toUIDate(expense.deletedAt ?? expense.createdAt, { year: true })}
               </p>
             ) : (
               <p className="text-sm text-gray-500">
-                {t('ui.added_by', { ns: 'common' })}{' '}
-                {displayName(expense.addedByUser, user.id, 'dativus')}{' '}
-                {t('ui.on', { ns: 'common' })} {toUIDate(expense.createdAt, { year: true })}
+                {t('ui.added_by')} {displayName(expense.addedByUser, user.id, 'dativus')}{' '}
+                {t('ui.on')} {toUIDate(expense.createdAt, { year: true })}
               </p>
             )}
           </div>
@@ -82,7 +78,6 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
           {displayName(expense.paidByUser, user.id)}{' '}
           {t(
             `ui.expense.${expense.paidByUser.id === user.id ? 'you' : 'user'}.${expense.amount < 0 ? 'received' : 'paid'}`,
-            { ns: 'common' },
           )}{' '}
           {expense.currency} {toUIString(expense.amount)}
         </p>

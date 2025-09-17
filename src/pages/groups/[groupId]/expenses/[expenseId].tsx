@@ -19,7 +19,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   user,
   storagePublicUrl,
 }) => {
-  const { t } = useTranslation('groups_details');
+  const { t } = useTranslation();
   const router = useRouter();
   const expenseId = router.query.expenseId as string;
   const groupId = parseInt(router.query.groupId as string);
@@ -37,9 +37,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
             <Link href={`/groups/${groupId}`}>
               <ChevronLeftIcon className="mr-1 h-6 w-6" />
             </Link>
-            <p className="w-full text-center text-[16px] font-normal">
-              {t('ui.expense_details', { ns: 'common' })}
-            </p>
+            <p className="w-full text-center text-[16px] font-normal">{t('ui.expense_details')}</p>
             <div />
           </div>
         }
@@ -79,11 +77,7 @@ ExpensesPage.auth = true;
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
     storagePublicUrl: env.R2_PUBLIC_URL,
-    ...(await customServerSideTranslations(context.locale, [
-      'common',
-      'groups_details',
-      'expense_details',
-    ])),
+    ...(await customServerSideTranslations(context.locale, ['common'])),
   },
 });
 

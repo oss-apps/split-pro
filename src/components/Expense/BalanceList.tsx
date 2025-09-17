@@ -22,7 +22,7 @@ export const BalanceList: React.FC<{
   groupBalances?: GroupBalance[];
   users?: User[];
 }> = ({ groupBalances = [], users = [] }) => {
-  const { displayName, t } = useTranslationWithUtils(['expense_details']);
+  const { displayName, t } = useTranslationWithUtils();
   const userQuery = api.user.me.useQuery();
 
   const addOrEditCurrencyConversionMutation = api.expense.addOrEditCurrencyConversion.useMutation();
@@ -72,8 +72,8 @@ export const BalanceList: React.FC<{
                     <span className="text-gray-400">
                       {' '}
                       {isCurrentUser
-                        ? t('ui.balance_list.are_settled_up')
-                        : t('ui.balance_list.is_settled_up')}
+                        ? t('expense_details.balance_list.are_settled_up')
+                        : t('expense_details.balance_list.is_settled_up')}
                     </span>
                   ) : (
                     <>
@@ -81,7 +81,6 @@ export const BalanceList: React.FC<{
                         {' '}
                         {t(
                           `ui.expense.${isCurrentUser ? 'you' : 'user'}.${0 < totalAmount[1] ? 'lent' : 'owe'}`,
-                          { ns: 'common' },
                         )}{' '}
                       </span>
                       <span
@@ -138,7 +137,6 @@ export const BalanceList: React.FC<{
                                 {' '}
                                 {t(
                                   `ui.expense.${friend.id === userQuery.data?.id ? 'you' : 'user'}.${0 > amount ? 'get' : 'pay'}`,
-                                  { ns: 'common' },
                                 )}{' '}
                               </span>
                               <span

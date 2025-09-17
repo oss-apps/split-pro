@@ -13,7 +13,7 @@ export const BalanceEntry: React.FC<{
   id: number;
   hasMore?: boolean;
 }> = ({ entity, amount, isPositive, currency, id, hasMore }) => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation();
   const router = useRouter();
 
   const currentRoute = router.pathname;
@@ -36,7 +36,7 @@ export const BalanceEntry: React.FC<{
               isPositive ? 'text-emerald-500' : 'text-orange-600',
             )}
           >
-            {t('ui.actors.you')} {t(`ui.expense.you.${isPositive ? 'lent' : 'owe'}`)}
+            {t('actors.you')} {t(`ui.expense.you.${isPositive ? 'lent' : 'owe'}`)}
           </div>
           <div className={`${isPositive ? 'text-emerald-500' : 'text-orange-600'} text-right`}>
             {currency} {toUIString(amount)}

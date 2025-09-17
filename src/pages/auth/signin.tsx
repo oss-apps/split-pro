@@ -45,8 +45,8 @@ const providerTypeGuard = (providerId: string): providerId is keyof typeof provi
 const emailSchema = (t: TFunction) =>
   z.object({
     email: z
-      .string({ required_error: t('validation.email_required') })
-      .email({ message: t('validation.email_invalid') }),
+      .string({ required_error: t('errors.email_required') })
+      .email({ message: t('errors.email_invalid') }),
   });
 
 type EmailFormValues = z.infer<ReturnType<typeof emailSchema>>;
@@ -57,7 +57,7 @@ const Home: NextPage<{
   providers: ClientSafeProvider[];
   callbackUrl?: string;
 }> = ({ error, providers, feedbackEmail, callbackUrl }) => {
-  const { t } = useTranslation('signin');
+  const { t } = useTranslation();
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
   const [showVerificationStep, setShowVerificationStep] = useState(false);
 
@@ -163,7 +163,7 @@ const Home: NextPage<{
           {providers && 2 === providers.length && (
             <div className="mt-6 flex w-[300px] items-center justify-between gap-2">
               <p className="bg-background z-10 ml-[150px] -translate-x-1/2 px-4 text-sm">
-                {t('ui.or', { ns: 'common' })}
+                {t('ui.or')}
               </p>
               <div className="absolute h-px w-[300px] bg-linear-to-r from-zinc-800 via-zinc-300 to-zinc-800" />
             </div>
@@ -221,7 +221,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      ...(await customServerSideTranslations(context.locale, ['common', 'signin'])),
+      ...(await customServerSideTranslations(context.locale, ['common'])),
       error: typeof error === 'string' ? error : '',
       feedbackEmail: env.FEEDBACK_EMAIL ?? '',
       providers: Object.values(providers ?? {}),

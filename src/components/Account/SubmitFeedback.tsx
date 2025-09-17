@@ -16,14 +16,14 @@ import { AccountButton } from './AccountButton';
 const feedbackSchema = (t: TFunction) =>
   z.object({
     feedback: z
-      .string({ required_error: t('ui.errors.feedback_required') })
-      .min(10, { message: t('ui.errors.feedback_min_length') }),
+      .string({ required_error: t('errors.feedback_required') })
+      .min(10, { message: t('errors.feedback_min_length') }),
   });
 
 type FeedbackFormValues = z.infer<ReturnType<typeof feedbackSchema>>;
 
 export const SubmitFeedback: React.FC = () => {
-  const { t } = useTranslation('account_page');
+  const { t } = useTranslation();
   const submitFeedbackMutation = api.user.submitFeedback.useMutation();
   const [feedbackOpen, setFeedbackOpen] = useState(false);
 
@@ -52,7 +52,7 @@ export const SubmitFeedback: React.FC = () => {
     () => (
       <AccountButton>
         <MessageSquare className="h-5 w-5 text-green-500" />
-        {t('ui.submit_feedback')}
+        {t('account.submit_feedback')}
       </AccountButton>
     ),
     [t],
@@ -69,7 +69,7 @@ export const SubmitFeedback: React.FC = () => {
           <Textarea
             className="text-lg placeholder:text-sm"
             rows={5}
-            placeholder={t('ui.submit_feedback_details.placeholder')}
+            placeholder={t('account.submit_feedback_details.placeholder')}
             {...field}
           />
         </FormControl>
@@ -85,11 +85,11 @@ export const SubmitFeedback: React.FC = () => {
       open={feedbackOpen}
       onOpenChange={setFeedbackOpen}
       onClose={handleClose}
-      leftAction={t('ui.actions.close', { ns: 'common' })}
-      title={t('ui.submit_feedback_details.title')}
+      leftAction={t('actions.close')}
+      title={t('account.submit_feedback_details.title')}
       className="h-[70vh]"
       shouldCloseOnAction={false}
-      actionTitle={t('ui.actions.submit', { ns: 'common' })}
+      actionTitle={t('actions.submit')}
       actionOnClick={handleActionClick}
     >
       <div>

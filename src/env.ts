@@ -69,6 +69,7 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_FRANKFURTER_USED: z.boolean().default(false),
+    NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT: z.boolean().default(false),
   },
 
   /**
@@ -115,6 +116,7 @@ export const env = createEnv({
     OIDC_WELL_KNOWN_URL: process.env.OIDC_WELL_KNOWN_URL,
     OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: !!process.env.OIDC_ALLOW_DANGEROUS_EMAIL_LINKING,
     NEXT_PUBLIC_FRANKFURTER_USED: process.env.CURRENCY_RATE_PROVIDER === 'frankfurter',
+    NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT: process.env.NEXTAUTH_URL?.includes('splitpro.app') ?? false,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

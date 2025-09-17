@@ -18,7 +18,7 @@ import { withI18nStaticProps } from '~/utils/i18n/server';
 import { BigMath } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser = () => {
-  const { t } = useTranslation(['groups_details']);
+  const { t } = useTranslation();
   const groupQuery = api.group.getAllGroupsWithBalances.useQuery();
   const archivedGroupQuery = api.group.getAllGroupsWithBalances.useQuery({ getArchived: true });
 
@@ -34,20 +34,16 @@ const BalancePage: NextPageWithUser = () => {
   return (
     <>
       <Head>
-        <title>{t('common:navigation.groups')}</title>
+        <title>{t('navigation.groups')}</title>
       </Head>
-      <MainLayout
-        title={t('common:navigation.groups')}
-        actions={actions}
-        loading={groupQuery.isPending}
-      >
+      <MainLayout title={t('navigation.groups')} actions={actions} loading={groupQuery.isPending}>
         <div className="mt-7 flex flex-col gap-8 pb-36">
           {0 === groupQuery.data?.length ? (
             <div className="mt-[30vh] flex flex-col items-center justify-center gap-20">
               <CreateGroup>
                 <Button>
                   <PlusIcon className="mr-2 h-4 w-4" />
-                  {t('common:ui.actions.create')}
+                  {t('actions.create')}
                 </Button>
               </CreateGroup>
             </div>
@@ -83,7 +79,7 @@ const BalancePage: NextPageWithUser = () => {
                 <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value="archived-groups">
                     <AccordionTrigger className="text-left text-sm text-gray-400">
-                      {t('ui.group_info.archived')} ({archivedGroupQuery.data.length})
+                      {t('group_details.group_info.archived')} ({archivedGroupQuery.data.length})
                     </AccordionTrigger>
                     <AccordionContent>
                       <div className="mt-7 flex flex-col gap-8">
@@ -112,6 +108,6 @@ const BalancePage: NextPageWithUser = () => {
 
 BalancePage.auth = true;
 
-export const getStaticProps = withI18nStaticProps(['groups_details', 'expense_details', 'common']);
+export const getStaticProps = withI18nStaticProps(['common']);
 
 export default BalancePage;

@@ -29,7 +29,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   title,
   loading,
 }) => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation();
   const router = useRouter();
   const currentPath = router.pathname;
 
@@ -44,7 +44,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({
       >
         <nav className="item-center -ml-[170px] hidden w-[170px] px-4 py-4 lg:flex lg:flex-col lg:gap-2">
           <Link href="/balances" className="mb-8 flex items-center gap-2">
-            <span className="text-xl font-medium">{t?.('navigation.app_name') ?? 'SplitPro'}</span>
+            <span className="text-xl font-medium">
+              {t?.('meta.application_name') ?? 'SplitPro'}
+            </span>
           </Link>
           <NavItemDesktop
             title={t?.('navigation.balances') ?? 'Balances'}

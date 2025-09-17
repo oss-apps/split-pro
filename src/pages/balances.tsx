@@ -61,7 +61,7 @@ const BalancePage: NextPageWithUser = () => {
                   <div className="flex items-center justify-center gap-2 text-center">
                     {/* <ArrowLeftCircleIcon className=" h-6 w-6 rotate-45 transform text-orange-700" /> */}
                     <p className="text-sm">
-                      {t('ui.actors.you')} {t('ui.expense.you.owe')}
+                      {t('actors.you')} {t('ui.expense.you.owe')}
                     </p>
                   </div>
                 </div>
@@ -84,7 +84,7 @@ const BalancePage: NextPageWithUser = () => {
                 <div className="bg-opacity-40 mt-2 flex flex-col justify-center px-1">
                   <div className="flex items-center justify-center gap-2">
                     <p className="text-sm">
-                      {t('ui.actors.you')} {t('ui.expense.you.lent')}
+                      {t('actors.you')} {t('ui.expense.you.lent')}
                     </p>
                   </div>
                 </div>
@@ -122,14 +122,14 @@ const BalancePage: NextPageWithUser = () => {
                 <DownloadAppDrawer>
                   <Button className="w-[250px]">
                     <Download className="mr-2 h-5 w-5 text-black" />
-                    {t('account_page:ui.download_app')}
+                    {t('account.download_app')}
                   </Button>
                 </DownloadAppDrawer>
-                {!isPwa && <p>{t('ui.or', { ns: 'common' })}</p>}
+                {!isPwa && <p>{t('ui.or')}</p>}
                 <Link href="/add">
                   <Button className="w-[250px]">
                     <PlusIcon className="mr-2 h-5 w-5 text-black" />
-                    {t('ui.actions.add_expense', { ns: 'common' })}
+                    {t('actions.add_expense')}
                   </Button>
                 </Link>
               </div>
@@ -143,6 +143,6 @@ const BalancePage: NextPageWithUser = () => {
 
 BalancePage.auth = true;
 
-export const getStaticProps = withI18nStaticProps(['common', 'account_page']);
+export const getStaticProps = withI18nStaticProps(['common']);
 
 export default BalancePage;

@@ -300,5 +300,5 @@ const MobileScreenShot = () => (
 );
 
 export const getServerSideProps: GetServerSideProps = async (context) => ({
-  props: await customServerSideTranslations(context.locale, ['home', 'common']),
+  props: await customServerSideTranslations(context.locale, ['home']),
 });

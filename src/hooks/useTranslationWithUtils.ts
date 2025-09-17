@@ -18,8 +18,8 @@ export const useTranslationWithUtils = (
 } => {
   if (!namespaces || namespaces.length === 0) {
     namespaces = ['common'];
-  } else if (!namespaces.includes('common')) {
-    namespaces.push('common');
+  } else if (!namespaces.includes) {
+    namespaces.push;
   }
   const translation = useTranslation(namespaces);
 

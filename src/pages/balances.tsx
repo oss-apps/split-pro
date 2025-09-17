@@ -122,14 +122,14 @@ const BalancePage: NextPageWithUser = () => {
                 <DownloadAppDrawer>
                   <Button className="w-[250px]">
                     <Download className="mr-2 h-5 w-5 text-black" />
-                    {t('account_page:ui.download_app')}
+                    {t('account.download_app')}
                   </Button>
                 </DownloadAppDrawer>
-                {!isPwa && <p>{t('ui.or', { ns: 'common' })}</p>}
+                {!isPwa && <p>{t('ui.or')}</p>}
                 <Link href="/add">
                   <Button className="w-[250px]">
                     <PlusIcon className="mr-2 h-5 w-5 text-black" />
-                    {t('actions.add_expense', { ns: 'common' })}
+                    {t('actions.add_expense')}
                   </Button>
                 </Link>
               </div>
@@ -143,6 +143,6 @@ const BalancePage: NextPageWithUser = () => {
 
 BalancePage.auth = true;
 
-export const getStaticProps = withI18nStaticProps(['common', 'account_page']);
+export const getStaticProps = withI18nStaticProps(['common']);
 
 export default BalancePage;

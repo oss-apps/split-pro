@@ -36,7 +36,7 @@ const AccountPage: NextPageWithUser<{ feedBackPossible: boolean }> = ({
   user,
   feedBackPossible,
 }) => {
-  const { t } = useTranslation('account_page');
+  const { t } = useTranslation();
   const router = useRouter();
   const userQuery = api.user.me.useQuery();
   const downloadQuery = api.user.downloadData.useMutation();
@@ -63,10 +63,10 @@ const AccountPage: NextPageWithUser<{ feedBackPossible: boolean }> = ({
     async (values: { name: string }) => {
       try {
         await updateDetailsMutation.mutateAsync({ name: values.name });
-        toast.success(t('ui.messages.submit_success'), { duration: 1500 });
+        toast.success(t('account.messages.submit_success'), { duration: 1500 });
         utils.user.me.refetch().catch(console.error);
       } catch (error) {
-        toast.error(t('ui.messages.submit_error'));
+        toast.error(t('account.messages.submit_error'));
 
         console.error(error);
       }
@@ -86,9 +86,9 @@ const AccountPage: NextPageWithUser<{ feedBackPossible: boolean }> = ({
   return (
     <>
       <Head>
-        <title>{t('ui.title')}</title>
+        <title>{t('account.title')}</title>
       </Head>
-      <MainLayout title={t('ui.title')} header={header}>
+      <MainLayout title={t('account.title')} header={header}>
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <EntityAvatar entity={user} size={50} />
@@ -109,25 +109,25 @@ const AccountPage: NextPageWithUser<{ feedBackPossible: boolean }> = ({
           <LanguagePicker>
             <AccountButton>
               <Languages className="size-5 text-green-500" />
-              {t('ui.change_language')}
+              {t('account.change_language')}
             </AccountButton>
           </LanguagePicker>
 
           {isCloud && (
             <AccountButton href="https://twitter.com/KM_Koushik_">
               <SiX className="size-5" />
-              {t('ui.follow_on_x')}
+              {t('account.follow_on_x')}
             </AccountButton>
           )}
 
           <AccountButton href="https://github.com/oss-apps/split-pro">
             <SiGithub className="size-5" />
-            {t('ui.star_on_github')}
+            {t('account.star_on_github')}
           </AccountButton>
 
           <AccountButton href="https://github.com/sponsors/krokosik">
             <HeartHandshakeIcon className="size-5 text-pink-600" />
-            {t('ui.support_us')}
+            {t('account.support_us')}
           </AccountButton>
 
           {feedBackPossible && <SubmitFeedback />}
@@ -136,24 +136,24 @@ const AccountPage: NextPageWithUser<{ feedBackPossible: boolean }> = ({
 
           <AccountButton href="https://www.producthunt.com/products/splitpro/reviews/new">
             <Star className="size-5 text-yellow-400" />
-            {t('ui.write_review')}
+            {t('account.write_review')}
           </AccountButton>
 
           <DownloadAppDrawer>
             <AccountButton>
               <Download className="size-5 text-blue-500" />
-              {t('ui.download_app')}
+              {t('account.download_app')}
             </AccountButton>
           </DownloadAppDrawer>
 
           <AccountButton onClick={downloadData} disabled={downloading} loading={downloading}>
             <FileDown className="size-5 text-teal-500" />
-            {t('ui.download_splitpro_data')}
+            {t('account.download_splitpro_data')}
           </AccountButton>
 
           <AccountButton href="/import-splitwise">
             <DownloadCloud className="size-5 text-violet-500" />
-            {t('ui.import_from_splitwise')}
+            {t('account.import_from_splitwise')}
           </AccountButton>
         </div>
 
@@ -163,7 +163,7 @@ const AccountPage: NextPageWithUser<{ feedBackPossible: boolean }> = ({
             className="text-orange-600 hover:text-orange-600/90"
             onClick={onSignOut}
           >
-            {t('ui.logout')}
+            {t('account.logout')}
           </Button>
         </div>
       </MainLayout>
@@ -176,7 +176,7 @@ AccountPage.auth = true;
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
     feedbackPossible: !!env.FEEDBACK_EMAIL,
-    ...(await customServerSideTranslations(context.locale, ['account_page', 'common'])),
+    ...(await customServerSideTranslations(context.locale, ['common'])),
   },
 });
 

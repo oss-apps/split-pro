@@ -22,7 +22,7 @@ const base64ToUint8Array = (base64: string) => {
 };
 
 export const SubscribeNotification: React.FC = () => {
-  const { t } = useTranslation('account_page');
+  const { t } = useTranslation();
   const updatePushSubscription = api.user.updatePushNotification.useMutation();
   const [isSubscribed, setIsSubscribed] = useState(false);
   const webPushPublicKey = useAppStore((s) => s.webPushPublicKey);
@@ -49,7 +49,7 @@ export const SubscribeNotification: React.FC = () => {
     try {
       const result = await Notification.requestPermission();
       if ('granted' === result) {
-        toast.success(t('ui.notifications.messages.notification_granted'));
+        toast.success(t('account.notifications.messages.notification_granted'));
         navigator.serviceWorker.ready
           .then(async (reg) => {
             if (!webPushPublicKey) {
@@ -99,12 +99,12 @@ export const SubscribeNotification: React.FC = () => {
       {!isSubscribed ? (
         <>
           <Bell className="h-5 w-5 text-red-400" />
-          {t('ui.notifications.enable_notification')}
+          {t('account.notifications.enable_notification')}
         </>
       ) : (
         <>
           <BellOff className="h-5 w-5 text-red-400" />
-          {t('ui.notifications.disable_notification')}
+          {t('account.notifications.disable_notification')}
         </>
       )}
     </AccountButton>

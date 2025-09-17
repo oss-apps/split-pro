@@ -28,7 +28,7 @@ export const AddOrEditExpensePage: React.FC<{
   enableSendingInvites: boolean;
   expenseId?: string;
 }> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
-  const { t } = useTranslationWithUtils(['expense_details']);
+  const { t } = useTranslationWithUtils();
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
   const isNegative = useAddExpenseStore((s) => s.isNegative);
@@ -205,12 +205,10 @@ export const AddOrEditExpensePage: React.FC<{
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <Button variant="ghost" className="text-primary px-0" onClick={router.back}>
-          {t('actions.cancel', { ns: 'common' })}
+          {t('actions.cancel')}
         </Button>
         <div className="text-center">
-          {expenseId
-            ? t('actions.edit_expense', { ns: 'common' })
-            : t('actions.add_expense', { ns: 'common' })}
+          {expenseId ? t('actions.edit_expense') : t('actions.add_expense')}
         </div>
         <Button
           variant="ghost"
@@ -220,7 +218,7 @@ export const AddOrEditExpensePage: React.FC<{
           }
           onClick={addExpense}
         >
-          {t('actions.save', { ns: 'common' })}
+          {t('actions.save')}
         </Button>{' '}
       </div>
       <UserInput isEditing={!!expenseId} />
@@ -231,7 +229,7 @@ export const AddOrEditExpensePage: React.FC<{
           <div className="mt-4 flex gap-2 sm:mt-10">
             <CategoryPicker category={category} onCategoryPick={setCategory} />
             <Input
-              placeholder={t('ui.add_expense_details.description_placeholder')}
+              placeholder={t('expense_details.add_expense_details.description_placeholder')}
               value={description}
               onChange={handleDescriptionChange}
               className="text-lg placeholder:text-sm"
@@ -241,7 +239,7 @@ export const AddOrEditExpensePage: React.FC<{
           <div className="flex gap-2">
             <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
             <Input
-              placeholder={t('ui.add_expense_details.amount_placeholder')}
+              placeholder={t('expense_details.add_expense_details.amount_placeholder')}
               className="text-lg placeholder:text-sm"
               type="number"
               inputMode="decimal"
@@ -277,7 +275,7 @@ export const AddOrEditExpensePage: React.FC<{
                       }
                       onClick={addExpense}
                     >
-                      {t('actions.submit', { ns: 'common' })}
+                      {t('actions.submit')}
                     </Button>
                   </div>
                 </div>
@@ -292,7 +290,7 @@ export const AddOrEditExpensePage: React.FC<{
 };
 
 const SponsorUs = () => {
-  const { t } = useTranslation(['expense_details']);
+  const { t } = useTranslation();
   return (
     <div className="flex w-full justify-center">
       <Link href="https://github.com/sponsors/krokosik" target="_blank" className="mx-auto">
@@ -302,7 +300,7 @@ const SponsorUs = () => {
         >
           <div className="flex items-center gap-4">
             <HeartHandshakeIcon className="h-5 w-5 text-pink-500" />
-            {t('ui.add_expense_details.sponsor_us')}
+            {t('expense_details.add_expense_details.sponsor_us')}
           </div>
         </Button>
       </Link>

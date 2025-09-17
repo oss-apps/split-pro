@@ -14,7 +14,7 @@ export const DeleteExpense: React.FC<{
   friendId?: number;
   groupId?: number;
 }> = ({ expenseId }) => {
-  const { t } = useTranslation('expense_details');
+  const { t } = useTranslation();
   const router = useRouter();
 
   const deleteExpenseMutation = api.expense.deleteExpense.useMutation();
@@ -36,8 +36,8 @@ export const DeleteExpense: React.FC<{
 
   return (
     <SimpleConfirmationDialog
-      title={t('ui.delete_expense_details.title')}
-      description={t('ui.delete_expense_details.text')}
+      title={t('expense_details.delete_expense_details.title')}
+      description={t('expense_details.delete_expense_details.text')}
       hasPermission
       onConfirm={onDeleteExpense}
       loading={deleteExpenseMutation.isPending}

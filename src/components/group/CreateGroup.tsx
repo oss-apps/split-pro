@@ -15,14 +15,14 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form'
 const groupSchema = (t: TFunction) =>
   z.object({
     name: z
-      .string({ required_error: t('errors.name_required', { ns: 'common' }) })
-      .min(1, { message: t('errors.name_required', { ns: 'common' }) }),
+      .string({ required_error: t('errors.name_required') })
+      .min(1, { message: t('errors.name_required') }),
   });
 
 type CreateGroupFormValues = z.infer<ReturnType<typeof groupSchema>>;
 
 export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { t } = useTranslation('groups_details');
+  const { t } = useTranslation();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const createGroup = api.group.create.useMutation(undefined);
@@ -72,7 +72,7 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
       <FormItem className="w-full">
         <FormControl>
           <Input
-            placeholder={t('ui.create_group.group_name_placeholder')}
+            placeholder={t('group_details.create_group.group_name_placeholder')}
             className="w-full py-2 text-lg"
             {...field}
           />
@@ -94,11 +94,11 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
         open={drawerOpen}
         onOpenChange={handleOpenChange}
         trigger={children}
-        leftAction={t('actions.cancel', { ns: 'common' })}
+        leftAction={t('actions.cancel')}
         leftActionOnClick={handleLeftActionClick}
-        title={t('ui.create_group.title')}
+        title={t('group_details.create_group.title')}
         className="h-[70vh]"
-        actionTitle={t('actions.submit', { ns: 'common' })}
+        actionTitle={t('actions.submit')}
         actionOnClick={handleActionClick}
       >
         <div className="w-full">

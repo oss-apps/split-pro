@@ -13,7 +13,7 @@ export const BalanceEntry: React.FC<{
   id: number;
   hasMore?: boolean;
 }> = ({ entity, amount, isPositive, currency, id, hasMore }) => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation();
   const router = useRouter();
 
   const currentRoute = router.pathname;

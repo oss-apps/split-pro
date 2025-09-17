@@ -7,7 +7,7 @@ import { Calendar } from '../ui/calendar';
 import type { DayPickerProps, PropsSingleRequired } from 'react-day-picker';
 
 export const DateSelector: React.FC<DayPickerProps & PropsSingleRequired> = (calendarProps) => {
-  const { t, toUIDate } = useTranslationWithUtils(['expense_details']);
+  const { t, toUIDate } = useTranslationWithUtils();
 
   return (
     <div className="flex flex-wrap items-center gap-4">
@@ -24,7 +24,7 @@ export const DateSelector: React.FC<DayPickerProps & PropsSingleRequired> = (cal
             {calendarProps.selected ? (
               toUIDate(calendarProps.selected, { useToday: true })
             ) : (
-              <span>{t('ui.add_expense_details.pick_a_date')}</span>
+              <span>{t('expense_details.add_expense_details.pick_a_date')}</span>
             )}
           </Button>
         </PopoverTrigger>

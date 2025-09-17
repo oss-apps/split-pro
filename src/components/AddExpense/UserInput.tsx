@@ -10,7 +10,7 @@ import { EntityAvatar } from '../ui/avatar';
 export const UserInput: React.FC<{
   isEditing?: boolean;
 }> = ({ isEditing }) => {
-  const { t } = useTranslation('expense_details');
+  const { t } = useTranslation();
   const {
     setNameOrEmail,
     removeLastParticipant,
@@ -92,12 +92,12 @@ export const UserInput: React.FC<{
         type="email"
         placeholder={
           isEditing && !!group
-            ? t('ui.add_expense_details.user_input.cannot_change_group')
+            ? t('expense_details.add_expense_details.user_input.cannot_change_group')
             : group
-              ? t('ui.add_expense_details.user_input.remove_group')
+              ? t('expense_details.add_expense_details.user_input.remove_group')
               : 1 < participants.length
-                ? t('ui.add_expense_details.user_input.add_more_friends')
-                : t('ui.add_expense_details.user_input.search_friends')
+                ? t('expense_details.add_expense_details.user_input.add_more_friends')
+                : t('expense_details.add_expense_details.user_input.search_friends')
         }
         value={nameOrEmail}
         onChange={(e) => setNameOrEmail(e.target.value)}

@@ -29,7 +29,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   title,
   loading,
 }) => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation();
   const router = useRouter();
   const currentPath = router.pathname;
 

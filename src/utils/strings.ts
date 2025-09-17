@@ -15,7 +15,7 @@ export const displayName = (
   useCase?: 'dativus' | 'accusativus',
 ): string => {
   if (currentUserId === user?.id) {
-    return t(`actors.you${useCase ? `_${useCase}` : ''}`, { ns: 'common' });
+    return t(`actors.you${useCase ? `_${useCase}` : ''}`);
   }
   return user?.name ?? user?.email ?? '';
 };
@@ -25,9 +25,7 @@ export const toUIDate = (
   date: Date,
   { useToday = false, year = false } = {},
 ): string =>
-  useToday && isToday(date)
-    ? t('ui.today', { ns: 'common' })
-    : format(date, year ? 'dd MMM yyyy' : 'MMM dd');
+  useToday && isToday(date) ? t('ui.today') : format(date, year ? 'dd MMM yyyy' : 'MMM dd');
 
 export function generateSplitDescription(
   t: TFunction,
@@ -39,11 +37,11 @@ export function generateSplitDescription(
 ): string {
   // Only enhance the description for EQUAL split type
   if (splitType !== SplitType.EQUAL) {
-    return t('ui.add_expense_details.split_type_section.split_unequally');
+    return t('expense_details.add_expense_details.split_type_section.split_unequally');
   }
 
   if (!paidBy || !currentUser) {
-    return t('ui.add_expense_details.split_type_section.split_equally');
+    return t('expense_details.add_expense_details.split_type_section.split_equally');
   }
 
   // Get participants who are actually selected for the split (have non-zero shares)
@@ -55,23 +53,23 @@ export function generateSplitDescription(
 
   // If no one is selected, fall back to default
   if (selectedParticipants.length === 0) {
-    return t('ui.add_expense_details.split_type_section.split_equally');
+    return t('expense_details.add_expense_details.split_type_section.split_equally');
   }
 
   // Case 1: Paying for exactly one person
   if (selectedParticipants.length === 1) {
     const beneficiary = selectedParticipants[0];
     const beneficiaryName = beneficiary?.name?.split(' ')[0] || beneficiary?.email || 'someone';
-    return `${t('common:ui.expense.user.paid')} ${t('common:ui.expense.for')} ${beneficiaryName}`;
+    return `${t('ui.expense.user.paid')} ${t('ui.expense.for')} ${beneficiaryName}`;
   }
 
   // Case 2: Splitting with multiple people
   if (selectedParticipants.length > 1) {
-    return `${t('ui.add_expense_details.split_type_section.split_equally')} (${selectedParticipants.length})`;
+    return `${t('expense_details.add_expense_details.split_type_section.split_equally')} (${selectedParticipants.length})`;
   }
 
   // Fallback to default for all other cases
-  return t('ui.add_expense_details.split_type_section.split_equally');
+  return t('expense_details.add_expense_details.split_type_section.split_equally');
 }
 
 export function getCurrencyName(t: TFunction, code: CurrencyCode, plural = false): string {

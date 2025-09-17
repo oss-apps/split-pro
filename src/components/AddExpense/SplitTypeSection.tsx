@@ -23,7 +23,7 @@ import { Input } from '../ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
 export const SplitTypeSection: React.FC = () => {
-  const { t, displayName, generateSplitDescription } = useTranslationWithUtils(['expense_details']);
+  const { t, displayName, generateSplitDescription } = useTranslationWithUtils();
   const isNegative = useAddExpenseStore((s) => s.isNegative);
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const participants = useAddExpenseStore((s) => s.participants);
@@ -37,16 +37,14 @@ export const SplitTypeSection: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center text-[16px] text-gray-400 sm:mt-4">
-      <p className="text-[16px]">
-        {t(`ui.expense.${isNegative ? 'received_by' : 'paid_by'}`, { ns: 'common' })}{' '}
-      </p>
+      <p className="text-[16px]">{t(`ui.expense.${isNegative ? 'received_by' : 'paid_by'}`)} </p>
       <AppDrawer
         trigger={
           <p className="overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
             {displayName(paidBy, currentUser?.id, 'dativus')}
           </p>
         }
-        title={t('ui.expense.paid_by', { ns: 'common' })}
+        title={t('ui.expense.paid_by')}
         className="h-[70vh]"
         shouldCloseOnAction
       >
@@ -60,7 +58,7 @@ export const SplitTypeSection: React.FC = () => {
           ))}
         </div>
       </AppDrawer>
-      <p>{t('ui.and', { ns: 'common' })} </p>
+      <p>{t('ui.and')} </p>
       <AppDrawer
         trigger={
           <div className="max-w-40 overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 md:max-w-48 lg:max-w-56">
@@ -68,12 +66,12 @@ export const SplitTypeSection: React.FC = () => {
           </div>
         }
         title={t(
-          `ui.add_expense_details.split_type_section.types.${splitType.toLowerCase()}.title`,
+          `expense_details.add_expense_details.split_type_section.types.${splitType.toLowerCase()}.title`,
         )}
         className="h-[85vh] lg:h-[70vh]"
         shouldCloseOnAction
         dismissible={canSplitScreenClosed}
-        actionTitle={t('actions.save', { ns: 'common' })}
+        actionTitle={t('actions.save')}
         actionDisabled={!canSplitScreenClosed}
         open={splitScreenOpen}
         onOpenChange={setSplitScreenOpen}
@@ -103,7 +101,7 @@ const PayerRow = ({ p, isPaying }: { p: Participant; isPaying: boolean }) => {
 };
 
 const SplitExpenseForm: React.FC = () => {
-  const { t } = useTranslation('expense_details');
+  const { t } = useTranslation();
   const splitType = useAddExpenseStore((s) => s.splitType);
   const { setSplitType } = useAddExpenseStore((s) => s.actions);
 
@@ -173,7 +171,7 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
       const totalParticipants = participants.filter(
         (p) => 0n !== splitShares[p.id]?.[SplitType.EQUAL],
       ).length;
-      return `${currency} ${0 < totalParticipants ? toUIString(amount / BigInt(totalParticipants)) : 0} ${t('ui.add_expense_details.split_type_section.types.equal.per_person')}`;
+      return `${currency} ${0 < totalParticipants ? toUIString(amount / BigInt(totalParticipants)) : 0} ${t('expense_details.add_expense_details.split_type_section.types.equal.per_person')}`;
     },
     fmtShareText: null,
     step: null,
@@ -190,7 +188,7 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
           (acc, p) => acc + (splitShares[p.id]?.[SplitType.PERCENTAGE] ?? 0n),
           0n,
         );
-      return `${t('ui.add_expense_details.split_type_section.types.percentage.remaining')} ${toUIString(remainingPercentage, true)}%`;
+      return `${t('expense_details.add_expense_details.split_type_section.types.percentage.remaining')} ${toUIString(remainingPercentage, true)}%`;
     },
     fmtShareText: (share) => (Number(share) / 100).toString(),
     step: null,
@@ -205,7 +203,7 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
         (acc, p) => acc + (splitShares[p.id]?.[SplitType.EXACT] ?? 0n),
         0n,
       );
-      return `${t('ui.add_expense_details.split_type_section.types.exact.remaining')} ${currency} ${toUIString(amount - totalAmount, true)}`;
+      return `${t('expense_details.add_expense_details.split_type_section.types.exact.remaining')} ${currency} ${toUIString(amount - totalAmount, true)}`;
     },
     fmtShareText: (share) => removeTrailingZeros(toUIString(share)),
     step: null,
@@ -213,14 +211,14 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
   {
     splitType: SplitType.SHARE,
     iconComponent: BarChart2,
-    prefix: t('ui.add_expense_details.split_type_section.types.share.shares'),
+    prefix: t('expense_details.add_expense_details.split_type_section.types.share.shares'),
     isBoolean: false,
     fmtSummartyText: (_amount, _currency, participants, splitShares) => {
       const totalShares = participants.reduce(
         (acc, p) => acc + (splitShares[p.id]?.[SplitType.SHARE] ?? 0n),
         0n,
       );
-      return `${t('ui.add_expense_details.split_type_section.types.share.total_shares')} ${Number(totalShares) / 100}`;
+      return `${t('expense_details.add_expense_details.split_type_section.types.share.total_shares')} ${Number(totalShares) / 100}`;
     },
     fmtShareText: (share) => (Number(share) / 100).toString(),
     step: 1,
@@ -237,7 +235,7 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
 ];
 
 const SplitSection: React.FC<SplitSectionProps> = (props) => {
-  const { t } = useTranslation('expense_details');
+  const { t } = useTranslation();
   const participants = useAddExpenseStore((s) => s.participants);
   const currency = useAddExpenseStore((s) => s.currency);
   const amount = useAddExpenseStore((s) => s.amount);
@@ -293,7 +291,7 @@ const SplitSection: React.FC<SplitSectionProps> = (props) => {
             onClick={selectAll}
           >
             {allSelected ? <X className="h-4 w-4" /> : <Check className="h-4 w-4" />}
-            <span className="text-sm">{t('actors.all', { ns: 'common' })}</span>
+            <span className="text-sm">{t('actors.all')}</span>
           </button>
         </div>
       )}

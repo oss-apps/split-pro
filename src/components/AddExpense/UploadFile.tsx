@@ -24,7 +24,7 @@ const getImgHeightAndWidth = (file: File) =>
   });
 
 export const UploadFile: React.FC = () => {
-  const { t } = useTranslation('expense_details');
+  const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
   const { setFileUploading, setFileKey } = useAddExpenseStore((s) => s.actions);
 
@@ -68,7 +68,7 @@ export const UploadFile: React.FC = () => {
         return;
       }
 
-      toast.success(t('ui.add_expense_details.upload_file.messages.upload_success'));
+      toast.success(t('expense_details.add_expense_details.upload_file.messages.upload_success'));
 
       setFileKey(key);
     } catch (error) {

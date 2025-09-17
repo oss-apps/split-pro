@@ -45,7 +45,7 @@ import { toUIString } from '~/utils/numbers';
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
 }> = ({ user, enableSendingInvites }) => {
-  const { displayName, toUIDate, t } = useTranslationWithUtils(['groups_details']);
+  const { displayName, toUIDate, t } = useTranslationWithUtils();
   const router = useRouter();
   const groupId = parseInt(router.query.groupId as string);
 
@@ -103,7 +103,7 @@ const BalancePage: NextPageWithUser<{
           toast.success(t('ui.messages.balances_recalculated'));
         },
         onError: (e) => {
-          toast.error(t('errors.something_went_wrong', { ns: 'common' }));
+          toast.error(t('errors.something_went_wrong'));
           console.error(e);
         },
       },
@@ -118,7 +118,7 @@ const BalancePage: NextPageWithUser<{
           router.replace('/groups').catch(console.error);
         },
         onError: (e) => {
-          toast.error(t('errors.something_went_wrong', { ns: 'common' }));
+          toast.error(t('errors.something_went_wrong'));
           console.error(e);
         },
       },
@@ -138,7 +138,7 @@ const BalancePage: NextPageWithUser<{
             }
           },
           onError: (e) => {
-            toast.error(t('errors.something_went_wrong', { ns: 'common' }));
+            toast.error(t('errors.something_went_wrong'));
             console.error(e);
           },
         },
@@ -164,12 +164,14 @@ const BalancePage: NextPageWithUser<{
         actions={
           <div className="flex gap-2">
             <AppDrawer
-              title={t('ui.group_statistics.title')}
+              title={t('group_details.group_statistics.title')}
               trigger={<BarChartHorizontal className="h-6 w-6" />}
               className="h-[85vh]"
             >
               <>
-                <p className="font-semibold">{t('ui.group_statistics.total_expenses')}</p>
+                <p className="font-semibold">
+                  {t('group_details.group_statistics.total_expenses')}
+                </p>
                 <div className="mt-2 flex flex-wrap gap-1">
                   {groupTotalQuery.data?.map((total, index, arr) =>
                     null != total._sum.amount ? (
@@ -184,7 +186,9 @@ const BalancePage: NextPageWithUser<{
                 </div>
                 {expensesQuery?.data && expensesQuery.data[expensesQuery.data.length - 1] && (
                   <div className="mt-8">
-                    <p className="font-semibold">{t('ui.group_statistics.first_expense')}</p>
+                    <p className="font-semibold">
+                      {t('group_details.group_statistics.first_expense')}
+                    </p>
                     <p>
                       {toUIDate(expensesQuery.data[expensesQuery.data.length - 1]!.createdAt, {
                         year: true,
@@ -195,7 +199,7 @@ const BalancePage: NextPageWithUser<{
               </>
             </AppDrawer>
             <AppDrawer
-              title={t('ui.group_info.title')}
+              title={t('group_details.group_info.title')}
               trigger={<Info className="h-6 w-6" />}
               className="h-[85vh]"
             >
@@ -225,7 +229,7 @@ const BalancePage: NextPageWithUser<{
                   )}
                 </div>
 
-                <p className="mt-5 font-semibold">{t('ui.group_info.members')}</p>
+                <p className="mt-5 font-semibold">{t('group_details.group_info.members')}</p>
                 <div className="mt-2 flex flex-col gap-2">
                   {groupDetailQuery.data?.groupUsers.map((groupUser) => (
                     <div key={groupUser.userId} className="flex items-center justify-between">
@@ -234,9 +238,7 @@ const BalancePage: NextPageWithUser<{
                         <p>{displayName(groupUser.user)}</p>
                       </div>
                       {groupUser.userId === groupDetailQuery.data?.userId ? (
-                        <p className="text-sm text-gray-400">
-                          {t('actors.owner', { ns: 'common' })}
-                        </p>
+                        <p className="text-sm text-gray-400">{t('actors.owner')}</p>
                       ) : (
                         isAdmin &&
                         (() => {
@@ -246,11 +248,15 @@ const BalancePage: NextPageWithUser<{
 
                           return (
                             <SimpleConfirmationDialog
-                              title={canLeave ? t('ui.group_info.remove_member_details.title') : ''}
+                              title={
+                                canLeave
+                                  ? t('group_details.group_info.remove_member_details.title')
+                                  : ''
+                              }
                               description={
                                 canLeave
-                                  ? t('ui.group_info.remove_member_details.can_remove')
-                                  : t('ui.group_info.remove_member_details.cant_remove')
+                                  ? t('group_details.group_info.remove_member_details.can_remove')
+                                  : t('group_details.group_info.remove_member_details.cant_remove')
                               }
                               hasPermission={canLeave}
                               onConfirm={() => onGroupLeave(groupUser.userId)}
@@ -273,16 +279,17 @@ const BalancePage: NextPageWithUser<{
               </>
               {groupDetailQuery.data?.createdAt && (
                 <div className="mt-8">
-                  <p className="font-semibold">{t('ui.group_info.group_created')}</p>
+                  <p className="font-semibold">{t('group_details.group_info.group_created')}</p>
                   <p>{toUIDate(groupDetailQuery.data.createdAt, { year: true })}</p>
                 </div>
               )}
               <div className="mt-8">
-                <p className="font-semibold">{t('ui.group_info.actions')}</p>
+                <p className="font-semibold">{t('group_details.group_info.actions')}</p>
                 <div className="child:h-7 mt-2 flex flex-col">
                   <Label className="flex cursor-pointer items-center justify-between">
                     <p className="flex items-center">
-                      <Merge className="mr-2 size-4" /> {t('ui.group_info.simplify_debts')}
+                      <Merge className="mr-2 size-4" />{' '}
+                      {t('group_details.group_info.simplify_debts')}
                     </p>
                     <Switch
                       id="simplify-debts"
@@ -304,8 +311,10 @@ const BalancePage: NextPageWithUser<{
                   </Label>
                   {isAdmin && (
                     <SimpleConfirmationDialog
-                      title={t('ui.group_info.recalculate_balances_details.title')}
-                      description={t('ui.group_info.recalculate_balances_details.description')}
+                      title={t('group_details.group_info.recalculate_balances_details.title')}
+                      description={t(
+                        'group_details.group_info.recalculate_balances_details.description',
+                      )}
                       hasPermission
                       onConfirm={onRecalculateBalances}
                       loading={recalculateGroupBalancesMutation.isPending}
@@ -313,13 +322,14 @@ const BalancePage: NextPageWithUser<{
                     >
                       <Button variant="ghost" className="text-primary justify-start p-0 text-left">
                         <Construction className="mr-2 h-5 w-5" />{' '}
-                        {t('ui.group_info.recalculate_balances')}
+                        {t('group_details.group_info.recalculate_balances')}
                       </Button>
                     </SimpleConfirmationDialog>
                   )}
                   <Label className="flex cursor-pointer items-center justify-between">
                     <p className="flex items-center">
-                      <Archive className="mr-2 size-4" /> {t('ui.group_info.archive_group')}
+                      <Archive className="mr-2 size-4" />{' '}
+                      {t('group_details.group_info.archive_group')}
                     </p>
                     <Switch
                       id="archive-group"
@@ -342,12 +352,14 @@ const BalancePage: NextPageWithUser<{
                   {isAdmin ? (
                     <SimpleConfirmationDialog
                       title={
-                        canDeleteOrArchive ? t('ui.group_info.delete_group_details.title') : ''
+                        canDeleteOrArchive
+                          ? t('group_details.group_info.delete_group_details.title')
+                          : ''
                       }
                       description={
                         canDeleteOrArchive
-                          ? t('ui.group_info.delete_group_details.can_delete')
-                          : t('ui.group_info.delete_group_details.cant_delete')
+                          ? t('group_details.group_info.delete_group_details.can_delete')
+                          : t('group_details.group_info.delete_group_details.cant_delete')
                       }
                       hasPermission={canDeleteOrArchive}
                       onConfirm={onGroupDelete}
@@ -358,16 +370,19 @@ const BalancePage: NextPageWithUser<{
                         variant="ghost"
                         className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
                       >
-                        <Trash2 className="mr-2 size-4" /> {t('ui.group_info.delete_group')}
+                        <Trash2 className="mr-2 size-4" />{' '}
+                        {t('group_details.group_info.delete_group')}
                       </Button>
                     </SimpleConfirmationDialog>
                   ) : (
                     <SimpleConfirmationDialog
-                      title={canLeave ? t('ui.group_info.leave_group_details.title') : ''}
+                      title={
+                        canLeave ? t('group_details.group_info.leave_group_details.title') : ''
+                      }
                       description={
                         canLeave
-                          ? t('ui.group_info.leave_group_details.can_leave')
-                          : t('ui.group_info.leave_group_details.cant_leave')
+                          ? t('group_details.group_info.leave_group_details.can_leave')
+                          : t('group_details.group_info.leave_group_details.cant_leave')
                       }
                       hasPermission={canLeave}
                       onConfirm={onGroupLeave}
@@ -378,7 +393,8 @@ const BalancePage: NextPageWithUser<{
                         variant="ghost"
                         className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
                       >
-                        <DoorOpen className="mr-2 h-5 w-5" /> {t('ui.group_info.leave_group')}
+                        <DoorOpen className="mr-2 h-5 w-5" />{' '}
+                        {t('group_details.group_info.leave_group')}
                       </Button>
                     </SimpleConfirmationDialog>
                   )}
@@ -408,7 +424,7 @@ const BalancePage: NextPageWithUser<{
               {isArchived && (
                 <div className="mb-4 flex justify-center gap-2 overflow-y-auto pb-4">
                   <p>
-                    {t('ui.group_info.archived')} {t('common:ui.on')}{' '}
+                    {t('group_details.group_info.archived')} {t('ui.on')}{' '}
                     {toUIDate(groupDetailQuery.data!.archivedAt!)}
                   </p>
                 </div>
@@ -422,13 +438,13 @@ const BalancePage: NextPageWithUser<{
             <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b pb-4">
               <Link href={`/add?groupId=${groupId}`}>
                 <Button size="sm" className="w-40 gap-1 text-sm lg:w-[180px]" disabled={isArchived}>
-                  <PlusIcon className="size-4" /> {t('actions.add_expense', { ns: 'common' })}
+                  <PlusIcon className="size-4" /> {t('actions.add_expense')}
                 </Button>
               </Link>
 
               <AddMembers group={groupDetailQuery.data} enableSendingInvites={enableSendingInvites}>
                 <Button size="sm" responsiveIcon variant="secondary" disabled={isArchived}>
-                  <UserPlus className="size-4 text-gray-400" /> {t('ui.add_members')}
+                  <UserPlus className="size-4 text-gray-400" /> {t('group_details.add_members')}
                 </Button>
               </AddMembers>
 
@@ -441,20 +457,19 @@ const BalancePage: NextPageWithUser<{
               >
                 {isInviteCopied ? (
                   <>
-                    <Check className="size-4" /> {t('ui.copied')}
+                    <Check className="size-4" /> {t('group_details.copied')}
                   </>
                 ) : (
                   <>
-                    <Share className="size-4 text-gray-400" />{' '}
-                    {t('actions.invite', { ns: 'common' })}
+                    <Share className="size-4 text-gray-400" /> {t('actions.invite')}
                   </>
                 )}
               </Button>
             </div>
             <Tabs defaultValue="expenses">
               <TabsList className="mx-auto grid w-full max-w-96 grid-cols-2">
-                <TabsTrigger value="expenses">{t('ui.tabs.expenses')}</TabsTrigger>
-                <TabsTrigger value="balances">{t('ui.tabs.balances')}</TabsTrigger>
+                <TabsTrigger value="expenses">{t('group_details.tabs.expenses')}</TabsTrigger>
+                <TabsTrigger value="balances">{t('group_details.tabs.balances')}</TabsTrigger>
               </TabsList>
               <TabsContent value="expenses">
                 <ExpenseList
@@ -501,13 +516,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      ...(await customServerSideTranslations(context.locale, [
-        'common',
-        'groups_details',
-        'expense_details',
-        'friend_details',
-        'currencies',
-      ])),
+      ...(await customServerSideTranslations(context.locale, ['common', 'currencies'])),
       enableSendingInvites: env.ENABLE_SENDING_INVITES,
     },
   };

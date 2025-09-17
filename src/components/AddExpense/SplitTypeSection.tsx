@@ -293,7 +293,7 @@ const SplitSection: React.FC<SplitSectionProps> = (props) => {
             onClick={selectAll}
           >
             {allSelected ? <X className="h-4 w-4" /> : <Check className="h-4 w-4" />}
-            <span className="text-sm">{t('ui.actors.all', { ns: 'common' })}</span>
+            <span className="text-sm">{t('actors.all', { ns: 'common' })}</span>
           </button>
         </div>
       )}

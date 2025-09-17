@@ -82,7 +82,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <div className="text-orange-700">
                 {0 < (youOwe?.length ?? 0) && (
                   <>
-                    {t('ui.actors.you')} {t('ui.expense.you.owe')}{' '}
+                    {t('actors.you')} {t('ui.expense.you.owe')}{' '}
                     {youOwe?.map((bal, index) => (
                       <span key={bal.currency}>
                         <span className="font-semibold tracking-wide">
@@ -98,7 +98,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <div className="text-emerald-600">
                 {0 < (youLent?.length ?? 0) && (
                   <>
-                    {t('ui.actors.you')} {t('ui.expense.you.lent')}{' '}
+                    {t('actors.you')} {t('ui.expense.you.lent')}{' '}
                     {youLent?.map((bal, index) => (
                       <span key={bal.currency}>
                         <span className="font-semibold tracking-wide">

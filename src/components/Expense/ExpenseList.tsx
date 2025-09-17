@@ -86,7 +86,7 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
             <div
               className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
             >
-              {t('ui.actors.you', { ns: 'common' })}{' '}
+              {t('actors.you', { ns: 'common' })}{' '}
               {t(`ui.expense.you.${youPaid ? 'lent' : 'owe'}`, { ns: 'common' })}
             </div>
             <div className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}>

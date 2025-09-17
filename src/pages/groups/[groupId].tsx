@@ -235,7 +235,7 @@ const BalancePage: NextPageWithUser<{
                       </div>
                       {groupUser.userId === groupDetailQuery.data?.userId ? (
                         <p className="text-sm text-gray-400">
-                          {t('ui.actors.owner', { ns: 'common' })}
+                          {t('actors.owner', { ns: 'common' })}
                         </p>
                       ) : (
                         isAdmin &&

@@ -166,7 +166,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
         {uploadedFile ? (
           <>
             <div className="mt-8 font-semibold">
-              {t('ui.actors.friends', { ns: 'common' })} ({usersWithBalance.length})
+              {t('actors.friends', { ns: 'common' })} ({usersWithBalance.length})
             </div>
             {usersWithBalance.length ? (
               <div className="mt-4 flex flex-col gap-3">
@@ -209,7 +209,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               </div>
             ) : null}
             <div className="mt-8 font-semibold">
-              {t('ui.actors.groups', { ns: 'common' })} ({groups.length})
+              {t('actors.groups', { ns: 'common' })} ({groups.length})
             </div>
             {groups.length ? (
               <div className="mt-4 flex flex-col gap-3">
@@ -228,7 +228,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                         </div>
                       </div>
                       <div className="flex shrink-0 flex-wrap justify-end gap-1">
-                        {group.members.length} {t('ui.actors.members', { ns: 'common' })}
+                        {group.members.length} {t('actors.members', { ns: 'common' })}
                       </div>
                     </div>
                     {index !== groups.length - 1 ? <Separator className="mt-3" /> : null}

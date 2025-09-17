@@ -61,7 +61,7 @@ const BalancePage: NextPageWithUser = () => {
                   <div className="flex items-center justify-center gap-2 text-center">
                     {/* <ArrowLeftCircleIcon className=" h-6 w-6 rotate-45 transform text-orange-700" /> */}
                     <p className="text-sm">
-                      {t('ui.actors.you')} {t('ui.expense.you.owe')}
+                      {t('actors.you')} {t('ui.expense.you.owe')}
                     </p>
                   </div>
                 </div>
@@ -84,7 +84,7 @@ const BalancePage: NextPageWithUser = () => {
                 <div className="bg-opacity-40 mt-2 flex flex-col justify-center px-1">
                   <div className="flex items-center justify-center gap-2">
                     <p className="text-sm">
-                      {t('ui.actors.you')} {t('ui.expense.you.lent')}
+                      {t('actors.you')} {t('ui.expense.you.lent')}
                     </p>
                   </div>
                 </div>

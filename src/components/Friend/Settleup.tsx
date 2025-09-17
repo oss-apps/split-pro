@@ -173,8 +173,8 @@ export const SettleUp: React.FC<{
             </div>
             <p className="mt-2 text-center text-sm text-gray-400">
               {isCurrentUserPaying
-                ? `${t('ui.actors.you')} ${t('ui.expense.you.pay')} ${displayName(friend)}`
-                : `${displayName(friend)} ${t('ui.expense.user.pay')} ${t('ui.actors.you')}`}
+                ? `${t('actors.you')} ${t('ui.expense.you.pay')} ${displayName(friend)}`
+                : `${displayName(friend)} ${t('ui.expense.user.pay')} ${t('actors.you')}`}
             </p>
           </div>
           <div className="mt-3 flex items-center gap-2">

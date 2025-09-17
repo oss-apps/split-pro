@@ -15,7 +15,7 @@ export const displayName = (
   useCase?: 'dativus' | 'accusativus',
 ): string => {
   if (currentUserId === user?.id) {
-    return t(`ui.actors.you${useCase ? `_${useCase}` : ''}`, { ns: 'common' });
+    return t(`actors.you${useCase ? `_${useCase}` : ''}`, { ns: 'common' });
   }
   return user?.name ?? user?.email ?? '';
 };

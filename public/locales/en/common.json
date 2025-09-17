@@ -5,7 +5,6 @@
     "application_name": "SplitPro"
   },
   "navigation": {
-    "app_name": "SplitPro",
     "balances": "Balances",
     "groups": "Groups",
     "add_expense": "Add Expense",
@@ -13,17 +12,17 @@
     "activity": "Activity",
     "account": "Account"
   },
+  "actors": {
+    "you": "You",
+    "you_dativus": "You",
+    "you_accusativus": "You",
+    "friends": "Friends",
+    "groups": "Groups",
+    "members": "Members",
+    "owner": "Owner",
+    "all": "All"
+  },
   "ui": {
-    "actors": {
-      "you": "You",
-      "you_dativus": "You",
-      "you_accusativus": "You",
-      "friends": "Friends",
-      "groups": "Groups",
-      "members": "Members",
-      "owner": "Owner",
-      "all": "All"
-    },
     "actions": {
       "cancel": "Cancel",
       "confirm": "Confirm",

@@ -15,8 +15,8 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form'
 const groupSchema = (t: TFunction) =>
   z.object({
     name: z
-      .string({ required_error: t('ui.errors.name_required', { ns: 'common' }) })
-      .min(1, { message: t('ui.errors.name_required', { ns: 'common' }) }),
+      .string({ required_error: t('errors.name_required', { ns: 'common' }) })
+      .min(1, { message: t('errors.name_required', { ns: 'common' }) }),
   });
 
 type CreateGroupFormValues = z.infer<ReturnType<typeof groupSchema>>;

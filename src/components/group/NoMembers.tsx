@@ -32,7 +32,7 @@ const NoMembers: React.FC<NoMembersProps> = ({ group, enableSendingInvites }) =>
 
       <AddMembers group={group} enableSendingInvites={enableSendingInvites}>
         <Button className="w-[200px]" disabled={isArchived}>
-          <UserPlus className="text-primary-foreground" /> {t('ui.no_members.add_members')}
+          <UserPlus className="text-primary-foreground" /> {t('ui.add_members')}
         </Button>
       </AddMembers>
 
@@ -48,7 +48,7 @@ const NoMembers: React.FC<NoMembersProps> = ({ group, enableSendingInvites }) =>
             {t('ui.no_members.invite_link')}
           </>
         ) : (
-          t('ui.no_members.copied')
+          t('ui.copied')
         )}
       </Button>
     </div>

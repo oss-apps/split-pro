@@ -53,7 +53,7 @@ export const SubscribeNotification: React.FC = () => {
         navigator.serviceWorker.ready
           .then(async (reg) => {
             if (!webPushPublicKey) {
-              toast.error(t('ui.notifications.errors.notification_not_supported'));
+              toast.error(t('errors.notification_not_supported'));
               return;
             }
 
@@ -67,12 +67,12 @@ export const SubscribeNotification: React.FC = () => {
           })
           .catch((e) => {
             console.info(e);
-            toast.error(t('ui.notifications.errors.subscribe_error'));
+            toast.error(t('errors.subscribe_error'));
           });
       }
     } catch (e) {
       console.info(e);
-      toast.error(t('ui.notifications.errors.request_error'));
+      toast.error(t('errors.request_error'));
     }
   }
 
@@ -86,7 +86,7 @@ export const SubscribeNotification: React.FC = () => {
       }
     } catch (e) {
       console.info(e);
-      toast.error(t('ui.notifications.errors.unsubscribe_error'));
+      toast.error(t('errors.unsubscribe_error'));
     }
   }
 

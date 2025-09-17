@@ -16,8 +16,8 @@ import { AccountButton } from './AccountButton';
 const feedbackSchema = (t: TFunction) =>
   z.object({
     feedback: z
-      .string({ required_error: t('ui.errors.feedback_required') })
-      .min(10, { message: t('ui.errors.feedback_min_length') }),
+      .string({ required_error: t('errors.feedback_required') })
+      .min(10, { message: t('errors.feedback_min_length') }),
   });
 
 type FeedbackFormValues = z.infer<ReturnType<typeof feedbackSchema>>;

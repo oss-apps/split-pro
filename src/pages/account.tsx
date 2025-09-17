@@ -32,9 +32,8 @@ import { customServerSideTranslations } from '~/utils/i18n/server';
 import { bigIntReplacer } from '~/utils/numbers';
 import { AccountButton } from '~/components/Account/AccountButton';
 
-const AccountPage: NextPageWithUser<{ isCloud: boolean; feedBackPossible: boolean }> = ({
+const AccountPage: NextPageWithUser<{ feedBackPossible: boolean }> = ({
   user,
-  isCloud,
   feedBackPossible,
 }) => {
   const { t } = useTranslation('account_page');
@@ -81,6 +80,8 @@ const AccountPage: NextPageWithUser<{ isCloud: boolean; feedBackPossible: boolea
     await signOut({ redirect: false });
     void router.push('/auth/signin', '/auth/signin', { locale: 'default' });
   }, [router]);
+
+  const isCloud = env.NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT;
 
   return (
     <>
@@ -175,7 +176,6 @@ AccountPage.auth = true;
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
     feedbackPossible: !!env.FEEDBACK_EMAIL,
-    isCloud: env.NEXTAUTH_URL.includes('splitpro.app'),
     ...(await customServerSideTranslations(context.locale, ['account_page', 'common'])),
   },
 });

@@ -40,9 +40,7 @@ export const UploadFile: React.FC = () => {
     }
 
     if (file.size > FILE_SIZE_LIMIT) {
-      toast.error(
-        `${t('ui.add_expense_details.upload_file.errors.less_than')} ${FILE_SIZE_LIMIT / 1024 / 1024}MB`,
-      );
+      toast.error(`${t('errors.less_than')} ${FILE_SIZE_LIMIT / 1024 / 1024}MB`);
       return;
     }
 
@@ -64,7 +62,7 @@ export const UploadFile: React.FC = () => {
       });
 
       if (!response.ok) {
-        toast.error(t('ui.add_expense_details.upload_file.errors.upload_failed'));
+        toast.error(t('errors.upload_failed'));
         console.error('Failed to upload file:', response.statusText);
         setFile(null);
         return;
@@ -75,7 +73,7 @@ export const UploadFile: React.FC = () => {
       setFileKey(key);
     } catch (error) {
       console.error('Error getting upload url:', error);
-      toast.error(t('ui.add_expense_details.upload_file.errors.uploading_error'));
+      toast.error(t('errors.uploading_error'));
     } finally {
       setFileUploading(false);
     }

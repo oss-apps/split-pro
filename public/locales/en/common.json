@@ -39,6 +39,15 @@
     "edit_expense": "Edit expense",
     "settle_up": "Settle up"
   },
+  "currency_conversion": {
+    "title": "Currency conversion",
+    "description": "Convert the amount to a different currency.",
+    "amount_to_receive": "Amount to receive",
+    "exchange_rate": "Exchange rate",
+    "fetching_rate": "Fetching rate...",
+    "rate": "Rate",
+    "success_toast": "Currency conversion set successfully"
+  },
   "ui": {
     "expense": {
       "you": {
@@ -83,17 +92,7 @@
     "expense_details": "Expense details",
     "select_currency": "Select currency",
     "outstanding_balances": "Outstanding balances",
-    "share_text": "Check out SplitPro. It's an open source free alternative for Splitwise",
-    "currency_conversion": {
-      "title": "Currency conversion",
-      "description": "Convert the amount to a different currency.",
-      "amount_to_receive": "Amount to receive",
-      "exchange_rate": "Exchange rate",
-      "fetching_rate": "Fetching rate...",
-      "rate": "Rate",
-      "success_toast": "Currency conversion set successfully",
-      "error_toast": "Error while setting currency conversion"
-    }
+    "share_text": "Check out SplitPro. It's an open source free alternative for Splitwise"
   },
   "errors": {
     "name_required": "Name is required",
@@ -103,7 +102,24 @@
     "invalid_currency_code": "Invalid currency code {{code}}",
     "signup_disabled": "Signup of new accounts is disabled on this instance",
     "signin_error": "An error occurred while signing in: ",
-    "email_invalid": "Email is invalid, please try the signin flow again."
+    "email_invalid": "Email is invalid, please try the signin flow again.",
+    "language_change_failed": "Error changing language",
+    "notification_not_supported": "Notification is not supported",
+    "subscribe_error": "Cannot subscribe to notification",
+    "unsubscribe_error": "Error unsubscribing notification",
+    "request_error": "Error requesting notification",
+    "import_failed": "Error importing file",
+    "feedback_required": "Feedback is required",
+    "feedback_min_length": "Feedback should be at least 10 characters",
+    "less_than": "File should be less than",
+    "upload_failed": "Failed to upload file",
+    "uploading_error": "Error uploading file",
+    "group_name_update_failed": "Error in updating group name",
+    "setting_update_failed": "Failed to update setting",
+    "email_required": "Email is required",
+    "otp_required": "OTP is required",
+    "otp_invalid": "Invalid OTP",
+    "currency_conversion_error": "Error while setting currency conversion"
   },
   "account": {
     "title": "Account",
@@ -113,9 +129,6 @@
       "messages": {
         "language_changed": "Language changed successfully"
       },
-      "errors": {
-        "language_change_failed": "Error changing language"
-      },
       "placeholder": "Select a language"
     },
     "notifications": {
@@ -123,12 +136,6 @@
       "disable_notification": "Disable notification",
       "messages": {
         "notification_granted": "You will receive notifications now"
-      },
-      "errors": {
-        "notification_not_supported": "Notification is not supported",
-        "subscribe_error": "Cannot subscribe to notification",
-        "unsubscribe_error": "Error unsubscribing notification",
-        "request_error": "Error requesting notification"
       }
     },
     "download_app": "Download app",
@@ -148,9 +155,6 @@
       "export_splitwise_data_button": "Export splitwise data",
       "messages": {
         "import_success": "Import successful"
-      },
-      "errors": {
-        "import_failed": "Error importing file"
       }
     },
     "download_splitpro_data": "Download SplitPro data",
@@ -158,10 +162,6 @@
     "submit_feedback_details": {
       "title": "Submit feedback",
       "placeholder": "Enter your feedback"
-    },
-    "errors": {
-      "feedback_required": "Feedback is required",
-      "feedback_min_length": "Feedback should be at least 10 characters"
     },
     "messages": {
       "submit_success": "Feedback submitted",
@@ -177,7 +177,7 @@
       "placeholder": "Enter name"
     }
   },
-  "expense": {
+  "expense_details": {
     "title": "Add expense",
     "title_mobile": "Add",
     "add_expense": "Add expense",
@@ -216,11 +216,6 @@
       "upload_file": {
         "messages": {
           "upload_success": "File uploaded successfully"
-        },
-        "errors": {
-          "less_than": "File should be less than",
-          "upload_failed": "Failed to upload file",
-          "uploading_error": "Error uploading file"
         }
       },
       "sponsor_us": "Sponsor us",
@@ -246,12 +241,9 @@
       "press_balance_info": "Press on individual balance to initiate settlement",
       "are_settled_up": "are settled up",
       "is_settled_up": "is settled up"
-    },
-    "errors": {
-      "amount_required": ""
     }
   },
-  "group": {
+  "group_details": {
     "title": "Group outstanding balances",
     "no_members": {
       "no_members": "No members in the group yet.",
@@ -260,12 +252,10 @@
         "title": "Add members",
         "placeholder": "Enter name or email",
         "warning": "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused",
-        "note": "Note: sending invite is disabled for now because of spam",
+        "note": "Note: sending email invites is disabled",
         "send_invite": "Send invite to user",
         "add_to_split_pro": "Add to Split Pro"
-      },
-      "invite_link": "Share invite link",
-      "copied": "Copied"
+      }
     },
     "group_statistics": {
       "title": "Group statistics",
@@ -317,10 +307,6 @@
       "balances_recalculated": "Balances recalculated successfully",
       "group_archived": "Group archived successfully"
     },
-    "errors": {
-      "group_name_update_failed": "Error in updating group name",
-      "setting_update_failed": "Failed to update setting"
-    },
     "add_members": "Add members",
     "copied": "Copied",
     "create_group": {
@@ -340,11 +326,5 @@
     "sending": "Sending...",
     "otp_sent": "We have sent an email with the OTP. Please check your inbox and click the link in the email to sign in.",
     "trouble_logging_in": "Trouble logging in? Contact"
-  },
-  "validation": {
-    "email_required": "Email is required",
-    "email_invalid": "Invalid email",
-    "otp_required": "OTP is required",
-    "otp_invalid": "Invalid OTP"
   }
 }

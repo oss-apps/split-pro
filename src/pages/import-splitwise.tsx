@@ -74,7 +74,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
       );
     } catch (e) {
       console.error(e);
-      toast.error(t('ui.import_from_splitwise_details.errors.import_failed'));
+      toast.error(t('errors.import_failed'));
     }
   };
 

@@ -27,7 +27,7 @@ export const LanguagePicker: React.FC<PropsWithChildren> = ({ children }) => {
         });
       } catch (error) {
         console.error('Error changing language:', error);
-        toast.error(t('ui.change_language_details.errors.language_change_failed'));
+        toast.error(t('errors.language_change_failed'));
       }
     },
     [router, t, updateUser],

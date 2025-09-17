@@ -103,7 +103,7 @@ const BalancePage: NextPageWithUser<{
           toast.success(t('ui.messages.balances_recalculated'));
         },
         onError: (e) => {
-          toast.error(t('ui.errors.something_went_wrong', { ns: 'common' }));
+          toast.error(t('errors.something_went_wrong', { ns: 'common' }));
           console.error(e);
         },
       },
@@ -118,7 +118,7 @@ const BalancePage: NextPageWithUser<{
           router.replace('/groups').catch(console.error);
         },
         onError: (e) => {
-          toast.error(t('ui.errors.something_went_wrong', { ns: 'common' }));
+          toast.error(t('errors.something_went_wrong', { ns: 'common' }));
           console.error(e);
         },
       },
@@ -138,7 +138,7 @@ const BalancePage: NextPageWithUser<{
             }
           },
           onError: (e) => {
-            toast.error(t('ui.errors.something_went_wrong', { ns: 'common' }));
+            toast.error(t('errors.something_went_wrong', { ns: 'common' }));
             console.error(e);
           },
         },
@@ -217,7 +217,7 @@ const BalancePage: NextPageWithUser<{
                           toast.success(t('ui.messages.group_name_updated'), { duration: 1500 });
                           await groupDetailQuery.refetch();
                         } catch (error) {
-                          toast.error(t('ui.errors.group_name_update_failed'));
+                          toast.error(t('errors.group_name_update_failed'));
                           console.error(error);
                         }
                       }}
@@ -295,7 +295,7 @@ const BalancePage: NextPageWithUser<{
                               void groupDetailQuery.refetch();
                             },
                             onError: () => {
-                              toast.error(t('ui.errors.setting_update_failed'));
+                              toast.error(t('errors.setting_update_failed'));
                             },
                           },
                         );

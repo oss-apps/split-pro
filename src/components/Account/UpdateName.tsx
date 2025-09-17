@@ -11,8 +11,8 @@ import { Input } from '../ui/input';
 const detailsSchema = (t: TFunction) =>
   z.object({
     name: z
-      .string({ required_error: t('ui.errors.name_required', { ns: 'common' }) })
-      .min(1, { message: t('ui.errors.name_required', { ns: 'common' }) }),
+      .string({ required_error: t('errors.name_required', { ns: 'common' }) })
+      .min(1, { message: t('errors.name_required', { ns: 'common' }) }),
   });
 
 type UpdateDetailsFormValues = z.infer<ReturnType<typeof detailsSchema>>;

@@ -12,6 +12,7 @@ import { api } from '~/utils/api';
 
 import { EntityAvatar } from '../ui/avatar';
 import { Input } from '../ui/input';
+import { env } from '~/env';
 
 const AddMembers: React.FC<{
   enableSendingInvites: boolean;
@@ -125,7 +126,7 @@ const AddMembers: React.FC<{
         onChange={(e) => setInputValue(e.target.value)}
       />
       <div>
-        {enableSendingInvites ? (
+        {enableSendingInvites && !env.NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT ? (
           <div className="mt-1 text-orange-600">
             {t('ui.no_members.add_members_details.warning')}
           </div>

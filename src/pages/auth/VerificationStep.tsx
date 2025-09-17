@@ -13,8 +13,8 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '~/components/ui/input-otp
 const otpSchema = (t: TFunction) =>
   z.object({
     otp: z
-      .string({ required_error: t('ui.otp_required') })
-      .length(5, { message: t('ui.otp_invalid') }),
+      .string({ required_error: t('errors.otp_required') })
+      .length(5, { message: t('errors.otp_invalid') }),
   });
 
 type OTPFormValues = z.infer<ReturnType<typeof otpSchema>>;

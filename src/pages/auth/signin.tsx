@@ -45,8 +45,8 @@ const providerTypeGuard = (providerId: string): providerId is keyof typeof provi
 const emailSchema = (t: TFunction) =>
   z.object({
     email: z
-      .string({ required_error: t('validation.email_required') })
-      .email({ message: t('validation.email_invalid') }),
+      .string({ required_error: t('errors.email_required') })
+      .email({ message: t('errors.email_invalid') }),
   });
 
 type EmailFormValues = z.infer<ReturnType<typeof emailSchema>>;

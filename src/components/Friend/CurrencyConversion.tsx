@@ -126,10 +126,10 @@ export const CurrencyConversion: React.FC<{
         from: currency,
         to: targetCurrency,
       });
-      toast.success(t('ui.currency_conversion.success_toast'));
+      toast.success(t('currency_conversion.success_toast'));
     } catch (error) {
       console.error(error);
-      toast.error(t('ui.currency_conversion.error_toast'));
+      toast.error(t('errors.currency_conversion_error'));
     }
   }, [onSubmit, targetCurrency, amountStr, rate, currency, t]);
 
@@ -137,7 +137,7 @@ export const CurrencyConversion: React.FC<{
     <AppDrawer
       trigger={children}
       leftAction={t('actions.back')}
-      title={t('ui.currency_conversion.title')}
+      title={t('currency_conversion.title')}
       className="h-[70vh]"
       actionTitle={t('actions.save')}
       shouldCloseOnAction
@@ -205,7 +205,7 @@ export const CurrencyConversion: React.FC<{
             {/* Rate */}
             <div className="flex w-full max-w-[240px] items-start sm:col-start-3 sm:row-span-2 sm:row-start-1 sm:h-full sm:flex-col sm:justify-between">
               <div className="flex w-1/2 flex-col gap-2 sm:w-full">
-                <Label className="capitalize">{t('ui.currency_conversion.rate')}</Label>
+                <Label className="capitalize">{t('currency_conversion.rate')}</Label>
                 <div className="flex flex-col">
                   <Input
                     aria-label="Rate"
@@ -219,7 +219,7 @@ export const CurrencyConversion: React.FC<{
                   />
                   {getCurrencyRate.isPending && (
                     <span className="pointer-events-none text-xs text-gray-500">
-                      {t('ui.currency_conversion.fetching_rate')}
+                      {t('currency_conversion.fetching_rate')}
                     </span>
                   )}
                   {!!rate && (

@@ -24,8 +24,10 @@ import { LanguageSelector } from '~/components/LanguageSelector';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { SiGithub } from '@icons-pack/react-simple-icons';
 
-export default function Home({ isCloud }: { isCloud: boolean }) {
+export default function Home() {
   const { t } = useTranslation('home');
+
+  const isCloud = env.NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT;
 
   return (
     <>
@@ -298,8 +300,5 @@ const MobileScreenShot = () => (
 );
 
 export const getServerSideProps: GetServerSideProps = async (context) => ({
-  props: {
-    isCloud: env.NEXTAUTH_URL.includes('splitpro.app'),
-    ...(await customServerSideTranslations(context.locale, ['home', 'common'])),
-  },
+  props: await customServerSideTranslations(context.locale, ['home', 'common']),
 });

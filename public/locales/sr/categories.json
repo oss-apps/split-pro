@@ -1,1 +1,15 @@
-{}
+{
+    "title": "Kategorije",
+    "categories_list": {
+        "entertainment": {
+            "name": "Zabava",
+            "items": {
+                "games": "Igre",
+                "movies": "Filmovi",
+                "music": "Muzika",
+                "sports": "Sport",
+                "other": "Zabava"
+            }
+        }
+    }
+}

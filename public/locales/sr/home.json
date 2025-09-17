@@ -1,1 +1,14 @@
-{}
+{
+    "meta": {
+        "title": "SplitPro: Besplatno podeli troškove sa svojim prijateljima",
+        "description": "SplitPro: Besplatno podeli troškove sa svojim prijateljima"
+    },
+    "nav": {
+        "app_name": "SplitPro",
+        "terms": "Uslovi",
+        "privacy": "Privatnost"
+    },
+    "hero": {
+        "title_part1": "Podeli troškove sa svojim prijateljima za"
+    }
+}

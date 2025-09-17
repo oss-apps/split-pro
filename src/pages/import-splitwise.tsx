@@ -106,7 +106,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
           <div className="flex gap-4">
             <Link href="/balances">
               <Button variant="ghost" className="text-primary px-0 py-0" size="sm">
-                {t('ui.actions.cancel', { ns: 'common' })}
+                {t('actions.cancel', { ns: 'common' })}
               </Button>
             </Link>
           </div>
@@ -119,7 +119,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               size="sm"
               disabled={importMutation.isPending || !uploadedFile}
             >
-              {t('ui.actions.import', { ns: 'common' })}
+              {t('actions.import', { ns: 'common' })}
             </Button>
           </div>
         </div>
@@ -152,11 +152,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             className="w-[100px]"
             size="sm"
           >
-            {importMutation.isPending ? (
-              <LoadingSpinner />
-            ) : (
-              t('ui.actions.import', { ns: 'common' })
-            )}
+            {importMutation.isPending ? <LoadingSpinner /> : t('actions.import', { ns: 'common' })}
           </Button>
         </div>
         <div className="mt-4 text-sm text-gray-400">

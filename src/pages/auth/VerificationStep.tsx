@@ -58,7 +58,7 @@ const VerificationStep: FC<VerificationStepProps> = ({ feedbackEmail, email, cal
               <FormField control={otpForm.control} name="otp" render={OTPInput} />
 
               <Button className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100">
-                {t('ui.actions.submit', { ns: 'common' })}
+                {t('actions.submit', { ns: 'common' })}
               </Button>
             </form>
           </Form>

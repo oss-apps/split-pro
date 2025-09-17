@@ -22,24 +22,24 @@
     "owner": "Owner",
     "all": "All"
   },
+  "actions": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "submit": "Submit",
+    "close": "Close",
+    "back": "Back",
+    "create": "Create",
+    "save": "Save",
+    "leave": "Leave",
+    "invite": "Invite",
+    "export": "Export",
+    "import": "Import",
+    "fetch": "Fetch",
+    "add_expense": "Add expense",
+    "edit_expense": "Edit expense",
+    "settle_up": "Settle up"
+  },
   "ui": {
-    "actions": {
-      "cancel": "Cancel",
-      "confirm": "Confirm",
-      "submit": "Submit",
-      "close": "Close",
-      "back": "Back",
-      "create": "Create",
-      "save": "Save",
-      "leave": "Leave",
-      "invite": "Invite",
-      "export": "Export",
-      "import": "Import",
-      "fetch": "Fetch",
-      "add_expense": "Add expense",
-      "edit_expense": "Edit expense",
-      "settle_up": "Settle up"
-    },
     "expense": {
       "you": {
         "lent": "lent",

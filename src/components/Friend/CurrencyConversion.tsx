@@ -136,10 +136,10 @@ export const CurrencyConversion: React.FC<{
   return (
     <AppDrawer
       trigger={children}
-      leftAction={t('ui.actions.back')}
+      leftAction={t('actions.back')}
       title={t('ui.currency_conversion.title')}
       className="h-[70vh]"
-      actionTitle={t('ui.actions.save')}
+      actionTitle={t('actions.save')}
       shouldCloseOnAction
       actionOnClick={onSave}
       actionDisabled={
@@ -236,7 +236,7 @@ export const CurrencyConversion: React.FC<{
               </div>
               <div className="flex w-1/2 flex-col items-end gap-2 sm:w-full sm:items-start">
                 <Label className="capitalize">
-                  {t('ui.actions.fetch')} {t('ui.expense.from')}
+                  {t('actions.fetch')} {t('ui.expense.from')}
                 </Label>
                 <div className="flex h-11 items-center justify-center">
                   <DateSelector

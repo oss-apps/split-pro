@@ -130,8 +130,8 @@ const AddPage: NextPageWithUser<{
       <Head>
         <title>
           {_expenseId
-            ? t('ui.actions.edit_expense', { ns: 'common' })
-            : t('ui.actions.add_expense', { ns: 'common' })}
+            ? t('actions.edit_expense', { ns: 'common' })
+            : t('actions.add_expense', { ns: 'common' })}
         </title>
       </Head>
       <MainLayout hideAppBar>

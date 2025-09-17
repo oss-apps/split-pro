@@ -205,12 +205,12 @@ export const AddOrEditExpensePage: React.FC<{
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <Button variant="ghost" className="text-primary px-0" onClick={router.back}>
-          {t('ui.actions.cancel', { ns: 'common' })}
+          {t('actions.cancel', { ns: 'common' })}
         </Button>
         <div className="text-center">
           {expenseId
-            ? t('ui.actions.edit_expense', { ns: 'common' })
-            : t('ui.actions.add_expense', { ns: 'common' })}
+            ? t('actions.edit_expense', { ns: 'common' })
+            : t('actions.add_expense', { ns: 'common' })}
         </div>
         <Button
           variant="ghost"
@@ -220,7 +220,7 @@ export const AddOrEditExpensePage: React.FC<{
           }
           onClick={addExpense}
         >
-          {t('ui.actions.save', { ns: 'common' })}
+          {t('actions.save', { ns: 'common' })}
         </Button>{' '}
       </div>
       <UserInput isEditing={!!expenseId} />
@@ -277,7 +277,7 @@ export const AddOrEditExpensePage: React.FC<{
                       }
                       onClick={addExpense}
                     >
-                      {t('ui.actions.submit', { ns: 'common' })}
+                      {t('actions.submit', { ns: 'common' })}
                     </Button>
                   </div>
                 </div>

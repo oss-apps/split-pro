@@ -83,7 +83,7 @@ export const GroupSettleUp: React.FC<{
       <div className="flex items-center justify-between px-2">
         <DrawerClose>
           <Button size="sm" variant="ghost" className="text-cyan-500 lg:hidden">
-            {t('ui.actions.back')}
+            {t('actions.back')}
           </Button>
         </DrawerClose>
         <div className="mt-4 mb-2 text-center">{t('ui.settlement')}</div>
@@ -94,7 +94,7 @@ export const GroupSettleUp: React.FC<{
             className="text-cyan-500 lg:hidden"
             onClick={saveExpense}
           >
-            {t('ui.actions.save')}
+            {t('actions.save')}
           </Button>
         </DrawerClose>
       </div>
@@ -123,7 +123,7 @@ export const GroupSettleUp: React.FC<{
       <div className="mt-8 hidden items-center justify-center gap-4 px-2 lg:flex">
         <DrawerClose>
           <Button size="sm" className="mx-auto" onClick={saveExpense}>
-            {t('ui.actions.save')}
+            {t('actions.save')}
           </Button>
         </DrawerClose>
       </div>

@@ -69,11 +69,11 @@ export const UpdateName: React.FC<{
       trigger={trigger}
       open={drawerOpen}
       onOpenChange={handleOpenChange}
-      leftAction={t('ui.actions.close', { ns: 'common' })}
+      leftAction={t('actions.close', { ns: 'common' })}
       title={t('ui.edit_name.title')}
       shouldCloseOnAction={false}
       className="h-[80vh]"
-      actionTitle={t('ui.actions.save', { ns: 'common' })}
+      actionTitle={t('actions.save', { ns: 'common' })}
       actionOnClick={handleOnActionClick}
     >
       <Form {...detailForm}>

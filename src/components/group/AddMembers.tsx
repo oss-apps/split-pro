@@ -110,8 +110,8 @@ const AddMembers: React.FC<{
       trigger={children}
       onTriggerClick={handleTriggerClick}
       title={t('ui.no_members.add_members_details.title')}
-      leftAction={t('ui.actions.cancel', { ns: 'common' })}
-      actionTitle={t('ui.actions.save', { ns: 'common' })}
+      leftAction={t('actions.cancel', { ns: 'common' })}
+      actionTitle={t('actions.save', { ns: 'common' })}
       actionOnClick={handleActionClick}
       className="h-[85vh]"
       shouldCloseOnAction

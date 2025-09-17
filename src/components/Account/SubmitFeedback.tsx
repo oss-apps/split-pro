@@ -85,11 +85,11 @@ export const SubmitFeedback: React.FC = () => {
       open={feedbackOpen}
       onOpenChange={setFeedbackOpen}
       onClose={handleClose}
-      leftAction={t('ui.actions.close', { ns: 'common' })}
+      leftAction={t('actions.close', { ns: 'common' })}
       title={t('ui.submit_feedback_details.title')}
       className="h-[70vh]"
       shouldCloseOnAction={false}
-      actionTitle={t('ui.actions.submit', { ns: 'common' })}
+      actionTitle={t('actions.submit', { ns: 'common' })}
       actionOnClick={handleActionClick}
     >
       <div>

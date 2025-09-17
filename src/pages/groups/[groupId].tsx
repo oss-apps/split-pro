@@ -422,7 +422,7 @@ const BalancePage: NextPageWithUser<{
             <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b pb-4">
               <Link href={`/add?groupId=${groupId}`}>
                 <Button size="sm" className="w-40 gap-1 text-sm lg:w-[180px]" disabled={isArchived}>
-                  <PlusIcon className="size-4" /> {t('ui.actions.add_expense', { ns: 'common' })}
+                  <PlusIcon className="size-4" /> {t('actions.add_expense', { ns: 'common' })}
                 </Button>
               </Link>
 
@@ -446,7 +446,7 @@ const BalancePage: NextPageWithUser<{
                 ) : (
                   <>
                     <Share className="size-4 text-gray-400" />{' '}
-                    {t('ui.actions.invite', { ns: 'common' })}
+                    {t('actions.invite', { ns: 'common' })}
                   </>
                 )}
               </Button>

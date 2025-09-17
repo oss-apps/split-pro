@@ -47,7 +47,7 @@ const BalancePage: NextPageWithUser = () => {
               <CreateGroup>
                 <Button>
                   <PlusIcon className="mr-2 h-4 w-4" />
-                  {t('common:ui.actions.create')}
+                  {t('common:actions.create')}
                 </Button>
               </CreateGroup>
             </div>

@@ -115,7 +115,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <SettleUp balances={balances.data} friend={friendQuery.data} />
               <Link href={`/add?friendId=${friendQuery.data.id}`}>
                 <Button size="sm" variant="secondary" responsiveIcon>
-                  <PlusIcon className="size-4" /> {t('ui.actions.add_expense')}
+                  <PlusIcon className="size-4" /> {t('actions.add_expense')}
                 </Button>
               </Link>
               <Export

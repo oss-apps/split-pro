@@ -20,7 +20,7 @@ export const DownloadAppDrawer: React.FC<DownloadAppDrawerProps> = ({ children, 
   return (
     <AppDrawer
       trigger={children}
-      leftAction={t('ui.actions.close', { ns: 'common' })}
+      leftAction={t('actions.close', { ns: 'common' })}
       title={t('ui.download_app_details.title')}
       className={className ?? 'h-[70vh]'}
       shouldCloseOnAction

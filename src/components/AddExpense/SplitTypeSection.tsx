@@ -73,7 +73,7 @@ export const SplitTypeSection: React.FC = () => {
         className="h-[85vh] lg:h-[70vh]"
         shouldCloseOnAction
         dismissible={canSplitScreenClosed}
-        actionTitle={t('ui.actions.save', { ns: 'common' })}
+        actionTitle={t('actions.save', { ns: 'common' })}
         actionDisabled={!canSplitScreenClosed}
         open={splitScreenOpen}
         onOpenChange={setSplitScreenOpen}

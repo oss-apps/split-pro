@@ -101,6 +101,251 @@
     "saving_expense": "Error while saving expense",
     "something_went_wrong": "Something went wrong",
     "valid_email": "Enter valid email",
-    "invalid_currency_code": "Invalid currency code {{code}}"
+    "invalid_currency_code": "Invalid currency code {{code}}",
+    "signup_disabled": "Signup of new accounts is disabled on this instance",
+    "signin_error": "An error occurred while signing in: ",
+    "email_invalid": "Email is invalid, please try the signin flow again."
+  },
+  "account": {
+    "title": "Account",
+    "change_language": "Change language",
+    "change_language_details": {
+      "title": "Select a language",
+      "messages": {
+        "language_changed": "Language changed successfully"
+      },
+      "errors": {
+        "language_change_failed": "Error changing language"
+      },
+      "placeholder": "Select a language"
+    },
+    "notifications": {
+      "enable_notification": "Enable notification",
+      "disable_notification": "Disable notification",
+      "messages": {
+        "notification_granted": "You will receive notifications now"
+      },
+      "errors": {
+        "notification_not_supported": "Notification is not supported",
+        "subscribe_error": "Cannot subscribe to notification",
+        "unsubscribe_error": "Error unsubscribing notification",
+        "request_error": "Error requesting notification"
+      }
+    },
+    "download_app": "Download app",
+    "download_app_details": {
+      "title": "Download app",
+      "download_as_pwa": "You can download SplitPro as a PWA to your home screen.",
+      "using_ios": "If you are using iOS, checkout this",
+      "using_android": "If you are using Android, checkout this",
+      "video": "video"
+    },
+    "import_from_splitwise": "Import from Splitwise",
+    "import_from_splitwise_details": {
+      "choose_file": "Choose file",
+      "no_file_chosen": "No file chosen",
+      "note": "Note: It currently only supports importing friends and groups. It will not import transactions. We are working on it.",
+      "follow_to_export_splitwise_data": "Follow this link to export splitwise data",
+      "export_splitwise_data_button": "Export splitwise data",
+      "messages": {
+        "import_success": "Import successful"
+      },
+      "errors": {
+        "import_failed": "Error importing file"
+      }
+    },
+    "download_splitpro_data": "Download SplitPro data",
+    "submit_feedback": "Submit feedback",
+    "submit_feedback_details": {
+      "title": "Submit feedback",
+      "placeholder": "Enter your feedback"
+    },
+    "errors": {
+      "feedback_required": "Feedback is required",
+      "feedback_min_length": "Feedback should be at least 10 characters"
+    },
+    "messages": {
+      "submit_success": "Feedback submitted",
+      "submit_error": "Failed to submit feedback"
+    },
+    "write_review": "Write a review",
+    "star_on_github": "Star us on GitHub",
+    "support_us": "Sponsor us",
+    "follow_on_x": "Follow us on X",
+    "logout": "Logout",
+    "edit_name": {
+      "title": "Edit name",
+      "placeholder": "Enter name"
+    }
+  },
+  "expense": {
+    "title": "Add expense",
+    "title_mobile": "Add",
+    "add_expense": "Add expense",
+    "add_expense_details": {
+      "add_new_expense": "Add new expense",
+      "description_placeholder": "Enter description",
+      "amount_placeholder": "Enter amount",
+      "split_type_section": {
+        "split_equally": "split equally",
+        "split_unequally": "split unequally",
+        "types": {
+          "equal": {
+            "title": "Equal",
+            "per_person": "per person"
+          },
+          "percentage": {
+            "title": "Percentage",
+            "remaining": "Remaining"
+          },
+          "exact": {
+            "title": "Exact",
+            "remaining": "Remaining"
+          },
+          "share": {
+            "title": "Share",
+            "total_shares": "Total shares",
+            "shares": "Share(s)"
+          },
+          "adjustment": {
+            "title": "Adjustment",
+            "remaining_to_split_equally": "Remaining to split eauqlly"
+          }
+        }
+      },
+      "pick_a_date": "Pick a date",
+      "upload_file": {
+        "messages": {
+          "upload_success": "File uploaded successfully"
+        },
+        "errors": {
+          "less_than": "File should be less than",
+          "upload_failed": "Failed to upload file",
+          "uploading_error": "Error uploading file"
+        }
+      },
+      "sponsor_us": "Sponsor us",
+      "user_input": {
+        "cannot_change_group": "Cannot change group while editing",
+        "remove_group": "Press delete to remove group",
+        "add_more_friends": "Search friends, groups or add email",
+        "search_friends": "Search friends, groups or add email"
+      },
+      "select_user_or_group": {
+        "only_one_group_time": "You can have only one group at a time",
+        "warning": "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused",
+        "note": "Note: sending invite is disabled for now because of spam",
+        "send_invite": "Send invite to user",
+        "add_to_split_pro": "Add to Split Pro"
+      }
+    },
+    "delete_expense_details": {
+      "title": "Are you absolutely sure?",
+      "text": "This action cannot be undone. This will permanently delete your expense."
+    },
+    "balance_list": {
+      "press_balance_info": "Press on individual balance to initiate settlement",
+      "are_settled_up": "are settled up",
+      "is_settled_up": "is settled up"
+    },
+    "errors": {
+      "amount_required": ""
+    }
+  },
+  "group": {
+    "title": "Group outstanding balances",
+    "no_members": {
+      "no_members": "No members in the group yet.",
+      "add_members": "Add members",
+      "add_members_details": {
+        "title": "Add members",
+        "placeholder": "Enter name or email",
+        "warning": "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused",
+        "note": "Note: sending invite is disabled for now because of spam",
+        "send_invite": "Send invite to user",
+        "add_to_split_pro": "Add to Split Pro"
+      },
+      "invite_link": "Share invite link",
+      "copied": "Copied"
+    },
+    "group_statistics": {
+      "title": "Group statistics",
+      "total_expenses": "Total expenses",
+      "first_expense": "First expense"
+    },
+    "group_info": {
+      "title": "Group info",
+      "members": "Members",
+      "group_created": "Group created",
+      "actions": "Actions",
+      "delete_group": "Delete group",
+      "delete_group_details": {
+        "title": "Are you absolutely sure?",
+        "can_delete": "This action cannot be reversed",
+        "cant_delete": "Can't delete the group until everyone settles up the balance"
+      },
+      "leave_group": "Leave group",
+      "leave_group_details": {
+        "title": "Are you absolutely sure?",
+        "can_leave": "This action cannot be reversed",
+        "cant_leave": "Can't leave the group until your outstanding balance is settled"
+      },
+      "remove_member_details": {
+        "title": "Are you absolutely sure?",
+        "can_remove": "You are about to remove this member from the group",
+        "cant_remove": "Can't remove member until their outstanding balance is settled"
+      },
+      "simplify_debts": "Simplify debts",
+      "recalculate_balances": "Recalculate balances",
+      "recalculate_balances_details": {
+        "title": "Are you sure?",
+        "description": "If balances do not match expenses, you can recalculate them. Note that it may take some time if the expense count is large. Balances outside the group will not be affected."
+      },
+      "archive_group": "Archive group",
+      "archived": "Archived",
+      "archive_group_details": {
+        "title": "Are you sure you want to archive this group?",
+        "can_archive": "This group will be archived and hidden from your main groups list. You can still access it later if needed.",
+        "cant_archive": "Cannot archive group with outstanding balances. All balances must be settled first."
+      }
+    },
+    "tabs": {
+      "expenses": "Expenses",
+      "balances": "Balances"
+    },
+    "messages": {
+      "group_name_updated": "Updated group name",
+      "balances_recalculated": "Balances recalculated successfully",
+      "group_archived": "Group archived successfully"
+    },
+    "errors": {
+      "group_name_update_failed": "Error in updating group name",
+      "setting_update_failed": "Failed to update setting"
+    },
+    "add_members": "Add members",
+    "copied": "Copied",
+    "create_group": {
+      "title": "Create a group",
+      "group_name_placeholder": "Group name"
+    }
+  },
+  "invite_message": {
+    "join_to": "Join to",
+    "in_splitpro": "in Splitpro",
+    "text": "Join to the group and you can add, manage expenses, and track your balances"
+  },
+  "auth": {
+    "continue_with": "Continue with {{provider}}",
+    "email_placeholder": "Enter your email",
+    "send_magic_link": "Send magic link",
+    "sending": "Sending...",
+    "otp_sent": "We have sent an email with the OTP. Please check your inbox and click the link in the email to sign in.",
+    "trouble_logging_in": "Trouble logging in? Contact"
+  },
+  "validation": {
+    "email_required": "Email is required",
+    "email_invalid": "Invalid email",
+    "otp_required": "OTP is required",
+    "otp_invalid": "Invalid OTP"
   }
 }

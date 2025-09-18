@@ -61,7 +61,7 @@
     },
     "bank_connection": {
       "title": "Bank connection",
-      "description": "Add expenses faster with a integration to GoCardless bank account transactions api"
+      "description": "Add expenses faster with a integration to GoCardless or Plaid bank account transactions api"
     },
     "currency_conversion": {
       "title": "Currency Conversion",

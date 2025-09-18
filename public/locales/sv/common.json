@@ -339,6 +339,13 @@
     "no_bank_providers_found": "Ingen bank hittades",
     "to_bank": "bank",
     "reconnect": "Återanslut",
-    "connect": "Anslut"
+    "connect": "Anslut",
+    "plaid": {
+      "connecting_to_bank": "Ansluter till banken...",
+      "connect_to_bank": "Anslut till banken",
+      "bank_connected_successfully": "Bank ansluten",
+      "bank_connection_failed": "Kunde inte ansluta till banken",
+      "bank_connection_cancelled": "Anslutning till banken avbruten"
+    }
   }
 }

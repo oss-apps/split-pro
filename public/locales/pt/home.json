@@ -61,7 +61,7 @@
     },
     "bank_connection": {
       "title": "Conexão Bancária",
-      "description": "Adicione despesas mais rapidamente com uma integração à API de transações de contas bancárias do GoCardless"
+      "description": "Adicione despesas mais rapidamente com uma integração à API de transações de contas bancárias do GoCardless ou Plaid"
     }
   },
   "footer": {

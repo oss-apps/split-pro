@@ -61,7 +61,7 @@
     },
     "bank_connection": {
       "title": "Połączenie Bankowe",
-      "description": "Dodawaj wydatki szybciej dzięki integracji do API transakcji kont bankowych GoCardless"
+      "description": "Dodawaj wydatki szybciej dzięki integracji do API transakcji kont bankowych GoCardless lub Plaid"
     }
   },
   "footer": {

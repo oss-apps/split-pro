@@ -124,19 +124,17 @@ export const BankingTransactionList: React.FC<{
               {t('expense_details.no_transactions_yet')}
             </div>
           )}
-          {transactionsArray
-            ?.filter((item) => item.transactionAmount.amount.includes('-'))
-            .map((item, index) => (
-              <BankTransactionItem
-                key={item.transactionId}
-                index={index}
-                item={item}
-                alreadyAdded={alreadyAdded(item.transactionId)}
-                onTransactionRowClick={onTransactionRowClick}
-                groupName={returnGroupName(item.transactionId)}
-                multipleTransactions={multipleTransactions}
-              />
-            ))}
+          {transactionsArray.map((item, index) => (
+            <BankTransactionItem
+              key={item.transactionId}
+              index={index}
+              item={item}
+              alreadyAdded={alreadyAdded(item.transactionId)}
+              onTransactionRowClick={onTransactionRowClick}
+              groupName={returnGroupName(item.transactionId)}
+              multipleTransactions={multipleTransactions}
+            />
+          ))}
         </>
       )}
     </div>

@@ -182,7 +182,14 @@
     "no_bank_providers_found": "No bank providers found",
     "to_bank": "to bank",
     "reconnect": "Reconnect",
-    "connect": "Connect"
+    "connect": "Connect",
+    "plaid": {
+      "connecting_to_bank": "Connecting to bank...",
+      "connect_to_bank": "Connect to bank",
+      "bank_connected_successfully": "Bank connected successfully",
+      "bank_connection_failed": "Failed to connect to bank",
+      "bank_connection_cancelled": "Bank connection cancelled"
+    }
   },
   "expense_details": {
     "title": "Add expense",

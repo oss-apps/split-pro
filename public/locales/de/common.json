@@ -342,6 +342,13 @@
     "no_bank_providers_found": "Keine Bankanbieter gefunden",
     "to_bank": "an die Bank",
     "reconnect": "Wieder verbinden",
-    "connect": "Verbinden"
+    "connect": "Verbinden",
+    "plaid": {
+      "connecting_to_bank": "Verbinde mit der Bank...",
+      "connect_to_bank": "Verbinde mit der Bank",
+      "bank_connected_successfully": "Bank erfolgreich verbunden",
+      "bank_connection_failed": "Fehler beim Verbinden mit der Bank",
+      "bank_connection_cancelled": "Verbindung mit der Bank abgebrochen"
+    }
   }
 }

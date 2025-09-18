@@ -1,7 +1,5 @@
 import { SiGithub, SiX } from '@icons-pack/react-simple-icons';
 import {
-  ChevronRight,
-  CreditCard,
   Download,
   DownloadCloud,
   FileDown,
@@ -27,21 +25,24 @@ import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { env } from '~/env';
 import { customServerSideTranslations } from '~/utils/i18n/server';
-import { BankAccountSelect } from '~/components/Account/BankAccountSelect';
+import { BankConnection } from '~/components/Account/BankAccount/BankConnection';
 import { bigIntReplacer } from '~/utils/numbers';
-import { isBankConnectionConfigured } from '~/server/bankTransactionHelper';
+import {
+  isBankConnectionConfigured,
+  whichBankConnectionConfigured,
+} from '~/server/bankTransactionHelper';
 import { api } from '~/utils/api';
 import type { NextPageWithUser } from '~/types';
 
 const AccountPage: NextPageWithUser<{
   feedBackPossible: boolean;
   bankConnectionEnabled: boolean;
-}> = ({ user, feedBackPossible, bankConnectionEnabled }) => {
+  bankConnection: string;
+}> = ({ user, feedBackPossible, bankConnectionEnabled, bankConnection }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const userQuery = api.user.me.useQuery();
   const downloadQuery = api.user.downloadData.useMutation();
-  const connectToBank = api.bankTransactions.connectToBank.useMutation();
   const updateDetailsMutation = api.user.updateUserDetail.useMutation();
 
   const [downloading, setDownloading] = useState(false);
@@ -83,13 +84,6 @@ const AccountPage: NextPageWithUser<{
     void router.push('/auth/signin', '/auth/signin', { locale: 'default' });
   }, [router]);
 
-  const onConnectToBank = useCallback(async () => {
-    const res = await connectToBank.mutateAsync(userQuery.data?.bankingId);
-    if (res?.authLink) {
-      window.location.href = res.authLink;
-    }
-  }, [connectToBank, userQuery.data?.bankingId]);
-
   const isCloud = env.NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT;
 
   return (
@@ -122,29 +116,10 @@ const AccountPage: NextPageWithUser<{
             </AccountButton>
           </LanguagePicker>
 
-          {bankConnectionEnabled && (
-            <>
-              <BankAccountSelect bankConnectionEnabled={bankConnectionEnabled} />
-              {userQuery.data?.bankingId && (
-                <Button
-                  onClick={onConnectToBank}
-                  variant="ghost"
-                  className="text-md hover:text-foreground/80 w-full justify-between px-0"
-                >
-                  <div className="flex items-center gap-4">
-                    <CreditCard className="h-5 w-5 text-teal-500" />
-                    <p>
-                      {userQuery.data?.obapiProviderId
-                        ? t('account.reconnect')
-                        : t('account.connect')}{' '}
-                      {t('account.to_bank')}
-                    </p>
-                  </div>
-                  <ChevronRight className="h-6 w-6 text-gray-500" />
-                </Button>
-              )}
-            </>
-          )}
+          <BankConnection
+            bankConnectionEnabled={bankConnectionEnabled}
+            bankConnection={bankConnection}
+          />
 
           {isCloud && (
             <AccountButton href="https://twitter.com/KM_Koushik_">
@@ -210,6 +185,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
     feedbackPossible: !!env.FEEDBACK_EMAIL,
     bankConnectionEnabled: !!isBankConnectionConfigured(),
+    bankConnection: whichBankConnectionConfigured(),
     ...(await customServerSideTranslations(context.locale, ['common'])),
   },
 });

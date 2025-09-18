@@ -61,7 +61,7 @@
     },
     "bank_connection": {
       "title": "Bankanslutning",
-      "description": "Lägg till utgifter snabbare med en integration till GoCardless bankkontotransaktions-API"
+      "description": "Lägg till utgifter snabbare med en integration till GoCardless eller Plaid bankkontotransaktions-API"
     }
   },
   "footer": {

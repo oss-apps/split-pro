@@ -6,15 +6,20 @@ import {
   whichBankConnectionConfigured,
 } from '~/server/bankTransactionHelper';
 import { gocardless } from '~/server/bankTransactionsController/goCardless/gocardless';
+import { plaid } from '~/server/bankTransactionsController/plaid/plaid';
 
 // When adding more, please model the output so the components are reusable.
 export const bankTransactionsRouter = createTRPCRouter({
   getTransactions: protectedProcedure
     .input(z.string().optional())
     .output(TransactionOutput.optional())
-    .query(async ({ input: requisitionId, ctx }) => {
-      if (whichBankConnectionConfigured() === 'GOCARDLESS') {
-        return await gocardless.getTransactions(ctx.session.user.id, requisitionId);
+    .query(async ({ input: token, ctx }) => {
+      const provider = whichBankConnectionConfigured();
+      if (provider === 'GOCARDLESS') {
+        return await gocardless.getTransactions(ctx.session.user.id, token);
+      }
+      if (provider === 'PLAID') {
+        return await plaid.getTransactions(ctx.session.user.id, token);
       }
     }),
   connectToBank: protectedProcedure
@@ -28,7 +33,8 @@ export const bankTransactionsRouter = createTRPCRouter({
         .optional(),
     )
     .mutation(async ({ input: institutionId, ctx }) => {
-      if (whichBankConnectionConfigured() === 'GOCARDLESS') {
+      const provider = whichBankConnectionConfigured();
+      if (provider === 'GOCARDLESS') {
         const res = await gocardless.connectToBank(
           institutionId,
           ctx.session.user.preferredLanguage,
@@ -49,12 +55,58 @@ export const bankTransactionsRouter = createTRPCRouter({
 
         return res;
       }
+      if (provider === 'PLAID') {
+        const res = await plaid.connectToBank(
+          ctx.session.user.id.toString(),
+          institutionId,
+          ctx.session.user.preferredLanguage,
+        );
+
+        if (!res) {
+          throw new Error('Failed to link to bank');
+        }
+
+        return res;
+      }
     }),
   getInstitutions: protectedProcedure.output(InstitutionsOutput).query(async () => {
-    if (whichBankConnectionConfigured() === 'GOCARDLESS') {
+    const provider = whichBankConnectionConfigured();
+    if (provider === 'GOCARDLESS') {
       return await gocardless.getInstitutions();
-    } else {
-      return [];
     }
+    if (provider === 'PLAID') {
+      return await plaid.getInstitutions();
+    }
+    return [];
   }),
+  exchangePublicToken: protectedProcedure
+    .input(z.string())
+    .output(
+      z
+        .object({
+          accessToken: z.string(),
+          itemId: z.string(),
+        })
+        .optional(),
+    )
+    .mutation(async ({ input: publicToken, ctx }) => {
+      if (whichBankConnectionConfigured() === 'PLAID') {
+        const res = await plaid.exchangePublicToken(publicToken);
+
+        if (!res) {
+          throw new Error('Failed to exchange public token');
+        }
+
+        await ctx.db.user.update({
+          where: {
+            id: ctx.session.user.id,
+          },
+          data: {
+            obapiProviderId: res.accessToken,
+          },
+        });
+
+        return res;
+      }
+    }),
 });

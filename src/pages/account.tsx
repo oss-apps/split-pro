@@ -134,8 +134,10 @@ const AccountPage: NextPageWithUser<{
                   <div className="flex items-center gap-4">
                     <CreditCard className="h-5 w-5 text-teal-500" />
                     <p>
-                      {userQuery.data?.obapiProviderId ? t('ui.reconnect') : t('ui.connect')}{' '}
-                      {t('ui.to_bank')}
+                      {userQuery.data?.obapiProviderId
+                        ? t('account.reconnect')
+                        : t('account.connect')}{' '}
+                      {t('account.to_bank')}
                     </p>
                   </div>
                   <ChevronRight className="h-6 w-6 text-gray-500" />

@@ -305,7 +305,7 @@ export const AddOrEditExpensePage: React.FC<{
             ) : null}
             <div className="flex items-center justify-end gap-4">
               <Button variant="ghost" className="text-primary px-0" onClick={clearFields}>
-                {t('ui.clear')}
+                {t('expense_details.clear')}
               </Button>
             </div>
           </div>

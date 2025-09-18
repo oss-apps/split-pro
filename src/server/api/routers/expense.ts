@@ -7,11 +7,18 @@ import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { getDocumentUploadUrl } from '~/server/storage';
-import { BigMath } from '~/utils/numbers';
+import { BigMath, currencyConversion } from '~/utils/numbers';
 
-// import { sendExpensePushNotification } from '../services/notificationService';
-import { createExpenseSchema } from '~/types/expense.types';
+import {
+  createCurrencyConversionSchema,
+  createExpenseSchema,
+  getCurrencyRateSchema,
+} from '~/types/expense.types';
 import { createExpense, deleteExpense, editExpense } from '../services/splitService';
+import { currencyRateProvider } from '../services/currencyRateService';
+import { isCurrencyCode } from '~/lib/currency';
+import { SplitType } from '@prisma/client';
+import { DEFAULT_CATEGORY } from '~/lib/category';
 
 export const expenseRouter = createTRPCRouter({
   getBalances: protectedProcedure.query(async ({ ctx }) => {
@@ -28,25 +35,22 @@ export const expenseRouter = createTRPCRouter({
     });
 
     const balances = balancesRaw
-      .reduce(
-        (acc, current) => {
-          const existing = acc.findIndex((item) => item.friendId === current.friendId);
-          if (-1 === existing) {
-            acc.push(current);
-          } else {
-            const existingItem = acc[existing];
-            if (existingItem) {
-              if (BigMath.abs(existingItem.amount) > BigMath.abs(current.amount)) {
-                acc[existing] = { ...existingItem, hasMore: true };
-              } else {
-                acc[existing] = { ...current, hasMore: true };
-              }
+      .reduce<((typeof balancesRaw)[number] & { hasMore?: boolean })[]>((acc, current) => {
+        const existing = acc.findIndex((item) => item.friendId === current.friendId);
+        if (-1 === existing) {
+          acc.push(current);
+        } else {
+          const existingItem = acc[existing];
+          if (existingItem) {
+            if (BigMath.abs(existingItem.amount) > BigMath.abs(current.amount)) {
+              acc[existing] = { ...existingItem, hasMore: true };
+            } else {
+              acc[existing] = { ...current, hasMore: true };
             }
           }
-          return acc;
-        },
-        [] as ((typeof balancesRaw)[number] & { hasMore?: boolean })[],
-      )
+        }
+        return acc;
+      }, [])
       .sort((a, b) => Number(BigMath.abs(b.amount) - BigMath.abs(a.amount)));
 
     const cumulatedBalances = await db.balance.groupBy({
@@ -80,6 +84,9 @@ export const expenseRouter = createTRPCRouter({
       if (input.expenseId) {
         await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
       }
+      if (input.splitType === SplitType.CURRENCY_CONVERSION) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
+      }
 
       if (input.groupId) {
         const group = await db.group.findUnique({
@@ -103,6 +110,86 @@ export const expenseRouter = createTRPCRouter({
       } catch (error) {
         console.error(error);
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create expense' });
+      }
+    }),
+
+  addOrEditCurrencyConversion: protectedProcedure
+    .input(createCurrencyConversionSchema)
+    .mutation(async ({ input, ctx }) => {
+      const { amount, rate, from, to, senderId, receiverId, groupId, expenseId } = input;
+
+      const amountTo = currencyConversion(amount, rate);
+      const name = `${from} → ${to} @ ${rate}`;
+
+      const expenseFrom = await (expenseId ? editExpense : createExpense)(
+        {
+          expenseId,
+          name,
+          currency: from,
+          amount,
+          paidBy: senderId,
+          splitType: SplitType.CURRENCY_CONVERSION,
+          category: DEFAULT_CATEGORY,
+          participants: [
+            { userId: senderId, amount: amount },
+            { userId: receiverId, amount: -amount },
+          ],
+          groupId,
+          expenseDate: new Date(),
+        },
+        ctx.session.user.id,
+      );
+
+      if (!expenseFrom) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to upsert currency conversion record',
+        });
+      }
+
+      const otherConversionParams = {
+        name,
+        currency: to,
+        amount: amountTo,
+        paidBy: receiverId,
+        splitType: SplitType.CURRENCY_CONVERSION,
+        category: DEFAULT_CATEGORY,
+        participants: [
+          { userId: senderId, amount: -amountTo },
+          { userId: receiverId, amount: amountTo },
+        ],
+        groupId,
+        expenseDate: new Date(),
+      };
+
+      if (expenseId) {
+        const expense = await db.expense.findFirst({
+          select: { otherConversion: true },
+          where: {
+            id: expenseId,
+          },
+        });
+
+        if (expense?.otherConversion) {
+          await editExpense(
+            {
+              expenseId: expense.otherConversion,
+              ...otherConversionParams,
+            },
+            ctx.session.user.id,
+          );
+          return {
+            ...expenseFrom,
+          };
+        }
+      } else {
+        await createExpense(
+          {
+            ...otherConversionParams,
+            otherConversion: expenseFrom.id,
+          },
+          ctx.session.user.id,
+        );
       }
     }),
 
@@ -133,6 +220,20 @@ export const expenseRouter = createTRPCRouter({
             {
               deletedBy: null,
             },
+            {
+              OR: [
+                {
+                  NOT: {
+                    splitType: SplitType.CURRENCY_CONVERSION,
+                  },
+                },
+                {
+                  NOT: {
+                    otherConversion: null,
+                  },
+                },
+              ],
+            },
           ],
         },
         orderBy: {
@@ -152,6 +253,7 @@ export const expenseRouter = createTRPCRouter({
             },
           },
           paidByUser: true,
+          conversionFrom: true,
         },
       });
 
@@ -165,6 +267,18 @@ export const expenseRouter = createTRPCRouter({
         where: {
           groupId: input.groupId,
           deletedBy: null,
+          OR: [
+            {
+              NOT: {
+                splitType: SplitType.CURRENCY_CONVERSION,
+              },
+            },
+            {
+              NOT: {
+                otherConversion: null,
+              },
+            },
+          ],
         },
         orderBy: {
           expenseDate: 'desc',
@@ -173,6 +287,7 @@ export const expenseRouter = createTRPCRouter({
           expenseParticipants: true,
           paidByUser: true,
           deletedByUser: true,
+          conversionTo: true,
         },
       });
 
@@ -198,6 +313,15 @@ export const expenseRouter = createTRPCRouter({
           deletedByUser: true,
           updatedByUser: true,
           group: true,
+          conversionTo: {
+            include: {
+              expenseParticipants: {
+                include: {
+                  user: true,
+                },
+              },
+            },
+          },
         },
       });
 
@@ -318,6 +442,18 @@ export const expenseRouter = createTRPCRouter({
 
       await deleteExpense(input.expenseId, ctx.session.user.id);
     }),
+
+  getCurrencyRate: protectedProcedure.input(getCurrencyRateSchema).query(async ({ input }) => {
+    const { from, to, date } = input;
+
+    if (!isCurrencyCode(from) || !isCurrencyCode(to)) {
+      throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid currency code' });
+    }
+
+    const rate = await currencyRateProvider.getCurrencyRate(from, to, date);
+
+    return { rate };
+  }),
 });
 
 const validateEditExpensePermission = async (expenseId: string, userId: number): Promise<void> => {

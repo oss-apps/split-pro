@@ -13,12 +13,13 @@ services:
       - POSTGRES_DB=${POSTGRES_DB:?err}
       - POSTGRES_PORT=${POSTGRES_PORT:-5432}
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER}']
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
       interval: 10s
       timeout: 5s
       retries: 5
     # ports:
     #   - "5432:5432"
+    env_file: .env
     volumes:
       - database:/var/lib/postgresql/data
     command: >
@@ -34,36 +35,8 @@ services:
       - ${PORT:-3000}:${PORT:-3000}
     environment:
       - PORT=${PORT:-3000}
-      # - HOSTNAME=0.0.0.0 # This is sometimes needed with reverse proxy setups. Uncomment when you encounter issues.
-      - DATABASE_URL=${DATABASE_URL:?err}
-      - NEXTAUTH_URL=${NEXTAUTH_URL:?err}
-      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:?err}
-      - ENABLE_SENDING_INVITES=${ENABLE_SENDING_INVITES:?err}
-      - FROM_EMAIL=${FROM_EMAIL}
-      - EMAIL_SERVER_HOST=${EMAIL_SERVER_HOST}
-      - EMAIL_SERVER_PORT=${EMAIL_SERVER_PORT}
-      - EMAIL_SERVER_USER=${EMAIL_SERVER_USER}
-      - EMAIL_SERVER_PASSWORD=${EMAIL_SERVER_PASSWORD}
-      - GOCARDLESS_COUNTRY=${GOCARDLESS_COUNTRY}
-      - GOCARDLESS_SECRET_ID=${GOCARDLESS_SECRET_ID}
-      - GOCARDLESS_SECRET_KEY=${GOCARDLESS_SECRET_KEY}
-      - GOCARDLESS_INTERVAL_IN_DAYS=${GOCARDLESS_INTERVAL_IN_DAYS}
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - AUTHENTIK_ID=${AUTHENTIK_ID}
-      - AUTHENTIK_SECRET=${AUTHENTIK_SECRET}
-      - AUTHENTIK_ISSUER=${AUTHENTIK_ISSUER}
-      - R2_ACCESS_KEY=${R2_ACCESS_KEY}
-      - R2_SECRET_KEY=${R2_SECRET_KEY}
-      - R2_BUCKET=${R2_BUCKET}
-      - R2_URL=${R2_URL}
-      - R2_PUBLIC_URL=${R2_PUBLIC_URL}
-      - WEB_PUSH_PRIVATE_KEY=${WEB_PUSH_PRIVATE_KEY}
-      - WEB_PUSH_PUBLIC_KEY=${WEB_PUSH_PUBLIC_KEY}
-      - WEB_PUSH_EMAIL=${WEB_PUSH_EMAIL}
-      - FEEDBACK_EMAIL=${FEEDBACK_EMAIL}
-      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
-      - DEFAULT_HOMEPAGE=${DEFAULT_HOMEPAGE}
+      # - HOSTNAME=0.0.0.0 # Uncomment this, to have the server listen on all network interfaces. Needed when you want to connect to split-pro via docker internal networks, e.g. for reverse proxy setups.
+    env_file: .env
     depends_on:
       postgres:
         condition: service_healthy

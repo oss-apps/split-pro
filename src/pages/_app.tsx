@@ -26,7 +26,7 @@ const MyApp: AppType<{ session: Session | null; baseUrl: string }> = ({
   Component,
   pageProps: { session, baseUrl, ...pageProps },
 }) => {
-  const { t, ready } = useTranslation('common');
+  const { t, ready } = useTranslation();
 
   if (!ready) {
     return (

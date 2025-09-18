@@ -6,14 +6,14 @@ import { cn } from '~/lib/utils';
 import { api } from '~/utils/api';
 import { Button } from '../ui/button';
 import Image from 'next/image';
-import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { useTranslation } from 'next-i18next';
 
 export const BankAccountSelect = ({
   bankConnectionEnabled,
 }: {
   bankConnectionEnabled: boolean;
 }) => {
-  const { t } = useTranslationWithUtils(['account_page']);
+  const { t } = useTranslation();
 
   const userQuery = api.user.me.useQuery();
   const updateProfile = api.user.updateUserDetail.useMutation();
@@ -40,17 +40,17 @@ export const BankAccountSelect = ({
         >
           <div className="flex items-center gap-4">
             <Landmark className="h-5 w-5 text-blue-500" />
-            <p>{t('ui.choose_bank_provider')}</p>
+            <p>{t('account.choose_bank_provider')}</p>
           </div>
           <ChevronRight className="h-6 w-6 text-gray-500" />
         </Button>
       }
-      title={t('ui.select_bank_provider')}
+      title={t('account.select_bank_provider')}
       className="h-[70vh]"
     >
       <Command className="h-[50vh]">
-        <CommandInput className="text-lg" placeholder={t('ui.search_bank')} />
-        <CommandEmpty>{t('ui.no_bank_providers_found')}</CommandEmpty>
+        <CommandInput className="text-lg" placeholder={t('account.search_bank')} />
+        <CommandEmpty>{t('account.no_bank_providers_found')}</CommandEmpty>
         <CommandGroup className="h-full overflow-auto">
           {institutions?.data?.map((framework) => (
             <CommandItem key={framework.id} value={framework.id} onSelect={onSelect}>

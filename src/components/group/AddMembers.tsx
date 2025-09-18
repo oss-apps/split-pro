@@ -12,13 +12,14 @@ import { api } from '~/utils/api';
 
 import { EntityAvatar } from '../ui/avatar';
 import { Input } from '../ui/input';
+import { env } from '~/env';
 
 const AddMembers: React.FC<{
   enableSendingInvites: boolean;
-  group: Group & { groupUsers: GroupUser[] };
+  group: (Group & { groupUsers: GroupUser[] }) | null | undefined;
   children: React.ReactNode;
 }> = ({ group, children, enableSendingInvites }) => {
-  const { t } = useTranslation('groups_details');
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [userIds, setUserIds] = useState<Record<number, boolean>>({});
   const [inputValue, setInputValue] = useState('');
@@ -28,6 +29,10 @@ const AddMembers: React.FC<{
   const addFriendMutation = api.user.inviteFriend.useMutation();
 
   const utils = api.useUtils();
+
+  if (!group) {
+    return null;
+  }
 
   const groupUserMap = group.groupUsers.reduce(
     (acc, gu) => {
@@ -103,11 +108,11 @@ const AddMembers: React.FC<{
 
   return (
     <AppDrawer
-      trigger={<>{children}</>}
+      trigger={children}
       onTriggerClick={handleTriggerClick}
-      title={t('ui.no_members.add_members_details.title')}
-      leftAction={t('ui.actions.cancel', { ns: 'common' })}
-      actionTitle={t('ui.actions.save', { ns: 'common' })}
+      title={t('group_details.no_members.add_members_details.title')}
+      leftAction={t('actions.cancel')}
+      actionTitle={t('actions.save')}
       actionOnClick={handleActionClick}
       className="h-[85vh]"
       shouldCloseOnAction
@@ -116,17 +121,17 @@ const AddMembers: React.FC<{
     >
       <Input
         className="mt-8 w-full text-lg"
-        placeholder={t('ui.no_members.add_members_details.placeholder')}
+        placeholder={t('group_details.no_members.add_members_details.placeholder')}
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
       />
       <div>
-        {enableSendingInvites ? (
+        {enableSendingInvites && !env.NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT ? (
           <div className="mt-1 text-orange-600">
-            {t('ui.no_members.add_members_details.warning')}
+            {t('group_details.no_members.add_members_details.warning')}
           </div>
         ) : (
-          <div>{t('ui.no_members.add_members_details.note')}</div>
+          <div>{t('group_details.no_members.add_members_details.note')}</div>
         )}
 
         <div className="flex justify-center gap-4">
@@ -139,8 +144,8 @@ const AddMembers: React.FC<{
             >
               <SendIcon className="mr-2 h-4 w-4" />
               {isEmail.success
-                ? t('ui.no_members.add_members_details.send_invite')
-                : t('common:errors.valid_email')}
+                ? t('group_details.no_members.add_members_details.send_invite')
+                : t('errors.valid_email')}
             </Button>
           )}
           <Button
@@ -151,8 +156,8 @@ const AddMembers: React.FC<{
           >
             <UserPlusIcon className="mr-2 h-4 w-4" />
             {isEmail.success
-              ? t('ui.no_members.add_members_details.add_to_split_pro')
-              : t('common:errors.valid_email')}
+              ? t('group_details.no_members.add_members_details.add_to_split_pro')
+              : t('errors.valid_email')}
           </Button>
         </div>
       </div>

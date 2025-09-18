@@ -28,7 +28,7 @@ function getPaymentString(
   } else if (isSettlement) {
     return (
       <div className={`${user.id === paidBy ? 'text-emerald-500' : 'text-orange-500'} text-sm`}>
-        {t('ui.actors.you')}{' '}
+        {t('actors.you')}{' '}
         {user.id === paidBy ? t('ui.expense.you.paid') : t('ui.expense.you.received')} {currency}{' '}
         {toUIString(amount)}
       </div>
@@ -37,8 +37,8 @@ function getPaymentString(
     return (
       <div className={`${user.id === paidBy ? 'text-emerald-500' : 'text-orange-500'} text-sm`}>
         {user.id === paidBy
-          ? `${t('ui.actors.you')} ${t('ui.expense.you.lent')} ${currency} ${toUIString(BigMath.abs(expenseUserAmt))}`
-          : `${t('ui.actors.you')} ${t('ui.expense.you.owe')} ${currency} ${toUIString(expenseUserAmt)}`}
+          ? `${t('actors.you')} ${t('ui.expense.you.lent')} ${currency} ${toUIString(BigMath.abs(expenseUserAmt))}`
+          : `${t('actors.you')} ${t('ui.expense.you.owe')} ${currency} ${toUIString(expenseUserAmt)}`}
       </div>
     );
   }

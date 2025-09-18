@@ -82,7 +82,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <div className="text-orange-700">
                 {0 < (youOwe?.length ?? 0) && (
                   <>
-                    {t('ui.actors.you')} {t('ui.expense.you.owe')}{' '}
+                    {t('actors.you')} {t('ui.expense.you.owe')}{' '}
                     {youOwe?.map((bal, index) => (
                       <span key={bal.currency}>
                         <span className="font-semibold tracking-wide">
@@ -98,7 +98,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               <div className="text-emerald-600">
                 {0 < (youLent?.length ?? 0) && (
                   <>
-                    {t('ui.actors.you')} {t('ui.expense.you.lent')}{' '}
+                    {t('actors.you')} {t('ui.expense.you.lent')}{' '}
                     {youLent?.map((bal, index) => (
                       <span key={bal.currency}>
                         <span className="font-semibold tracking-wide">
@@ -112,10 +112,10 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               </div>
             </div>
             <div className="mt-6 mb-4 flex justify-center gap-2">
-              <SettleUp balances={balances.data} friend={friendQuery.data} currentUser={user} />
+              <SettleUp balances={balances.data} friend={friendQuery.data} />
               <Link href={`/add?friendId=${friendQuery.data.id}`}>
                 <Button size="sm" variant="secondary" responsiveIcon>
-                  <PlusIcon className="size-4" /> {t('ui.actions.add_expense')}
+                  <PlusIcon className="size-4" /> {t('actions.add_expense')}
                 </Button>
               </Link>
               <Export
@@ -147,7 +147,7 @@ FriendPage.auth = true;
 
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
-    ...(await customServerSideTranslations(context.locale, ['common', 'expense_details'])),
+    ...(await customServerSideTranslations(context.locale, ['common'])),
   },
 });
 

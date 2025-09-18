@@ -20,7 +20,7 @@ This setup includes PostgreSQL and the Splitpro application.
 5. Run the following command to start the containers:
 
 ```
-docker-compose --env-file ./.env up -d
+docker-compose up -d
 ```
 
 This will start the PostgreSQL database and the Splitpro application containers.
@@ -80,3 +80,7 @@ docker exec -t <postgres container name> pg_dumpall -c -U postgres > splitpro_ba
 ```bash
 cat splitpro_backup.sql | docker exec -i <postgres container name> psql -U postgres
 ```
+
+## Authentication
+
+We use NextAuth for authentication providers, offering email, Google and Authentik providers out of the box. Other providers can be customized as OIDC providers, but remember that an OIDC callback is needed. Set up yout `NEXTAUTH_URL` and then a callback address of `https://${NEXTAUTH_URL}/api/auth/callback/oidc`.

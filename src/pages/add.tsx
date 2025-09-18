@@ -47,8 +47,7 @@ const AddPage: NextPageWithUser<{
       obapiProviderId: user.obapiProviderId ?? null,
       bankingId: user.bankingId ?? null,
     });
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [setCurrentUser, user]);
 
   const router = useRouter();
   const { friendId, groupId, expenseId } = router.query;
@@ -84,16 +83,14 @@ const AddPage: NextPageWithUser<{
       ]);
       useAddExpenseStore.setState({ showFriends: false });
     }
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupId, groupQuery.isPending, groupQuery.data, currentUser]);
+  }, [groupId, groupQuery.isPending, groupQuery.data, currentUser, setGroup, setParticipants]);
 
   useEffect(() => {
     if (friendId && currentUser && friendQuery.data) {
       setParticipants([currentUser, friendQuery.data]);
       useAddExpenseStore.setState({ showFriends: false });
     }
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [friendId, friendQuery.isPending, friendQuery.data, currentUser]);
+  }, [friendId, friendQuery.isPending, friendQuery.data, currentUser, setParticipants]);
 
   useEffect(() => {
     if (!_expenseId || !expenseQuery.data) {
@@ -118,17 +115,24 @@ const AddPage: NextPageWithUser<{
     );
     useAddExpenseStore.setState({ showFriends: false });
     setExpenseDate(expenseQuery.data.expenseDate);
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [_expenseId, expenseQuery.data]);
+  }, [
+    _expenseId,
+    expenseQuery.data,
+    setAmount,
+    setAmountStr,
+    setCategory,
+    setCurrency,
+    setDescription,
+    setExpenseDate,
+    setGroup,
+    setPaidBy,
+    setParticipants,
+  ]);
 
   return (
     <>
       <Head>
-        <title>
-          {_expenseId
-            ? t('ui.actions.edit_expense', { ns: 'common' })
-            : t('ui.actions.add_expense', { ns: 'common' })}
-        </title>
+        <title>{_expenseId ? t('actions.edit_expense') : t('actions.add_expense')}</title>
       </Head>
       <MainLayout hideAppBar>
         {currentUser && (!_expenseId || expenseQuery.data) && (
@@ -153,11 +157,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => ({
     isStorageConfigured: !!isStorageConfigured(),
     enableSendingInvites: !!env.ENABLE_SENDING_INVITES,
     bankConnectionEnabled: !!isBankConnectionConfigured(),
-    ...(await customServerSideTranslations(context.locale, [
-      'common',
-      'expense_details',
-      'categories',
-      'currencies',
-    ])),
+    ...(await customServerSideTranslations(context.locale, ['common', 'categories', 'currencies'])),
   },
 });

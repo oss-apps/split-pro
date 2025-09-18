@@ -24,7 +24,7 @@ export const SimpleConfirmationDialog: React.FC<
     children: React.ReactNode;
   } & VariantProps<typeof buttonVariants>
 > = ({ title, description, hasPermission, onConfirm, loading, variant, children }) => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   return (
@@ -36,7 +36,7 @@ export const SimpleConfirmationDialog: React.FC<
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>{t('ui.actions.cancel', { ns: 'common' })}</AlertDialogCancel>
+          <AlertDialogCancel>{t('actions.cancel')}</AlertDialogCancel>
           {hasPermission && (
             <form
               onSubmit={async (e) => {
@@ -52,7 +52,7 @@ export const SimpleConfirmationDialog: React.FC<
                 disabled={loading}
                 loading={loading}
               >
-                {t('ui.actions.confirm', { ns: 'common' })}
+                {t('actions.confirm')}
               </Button>
             </form>
           )}

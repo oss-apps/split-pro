@@ -1,6 +1,8 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { type GetServerSidePropsContext } from 'next';
-import { type DefaultSession, type NextAuthOptions, getServerSession } from 'next-auth';
+import type { NextAuthOptions, User } from 'next-auth';
+import { type DefaultSession, getServerSession } from 'next-auth';
+
 import { type Adapter, type AdapterUser } from 'next-auth/adapters';
 import AuthentikProvider from 'next-auth/providers/authentik';
 import EmailProvider from 'next-auth/providers/email';
@@ -11,6 +13,7 @@ import { db } from '~/server/db';
 
 import { sendSignUpEmail } from './mailer';
 import { getBaseUrl } from '~/utils/api';
+import type { OAuthConfig } from 'next-auth/providers/oauth';
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -33,6 +36,9 @@ declare module 'next-auth' {
 
   interface User {
     id: number;
+    name: string;
+    email: string;
+    image: string;
     currency: string;
     obapiProviderId?: string;
     bankingId?: string;
@@ -199,6 +205,39 @@ function getProviders() {
         allowDangerousEmailAccountLinking: true,
       }),
     );
+  }
+
+  if (env.OIDC_CLIENT_ID && env.OIDC_CLIENT_SECRET && env.OIDC_WELL_KNOWN_URL) {
+    providersList.push({
+      id: env.OIDC_NAME?.toLowerCase() ?? 'oidc',
+      name: env.OIDC_NAME ?? 'OIDC',
+      clientId: env.OIDC_CLIENT_ID,
+      clientSecret: env.OIDC_CLIENT_SECRET,
+      type: 'oauth',
+      wellKnown: env.OIDC_WELL_KNOWN_URL,
+      authorization: { params: { scope: 'openid email profile' } },
+      allowDangerousEmailAccountLinking: env.OIDC_ALLOW_DANGEROUS_EMAIL_LINKING,
+      idToken: true,
+      profile(profile) {
+        // This function expects a "standard" next-auth user but we override
+        // what a next-auth user is above.  The expected next-auth user must be
+        // a record that has an id, a name, an email, and an image.
+        //
+        // To work around this, we case to unknown and then `User`.
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+        } as unknown as User;
+      },
+    } satisfies OAuthConfig<{
+      sub: string;
+      name: string;
+      email: string;
+      picture: string;
+      preferred_username: string;
+    }>);
   }
 
   return providersList;

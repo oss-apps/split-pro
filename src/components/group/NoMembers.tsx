@@ -13,7 +13,7 @@ interface NoMembersProps {
 }
 
 const NoMembers: React.FC<NoMembersProps> = ({ group, enableSendingInvites }) => {
-  const { t } = useTranslation('groups_details');
+  const { t } = useTranslation();
   const [isCopied, setIsCopied] = useState(false);
   const isArchived = !!group.archivedAt;
 
@@ -28,14 +28,15 @@ const NoMembers: React.FC<NoMembersProps> = ({ group, enableSendingInvites }) =>
 
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4">
-      <p className="mb-4 text-center text-gray-500">{t('ui.no_members.no_members')}</p>
-      <Button className="w-[200px]" disabled={isArchived}>
-        <AddMembers group={group} enableSendingInvites={enableSendingInvites}>
-          <UserPlus className="text-primary-foreground h-5 w-5" />
-          <p>{t('ui.no_members.add_members')}</p>
-        </AddMembers>
-      </Button>
-      <p className="text-gray-400">{t('common:ui.or')}</p>
+      <p className="mb-4 text-center text-gray-500">{t('group_details.no_members.no_members')}</p>
+
+      <AddMembers group={group} enableSendingInvites={enableSendingInvites}>
+        <Button className="w-[200px]" disabled={isArchived}>
+          <UserPlus className="text-primary-foreground" /> {t('group_details.add_members')}
+        </Button>
+      </AddMembers>
+
+      <p className="text-gray-400">{t('ui.or')}</p>
       <Button
         className="flex w-[200px] items-center gap-2"
         onClick={copyToClipboard}
@@ -44,10 +45,10 @@ const NoMembers: React.FC<NoMembersProps> = ({ group, enableSendingInvites }) =>
         {!isCopied ? (
           <>
             <Share className="h-5 w-5" />
-            {t('ui.no_members.invite_link')}
+            {t('group_details.no_members.invite_link')}
           </>
         ) : (
-          t('ui.no_members.copied')
+          t('group_details.copied')
         )}
       </Button>
     </div>

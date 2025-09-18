@@ -24,7 +24,7 @@ const getImgHeightAndWidth = (file: File) =>
   });
 
 export const UploadFile: React.FC = () => {
-  const { t } = useTranslation('expense_details');
+  const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
   const { setFileUploading, setFileKey } = useAddExpenseStore((s) => s.actions);
 
@@ -40,9 +40,7 @@ export const UploadFile: React.FC = () => {
     }
 
     if (file.size > FILE_SIZE_LIMIT) {
-      toast.error(
-        `${t('ui.add_expense_details.upload_file.errors.less_than')} ${FILE_SIZE_LIMIT / 1024 / 1024}MB`,
-      );
+      toast.error(`${t('errors.less_than')} ${FILE_SIZE_LIMIT / 1024 / 1024}MB`);
       return;
     }
 
@@ -64,18 +62,18 @@ export const UploadFile: React.FC = () => {
       });
 
       if (!response.ok) {
-        toast.error(t('ui.add_expense_details.upload_file.errors.upload_failed'));
+        toast.error(t('errors.upload_failed'));
         console.error('Failed to upload file:', response.statusText);
         setFile(null);
         return;
       }
 
-      toast.success(t('ui.add_expense_details.upload_file.messages.upload_success'));
+      toast.success(t('expense_details.add_expense_details.upload_file.messages.upload_success'));
 
       setFileKey(key);
     } catch (error) {
       console.error('Error getting upload url:', error);
-      toast.error(t('ui.add_expense_details.upload_file.errors.uploading_error'));
+      toast.error(t('errors.uploading_error'));
     } finally {
       setFileUploading(false);
     }

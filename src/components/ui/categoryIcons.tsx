@@ -1,3 +1,4 @@
+import { SplitType } from '@prisma/client';
 import {
   Baby,
   Backpack,
@@ -8,6 +9,7 @@ import {
   Car,
   CarTaxiFront,
   Construction,
+  DollarSign,
   DoorOpen,
   FerrisWheel,
   Flame,
@@ -18,6 +20,7 @@ import {
   Globe,
   GraduationCap,
   Hammer,
+  HandCoins,
   HandIcon,
   Home,
   Hotel,
@@ -98,9 +101,13 @@ export const CategoryIcons: Record<CategoryItem, LucideIcon> = {
   hotel: Hotel,
 };
 
+export const CURRENCY_CONVERSION_ICON = DollarSign;
+
+export const SETTLEUP_ICON = HandCoins;
+
 export const DEFAULT_CATEGORY_ICON = CategoryIcons[DEFAULT_CATEGORY];
 
-export const CategoryIcon: React.FC<{ category?: string } & LucideProps> = ({
+export const CategoryIcon: React.FC<{ category?: string; splitType?: SplitType } & LucideProps> = ({
   category = DEFAULT_CATEGORY,
   ...props
 }) => {

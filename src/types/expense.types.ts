@@ -13,11 +13,13 @@ export type CreateExpense = Omit<
   | 'expenseDate'
   | 'fileKey'
   | 'transactionId'
+  | 'otherConversion'
 > & {
   expenseDate?: Date;
   fileKey?: string;
   expenseId?: string;
   transactionId?: string;
+  otherConversion?: string;
   participants: Omit<ExpenseParticipant, 'expenseId'>[];
 };
 
@@ -34,6 +36,7 @@ export const createExpenseSchema = z.object({
     SplitType.SHARE,
     SplitType.EXACT,
     SplitType.SETTLEMENT,
+    SplitType.CURRENCY_CONVERSION,
   ]),
   currency: z.string(),
   participants: z.array(z.object({ userId: z.number(), amount: z.bigint() })),
@@ -41,4 +44,23 @@ export const createExpenseSchema = z.object({
   transactionId: z.string().optional(),
   expenseDate: z.date().optional(),
   expenseId: z.string().optional(),
+  otherConversion: z.string().optional(),
 }) satisfies z.ZodType<CreateExpense>;
+
+export const createCurrencyConversionSchema = z.object({
+  amount: z.bigint(),
+  from: z.string(),
+  to: z.string(),
+  rate: z.number().positive(),
+  senderId: z.number(),
+  receiverId: z.number(),
+  groupId: z.number().nullable(),
+  expenseId: z.string().optional(),
+  otherExpenseId: z.string().optional(),
+});
+
+export const getCurrencyRateSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  date: z.date().transform((date) => new Date(date.toDateString())),
+});

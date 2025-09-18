@@ -54,7 +54,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
       <div className="flex flex-col gap-2">
         {0 < youLent.length ? (
           <div className="flex flex-wrap gap-1 text-emerald-500">
-            {t('ui.actors.you')} {t('ui.expense.you.lent')}
+            {t('actors.you')} {t('ui.expense.you.lent')}
             {youLent.map(([currency, amount], index, arr) => (
               <React.Fragment key={currency}>
                 <div className="flex gap-1 font-semibold">
@@ -68,7 +68,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
 
         {0 < youOwe.length ? (
           <div className="text-orange-6000 flex flex-wrap gap-1 text-orange-600">
-            {t('ui.actors.you')} {t('ui.expense.you.owe')}
+            {t('actors.you')} {t('ui.expense.you.owe')}
             {youOwe.map(([currency, amount], index, arr) => (
               <React.Fragment key={currency}>
                 <div className="flex gap-1 font-semibold">
@@ -93,8 +93,8 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
                 {Object.entries(balances).map(([currency, amount]) => (
                   <div key={currency}>
                     {0 < amount
-                      ? `${friend?.name} ${t('ui.expense.user.owe')} ${t('ui.actors.you_dativus').toLowerCase()}`
-                      : `${t('ui.actors.you')} ${t('ui.expense.you.owe')} ${friend?.name}`}{' '}
+                      ? `${friend?.name} ${t('ui.expense.user.owe')} ${t('actors.you_dativus').toLowerCase()}`
+                      : `${t('actors.you')} ${t('ui.expense.you.owe')} ${friend?.name}`}{' '}
                     {toUIString(amount)} {currency}
                   </div>
                 ))}

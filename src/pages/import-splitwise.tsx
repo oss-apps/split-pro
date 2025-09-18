@@ -17,7 +17,7 @@ import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
 
 const ImportSpliwisePage: NextPageWithUser = () => {
-  const { t } = useTranslation('account_page');
+  const { t } = useTranslation();
   const [usersWithBalance, setUsersWithBalance] = useState<SplitwiseUser[]>([]);
   const [groups, setGroups] = useState<SplitwiseGroup[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<Record<string, boolean>>({});
@@ -74,7 +74,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
       );
     } catch (e) {
       console.error(e);
-      toast.error(t('ui.import_from_splitwise_details.errors.import_failed'));
+      toast.error(t('errors.import_failed'));
     }
   };
 
@@ -88,7 +88,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
       },
       {
         onSuccess: () => {
-          toast.success(t('ui.import_from_splitwise_details.messages.import_success'));
+          toast.success(t('account.import_from_splitwise_details.messages.import_success'));
           router.push('/balances').catch((err) => console.error(err));
         },
       },
@@ -98,7 +98,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
   return (
     <>
       <Head>
-        <title>{t('ui.import_from_splitwise')}</title>
+        <title>{t('account.import_from_splitwise')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainLayout hideAppBar>
@@ -106,11 +106,11 @@ const ImportSpliwisePage: NextPageWithUser = () => {
           <div className="flex gap-4">
             <Link href="/balances">
               <Button variant="ghost" className="text-primary px-0 py-0" size="sm">
-                {t('ui.actions.cancel', { ns: 'common' })}
+                {t('actions.cancel')}
               </Button>
             </Link>
           </div>
-          <div className="font-medium">{t('ui.import_from_splitwise')}</div>
+          <div className="font-medium">{t('account.import_from_splitwise')}</div>
           <div className="flex gap-4">
             <Button
               onClick={onImport}
@@ -119,7 +119,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               size="sm"
               disabled={importMutation.isPending || !uploadedFile}
             >
-              {t('ui.actions.import', { ns: 'common' })}
+              {t('actions.import')}
             </Button>
           </div>
         </div>
@@ -129,13 +129,13 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               <div className="flex items-center border-r pr-4">
                 <PaperClipIcon className="mr-2 h-4 w-4" />{' '}
                 <span className="hidden text-sm md:block">
-                  {t('ui.import_from_splitwise_details.choose_file')}
+                  {t('account.import_from_splitwise_details.choose_file')}
                 </span>
               </div>
               <div className="pl-4 text-gray-400">
                 {uploadedFile
                   ? uploadedFile.name
-                  : t('ui.import_from_splitwise_details.no_file_chosen')}
+                  : t('account.import_from_splitwise_details.no_file_chosen')}
               </div>
             </div>
             <Input
@@ -152,21 +152,17 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             className="w-[100px]"
             size="sm"
           >
-            {importMutation.isPending ? (
-              <LoadingSpinner />
-            ) : (
-              t('ui.actions.import', { ns: 'common' })
-            )}
+            {importMutation.isPending ? <LoadingSpinner /> : t('actions.import')}
           </Button>
         </div>
         <div className="mt-4 text-sm text-gray-400">
-          {t('ui.import_from_splitwise_details.note')}
+          {t('account.import_from_splitwise_details.note')}
         </div>
 
         {uploadedFile ? (
           <>
             <div className="mt-8 font-semibold">
-              {t('ui.actors.friends', { ns: 'common' })} ({usersWithBalance.length})
+              {t('actors.friends')} ({usersWithBalance.length})
             </div>
             {usersWithBalance.length ? (
               <div className="mt-4 flex flex-col gap-3">
@@ -209,7 +205,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               </div>
             ) : null}
             <div className="mt-8 font-semibold">
-              {t('ui.actors.groups', { ns: 'common' })} ({groups.length})
+              {t('actors.groups')} ({groups.length})
             </div>
             {groups.length ? (
               <div className="mt-4 flex flex-col gap-3">
@@ -228,7 +224,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                         </div>
                       </div>
                       <div className="flex shrink-0 flex-wrap justify-end gap-1">
-                        {group.members.length} {t('ui.actors.members', { ns: 'common' })}
+                        {group.members.length} {t('actors.members')}
                       </div>
                     </div>
                     {index !== groups.length - 1 ? <Separator className="mt-3" /> : null}
@@ -239,11 +235,11 @@ const ImportSpliwisePage: NextPageWithUser = () => {
           </>
         ) : (
           <div className="mt-20 flex flex-col items-center justify-center gap-4">
-            {t('ui.import_from_splitwise_details.follow_to_export_splitwise_data')}
+            {t('account.import_from_splitwise_details.follow_to_export_splitwise_data')}
             <Link href="https://export-splitwise.vercel.app/" target="_blank">
               <Button>
                 <DownloadCloud className="mr-2 text-gray-800" />
-                {t('ui.import_from_splitwise_details.export_splitwise_data_button')}
+                {t('account.import_from_splitwise_details.export_splitwise_data_button')}
               </Button>
             </Link>
           </div>
@@ -255,6 +251,6 @@ const ImportSpliwisePage: NextPageWithUser = () => {
 
 ImportSpliwisePage.auth = true;
 
-export const getStaticProps = withI18nStaticProps(['common', 'account_page']);
+export const getStaticProps = withI18nStaticProps(['common']);
 
 export default ImportSpliwisePage;

@@ -14,7 +14,7 @@ export const BankTransactionItem: React.FC<{
   groupName: string;
   multipleTransactions: TransactionAddInputModel[];
 }> = ({ index, alreadyAdded, item, onTransactionRowClick, groupName, multipleTransactions }) => {
-  const { t, toUIDate } = useTranslationWithUtils(['expense_details']);
+  const { t, toUIDate } = useTranslationWithUtils();
 
   const createCheckboxHandler = useCallback(
     (item: TransactionWithPendingStatus) => () => onTransactionRowClick(item, true),
@@ -57,8 +57,8 @@ export const BankTransactionItem: React.FC<{
               {item.description}
             </p>
             <p className="line-clamp-1 flex text-left text-xs whitespace-break-spaces text-gray-500">
-              {item.pending && t('ui.pending')}{' '}
-              {alreadyAdded && `(${t('ui.already_added')}${groupName})`}
+              {item.pending && t('expense_details.pending')}{' '}
+              {alreadyAdded && `(${t('expense_details.already_added')}${groupName})`}
             </p>
           </div>
         </Button>

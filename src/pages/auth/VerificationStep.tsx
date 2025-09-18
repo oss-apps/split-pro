@@ -13,8 +13,8 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '~/components/ui/input-otp
 const otpSchema = (t: TFunction) =>
   z.object({
     otp: z
-      .string({ required_error: t('ui.otp_required') })
-      .length(5, { message: t('ui.otp_invalid') }),
+      .string({ required_error: t('errors.otp_required') })
+      .length(5, { message: t('errors.otp_invalid') }),
   });
 
 type OTPFormValues = z.infer<ReturnType<typeof otpSchema>>;
@@ -26,7 +26,7 @@ interface VerificationStepProps {
 }
 
 const VerificationStep: FC<VerificationStepProps> = ({ feedbackEmail, email, callbackUrl }) => {
-  const { t } = useTranslation('signin');
+  const { t } = useTranslation();
 
   const otpForm = useForm<OTPFormValues>({
     resolver: zodResolver(otpSchema(t)),
@@ -58,7 +58,7 @@ const VerificationStep: FC<VerificationStepProps> = ({ feedbackEmail, email, cal
               <FormField control={otpForm.control} name="otp" render={OTPInput} />
 
               <Button className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100">
-                {t('ui.actions.submit', { ns: 'common' })}
+                {t('actions.submit')}
               </Button>
             </form>
           </Form>

@@ -62,6 +62,10 @@
     "bank_connection": {
       "title": "Bank connection",
       "description": "Add expenses faster with a integration to GoCardless bank account transactions api"
+    },
+    "currency_conversion": {
+      "title": "Currency Conversion",
+      "description": "Quickly convert between different currencies using up-to-date or historical exchange rates"
     }
   },
   "footer": {

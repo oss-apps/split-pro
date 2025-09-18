@@ -26,7 +26,7 @@ export const BankingTransactionList: React.FC<{
   isTransactionLoading,
   bankConnectionEnabled,
 }) => {
-  const { t } = useTranslationWithUtils(['expense_details']);
+  const { t } = useTranslationWithUtils();
 
   const userQuery = api.user.me.useQuery();
   const transactions = api.bankTransactions.getTransactions.useQuery(
@@ -102,7 +102,7 @@ export const BankingTransactionList: React.FC<{
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <p>{t('ui.bank_transactions')}</p>
+        <p>{t('expense_details.bank_transactions')}</p>
         <Button
           variant="ghost"
           className="text-primary px-0"
@@ -110,7 +110,7 @@ export const BankingTransactionList: React.FC<{
           onClick={addMultipleExpenses}
           loading={isTransactionLoading}
         >
-          {t('ui.submit_all')}
+          {t('expense_details.submit_all')}
         </Button>
       </div>
       {transactions?.isLoading ? (
@@ -120,7 +120,9 @@ export const BankingTransactionList: React.FC<{
       ) : (
         <>
           {transactionsArray?.length === 0 && (
-            <div className="mt-[30vh] text-center text-gray-400">{t('ui.no_transactions_yet')}</div>
+            <div className="mt-[30vh] text-center text-gray-400">
+              {t('expense_details.no_transactions_yet')}
+            </div>
           )}
           {transactionsArray
             ?.filter((item) => item.transactionAmount.amount.includes('-'))

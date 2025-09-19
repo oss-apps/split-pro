@@ -58,7 +58,6 @@ export const bankTransactionsRouter = createTRPCRouter({
       if (provider === 'PLAID') {
         const res = await plaid.connectToBank(
           ctx.session.user.id.toString(),
-          institutionId,
           ctx.session.user.preferredLanguage,
         );
 
@@ -66,7 +65,7 @@ export const bankTransactionsRouter = createTRPCRouter({
           throw new Error('Failed to link to bank');
         }
 
-        return res;
+        return { ...res, institutionId: institutionId || '' };
       }
     }),
   getInstitutions: protectedProcedure.output(InstitutionsOutput).query(async () => {

@@ -184,8 +184,8 @@
     "reconnect": "Reconnect",
     "connect": "Connect",
     "plaid": {
-      "connecting_to_bank": "Connecting to bank...",
-      "connect_to_bank": "Connect to bank",
+      "connecting_to_bank": "Connecting to Plaid...",
+      "connect_to_bank": "Connect to Plaid",
       "bank_connected_successfully": "Bank connected successfully",
       "bank_connection_failed": "Failed to connect to bank",
       "bank_connection_cancelled": "Bank connection cancelled"

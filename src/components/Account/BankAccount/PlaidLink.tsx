@@ -3,6 +3,7 @@ import { usePlaidLink } from 'react-plaid-link';
 import { api } from '~/utils/api';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
+import { Button } from '~/components/ui/button';
 
 interface PlaidLinkProps {
   linkToken: string;
@@ -60,10 +61,11 @@ export const PlaidLink: React.FC<PlaidLinkProps> = ({ linkToken, onSuccess, onEx
   }, [open, ready, isLoading]);
 
   return (
-    <button
+    <Button
       onClick={handleClick}
+      variant="ghost"
       disabled={!ready || isLoading}
-      className="text-md hover:text-foreground/80 flex w-full items-center justify-between gap-4 px-0"
+      className="text-md hover:text-foreground/80 w-full justify-between px-0"
     >
       <div className="flex items-center gap-4">
         <div className="h-5 w-5 text-teal-500">
@@ -73,6 +75,6 @@ export const PlaidLink: React.FC<PlaidLinkProps> = ({ linkToken, onSuccess, onEx
           {isLoading ? t('account.plaid.connecting_to_bank') : t('account.plaid.connect_to_bank')}
         </p>
       </div>
-    </button>
+    </Button>
   );
 };

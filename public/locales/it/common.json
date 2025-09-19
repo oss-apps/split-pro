@@ -345,8 +345,8 @@
     "search_bank": "Cerca il conto",
     "no_bank_providers_found": "Nessun provider del conto trovato",
     "plaid": {
-      "connecting_to_bank": "Connettendo con la banca...",
-      "connect_to_bank": "Connetti con la banca",
+      "connecting_to_bank": "Connettendo con la Plaid...",
+      "connect_to_bank": "Connetti con la Plaid",
       "bank_connected_successfully": "Banca connessa con successo",
       "bank_connection_failed": "Errore nella connessione con la banca",
       "bank_connection_cancelled": "Connessione con la banca annullata"

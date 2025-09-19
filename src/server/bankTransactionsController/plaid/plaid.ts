@@ -70,10 +70,7 @@ export const plaid = {
     return formattedTransactions;
   },
 
-  connectToBank: async (id: string, institutionId?: string, preferredLanguage?: string) => {
-    if (!institutionId) {
-      return;
-    }
+  connectToBank: async (id: string, preferredLanguage?: string) => {
     const response = await plaidClient.linkTokenCreate({
       user: {
         client_user_id: id,
@@ -91,7 +88,6 @@ export const plaid = {
     }
 
     return {
-      institutionId: institutionId,
       authLink: response.data.link_token,
     };
   },

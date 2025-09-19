@@ -353,8 +353,8 @@
     "reconnect": "Połącz ponownie",
     "connect": "Połącz",
     "plaid": {
-      "connecting_to_bank": "Łączenie z bankiem...",
-      "connect_to_bank": "Połącz z bankiem",
+      "connecting_to_bank": "Łączenie z Plaid...",
+      "connect_to_bank": "Połącz z Plaid",
       "bank_connected_successfully": "Bank połączony pomyślnie",
       "bank_connection_failed": "Nie udało się połączyć z bankiem",
       "bank_connection_cancelled": "Połączenie z bankiem anulowane"

@@ -175,6 +175,20 @@
     "edit_name": {
       "title": "Edit name",
       "placeholder": "Enter name"
+    },
+    "choose_bank_provider": "Choose bank provider",
+    "select_bank_provider": "Select bank provider",
+    "search_bank": "Search bank",
+    "no_bank_providers_found": "No bank providers found",
+    "to_bank": "to bank",
+    "reconnect": "Reconnect",
+    "connect": "Connect",
+    "plaid": {
+      "connecting_to_bank": "Connecting to Plaid...",
+      "connect_to_bank": "Connect to Plaid",
+      "bank_connected_successfully": "Bank connected successfully",
+      "bank_connection_failed": "Failed to connect to bank",
+      "bank_connection_cancelled": "Bank connection cancelled"
     }
   },
   "expense_details": {
@@ -241,7 +255,14 @@
       "press_balance_info": "Press on individual balance to initiate settlement",
       "are_settled_up": "are settled up",
       "is_settled_up": "is settled up"
-    }
+    },
+    "verified_transaction": "Verified transaction",
+    "clear": "Clear",
+    "bank_transactions": "Bank transactions",
+    "submit_all": "Submit all",
+    "pending": "Pending",
+    "no_transactions_yet": "No transactions yet",
+    "already_added": "Already added"
   },
   "group_details": {
     "title": "Group outstanding balances",

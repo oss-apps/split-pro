@@ -24,15 +24,21 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { env } from '~/env';
-import { type NextPageWithUser } from '~/types';
-import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
+import { BankConnection } from '~/components/Account/BankAccount/BankConnection';
 import { bigIntReplacer } from '~/utils/numbers';
+import {
+  isBankConnectionConfigured,
+  whichBankConnectionConfigured,
+} from '~/server/bankTransactionHelper';
+import { api } from '~/utils/api';
+import type { NextPageWithUser } from '~/types';
 
-const AccountPage: NextPageWithUser<{ feedBackPossible: boolean }> = ({
-  user,
-  feedBackPossible,
-}) => {
+const AccountPage: NextPageWithUser<{
+  feedBackPossible: boolean;
+  bankConnectionEnabled: boolean;
+  bankConnection: string;
+}> = ({ user, feedBackPossible, bankConnectionEnabled, bankConnection }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const userQuery = api.user.me.useQuery();
@@ -110,6 +116,11 @@ const AccountPage: NextPageWithUser<{ feedBackPossible: boolean }> = ({
             </AccountButton>
           </LanguagePicker>
 
+          <BankConnection
+            bankConnectionEnabled={bankConnectionEnabled}
+            bankConnection={bankConnection}
+          />
+
           {isCloud && (
             <AccountButton href="https://twitter.com/KM_Koushik_">
               <SiX className="size-5" />
@@ -173,6 +184,8 @@ AccountPage.auth = true;
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
     feedbackPossible: !!env.FEEDBACK_EMAIL,
+    bankConnectionEnabled: !!isBankConnectionConfigured(),
+    bankConnection: whichBankConnectionConfigured(),
     ...(await customServerSideTranslations(context.locale, ['common'])),
   },
 });

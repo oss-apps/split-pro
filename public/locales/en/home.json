@@ -59,6 +59,10 @@
       "title": "Internationalization",
       "description": "Available in multiple languages to make expense splitting accessible worldwide"
     },
+    "bank_connection": {
+      "title": "Bank connection",
+      "description": "Add expenses faster with a integration to GoCardless or Plaid bank account transactions api"
+    },
     "currency_conversion": {
       "title": "Currency Conversion",
       "description": "Quickly convert between different currencies using up-to-date or historical exchange rates"

@@ -56,10 +56,8 @@ const BalancePage: NextPageWithUser = () => {
           <div className="mx-4 flex items-stretch justify-between gap-4">
             {balanceQuery.data?.youOwe.length ? (
               <div className="w-1/2 rounded-2xl border px-2 py-2">
-                {/* <ArrowLeftCircleIcon className=" h-6 w-6 rotate-45 transform text-gray-600" /> */}
                 <div className="mt-2 px-1">
                   <div className="flex items-center justify-center gap-2 text-center">
-                    {/* <ArrowLeftCircleIcon className=" h-6 w-6 rotate-45 transform text-orange-700" /> */}
                     <p className="text-sm">
                       {t('actors.you')} {t('ui.expense.you.owe')}
                     </p>
@@ -71,9 +69,7 @@ const BalancePage: NextPageWithUser = () => {
                       <span className="text-orange-600">
                         {balance.currency.toUpperCase()} {toUIString(balance.amount)}
                       </span>
-                      {index !== balanceQuery.data.youOwe.length - 1 ? (
-                        <span className="">+</span>
-                      ) : null}
+                      {index !== balanceQuery.data.youOwe.length - 1 ? <span>+</span> : null}
                     </span>
                   ))}
                 </div>
@@ -81,7 +77,7 @@ const BalancePage: NextPageWithUser = () => {
             ) : null}
             {balanceQuery.data?.youGet.length ? (
               <div className="w-1/2 rounded-2xl border px-2 py-2">
-                <div className="bg-opacity-40 mt-2 flex flex-col justify-center px-1">
+                <div className="mt-2 flex flex-col justify-center px-1">
                   <div className="flex items-center justify-center gap-2">
                     <p className="text-sm">
                       {t('actors.you')} {t('ui.expense.you.lent')}
@@ -91,9 +87,9 @@ const BalancePage: NextPageWithUser = () => {
                 <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
                   {balanceQuery.data?.youGet.map((balance, index) => (
                     <span key={balance.currency} className="flex gap-1">
-                      <p className="text-emerald-500">
+                      <span className="text-emerald-500">
                         {balance.currency.toUpperCase()} {toUIString(balance.amount)}
-                      </p>{' '}
+                      </span>
                       {index !== balanceQuery.data.youGet.length - 1 ? (
                         <span className="text-gray-400">+</span>
                       ) : null}
@@ -103,38 +99,38 @@ const BalancePage: NextPageWithUser = () => {
               </div>
             ) : null}
           </div>
+        </div>
 
-          <div className="mt-5 flex flex-col gap-8 pb-36">
-            {balanceQuery.data?.balances.map((balance) => (
-              <BalanceEntry
-                key={balance.friend.id}
-                id={balance.friend.id}
-                entity={balance.friend}
-                amount={balance.amount}
-                isPositive={0n < balance.amount}
-                currency={balance.currency}
-                hasMore={balance.hasMore}
-              />
-            ))}
+        <div className="mt-5 flex flex-col gap-8 pb-36">
+          {balanceQuery.data?.balances.map((balance) => (
+            <BalanceEntry
+              key={balance.friend.id}
+              id={balance.friend.id}
+              entity={balance.friend}
+              amount={balance.amount}
+              isPositive={0n < balance.amount}
+              currency={balance.currency}
+              hasMore={balance.hasMore}
+            />
+          ))}
 
-            {!balanceQuery.isPending && !balanceQuery.data?.balances.length ? (
-              <div className="mt-[40vh] flex -translate-y-[130%] flex-col items-center justify-center gap-6">
-                <DownloadAppDrawer>
-                  <Button className="w-[250px]">
-                    <Download className="mr-2 h-5 w-5 text-black" />
-                    {t('account.download_app')}
-                  </Button>
-                </DownloadAppDrawer>
-                {!isPwa && <p>{t('ui.or')}</p>}
-                <Link href="/add">
-                  <Button className="w-[250px]">
-                    <PlusIcon className="mr-2 h-5 w-5 text-black" />
-                    {t('actions.add_expense')}
-                  </Button>
-                </Link>
-              </div>
-            ) : null}
-          </div>
+          {!balanceQuery.isPending && !balanceQuery.data?.balances.length ? (
+            <div className="mt-[40vh] flex -translate-y-[130%] flex-col items-center justify-center gap-6">
+              <DownloadAppDrawer>
+                <Button className="w-[250px]">
+                  <Download className="mr-2 h-5 w-5 text-black" />
+                  {t('account.download_app')}
+                </Button>
+              </DownloadAppDrawer>
+              {!isPwa && <p>{t('ui.or')}</p>}
+              <Link href="/add">
+                <Button className="w-[250px]">
+                  <PlusIcon className="mr-2 h-5 w-5 text-black" />
+                  {t('actions.add_expense')}
+                </Button>
+              </Link>
+            </div>
+          ) : null}
         </div>
       </MainLayout>
     </>

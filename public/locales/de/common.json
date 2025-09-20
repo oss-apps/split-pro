@@ -272,7 +272,14 @@
       "press_balance_info": "Drücke auf einen einzelnen Saldo, um die Abrechnung zu starten",
       "are_settled_up": "bist ausgeglichen",
       "is_settled_up": "ist ausgeglichen"
-    }
+    },
+    "verified_transaction": "Verifizierte Transaktion",
+    "clear": "Löschen",
+    "bank_transactions": "Transaktionen",
+    "submit_all": "Alle senden",
+    "pending": "Ausstehend",
+    "no_transactions_yet": "Noch keine Transaktionen",
+    "already_added": "Bereits hinzugefügt"
   },
   "account": {
     "title": "Konto",
@@ -328,6 +335,20 @@
     "edit_name": {
       "title": "Namen bearbeiten",
       "placeholder": "Name eingeben"
+    },
+    "choose_bank_provider": "Bankanbieter auswählen",
+    "select_bank_provider": "Bankanbieter auswählen",
+    "search_bank": "Bank suchen",
+    "no_bank_providers_found": "Keine Bankanbieter gefunden",
+    "to_bank": "an die Bank",
+    "reconnect": "Wieder verbinden",
+    "connect": "Verbinden",
+    "plaid": {
+      "connecting_to_bank": "Verbinde mit der Plaid...",
+      "connect_to_bank": "Verbinde mit der Plaid",
+      "bank_connected_successfully": "Bank erfolgreich verbunden",
+      "bank_connection_failed": "Fehler beim Verbinden mit der Bank",
+      "bank_connection_cancelled": "Verbindung mit der Bank abgebrochen"
     }
   }
 }

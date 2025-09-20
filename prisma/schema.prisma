@@ -46,6 +46,8 @@ model User {
     id                  Int                  @id @default(autoincrement())
     name                String?
     email               String?              @unique
+    obapiProviderId     String?
+    bankingId           String?
     emailVerified       DateTime?
     image               String?
     currency            String               @default("USD")
@@ -64,6 +66,16 @@ model User {
     addedExpenses       Expense[]            @relation("AddedByUser")
     deletedExpenses     Expense[]            @relation("DeletedByUser")
     updatedExpenses     Expense[]            @relation("UpdatedByUser")
+}
+
+model CachedBankData {
+    id              Int      @id @default(autoincrement())
+    obapiProviderId String   @unique
+    data            String
+    userId          Int
+    lastFetched     DateTime
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
 }
 
 model VerificationToken {
@@ -165,6 +177,7 @@ model Expense {
     conversionFrom          Expense?             @relation(name: "CurrencyConversion")
     expenseParticipants     ExpenseParticipant[]
     expenseNotes            ExpenseNote[]
+    transactionId       String?
 
     @@index([groupId])
     @@index([paidBy])

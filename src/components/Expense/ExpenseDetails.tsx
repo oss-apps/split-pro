@@ -17,6 +17,7 @@ import { Button } from '../ui/button';
 import { CategoryIcon } from '../ui/categoryIcons';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
+import { BadgeCheck } from 'lucide-react';
 
 type ExpenseDetailsOutput = NonNullable<inferRouterOutputs<ExpenseRouter>['getExpenseDetails']>;
 
@@ -61,6 +62,12 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
               <p className="text-sm text-gray-500">
                 {t('ui.added_by')} {displayName(expense.addedByUser, user.id, 'dativus')}{' '}
                 {t('ui.on')} {toUIDate(expense.createdAt, { year: true })}
+              </p>
+            )}
+            {expense.transactionId && (
+              <p className="flex gap-2 text-sm text-gray-500">
+                {t('ui.verified_transaction')}
+                <BadgeCheck className="h-4 w-4 text-emerald-500" />
               </p>
             )}
           </div>

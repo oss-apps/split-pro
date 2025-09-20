@@ -41,6 +41,7 @@ export async function createExpense(
     participants,
     expenseDate,
     fileKey,
+    transactionId,
     otherConversion,
   }: CreateExpense,
   currentUserId: number,
@@ -67,6 +68,7 @@ export async function createExpense(
         fileKey,
         addedBy: currentUserId,
         expenseDate,
+        transactionId: transactionId ?? '',
         conversionFrom: otherConversion
           ? {
               connect: {

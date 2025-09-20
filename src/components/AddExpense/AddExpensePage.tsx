@@ -297,7 +297,7 @@ export const AddOrEditExpensePage: React.FC<{
                       }
                       onClick={addExpense}
                     >
-                      {t('actions.submit')}
+                      {t('actions.save')}
                     </Button>
                   </div>
                 </div>

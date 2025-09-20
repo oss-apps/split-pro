@@ -1,0 +1,176 @@
+name: Publish DB image
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run the action on'
+        default: 'main'
+        required: true
+      major:
+        description: 'Postgres major version'
+        default: '16'
+        required: true
+      minor:
+        description: 'Postgres minor version'
+        default: '10'
+        required: true
+      base:
+        description: 'Postgres base image (e.g. alpine, bookworm, trixie)'
+        default: 'trixie'
+        required: true
+      is_latest:
+        description: 'Is this the latest version'
+        default: false
+        required: true
+        type: boolean
+
+jobs:
+  build_and_publish_db_images:
+    name: Build and publish DB images
+    runs-on: ${{ matrix.os }}
+    permissions:
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - warp-ubuntu-latest-x64-2x
+          - warp-ubuntu-latest-arm64-2x
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build the docker image
+        env:
+          BUILD_PLATFORM: ${{ matrix.os == 'warp-ubuntu-latest-arm64-2x' && 'arm64' || 'amd64' }}
+        run: |
+          POSTGRES_MAJOR="${{ github.event.inputs.major }}"
+          POSTGRES_MINOR="${{ github.event.inputs.minor }}";
+          POSTGRES_BASE="${{ github.event.inputs.base }}"
+          DB_VERSION="${{ github.event.inputs.major }}.${{ github.event.inputs.minor }}-${{ github.event.inputs.base }}"
+          GIT_SHA="$(git rev-parse HEAD)"
+
+          docker build \
+            --progress=plain \
+            -t "ossapps/postgres-$BUILD_PLATFORM:$GIT_SHA" \
+            -t "ossapps/postgres-$BUILD_PLATFORM:$DB_VERSION" \
+            -t "ghcr.io/oss-apps/postgres-$BUILD_PLATFORM:$GIT_SHA" \
+            -t "ghcr.io/oss-apps/postgres-$BUILD_PLATFORM:$DB_VERSION" \
+            --build-arg POSTGRES_MAJOR=$POSTGRES_MAJOR \
+            --build-arg POSTGRES_MINOR=$POSTGRES_MINOR \
+            --build-arg POSTGRES_BASE=$POSTGRES_BASE \
+            -f docker/postgres/Dockerfile \
+            .
+          
+          if [ "${{ github.event.inputs.is_latest }}" = "true" ]; then
+            docker tag "ossapps/postgres-$BUILD_PLATFORM:$GIT_SHA" "ossapps/postgres-$BUILD_PLATFORM:latest"
+            docker tag "ossapps/postgres-$BUILD_PLATFORM:$DB_VERSION" "ossapps/postgres-$BUILD_PLATFORM:latest"
+            docker tag "ghcr.io/oss-apps/postgres-$BUILD_PLATFORM:$GIT_SHA" "ghcr.io/oss-apps/postgres-$BUILD_PLATFORM:latest"
+            docker tag "ghcr.io/oss-apps/postgres-$BUILD_PLATFORM:$DB_VERSION" "ghcr.io/oss-apps/postgres-$BUILD_PLATFORM:latest"
+          fi
+
+      - name: Push the docker image to DockerHub
+        run: docker push --all-tags "ossapps/postgres-$BUILD_PLATFORM"
+        env:
+          BUILD_PLATFORM: ${{ matrix.os == 'warp-ubuntu-latest-arm64-2x' && 'arm64' || 'amd64' }}
+
+      - name: Push the docker image to GitHub Container Registry
+        run: docker push --all-tags "ghcr.io/oss-apps/postgres-$BUILD_PLATFORM"
+        env:
+          BUILD_PLATFORM: ${{ matrix.os == 'warp-ubuntu-latest-arm64-2x' && 'arm64' || 'amd64' }}
+
+  create_and_publish_manifest:
+    name: Create and publish manifest
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    needs: build_and_publish_db_images
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and push DockerHub manifest
+        run: |
+          DB_VERSION="${{ github.event.inputs.major }}.${{ github.event.inputs.minor }}-${{ github.event.inputs.base }}"
+          GIT_SHA="$(git rev-parse HEAD)"
+
+          docker manifest create \
+            ossapps/postgres:$DB_VERSION \
+            --amend ossapps/postgres-amd64:$DB_VERSION \
+            --amend ossapps/postgres-arm64:$DB_VERSION \
+
+          docker manifest create \
+            ossapps/postgres:$GIT_SHA \
+            --amend ossapps/postgres-amd64:$GIT_SHA \
+            --amend ossapps/postgres-arm64:$GIT_SHA \
+
+          docker manifest push ossapps/postgres:$DB_VERSION
+          docker manifest push ossapps/postgres:$GIT_SHA
+
+      - name: Create and push Github Container Registry manifest
+        run: |
+          DB_VERSION="${{ github.event.inputs.major }}.${{ github.event.inputs.minor }}-${{ github.event.inputs.base }}"
+          GIT_SHA="$(git rev-parse HEAD)"
+
+          docker manifest create \
+            ghcr.io/oss-apps/postgres:$DB_VERSION \
+            --amend ghcr.io/oss-apps/postgres-amd64:$DB_VERSION \
+            --amend ghcr.io/oss-apps/postgres-arm64:$DB_VERSION \
+
+          docker manifest create \
+            ghcr.io/oss-apps/postgres:$GIT_SHA \
+            --amend ghcr.io/oss-apps/postgres-amd64:$GIT_SHA \
+            --amend ghcr.io/oss-apps/postgres-arm64:$GIT_SHA \
+
+          docker manifest push ghcr.io/oss-apps/postgres:$CHANNEL
+          docker manifest push ghcr.io/oss-apps/postgres:$GIT_SHA
+
+      - name: Create and push "latest" tag if applicable
+        if: ${{ github.event.inputs.is_latest == true }}
+        run: |
+          docker manifest create \
+            ossapps/postgres:latest \
+            --amend ossapps/postgres-amd64:latest \
+            --amend ossapps/postgres-arm64:latest \
+
+          docker manifest create \
+            ghcr.io/oss-apps/postgres:latest \
+            --amend ghcr.io/oss-apps/postgres-amd64:latest \
+            --amend ghcr.io/oss-apps/postgres-arm64:latest \
+
+          docker manifest push ossapps/postgres:latest
+          docker manifest push ghcr.io/oss-apps/postgres:latest

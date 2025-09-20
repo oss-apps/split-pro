@@ -57,16 +57,17 @@ model User {
     groups              Group[]
     associatedGroups    GroupUser[]
     expenseParticipants ExpenseParticipant[]
+    createdRecurrences  ExpenseRecurrence[]
     expenseNotes        ExpenseNote[]
-    userBalances        Balance[]            @relation("UserBalance")
-    cachedBankData      CachedBankData[]     @relation("UserCachedBankData")
-    friendBalances      Balance[]            @relation("FriendBalance")
-    groupUserBalances   GroupBalance[]       @relation("GroupUserBalance")
-    groupFriendBalances GroupBalance[]       @relation("GroupFriendBalance")
-    paidExpenses        Expense[]            @relation("PaidByUser")
-    addedExpenses       Expense[]            @relation("AddedByUser")
-    deletedExpenses     Expense[]            @relation("DeletedByUser")
-    updatedExpenses     Expense[]            @relation("UpdatedByUser")
+    userBalances        Balance[]            @relation(name: "UserBalance")
+    cachedBankData      CachedBankData[]     @relation(name: "UserCachedBankData")
+    friendBalances      Balance[]            @relation(name: "FriendBalance")
+    groupUserBalances   GroupBalance[]       @relation(name: "GroupUserBalance")
+    groupFriendBalances GroupBalance[]       @relation(name: "GroupFriendBalance")
+    paidExpenses        Expense[]            @relation(name: "PaidByUser")
+    addedExpenses       Expense[]            @relation(name: "AddedByUser")
+    deletedExpenses     Expense[]            @relation(name: "DeletedByUser")
+    updatedExpenses     Expense[]            @relation(name: "UpdatedByUser")
 }
 
 model CachedBankData {
@@ -170,6 +171,7 @@ model Expense {
     deletedBy               Int?
     updatedBy               Int?
     otherConversion         String?              @unique
+    recurrenceId            Int?
     group                   Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
     paidByUser              User                 @relation(name: "PaidByUser", fields: [paidBy], references: [id], onDelete: Cascade)
     addedByUser             User                 @relation(name: "AddedByUser", fields: [addedBy], references: [id], onDelete: Cascade)
@@ -177,6 +179,7 @@ model Expense {
     updatedByUser           User?                @relation(name: "UpdatedByUser", fields: [updatedBy], references: [id], onDelete: SetNull)
     conversionTo            Expense?             @relation(name: "CurrencyConversion", fields: [otherConversion], references: [id], onDelete: Cascade)
     conversionFrom          Expense?             @relation(name: "CurrencyConversion")
+    recurrence              ExpenseRecurrence?
     expenseParticipants     ExpenseParticipant[]
     expenseNotes            ExpenseNote[]
     transactionId           String?
@@ -203,6 +206,24 @@ model ExpenseNote {
     createdAt   DateTime @default(now())
     createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
     expense     Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+}
+
+enum RecurrenceInterval {
+    DAILY
+    WEEKLY
+    MONTHLY
+    YEARLY
+}
+
+model ExpenseRecurrence {
+    id             Int      @id @default(autoincrement())
+    expenseId      String   @unique
+    repeatEvery    Int
+    repeatInterval RecurrenceInterval
+    createdById    Int
+    jobId          BigInt
+    createdBy      User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
+    expense        Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
 }
 
 model CurrencyRateCache {

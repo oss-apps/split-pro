@@ -14,12 +14,14 @@ export type CreateExpense = Omit<
   | 'fileKey'
   | 'transactionId'
   | 'otherConversion'
+  | 'recurrenceId'
 > & {
   expenseDate?: Date;
   fileKey?: string;
   expenseId?: string;
   transactionId?: string;
   otherConversion?: string;
+  recurrenceId?: string;
   participants: Omit<ExpenseParticipant, 'expenseId'>[];
 };
 

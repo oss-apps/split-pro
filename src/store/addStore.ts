@@ -15,22 +15,24 @@ export interface AddExpenseState {
   amount: bigint;
   amountStr: string;
   isNegative: boolean;
-  currentUser: User | undefined;
+  currentUser?: User;
   splitType: SplitType;
-  group: Group | undefined;
+  group?: Group;
   participants: Participant[];
   splitShares: SplitShares;
   description: string;
   currency: CurrencyCode;
   category: string;
   nameOrEmail: string;
-  paidBy: User | undefined;
+  paidBy?: User;
   showFriends: boolean;
   isFileUploading: boolean;
   fileKey?: string;
   canSplitScreenClosed: boolean;
   splitScreenOpen: boolean;
-  expenseDate: Date | undefined;
+  expenseDate?: Date;
+  repeatInterval?: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+  repeatEvery: number;
   transactionId?: string;
   multipleTransactions: TransactionAddInputModel[];
   isTransactionLoading: boolean;
@@ -58,6 +60,9 @@ export interface AddExpenseState {
     setTransactionId: (transactionId?: string) => void;
     setMultipleTransactions: (multipleTransactions: TransactionAddInputModel[]) => void;
     setIsTransactionLoading: (isTransactionLoading: boolean) => void;
+    setRepeatInterval: (repeatInterval: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY') => void;
+    setRepeatEvery: (repeatEvery: number) => void;
+    unsetRepeat: () => void;
   };
 }
 
@@ -67,7 +72,6 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   isNegative: false,
   splitType: SplitType.EQUAL,
   participants: [],
-  group: undefined,
   splitShares: {
     [SplitType.EQUAL]: {},
     [SplitType.PERCENTAGE]: {},
@@ -79,15 +83,12 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   currency: 'USD',
   category: DEFAULT_CATEGORY,
   nameOrEmail: '',
-  paidBy: undefined,
-  currentUser: undefined,
   description: '',
   showFriends: true,
   isFileUploading: false,
-  fileKey: undefined,
   canSplitScreenClosed: true,
   splitScreenOpen: false,
-  expenseDate: undefined,
+  repeatEvery: 1,
   multipleTransactions: [],
   isTransactionLoading: false,
   actions: {
@@ -285,6 +286,9 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     setTransactionId: (transactionId) => set({ transactionId }),
     setMultipleTransactions: (multipleTransactions) => set({ multipleTransactions }),
     setIsTransactionLoading: (isTransactionLoading) => set({ isTransactionLoading }),
+    setRepeatInterval: (repeatInterval) => set({ repeatInterval }),
+    setRepeatEvery: (repeatEvery) => set({ repeatEvery }),
+    unsetRepeat: () => set({ repeatInterval: undefined, repeatEvery: 1 }),
   },
 }));
 

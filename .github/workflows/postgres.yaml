@@ -37,6 +37,11 @@ jobs:
         os:
           - warp-ubuntu-latest-x64-2x
           - warp-ubuntu-latest-arm64-2x
+    env:
+      POSTGRES_MAJOR: ${{ github.event.inputs.major }}
+      POSTGRES_MINOR: ${{ github.event.inputs.minor }}
+      POSTGRES_BASE: ${{ github.event.inputs.base }}
+      DB_VERSION: ${{ github.event.inputs.major }}.${{ github.event.inputs.minor }}-${{ github.event.inputs.base }}
 
     steps:
       - uses: actions/checkout@v4
@@ -63,10 +68,6 @@ jobs:
         env:
           BUILD_PLATFORM: ${{ matrix.os == 'warp-ubuntu-latest-arm64-2x' && 'arm64' || 'amd64' }}
         run: |
-          POSTGRES_MAJOR="${{ github.event.inputs.major }}"
-          POSTGRES_MINOR="${{ github.event.inputs.minor }}";
-          POSTGRES_BASE="${{ github.event.inputs.base }}"
-          DB_VERSION="${{ github.event.inputs.major }}.${{ github.event.inputs.minor }}-${{ github.event.inputs.base }}"
           GIT_SHA="$(git rev-parse HEAD)"
 
           docker build \
@@ -125,7 +126,6 @@ jobs:
 
       - name: Create and push DockerHub manifest
         run: |
-          DB_VERSION="${{ github.event.inputs.major }}.${{ github.event.inputs.minor }}-${{ github.event.inputs.base }}"
           GIT_SHA="$(git rev-parse HEAD)"
 
           docker manifest create \
@@ -160,7 +160,7 @@ jobs:
           docker manifest push ghcr.io/oss-apps/postgres:$GIT_SHA
 
       - name: Create and push "latest" tag if applicable
-        if: ${{ github.event.inputs.is_latest == true }}
+        if: github.event.inputs.is_latest == 'true'
         run: |
           docker manifest create \
             ossapps/postgres:latest \

@@ -2,7 +2,7 @@ name: split-pro-dev
 
 services:
   postgres:
-    image: postgres:16
+    image: ossapps/postgres
     container_name: ${POSTGRES_CONTAINER_NAME:-splitpro-db}
     restart: always
     environment:

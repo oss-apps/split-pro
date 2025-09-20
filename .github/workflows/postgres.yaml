@@ -160,7 +160,7 @@ jobs:
           docker manifest push ghcr.io/oss-apps/postgres:$GIT_SHA
 
       - name: Create and push "latest" tag if applicable
-        if: ${{ github.event.inputs.is_latest == true }}
+        if: github.event.inputs.is_latest == 'true'
         run: |
           docker manifest create \
             ossapps/postgres:latest \

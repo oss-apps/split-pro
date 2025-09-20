@@ -156,7 +156,7 @@ jobs:
             --amend ghcr.io/oss-apps/postgres-amd64:$GIT_SHA \
             --amend ghcr.io/oss-apps/postgres-arm64:$GIT_SHA \
 
-          docker manifest push ghcr.io/oss-apps/postgres:$CHANNEL
+          docker manifest push ghcr.io/oss-apps/postgres:$DB_VERSION
           docker manifest push ghcr.io/oss-apps/postgres:$GIT_SHA
 
       - name: Create and push "latest" tag if applicable

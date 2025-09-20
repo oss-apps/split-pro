@@ -15,6 +15,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    command: >
+      postgres
+      -c shared_preload_libraries=pg_cron
+      -c cron.database_name=${POSTGRES_DB:-splitpro}
+      -c cron.timezone=${TZ:-UTC}
     # ports:
     #   - "5432:5432"
     env_file: .env

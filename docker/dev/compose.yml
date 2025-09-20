@@ -12,6 +12,11 @@ services:
       - POSTGRES_PORT=${POSTGRES_PORT:-5432}
     volumes:
       - database:/var/lib/postgresql/data
+    command: >
+      postgres
+      -c shared_preload_libraries=pg_cron
+      -c cron.database_name=${POSTGRES_DB:-splitpro}
+      -c cron.timezone=${TZ:-UTC}
     ports:
       - '${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}'
     command: >

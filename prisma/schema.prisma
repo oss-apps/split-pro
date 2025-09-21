@@ -154,7 +154,7 @@ enum SplitType {
 }
 
 model Expense {
-    id                      String               @id @default(cuid())
+    id                      String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
     paidBy                  Int
     addedBy                 Int
     name                    String
@@ -170,7 +170,7 @@ model Expense {
     deletedAt               DateTime?
     deletedBy               Int?
     updatedBy               Int?
-    otherConversion         String?              @unique
+    otherConversion         String?              @unique @db.Uuid
     recurrenceId            Int?
     group                   Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
     paidByUser              User                 @relation(name: "PaidByUser", fields: [paidBy], references: [id], onDelete: Cascade)
@@ -189,7 +189,7 @@ model Expense {
 }
 
 model ExpenseParticipant {
-    expenseId String
+    expenseId String  @db.Uuid
     userId    Int
     amount    BigInt
     user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -200,7 +200,7 @@ model ExpenseParticipant {
 
 model ExpenseNote {
     id          String   @id @default(cuid())
-    expenseId   String
+    expenseId   String   @db.Uuid
     note        String
     createdById Int
     createdAt   DateTime @default(now())
@@ -217,7 +217,7 @@ enum RecurrenceInterval {
 
 model ExpenseRecurrence {
     id             Int      @id @default(autoincrement())
-    expenseId      String   @unique
+    expenseId      String   @unique @db.Uuid
     repeatEvery    Int
     repeatInterval RecurrenceInterval
     createdById    Int

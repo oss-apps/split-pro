@@ -25,19 +25,15 @@ It currently has most of the important features.
 - Import from splitwise
 - simplify group debts
 - community translations, feel free to add your language!
-- **UNRELEASED** currency conversion, quickly convert expenses and group balances
+- **UPCOMING** currency conversion, quickly convert expenses and group balances
+- **UPCOMING** recurrent transactions
+- **UPCOMING** bank account transaction integration
 
 **More features coming every day**
 
 ## Versions
 
-Split Pro is aimed for self hosting mostly. To get the most recent features you can build an image from source. Stabilized changes are released as Docker images, while we also have a not so often updated cloud instance for you to try:
-
-<p align="center">
-    <a href="https://splitpro.app"><strong>To our App »</strong></a>
-    <br />
-  </p>
-</p>
+Split Pro is for self hosting. To get the most recent features you can build an image from source. Stabilized changes which you can see in GitHub releases are available as Docker images on DockerHub and ghcr. In the past we used to have a community hosted instance at https://splitpro.app, but it is no longer maintained and stuck at version `1.3.4`
 
 ---
 

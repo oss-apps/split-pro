@@ -17,7 +17,7 @@ A clear and concise description of what you want to happen.
 A clear and concise description of any alternative solutions or features you've considered.
 
 **App version**
-Please note that the cloud version might be out of date and the feature might exist on the main branch.
+Do not post issues about splitpro.app! It is no longer maintained and a lot of its issues have been fixed. Please post here the tagged release you are using (1.5.3, 1.4.0 etc) or the commit hash if building from source.
 
 **Additional context**
 Add any other context or screenshots about the feature request here.

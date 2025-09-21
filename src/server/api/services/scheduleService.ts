@@ -36,10 +36,11 @@ export const createRecurringExpenseJob = async (
   const procedure = '';
 
   await db.$executeRaw`
-    SELECT cron.schedule(${expenseId}, ${cronExpression}, $$
-    INSERT INTO 
-    $$);
-  `;
+SELECT cron.schedule(
+  ${expenseId}, 
+  ${cronExpression}, 
+  $$ SELECT duplicate_expense_with_participants(${expenseId}::UUID); $$
+);`;
 };
 
 const getCronExpression = (date: Date, repeatEvery: number, repeatInterval: RecurrenceInterval) => {

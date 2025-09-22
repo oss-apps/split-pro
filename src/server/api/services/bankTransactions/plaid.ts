@@ -116,7 +116,11 @@ export class PlaidService extends AbstractBankProvider {
         obapiProviderId: accessToken,
         data: JSON.stringify(formattedTransactions),
         lastFetched: new Date(),
-        userId,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
       },
     });
 

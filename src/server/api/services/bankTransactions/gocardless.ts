@@ -102,7 +102,11 @@ export class GoCardlessService extends AbstractBankProvider {
         obapiProviderId: accountId ?? '',
         data: JSON.stringify(formattedTransactions),
         lastFetched: new Date(),
-        userId,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
       },
     });
 

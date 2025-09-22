@@ -179,7 +179,7 @@ model Expense {
     conversionFrom          Expense?             @relation(name: "CurrencyConversion")
     expenseParticipants     ExpenseParticipant[]
     expenseNotes            ExpenseNote[]
-    transactionId       String?
+    transactionId           String?
 
     @@index([groupId])
     @@index([paidBy])

@@ -45,7 +45,9 @@
     "import": "Importar",
     "add_expense": "Adicionar despesa",
     "edit_expense": "Editar despesa",
-    "settle_up": "Acertar contas"
+    "settle_up": "Acertar contas",
+    "reconnect": "Reconectar",
+    "connect": "Conectar"
   },
   "currency_conversion": {
     "title": "Conversão de moeda",
@@ -328,6 +330,18 @@
     "edit_name": {
       "title": "Editar nome",
       "placeholder": "Inserir nome"
+    }
+  },
+  "bank_transactions": {
+    "choose_bank_provider": "Selecionar fornecedor de conta",
+    "select_bank_provider": "Selecionar fornecedor de conta",
+    "search_bank": "Pesquisar conta",
+    "no_bank_providers_found": "Nenhum fornecedor de conta encontrado",
+    "to_bank": "para a conta",
+    "plaid": {
+      "bank_connected_successfully": "Conta conectada com sucesso",
+      "bank_connection_failed": "Falha ao conectar à conta",
+      "bank_connection_cancelled": "Conexão à conta cancelada"
     }
   }
 }

@@ -2,9 +2,7 @@ name: split-pro-prod
 
 services:
   postgres:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ossapps/postgres
     container_name: ${POSTGRES_CONTAINER_NAME:-splitpro-db}
     restart: always
     environment:
@@ -26,6 +24,7 @@ services:
       postgres
       -c shared_preload_libraries=pg_cron
       -c cron.database_name=${POSTGRES_DB:-splitpro}
+      -c cron.timezone=${TZ:-UTC}
 
   splitpro:
     image: ossapps/splitpro:latest

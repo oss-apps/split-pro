@@ -37,7 +37,9 @@
     "fetch": "Hämta",
     "add_expense": "Lägg till utgift",
     "edit_expense": "Redigera utgift",
-    "settle_up": "Gör kvitt"
+    "settle_up": "Gör kvitt",
+    "reconnect": "Återanslut",
+    "connect": "Anslut"
   },
   "currency_conversion": {
     "title": "Valutaomvandling",
@@ -270,7 +272,6 @@
       "are_settled_up": "är kvitt",
       "is_settled_up": "är kvitt"
     },
-    "verified_transaction": "Verifierad transaktion",
     "clear": "Rensa",
     "bank_transactions": "Transaktioner",
     "submit_all": "Skicka alla",
@@ -332,17 +333,15 @@
     "edit_name": {
       "title": "Redigera namn",
       "placeholder": "Ange namn"
-    },
+    }
+  },
+  "bank_transactions": {
     "choose_bank_provider": "Välj bank",
     "select_bank_provider": "Välj bank",
     "search_bank": "Sök bank",
     "no_bank_providers_found": "Ingen bank hittades",
     "to_bank": "bank",
-    "reconnect": "Återanslut",
-    "connect": "Anslut",
     "plaid": {
-      "connecting_to_bank": "Ansluter till Plaid...",
-      "connect_to_bank": "Anslut till Plaid",
       "bank_connected_successfully": "Bank ansluten",
       "bank_connection_failed": "Kunde inte ansluta till banken",
       "bank_connection_cancelled": "Anslutning till banken avbruten"

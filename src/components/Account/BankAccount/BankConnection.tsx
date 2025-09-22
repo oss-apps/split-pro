@@ -1,24 +1,22 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { ChevronRight, CreditCard } from 'lucide-react';
-import { useTranslation } from 'next-i18next';
-import { Button } from '~/components/ui/button';
+import React, { useCallback } from 'react';
 import { BankAccountSelect } from './BankAccountSelect';
 import { PlaidLink } from './PlaidLink';
 import { api } from '~/utils/api';
+import type { ButtonProps } from '~/components/ui/button';
 
 interface BankConnectionProps {
   bankConnectionEnabled: boolean;
   bankConnection: string | null;
+  children: React.ReactElement<ButtonProps>;
 }
 
 export const BankConnection: React.FC<BankConnectionProps> = ({
   bankConnectionEnabled,
   bankConnection,
+  children,
 }) => {
-  const { t } = useTranslation();
   const userQuery = api.user.me.useQuery();
   const connectToBank = api.bankTransactions.connectToBank.useMutation();
-  const [plaidLinkToken, setPlaidLinkToken] = useState<string | null>(null);
 
   const onConnectToBank = useCallback(async () => {
     if (bankConnection === 'GOCARDLESS') {
@@ -32,19 +30,14 @@ export const BankConnection: React.FC<BankConnectionProps> = ({
     } else if (bankConnection === 'PLAID') {
       const res = await connectToBank.mutateAsync();
       if (res?.authLink) {
-        setPlaidLinkToken(res.authLink);
+        return res.authLink;
       }
     }
   }, [connectToBank, userQuery.data?.bankingId, bankConnection]);
 
-  const onPlaidSuccess = useCallback(() => {
-    setPlaidLinkToken(null);
+  const fetchUser = useCallback(() => {
     userQuery.refetch().catch(console.error);
   }, [userQuery]);
-
-  const onPlaidExit = useCallback(() => {
-    setPlaidLinkToken(null);
-  }, []);
 
   if (!bankConnectionEnabled) {
     return null;
@@ -56,25 +49,14 @@ export const BankConnection: React.FC<BankConnectionProps> = ({
         <BankAccountSelect bankConnectionEnabled={bankConnectionEnabled} />
       )}
 
-      {bankConnection === 'PLAID' && plaidLinkToken && (
-        <PlaidLink linkToken={plaidLinkToken} onSuccess={onPlaidSuccess} onExit={onPlaidExit} />
-      )}
-
-      {(bankConnection === 'GOCARDLESS' ? userQuery.data?.bankingId : !plaidLinkToken) && (
-        <Button
-          onClick={onConnectToBank}
-          variant="ghost"
-          className="text-md hover:text-foreground/80 w-full justify-between px-0"
-        >
-          <div className="flex items-center gap-4">
-            <CreditCard className="h-5 w-5 text-teal-500" />
-            <p>
-              {userQuery.data?.obapiProviderId ? t('account.reconnect') : t('account.connect')}{' '}
-              {t('account.to_bank')}
-            </p>
-          </div>
-          <ChevronRight className="h-6 w-6 text-gray-500" />
-        </Button>
+      {bankConnection === 'PLAID' ? (
+        <PlaidLink onConnect={onConnectToBank} onSuccess={fetchUser}>
+          {children}
+        </PlaidLink>
+      ) : (
+        bankConnection === 'GOCARDLESS' &&
+        userQuery.data?.bankingId &&
+        React.cloneElement(children, { onClick: onConnectToBank } as Partial<ButtonProps>)
       )}
     </>
   );

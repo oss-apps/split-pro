@@ -1,5 +1,6 @@
 import { SiGithub, SiX } from '@icons-pack/react-simple-icons';
 import {
+  CreditCard,
   Download,
   DownloadCloud,
   FileDown,
@@ -119,7 +120,13 @@ const AccountPage: NextPageWithUser<{
           <BankConnection
             bankConnectionEnabled={bankConnectionEnabled}
             bankConnection={bankConnection}
-          />
+          >
+            <AccountButton>
+              <CreditCard className="size-5 text-teal-500" />
+              {userQuery.data?.obapiProviderId ? t('actions.reconnect') : t('actions.connect')}{' '}
+              {t('bank_transactions.to_bank')}
+            </AccountButton>
+          </BankConnection>
 
           {isCloud && (
             <AccountButton href="https://twitter.com/KM_Koushik_">

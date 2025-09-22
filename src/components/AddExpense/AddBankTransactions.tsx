@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import React, { useCallback } from 'react';
-import { isCurrencyCode } from '~/lib/currency';
 import { calculateParticipantSplit, useAddExpenseStore } from '~/store/addStore';
 import type { TransactionAddInputModel } from '~/types';
 import { api } from '~/utils/api';
@@ -10,7 +9,7 @@ const AddBankTransactions: React.FC<{
   clearFields: () => void;
   onUpdateAmount: (amount: string) => void;
   bankConnectionEnabled: boolean;
-}> = ({ clearFields, onUpdateAmount, bankConnectionEnabled }) => {
+}> = ({ clearFields, bankConnectionEnabled }) => {
   const participants = useAddExpenseStore((s) => s.participants);
   const group = useAddExpenseStore((s) => s.group);
   const category = useAddExpenseStore((s) => s.category);
@@ -22,16 +21,8 @@ const AddBankTransactions: React.FC<{
   const multipleTransactions = useAddExpenseStore((s) => s.multipleTransactions);
   const isTransactionLoading = useAddExpenseStore((s) => s.isTransactionLoading);
 
-  const {
-    setCurrency,
-    setDescription,
-    resetState,
-    setSplitScreenOpen,
-    setExpenseDate,
-    setTransactionId,
-    setMultipleTransactions,
-    setIsTransactionLoading,
-  } = useAddExpenseStore((s) => s.actions);
+  const { resetState, setSplitScreenOpen, setMultipleTransactions, setIsTransactionLoading } =
+    useAddExpenseStore((s) => s.actions);
 
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
 
@@ -116,21 +107,6 @@ const AddBankTransactions: React.FC<{
     setMultipleTransactions,
   ]);
 
-  const addViaBankTransaction = useCallback(
-    (obj: TransactionAddInputModel) => {
-      setExpenseDate(obj.date);
-      setDescription(obj.description);
-      if (isCurrencyCode(obj.currency)) {
-        setCurrency(obj.currency);
-      } else {
-        console.warn(`Invalid currency code: ${obj.currency}`);
-      }
-      onUpdateAmount(obj.amount);
-      setTransactionId(obj.transactionId ?? '');
-    },
-    [setExpenseDate, setDescription, setCurrency, onUpdateAmount, setTransactionId],
-  );
-
   const handleSetMultipleTransactions = useCallback(
     (a: TransactionAddInputModel[]) => {
       clearFields();
@@ -141,7 +117,6 @@ const AddBankTransactions: React.FC<{
 
   return (
     <BankingTransactionList
-      add={addViaBankTransaction}
       addMultipleExpenses={addMultipleExpenses}
       multipleTransactions={multipleTransactions}
       setMultipleTransactions={handleSetMultipleTransactions}

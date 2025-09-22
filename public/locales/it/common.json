@@ -47,7 +47,9 @@
     "import": "Importa",
     "add_expense": "Aggiungi spesa",
     "edit_expense": "Modifica spesa",
-    "settle_up": "Regola"
+    "settle_up": "Regola",
+    "reconnect": "Riconnetti",
+    "connect": "Connetti"
   },
   "currency_conversion": {
     "title": "Conversione valuta",
@@ -274,7 +276,6 @@
       "are_settled_up": "siete pari",
       "is_settled_up": "è pari"
     },
-    "verified_transaction": "Transazione verificata",
     "clear": "Cancella",
     "bank_transactions": "Transazioni bancarie",
     "submit_all": "Invia tutto",
@@ -336,17 +337,15 @@
     "edit_name": {
       "title": "Modifica nome",
       "placeholder": "Inserisci il nome"
-    },
+    }
+  },
+  "bank_transactions": {
     "to_bank": "al conto",
-    "reconnect": "Riconnetti",
-    "connect": "Connetti",
     "choose_bank_provider": "Scegli il provider del conto",
     "select_bank_provider": "Seleziona il provider del conto",
     "search_bank": "Cerca il conto",
     "no_bank_providers_found": "Nessun provider del conto trovato",
     "plaid": {
-      "connecting_to_bank": "Connettendo con la Plaid...",
-      "connect_to_bank": "Connetti con la Plaid",
       "bank_connected_successfully": "Banca connessa con successo",
       "bank_connection_failed": "Errore nella connessione con la banca",
       "bank_connection_cancelled": "Connessione con la banca annullata"

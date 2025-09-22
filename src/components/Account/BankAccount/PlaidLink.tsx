@@ -1,21 +1,53 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
 import { api } from '~/utils/api';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
-import { Button } from '~/components/ui/button';
+import type { ButtonProps } from '~/components/ui/button';
 
 interface PlaidLinkProps {
-  linkToken: string;
+  onConnect: () => Promise<string | undefined>;
   onSuccess?: () => void;
-  onExit?: () => void;
+  children: React.ReactElement<ButtonProps>;
 }
 
-export const PlaidLink: React.FC<PlaidLinkProps> = ({ linkToken, onSuccess, onExit }) => {
+const usePlaidLinkHook = (
+  onConnect: () => Promise<string | undefined>,
+  onPlaidSuccess: (publicToken: string, _metadata: any) => void,
+  onPlaidExit: (err: any, _metadata: any) => void,
+): { open: () => void; ready: boolean } => {
+  const [linkToken, setLinkToken] = useState<string | null>(null);
+  const requestedRef = useRef(false);
+  const { open, ready } = usePlaidLink({
+    token: linkToken,
+    onSuccess: onPlaidSuccess,
+    onExit: onPlaidExit,
+  });
+
+  useEffect(() => {
+    const preFunction = async () => {
+      const authToken = await onConnect();
+      if (authToken) {
+        setLinkToken(authToken);
+      }
+    };
+
+    if (!linkToken && !requestedRef.current) {
+      requestedRef.current = true;
+      void preFunction();
+    }
+  }, [linkToken, onConnect]);
+
+  return {
+    open: open as () => void,
+    ready,
+  };
+};
+
+export const PlaidLink: React.FC<PlaidLinkProps> = ({ onConnect, onSuccess, children }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const exchangePublicToken = api.bankTransactions.exchangePublicToken.useMutation();
-  const utils = api.useUtils();
 
   const onPlaidSuccess = useCallback(
     async (publicToken: string, _metadata: any) => {
@@ -23,7 +55,6 @@ export const PlaidLink: React.FC<PlaidLinkProps> = ({ linkToken, onSuccess, onEx
       try {
         await exchangePublicToken.mutateAsync(publicToken);
         toast.success(t('account.plaid.bank_connected_successfully'));
-        await utils.user.me.refetch();
         onSuccess?.();
       } catch (error) {
         console.error('Error exchanging public token:', error);
@@ -32,7 +63,7 @@ export const PlaidLink: React.FC<PlaidLinkProps> = ({ linkToken, onSuccess, onEx
         setIsLoading(false);
       }
     },
-    [exchangePublicToken, utils.user.me, onSuccess, t],
+    [exchangePublicToken, onSuccess, t],
   );
 
   const onPlaidExit = useCallback(
@@ -41,40 +72,14 @@ export const PlaidLink: React.FC<PlaidLinkProps> = ({ linkToken, onSuccess, onEx
         console.error('Plaid Link error:', err);
         toast.error(t('account.plaid.bank_connection_cancelled'));
       }
-      onExit?.();
     },
-    [onExit, t],
+    [t],
   );
 
-  const config = {
-    token: linkToken,
-    onSuccess: onPlaidSuccess,
-    onExit: onPlaidExit,
-  };
+  const { open, ready } = usePlaidLinkHook(onConnect, onPlaidSuccess, onPlaidExit);
 
-  const { open, ready } = usePlaidLink(config);
-
-  const handleClick = useCallback(() => {
-    if (ready && !isLoading) {
-      open();
-    }
-  }, [open, ready, isLoading]);
-
-  return (
-    <Button
-      onClick={handleClick}
-      variant="ghost"
-      disabled={!ready || isLoading}
-      className="text-md hover:text-foreground/80 w-full justify-between px-0"
-    >
-      <div className="flex items-center gap-4">
-        <div className="h-5 w-5 text-teal-500">
-          <div className="h-5 w-5 rounded bg-teal-500" />
-        </div>
-        <p>
-          {isLoading ? t('account.plaid.connecting_to_bank') : t('account.plaid.connect_to_bank')}
-        </p>
-      </div>
-    </Button>
-  );
+  return React.cloneElement(children, {
+    onClick: open,
+    disabled: !ready || isLoading || (children.props as ButtonProps).disabled,
+  } as Partial<ButtonProps>);
 };

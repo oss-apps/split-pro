@@ -5,21 +5,21 @@ import { Button } from '../../ui/button';
 import type { TransactionAddInputModel } from '~/types';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { BankTransactionItem } from './BankTransactionItem';
-import type { TransactionOutputItem } from '~/server/bankTransactionHelper';
+import type { TransactionOutputItem } from '~/types/bank.types';
+import { AppDrawer } from '~/components/ui/drawer';
+import { Landmark } from 'lucide-react';
 
 export type TransactionWithPendingStatus = TransactionOutputItem & {
   pending: boolean;
 };
 
 export const BankingTransactionList: React.FC<{
-  add: (obj: TransactionAddInputModel) => void;
   addMultipleExpenses: () => void;
   multipleTransactions: TransactionAddInputModel[];
   setMultipleTransactions: (a: TransactionAddInputModel[]) => void;
   isTransactionLoading: boolean;
   bankConnectionEnabled: boolean;
 }> = ({
-  add,
   addMultipleExpenses,
   multipleTransactions,
   setMultipleTransactions,
@@ -27,6 +27,8 @@ export const BankingTransactionList: React.FC<{
   bankConnectionEnabled,
 }) => {
   const { t } = useTranslationWithUtils();
+
+  const [open, setOpen] = React.useState(false);
 
   const userQuery = api.user.me.useQuery();
   const transactions = api.bankTransactions.getTransactions.useQuery(
@@ -69,7 +71,7 @@ export const BankingTransactionList: React.FC<{
   const transactionsArray = returnTransactionsArray();
 
   const onTransactionRowClick = useCallback(
-    (item: TransactionWithPendingStatus, multiple: boolean) => {
+    (item: TransactionWithPendingStatus) => {
       const transactionData = {
         date: new Date(item.bookingDate),
         amount: item.transactionAmount.amount.replace('-', ''),
@@ -78,65 +80,69 @@ export const BankingTransactionList: React.FC<{
         transactionId: item.transactionId,
       };
 
-      if (multiple) {
-        const isInMultipleTransactions = multipleTransactions?.some(
-          (cItem) => cItem.transactionId === item.transactionId,
-        );
+      const isInMultipleTransactions = multipleTransactions?.some(
+        (cItem) => cItem.transactionId === item.transactionId,
+      );
 
-        setMultipleTransactions(
-          isInMultipleTransactions
-            ? multipleTransactions.filter((cItem) => cItem.transactionId !== item.transactionId)
-            : [...multipleTransactions, transactionData],
-        );
-      } else {
-        if (alreadyAdded(item.transactionId)) {
-          return;
-        }
-        add(transactionData);
-        document.getElementById('mainlayout')?.scrollTo({ top: 0, behavior: 'instant' });
-      }
+      setMultipleTransactions(
+        isInMultipleTransactions
+          ? multipleTransactions.filter((cItem) => cItem.transactionId !== item.transactionId)
+          : [...multipleTransactions, transactionData],
+      );
     },
-    [multipleTransactions, setMultipleTransactions, add, alreadyAdded],
+    [multipleTransactions, setMultipleTransactions],
   );
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <p>{t('expense_details.bank_transactions')}</p>
-        <Button
-          variant="ghost"
-          className="text-primary px-0"
-          disabled={(multipleTransactions?.length || 0) === 0 || isTransactionLoading}
-          onClick={addMultipleExpenses}
-          loading={isTransactionLoading}
-        >
-          {t('expense_details.submit_all')}
-        </Button>
-      </div>
-      {transactions?.isLoading ? (
-        <div className="mt-10 flex justify-center">
-          <LoadingSpinner className="text-primary" />
-        </div>
-      ) : (
-        <>
-          {transactionsArray?.length === 0 && (
-            <div className="mt-[30vh] text-center text-gray-400">
-              {t('expense_details.no_transactions_yet')}
+    <AppDrawer
+      trigger={
+        <div className="flex w-full justify-center">
+          <Button
+            variant="outline"
+            className="text-md hover:text-foreground/80 justify-between rounded-full border-teal-500"
+          >
+            <div className="flex items-center gap-4">
+              <Landmark className="h-5 w-5 text-teal-500" />
+              {t('expense_details.bank_transactions')}
             </div>
-          )}
-          {transactionsArray.map((item, index) => (
-            <BankTransactionItem
-              key={item.transactionId}
-              index={index}
-              item={item}
-              alreadyAdded={alreadyAdded(item.transactionId)}
-              onTransactionRowClick={onTransactionRowClick}
-              groupName={returnGroupName(item.transactionId)}
-              multipleTransactions={multipleTransactions}
-            />
-          ))}
-        </>
-      )}
-    </div>
+          </Button>
+        </div>
+      }
+      title={t('expense_details.bank_transactions')}
+      open={open}
+      onOpenChange={setOpen}
+      className="h-[80vh]"
+      actionTitle={t('expense_details.submit_all')}
+      actionOnClick={addMultipleExpenses}
+      actionDisabled={(multipleTransactions?.length || 0) === 0 || isTransactionLoading}
+      shouldCloseOnAction
+    >
+      <div className="flex flex-col gap-4">
+        {transactions?.isLoading ? (
+          <div className="mt-10 flex justify-center">
+            <LoadingSpinner className="text-primary" />
+          </div>
+        ) : (
+          <>
+            {transactionsArray?.length === 0 && (
+              <div className="mt-[30vh] text-center text-gray-400">
+                {t('expense_details.no_transactions_yet')}
+              </div>
+            )}
+            {transactionsArray.map((item, index) => (
+              <BankTransactionItem
+                key={item.transactionId}
+                index={index}
+                item={item}
+                alreadyAdded={alreadyAdded(item.transactionId)}
+                onTransactionRowClick={onTransactionRowClick}
+                groupName={returnGroupName(item.transactionId)}
+                multipleTransactions={multipleTransactions}
+              />
+            ))}
+          </>
+        )}
+      </div>
+    </AppDrawer>
   );
 };

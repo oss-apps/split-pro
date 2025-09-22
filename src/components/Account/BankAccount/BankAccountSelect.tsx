@@ -40,17 +40,17 @@ export const BankAccountSelect = ({
         >
           <div className="flex items-center gap-4">
             <Landmark className="h-5 w-5 text-blue-500" />
-            <p>{t('account.choose_bank_provider')}</p>
+            <p>{t('bank_transactions.choose_bank_provider')}</p>
           </div>
           <ChevronRight className="h-6 w-6 text-gray-500" />
         </Button>
       }
-      title={t('account.select_bank_provider')}
+      title={t('bank_transactions.select_bank_provider')}
       className="h-[70vh]"
     >
       <Command className="h-[50vh]">
-        <CommandInput className="text-lg" placeholder={t('account.search_bank')} />
-        <CommandEmpty>{t('account.no_bank_providers_found')}</CommandEmpty>
+        <CommandInput className="text-lg" placeholder={t('bank_transactions.search_bank')} />
+        <CommandEmpty>{t('bank_transactions.no_bank_providers_found')}</CommandEmpty>
         <CommandGroup className="h-full overflow-auto">
           {institutions?.data?.map((framework) => (
             <CommandItem key={framework.id} value={framework.id} onSelect={onSelect}>

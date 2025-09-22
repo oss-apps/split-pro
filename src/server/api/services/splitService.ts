@@ -351,6 +351,7 @@ export async function editExpense(
     participants,
     expenseDate,
     fileKey,
+    transactionId,
   }: CreateExpense,
   currentUserId: number,
 ) {
@@ -475,6 +476,7 @@ export async function editExpense(
           create: participants,
         },
         fileKey,
+        transactionId: transactionId ?? '',
         expenseDate,
         updatedBy: currentUserId,
       },

@@ -59,6 +59,7 @@ model User {
     expenseParticipants ExpenseParticipant[]
     expenseNotes        ExpenseNote[]
     userBalances        Balance[]            @relation("UserBalance")
+    cachedBankData      CachedBankData[]     @relation("UserCachedBankData")
     friendBalances      Balance[]            @relation("FriendBalance")
     groupUserBalances   GroupBalance[]       @relation("GroupUserBalance")
     groupFriendBalances GroupBalance[]       @relation("GroupFriendBalance")
@@ -73,6 +74,7 @@ model CachedBankData {
     obapiProviderId String   @unique
     data            String
     userId          Int
+    user            User     @relation(name: "UserCachedBankData", fields: [userId], references: [id], onDelete: Cascade)
     lastFetched     DateTime
     createdAt       DateTime @default(now())
     updatedAt       DateTime @updatedAt

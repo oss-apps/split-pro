@@ -142,7 +142,7 @@ const Home: NextPage<{
       <main className="flex h-full flex-col justify-center lg:justify-normal">
         <div className="flex flex-col items-center lg:mt-20">
           <div className="mb-5 flex items-center gap-4">
-            <p className="text-primary text-3xl">{t('title')}</p>
+            <p className="text-primary text-3xl">{t('meta.application_name')}</p>
           </div>
           <div className="mb-10 flex items-center gap-4">
             <LanguageSelector />

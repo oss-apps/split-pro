@@ -51,6 +51,17 @@ I managed to find a good app [spliit.app](https://spliit.app/) by [Sebastien Cas
 
 _That's when I decided to work on this_
 
+## Translations
+
+The app translations are managed using [a Weblate project](https://hosted.weblate.org/projects/splitpro/). 
+You can easily add missing translations, fix issues you find and a new language! Just be aware that a new language
+also needs to be added in the code and open an issue for that once you finish translating the files.
+Here is the current state of translation:
+
+<a href="https://hosted.weblate.org/engage/splitpro/">
+<img src="https://hosted.weblate.org/widget/splitpro/multi-auto.svg" alt="Translation status" />
+</a>
+
 ## FAQ
 
 #### How numerically stable is the internal logic?

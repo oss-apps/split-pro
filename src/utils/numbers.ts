@@ -70,6 +70,7 @@ export function toUIString(num = 0n, signed = false, currencyCode: CurrencyCode 
           })
           .slice(1) // Remove leading '0.'
       : '');
+  console.log(`-> ${res}`);
   return (signed && 0n > num && 0 !== parseFloat(res) ? '-' : '') + res;
 }
 

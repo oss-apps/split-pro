@@ -7,13 +7,41 @@ export function toSafeBigInt(num: number | string) {
     if ('' === num.trim()) {
       return 0n;
     }
-    const parsed = parseFloat(num);
+    // Normalize common thousands and decimal separators.
+    // Strategy:
+    // - Remove spaces always.
+    // - If both '.' and ',' are present, assume commas are thousands separators -> remove all commas.
+    // - If only ',' is present:
+    //   - If the part after ',' has length === 3 -> treat comma as thousands separator and remove it (e.g. "6,666" -> "6666").
+    //   - Otherwise treat comma as decimal separator and replace with '.' (e.g. "1,23" -> "1.23").
+    let s = num.trim();
+    s = s.replace(/\s+/g, '');
+
+    const hasDot = s.indexOf('.') !== -1;
+    const hasComma = s.indexOf(',') !== -1;
+
+    if (hasDot && hasComma) {
+      // remove commas as thousands separators
+      s = s.replace(/,/g, '');
+    } else if (hasComma && !hasDot) {
+      const parts = s.split(',');
+      const after = parts[1] ?? '';
+      if (after.length === 3) {
+        // treat comma as thousands separator
+        s = s.replace(/,/g, '');
+      } else {
+        // treat comma as decimal separator
+        s = s.replace(/,/g, '.');
+      }
+    }
+
+    const parsed = parseFloat(s);
     if (isNaN(parsed)) {
       return 0n;
     }
-    const num_unified_decimal = num.replace(',', '.');
-    const parts = num_unified_decimal.split('.');
-    const whole = BigInt(parts[0]!);
+
+    const parts = s.split('.');
+    const whole = BigInt(parts[0]! || '0');
     const fraction = BigInt(Math.round(parseFloat(`0.${parts[1] ?? '0'}`) * 100));
 
     return whole * 100n + fraction;

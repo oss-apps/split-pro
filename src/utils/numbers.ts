@@ -7,6 +7,7 @@ export function toSafeBigInt(num: number | string) {
     if ('' === num.trim()) {
       return 0n;
     }
+    console.log(`toSafeBigInt(${num})`);
     // Normalize common thousands and decimal separators.
     // Strategy:
     // - Remove spaces always.
@@ -51,6 +52,7 @@ export function toSafeBigInt(num: number | string) {
 }
 
 export function toUIString(num = 0n, signed = false, currencyCode: CurrencyCode = 'USD') {
+  console.log(`toUIString(${num}, ${signed}, ${currencyCode})`);
   const { decimalDigits } = CURRENCIES[currencyCode];
   const maxDecimals = 10n ** BigInt(decimalDigits);
   const decimalPart = num % 100n;

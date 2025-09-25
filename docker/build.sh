@@ -15,7 +15,7 @@ echo "Building docker image for monorepo at $MONOREPO_ROOT"
 echo "App version: $APP_VERSION"
 echo "Git SHA: $GIT_SHA"
 
-docker build -f "$SCRIPT_DIR/Dockerfile" \
+docker build -f "$SCRIPT_DIR/../Dockerfile" \
     --progress=plain \
     -t "ossapps/splitpro:latest" \
     -t "ossapps/splitpro:$GIT_SHA" \

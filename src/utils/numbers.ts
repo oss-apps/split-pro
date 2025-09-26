@@ -11,12 +11,21 @@ export function toSafeBigInt(num: number | string) {
     if (isNaN(parsed)) {
       return 0n;
     }
-    const num_unified_decimal = num.replace(',', '.');
-    const parts = num_unified_decimal.split('.');
-    const whole = BigInt(parts[0]!);
-    const fraction = BigInt(Math.round(parseFloat(`0.${parts[1] ?? '0'}`) * 100));
+    // Normalize decimal separator and extract sign
+    const numUnified = num.replace(',', '.').trim();
+    const negative = numUnified.startsWith('-');
+    const unsigned = negative ? numUnified.slice(1) : numUnified;
 
-    return whole * 100n + fraction;
+    const parts = unsigned.split('.');
+    const wholePartStr = parts[0] ?? '0';
+    // Handle edge inputs like ".50" or "-.50"
+    const whole = '' === wholePartStr ? 0n : BigInt(wholePartStr);
+    const fractionStr = parts[1] ?? '0';
+    // We round to 2 decimal places (cents) to stay consistent with currency storage
+    const fraction = BigInt(Math.round(parseFloat(`0.${fractionStr}`) * 100));
+
+    const value = whole * 100n + fraction;
+    return negative ? -value : value;
   } else {
     return 0n;
   }

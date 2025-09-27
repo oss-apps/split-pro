@@ -1,1 +1,57 @@
-{}
+{
+  "currency_list": {
+    "AED": {
+      "name_0": "dirham dos Emirados Árabes Unidos",
+      "name_1": "de dirhams dos EAU",
+      "name_2": "dirhams dos EAU"
+    },
+    "AFN": {
+      "name_0": "afegane afegão",
+      "name_1": "de afeganes afegãos",
+      "name_2": "afeganes afegãos"
+    },
+    "ARS": {
+      "name_0": "peso argentino",
+      "name_1": "de pesos argentinos",
+      "name_2": "pesos argentinos"
+    },
+    "AUD": {
+      "name_0": "dólar australiano",
+      "name_1": "de dólares australianos",
+      "name_2": "dólares australianos"
+    },
+    "BRL": {
+      "name_0": "real brasileiro",
+      "name_1": "de reais brasileiros",
+      "name_2": "reais brasileiros"
+    },
+    "CAD": {
+      "name_0": "dólar canadense",
+      "name_1": "de dólares canadenses",
+      "name_2": "dólares canadenses"
+    },
+    "COP": {
+      "name_0": "peso colombiano",
+      "name_1": "de pesos colombianos",
+      "name_2": "pesos colombianos"
+    },
+    "EUR": {
+      "name_0": "euro",
+      "name_1": "de euros",
+      "name_2": "euros"
+    },
+    "GBP": {
+      "name_0": "libra esterlina",
+      "name_1": "de libras esterlinas",
+      "name_2": "libras esterlinas"
+    },
+    "MXN": {
+      "name_0": "peso mexicano",
+      "name_1": "de pesos mexicanos",
+      "name_2": "pesos mexicanos"
+    }
+  },
+  "no_currency_found": "Nenhuma moeda encontrada.",
+  "placeholder": "Selecione a moeda",
+  "title": "Selecionar moeda"
+}

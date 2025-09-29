@@ -1,86 +1,86 @@
 {
-  "title": "Kategorie",
   "categories_list": {
     "entertainment": {
-      "name": "Rozrywka",
       "items": {
         "games": "Gry",
         "movies": "Filmy",
         "music": "Muzyka",
-        "sports": "Sport",
-        "other": "Rozrywka"
-      }
+        "other": "Rozrywka",
+        "sports": "Sport"
+      },
+      "name": "Rozrywka"
     },
     "food": {
-      "name": "Jedzenie i Napoje",
       "items": {
         "diningOut": "Jedzenie na mieście",
         "groceries": "Zakupy spożywcze",
         "liquor": "Alkohol",
         "other": "Jedzenie i Napoje"
-      }
+      },
+      "name": "Jedzenie i Napoje"
+    },
+    "general": {
+      "items": {
+        "general": "Ogólne",
+        "other": "Ogólne"
+      },
+      "name": "Ogólne"
     },
     "home": {
-      "name": "Dom",
       "items": {
         "electronics": "Elektronika",
         "furniture": "Meble",
-        "supplies": "Wyposażenie",
         "maintenance": "Konserwacja",
         "mortgage": "Kredyt hipoteczny",
+        "other": "Dom",
         "pets": "Zwierzęta",
         "rent": "Czynsz",
         "services": "Usługi",
-        "other": "Dom"
-      }
+        "supplies": "Wyposażenie"
+      },
+      "name": "Dom"
     },
     "life": {
-      "name": "Życie",
       "items": {
         "childcare": "Opieka nad dziećmi",
         "clothing": "Odzież",
         "education": "Edukacja",
         "gifts": "Prezenty",
+        "insurance": "Ubezpieczenie",
         "medical": "Medyczne",
-        "taxes": "Podatki",
         "other": "Życie",
-        "insurance": "Ubezpieczenie"
-      }
+        "taxes": "Podatki"
+      },
+      "name": "Życie"
     },
     "travel": {
-      "name": "Podróże",
       "items": {
+        "bicycle": "Rower",
         "bus": "Autobus",
-        "train": "Pociąg",
         "car": "Samochód",
         "fuel": "Paliwo",
+        "hotel": "Hotel",
+        "other": "Podróże",
         "parking": "Parking",
         "plane": "Samolot",
         "taxi": "Taxi",
-        "other": "Podróże",
-        "bicycle": "Rower",
-        "hotel": "Hotel"
-      }
+        "train": "Pociąg"
+      },
+      "name": "Podróże"
     },
     "utilities": {
-      "name": "Media",
       "items": {
         "cleaning": "Sprzątanie",
         "electricity": "Elektryczność",
         "gas": "Gaz",
         "internet": "Internet",
-        "trash": "Śmieci",
+        "other": "Media",
         "phone": "Telefon",
-        "water": "Woda",
-        "other": "Media"
-      }
-    },
-    "general": {
-      "name": "Ogólne",
-      "items": {
-        "general": "Ogólne",
-        "other": "Ogólne"
-      }
+        "trash": "Śmieci",
+        "water": "Woda"
+      },
+      "name": "Media"
     }
-  }
+  },
+  "title": "Kategorie"
 }

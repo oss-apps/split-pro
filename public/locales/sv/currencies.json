@@ -1,16 +1,5 @@
 {
-  "title": "Välj valuta",
-  "placeholder": "Välj valuta",
-  "no_currency_found": "Ingen valuta hittad.",
   "currency_list": {
-    "CAD": {
-      "name": "Kanadensisk dollar",
-      "name_plural": "Kanadensiska dollar"
-    },
-    "EUR": {
-      "name": "Euro",
-      "name_plural": "Euro"
-    },
     "AED": {
       "name": "Dirham från Förenade Arabemiraten",
       "name_plural": "Dirham från FAE"
@@ -83,6 +72,10 @@
       "name": "Belizisk dollar",
       "name_plural": "Beliziska dollar"
     },
+    "CAD": {
+      "name": "Kanadensisk dollar",
+      "name_plural": "Kanadensiska dollar"
+    },
     "CDF": {
       "name": "Kongolesisk franc",
       "name_plural": "Kongolesiska franc"
@@ -146,6 +139,10 @@
     "ETB": {
       "name": "Etiopisk birr",
       "name_plural": "Etiopiska birr"
+    },
+    "EUR": {
+      "name": "Euro",
+      "name_plural": "Euro"
     },
     "GBP": {
       "name": "Brittisk pund sterling",
@@ -555,5 +552,8 @@
       "name": "Zimbabweansk dollar",
       "name_plural": "Zimbabweanska dollar"
     }
-  }
+  },
+  "no_currency_found": "Ingen valuta hittad.",
+  "placeholder": "Välj valuta",
+  "title": "Välj valuta"
 }

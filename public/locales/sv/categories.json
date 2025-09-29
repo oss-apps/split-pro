@@ -1,86 +1,86 @@
 {
-  "title": "Kategorier",
   "categories_list": {
     "entertainment": {
-      "name": "Underhållning",
       "items": {
         "games": "Spel",
         "movies": "Filmer",
         "music": "Musik",
-        "sports": "Sport",
-        "other": "Underhållning"
-      }
+        "other": "Underhållning",
+        "sports": "Sport"
+      },
+      "name": "Underhållning"
     },
     "food": {
-      "name": "Mat & Dryck",
       "items": {
         "diningOut": "Restaurang",
         "groceries": "Matvaror",
         "liquor": "Dryck",
         "other": "Mat & Dryck"
-      }
+      },
+      "name": "Mat & Dryck"
+    },
+    "general": {
+      "items": {
+        "general": "Allmänt",
+        "other": "Allmänt"
+      },
+      "name": "Allmänt"
     },
     "home": {
-      "name": "Hem",
       "items": {
         "electronics": "Elektronik",
         "furniture": "Möbler",
-        "supplies": "Tillbehör",
         "maintenance": "Underhåll",
         "mortgage": "Lån",
+        "other": "Hem",
         "pets": "Husdjur",
         "rent": "Hyra",
         "services": "Tjänster",
-        "other": "Hem"
-      }
+        "supplies": "Tillbehör"
+      },
+      "name": "Hem"
     },
     "life": {
-      "name": "Liv",
       "items": {
         "childcare": "Barnvård",
         "clothing": "Kläder",
         "education": "Utbildning",
         "gifts": "Gåvor",
+        "insurance": "Försäkring",
         "medical": "Medicin",
-        "taxes": "Skatter",
         "other": "Liv",
-        "insurance": "Försäkring"
-      }
+        "taxes": "Skatter"
+      },
+      "name": "Liv"
     },
     "travel": {
-      "name": "Resor",
       "items": {
+        "bicycle": "Cykel",
         "bus": "Buss",
-        "train": "Tåg",
         "car": "Bil",
         "fuel": "Bränsle",
+        "hotel": "Hotell",
+        "other": "Resor",
         "parking": "Parkering",
         "plane": "Flyg",
         "taxi": "Taxi",
-        "other": "Resor",
-        "bicycle": "Cykel",
-        "hotel": "Hotell"
-      }
+        "train": "Tåg"
+      },
+      "name": "Resor"
     },
     "utilities": {
-      "name": "Verktyg",
       "items": {
         "cleaning": "Tvätt",
         "electricity": "El",
         "gas": "Gas",
         "internet": "Internet",
-        "trash": "Avfall",
+        "other": "Verktyg",
         "phone": "Telefon",
-        "water": "Vatten",
-        "other": "Verktyg"
-      }
-    },
-    "general": {
-      "name": "Allmänt",
-      "items": {
-        "general": "Allmänt",
-        "other": "Allmänt"
-      }
+        "trash": "Avfall",
+        "water": "Vatten"
+      },
+      "name": "Verktyg"
     }
-  }
+  },
+  "title": "Kategorier"
 }

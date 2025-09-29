@@ -1,66 +1,66 @@
 {
-  "meta": {
-    "title": "SplitPro: Dziel wydatki ze znajomymi za darmo",
-    "description": "SplitPro: Dziel wydatki ze znajomymi za darmo"
-  },
-  "nav": {
-    "app_name": "SplitPro",
-    "terms": "Warunki",
-    "privacy": "Prywatność"
-  },
-  "hero": {
-    "title_part1": "Dziel wydatki ze znajomymi",
-    "title_highlight": "za darmo",
-    "subtitle_part1": "Otwarta",
-    "subtitle_link": "open source",
-    "subtitle_part2": "alternatywa dla SplitWise",
-    "add_expense_button": "Dodaj Wydatek",
-    "star_github_button": "Zostaw gwiazdkę"
-  },
   "features": {
-    "title": "Funkcje",
-    "groups_and_friends": {
-      "title": "Grupy i Znajomi",
-      "description": "Możesz tworzyć wiele grup lub dodawać wydatki bezpośrednio."
-    },
-    "multiple_currencies": {
-      "title": "Wiele walut",
-      "description": "Musisz dodać wydatek w różnej walucie dla tego samego użytkownika? Nie ma problemu!"
-    },
-    "unequal_split": {
-      "title": "Nierówny podział",
-      "description": "Zaawansowane opcje podziału. Według udziałów, procentów lub dokładnych kwot."
-    },
-    "pwa_support": {
-      "title": "Wsparcie PWA",
-      "description": "Kochasz aplikacje mobilne? Mamy cię na oku. Zainstaluj jako PWA i nawet tego nie zauważysz!"
-    },
-    "upload_receipts": {
-      "title": "Przesyłanie paragonów",
-      "description": "Przesyłaj paragony wraz z wydatkiem"
-    },
-    "open_source": {
-      "title": "Open source",
-      "description": "To co dostajesz, zawsze pozostanie darmowe. Łatwe do samodzielnego hostowania"
-    },
-    "import_splitwise": {
-      "title": "Import z splitwise",
-      "description": "Nie musisz ręcznie migrować danych. Możesz importować użytkowników i grupy ze splitwise"
-    },
-    "push_notifications": {
-      "title": "Powiadomienia push",
-      "description": "Nigdy nie przegap ważnych powiadomień. Dowiesz się, gdy ktoś doda wydatek lub się rozliczy"
-    },
     "debt_simplification": {
-      "title": "Upraszczanie Długów",
-      "description": "Automatycznie uprość długi grupowe, aby zmniejszyć liczbę transakcji potrzebnych między znajomymi"
+      "description": "Automatycznie uprość długi grupowe, aby zmniejszyć liczbę transakcji potrzebnych między znajomymi",
+      "title": "Upraszczanie Długów"
+    },
+    "groups_and_friends": {
+      "description": "Możesz tworzyć wiele grup lub dodawać wydatki bezpośrednio.",
+      "title": "Grupy i Znajomi"
     },
     "i18": {
-      "title": "Internacjonalizacja",
-      "description": "Dostępne w wielu językach, aby dzielenie wydatków było dostępne na całym świecie"
+      "description": "Dostępne w wielu językach, aby dzielenie wydatków było dostępne na całym świecie",
+      "title": "Internacjonalizacja"
+    },
+    "import_splitwise": {
+      "description": "Nie musisz ręcznie migrować danych. Możesz importować użytkowników i grupy ze splitwise",
+      "title": "Import z splitwise"
+    },
+    "multiple_currencies": {
+      "description": "Musisz dodać wydatek w różnej walucie dla tego samego użytkownika? Nie ma problemu!",
+      "title": "Wiele walut"
+    },
+    "open_source": {
+      "description": "To co dostajesz, zawsze pozostanie darmowe. Łatwe do samodzielnego hostowania",
+      "title": "Open source"
+    },
+    "push_notifications": {
+      "description": "Nigdy nie przegap ważnych powiadomień. Dowiesz się, gdy ktoś doda wydatek lub się rozliczy",
+      "title": "Powiadomienia push"
+    },
+    "pwa_support": {
+      "description": "Kochasz aplikacje mobilne? Mamy cię na oku. Zainstaluj jako PWA i nawet tego nie zauważysz!",
+      "title": "Wsparcie PWA"
+    },
+    "title": "Funkcje",
+    "unequal_split": {
+      "description": "Zaawansowane opcje podziału. Według udziałów, procentów lub dokładnych kwot.",
+      "title": "Nierówny podział"
+    },
+    "upload_receipts": {
+      "description": "Przesyłaj paragony wraz z wydatkiem",
+      "title": "Przesyłanie paragonów"
     }
   },
   "footer": {
     "built_by": "Zbudowane przez"
+  },
+  "hero": {
+    "add_expense_button": "Dodaj Wydatek",
+    "star_github_button": "Zostaw gwiazdkę",
+    "subtitle_link": "open source",
+    "subtitle_part1": "Otwarta",
+    "subtitle_part2": "alternatywa dla SplitWise",
+    "title_highlight": "za darmo",
+    "title_part1": "Dziel wydatki ze znajomymi"
+  },
+  "meta": {
+    "description": "SplitPro: Dziel wydatki ze znajomymi za darmo",
+    "title": "SplitPro: Dziel wydatki ze znajomymi za darmo"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "privacy": "Prywatność",
+    "terms": "Warunki"
   }
 }

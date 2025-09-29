@@ -1,66 +1,66 @@
 {
-  "meta": {
-    "title": "SplitPro: Dela utgifter med dina vänner gratis",
-    "description": "SplitPro: Dela utgifter med dina vänner gratis"
-  },
-  "nav": {
-    "app_name": "SplitPro",
-    "terms": "Villkor",
-    "privacy": "Integritet"
-  },
-  "hero": {
-    "title_part1": "Dela utgifter med dina vänner helt",
-    "title_highlight": "gratis",
-    "subtitle_part1": "Ett",
-    "subtitle_link": "open source",
-    "subtitle_part2": "alternativ till SplitWise",
-    "add_expense_button": "Lägg till utgift",
-    "star_github_button": "Betygsätt oss på github"
-  },
   "features": {
-    "title": "Funktioner",
-    "groups_and_friends": {
-      "title": "Grupper och vänner",
-      "description": "Kan skapa flera grupper eller lägga till saldo direkt. Allt kommer att räknas ut"
-    },
-    "multiple_currencies": {
-      "title": "Flera valutor",
-      "description": "Behöver du lägga till utgift med annan valuta? Inga problem!"
-    },
-    "unequal_split": {
-      "title": "Ojämn delning",
-      "description": "Avancerade delningsalternativ. Efter andelar, procent eller exakta belopp."
-    },
-    "pwa_support": {
-      "title": "PWA support",
-      "description": "Älskar du mobila appar? Inga problem. Installera det som en PWA och du kommer inte ens att märka!"
-    },
-    "upload_receipts": {
-      "title": "Ladda upp kvitton",
-      "description": "Ladda upp kvitton tillsammans med utgiften"
-    },
-    "open_source": {
-      "title": "Open source",
-      "description": "Vilket gör det enkelt att granska. Lätt att self-hosta"
-    },
-    "import_splitwise": {
-      "title": "Importera från splitwise",
-      "description": "Du behöver du inte manuellt migrera saldon. Du kan importera användare och grupper från splitwise"
-    },
-    "push_notifications": {
-      "title": "Push-notifikationer",
-      "description": "Missa aldrig viktiga notifikationer. Få meddelanden när någon lägger till en utgift eller kvittar"
-    },
     "debt_simplification": {
-      "title": "Skuldförenkling",
-      "description": "Förenkla automatiskt gruppskulder för att minska antalet transaktioner som behövs mellan vänner"
+      "description": "Förenkla automatiskt gruppskulder för att minska antalet transaktioner som behövs mellan vänner",
+      "title": "Skuldförenkling"
+    },
+    "groups_and_friends": {
+      "description": "Kan skapa flera grupper eller lägga till saldo direkt. Allt kommer att räknas ut",
+      "title": "Grupper och vänner"
     },
     "i18": {
-      "title": "Internationalisering",
-      "description": "Tillgänglig på flera språk för att göra utgiftsdelning tillgänglig över hela världen"
+      "description": "Tillgänglig på flera språk för att göra utgiftsdelning tillgänglig över hela världen",
+      "title": "Internationalisering"
+    },
+    "import_splitwise": {
+      "description": "Du behöver du inte manuellt migrera saldon. Du kan importera användare och grupper från splitwise",
+      "title": "Importera från splitwise"
+    },
+    "multiple_currencies": {
+      "description": "Behöver du lägga till utgift med annan valuta? Inga problem!",
+      "title": "Flera valutor"
+    },
+    "open_source": {
+      "description": "Vilket gör det enkelt att granska. Lätt att self-hosta",
+      "title": "Open source"
+    },
+    "push_notifications": {
+      "description": "Missa aldrig viktiga notifikationer. Få meddelanden när någon lägger till en utgift eller kvittar",
+      "title": "Push-notifikationer"
+    },
+    "pwa_support": {
+      "description": "Älskar du mobila appar? Inga problem. Installera det som en PWA och du kommer inte ens att märka!",
+      "title": "PWA support"
+    },
+    "title": "Funktioner",
+    "unequal_split": {
+      "description": "Avancerade delningsalternativ. Efter andelar, procent eller exakta belopp.",
+      "title": "Ojämn delning"
+    },
+    "upload_receipts": {
+      "description": "Ladda upp kvitton tillsammans med utgiften",
+      "title": "Ladda upp kvitton"
     }
   },
   "footer": {
     "built_by": "Byggt av"
+  },
+  "hero": {
+    "add_expense_button": "Lägg till utgift",
+    "star_github_button": "Betygsätt oss på github",
+    "subtitle_link": "open source",
+    "subtitle_part1": "Ett",
+    "subtitle_part2": "alternativ till SplitWise",
+    "title_highlight": "gratis",
+    "title_part1": "Dela utgifter med dina vänner helt"
+  },
+  "meta": {
+    "description": "SplitPro: Dela utgifter med dina vänner gratis",
+    "title": "SplitPro: Dela utgifter med dina vänner gratis"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "privacy": "Integritet",
+    "terms": "Villkor"
   }
 }

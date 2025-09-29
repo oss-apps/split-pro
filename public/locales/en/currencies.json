@@ -1,16 +1,5 @@
 {
-  "title": "Select currency",
-  "placeholder": "Select currency",
-  "no_currency_found": "No currency found.",
   "currency_list": {
-    "CAD": {
-      "name": "Canadian Dollar",
-      "name_plural": "Canadian dollars"
-    },
-    "EUR": {
-      "name": "Euro",
-      "name_plural": "Euros"
-    },
     "AED": {
       "name": "United Arab Emirates Dirham",
       "name_plural": "UAE dirhams"
@@ -83,6 +72,10 @@
       "name": "Belize Dollar",
       "name_plural": "Belize dollars"
     },
+    "CAD": {
+      "name": "Canadian Dollar",
+      "name_plural": "Canadian dollars"
+    },
     "CDF": {
       "name": "Congolese Franc",
       "name_plural": "Congolese francs"
@@ -146,6 +139,10 @@
     "ETB": {
       "name": "Ethiopian Birr",
       "name_plural": "Ethiopian birrs"
+    },
+    "EUR": {
+      "name": "Euro",
+      "name_plural": "Euros"
     },
     "GBP": {
       "name": "British Pound Sterling",
@@ -555,5 +552,8 @@
       "name": "Zimbabwean Dollar",
       "name_plural": "Zimbabwean Dollar"
     }
-  }
+  },
+  "no_currency_found": "No currency found.",
+  "placeholder": "Select currency",
+  "title": "Select currency"
 }

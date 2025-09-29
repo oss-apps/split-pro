@@ -1,66 +1,66 @@
 {
-  "meta": {
-    "title": "SplitPro: Dividí gastos con tus amigos gratis",
-    "description": "SplitPro: Dividí gastos con tus amigos gratis"
-  },
-  "nav": {
-    "app_name": "SplitPro",
-    "terms": "Términos",
-    "privacy": "Privacidad"
-  },
-  "hero": {
-    "title_part1": "Dividí gastos con tus amigos",
-    "title_highlight": "gratis",
-    "subtitle_part1": "Una alternativa de",
-    "subtitle_link": "código abierto",
-    "subtitle_part2": "a SplitWise",
-    "add_expense_button": "Agregar Gasto",
-    "star_github_button": "Danos una estrella en GitHub"
-  },
   "features": {
-    "title": "Características",
-    "groups_and_friends": {
-      "title": "Grupos y Amigos",
-      "description": "Podés crear múltiples grupos o agregar saldo directamente. Todo se consolidará"
-    },
-    "multiple_currencies": {
-      "title": "Múltiples monedas",
-      "description": "¿Necesitás agregar un gasto con una moneda diferente para el mismo usuario? ¡No hay problema!"
-    },
-    "unequal_split": {
-      "title": "División Desigual",
-      "description": "Opciones avanzadas de división. Por cuotas, porcentaje o cantidades exactas."
-    },
-    "pwa_support": {
-      "title": "Soporte PWA",
-      "description": "¿Te encantan las aplicaciones móviles? Te tenemos cubierto. ¡Instalala como una PWA y ni siquiera lo notarás!"
-    },
-    "upload_receipts": {
-      "title": "Subir Recibos",
-      "description": "Subí recibos junto con el gasto"
-    },
-    "open_source": {
-      "title": "Código abierto",
-      "description": "Lo que hace difícil que se vuelva malvado. Fácil de autoalojar"
-    },
-    "import_splitwise": {
-      "title": "Importar desde Splitwise",
-      "description": "No tenés que migrar saldos manualmente. Podés importar usuarios y grupos desde Splitwise"
-    },
-    "push_notifications": {
-      "title": "Notificaciones push",
-      "description": "Nunca te pierdas notificaciones importantes. Recibí notificaciones cuando alguien agrega un gasto o liquida"
-    },
     "debt_simplification": {
-      "title": "Simplificación de Deudas",
-      "description": "Simplifica automáticamente las deudas del grupo para reducir el número de transacciones necesarias entre amigos"
+      "description": "Simplifica automáticamente las deudas del grupo para reducir el número de transacciones necesarias entre amigos",
+      "title": "Simplificación de Deudas"
+    },
+    "groups_and_friends": {
+      "description": "Podés crear múltiples grupos o agregar saldo directamente. Todo se consolidará",
+      "title": "Grupos y Amigos"
     },
     "i18": {
-      "title": "Internacionalización",
-      "description": "Disponible en múltiples idiomas para hacer que la división de gastos sea accesible en todo el mundo"
+      "description": "Disponible en múltiples idiomas para hacer que la división de gastos sea accesible en todo el mundo",
+      "title": "Internacionalización"
+    },
+    "import_splitwise": {
+      "description": "No tenés que migrar saldos manualmente. Podés importar usuarios y grupos desde Splitwise",
+      "title": "Importar desde Splitwise"
+    },
+    "multiple_currencies": {
+      "description": "¿Necesitás agregar un gasto con una moneda diferente para el mismo usuario? ¡No hay problema!",
+      "title": "Múltiples monedas"
+    },
+    "open_source": {
+      "description": "Lo que hace difícil que se vuelva malvado. Fácil de autoalojar",
+      "title": "Código abierto"
+    },
+    "push_notifications": {
+      "description": "Nunca te pierdas notificaciones importantes. Recibí notificaciones cuando alguien agrega un gasto o liquida",
+      "title": "Notificaciones push"
+    },
+    "pwa_support": {
+      "description": "¿Te encantan las aplicaciones móviles? Te tenemos cubierto. ¡Instalala como una PWA y ni siquiera lo notarás!",
+      "title": "Soporte PWA"
+    },
+    "title": "Características",
+    "unequal_split": {
+      "description": "Opciones avanzadas de división. Por cuotas, porcentaje o cantidades exactas.",
+      "title": "División Desigual"
+    },
+    "upload_receipts": {
+      "description": "Subí recibos junto con el gasto",
+      "title": "Subir Recibos"
     }
   },
   "footer": {
     "built_by": "Construido por"
+  },
+  "hero": {
+    "add_expense_button": "Agregar Gasto",
+    "star_github_button": "Danos una estrella en GitHub",
+    "subtitle_link": "código abierto",
+    "subtitle_part1": "Una alternativa de",
+    "subtitle_part2": "a SplitWise",
+    "title_highlight": "gratis",
+    "title_part1": "Dividí gastos con tus amigos"
+  },
+  "meta": {
+    "description": "SplitPro: Dividí gastos con tus amigos gratis",
+    "title": "SplitPro: Dividí gastos con tus amigos gratis"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "privacy": "Privacidad",
+    "terms": "Términos"
   }
 }

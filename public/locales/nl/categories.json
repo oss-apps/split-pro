@@ -1,1 +1,86 @@
-{}
+{
+  "title": "Categorieën",
+  "categories_list": {
+    "entertainment": {
+      "name": "Entertainment",
+      "items": {
+        "movies": "Films",
+        "music": "Muziek",
+        "sports": "Sport",
+        "games": "Spellen",
+        "other": "Entertainment"
+      }
+    },
+    "food": {
+      "name": "Eten & Drinken",
+      "items": {
+        "diningOut": "Uit Eten",
+        "groceries": "Boodschappen",
+        "liquor": "Drank",
+        "other": "Eten & Drinken"
+      }
+    },
+    "home": {
+      "name": "Huis",
+      "items": {
+        "electronics": "Elektronica",
+        "furniture": "Meubels",
+        "supplies": "Voorraad",
+        "maintenance": "Onderhoud",
+        "mortgage": "Hypotheek",
+        "pets": "Huisdieren",
+        "rent": "Huur",
+        "services": "Diensten",
+        "other": "Huis"
+      }
+    },
+    "life": {
+      "name": "Leven",
+      "items": {
+        "childcare": "Kinderopvang",
+        "clothing": "Kledij",
+        "education": "Onderwijs",
+        "gifts": "Geschenken",
+        "medical": "Medisch",
+        "taxes": "Belastingen",
+        "other": "Leven",
+        "insurance": "Verzekering"
+      }
+    },
+    "travel": {
+      "name": "Reizen",
+      "items": {
+        "bus": "Bus",
+        "train": "Trein",
+        "car": "Wagen",
+        "fuel": "Brandstof",
+        "parking": "Parking",
+        "plane": "Vliegtuig",
+        "taxi": "Taxi",
+        "other": "Reizen",
+        "bicycle": "Fiets",
+        "hotel": "Hotel"
+      }
+    },
+    "utilities": {
+      "name": "Nutsvoorzieningen",
+      "items": {
+        "cleaning": "Schoonmaak",
+        "electricity": "Elektriciteit",
+        "gas": "Gas",
+        "internet": "Internet",
+        "trash": "Afval",
+        "phone": "Telefoon",
+        "water": "Water",
+        "other": "Nutsvoorzieningen"
+      }
+    },
+    "general": {
+      "name": "Algemeen",
+      "items": {
+        "general": "Algemeen",
+        "other": "Algemeen"
+      }
+    }
+  }
+}

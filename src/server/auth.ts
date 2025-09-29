@@ -45,7 +45,7 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
   return {
     ...prismaAdapter,
     createUser: (user: Omit<AdapterUser, 'id'>): Promise<AdapterUser> => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      // oxlint-disable-next-line typescript/no-unsafe-assignment
       const prismaCreateUser = prismaAdapter.createUser;
 
       if (env.INVITE_ONLY) {
@@ -57,11 +57,11 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
         throw new Error('Prisma Adapter lacks User Creation');
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+      // oxlint-disable-next-line typescript/no-unsafe-return, typescript/no-unsafe-call
       return prismaCreateUser(user);
     },
     linkAccount: async (account: AdapterAccount) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      // oxlint-disable-next-line typescript/no-unsafe-assignment
       const originalLinkAccount = prismaAdapter.linkAccount;
 
       if (!originalLinkAccount) {
@@ -78,7 +78,7 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
           ...standardAccountData
         } = account as unknown as Record<string, unknown>;
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        // oxlint-disable-next-line typescript/no-unsafe-return
         return originalLinkAccount(standardAccountData as AdapterAccount);
       }
 

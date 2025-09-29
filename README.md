@@ -53,7 +53,7 @@ _That's when I decided to work on this_
 
 ## Translations
 
-The app translations are managed using [a Weblate project](https://hosted.weblate.org/projects/splitpro/). 
+The app translations are managed using [a Weblate project](https://hosted.weblate.org/projects/splitpro/).
 You can easily add missing translations, fix issues you find and a new language! Just be aware that a new language
 also needs to be added in the code and open an issue for that once you finish translating the files.
 Here is the current state of translation:

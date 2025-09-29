@@ -1,5 +1,9 @@
 {
   "features": {
+    "currency_conversion": {
+      "description": "Konvertera snabbt mellan olika valutor med hjälp av aktuella eller historiska växelkurser",
+      "title": "Valutakonvertering"
+    },
     "debt_simplification": {
       "description": "Förenkla automatiskt gruppskulder för att minska antalet transaktioner som behövs mellan vänner",
       "title": "Skuldförenkling"

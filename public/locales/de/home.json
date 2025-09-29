@@ -1,5 +1,9 @@
 {
   "features": {
+    "currency_conversion": {
+      "description": "Schnelle Umrechnung zwischen verschiedenen Währungen unter Verwendung aktueller oder historischer Wechselkurse",
+      "title": "Währungsumrechnung"
+    },
     "debt_simplification": {
       "description": "Vereinfache automatisch Gruppenschulden, um die Anzahl der notwendigen Transaktionen zwischen Freunden zu reduzieren",
       "title": "Schuldenvereinfachung"
@@ -56,7 +60,7 @@
   },
   "meta": {
     "description": "SplitPro: Teile Ausgaben mit deinen Freunden. Kostenlos.",
-    "title": "SplitPro: Teile Ausgaben mit deinen Freunden. Kostenlos."
+    "title": "SplitPro: Teilen Sie Ihre Ausgaben kostenlos mit Ihren Freunden"
   },
   "nav": {
     "app_name": "SplitPro",

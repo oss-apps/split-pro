@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "title": "SplitPro: Deel uitgaven gratis met je vrienden",
+    "description": "SplitPro: Deel uitgaven gratis met je vrienden"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "terms": "Voorwaarden",
+    "privacy": "Privacy"
+  },
+  "hero": {
+    "title_part1": "Deel uitgaven met je vrienden",
+    "title_highlight": "gratis",
+    "subtitle_part1": "Een",
+    "subtitle_link": "open source",
+    "subtitle_part2": "alternatief voor SplitWise",
+    "add_expense_button": "Voeg Uitgave Toe",
+    "star_github_button": "Star us on github"
+  },
+  "features": {
+    "title": "Functies",
+    "groups_and_friends": {
+      "title": "Groepen en Vrienden",
+      "description": "Kan meerdere groepen creëren of meteen een saldo toevoegen. Alles wordt geconsolideerd"
+    },
+    "multiple_currencies": {
+      "title": "Meerdere valuta",
+      "description": "Nood aan meerdere valuta voor dezelfde gebruiker? Geen probleem!"
+    },
+    "unequal_split": {
+      "title": "Oneven Verdeling",
+      "description": "Geavanceerde deelopties. Per deel, percentage of exacte bedragen."
+    },
+    "pwa_support": {
+      "title": "PWA support",
+      "description": "Hou je van mobiele apps? We steunen je hierin. Installeer het als een PWA en je merkt geen verschil!"
+    },
+    "upload_receipts": {
+      "title": "Upload Ontvangstbewijzen",
+      "description": "Upload ontvangstbewijzen samen met de uitgave"
+    },
+    "open_source": {
+      "title": "Open source",
+      "description": "Wat het moeilijk maakt om slecht te worden. Gemakkelijk zelf te hosten"
+    },
+    "import_splitwise": {
+      "title": "Import van Splitwise",
+      "description": "Geen nood om manueel saldos to migreren. Je kan gebruikers en groepen importeren van Splitwise"
+    },
+    "push_notifications": {
+      "title": "Push notificaties",
+      "description": "Miss nooit belangrijke notificaties. Wordt geüpdatet zodra iemand een uitgave toevoegt of zijn schuld vereffend"
+    }
+  }
+}

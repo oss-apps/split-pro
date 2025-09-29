@@ -1,1 +1,8 @@
-{}
+{
+  "currency_list": {
+    "AED": {
+      "name": "Verenigde Arabische Emiraten Dirham",
+      "name_plural": "Verenigde Arabische Emiraten Dirhams"
+    }
+  }
+}

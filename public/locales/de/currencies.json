@@ -74,7 +74,7 @@
     },
     "CAD": {
       "name": "Kanadischer Dollar",
-      "name_plural": "Kanadische Dollar"
+      "name_plural": "Kanadische Dollars"
     },
     "CDF": {
       "name": "Kongolesischer Franc",
@@ -344,6 +344,10 @@
       "name": "Omanischer Rial",
       "name_plural": "Omanische Rial"
     },
+    "PAB": {
+      "name": "Panamaischer Balboa",
+      "name_plural": "Panamaische Balboas"
+    },
     "PEN": {
       "name": "Peruanischer Nuevo Sol",
       "name_plural": "Peruanische Nuevos Soles"
@@ -383,6 +387,10 @@
     "RUB": {
       "name": "Russischer Rubel",
       "name_plural": "Russische Rubel"
+    },
+    "RWF": {
+      "name": "Ruandischer Franken",
+      "name_plural": "Ruandische Franken"
     },
     "SAR": {
       "name": "Saudi-Riyal",
@@ -496,6 +504,10 @@
       "name": "Usbekistan-Sum",
       "name_plural": "Usbekistan-Sum"
     },
+    "VEF": {
+      "name": "Venezolanischer Bolívar",
+      "name_plural": "Venezolanische Bolívares"
+    },
     "VND": {
       "name": "Vietnamesischer Dong",
       "name_plural": "Vietnamesische Dong"
@@ -535,6 +547,10 @@
     "ZMW": {
       "name": "Sambischer Kwacha",
       "name_plural": "Sambische Kwacha"
+    },
+    "ZWL": {
+      "name": "Simbabwischer Dollar",
+      "name_plural": "Simbabwische Dollar"
     }
   },
   "no_currency_found": "Keine Währung gefunden.",

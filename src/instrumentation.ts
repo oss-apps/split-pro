@@ -1,3 +1,5 @@
+import { checkRecurrenceNotifications } from './server/api/services/notificationService';
+
 /**
  * Add things here to be executed during server startup.
  *
@@ -8,6 +10,9 @@ export async function register() {
     console.log('Registering instrumentation');
     const { validateAuthEnv } = await import('./server/auth');
     validateAuthEnv();
+
+    console.log('Starting recurrent expense notification checking...');
+    setTimeout(checkRecurrenceNotifications, 1000 * 10); // Start after 10 seconds
   }
 
   if (process.env.NEXT_RUNTIME !== 'nodejs') {

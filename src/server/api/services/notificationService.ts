@@ -100,7 +100,7 @@ export async function sendExpensePushNotification(expenseId: string) {
   await Promise.all(pushNotifications);
 }
 
-async function checkRecurrenceNotifications() {
+export async function checkRecurrenceNotifications() {
   try {
     const recurrences = await db.expenseRecurrence.findMany({
       where: {
@@ -131,16 +131,4 @@ async function checkRecurrenceNotifications() {
   } finally {
     setTimeout(checkRecurrenceNotifications, 1000 * 60); // Check every minute
   }
-}
-
-declare namespace globalThis {
-  // oxlint-disable-next-line no-unused-vars
-  let recurrenceNotificationChecker: boolean | undefined;
-}
-
-if (!globalThis.recurrenceNotificationChecker) {
-  globalThis.recurrenceNotificationChecker = true;
-  // Start the checker
-  console.log('Starting recurrent expense notification checking...');
-  setTimeout(checkRecurrenceNotifications, 1000 * 10); // Start after 10 seconds
 }

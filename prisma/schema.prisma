@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["relationJoins"]
@@ -13,9 +10,9 @@ datasource db {
   // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
   // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
   url      = env("DATABASE_URL")
+  schemas  = ["cron", "public"]
 }
 
-// Necessary for Next auth
 model Account {
   id                String  @id @default(cuid())
   userId            Int
@@ -32,6 +29,7 @@ model Account {
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@schema("public")
 }
 
 model Session {
@@ -40,6 +38,8 @@ model Session {
   userId       Int
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@schema("public")
 }
 
 model User {
@@ -68,6 +68,8 @@ model User {
   addedExpenses       Expense[]            @relation(name: "AddedByUser")
   deletedExpenses     Expense[]            @relation(name: "DeletedByUser")
   updatedExpenses     Expense[]            @relation(name: "UpdatedByUser")
+
+  @@schema("public")
 }
 
 model CachedBankData {
@@ -87,6 +89,7 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+  @@schema("public")
 }
 
 model Balance {
@@ -101,6 +104,7 @@ model Balance {
   friend                User     @relation(name: "FriendBalance", fields: [friendId], references: [id], onDelete: Cascade)
 
   @@id([userId, currency, friendId])
+  @@schema("public")
 }
 
 model Group {
@@ -118,6 +122,8 @@ model Group {
   expenses         Expense[]
   groupBalances    GroupBalance[]
   simplifyDebts    Boolean        @default(false)
+
+  @@schema("public")
 }
 
 model GroupUser {
@@ -127,6 +133,7 @@ model GroupUser {
   group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@id([groupId, userId])
+  @@schema("public")
 }
 
 model GroupBalance {
@@ -141,6 +148,7 @@ model GroupBalance {
   friend    User     @relation(name: "GroupFriendBalance", fields: [firendId], references: [id], onDelete: Cascade)
 
   @@id([groupId, currency, firendId, userId])
+  @@schema("public")
 }
 
 enum SplitType {
@@ -151,6 +159,8 @@ enum SplitType {
   ADJUSTMENT
   SETTLEMENT
   CURRENCY_CONVERSION
+
+  @@schema("public")
 }
 
 model Expense {
@@ -186,6 +196,7 @@ model Expense {
 
   @@index([groupId])
   @@index([paidBy])
+  @@schema("public")
 }
 
 model ExpenseParticipant {
@@ -196,6 +207,7 @@ model ExpenseParticipant {
   expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
 
   @@id([expenseId, userId])
+  @@schema("public")
 }
 
 model ExpenseNote {
@@ -206,6 +218,8 @@ model ExpenseNote {
   createdAt   DateTime @default(now())
   createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
   expense     Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  @@schema("public")
 }
 
 enum RecurrenceInterval {
@@ -213,18 +227,24 @@ enum RecurrenceInterval {
   WEEKLY
   MONTHLY
   YEARLY
+
+  @@schema("public")
 }
 
 model ExpenseRecurrence {
   id             Int                @id @default(autoincrement())
-  expenseId      String             @unique @db.Uuid
   repeatEvery    Int
   repeatInterval RecurrenceInterval
   createdById    Int
-  jobId          BigInt
+  jobId          BigInt             @unique
   notified       Boolean            @default(true)
+  expenseId      String             @unique @db.Uuid
   createdBy      User               @relation(fields: [createdById], references: [id], onDelete: Cascade)
   expense        Expense            @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  jobDetails job? @relation("job_details", fields: [jobId], references: [jobid], onDelete: Cascade)
+
+  @@schema("public")
 }
 
 model CurrencyRateCache {
@@ -235,9 +255,49 @@ model CurrencyRateCache {
   insertedAt DateTime @default(now())
 
   @@id([from, to, date])
+  @@schema("public")
 }
 
 model PushNotification {
   userId       Int    @id
   subscription String
+
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model job {
+  jobid    BigInt  @id @default(autoincrement())
+  schedule String
+  command  String
+  nodename String  @default("localhost")
+  nodeport Int     @default(dbgenerated("inet_server_port()"))
+  database String  @default(dbgenerated("current_database()"))
+  username String  @default(dbgenerated("CURRENT_USER"))
+  active   Boolean @default(true)
+  jobname  String?
+
+  runDetails        job_run_details[]  @relation("job_run_details")
+  expenseRecurrence ExpenseRecurrence? @relation("job_details")
+
+  @@unique([jobname, username], map: "jobname_username_uniq")
+  @@schema("cron")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model job_run_details {
+  jobid          BigInt?
+  runid          BigInt    @id @default(autoincrement())
+  job_pid        Int?
+  database       String?
+  username       String?
+  command        String?
+  status         String?
+  return_message String?
+  start_time     DateTime? @db.Timestamptz(6)
+  end_time       DateTime? @db.Timestamptz(6)
+
+  job job? @relation("job_run_details", fields: [jobid], references: [jobid], onDelete: Cascade)
+
+  @@schema("cron")
 }

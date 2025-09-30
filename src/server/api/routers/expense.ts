@@ -393,6 +393,41 @@ export const expenseRouter = createTRPCRouter({
     return expenses;
   }),
 
+  getRecurringExpenses: protectedProcedure.query(async ({ ctx }) => {
+    const expenses = await db.expenseParticipant.findMany({
+      where: {
+        userId: ctx.session.user.id,
+        expense: {
+          NOT: {
+            recurrenceId: null,
+          },
+        },
+      },
+      orderBy: {
+        expense: {
+          createdAt: 'desc',
+        },
+      },
+      include: {
+        expense: {
+          include: {
+            recurrence: true,
+            addedByUser: {
+              select: {
+                name: true,
+                email: true,
+                image: true,
+                id: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return expenses;
+  }),
+
   getUploadUrl: protectedProcedure
     .input(z.object({ fileName: z.string(), fileType: z.string(), fileSize: z.number() }))
     .mutation(async ({ input, ctx }) => {

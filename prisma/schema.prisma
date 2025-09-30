@@ -222,6 +222,7 @@ model ExpenseRecurrence {
     repeatInterval RecurrenceInterval
     createdById    Int
     jobId          BigInt
+    notified       Boolean  @default(true)
     createdBy      User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
     expense        Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
 }

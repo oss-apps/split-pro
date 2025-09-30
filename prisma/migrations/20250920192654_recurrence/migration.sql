@@ -12,6 +12,7 @@ CREATE TABLE "public"."ExpenseRecurrence" (
     "repeatInterval" "public"."RecurrenceInterval" NOT NULL,
     "createdById" INTEGER NOT NULL,
     "jobId" BIGINT NOT NULL,
+    "notified" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "ExpenseRecurrence_pkey" PRIMARY KEY ("id")
 );
@@ -51,7 +52,12 @@ BEGIN
     FROM "ExpenseParticipant"
     WHERE "expenseId" = original_expense_id;
 
-    -- STEP 3: Return the new expense ID
+    -- STEP 3: Set notified to false in the ExpenseRecurrence table
+    UPDATE "ExpenseRecurrence"
+    SET notified = false
+    WHERE expenseId = original_expense_id;
+
+    -- STEP 4: Return the new expense ID
     RETURN new_expense_id;
 END;
 $$ LANGUAGE plpgsql;

@@ -5,6 +5,9 @@ const config = {
   // Run oxlint on JavaScript/TypeScript files
   '*.{js,jsx,ts,tsx}': ['oxlint --type-aware --fix'],
 
+  // Format prisma.schema files
+  '*.prisma': ['pnpm prisma format'],
+
   // Type check TypeScript files (optional - can be slow)
   // '*.{ts,tsx}': () => 'tsc --noEmit',
 };

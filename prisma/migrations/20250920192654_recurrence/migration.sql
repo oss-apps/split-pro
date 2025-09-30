@@ -61,3 +61,10 @@ BEGIN
     RETURN new_expense_id;
 END;
 $$ LANGUAGE plpgsql;
+
+DO $$
+BEGIN
+IF current_database() = 'postgres' THEN
+  CREATE EXTENSION IF NOT EXISTS pg_cron;
+END IF;
+END $$;

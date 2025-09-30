@@ -13,7 +13,6 @@ export const db =
     const prisma = new PrismaClient({
       log: 'development' === env.NODE_ENV ? ['error', 'warn'] : ['error'],
     });
-    await prisma.$executeRaw`CREATE EXTENSION IF NOT EXISTS pg_cron;`;
     return prisma;
   })());
 

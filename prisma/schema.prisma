@@ -236,13 +236,11 @@ model ExpenseRecurrence {
   repeatEvery    Int
   repeatInterval RecurrenceInterval
   createdById    Int
-  jobId          BigInt             @unique
+  jobId          BigInt
   notified       Boolean            @default(true)
   expenseId      String             @unique @db.Uuid
   createdBy      User               @relation(fields: [createdById], references: [id], onDelete: Cascade)
   expense        Expense            @relation(fields: [expenseId], references: [id], onDelete: Cascade)
-
-  jobDetails job? @relation("job_details", fields: [jobId], references: [jobid], onDelete: Cascade)
 
   @@schema("public")
 }
@@ -277,8 +275,7 @@ model job {
   active   Boolean @default(true)
   jobname  String?
 
-  runDetails        job_run_details[]  @relation("job_run_details")
-  expenseRecurrence ExpenseRecurrence? @relation("job_details")
+  runDetails job_run_details[] @relation("job_run_details")
 
   @@unique([jobname, username], map: "jobname_username_uniq")
   @@schema("cron")

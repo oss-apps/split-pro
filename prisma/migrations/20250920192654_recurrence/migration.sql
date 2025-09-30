@@ -64,7 +64,7 @@ $$ LANGUAGE plpgsql;
 
 DO $$
 BEGIN
-IF current_database() = 'postgres' THEN
+IF current_database() NOT LIKE 'prisma_migrate_shadow_db%' THEN
   CREATE EXTENSION IF NOT EXISTS pg_cron;
 END IF;
 END $$;

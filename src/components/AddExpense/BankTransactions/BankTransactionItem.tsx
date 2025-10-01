@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Button } from '../../ui/button';
-import { Checkbox } from '../../ui/checkbox';
-import type { TransactionAddInputModel } from '~/types';
+// import { Checkbox } from '../../ui/checkbox';
+// import type { TransactionAddInputModel } from '~/types';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { cn } from '~/lib/utils';
 import type { TransactionWithPendingStatus } from './BankingTransactionList';
@@ -12,14 +12,14 @@ export const BankTransactionItem: React.FC<{
   item: TransactionWithPendingStatus;
   onTransactionRowClick: (item: TransactionWithPendingStatus, multiple: boolean) => void;
   groupName: string;
-  multipleTransactions: TransactionAddInputModel[];
-}> = ({ index, alreadyAdded, item, onTransactionRowClick, groupName, multipleTransactions }) => {
+  // multipleTransactions: TransactionAddInputModel[];
+}> = ({ index, alreadyAdded, item, onTransactionRowClick, groupName }) => {
   const { t, toUIDate } = useTranslationWithUtils();
 
-  const createCheckboxHandler = useCallback(
-    (item: TransactionWithPendingStatus) => () => onTransactionRowClick(item, true),
-    [onTransactionRowClick],
-  );
+  // const createCheckboxHandler = useCallback(
+  //   (item: TransactionWithPendingStatus) => () => onTransactionRowClick(item, true),
+  //   [onTransactionRowClick],
+  // );
 
   const createClickHandler = useCallback(
     (item: TransactionWithPendingStatus) => () => onTransactionRowClick(item, false),
@@ -33,14 +33,14 @@ export const BankTransactionItem: React.FC<{
   return (
     <div className="flex items-center justify-between px-2 py-2" key={index}>
       <div className="flex items-center gap-4">
-        <Checkbox
+        {/* <Checkbox
           checked={multipleTransactions?.some(
             (cItem) => cItem.transactionId === item.transactionId,
           )}
           disabled={alreadyAdded}
           onCheckedChange={createCheckboxHandler(item)}
           className="h-6 w-6 md:h-4 md:w-4"
-        />
+        /> */}
         <Button className="flex items-center gap-4" variant="ghost" disabled={alreadyAdded}>
           <div className="text-xs text-gray-500">
             {toUIDate(new Date(item.bookingDate), { useToday: true })

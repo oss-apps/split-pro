@@ -13,22 +13,22 @@ export type TransactionWithPendingStatus = TransactionOutputItem & {
 
 export const BankingTransactionList: React.FC<{
   add: (obj: TransactionAddInputModel) => void;
-  addMultipleExpenses: () => void;
-  multipleTransactions: TransactionAddInputModel[];
-  setMultipleTransactions: (a: TransactionAddInputModel[]) => void;
-  isTransactionLoading: boolean;
+  // addMultipleExpenses: () => void;
+  // multipleTransactions: TransactionAddInputModel[];
+  // setMultipleTransactions: (a: TransactionAddInputModel[]) => void;
+  // isTransactionLoading: boolean;
   bankConnectionEnabled: boolean;
   children: React.ReactNode;
-  clearFields: () => void;
+  // clearFields: () => void;
 }> = ({
   add,
-  addMultipleExpenses,
-  multipleTransactions,
-  setMultipleTransactions,
-  isTransactionLoading,
+  // addMultipleExpenses,
+  // multipleTransactions,
+  // setMultipleTransactions,
+  // isTransactionLoading,
   bankConnectionEnabled,
   children,
-  clearFields,
+  // clearFields,
 }) => {
   const { t } = useTranslationWithUtils();
 
@@ -75,7 +75,7 @@ export const BankingTransactionList: React.FC<{
   const transactionsArray = returnTransactionsArray();
 
   const onTransactionRowClick = useCallback(
-    (item: TransactionWithPendingStatus, multiple: boolean) => {
+    (item: TransactionWithPendingStatus) => {
       const transactionData = {
         date: new Date(item.bookingDate),
         amount: item.transactionAmount.amount.replace('-', ''),
@@ -84,37 +84,35 @@ export const BankingTransactionList: React.FC<{
         transactionId: item.transactionId,
       };
 
-      if (multiple) {
-        clearFields();
-        const isInMultipleTransactions = multipleTransactions?.some(
-          (cItem) => cItem.transactionId === item.transactionId,
-        );
+      // if (multiple) {
+      //   clearFields();
+      //   const isInMultipleTransactions = multipleTransactions?.some(
+      //     (cItem) => cItem.transactionId === item.transactionId,
+      //   );
 
-        setMultipleTransactions(
-          isInMultipleTransactions
-            ? multipleTransactions.filter((cItem) => cItem.transactionId !== item.transactionId)
-            : [...multipleTransactions, transactionData],
-        );
-      } else {
-        if (alreadyAdded(item.transactionId)) {
-          return;
-        }
-        add(transactionData);
-        document.getElementById('mainlayout')?.scrollTo({ top: 0, behavior: 'instant' });
+      //   setMultipleTransactions(
+      //     isInMultipleTransactions
+      //       ? multipleTransactions.filter((cItem) => cItem.transactionId !== item.transactionId)
+      //       : [...multipleTransactions, transactionData],
+      //   );
+      // } else {
+      if (alreadyAdded(item.transactionId)) {
+        return;
       }
+      add(transactionData);
+      setOpen(false);
+      document.getElementById('mainlayout')?.scrollTo({ top: 0, behavior: 'instant' });
+      // }
     },
-    [multipleTransactions, setMultipleTransactions, add, alreadyAdded, clearFields],
+    [add, alreadyAdded],
   );
 
-  const setOpenClose = useCallback(
-    (open: boolean) => {
-      setOpen(open);
-      if (!open) {
-        setMultipleTransactions([]);
-      }
-    },
-    [setMultipleTransactions],
-  );
+  const setOpenClose = useCallback((open: boolean) => {
+    setOpen(open);
+    // if (!open) {
+    //   setMultipleTransactions([]);
+    // }
+  }, []);
 
   return (
     <AppDrawer
@@ -123,9 +121,12 @@ export const BankingTransactionList: React.FC<{
       open={open}
       onOpenChange={setOpenClose}
       className="h-[80vh]"
-      actionTitle={t('expense_details.submit_all')}
-      actionOnClick={addMultipleExpenses}
-      actionDisabled={(multipleTransactions?.length || 0) === 0 || isTransactionLoading}
+      // actionTitle={t('expense_details.submit_all')}
+      // actionOnClick={addMultipleExpenses}
+      // actionDisabled={
+      //   (multipleTransactions?.length || 0) === 0 ||
+      //   isTransactionLoading
+      // }
       shouldCloseOnAction
     >
       <div className="flex flex-col gap-4">
@@ -148,7 +149,7 @@ export const BankingTransactionList: React.FC<{
                 alreadyAdded={alreadyAdded(item.transactionId)}
                 onTransactionRowClick={onTransactionRowClick}
                 groupName={returnGroupName(item.transactionId)}
-                multipleTransactions={multipleTransactions}
+                // multipleTransactions={multipleTransactions}
               />
             ))}
           </>

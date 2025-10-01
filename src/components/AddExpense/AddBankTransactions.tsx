@@ -1,121 +1,119 @@
-import { useRouter } from 'next/router';
 import React, { useCallback } from 'react';
-import { calculateParticipantSplit, useAddExpenseStore } from '~/store/addStore';
+import { useAddExpenseStore } from '~/store/addStore';
 import type { TransactionAddInputModel } from '~/types';
-import { api } from '~/utils/api';
 import { BankingTransactionList } from './BankTransactions/BankingTransactionList';
 import { isCurrencyCode } from '~/lib/currency';
 
 const AddBankTransactions: React.FC<{
-  clearFields: () => void;
+  // clearFields: () => void;
   onUpdateAmount: (amount: string) => void;
   bankConnectionEnabled: boolean;
   children: React.ReactNode;
-}> = ({ clearFields, bankConnectionEnabled, onUpdateAmount, children }) => {
-  const participants = useAddExpenseStore((s) => s.participants);
-  const group = useAddExpenseStore((s) => s.group);
-  const category = useAddExpenseStore((s) => s.category);
-  const isExpenseSettled = useAddExpenseStore((s) => s.canSplitScreenClosed);
-  const splitShares = useAddExpenseStore((s) => s.splitShares);
-  const paidBy = useAddExpenseStore((s) => s.paidBy);
-  const splitType = useAddExpenseStore((s) => s.splitType);
-  const fileKey = useAddExpenseStore((s) => s.fileKey);
-  const multipleTransactions = useAddExpenseStore((s) => s.multipleTransactions);
-  const isTransactionLoading = useAddExpenseStore((s) => s.isTransactionLoading);
+}> = ({ bankConnectionEnabled, onUpdateAmount, children }) => {
+  // const participants = useAddExpenseStore((s) => s.participants);
+  // const group = useAddExpenseStore((s) => s.group);
+  // const category = useAddExpenseStore((s) => s.category);
+  // const isExpenseSettled = useAddExpenseStore((s) => s.canSplitScreenClosed);
+  // const splitShares = useAddExpenseStore((s) => s.splitShares);
+  // const paidBy = useAddExpenseStore((s) => s.paidBy);
+  // const splitType = useAddExpenseStore((s) => s.splitType);
+  // const fileKey = useAddExpenseStore((s) => s.fileKey);
+  // const multipleTransactions = useAddExpenseStore((s) => s.multipleTransactions);
+  // const isTransactionLoading = useAddExpenseStore((s) => s.isTransactionLoading);
 
   const {
     setCurrency,
     setDescription,
-    resetState,
-    setSplitScreenOpen,
+    // resetState,
+    // setSplitScreenOpen,
     setExpenseDate,
     setTransactionId,
-    setMultipleTransactions,
-    setIsTransactionLoading,
+    // setMultipleTransactions,
+    // setIsTransactionLoading,
   } = useAddExpenseStore((s) => s.actions);
 
-  const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
+  // const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
 
-  const router = useRouter();
+  // const router = useRouter();
 
-  const addMultipleExpenses = useCallback(async () => {
-    setIsTransactionLoading(true);
+  // const addMultipleExpenses = useCallback(async () => {
+  //   setIsTransactionLoading(true);
 
-    if (!paidBy) {
-      return;
-    }
+  //   if (!paidBy) {
+  //     return;
+  //   }
 
-    if (!isExpenseSettled) {
-      setSplitScreenOpen(true);
-      return;
-    }
+  //   if (!isExpenseSettled) {
+  //     setSplitScreenOpen(true);
+  //     return;
+  //   }
 
-    const seen = new Set();
-    const deduplicated = multipleTransactions.filter((item) => {
-      if (seen.has(item.transactionId)) {
-        return false;
-      }
-      seen.add(item.transactionId);
-      return true;
-    });
+  //   const seen = new Set();
+  //   const deduplicated = multipleTransactions.filter((item) => {
+  //     if (seen.has(item.transactionId)) {
+  //       return false;
+  //     }
+  //     seen.add(item.transactionId);
+  //     return true;
+  //   });
 
-    const expensePromises = deduplicated.map(async (tempItem) => {
-      if (tempItem) {
-        const normalizedAmount = tempItem.amount.replace(',', '.');
-        const _amtBigInt = BigInt(Math.round(Number(normalizedAmount) * 100));
+  //   const expensePromises = deduplicated.map(async (tempItem) => {
+  //     if (tempItem) {
+  //       const normalizedAmount = tempItem.amount.replace(',', '.');
+  //       const _amtBigInt = BigInt(Math.round(Number(normalizedAmount) * 100));
 
-        const { participants: tempParticipants } = calculateParticipantSplit(
-          _amtBigInt,
-          participants,
-          splitType,
-          splitShares,
-          paidBy,
-        );
+  //       const { participants: tempParticipants } = calculateParticipantSplit(
+  //         _amtBigInt,
+  //         participants,
+  //         splitType,
+  //         splitShares,
+  //         paidBy,
+  //       );
 
-        return addExpenseMutation.mutateAsync({
-          name: tempItem.description,
-          currency: tempItem.currency,
-          amount: _amtBigInt,
-          groupId: group?.id ?? null,
-          splitType,
-          participants: tempParticipants.map((p) => ({
-            userId: p.id,
-            amount: p.amount ?? 0n,
-          })),
-          paidBy: paidBy.id,
-          category,
-          fileKey,
-          expenseDate: tempItem.date,
-          expenseId: tempItem.expenseId,
-          transactionId: tempItem.transactionId,
-        });
-      }
-      return Promise.resolve();
-    });
+  //       return addExpenseMutation.mutateAsync({
+  //         name: tempItem.description,
+  //         currency: tempItem.currency,
+  //         amount: _amtBigInt,
+  //         groupId: group?.id ?? null,
+  //         splitType,
+  //         participants: tempParticipants.map((p) => ({
+  //           userId: p.id,
+  //           amount: p.amount ?? 0n,
+  //         })),
+  //         paidBy: paidBy.id,
+  //         category,
+  //         fileKey,
+  //         expenseDate: tempItem.date,
+  //         expenseId: tempItem.expenseId,
+  //         transactionId: tempItem.transactionId,
+  //       });
+  //     }
+  //     return Promise.resolve();
+  //   });
 
-    await Promise.all(expensePromises);
+  //   await Promise.all(expensePromises);
 
-    setMultipleTransactions([]);
-    setIsTransactionLoading(false);
-    router.back();
-    resetState();
-  }, [
-    setSplitScreenOpen,
-    router,
-    resetState,
-    addExpenseMutation,
-    group,
-    paidBy,
-    splitType,
-    fileKey,
-    isExpenseSettled,
-    multipleTransactions,
-    participants,
-    category,
-    setIsTransactionLoading,
-    splitShares,
-    setMultipleTransactions,
-  ]);
+  //   setMultipleTransactions([]);
+  //   setIsTransactionLoading(false);
+  //   router.back();
+  //   resetState();
+  // }, [
+  //   setSplitScreenOpen,
+  //   router,
+  //   resetState,
+  //   addExpenseMutation,
+  //   group,
+  //   paidBy,
+  //   splitType,
+  //   fileKey,
+  //   isExpenseSettled,
+  //   multipleTransactions,
+  //   participants,
+  //   category,
+  //   setIsTransactionLoading,
+  //   splitShares,
+  //   setMultipleTransactions,
+  // ]);
 
   const addViaBankTransaction = useCallback(
     (obj: TransactionAddInputModel) => {
@@ -132,22 +130,22 @@ const AddBankTransactions: React.FC<{
     [setExpenseDate, setDescription, setCurrency, onUpdateAmount, setTransactionId],
   );
 
-  const handleSetMultipleTransactions = useCallback(
-    (a: TransactionAddInputModel[]) => {
-      setMultipleTransactions(a);
-    },
-    [setMultipleTransactions],
-  );
+  // const handleSetMultipleTransactions = useCallback(
+  //   (a: TransactionAddInputModel[]) => {
+  //     setMultipleTransactions(a);
+  //   },
+  //   [setMultipleTransactions],
+  // );
 
   return (
     <BankingTransactionList
       add={addViaBankTransaction}
-      addMultipleExpenses={addMultipleExpenses}
-      multipleTransactions={multipleTransactions}
-      setMultipleTransactions={handleSetMultipleTransactions}
-      isTransactionLoading={isTransactionLoading}
+      // addMultipleExpenses={addMultipleExpenses}
+      // multipleTransactions={multipleTransactions}
+      // setMultipleTransactions={handleSetMultipleTransactions}
+      // isTransactionLoading={isTransactionLoading}
       bankConnectionEnabled={bankConnectionEnabled}
-      clearFields={clearFields}
+      // clearFields={clearFields}
     >
       {children}
     </BankingTransactionList>

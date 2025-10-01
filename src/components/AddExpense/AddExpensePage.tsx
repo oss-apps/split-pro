@@ -310,7 +310,7 @@ export const AddOrEditExpensePage: React.FC<{
             </div>
           </div>
           <AddBankTransactions
-            clearFields={clearFields}
+            // clearFields={clearFields}
             onUpdateAmount={onUpdateAmount}
             bankConnectionEnabled={bankConnectionEnabled}
           >

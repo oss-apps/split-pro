@@ -26,6 +26,10 @@ export const BankTransactionItem: React.FC<{
     [onTransactionRowClick],
   );
 
+  const isNegative = item?.transactionAmount?.amount
+    ? Number(item.transactionAmount.amount) < 0
+    : false;
+
   return (
     <div className="flex items-center justify-between px-2 py-2" key={index}>
       <div className="flex items-center gap-4">
@@ -64,7 +68,13 @@ export const BankTransactionItem: React.FC<{
         </Button>
       </div>
       <div className="min-w-10 shrink-0">
-        <div className={`text-right ${alreadyAdded ? 'text-red-500' : 'text-emerald-600'}`}>
+        <div
+          className={cn(
+            'text-right text-emerald-600',
+            alreadyAdded && 'text-gray-500',
+            isNegative && 'text-red-500',
+          )}
+        >
           <span className="font-light">{item.transactionAmount.currency}</span>{' '}
           {item.transactionAmount.amount}
         </div>

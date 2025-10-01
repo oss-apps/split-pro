@@ -1,30 +1,34 @@
 import React, { useCallback } from 'react';
 import { api } from '~/utils/api';
 import { LoadingSpinner } from '../../ui/spinner';
-import { Button } from '../../ui/button';
 import type { TransactionAddInputModel } from '~/types';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { BankTransactionItem } from './BankTransactionItem';
 import type { TransactionOutputItem } from '~/types/bank.types';
 import { AppDrawer } from '~/components/ui/drawer';
-import { Landmark } from 'lucide-react';
 
 export type TransactionWithPendingStatus = TransactionOutputItem & {
   pending: boolean;
 };
 
 export const BankingTransactionList: React.FC<{
+  add: (obj: TransactionAddInputModel) => void;
   addMultipleExpenses: () => void;
   multipleTransactions: TransactionAddInputModel[];
   setMultipleTransactions: (a: TransactionAddInputModel[]) => void;
   isTransactionLoading: boolean;
   bankConnectionEnabled: boolean;
+  children: React.ReactNode;
+  clearFields: () => void;
 }> = ({
+  add,
   addMultipleExpenses,
   multipleTransactions,
   setMultipleTransactions,
   isTransactionLoading,
   bankConnectionEnabled,
+  children,
+  clearFields,
 }) => {
   const { t } = useTranslationWithUtils();
 
@@ -71,7 +75,7 @@ export const BankingTransactionList: React.FC<{
   const transactionsArray = returnTransactionsArray();
 
   const onTransactionRowClick = useCallback(
-    (item: TransactionWithPendingStatus) => {
+    (item: TransactionWithPendingStatus, multiple: boolean) => {
       const transactionData = {
         date: new Date(item.bookingDate),
         amount: item.transactionAmount.amount.replace('-', ''),
@@ -80,37 +84,44 @@ export const BankingTransactionList: React.FC<{
         transactionId: item.transactionId,
       };
 
-      const isInMultipleTransactions = multipleTransactions?.some(
-        (cItem) => cItem.transactionId === item.transactionId,
-      );
+      if (multiple) {
+        clearFields();
+        const isInMultipleTransactions = multipleTransactions?.some(
+          (cItem) => cItem.transactionId === item.transactionId,
+        );
 
-      setMultipleTransactions(
-        isInMultipleTransactions
-          ? multipleTransactions.filter((cItem) => cItem.transactionId !== item.transactionId)
-          : [...multipleTransactions, transactionData],
-      );
+        setMultipleTransactions(
+          isInMultipleTransactions
+            ? multipleTransactions.filter((cItem) => cItem.transactionId !== item.transactionId)
+            : [...multipleTransactions, transactionData],
+        );
+      } else {
+        if (alreadyAdded(item.transactionId)) {
+          return;
+        }
+        add(transactionData);
+        document.getElementById('mainlayout')?.scrollTo({ top: 0, behavior: 'instant' });
+      }
     },
-    [multipleTransactions, setMultipleTransactions],
+    [multipleTransactions, setMultipleTransactions, add, alreadyAdded, clearFields],
+  );
+
+  const setOpenClose = useCallback(
+    (open: boolean) => {
+      setOpen(open);
+      if (!open) {
+        setMultipleTransactions([]);
+      }
+    },
+    [setMultipleTransactions],
   );
 
   return (
     <AppDrawer
-      trigger={
-        <div className="flex w-full justify-center">
-          <Button
-            variant="outline"
-            className="text-md hover:text-foreground/80 justify-between rounded-full border-teal-500"
-          >
-            <div className="flex items-center gap-4">
-              <Landmark className="h-5 w-5 text-teal-500" />
-              {t('expense_details.bank_transactions')}
-            </div>
-          </Button>
-        </div>
-      }
+      trigger={children}
       title={t('expense_details.bank_transactions')}
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={setOpenClose}
       className="h-[80vh]"
       actionTitle={t('expense_details.submit_all')}
       actionOnClick={addMultipleExpenses}

@@ -1,4 +1,4 @@
-import { HeartHandshakeIcon } from 'lucide-react';
+import { HeartHandshakeIcon, Landmark } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -313,7 +313,19 @@ export const AddOrEditExpensePage: React.FC<{
             clearFields={clearFields}
             onUpdateAmount={onUpdateAmount}
             bankConnectionEnabled={bankConnectionEnabled}
-          />
+          >
+            <div className="flex w-full justify-center">
+              <Button
+                variant="outline"
+                className="text-md hover:text-foreground/80 justify-between rounded-full border-teal-500"
+              >
+                <div className="flex items-center gap-4">
+                  <Landmark className="h-5 w-5 text-teal-500" />
+                  {t('expense_details.bank_transactions')}
+                </div>
+              </Button>
+            </div>
+          </AddBankTransactions>
           <SponsorUs />
         </>
       )}

@@ -32,6 +32,7 @@
     "prefer-default-export": "off",
     "yoda": "off",
     "new-cap": "off",
+    "no-named-export": "off",
     "id-length": "off",
     "react_perf/jsx-no-jsx-as-prop": "off",
     "no-nested-ternary": "off",

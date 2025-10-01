@@ -54,11 +54,11 @@ export const PlaidLink: React.FC<PlaidLinkProps> = ({ onConnect, onSuccess, chil
       setIsLoading(true);
       try {
         await exchangePublicToken.mutateAsync(publicToken);
-        toast.success(t('account.plaid.bank_connected_successfully'));
+        toast.success(t('bank_transactions.plaid.bank_connected_successfully'));
         onSuccess?.();
       } catch (error) {
         console.error('Error exchanging public token:', error);
-        toast.error(t('account.plaid.bank_connection_failed'));
+        toast.error(t('bank_transactions.plaid.bank_connection_failed'));
       } finally {
         setIsLoading(false);
       }
@@ -70,7 +70,7 @@ export const PlaidLink: React.FC<PlaidLinkProps> = ({ onConnect, onSuccess, chil
     (err: any, _metadata: any) => {
       if (err) {
         console.error('Plaid Link error:', err);
-        toast.error(t('account.plaid.bank_connection_cancelled'));
+        toast.error(t('bank_transactions.plaid.bank_connection_cancelled'));
       }
     },
     [t],

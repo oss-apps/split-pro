@@ -98,6 +98,20 @@ export const SelectUserOrGroup: React.FC<{
     );
   }
 
+  const handleFriendClick = useCallback(
+    (f: User) => {
+      const isExisting = participants.some((p) => p.id === f.id);
+
+      if (isExisting) {
+        removeParticipant(f.id);
+      } else {
+        addOrUpdateParticipant(f);
+      }
+      setNameOrEmail('');
+    },
+    [participants, removeParticipant, addOrUpdateParticipant, setNameOrEmail],
+  );
+
   return (
     <div className="mt-1">
       <div>
@@ -140,22 +154,11 @@ export const SelectUserOrGroup: React.FC<{
           <>
             <div className="font-normal text-gray-500">{t('actors.friends')}</div>
             {filteredFriends.map((f) => {
-              const isExisting = participants.some((p) => p.id === f.id);
-
-              const handleFriendClick = useCallback(() => {
-                if (isExisting) {
-                  removeParticipant(f.id);
-                } else {
-                  addOrUpdateParticipant(f);
-                }
-                setNameOrEmail('');
-              }, [isExisting, f]);
-
               return (
                 <button
                   key={f.id}
                   className="flex w-full items-center justify-between border-b border-gray-900 py-4"
-                  onClick={handleFriendClick}
+                  onClick={() => handleFriendClick(f)}
                 >
                   <div className="flex items-center gap-4">
                     <EntityAvatar entity={f} size={35} />
@@ -178,13 +181,11 @@ export const SelectUserOrGroup: React.FC<{
             <div className="mt-8 text-gray-500">{t('actors.groups')}</div>
             <div className="mt-2 flex flex-col gap-1">
               {filteredGroups.map((g) => {
-                const handleGroupClick = useCallback(() => onGroupSelect(g.group), [g.group]);
-
                 return (
                   <button
                     key={g.groupId}
                     className="border-b border-gray-900 py-4"
-                    onClick={handleGroupClick}
+                    onClick={() => onGroupSelect(g.group)}
                   >
                     <div className="flex items-center gap-4">
                       <EntityAvatar entity={g.group} size={35} />

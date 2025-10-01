@@ -22,28 +22,26 @@ interface SetDbCachedDataParams<K extends CachedBankDataKey> {
   data: DbCachedData[K]['data'];
 }
 
-export async function getDbCachedData<T, K extends CachedBankDataKey>({
+async function getDbCachedData<T, K extends CachedBankDataKey>({
   key,
   where,
   maxAgeMs = 24 * 60 * 60 * 1000,
 }: GetDbCachedDataParams<K>): Promise<T | null> {
+  const minLastFetched = new Date(Date.now() - maxAgeMs);
+
   const cached = await db[key].findUnique({
-    where: where,
+    where: {
+      ...where,
+      lastFetched: {
+        gt: minLastFetched,
+      },
+    } as DbCachedData[K]['where'],
   });
 
-  if (!cached) {
-    return null;
-  }
-
-  const isFresh = cached.lastFetched > new Date(Date.now() - maxAgeMs);
-  if (!isFresh) {
-    return null;
-  }
-
-  return cached as T;
+  return cached as T | null;
 }
 
-export async function setDbCachedData<K extends CachedBankDataKey>({
+async function setDbCachedData<K extends CachedBankDataKey>({
   key,
   where,
   data,
@@ -54,3 +52,5 @@ export async function setDbCachedData<K extends CachedBankDataKey>({
     create: data,
   });
 }
+
+export { getDbCachedData, setDbCachedData };

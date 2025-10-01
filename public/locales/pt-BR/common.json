@@ -85,9 +85,12 @@
   "auth": {
     "continue_with": "Continuar com {{provider}}",
     "email_placeholder": "Insira seu e-mail",
+    "no_providers_configured": "Nenhum provedor de autenticação configurado",
+    "no_providers_instructions": "Por favor, configure pelo menos um provedor de autenticação para fazer login. Consulte as",
     "otp_sent": "Enviamos um e-mail para você com o código OTP. Por favor, confira sua caixa de entrada e clique no link contido no e-mail para entrar.",
     "send_magic_link": "Enviar link mágico",
     "sending": "Enviando...",
+    "setup_instructions": "instruções de configuração do Docker",
     "trouble_logging_in": "Com dificuldades para fazer login? Entre em contato"
   },
   "currency_conversion": {

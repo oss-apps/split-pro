@@ -1,4 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  SiAuth0,
+  SiAuthelia,
+  SiAuthentik,
+  SiGithub,
+  SiGoogle,
+  SiKeycloak,
+} from '@icons-pack/react-simple-icons';
 import { type GetServerSideProps, type NextPage } from 'next';
 import { type ClientSafeProvider, getProviders, signIn } from 'next-auth/react';
 import { type TFunction, useTranslation } from 'next-i18next';
@@ -6,6 +14,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { LanguageSelector } from '~/components/LanguageSelector';
 import { Button } from '~/components/ui/button';
 import {
   Form,
@@ -16,19 +25,10 @@ import {
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import { LanguageSelector } from '~/components/LanguageSelector';
 import { env } from '~/env';
 import { getServerAuthSession } from '~/server/auth';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import VerificationStep from './VerificationStep';
-import {
-  SiAuth0,
-  SiAuthelia,
-  SiAuthentik,
-  SiGithub,
-  SiGoogle,
-  SiKeycloak,
-} from '@icons-pack/react-simple-icons';
 
 const providerSvgs = {
   github: <SiGithub />,
@@ -148,42 +148,65 @@ const Home: NextPage<{
             <LanguageSelector />
           </div>
 
-          {providers
-            .filter((provider) => 'email' !== provider.id)
-            .map((provider) => (
-              <Button
-                className="mx-auto flex w-[300px] items-center gap-3 bg-white hover:bg-gray-100 focus:bg-gray-100"
-                onClick={handleProviderSignIn(provider.id)}
-                key={provider.id}
-              >
-                {providerTypeGuard(provider.id) && providerSvgs[provider.id]}
-                {t('auth.continue_with', { provider: provider.name })}
-              </Button>
-            ))}
-          {providers && 2 === providers.length && (
-            <div className="mt-6 flex w-[300px] items-center justify-between gap-2">
-              <p className="bg-background z-10 ml-[150px] -translate-x-1/2 px-4 text-sm">
-                {t('ui.or')}
+          {providers.length === 0 ? (
+            <div className="text-muted-foreground flex w-[300px] flex-col items-center gap-4 text-center">
+              <p className="text-lg font-semibold">{t('auth.no_providers_configured')}</p>
+              <p className="text-sm">
+                {t('auth.no_providers_instructions')}{' '}
+                <a
+                  className="text-primary underline"
+                  href="https://github.com/oss-apps/split-pro/blob/main/docker/README.md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t('auth.setup_instructions')}
+                </a>
+                .
               </p>
-              <div className="absolute h-px w-[300px] bg-linear-to-r from-zinc-800 via-zinc-300 to-zinc-800" />
             </div>
-          )}
-          {providers.find((provider) => 'email' === provider.id) ? (
+          ) : (
             <>
-              <Form {...emailForm}>
-                <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="mt-6 space-y-8">
-                  <FormField control={emailForm.control} name="email" render={field} />
+              {providers
+                .filter((provider) => 'email' !== provider.id)
+                .map((provider) => (
                   <Button
-                    className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
-                    type="submit"
-                    disabled={'sending' === emailStatus}
+                    className="mx-auto flex w-[300px] items-center gap-3 bg-white hover:bg-gray-100 focus:bg-gray-100"
+                    onClick={handleProviderSignIn(provider.id)}
+                    key={provider.id}
                   >
-                    {'sending' === emailStatus ? t('auth.sending') : t('auth.send_magic_link')}
+                    {providerTypeGuard(provider.id) && providerSvgs[provider.id]}
+                    {t('auth.continue_with', { provider: provider.name })}
                   </Button>
-                </form>
-              </Form>
+                ))}
+              {providers && 2 === providers.length && (
+                <div className="mt-6 flex w-[300px] items-center justify-between gap-2">
+                  <p className="bg-background z-10 ml-[150px] -translate-x-1/2 px-4 text-sm">
+                    {t('ui.or')}
+                  </p>
+                  <div className="absolute h-px w-[300px] bg-linear-to-r from-zinc-800 via-zinc-300 to-zinc-800" />
+                </div>
+              )}
+              {providers.find((provider) => 'email' === provider.id) ? (
+                <>
+                  <Form {...emailForm}>
+                    <form
+                      onSubmit={emailForm.handleSubmit(onEmailSubmit)}
+                      className="mt-6 space-y-8"
+                    >
+                      <FormField control={emailForm.control} name="email" render={field} />
+                      <Button
+                        className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
+                        type="submit"
+                        disabled={'sending' === emailStatus}
+                      >
+                        {'sending' === emailStatus ? t('auth.sending') : t('auth.send_magic_link')}
+                      </Button>
+                    </form>
+                  </Form>
+                </>
+              ) : null}
             </>
-          ) : null}
+          )}
           {feedbackEmail && (
             <p className="text-muted-foreground mt-6 w-[300px] text-center text-sm">
               {t('auth.trouble_logging_in')}

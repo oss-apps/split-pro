@@ -80,9 +80,12 @@
   "auth": {
     "continue_with": "Continuar con {{provider}}",
     "email_placeholder": "Introduce tu correo electrónico",
+    "no_providers_configured": "No hay proveedores de autenticación configurados",
+    "no_providers_instructions": "Por favor, configure al menos un proveedor de autenticación para iniciar sesión. Consulte las",
     "otp_sent": "Hemos enviado un correo electrónico con el OTP. Por favor, revisa tu bandeja de entrada y haz clic en el enlace del correo electrónico para iniciar sesión.",
     "send_magic_link": "Enviar enlace mágico",
     "sending": "Enviando...",
+    "setup_instructions": "instrucciones de configuración de Docker",
     "trouble_logging_in": "¿Problemas para iniciar sesión? Contacta a"
   },
   "currency_conversion": {

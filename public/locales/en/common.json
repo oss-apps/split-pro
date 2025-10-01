@@ -85,9 +85,12 @@
   "auth": {
     "continue_with": "Continue with {{provider}}",
     "email_placeholder": "Enter your email",
+    "no_providers_configured": "No authentication providers configured",
+    "no_providers_instructions": "Please configure at least one authentication provider to sign in. See the",
     "otp_sent": "We have sent an email with the OTP. Please check your inbox and click the link in the email to sign in.",
     "send_magic_link": "Send magic link",
     "sending": "Sending...",
+    "setup_instructions": "Docker setup instructions",
     "trouble_logging_in": "Trouble logging in? Contact"
   },
   "currency_conversion": {

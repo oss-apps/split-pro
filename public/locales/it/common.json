@@ -84,10 +84,13 @@
   "auth": {
     "continue_with": "Continua con {{provider}}",
     "email_placeholder": "Inserisci la tua email",
+    "no_providers_configured": "Nessun provider di autenticazione configurato",
+    "no_providers_instructions": "Si prega di configurare almeno un provider di autenticazione per accedere. Consulta le",
     "or": "oppure",
     "otp_sent": "Abbiamo inviato un'e-mail con l'OTP. Controllare la posta in arrivo e fare clic sul link contenuto nell'e-mail per accedere.",
     "send_magic_link": "Invia link magico",
     "sending": "Invio in corso...",
+    "setup_instructions": "istruzioni di configurazione Docker",
     "submit": "Invia",
     "trouble_logging_in": "Problemi ad accedere? Contatta"
   },

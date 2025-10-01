@@ -4,9 +4,15 @@ If you plan to contribute to Splitpro, please take a moment to feel awesome ✨ 
 
 ## Adding a new locale
 
+> We are in the process of setting up WebPlate for automated GUI based locale adding. Please do not use it yet, but the process below will become much simpler soon!
+
 If you speak a language that is missing here or spot some mistakes in the translations, feel free to submit a PR, not much coding knowledge required! The process involves copying the files in `public/locales/en` and creating a new folder with your locale. Then it is a matter of updating the values themselves and adding your locale in the [config](./next-i18next.config.js) and [client](./src/utils/i18n/client.ts).
 
 Before submitting a PR, please run the local environment and check that it looks alright in the UI. Also, by submitting a PR, you assume the role of a maintainer of the translation, as possibly no one else will be able to check it.
+
+## Adding a new currency rate provider
+
+This is very straightforward and requires adding a new subclass in `./src/server/api/services/currencyRateService.ts`. You basically need to define a method that given a currency pair and a date, returns the appropriate date. If the provider returns more currencies in one API call, you can also return more, as well as only return an intermediate currencies, the inherited methods will put it all together!
 
 ## Before getting started
 
@@ -31,7 +37,7 @@ Always feel free to ask questions or seek clarification on the issue.
 
 ## Developing
 
-The development branch is <code>main</code>. All pull requests should be made against this branch. If you need help getting started, send an email to koushik@ossapps.dev.
+The development branch is <code>main</code>. All pull requests should be made against this branch. If you need help getting started, go to our GitHub Discussions.
 
 1. [Fork](https://help.github.com/articles/fork-a-repo/) this repository to your
    own GitHub account and then

@@ -1,16 +1,5 @@
 {
-  "title": "Waluty",
-  "placeholder": "Wybierz walutę",
-  "no_currency_found": "Nie znaleziono waluty.",
   "currency_list": {
-    "CAD": {
-      "name": "Dolar kanadyjski",
-      "name_plural": "Dolary kanadyjskie"
-    },
-    "EUR": {
-      "name": "Euro",
-      "name_plural": "Euro"
-    },
     "AED": {
       "name": "Dirham ZEA",
       "name_plural": "Dirhamy ZEA"
@@ -83,6 +72,11 @@
       "name": "Dolar belizeński",
       "name_plural": "Dolary belizeńskie"
     },
+    "CAD": {
+      "name_0": "Dolar kanadyjski",
+      "name_1": "Dolary kanadyjskie",
+      "name_2": "Dolarów kanadyjskich"
+    },
     "CDF": {
       "name": "Frank kongijski",
       "name_plural": "Franki kongijskie"
@@ -146,6 +140,10 @@
     "ETB": {
       "name": "Birr etiopski",
       "name_plural": "Birry etiopskie"
+    },
+    "EUR": {
+      "name": "Euro",
+      "name_plural": "Euro"
     },
     "GBP": {
       "name": "Funt szterling",
@@ -555,5 +553,8 @@
       "name": "Dolar zimbabweński",
       "name_plural": "Dolary zimbabweńskie"
     }
-  }
+  },
+  "no_currency_found": "Nie znaleziono waluty.",
+  "placeholder": "Wybierz walutę",
+  "title": "Waluty"
 }

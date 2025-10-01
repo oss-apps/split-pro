@@ -25,19 +25,15 @@ It currently has most of the important features.
 - Import from splitwise
 - simplify group debts
 - community translations, feel free to add your language!
-- **UNRELEASED** currency conversion, quickly convert expenses and group balances
+- **UPCOMING** currency conversion, quickly convert expenses and group balances
+- **UPCOMING** recurrent transactions
+- **UPCOMING** bank account transaction integration
 
 **More features coming every day**
 
 ## Versions
 
-Split Pro is aimed for self hosting mostly. To get the most recent features you can build an image from source. Stabilized changes are released as Docker images, while we also have a not so often updated cloud instance for you to try:
-
-<p align="center">
-    <a href="https://splitpro.app"><strong>To our App »</strong></a>
-    <br />
-  </p>
-</p>
+Split Pro is for self hosting. To get the most recent features you can build an image from source. Stabilized changes which you can see in GitHub releases are available as Docker images on DockerHub and ghcr. In the past we used to have a community hosted instance at https://splitpro.app, but it is no longer maintained and stuck at version `1.3.4`
 
 ---
 
@@ -54,6 +50,17 @@ I was searching for other open-source alternatives (Let's be honest, any closed-
 I managed to find a good app [spliit.app](https://spliit.app/) by [Sebastien Castiel](https://scastiel.dev/) but it's not a complete replacement and didn't suit my workflow sadly. Check it out to see if it fits you.
 
 _That's when I decided to work on this_
+
+## Translations
+
+The app translations are managed using [a Weblate project](https://hosted.weblate.org/projects/splitpro/).
+You can easily add missing translations, fix issues you find and a new language! Just be aware that a new language
+also needs to be added in the code and open an issue for that once you finish translating the files.
+Here is the current state of translation:
+
+<a href="https://hosted.weblate.org/engage/splitpro/">
+<img src="https://hosted.weblate.org/widget/splitpro/multi-auto.svg" alt="Translation status" />
+</a>
 
 ## FAQ
 
@@ -141,6 +148,7 @@ We are grateful for the support of our sponsors.
 </a>
 <a href="https://github.com/igorrrpawlowski"><img src="https:&#x2F;&#x2F;github.com&#x2F;igorrrpawlowski.png" width="60px" alt="User avatar: igorrrpawlowski" /></a>
 <a href="https://github.com/probeonstimpack"><img src="https:&#x2F;&#x2F;github.com&#x2F;probeonstimpack.png" width="60px" alt="User avatar: Marcel Szmeterowicz" /></a>
+<a href="https://github.com/mexicanhatman"><img src="https://avatars.githubusercontent.com/u/78694887?v=4" width="60px" alt="User avatar: mexicanhatman" /></a>
 
 ## Star History
 

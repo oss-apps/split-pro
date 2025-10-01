@@ -34,7 +34,7 @@ jobs:
         run: pnpm lint
 
       - name: Run tsc
-        run: pnpm tsc --noEmit
+        run: pnpm tsgo --noEmit
 
       - name: Run tests
         run: pnpm test

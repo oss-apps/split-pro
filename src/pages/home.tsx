@@ -269,14 +269,16 @@ export default function Home() {
                 </p> */}
               </div>
               <div className="flex justify-center gap-4 lg:justify-start">
-                <a
-                  className="text-primary"
-                  href="https://twitter.com/KM_Koushik_"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Twitter
-                </a>
+                {isCloud && (
+                  <a
+                    className="text-primary"
+                    href="https://twitter.com/KM_Koushik_"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Twitter
+                  </a>
+                )}
                 <a
                   className="text-primary"
                   href="https://github.com/oss-apps/split-pro"

@@ -1,0 +1,70 @@
+{
+  "features": {
+    "currency_conversion": {
+      "description": "Convertis rapidement les dépenses entre plusieurs devises, avec le taux de change actuel ou antérieur.",
+      "title": "Conversion monétaire"
+    },
+    "debt_simplification": {
+      "description": "Simplifie automatiquement les dettes des groupes et réduis le nombre de transactions à faire entre ami⋅es.",
+      "title": "Simplification des dettes"
+    },
+    "groups_and_friends": {
+      "description": "Tu peux créer de multiples groupes, ou simplement gérer ton solde avec les autres. Tout sera regroupé sur ton tableau de bord !",
+      "title": "Groupes et ami⋅es"
+    },
+    "i18": {
+      "description": "L'appli est disponible dans de multiples langues pour rendre le partage des dépenses accessible partout.",
+      "title": "International"
+    },
+    "import_splitwise": {
+      "description": "Pas besoin de d'importer manuellement tous les soldes. Tu peux importer les membres et groupes de ton Splitwise.",
+      "title": "Import depuis Splitwise"
+    },
+    "multiple_currencies": {
+      "description": "Besoin d'ajouter des dépenses avec des devises différentes pour une même personne ? Pas de problème !",
+      "title": "Devises multiples"
+    },
+    "open_source": {
+      "description": "Pour te garantir le contrôle sur tes données : pas de mauvaise surprise ou de fonctionnalité payante ! Et c'est facile à auto-héberger.",
+      "title": "Open source"
+    },
+    "push_notifications": {
+      "description": "Ne rate aucune info importante. Reçois une notification quand quelqu'un ajoute une dépense ou un règlement.",
+      "title": "Notifications push"
+    },
+    "pwa_support": {
+      "description": "Tu aimes avoir l'app sur mobile ? Pas de souci : tu peux mettre un raccourci et ça fonctionne pareil !",
+      "title": "App PWA (Appli Web Progressive)"
+    },
+    "title": "Fonctionnalités",
+    "unequal_split": {
+      "description": "Des options de répartition des dépenses avancée. Par parts, pourcentages, ou montants précis, avec possibilité d'ajustement manuel.",
+      "title": "Répartition des sommes"
+    },
+    "upload_receipts": {
+      "description": "Ajoute tes factures et notes en pièce jointe sur tes dépenses",
+      "title": "Mets tes factures en ligne"
+    }
+  },
+  "footer": {
+    "built_by": "Développé par"
+  },
+  "hero": {
+    "add_expense_button": "Ajouter une dépense",
+    "star_github_button": "Mettez-nous une étoile sur GitHub",
+    "subtitle_link": "open source",
+    "subtitle_part1": "Une alternative",
+    "subtitle_part2": "à Splitwise",
+    "title_highlight": "gratuitement",
+    "title_part1": "Répartissez vos dépenses entre ami⋅es"
+  },
+  "meta": {
+    "description": "SplitPro : partagez vos dépenses entre ami⋅es. C'est gratuit !",
+    "title": "SplitPro : partagez vos dépenses entre ami⋅es. C'est gratuit !"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "privacy": "Données et vie privée",
+    "terms": "Conditions d'utilisation"
+  }
+}

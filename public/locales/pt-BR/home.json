@@ -1,0 +1,70 @@
+{
+  "features": {
+    "currency_conversion": {
+      "description": "Converta moedas rapidamente usando taxas de câmbio atualizadas ou históricas",
+      "title": "Conversão de moedas"
+    },
+    "debt_simplification": {
+      "description": "Simplifique automaticamente dívidas do grupo para reduzir o número de transações necessárias entre amigos",
+      "title": "Simplificação de dívidas"
+    },
+    "groups_and_friends": {
+      "description": "Pode criar vários grupos ou adicionar saldos diretamente. Tudo será consolidado",
+      "title": "Grupos e amigos"
+    },
+    "i18": {
+      "description": "Disponível em vários idiomas para facilitar a divisão de despesas no mundo todo",
+      "title": "Internacionalização"
+    },
+    "import_splitwise": {
+      "description": "Não precisa migrar os saldos manualmente. É só importar usuários e grupos do Splitwise",
+      "title": "Importe do Splitwise"
+    },
+    "multiple_currencies": {
+      "description": "Precisa adicionar despesas com diferentes moedas para o mesmo usuário? Sem problemas!",
+      "title": "Múltiplas moedas"
+    },
+    "open_source": {
+      "description": "O que torna difícil sermos do mal. E fácil de hospedar por conta própria",
+      "title": "Código aberto"
+    },
+    "push_notifications": {
+      "description": "Nunca perca uma notificação. Seja notificado quando alguém adicionar uma despesa ou quitar uma dívida",
+      "title": "Notificações push"
+    },
+    "pwa_support": {
+      "description": "Gosta de apps? Deixa com a gente. Instale como um PWA: é só adicionar nosso site à sua tela inicial e ele funciona como um aplicativo. Você nem vai notar a diferença!",
+      "title": "Suporte a PWA"
+    },
+    "title": "Funcionalidades",
+    "unequal_split": {
+      "description": "Opções de divisão avançadas. Por partes, porcentagem ou quantias exatas.",
+      "title": "Divisão desigual"
+    },
+    "upload_receipts": {
+      "description": "Envie recibos e notas fiscais junto às despesas",
+      "title": "Upload de recibos"
+    }
+  },
+  "footer": {
+    "built_by": "Criado por"
+  },
+  "hero": {
+    "add_expense_button": "Adicionar despesa",
+    "star_github_button": "Nos favorite no github",
+    "subtitle_link": "open source",
+    "subtitle_part1": "Uma alternativa",
+    "subtitle_part2": "ao SplitWise",
+    "title_highlight": "de graça",
+    "title_part1": "Divida despesas com seus amigos"
+  },
+  "meta": {
+    "description": "SplitPro: Divida despesas com seus amigos de graça",
+    "title": "SplitPro: Divida despesas com seus amigos de graça"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "privacy": "Privacidade",
+    "terms": "Termos"
+  }
+}

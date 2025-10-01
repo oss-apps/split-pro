@@ -70,7 +70,9 @@
     "leave": "Leave",
     "save": "Save",
     "settle_up": "Settle up",
-    "submit": "Submit"
+    "submit": "Submit",
+    "reconnect": "Reconnect",
+    "connect": "Connect"
   },
   "actors": {
     "all": "All",

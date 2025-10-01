@@ -38,7 +38,8 @@
     "typescript/no-confusing-void-expression": "off",
     "typescript/no-misused-spread": "warn",
     "func-names": "off",
-    "prefer-destructuring": "off"
+    "prefer-destructuring": "off",
+    "no-named-export": "off"
   },
   "overrides": [
     {

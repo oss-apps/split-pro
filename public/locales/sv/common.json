@@ -85,9 +85,12 @@
   "auth": {
     "continue_with": "Fortsätt med {{provider}}",
     "email_placeholder": "Ange din email",
+    "no_providers_configured": "Inga autentiseringsleverantörer konfigurerade",
+    "no_providers_instructions": "Vänligen konfigurera minst en autentiseringsleverantör för att logga in. Se",
     "otp_sent": "Vi har skickat ett mail med OTP. Kontrollera din inkorg och klicka på länken i mailet för att logga in.",
     "send_magic_link": "Skicka magisk länk",
     "sending": "Skickar...",
+    "setup_instructions": "Docker-installationsinstruktioner",
     "trouble_logging_in": "Problem med att logga in? Kontakta"
   },
   "currency_conversion": {

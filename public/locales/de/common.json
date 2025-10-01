@@ -85,9 +85,12 @@
   "auth": {
     "continue_with": "Weiter mit {{provider}}",
     "email_placeholder": "Mailadresse eingeben",
+    "no_providers_configured": "Keine Authentifizierungsanbieter konfiguriert",
+    "no_providers_instructions": "Bitte konfigurieren Sie mindestens einen Authentifizierungsanbieter, um sich anzumelden. Siehe die",
     "otp_sent": "Wir haben dir eine Mail mit dem Einmalpasswort geschickt. Schau im Posteingang und folge dem Link in der Email um dich anzumelden",
     "send_magic_link": "Sende Magic Link",
     "sending": "Senden...",
+    "setup_instructions": "Docker-Setup-Anleitung",
     "trouble_logging_in": "Probleme beim anmelden? Kontakt"
   },
   "currency_conversion": {

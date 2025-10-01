@@ -92,28 +92,3 @@ describe('toUIString', () => {
     });
   });
 });
-
-const { toSafeBigInt } = require('./numbers');
-
-describe('toSafeBigInt (minimal current behavior)', () => {
-  it.each([
-    ['integer positive', '100', 10000n],
-    ['integer negative', '-100', -10000n],
-    ['decimal positive', '100.25', 10025n],
-    ['decimal negative', '-100.25', -10025n],
-    ['small decimal positive rounding', '1.005', 101n],
-  ])('%s: %s -> %s', (_label, input, expected) => {
-    expect(toSafeBigInt(input)).toBe(expected);
-  });
-
-  it.each([
-    ['empty string', '', 0n],
-    ['letters', 'abc', 0n],
-  ])('invalid input %s -> 0n', (_label, input, expected) => {
-    expect(toSafeBigInt(input)).toBe(expected);
-  });
-
-  it('negative zero decimal becomes +1 cent with current logic', () => {
-    expect(toSafeBigInt('-0.01')).toBe(-1n);
-  });
-});

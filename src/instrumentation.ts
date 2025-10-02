@@ -11,7 +11,7 @@ export async function register() {
   }
 
   // Create cron jobs
-  if (process.env.CRON_JOB_FREQUENCY) {
+  if (process.env.CRON_JOB_FREQUENCY && process.env.DATABASE_URL) {
     const frequencies = ['weekly', 'monthly'];
 
     if (frequencies.includes(process.env.CRON_JOB_FREQUENCY)) {

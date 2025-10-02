@@ -87,7 +87,6 @@ export const AddOrEditExpensePage: React.FC<{
   );
 
   const addExpense = useCallback(async () => {
-    const { group, paidBy } = useAddExpenseStore.getState();
     if (!paidBy) {
       return;
     }
@@ -309,24 +308,22 @@ export const AddOrEditExpensePage: React.FC<{
               </Button>
             </div>
           </div>
-          <AddBankTransactions
-            // clearFields={clearFields}
-            onUpdateAmount={onUpdateAmount}
-            bankConnectionEnabled={bankConnectionEnabled}
-          >
-            <div className="flex w-full justify-center">
+          <div className="absolute right-0 bottom-30 left-0 flex items-center justify-between gap-4 lg:relative lg:bottom-0">
+            <div className="h-[40px] w-[56px]" /> {/* Empty spot for another button */}
+            <SponsorUs />
+            <AddBankTransactions
+              // clearFields={clearFields}
+              onUpdateAmount={onUpdateAmount}
+              bankConnectionEnabled={bankConnectionEnabled}
+            >
               <Button
-                variant="outline"
-                className="text-md hover:text-foreground/80 justify-between rounded-full border-teal-500"
+                variant="ghost"
+                className="hover:text-foreground/80 items-center justify-between"
               >
-                <div className="flex items-center gap-4">
-                  <Landmark className="h-5 w-5 text-teal-500" />
-                  {t('expense_details.bank_transactions')}
-                </div>
+                <Landmark className="text-white-500 h-6 w-6" />
               </Button>
-            </div>
-          </AddBankTransactions>
-          <SponsorUs />
+            </AddBankTransactions>
+          </div>
         </>
       )}
     </div>

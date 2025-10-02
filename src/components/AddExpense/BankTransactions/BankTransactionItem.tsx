@@ -22,8 +22,8 @@ export const BankTransactionItem: React.FC<{
   // );
 
   const createClickHandler = useCallback(
-    (item: TransactionWithPendingStatus) => () => onTransactionRowClick(item, false),
-    [onTransactionRowClick],
+    () => onTransactionRowClick(item, false),
+    [onTransactionRowClick, item],
   );
 
   const isNegative = item?.transactionAmount?.amount
@@ -51,7 +51,7 @@ export const BankTransactionItem: React.FC<{
                 </div>
               ))}
           </div>
-          <div onClick={createClickHandler(item)}>
+          <div onClick={createClickHandler}>
             <p
               className={cn(
                 'line-clamp-2 text-left text-sm whitespace-break-spaces lg:text-base',

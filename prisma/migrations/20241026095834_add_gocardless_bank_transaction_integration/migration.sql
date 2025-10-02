@@ -20,3 +20,6 @@ CREATE TABLE "CachedBankData" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "CachedBankData_obapiProviderId_key" ON "CachedBankData"("obapiProviderId");
+
+-- AddForeignKey
+ALTER TABLE "public"."CachedBankData" ADD CONSTRAINT "CachedBankData_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

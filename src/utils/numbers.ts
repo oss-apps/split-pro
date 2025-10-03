@@ -7,7 +7,6 @@ export function toSafeBigInt(num: number | string) {
     if ('' === num.trim()) {
       return 0n;
     }
-    console.log(`toSafeBigInt(${num})`);
     // Normalize common thousands and decimal separators.
     // Strategy:
     // - Remove spaces always.
@@ -22,16 +21,13 @@ export function toSafeBigInt(num: number | string) {
     const hasComma = s.indexOf(',') !== -1;
 
     if (hasDot && hasComma) {
-      // remove commas as thousands separators
       s = s.replace(/,/g, '');
     } else if (hasComma && !hasDot) {
       const parts = s.split(',');
       const after = parts[1] ?? '';
       if (after.length === 3) {
-        // treat comma as thousands separator
         s = s.replace(/,/g, '');
       } else {
-        // treat comma as decimal separator
         s = s.replace(/,/g, '.');
       }
     }
@@ -52,7 +48,6 @@ export function toSafeBigInt(num: number | string) {
 }
 
 export function toUIString(num = 0n, signed = false, currencyCode: CurrencyCode = 'USD') {
-  console.log(`toUIString(${num}, ${signed}, ${currencyCode})`);
   const { decimalDigits } = CURRENCIES[currencyCode];
   const maxDecimals = 10n ** BigInt(decimalDigits);
   const decimalPart = num % 100n;
@@ -70,7 +65,6 @@ export function toUIString(num = 0n, signed = false, currencyCode: CurrencyCode 
           })
           .slice(1) // Remove leading '0.'
       : '');
-  console.log(`-> ${res}`);
   return (signed && 0n > num && 0 !== parseFloat(res) ? '-' : '') + res;
 }
 

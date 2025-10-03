@@ -2,10 +2,11 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { type GetServerSidePropsContext } from 'next';
 import type { User } from 'next-auth';
 import { type DefaultSession, type NextAuthOptions, getServerSession } from 'next-auth';
-import { type Adapter, type AdapterUser } from 'next-auth/adapters';
+import { type Adapter, type AdapterUser, type AdapterAccount } from 'next-auth/adapters';
 import AuthentikProvider from 'next-auth/providers/authentik';
 import EmailProvider from 'next-auth/providers/email';
 import GoogleProvider from 'next-auth/providers/google';
+import KeycloakProvider from 'next-auth/providers/keycloak';
 
 import { env } from '~/env';
 import { db } from '~/server/db';
@@ -44,7 +45,7 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
   return {
     ...prismaAdapter,
     createUser: (user: Omit<AdapterUser, 'id'>): Promise<AdapterUser> => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      // oxlint-disable-next-line typescript/no-unsafe-assignment
       const prismaCreateUser = prismaAdapter.createUser;
 
       if (env.INVITE_ONLY) {
@@ -56,8 +57,33 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
         throw new Error('Prisma Adapter lacks User Creation');
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+      // oxlint-disable-next-line typescript/no-unsafe-return, typescript/no-unsafe-call
       return prismaCreateUser(user);
+    },
+    linkAccount: async (account: AdapterAccount) => {
+      // oxlint-disable-next-line typescript/no-unsafe-assignment
+      const originalLinkAccount = prismaAdapter.linkAccount;
+
+      if (!originalLinkAccount) {
+        throw new Error('Adapter is missing the linkAccount method.');
+      }
+
+      if (account.provider === 'keycloak') {
+        // Keycloak provides some non-standard fields that do not exist in the prisma schema.
+        // We strip them out before passing them on to the original adapter.
+        const {
+          ['not-before-policy']: _notBeforePolicy,
+          refresh_expires_in: _refresh_expires_in,
+          // keep the rest
+          ...standardAccountData
+        } = account as unknown as Record<string, unknown>;
+
+        // oxlint-disable-next-line typescript/no-unsafe-return
+        return originalLinkAccount(standardAccountData as AdapterAccount);
+      }
+
+      // Default: proceed directly
+      return originalLinkAccount(account);
     },
   } as Adapter;
 };
@@ -192,6 +218,17 @@ function getProviders() {
         clientId: env.AUTHENTIK_ID,
         clientSecret: env.AUTHENTIK_SECRET,
         issuer: env.AUTHENTIK_ISSUER,
+        allowDangerousEmailAccountLinking: true,
+      }),
+    );
+  }
+
+  if (env.KEYCLOAK_ID && env.KEYCLOAK_SECRET && env.KEYCLOAK_ISSUER) {
+    providersList.push(
+      KeycloakProvider({
+        clientId: env.KEYCLOAK_ID,
+        clientSecret: env.KEYCLOAK_SECRET,
+        issuer: env.KEYCLOAK_ISSUER,
         allowDangerousEmailAccountLinking: true,
       }),
     );

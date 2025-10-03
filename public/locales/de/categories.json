@@ -1,86 +1,86 @@
 {
-  "title": "Kategorien",
   "categories_list": {
     "entertainment": {
-      "name": "Unterhaltung",
       "items": {
         "games": "Spiele",
         "movies": "Filme",
         "music": "Musik",
-        "sports": "Sport",
-        "other": "Unterhaltung"
-      }
+        "other": "Unterhaltung",
+        "sports": "Sport"
+      },
+      "name": "Unterhaltung"
     },
     "food": {
-      "name": "Essen & Trinken",
       "items": {
         "diningOut": "Auswärts essen",
         "groceries": "Lebensmittel",
         "liquor": "Alkohol",
         "other": "Essen & Trinken"
-      }
+      },
+      "name": "Essen & Trinken"
+    },
+    "general": {
+      "items": {
+        "general": "Allgemein",
+        "other": "Allgemein"
+      },
+      "name": "Allgemein"
     },
     "home": {
-      "name": "Zuhause",
       "items": {
         "electronics": "Elektronik",
         "furniture": "Möbel",
-        "supplies": "Materialien",
         "maintenance": "Wartung",
         "mortgage": "Hypothek",
+        "other": "Zuhause",
         "pets": "Haustiere",
         "rent": "Miete",
         "services": "Dienstleistungen",
-        "other": "Zuhause"
-      }
+        "supplies": "Materialien"
+      },
+      "name": "Zuhause"
     },
     "life": {
-      "name": "Leben",
       "items": {
         "childcare": "Kinderbetreuung",
         "clothing": "Kleidung",
         "education": "Bildung",
         "gifts": "Geschenke",
+        "insurance": "Versicherung",
         "medical": "Medizinisch",
-        "taxes": "Steuern",
         "other": "Leben",
-        "insurance": "Versicherung"
-      }
+        "taxes": "Steuern"
+      },
+      "name": "Leben"
     },
     "travel": {
-      "name": "Reisen",
       "items": {
+        "bicycle": "Fahrrad",
         "bus": "Bus",
-        "train": "Zug",
         "car": "Auto",
         "fuel": "Kraftstoff",
+        "hotel": "Hotel",
+        "other": "Reisen",
         "parking": "Parken",
         "plane": "Flugzeug",
         "taxi": "Taxi",
-        "other": "Reisen",
-        "bicycle": "Fahrrad",
-        "hotel": "Hotel"
-      }
+        "train": "Zug"
+      },
+      "name": "Reisen"
     },
     "utilities": {
-      "name": "Nebenkosten",
       "items": {
         "cleaning": "Reinigung",
         "electricity": "Strom",
         "gas": "Gas",
         "internet": "Internet",
-        "trash": "Müll",
+        "other": "Nebenkosten",
         "phone": "Telefon",
-        "water": "Wasser",
-        "other": "Nebenkosten"
-      }
-    },
-    "general": {
-      "name": "Allgemein",
-      "items": {
-        "general": "Allgemein",
-        "other": "Allgemein"
-      }
+        "trash": "Müll",
+        "water": "Wasser"
+      },
+      "name": "Nebenkosten"
     }
-  }
+  },
+  "title": "Kategorien"
 }

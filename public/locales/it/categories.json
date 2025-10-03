@@ -1,86 +1,86 @@
 {
-  "title": "Categorie",
   "categories_list": {
     "entertainment": {
-      "name": "Intrattenimento",
       "items": {
         "games": "Giochi",
         "movies": "Film",
         "music": "Musica",
-        "sports": "Sport",
-        "other": "Intrattenimento"
-      }
+        "other": "Intrattenimento",
+        "sports": "Sport"
+      },
+      "name": "Intrattenimento"
     },
     "food": {
-      "name": "Cibo e bevande",
       "items": {
         "diningOut": "Cene fuori",
         "groceries": "Spesa",
         "liquor": "Alcolici",
         "other": "Cibo e bevande"
-      }
+      },
+      "name": "Cibo e bevande"
+    },
+    "general": {
+      "items": {
+        "general": "Generale",
+        "other": "Generale"
+      },
+      "name": "Generale"
     },
     "home": {
-      "name": "Casa",
       "items": {
         "electronics": "Elettronica",
         "furniture": "Mobili",
-        "supplies": "Forniture",
         "maintenance": "Manutenzione",
         "mortgage": "Mutuo",
+        "other": "Casa",
         "pets": "Animali domestici",
         "rent": "Affitto",
         "services": "Servizi",
-        "other": "Casa"
-      }
+        "supplies": "Forniture"
+      },
+      "name": "Casa"
     },
     "life": {
-      "name": "Vita",
       "items": {
         "childcare": "Cura dei bambini",
         "clothing": "Abbigliamento",
         "education": "Istruzione",
         "gifts": "Regali",
+        "insurance": "Assicurazione",
         "medical": "Spese mediche",
-        "taxes": "Tasse",
         "other": "Vita",
-        "insurance": "Assicurazione"
-      }
+        "taxes": "Tasse"
+      },
+      "name": "Vita"
     },
     "travel": {
-      "name": "Viaggi",
       "items": {
+        "bicycle": "Bicicletta",
         "bus": "Autobus",
-        "train": "Treno",
         "car": "Auto",
         "fuel": "Carburante",
+        "hotel": "Hotel",
+        "other": "Viaggi",
         "parking": "Parcheggio",
         "plane": "Aereo",
         "taxi": "Taxi",
-        "other": "Viaggi",
-        "bicycle": "Bicicletta",
-        "hotel": "Hotel"
-      }
+        "train": "Treno"
+      },
+      "name": "Viaggi"
     },
     "utilities": {
-      "name": "Utenze",
       "items": {
         "cleaning": "Pulizie",
         "electricity": "Elettricità",
         "gas": "Gas",
         "internet": "Internet",
-        "trash": "Spazzatura",
+        "other": "Utenze",
         "phone": "Telefone",
-        "water": "Acqua",
-        "other": "Utenze"
-      }
-    },
-    "general": {
-      "name": "Generale",
-      "items": {
-        "general": "Generale",
-        "other": "Generale"
-      }
+        "trash": "Spazzatura",
+        "water": "Acqua"
+      },
+      "name": "Utenze"
     }
-  }
+  },
+  "title": "Categorie"
 }

@@ -4,11 +4,11 @@ If you plan to contribute to Splitpro, please take a moment to feel awesome ✨ 
 
 ## Adding a new locale
 
-> We are in the process of setting up WebPlate for automated GUI based locale adding. Please do not use it yet, but the process below will become much simpler soon!
+If you speak a language that is missing here or spot some mistakes in the translations, feel free to use our [Weblate project](https://hosted.weblate.org/projects/splitpro/), no coding knowledge required! The GUI is easy to navigate and you can read Weblate docs in case of any issues. If you are adding a new language and have translated all the keys, you can submit a PR updating [config](./next-i18next.config.js) and [client](./src/utils/i18n/client.ts) to enable its use in the app.
 
-If you speak a language that is missing here or spot some mistakes in the translations, feel free to submit a PR, not much coding knowledge required! The process involves copying the files in `public/locales/en` and creating a new folder with your locale. Then it is a matter of updating the values themselves and adding your locale in the [config](./next-i18next.config.js) and [client](./src/utils/i18n/client.ts).
+#### Adding locales when developing
 
-Before submitting a PR, please run the local environment and check that it looks alright in the UI. Also, by submitting a PR, you assume the role of a maintainer of the translation, as possibly no one else will be able to check it.
+To ease developer burden, you should only create English keys when adding new features. The rest should be updated by the community via Weblate!
 
 ## Adding a new currency rate provider
 

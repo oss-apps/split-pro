@@ -53,7 +53,7 @@ _That's when I decided to work on this_
 
 ## Translations
 
-The app translations are managed using [a Weblate project](https://hosted.weblate.org/projects/splitpro/). 
+The app translations are managed using [a Weblate project](https://hosted.weblate.org/projects/splitpro/).
 You can easily add missing translations, fix issues you find and a new language! Just be aware that a new language
 also needs to be added in the code and open an issue for that once you finish translating the files.
 Here is the current state of translation:
@@ -147,6 +147,7 @@ We are grateful for the support of our sponsors.
 </a>
 <a href="https://github.com/igorrrpawlowski"><img src="https:&#x2F;&#x2F;github.com&#x2F;igorrrpawlowski.png" width="60px" alt="User avatar: igorrrpawlowski" /></a>
 <a href="https://github.com/probeonstimpack"><img src="https:&#x2F;&#x2F;github.com&#x2F;probeonstimpack.png" width="60px" alt="User avatar: Marcel Szmeterowicz" /></a>
+<a href="https://github.com/mexicanhatman"><img src="https://avatars.githubusercontent.com/u/78694887?v=4" width="60px" alt="User avatar: mexicanhatman" /></a>
 
 ## Star History
 

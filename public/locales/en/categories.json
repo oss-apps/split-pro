@@ -1,86 +1,86 @@
 {
-  "title": "Categories",
   "categories_list": {
     "entertainment": {
-      "name": "Entertainment",
       "items": {
         "games": "Games",
         "movies": "Movies",
         "music": "Music",
-        "sports": "Sports",
-        "other": "Entertainment"
-      }
+        "other": "Entertainment",
+        "sports": "Sports"
+      },
+      "name": "Entertainment"
     },
     "food": {
-      "name": "Food & Drinks",
       "items": {
         "diningOut": "Dining Out",
         "groceries": "Groceries",
         "liquor": "Liquor",
         "other": "Food & Drinks"
-      }
+      },
+      "name": "Food & Drinks"
+    },
+    "general": {
+      "items": {
+        "general": "General",
+        "other": "General"
+      },
+      "name": "General"
     },
     "home": {
-      "name": "Home",
       "items": {
         "electronics": "Electronics",
         "furniture": "Furniture",
-        "supplies": "Supplies",
         "maintenance": "Maintenance",
         "mortgage": "Mortgage",
+        "other": "Home",
         "pets": "Pets",
         "rent": "Rent",
         "services": "Services",
-        "other": "Home"
-      }
+        "supplies": "Supplies"
+      },
+      "name": "Home"
     },
     "life": {
-      "name": "Life",
       "items": {
         "childcare": "Childcare",
         "clothing": "Clothing",
         "education": "Education",
         "gifts": "Gifts",
+        "insurance": "Insurance",
         "medical": "Medical",
-        "taxes": "Taxes",
         "other": "Life",
-        "insurance": "Insurance"
-      }
+        "taxes": "Taxes"
+      },
+      "name": "Life"
     },
     "travel": {
-      "name": "Travel",
       "items": {
+        "bicycle": "Bicycle",
         "bus": "Bus",
-        "train": "Train",
         "car": "Car",
         "fuel": "Fuel",
+        "hotel": "Hotel",
+        "other": "Travel",
         "parking": "Parking",
         "plane": "Plane",
         "taxi": "Taxi",
-        "other": "Travel",
-        "bicycle": "Bicycle",
-        "hotel": "Hotel"
-      }
+        "train": "Train"
+      },
+      "name": "Travel"
     },
     "utilities": {
-      "name": "Utilities",
       "items": {
         "cleaning": "Cleaning",
         "electricity": "Electricity",
         "gas": "Gas",
         "internet": "Internet",
-        "trash": "Trash",
+        "other": "Utilities",
         "phone": "Phone",
-        "water": "Water",
-        "other": "Utilities"
-      }
-    },
-    "general": {
-      "name": "General",
-      "items": {
-        "general": "General",
-        "other": "General"
-      }
+        "trash": "Trash",
+        "water": "Water"
+      },
+      "name": "Utilities"
     }
-  }
+  },
+  "title": "Categories"
 }

@@ -310,7 +310,7 @@ export const AddOrEditExpensePage: React.FC<{
             <div className="flex gap-2">
               <Button
                 variant="ghost"
-                className={cn('px-2', !!transactionId && 'text-red-500')}
+                className={cn('px-2', transactionId ? 'text-red-500' : 'invisible')}
                 disabled={!transactionId}
                 onClick={clearFields}
               >

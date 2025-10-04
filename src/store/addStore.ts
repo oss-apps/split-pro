@@ -4,6 +4,7 @@ import { create } from 'zustand';
 
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { type CurrencyCode } from '~/lib/currency';
+import type { TransactionAddInputModel } from '~/types';
 import { shuffleArray } from '~/utils/array';
 import { BigMath } from '~/utils/numbers';
 
@@ -30,6 +31,9 @@ export interface AddExpenseState {
   canSplitScreenClosed: boolean;
   splitScreenOpen: boolean;
   expenseDate: Date | undefined;
+  transactionId?: string;
+  multipleTransactions: TransactionAddInputModel[];
+  isTransactionLoading: boolean;
   actions: {
     setAmount: (amount: bigint) => void;
     setAmountStr: (amountStr: string) => void;
@@ -51,6 +55,9 @@ export interface AddExpenseState {
     resetState: () => void;
     setSplitScreenOpen: (splitScreenOpen: boolean) => void;
     setExpenseDate: (expenseDate: Date | undefined) => void;
+    setTransactionId: (transactionId?: string) => void;
+    setMultipleTransactions: (multipleTransactions: TransactionAddInputModel[]) => void;
+    setIsTransactionLoading: (isTransactionLoading: boolean) => void;
   };
 }
 
@@ -81,6 +88,8 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   canSplitScreenClosed: true,
   splitScreenOpen: false,
   expenseDate: undefined,
+  multipleTransactions: [],
+  isTransactionLoading: false,
   actions: {
     setAmount: (realAmount) =>
       set((s) => {
@@ -112,10 +121,10 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
       })),
     setSplitShare: (splitType, userId, share) =>
       set((state) => {
-        const splitShares = {
+        const splitShares: SplitShares = {
           ...state.splitShares,
           [userId]: {
-            ...state.splitShares[userId],
+            ...(state.splitShares[userId] ?? initSplitShares()),
             [splitType]: share,
           },
         } as SplitShares;
@@ -162,7 +171,6 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
           res[p.id] = initSplitShares();
           return res;
         }, {});
-
         if (splitType) {
           calculateSplitShareBasedOnAmount(
             state.amount,
@@ -274,6 +282,9 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     },
     setSplitScreenOpen: (splitScreenOpen) => set({ splitScreenOpen }),
     setExpenseDate: (expenseDate) => set({ expenseDate }),
+    setTransactionId: (transactionId) => set({ transactionId }),
+    setMultipleTransactions: (multipleTransactions) => set({ multipleTransactions }),
+    setIsTransactionLoading: (isTransactionLoading) => set({ isTransactionLoading }),
   },
 }));
 

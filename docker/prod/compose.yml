@@ -2,7 +2,7 @@ name: split-pro-prod
 
 services:
   postgres:
-    image: postgres:16
+    image: ossapps/postgres
     container_name: ${POSTGRES_CONTAINER_NAME:-splitpro-db}
     restart: always
     environment:
@@ -20,6 +20,11 @@ services:
     env_file: .env
     volumes:
       - database:/var/lib/postgresql/data
+    command: >
+      postgres
+      -c shared_preload_libraries=pg_cron
+      -c cron.database_name=${POSTGRES_DB:-splitpro}
+      -c cron.timezone=${TZ:-UTC}
 
   splitpro:
     image: ossapps/splitpro:latest

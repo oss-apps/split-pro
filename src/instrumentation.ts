@@ -4,7 +4,7 @@
  * more details here: https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation
  */
 export async function register() {
-  if (process.env.NEXT_RUNTIME === 'edge') {
+  if (process.env.NEXT_RUNTIME !== 'nodejs') {
     console.log('Skipping instrumentation on edge runtime');
     return;
   }

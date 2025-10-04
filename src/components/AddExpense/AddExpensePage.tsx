@@ -1,4 +1,4 @@
-import { HeartHandshakeIcon, Landmark } from 'lucide-react';
+import { HeartHandshakeIcon, Landmark, Trash } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -23,6 +23,7 @@ import { UserInput } from './UserInput';
 import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
 import AddBankTransactions from './AddBankTransactions';
+import { cn } from '~/lib/utils';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
@@ -187,6 +188,11 @@ export const AddOrEditExpensePage: React.FC<{
     setExpenseDate(new Date());
   }, [setAmount, setDescription, setAmountStr, setTransactionId, setExpenseDate]);
 
+  const canBeCleared = useMemo(
+    () => amount !== 0n || description !== '' || transactionId !== '',
+    [amount, description, transactionId],
+  );
+
   const previousCurrencyRef = React.useRef<CurrencyCode | null>(null);
 
   const onConvertAmount: React.ComponentProps<typeof CurrencyConversion>['onSubmit'] = useCallback(
@@ -302,27 +308,31 @@ export const AddOrEditExpensePage: React.FC<{
                 </div>
               </>
             ) : null}
-            <div className="flex items-center justify-end gap-4">
-              <Button variant="ghost" className="text-primary px-0" onClick={clearFields}>
-                {t('expense_details.clear')}
-              </Button>
-            </div>
           </div>
-          <div className="absolute right-0 bottom-30 left-0 flex items-center justify-between gap-4 lg:relative lg:bottom-0">
-            <div className="h-[40px] w-[56px]" /> {/* Empty spot for another button */}
-            <SponsorUs />
-            <AddBankTransactions
-              // clearFields={clearFields}
-              onUpdateAmount={onUpdateAmount}
-              bankConnectionEnabled={bankConnectionEnabled}
+          <div className="flex items-center justify-around gap-4 px-4 lg:px-0">
+            <Button
+              variant="ghost"
+              className={cn('text-primary px-2', canBeCleared && 'text-emerald-500')}
+              disabled={!canBeCleared}
+              onClick={clearFields}
             >
-              <Button
-                variant="ghost"
-                className="hover:text-foreground/80 items-center justify-between"
+              <Trash className="h-6 w-6" />
+            </Button>
+            <SponsorUs />
+            <div className="flex gap-2">
+              <AddBankTransactions
+                // clearFields={clearFields}
+                onUpdateAmount={onUpdateAmount}
+                bankConnectionEnabled={bankConnectionEnabled}
               >
-                <Landmark className="text-white-500 h-6 w-6" />
-              </Button>
-            </AddBankTransactions>
+                <Button
+                  variant="ghost"
+                  className="hover:text-foreground/80 items-center justify-between px-2"
+                >
+                  <Landmark className="text-white-500 h-6 w-6" />
+                </Button>
+              </AddBankTransactions>
+            </div>
           </div>
         </>
       )}

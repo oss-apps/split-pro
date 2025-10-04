@@ -31,7 +31,7 @@ export interface AddExpenseState {
   canSplitScreenClosed: boolean;
   splitScreenOpen: boolean;
   expenseDate: Date | undefined;
-  transactionId: string;
+  transactionId?: string;
   multipleTransactions: TransactionAddInputModel[];
   isTransactionLoading: boolean;
   actions: {
@@ -55,7 +55,7 @@ export interface AddExpenseState {
     resetState: () => void;
     setSplitScreenOpen: (splitScreenOpen: boolean) => void;
     setExpenseDate: (expenseDate: Date | undefined) => void;
-    setTransactionId: (transactionId: string) => void;
+    setTransactionId: (transactionId?: string) => void;
     setMultipleTransactions: (multipleTransactions: TransactionAddInputModel[]) => void;
     setIsTransactionLoading: (isTransactionLoading: boolean) => void;
   };
@@ -88,7 +88,6 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   canSplitScreenClosed: true,
   splitScreenOpen: false,
   expenseDate: undefined,
-  transactionId: '',
   multipleTransactions: [],
   isTransactionLoading: false,
   actions: {

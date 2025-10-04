@@ -125,7 +125,7 @@ const AddBankTransactions: React.FC<{
         console.warn(`Invalid currency code: ${obj.currency}`);
       }
       onUpdateAmount(obj.amount);
-      setTransactionId(obj.transactionId ?? '');
+      setTransactionId(obj.transactionId);
     },
     [setExpenseDate, setDescription, setCurrency, onUpdateAmount, setTransactionId],
   );

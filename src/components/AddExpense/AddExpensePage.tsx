@@ -44,6 +44,14 @@ export const AddOrEditExpensePage: React.FC<{
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const splitType = useAddExpenseStore((s) => s.splitType);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
+  const { data: expenseData } = api.expense.getExpenseDetails.useQuery(
+    {
+      expenseId: expenseId as string,
+    },
+    {
+      enabled: !!expenseId,
+    },
+  );
 
   const {
     setCurrency,
@@ -54,10 +62,35 @@ export const AddOrEditExpensePage: React.FC<{
     resetState,
     setSplitScreenOpen,
     setExpenseDate,
+    setFileKey,
   } = useAddExpenseStore((s) => s.actions);
 
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
   const updateProfile = api.user.updateUserDetail.useMutation();
+
+  React.useEffect(() => {
+    if (expenseData) {
+      setDescription(expenseData.name);
+      setAmount(expenseData.amount);
+      setAmountStr(toUIString(expenseData.amount));
+      setCurrency(expenseData.currency as CurrencyCode);
+      setCategory(expenseData.category);
+      setExpenseDate(expenseData.expenseDate);
+
+      if (expenseData.fileKey) {
+        setFileKey(expenseData.fileKey);
+      }
+    }
+  }, [
+    expenseData,
+    setDescription,
+    setAmount,
+    setAmountStr,
+    setCurrency,
+    setCategory,
+    setExpenseDate,
+    setFileKey,
+  ]);
 
   const onCurrencyPick = useCallback(
     (newCurrency: CurrencyCode) => {

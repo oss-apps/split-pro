@@ -16,7 +16,7 @@ services:
       - '${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}'
 
   minio:
-    image: minio/minio
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
     container_name: splitpro-storage-dev
     ports:
       - 9002:9002

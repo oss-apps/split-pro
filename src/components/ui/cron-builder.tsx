@@ -2,6 +2,12 @@
 import cronstrue from 'cronstrue';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ToggleGroup, ToggleGroupItem } from './toggle-group';
+import { Label } from './label';
+import { Input } from './input';
+import { Button } from './button';
+import { cn } from '~/lib/utils';
+import { format } from 'date-fns';
+import { TFunction, useTranslation } from 'next-i18next';
 
 export interface CronTextResult {
   status: boolean;
@@ -10,7 +16,9 @@ export interface CronTextResult {
 
 export function getCronText(cronString: string): CronTextResult {
   try {
-    const value = cronstrue.toString(cronString.trim());
+    const value = cronstrue.toString(cronString.trim(), {
+      use24HourTimeFormat: true,
+    });
     return { status: true, value };
   } catch (error) {
     return { status: false };
@@ -19,7 +27,7 @@ export function getCronText(cronString: string): CronTextResult {
 
 export interface CronBuilderProps {
   onChange: (cronExpression: string) => void;
-  defaultValue?: string;
+  value: string;
   className?: string;
 }
 
@@ -35,57 +43,31 @@ interface ParsedCron {
   };
 }
 
-const SCHEDULE_TYPES = [
-  { value: 'never', label: 'Never' },
-  { value: 'hour', label: 'Hourly' },
-  { value: 'day', label: 'Daily' },
-  { value: 'week', label: 'Weekly' },
-  { value: 'month', label: 'Monthly' },
-  { value: 'year', label: 'Yearly' },
-  { value: 'custom', label: 'Custom' },
-] as const;
+const SCHEDULE_TYPES = (t: TFunction) =>
+  [
+    { value: 'never', label: t('recurrence.schedule_type.never') },
+    { value: 'day', label: t('recurrence.schedule_type.day') },
+    { value: 'week', label: t('recurrence.schedule_type.week') },
+    { value: 'month', label: t('recurrence.schedule_type.month') },
+    { value: 'year', label: t('recurrence.schedule_type.year') },
+    { value: 'custom', label: t('recurrence.schedule_type.custom') },
+  ] as const;
 
-type ScheduleType = (typeof SCHEDULE_TYPES)[number];
+type ScheduleType = ReturnType<typeof SCHEDULE_TYPES>[number];
 
-const MINUTES = Array.from({ length: 60 }, (_, i) => i);
-const HOURS = Array.from({ length: 24 }, (_, i) => i);
 const DAYS_OF_MONTH = Array.from({ length: 31 }, (_, i) => i + 1);
-const COMMON_MINUTES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
-const MONTHS_SHORT = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
-const DAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-// Enhanced button style utility with multiple states
-const getButtonStyles = (state = 'default'): string => {
-  const base = 'px-2 py-1 text-xs rounded border transition-colors';
+const MONTHS_SHORT = (code: string) =>
+  Array.from({ length: 12 }, (_, i) => {
+    const date = new Date(2000, i, 1); // Year 2000, month i, day 1
+    return new Intl.DateTimeFormat(code, { month: 'short' }).format(date);
+  });
 
-  switch (state) {
-    case 'selected':
-      return `${base} bg-[hsl(var(--selected))] text-[hsl(var(--selected-foreground))] border-[hsl(var(--selected))]`;
-    case 'pressed':
-      return `${base} bg-[hsl(var(--pressed))] text-[hsl(var(--pressed-foreground))] border-[hsl(var(--pressed))]`;
-    case 'disabled':
-      return `${base} bg-[hsl(var(--disabled))] text-[hsl(var(--disabled-foreground))] border-[hsl(var(--disabled))] cursor-not-allowed`;
-    case 'loading':
-      return `${base} bg-[hsl(var(--processing))] text-[hsl(var(--processing-foreground))] border-[hsl(var(--processing))]`;
-    case 'focused':
-      return `${base} bg-[hsl(var(--focused))] text-[hsl(var(--focused-foreground))] border-[hsl(var(--focused))] outline-none ring-2 ring-[hsl(var(--focused)/50%)]`;
-    default:
-      return `${base} bg-background text-foreground border-border hover:bg-[hsl(var(--selected))] hover:text-[hsl(var(--selected-foreground))] focus:bg-[hsl(var(--focused))] focus:text-[hsl(var(--focused-foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--focused)/50%)] active:bg-[hsl(var(--pressed))] active:text-[hsl(var(--pressed-foreground))]`;
-  }
-};
+const DAYS_SHORT = (code: string) =>
+  Array.from({ length: 7 }, (_, i) => {
+    const date = new Date(2000, 0, 2 + i); // Jan 2, 2000 was a Sunday
+    return new Intl.DateTimeFormat(code, { weekday: 'short' }).format(date);
+  });
 
 // GridButton component for reusable grid buttons
 interface GridButtonProps {
@@ -108,25 +90,16 @@ const GridButton = React.memo<GridButtonProps>(
     className = '',
     disabled = false,
   }) => {
-    const [isPressed, setIsPressed] = useState(false);
-
     return (
-      <button
-        type="button"
-        onClick={() => !disabled && onClick(value)}
-        onMouseDown={() => !disabled && setIsPressed(true)}
-        onMouseUp={() => setIsPressed(false)}
-        onMouseLeave={() => setIsPressed(false)}
-        onTouchStart={() => !disabled && setIsPressed(true)}
-        onTouchEnd={() => setIsPressed(false)}
-        className={`${getButtonStyles(
-          disabled ? 'disabled' : isPressed ? 'pressed' : isSelected ? 'selected' : 'default',
-        )} ${className}`}
+      <Button
+        className={cn(isSelected ? 'bg-primary text-primary-foreground' : '', className)}
+        onClick={() => onClick(value)}
+        variant="outline"
         style={{ minWidth }}
         disabled={disabled}
       >
         {children || (typeof value === 'number' ? value.toString().padStart(2, '0') : value)}
-      </button>
+      </Button>
     );
   },
 );
@@ -139,8 +112,7 @@ interface ScheduleFieldsProps {
   renderDaysOfWeekList: () => React.ReactNode;
   renderMonthsGrid: () => React.ReactNode;
   renderDaysOfMonthGrid: () => React.ReactNode;
-  renderHoursGrid: () => React.ReactNode;
-  renderMinutesGrid: () => React.ReactNode;
+  renderTimeInput: () => React.ReactNode;
 }
 
 const ScheduleFields = React.memo<ScheduleFieldsProps>(
@@ -149,65 +121,35 @@ const ScheduleFields = React.memo<ScheduleFieldsProps>(
     renderDaysOfWeekList,
     renderMonthsGrid,
     renderDaysOfMonthGrid,
-    renderHoursGrid,
-    renderMinutesGrid,
+    renderTimeInput,
   }) => {
+    const outputs = [renderTimeInput];
+
+    if (scheduleType === 'never') {
+      return null;
+    }
+
     if (scheduleType === 'week') {
-      return (
-        <div className="flex flex-col gap-4">
-          <div className="w-full">{renderDaysOfWeekList()}</div>
-          <div className="flex flex-wrap items-start gap-6">
-            {renderHoursGrid()}
-            {renderMinutesGrid()}
-          </div>
-        </div>
-      );
+      outputs.push(renderDaysOfWeekList);
+    } else if (scheduleType === 'year') {
+      outputs.push(renderMonthsGrid);
+      outputs.push(renderDaysOfMonthGrid);
+    } else if (scheduleType === 'month') {
+      outputs.push(renderDaysOfMonthGrid);
     }
 
-    if (scheduleType === 'year') {
-      return (
-        <div className="grid w-fit grid-cols-2 items-start gap-6">
-          <div>{renderMonthsGrid()}</div>
-          <div>{renderDaysOfMonthGrid()}</div>
-          <div>{renderHoursGrid()}</div>
-          <div>{renderMinutesGrid()}</div>
-        </div>
-      );
-    }
-
-    if (scheduleType === 'month') {
-      return (
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-wrap items-start gap-6">{renderDaysOfMonthGrid()}</div>
-          <div className="flex flex-wrap items-start gap-6">
-            {renderHoursGrid()}
-            {renderMinutesGrid()}
-          </div>
-        </div>
-      );
-    }
-
-    if (scheduleType === 'day') {
-      return (
-        <div className="flex flex-wrap items-start gap-6">
-          {renderHoursGrid()}
-          {renderMinutesGrid()}
-        </div>
-      );
-    }
-
-    if (scheduleType === 'hour') {
-      return <div className="flex flex-wrap items-start gap-6">{renderMinutesGrid()}</div>;
-    }
-
-    return null;
+    return outputs.map((RenderFunc, index) => (
+      <React.Fragment key={index}>{RenderFunc()}</React.Fragment>
+    ));
   },
 );
 
 ScheduleFields.displayName = 'ScheduleFields';
 
-export function CronBuilder({ onChange, defaultValue, className }: CronBuilderProps) {
-  const defaultSchedule = defaultValue || '0 0 * * 0'; // Use provided default or fallback
+export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
+  const { t, i18n } = useTranslation();
+
+  const defaultSchedule = value; // Use provided default or fallback
 
   // Helper function to parse cron expression and determine schedule type
   const parseCronExpression = (cronExpr: string): ParsedCron => {
@@ -278,7 +220,6 @@ export function CronBuilder({ onChange, defaultValue, className }: CronBuilderPr
   const [daysOfWeek, setDaysOfWeek] = useState<number[]>(initialParsed.values.daysOfWeek || [0]);
   const [custom, setCustom] = useState<string>(initialParsed.values.custom || defaultSchedule);
   const [cronExpression, setCronExpression] = useState(defaultSchedule);
-  const [showAllMinutes, setShowAllMinutes] = useState(false);
 
   function loadDefaults() {
     setMinutes([0]);
@@ -305,20 +246,17 @@ export function CronBuilder({ onChange, defaultValue, className }: CronBuilderPr
     const minutesCSV = cleanMinutes.length === 60 ? '*' : cleanMinutes.join(',');
 
     switch (scheduleType) {
-      case 'hour':
-        expression = `${minutesCSV} * * * ?`;
-        break;
       case 'day':
-        expression = `${minutesCSV} ${hoursCSV} * * ?`;
+        expression = `${minutesCSV} ${hoursCSV} * * *`;
         break;
       case 'week':
-        expression = `${minutesCSV} ${hoursCSV} ? * ${dowCSV}`;
+        expression = `${minutesCSV} ${hoursCSV} * * ${dowCSV}`;
         break;
       case 'month':
-        expression = `${minutesCSV} ${hoursCSV} ${domCSV} * ?`;
+        expression = `${minutesCSV} ${hoursCSV} ${domCSV} * *`;
         break;
       case 'year':
-        expression = `${minutesCSV} ${hoursCSV} ${domCSV} ${monthsCSV} ?`;
+        expression = `${minutesCSV} ${hoursCSV} ${domCSV} ${monthsCSV} *`;
         break;
       case 'custom':
         expression = custom || '';
@@ -353,24 +291,15 @@ export function CronBuilder({ onChange, defaultValue, className }: CronBuilderPr
   }
 
   const MonthButton = React.memo<MonthButtonProps>(({ month, index, isSelected, onClick }) => {
-    const [isPressed, setIsPressed] = useState(false);
-
     return (
-      <button
+      <Button
         key={index}
-        type="button"
         onClick={() => onClick(index)}
-        onMouseDown={() => setIsPressed(true)}
-        onMouseUp={() => setIsPressed(false)}
-        onMouseLeave={() => setIsPressed(false)}
-        onTouchStart={() => setIsPressed(true)}
-        onTouchEnd={() => setIsPressed(false)}
-        className={`px-3 py-1 ${getButtonStyles(
-          isPressed ? 'pressed' : isSelected ? 'selected' : 'default',
-        )}`}
+        variant="outline"
+        className={cn(isSelected ? 'bg-primary text-primary-foreground' : '', className)}
       >
         {month}
-      </button>
+      </Button>
     );
   });
 
@@ -378,9 +307,9 @@ export function CronBuilder({ onChange, defaultValue, className }: CronBuilderPr
 
   const renderMonthsGrid = () => (
     <div className="flex w-fit flex-col gap-2">
-      <label className="text-foreground text-xs font-medium">Months</label>
+      <Label className="px-1 text-xs">{t('recurrence.months')}</Label>
       <div className="grid w-fit grid-cols-3 gap-1">
-        {MONTHS_SHORT.map((month, index) => (
+        {MONTHS_SHORT(i18n.language).map((month, index) => (
           <MonthButton
             key={index}
             month={month}
@@ -411,25 +340,21 @@ export function CronBuilder({ onChange, defaultValue, className }: CronBuilderPr
 
   const DayOfWeekButton = React.memo<DayOfWeekButtonProps>(
     ({ day, index, isSelected, isWeekend, onClick }) => {
-      const [isPressed, setIsPressed] = useState(false);
-
       return (
-        <button
+        <Button
           key={index}
           type="button"
           onClick={() => onClick(index)}
-          onMouseDown={() => setIsPressed(true)}
-          onMouseUp={() => setIsPressed(false)}
-          onMouseLeave={() => setIsPressed(false)}
-          onTouchStart={() => setIsPressed(true)}
-          onTouchEnd={() => setIsPressed(false)}
-          className={`px-3 py-1 text-center ${getButtonStyles(
-            isPressed ? 'pressed' : isSelected ? 'selected' : 'default',
-          )} ${isWeekend ? 'text-orange-500' : ''}`}
           style={{ minWidth: '50px' }}
+          variant="outline"
+          className={cn(
+            isSelected ? 'bg-primary text-primary-foreground' : '',
+            isWeekend ? 'text-red-500' : '',
+            className,
+          )}
         >
           {day}
-        </button>
+        </Button>
       );
     },
   );
@@ -441,9 +366,9 @@ export function CronBuilder({ onChange, defaultValue, className }: CronBuilderPr
 
     return (
       <div className="flex w-full flex-col gap-2">
-        <label className="text-foreground text-xs font-medium">Days of Week</label>
+        <Label className="px-1 text-xs">{t('recurrence.days_of_week')}</Label>
         <div className="flex w-full flex-row justify-start gap-1">
-          {DAYS_SHORT.map((day, index) => {
+          {DAYS_SHORT(i18n.language).map((day, index) => {
             const isWeekend = weekendDays.includes(index);
             const isSelected = daysOfWeek.includes(index);
             return (
@@ -471,7 +396,7 @@ export function CronBuilder({ onChange, defaultValue, className }: CronBuilderPr
 
   const renderDaysOfMonthGrid = () => (
     <div className="flex w-fit flex-col gap-2">
-      <label className="text-foreground text-xs font-medium">Days of Month</label>
+      <Label className="px-1 text-xs">{t('recurrence.days_of_month')}</Label>
       <div className="grid w-fit grid-cols-7 gap-1">
         {DAYS_OF_MONTH.map((day) => (
           <GridButton
@@ -485,67 +410,33 @@ export function CronBuilder({ onChange, defaultValue, className }: CronBuilderPr
     </div>
   );
 
-  const handleHourToggle = useCallback((hour: number | string) => {
-    const hourNum = typeof hour === 'number' ? hour : parseInt(hour, 10);
-    setHours((prev) =>
-      prev.includes(hourNum) ? prev.filter((h) => h !== hourNum) : [...prev, hourNum],
+  const renderTimeInput = () => {
+    const [value, setValue] = useState(
+      format(new Date().setHours(hours[0] || 0, minutes[0] || 0), 'HH:mm'),
     );
-  }, []);
 
-  const renderHoursGrid = () => (
-    <div className="flex w-fit flex-col gap-2">
-      <label className="text-foreground text-xs font-medium">Hours</label>
-      <div className="grid w-fit grid-cols-6 gap-1">
-        {HOURS.map((hour) => (
-          <GridButton
-            key={hour}
-            value={hour}
-            isSelected={hours.includes(hour)}
-            onClick={handleHourToggle}
-          />
-        ))}
+    return (
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="time-picker" className="px-1 text-xs">
+          {t('recurrence.time_of_day')}
+        </Label>
+        <Input
+          type="time"
+          id="time-picker"
+          value={value}
+          onChange={(e) => {
+            const date = e.target.valueAsDate;
+            setValue(e.target.value);
+            if (date) {
+              setHours([date.getHours()]);
+              setMinutes([date.getMinutes()]);
+            }
+          }}
+          className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+        />
       </div>
-    </div>
-  );
-
-  const handleMinuteToggle = useCallback((minute: number | string) => {
-    const minuteNum = typeof minute === 'number' ? minute : parseInt(minute, 10);
-    setMinutes((prev) =>
-      prev.includes(minuteNum) ? prev.filter((m) => m !== minuteNum) : [...prev, minuteNum],
     );
-  }, []);
-
-  const minutesToShow = useMemo(
-    () => (showAllMinutes ? MINUTES : COMMON_MINUTES),
-    [showAllMinutes],
-  );
-
-  const renderMinutesGrid = () => (
-    <div className="flex w-fit flex-col gap-2">
-      <div className="flex items-center gap-2">
-        <label className="text-foreground text-xs font-medium">Minutes</label>
-        <span className="text-muted-foreground text-xs">({showAllMinutes ? 'All' : 'Common'})</span>
-        <button
-          type="button"
-          onClick={() => setShowAllMinutes(!showAllMinutes)}
-          className="border-border hover:bg-accent rounded border px-1 pb-0.5 text-xs transition-colors"
-          aria-label={showAllMinutes ? 'Show fewer minutes' : 'Show more minutes'}
-        >
-          {showAllMinutes ? '−' : '+'}
-        </button>
-      </div>
-      <div className={`grid w-fit gap-1 ${showAllMinutes ? 'grid-cols-12' : 'grid-cols-6'}`}>
-        {minutesToShow.map((minute) => (
-          <GridButton
-            key={minute}
-            value={minute}
-            isSelected={minutes.includes(minute)}
-            onClick={handleMinuteToggle}
-          />
-        ))}
-      </div>
-    </div>
-  );
+  };
 
   // Render Cron expression builder UI
   return (
@@ -563,7 +454,7 @@ export function CronBuilder({ onChange, defaultValue, className }: CronBuilderPr
             }}
             className="w-fit justify-start"
           >
-            {SCHEDULE_TYPES.map(({ value, label }) => (
+            {SCHEDULE_TYPES(t).map(({ value, label }) => (
               <ToggleGroupItem key={value} value={value} className="h-8 px-3 py-1 text-xs">
                 {label}
               </ToggleGroupItem>
@@ -572,17 +463,17 @@ export function CronBuilder({ onChange, defaultValue, className }: CronBuilderPr
         </div>
 
         {scheduleType === 'never' ? (
-          <div className="text-muted-foreground mt-2 text-sm">No schedule configured</div>
+          <div className="text-muted-foreground mt-2 text-sm">{t('recurrence.never')}</div>
         ) : (
           <div className="flex flex-col gap-4">
             {scheduleType === 'custom' ? (
               <div className="bg-card border-border flex w-full flex-col gap-2 rounded-md border p-3">
-                <label
+                <Label
                   htmlFor="custom-schedule"
                   className="text-card-foreground text-xs font-medium"
                 >
-                  Cron Expression
-                </label>
+                  {t('recurrence.cron_expression')}
+                </Label>
                 <input
                   type="text"
                   id="custom-schedule"
@@ -601,8 +492,7 @@ export function CronBuilder({ onChange, defaultValue, className }: CronBuilderPr
                 renderDaysOfWeekList={renderDaysOfWeekList}
                 renderMonthsGrid={renderMonthsGrid}
                 renderDaysOfMonthGrid={renderDaysOfMonthGrid}
-                renderHoursGrid={renderHoursGrid}
-                renderMinutesGrid={renderMinutesGrid}
+                renderTimeInput={renderTimeInput}
               />
             )}
 
@@ -619,8 +509,8 @@ export function CronBuilder({ onChange, defaultValue, className }: CronBuilderPr
                 );
               else
                 return (
-                  <p className="bg-destructive text-destructive-foreground rounded-sm p-3">
-                    Invalid cron expression
+                  <p className={'text-destructive text-sm font-medium'}>
+                    {t('errors.invalid_cron_expression')}
                   </p>
                 );
             })()}

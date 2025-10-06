@@ -31,8 +31,7 @@ export interface AddExpenseState {
   canSplitScreenClosed: boolean;
   splitScreenOpen: boolean;
   expenseDate: Date;
-  repeatInterval?: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
-  repeatEvery: number;
+  cronExpression: string;
   transactionId?: string;
   multipleTransactions: TransactionAddInputModel[];
   isTransactionLoading: boolean;
@@ -60,9 +59,7 @@ export interface AddExpenseState {
     setTransactionId: (transactionId?: string) => void;
     setMultipleTransactions: (multipleTransactions: TransactionAddInputModel[]) => void;
     setIsTransactionLoading: (isTransactionLoading: boolean) => void;
-    setRepeatInterval: (repeatInterval: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY') => void;
-    setRepeatEvery: (repeatEvery: number) => void;
-    unsetRepeat: () => void;
+    setCronExpression: (cronExpression: string) => void;
   };
 }
 
@@ -92,6 +89,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   repeatEvery: 1,
   multipleTransactions: [],
   isTransactionLoading: false,
+  cronExpression: '',
   actions: {
     setAmount: (realAmount) =>
       set((s) => {
@@ -280,6 +278,16 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         group: undefined,
         amountStr: '',
         splitShares: s.currentUser ? { [s.currentUser.id]: initSplitShares() } : {},
+        isNegative: false,
+        canSplitScreenClosed: true,
+        splitScreenOpen: false,
+        expenseDate: new Date(),
+        transactionId: undefined,
+        multipleTransactions: [],
+        isTransactionLoading: false,
+        cronExpression: '',
+        isFileUploading: false,
+        paidBy: s.currentUser,
       }));
     },
     setSplitScreenOpen: (splitScreenOpen) => set({ splitScreenOpen }),
@@ -287,9 +295,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     setTransactionId: (transactionId) => set({ transactionId }),
     setMultipleTransactions: (multipleTransactions) => set({ multipleTransactions }),
     setIsTransactionLoading: (isTransactionLoading) => set({ isTransactionLoading }),
-    setRepeatInterval: (repeatInterval) => set({ repeatInterval }),
-    setRepeatEvery: (repeatEvery) => set({ repeatEvery }),
-    unsetRepeat: () => set({ repeatInterval: undefined, repeatEvery: 1 }),
+    setCronExpression: (cronExpression) => set({ cronExpression }),
   },
 }));
 

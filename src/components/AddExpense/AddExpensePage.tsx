@@ -1,4 +1,4 @@
-import { HeartHandshakeIcon, Landmark, RefreshCcwDot, RefreshCwOff, X } from 'lucide-react';
+import { HeartHandshakeIcon, Landmark, RefreshCcwDot, X } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -49,7 +49,7 @@ export const AddOrEditExpensePage: React.FC<{
   const splitType = useAddExpenseStore((s) => s.splitType);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
   const transactionId = useAddExpenseStore((s) => s.transactionId);
-  const repeatInterval = useAddExpenseStore((s) => s.repeatInterval);
+  const cronExpression = useAddExpenseStore((s) => s.cronExpression);
 
   const {
     setCurrency,
@@ -309,7 +309,13 @@ export const AddOrEditExpensePage: React.FC<{
           <div className="flex items-center justify-evenly px-4 lg:px-0">
             <RecurrenceInput>
               <Button variant="ghost" size="sm">
-                <RefreshCcwDot className={cn(repeatInterval && 'text-primary', 'size-6')} />
+                <RefreshCcwDot
+                  className={cn(
+                    cronExpression && 'text-primary',
+                    (!amtStr || !description) && 'invisible',
+                    'size-6',
+                  )}
+                />
                 <span className="sr-only">Toggle recurring expense options</span>
               </Button>
             </RecurrenceInput>

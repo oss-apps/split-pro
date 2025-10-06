@@ -19,6 +19,7 @@ import { currencyRateProvider } from '../services/currencyRateService';
 import { isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
+import { createRecurringExpenseJob } from '../services/scheduleService';
 
 export const expenseRouter = createTRPCRouter({
   getBalances: protectedProcedure.query(async ({ ctx }) => {
@@ -105,6 +106,23 @@ export const expenseRouter = createTRPCRouter({
         const expense = input.expenseId
           ? await editExpense(input, ctx.session.user.id)
           : await createExpense(input, ctx.session.user.id);
+
+        if (expense && input.cronExpression) {
+          const [{ schedule }] = await createRecurringExpenseJob(expense.id, input.cronExpression);
+          console.log('Created recurring expense job with jobid:', schedule);
+          await db.expense.update({
+            where: { id: expense.id },
+            data: {
+              recurrence: {
+                create: {
+                  job: {
+                    connect: { jobid: schedule },
+                  },
+                },
+              },
+            },
+          });
+        }
 
         return expense;
       } catch (error) {

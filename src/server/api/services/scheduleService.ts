@@ -21,11 +21,12 @@ export const createRecurringDeleteBankCacheJob = async (frequency: 'weekly' | 'm
   }
 };
 
-export const createRecurringExpenseJob = async (expenseId: string, cronExpression: string) => {
-  await db.$executeRaw`
+export const createRecurringExpenseJob = async (
+  expenseId: string,
+  cronExpression: string,
+) => db.$queryRaw<[{ schedule: bigint }]>`
 SELECT cron.schedule(
-  ${expenseId}, 
-  ${cronExpression}, 
-  $$ SELECT duplicate_expense_with_participants(${expenseId}::UUID); $$
+${expenseId}, 
+${cronExpression.replaceAll('L', '$')}, 
+$$ SELECT duplicate_expense_with_participants(${expenseId}::UUID); $$
 );`;
-};

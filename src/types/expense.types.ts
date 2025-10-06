@@ -21,7 +21,6 @@ export type CreateExpense = Omit<
   expenseId?: string;
   transactionId?: string;
   otherConversion?: string;
-  recurrenceId?: string;
   participants: Omit<ExpenseParticipant, 'expenseId'>[];
 };
 
@@ -47,6 +46,7 @@ export const createExpenseSchema = z.object({
   expenseDate: z.date().optional(),
   expenseId: z.string().optional(),
   otherConversion: z.string().optional(),
+  cronExpression: z.string().optional(),
 }) satisfies z.ZodType<CreateExpense>;
 
 export const createCurrencyConversionSchema = z.object({

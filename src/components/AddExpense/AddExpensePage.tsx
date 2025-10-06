@@ -122,6 +122,7 @@ export const AddOrEditExpensePage: React.FC<{
           expenseDate,
           expenseId,
           transactionId,
+          cronExpression,
         },
         {
           onSuccess: (d) => {
@@ -164,6 +165,7 @@ export const AddOrEditExpensePage: React.FC<{
     setMultipleTransactions,
     transactionId,
     setIsTransactionLoading,
+    cronExpression,
   ]);
 
   const handleDescriptionChange = useCallback(

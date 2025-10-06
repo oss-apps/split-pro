@@ -67,7 +67,7 @@ const DAYS_SHORT = (code: string) =>
   Array.from({ length: 7 }, (_, i) => {
     const date = new Date(2000, 0, 2 + i); // Jan 2, 2000 was a Sunday
     return new Intl.DateTimeFormat(code, { weekday: 'short' }).format(date);
-  }).concat('L');
+  });
 
 // GridButton component for reusable grid buttons
 interface GridButtonProps {

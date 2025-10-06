@@ -76,7 +76,6 @@ export const SettleUp: React.FC<{
         paidBy: isCurrentUserPaying ? currentUser.id : friend.id,
         category: DEFAULT_CATEGORY,
         groupId: null,
-        transactionId: '',
       },
       {
         onSuccess: () => {

@@ -1,4 +1,4 @@
-import { HeartHandshakeIcon, Landmark, Trash } from 'lucide-react';
+import { HeartHandshakeIcon, Landmark, X } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -11,8 +11,12 @@ import { currencyConversion, toSafeBigInt, toUIString } from '~/utils/numbers';
 
 import { toast } from 'sonner';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { cn } from '~/lib/utils';
+import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { Button } from '../ui/button';
+import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
 import { Input } from '../ui/input';
+import AddBankTransactions from './AddBankTransactions';
 import { CategoryPicker } from './CategoryPicker';
 import { CurrencyPicker } from './CurrencyPicker';
 import { DateSelector } from './DateSelector';
@@ -20,10 +24,6 @@ import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { SplitTypeSection } from './SplitTypeSection';
 import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
-import { CurrencyConversion } from '../Friend/CurrencyConversion';
-import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
-import AddBankTransactions from './AddBankTransactions';
-import { cn } from '~/lib/utils';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
@@ -184,14 +184,9 @@ export const AddOrEditExpensePage: React.FC<{
     setAmount(0n);
     setDescription('');
     setAmountStr('');
-    setTransactionId('');
+    setTransactionId();
     setExpenseDate(new Date());
   }, [setAmount, setDescription, setAmountStr, setTransactionId, setExpenseDate]);
-
-  const canBeCleared = useMemo(
-    () => amount !== 0n || description !== '' || transactionId !== '',
-    [amount, description, transactionId],
-  );
 
   const previousCurrencyRef = React.useRef<CurrencyCode | null>(null);
 
@@ -275,7 +270,7 @@ export const AddOrEditExpensePage: React.FC<{
               rightIcon={currencyConversionComponent}
             />
           </div>
-          <div className="h-auto">
+          <div className="h-[180px]">
             {amount && '' !== description ? (
               <>
                 <SplitTypeSection />
@@ -310,16 +305,18 @@ export const AddOrEditExpensePage: React.FC<{
             ) : null}
           </div>
           <div className="flex items-center justify-around gap-4 px-4 lg:px-0">
-            <Button
-              variant="ghost"
-              className={cn('text-primary px-2', canBeCleared && 'text-emerald-500')}
-              disabled={!canBeCleared}
-              onClick={clearFields}
-            >
-              <Trash className="h-6 w-6" />
-            </Button>
+            {/* place for recurring button */}
             <SponsorUs />
             <div className="flex gap-2">
+              <Button
+                variant="ghost"
+                className={cn('px-2', transactionId ? 'text-red-500' : 'invisible')}
+                disabled={!transactionId}
+                onClick={clearFields}
+              >
+                <X className="h-6 w-6" />
+              </Button>
+
               <AddBankTransactions
                 // clearFields={clearFields}
                 onUpdateAmount={onUpdateAmount}
@@ -329,7 +326,9 @@ export const AddOrEditExpensePage: React.FC<{
                   variant="ghost"
                   className="hover:text-foreground/80 items-center justify-between px-2"
                 >
-                  <Landmark className="text-white-500 h-6 w-6" />
+                  <Landmark
+                    className={cn(transactionId ? 'text-primary' : 'text-white-500', 'h-6 w-6')}
+                  />
                 </Button>
               </AddBankTransactions>
             </div>

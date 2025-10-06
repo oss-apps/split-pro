@@ -16,6 +16,7 @@ export const RecurrenceInput: React.FC<React.PropsWithChildren<{}>> = ({ childre
       trigger={children}
       shouldCloseOnAction
       actionTitle={t('actions.confirm')}
+      className="h-[70vh]"
     >
       <CronBuilder value={cronExpression} onChange={setCronExpression} />
     </AppDrawer>

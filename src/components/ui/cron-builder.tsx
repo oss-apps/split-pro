@@ -67,7 +67,7 @@ const DAYS_SHORT = (code: string) =>
   Array.from({ length: 7 }, (_, i) => {
     const date = new Date(2000, 0, 2 + i); // Jan 2, 2000 was a Sunday
     return new Intl.DateTimeFormat(code, { weekday: 'short' }).format(date);
-  });
+  }).concat('L');
 
 // GridButton component for reusable grid buttons
 interface GridButtonProps {
@@ -215,9 +215,13 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
   const [scheduleType, setScheduleType] = useState(initialParsed.type);
   const [minutes, setMinutes] = useState<number[]>(initialParsed.values.minutes || [0]);
   const [hours, setHours] = useState<number[]>(initialParsed.values.hours || [0]);
-  const [daysOfMonth, setDaysOfMonth] = useState<number[]>(initialParsed.values.daysOfMonth || [1]);
+  const [daysOfMonth, setDaysOfMonth] = useState<Array<number | 'L'>>(
+    initialParsed.values.daysOfMonth || [1],
+  );
   const [months, setMonths] = useState<number[]>(initialParsed.values.months || [1]);
-  const [daysOfWeek, setDaysOfWeek] = useState<number[]>(initialParsed.values.daysOfWeek || [0]);
+  const [daysOfWeek, setDaysOfWeek] = useState<Array<number | 'L'>>(
+    initialParsed.values.daysOfWeek || [0],
+  );
   const [custom, setCustom] = useState<string>(initialParsed.values.custom || defaultSchedule);
   const [cronExpression, setCronExpression] = useState(defaultSchedule);
 
@@ -323,7 +327,8 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
   );
 
   const handleDayOfWeekToggle = useCallback((dayIndex: number | string) => {
-    const dayNum = typeof dayIndex === 'number' ? dayIndex : parseInt(dayIndex, 10);
+    const dayNum =
+      typeof dayIndex === 'number' || dayIndex === 'L' ? dayIndex : parseInt(dayIndex, 10);
     setDaysOfWeek((prev) =>
       prev.includes(dayNum) ? prev.filter((d) => d !== dayNum) : [...prev, dayNum],
     );
@@ -367,7 +372,7 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
     return (
       <div className="flex w-full flex-col gap-2">
         <Label className="px-1 text-xs">{t('recurrence.days_of_week')}</Label>
-        <div className="flex w-full flex-row justify-start gap-1">
+        <div className="flex w-full flex-row flex-wrap justify-start gap-1">
           {DAYS_SHORT(i18n.language).map((day, index) => {
             const isWeekend = weekendDays.includes(index);
             const isSelected = daysOfWeek.includes(index);
@@ -388,7 +393,7 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
   };
 
   const handleDayOfMonthToggle = useCallback((day: number | string) => {
-    const dayNum = typeof day === 'number' ? day : parseInt(day, 10);
+    const dayNum = typeof day === 'number' || day === 'L' ? day : parseInt(day, 10);
     setDaysOfMonth((prev) =>
       prev.includes(dayNum) ? prev.filter((d) => d !== dayNum) : [...prev, dayNum],
     );
@@ -406,6 +411,12 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
             onClick={handleDayOfMonthToggle}
           />
         ))}
+        <GridButton
+          key="L"
+          value="L"
+          isSelected={daysOfMonth.includes('L')}
+          onClick={handleDayOfMonthToggle}
+        />
       </div>
     </div>
   );
@@ -452,7 +463,7 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
                 setScheduleType(value);
               }
             }}
-            className="w-fit justify-start"
+            className="w-fit flex-wrap justify-start"
           >
             {SCHEDULE_TYPES(t).map(({ value, label }) => (
               <ToggleGroupItem key={value} value={value} className="h-8 px-3 py-1 text-xs">

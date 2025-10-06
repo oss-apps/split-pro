@@ -1,6 +1,3 @@
--- CreateEnum
-CREATE TYPE "public"."RecurrenceInterval" AS ENUM ('DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY');
-
 -- AlterTable
 ALTER TABLE "public"."Expense" ADD COLUMN     "recurrenceId" INTEGER;
 
@@ -8,14 +5,15 @@ ALTER TABLE "public"."Expense" ADD COLUMN     "recurrenceId" INTEGER;
 CREATE TABLE "public"."ExpenseRecurrence" (
     "id" SERIAL NOT NULL,
     "expenseId" TEXT NOT NULL,
-    "repeatEvery" INTEGER NOT NULL,
-    "repeatInterval" "public"."RecurrenceInterval" NOT NULL,
     "createdById" INTEGER NOT NULL,
     "jobId" BIGINT NOT NULL,
     "notified" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "ExpenseRecurrence_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ExpenseRecurrence_jobId_key" ON "public"."ExpenseRecurrence"("jobId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ExpenseRecurrence_expenseId_key" ON "public"."ExpenseRecurrence"("expenseId");
@@ -66,5 +64,21 @@ DO $$
 BEGIN
 IF current_database() NOT LIKE 'prisma_migrate_shadow_db%' THEN
   CREATE EXTENSION IF NOT EXISTS pg_cron;
+ELSE
+    CREATE SCHEMA IF NOT EXISTS cron;
+    CREATE TABLE IF NOT EXISTS cron.job (
+        jobid BIGINT PRIMARY KEY,
+        schedule TEXT,
+        command TEXT,
+        nodename TEXT,
+        nodeport INTEGER,
+        database TEXT,
+        username TEXT,
+        active BOOLEAN,
+        jobname TEXT
+    );
 END IF;
 END $$;
+
+-- AddForeignKey
+ALTER TABLE "public"."ExpenseRecurrence" ADD CONSTRAINT "ExpenseRecurrence_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "cron"."job"("jobid") ON DELETE CASCADE ON UPDATE CASCADE;

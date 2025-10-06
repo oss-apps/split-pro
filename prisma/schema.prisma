@@ -224,25 +224,15 @@ model ExpenseNote {
   @@schema("public")
 }
 
-enum RecurrenceInterval {
-  DAILY
-  WEEKLY
-  MONTHLY
-  YEARLY
-
-  @@schema("public")
-}
-
 model ExpenseRecurrence {
-  id             Int                @id @default(autoincrement())
-  repeatEvery    Int
-  repeatInterval RecurrenceInterval
-  createdById    Int
-  jobId          BigInt
-  notified       Boolean            @default(true)
-  expenseId      String             @unique @db.Uuid
-  createdBy      User               @relation(fields: [createdById], references: [id], onDelete: Cascade)
-  expense        Expense            @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  id          Int     @id @default(autoincrement())
+  createdById Int
+  jobId       BigInt  @unique
+  notified    Boolean @default(true)
+  expenseId   String  @unique @db.Uuid
+  createdBy   User    @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  expense     Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  job         job     @relation(fields: [jobId], references: [jobid], onDelete: Cascade)
 
   @@schema("public")
 }
@@ -277,7 +267,8 @@ model job {
   active   Boolean @default(true)
   jobname  String?
 
-  runDetails job_run_details[] @relation("job_run_details")
+  recurrence ExpenseRecurrence? @relation()
+  runDetails job_run_details[]  @relation("job_run_details")
 
   @@unique([jobname, username], map: "jobname_username_uniq")
   @@schema("cron")

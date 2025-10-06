@@ -12,11 +12,13 @@ import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { type GetServerSideProps } from 'next';
+import { isBankConnectionConfigured } from '~/server/bankTransactionHelper';
 
 const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
-}> = ({ user, isStorageConfigured, enableSendingInvites }) => {
+  bankConnectionEnabled: boolean;
+}> = ({ user, isStorageConfigured, enableSendingInvites, bankConnectionEnabled }) => {
   const { t } = useTranslation('add_page');
   const {
     setCurrentUser,
@@ -43,6 +45,8 @@ const AddPage: NextPageWithUser<{
       name: user.name ?? null,
       email: user.email ?? null,
       image: user.image ?? null,
+      obapiProviderId: user.obapiProviderId ?? null,
+      bankingId: user.bankingId ?? null,
     });
   }, [setCurrentUser, user]);
 
@@ -140,6 +144,7 @@ const AddPage: NextPageWithUser<{
             isStorageConfigured={isStorageConfigured}
             enableSendingInvites={enableSendingInvites}
             expenseId={_expenseId}
+            bankConnectionEnabled={!!bankConnectionEnabled}
           />
         )}
       </MainLayout>
@@ -155,6 +160,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
     isStorageConfigured: !!isStorageConfigured(),
     enableSendingInvites: !!env.ENABLE_SENDING_INVITES,
+    bankConnectionEnabled: !!isBankConnectionConfigured(),
     ...(await customServerSideTranslations(context.locale, ['common', 'categories', 'currencies'])),
   },
 });

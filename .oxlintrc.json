@@ -32,13 +32,15 @@
     "prefer-default-export": "off",
     "yoda": "off",
     "new-cap": "off",
+    "no-named-export": "off",
     "id-length": "off",
     "react_perf/jsx-no-jsx-as-prop": "off",
     "no-nested-ternary": "off",
     "typescript/no-confusing-void-expression": "off",
     "typescript/no-misused-spread": "warn",
     "func-names": "off",
-    "prefer-destructuring": "off"
+    "prefer-destructuring": "off",
+    "no-named-export": "off"
   },
   "overrides": [
     {

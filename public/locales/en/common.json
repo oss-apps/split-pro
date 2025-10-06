@@ -70,7 +70,9 @@
     "leave": "Leave",
     "save": "Save",
     "settle_up": "Settle up",
-    "submit": "Submit"
+    "submit": "Submit",
+    "reconnect": "Reconnect",
+    "connect": "Connect"
   },
   "actors": {
     "all": "All",
@@ -128,6 +130,18 @@
     "upload_failed": "Failed to upload file",
     "uploading_error": "Error uploading file",
     "valid_email": "Enter valid email"
+  },
+  "bank_transactions": {
+    "choose_bank_provider": "Choose bank provider",
+    "select_bank_provider": "Select bank provider",
+    "search_bank": "Search bank",
+    "no_bank_providers_found": "No bank providers found",
+    "to_bank": "to bank",
+    "plaid": {
+      "bank_connected_successfully": "Bank connected successfully",
+      "bank_connection_failed": "Failed to connect to bank",
+      "bank_connection_cancelled": "Bank connection cancelled"
+    }
   },
   "expense_details": {
     "add_expense": "Add expense",
@@ -193,7 +207,13 @@
       "title": "Are you absolutely sure?"
     },
     "title": "Add expense",
-    "title_mobile": "Add"
+    "title_mobile": "Add",
+    "clear": "Clear",
+    "bank_transactions": "Bank transactions",
+    "submit_all": "Submit all",
+    "pending": "Pending",
+    "no_transactions_yet": "No transactions yet",
+    "already_added": "Already added"
   },
   "group_details": {
     "add_members": "Add members",

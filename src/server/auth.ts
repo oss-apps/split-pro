@@ -2,7 +2,7 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { type GetServerSidePropsContext } from 'next';
 import type { User } from 'next-auth';
 import { type DefaultSession, type NextAuthOptions, getServerSession } from 'next-auth';
-import { type Adapter, type AdapterUser, type AdapterAccount } from 'next-auth/adapters';
+import { type Adapter, type AdapterAccount, type AdapterUser } from 'next-auth/adapters';
 import AuthentikProvider from 'next-auth/providers/authentik';
 import EmailProvider from 'next-auth/providers/email';
 import GoogleProvider from 'next-auth/providers/google';
@@ -26,6 +26,8 @@ declare module 'next-auth' {
     user: DefaultSession['user'] & {
       id: number;
       currency: string;
+      obapiProviderId?: string;
+      bankingId?: string;
       preferredLanguage: string;
       // ...other properties
       // role: UserRole;
@@ -34,7 +36,12 @@ declare module 'next-auth' {
 
   interface User {
     id: number;
+    name: string;
+    email: string;
+    image: string;
     currency: string;
+    obapiProviderId?: string;
+    bankingId?: string;
     preferredLanguage: string;
   }
 }
@@ -104,6 +111,8 @@ export const authOptions: NextAuthOptions = {
         ...session.user,
         id: user.id,
         currency: user.currency,
+        obapiProviderId: user.obapiProviderId,
+        bankingId: user.bankingId,
         preferredLanguage: user.preferredLanguage,
       },
     }),

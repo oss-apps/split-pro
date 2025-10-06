@@ -73,14 +73,16 @@ model User {
 }
 
 model CachedBankData {
-    id              Int      @id @default(autoincrement())
-    obapiProviderId String   @unique
-    data            String
-    userId          Int
-    user            User     @relation(name: "UserCachedBankData", fields: [userId], references: [id], onDelete: Cascade)
-    lastFetched     DateTime
-    createdAt       DateTime @default(now())
-    updatedAt       DateTime @updatedAt
+  id              Int      @id @default(autoincrement())
+  obapiProviderId String   @unique
+  data            String
+  userId          Int
+  user            User     @relation(name: "UserCachedBankData", fields: [userId], references: [id], onDelete: Cascade)
+  lastFetched     DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@schema("public")
 }
 
 model VerificationToken {

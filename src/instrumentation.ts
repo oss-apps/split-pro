@@ -4,14 +4,16 @@
  * more details here: https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation
  */
 export async function register() {
+  console.log('Registering instrumentation');
+  if (process.env.NEXT_RUNTIME === 'nodejs') {
+    const { validateAuthEnv } = await import('./server/auth');
+    validateAuthEnv();
+  }
+
   if (process.env.NEXT_RUNTIME === 'edge') {
     console.log('Skipping instrumentation on edge runtime');
     return;
   }
-
-  console.log('Registering instrumentation');
-  const { validateAuthEnv } = await import('./server/auth');
-  validateAuthEnv();
 
   if (process.env.DATABASE_URL) {
     const { db } = await import('./server/db');

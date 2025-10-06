@@ -57,7 +57,6 @@ model User {
   groups              Group[]
   associatedGroups    GroupUser[]
   expenseParticipants ExpenseParticipant[]
-  createdRecurrences  ExpenseRecurrence[]
   expenseNotes        ExpenseNote[]
   userBalances        Balance[]            @relation(name: "UserBalance")
   cachedBankData      CachedBankData[]     @relation(name: "UserCachedBankData")
@@ -225,14 +224,12 @@ model ExpenseNote {
 }
 
 model ExpenseRecurrence {
-  id          Int     @id @default(autoincrement())
-  createdById Int
-  jobId       BigInt  @unique
-  notified    Boolean @default(true)
-  expenseId   String  @unique @db.Uuid
-  createdBy   User    @relation(fields: [createdById], references: [id], onDelete: Cascade)
-  expense     Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
-  job         job     @relation(fields: [jobId], references: [jobid], onDelete: Cascade)
+  id        Int     @id @default(autoincrement())
+  jobId     BigInt  @unique
+  notified  Boolean @default(true)
+  expenseId String  @unique @db.Uuid
+  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  job       job     @relation(fields: [jobId], references: [jobid], onDelete: Cascade)
 
   @@schema("public")
 }

@@ -41,6 +41,7 @@ export async function createExpense(
     participants,
     expenseDate,
     fileKey,
+    transactionId,
     otherConversion,
   }: CreateExpense,
   currentUserId: number,
@@ -67,6 +68,7 @@ export async function createExpense(
         fileKey,
         addedBy: currentUserId,
         expenseDate,
+        transactionId,
         conversionFrom: otherConversion
           ? {
               connect: {
@@ -349,6 +351,7 @@ export async function editExpense(
     participants,
     expenseDate,
     fileKey,
+    transactionId,
   }: CreateExpense,
   currentUserId: number,
 ) {
@@ -473,6 +476,7 @@ export async function editExpense(
           create: participants,
         },
         fileKey,
+        transactionId,
         expenseDate,
         updatedBy: currentUserId,
       },
@@ -729,6 +733,7 @@ export async function recalculateGroupBalances(groupId: number) {
   for (const groupExpense of groupExpenses) {
     for (const participant of groupExpense.expenseParticipants) {
       if (participant.userId === groupExpense.paidBy) {
+        // oxlint-disable-next-line no-continue
         continue;
       }
 
@@ -792,12 +797,14 @@ export async function importUserBalanceFromSplitWise(
   for (const user of splitWiseUsers) {
     const dbUser = userMap[user.email];
     if (!dbUser) {
+      // oxlint-disable-next-line no-continue
       continue;
     }
 
     for (const balance of user.balance) {
       const amount = toSafeBigInt(balance.amount);
       const currency = balance.currency_code;
+      // oxlint-disable-next-line no-await-in-loop
       const existingBalance = await db.balance.findUnique({
         where: {
           userId_currency_friendId: {
@@ -809,6 +816,7 @@ export async function importUserBalanceFromSplitWise(
       });
 
       if (existingBalance?.importedFromSplitwise) {
+        // oxlint-disable-next-line no-continue
         continue;
       }
 

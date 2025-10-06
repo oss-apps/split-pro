@@ -17,6 +17,7 @@ import { Button } from '../ui/button';
 import { CategoryIcon } from '../ui/categoryIcons';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
+import { Landmark } from 'lucide-react';
 
 type ExpenseDetailsOutput = NonNullable<inferRouterOutputs<ExpenseRouter>['getExpenseDetails']>;
 
@@ -37,7 +38,10 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
             <CategoryIcon category={expense.category} className="text-gray-400" size={24} />
           </div>
           <div className="flex flex-col gap-2">
-            <p className="">{expense.name}</p>
+            <div className="flex w-full items-center gap-2">
+              <p>{expense.name}</p>
+              {expense.transactionId && <Landmark className="h-4 w-4 text-emerald-500" />}
+            </div>
             <p className="text-2xl font-semibold">
               {expense.currency} {toUIString(expense.amount)}
             </p>

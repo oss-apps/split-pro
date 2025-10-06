@@ -22,7 +22,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
   const { friendId } = router.query;
 
-  const _friendId = parseInt(friendId as string);
+  const _friendId = parseInt(Array.isArray(friendId) ? (friendId[0] ?? '') : (friendId ?? ''));
 
   const friendQuery = api.user.getFriend.useQuery(
     { friendId: _friendId },

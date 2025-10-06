@@ -7,6 +7,7 @@ import {
   GitFork,
   Globe,
   Import,
+  Landmark,
   Merge,
   Split,
   Users,
@@ -216,6 +217,15 @@ export default function Home() {
                   </div>
                   <p className="px-4 text-gray-400 lg:px-0">
                     {t('features.currency_conversion.description')}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-1 lg:w-1/2">
+                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
+                    <Landmark className="text-primary h-6 w-6" />
+                    <p className="text-lg font-medium">{t('features.bank_connection.title')}</p>
+                  </div>
+                  <p className="px-4 text-gray-400 lg:px-0">
+                    {t('features.bank_connection.description')}
                   </p>
                 </div>
               </div>

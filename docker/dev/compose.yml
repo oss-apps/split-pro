@@ -19,11 +19,6 @@ services:
       -c cron.timezone=${TZ:-UTC}
     ports:
       - '${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}'
-    command: >
-      postgres
-      -c shared_preload_libraries=pg_cron
-      -c cron.database_name=${POSTGRES_DB:-splitpro}
-      -c cron.timezone=${TZ:-UTC}
 
   minio:
     image: minio/minio:RELEASE.2025-04-22T22-12-26Z

@@ -21,11 +21,6 @@ export async function register() {
     return;
   }
 
-  if (process.env.DATABASE_URL) {
-    const { db } = await import('./server/db');
-    await db.$executeRaw`CREATE EXTENSION IF NOT EXISTS pg_cron;`;
-  }
-
   // Create cron jobs
   if (process.env.CLEAR_BANK_CACHE_FREQUENCY && process.env.DATABASE_URL) {
     const frequencies = ['weekly', 'monthly'];

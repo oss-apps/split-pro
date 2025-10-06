@@ -30,7 +30,7 @@ export interface AddExpenseState {
   fileKey?: string;
   canSplitScreenClosed: boolean;
   splitScreenOpen: boolean;
-  expenseDate?: Date;
+  expenseDate: Date;
   repeatInterval?: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
   repeatEvery: number;
   transactionId?: string;
@@ -88,6 +88,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   isFileUploading: false,
   canSplitScreenClosed: true,
   splitScreenOpen: false,
+  expenseDate: new Date(),
   repeatEvery: 1,
   multipleTransactions: [],
   isTransactionLoading: false,

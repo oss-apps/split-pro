@@ -15,21 +15,12 @@ import { cn } from '~/lib/utils';
 import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { Button } from '../ui/button';
 import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible';
 import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
 import AddBankTransactions from './AddBankTransactions';
 import { CategoryPicker } from './CategoryPicker';
 import { CurrencyPicker } from './CurrencyPicker';
 import { DateSelector } from './DateSelector';
+import { RecurrenceInput } from './RecurrenceInput';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { SplitTypeSection } from './SplitTypeSection';
 import { UploadFile } from './UploadFile';
@@ -58,6 +49,7 @@ export const AddOrEditExpensePage: React.FC<{
   const splitType = useAddExpenseStore((s) => s.splitType);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
   const transactionId = useAddExpenseStore((s) => s.transactionId);
+  const repeatInterval = useAddExpenseStore((s) => s.repeatInterval);
 
   const {
     setCurrency,
@@ -286,7 +278,12 @@ export const AddOrEditExpensePage: React.FC<{
                 <SplitTypeSection />
 
                 <div className="mt-4 flex items-start justify-between sm:mt-10">
-                  <DateSettings />
+                  <DateSelector
+                    mode="single"
+                    required
+                    selected={expenseDate}
+                    onSelect={setExpenseDate}
+                  />
                   <div className="flex items-center gap-4">
                     {isStorageConfigured ? <UploadFile /> : null}
                     <Button
@@ -309,19 +306,15 @@ export const AddOrEditExpensePage: React.FC<{
               </>
             ) : null}
           </div>
-          <div className="flex items-center justify-around gap-4 px-4 lg:px-0">
-            {/* place for recurring button */}
+          <div className="flex items-center justify-evenly px-4 lg:px-0">
+            <RecurrenceInput>
+              <Button variant="ghost" size="sm">
+                <RefreshCcwDot className={cn(repeatInterval && 'text-primary', 'size-6')} />
+                <span className="sr-only">Toggle recurring expense options</span>
+              </Button>
+            </RecurrenceInput>
             <SponsorUs />
             <div className="flex gap-2">
-              <Button
-                variant="ghost"
-                className={cn('px-2', transactionId ? 'text-red-500' : 'invisible')}
-                disabled={!transactionId}
-                onClick={clearFields}
-              >
-                <X className="h-6 w-6" />
-              </Button>
-
               <AddBankTransactions
                 // clearFields={clearFields}
                 onUpdateAmount={onUpdateAmount}
@@ -336,6 +329,14 @@ export const AddOrEditExpensePage: React.FC<{
                   />
                 </Button>
               </AddBankTransactions>
+              <Button
+                variant="ghost"
+                className={cn('px-2', transactionId ? 'text-red-500' : 'invisible')}
+                disabled={!transactionId}
+                onClick={clearFields}
+              >
+                <X className="h-6 w-6" />
+              </Button>
             </div>
           </div>
         </>
@@ -344,86 +345,10 @@ export const AddOrEditExpensePage: React.FC<{
   );
 };
 
-const DateSettings: React.FC = () => {
-  const { t } = useTranslation();
-  const expenseDate = useAddExpenseStore((s) => s.expenseDate);
-  const { setExpenseDate, setRepeatInterval, setRepeatEvery, unsetRepeat } = useAddExpenseStore(
-    (s) => s.actions,
-  );
-  const repeatInterval = useAddExpenseStore((s) => s.repeatInterval);
-  const repeatEvery = useAddExpenseStore((s) => s.repeatEvery);
-
-  const toggleRecurring = useCallback(() => {
-    if (repeatInterval) {
-      unsetRepeat();
-    } else {
-      setRepeatInterval('MONTHLY');
-    }
-  }, [repeatInterval, setRepeatInterval, unsetRepeat]);
-
-  const onRepeatEveryChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const val = Math.min(99, Math.max(1, Number(e.target.value)));
-      if (!Number.isNaN(val)) {
-        setRepeatEvery(val);
-      }
-    },
-    [setRepeatEvery],
-  );
-
-  if (!expenseDate) {
-    return <DateSelector mode="single" required selected={expenseDate} onSelect={setExpenseDate} />;
-  }
-
-  return (
-    <Collapsible className="flex flex-col gap-2" open={!!repeatInterval}>
-      <div className="flex items-center gap-2">
-        <DateSelector mode="single" required selected={expenseDate} onSelect={setExpenseDate} />
-        <CollapsibleTrigger>
-          <Button variant="ghost" size="sm" onClick={toggleRecurring}>
-            {!repeatInterval ? (
-              <RefreshCwOff className="size-6" />
-            ) : (
-              <RefreshCcwDot className="text-primary size-6" />
-            )}
-            <span className="sr-only">Toggle recurring expense options</span>
-          </Button>
-        </CollapsibleTrigger>
-      </div>
-      <CollapsibleContent>
-        <Label className="text-xs text-gray-500">Repeat every</Label>
-        <div className="flex items-center gap-2 text-sm">
-          <Input
-            type="number"
-            min={1}
-            value={repeatEvery}
-            max={99}
-            className="h-9 w-10 text-center"
-            onChange={onRepeatEveryChange}
-          />
-          <Select value={repeatInterval} onValueChange={setRepeatInterval}>
-            <SelectTrigger className="h-8">
-              <SelectValue placeholder={repeatInterval} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="DAILY">Days</SelectItem>
-                <SelectItem value="WEEKLY">Weeks</SelectItem>
-                <SelectItem value="MONTHLY">Months</SelectItem>
-                <SelectItem value="YEARLY">Years</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-      </CollapsibleContent>
-    </Collapsible>
-  );
-};
-
 const SponsorUs = () => {
   const { t } = useTranslation();
   return (
-    <div className="flex w-full justify-center">
+    <div className="flex justify-center">
       <Link href="https://github.com/sponsors/krokosik" target="_blank" className="mx-auto">
         <Button
           variant="outline"

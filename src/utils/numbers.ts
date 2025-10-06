@@ -22,6 +22,22 @@ export function toSafeBigInt(num: number | string) {
   }
 }
 
+export function toUINumber(num = 0n, currencyCode: CurrencyCode = 'USD') {
+  const { decimalDigits } = CURRENCIES[currencyCode];
+  const maxDecimals = 10n ** BigInt(decimalDigits);
+  const decimalPart = num % 100n;
+  const wholePart = Number(BigMath.abs(num) / 100n);
+
+  let result = Number(wholePart);
+
+  if (decimalPart !== 0n) {
+    const frac = Number(decimalPart) / Number(maxDecimals);
+    result += frac;
+  }
+
+  return result;
+}
+
 export function toUIString(num = 0n, signed = false, currencyCode: CurrencyCode = 'USD') {
   const { decimalDigits } = CURRENCIES[currencyCode];
   const maxDecimals = 10n ** BigInt(decimalDigits);

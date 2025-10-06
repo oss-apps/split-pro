@@ -14,7 +14,7 @@ import { type ChangeEvent, useCallback, useMemo } from 'react';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/store/addStore';
-import { removeTrailingZeros, toSafeBigInt, toUIString } from '~/utils/numbers';
+import { removeTrailingZeros, toSafeBigInt, toUINumber, toUIString } from '~/utils/numbers';
 
 import { type TFunction, useTranslation } from 'next-i18next';
 import { EntityAvatar } from '../ui/avatar';
@@ -205,7 +205,7 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
       );
       return `${t('expense_details.add_expense_details.split_type_section.types.exact.remaining')} ${currency} ${toUIString(amount - totalAmount, true)}`;
     },
-    fmtShareText: (share) => removeTrailingZeros(toUIString(share)),
+    fmtShareText: (share) => removeTrailingZeros(toUINumber(share).toString()),
     step: null,
   },
   {

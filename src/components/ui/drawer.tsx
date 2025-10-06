@@ -141,7 +141,7 @@ interface AppDrawerProps {
   trigger: React.ReactNode;
   disableTrigger?: boolean;
   onTriggerClick?: React.MouseEventHandler<HTMLButtonElement>;
-  className: string;
+  className?: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   title?: string;

@@ -1,5 +1,9 @@
 {
   "features": {
+    "bank_connection": {
+      "description": "Ajoute tes dépenses plus rapidement grâce à l'intégration des services inter-bancaires GoCardless et Plaid",
+      "title": "Connexion à ta banque"
+    },
     "currency_conversion": {
       "description": "Convertis rapidement les dépenses entre plusieurs devises, avec le taux de change actuel ou antérieur.",
       "title": "Conversion monétaire"

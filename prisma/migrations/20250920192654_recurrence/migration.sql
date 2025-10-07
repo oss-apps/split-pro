@@ -4,7 +4,6 @@ ALTER TABLE "public"."Expense" ADD COLUMN     "recurrenceId" INTEGER;
 -- CreateTable
 CREATE TABLE "public"."ExpenseRecurrence" (
     "id" SERIAL NOT NULL,
-    "expenseId" TEXT NOT NULL,
     "jobId" BIGINT NOT NULL,
     "notified" BOOLEAN NOT NULL DEFAULT true,
 
@@ -14,11 +13,8 @@ CREATE TABLE "public"."ExpenseRecurrence" (
 -- CreateIndex
 CREATE UNIQUE INDEX "ExpenseRecurrence_jobId_key" ON "public"."ExpenseRecurrence"("jobId");
 
--- CreateIndex
-CREATE UNIQUE INDEX "ExpenseRecurrence_expenseId_key" ON "public"."ExpenseRecurrence"("expenseId");
-
 -- AddForeignKey
-ALTER TABLE "public"."ExpenseRecurrence" ADD CONSTRAINT "ExpenseRecurrence_expenseId_fkey" FOREIGN KEY ("expenseId") REFERENCES "public"."Expense"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."Expense" ADD CONSTRAINT "Expense_recurrenceId_fkey" FOREIGN KEY ("recurrenceId") REFERENCES "public"."ExpenseRecurrence"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 CREATE OR REPLACE FUNCTION duplicate_expense_with_participants(original_expense_id UUID)
 RETURNS UUID AS $$

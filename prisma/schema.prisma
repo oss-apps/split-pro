@@ -190,7 +190,7 @@ model Expense {
   updatedByUser       User?                @relation(name: "UpdatedByUser", fields: [updatedBy], references: [id], onDelete: SetNull)
   conversionTo        Expense?             @relation(name: "CurrencyConversion", fields: [otherConversion], references: [id], onDelete: Cascade)
   conversionFrom      Expense?             @relation(name: "CurrencyConversion")
-  recurrence          ExpenseRecurrence?
+  recurrence          ExpenseRecurrence?   @relation(fields: [recurrenceId], references: [id], onDelete: Cascade)
   expenseParticipants ExpenseParticipant[]
   expenseNotes        ExpenseNote[]
   transactionId       String?
@@ -224,12 +224,11 @@ model ExpenseNote {
 }
 
 model ExpenseRecurrence {
-  id        Int     @id @default(autoincrement())
-  jobId     BigInt  @unique
-  notified  Boolean @default(true)
-  expenseId String  @unique @db.Uuid
-  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
-  job       job     @relation(fields: [jobId], references: [jobid], onDelete: Cascade)
+  id       Int       @id @default(autoincrement())
+  jobId    BigInt    @unique
+  notified Boolean   @default(true)
+  expense  Expense[]
+  job      job       @relation(fields: [jobId], references: [jobid], onDelete: Cascade)
 
   @@schema("public")
 }

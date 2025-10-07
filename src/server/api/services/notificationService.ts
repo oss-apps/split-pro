@@ -108,23 +108,29 @@ export async function checkRecurrenceNotifications() {
           notified: true,
         },
       },
-      select: {
-        expenseId: true,
+      include: {
+        expense: {
+          select: { id: true },
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+        },
       },
     });
 
     await Promise.all(
-      recurrences.map(async (r) => {
-        await sendExpensePushNotification(r.expenseId);
-        await db.expenseRecurrence.update({
-          where: {
-            expenseId: r.expenseId,
-          },
-          data: {
-            notified: true,
-          },
-        });
-      }),
+      recurrences
+        .filter((r) => r.expense[0])
+        .map(async (r) => {
+          await sendExpensePushNotification(r.expense[0]!.id);
+          await db.expenseRecurrence.update({
+            where: {
+              id: r.id,
+            },
+            data: {
+              notified: true,
+            },
+          });
+        }),
     );
   } catch (e) {
     console.error('Error sending recurrence notifications', e);

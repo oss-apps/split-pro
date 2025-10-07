@@ -25,5 +25,5 @@ export const createRecurringExpenseJob = async (expenseId: string, cronExpressio
   db.$queryRawUnsafe<[{ schedule: bigint }]>(
     `SELECT cron.schedule($1, $2, $$ SELECT duplicate_expense_with_participants('${expenseId}'::UUID); $$);`,
     expenseId,
-    cronExpression.replaceAll('L', '$'),
+    cronExpression,
   );

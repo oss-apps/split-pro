@@ -18,6 +18,7 @@ import { Button } from '../ui/button';
 import { CategoryIcon } from '../ui/categoryIcons';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
+import { cronFromBackend } from '~/lib/cron';
 
 type ExpenseDetailsOutput = NonNullable<inferRouterOutputs<ExpenseRouter>['getExpenseDetails']>;
 
@@ -28,7 +29,7 @@ interface ExpenseDetailsProps {
 }
 
 const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
-  const { displayName, toUIDate, t, i18n } = useTranslationWithUtils();
+  const { displayName, toUIDate, t } = useTranslationWithUtils();
 
   const { cronParser, i18nReady } = useIntlCronParser();
 
@@ -75,10 +76,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
                 {i18nReady
                   ? `: 
                 
-                ${cronParser.toString(expense.recurrence.job.schedule, {
-                  use24HourTimeFormat: true,
-                  locale: i18n.language.split('-')[0],
-                })}`
+                ${cronParser(cronFromBackend(expense.recurrence.job.schedule))}`
                   : ''}
               </p>
             ) : null}

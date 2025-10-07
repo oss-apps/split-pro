@@ -6,13 +6,14 @@ import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { useIntlCronParser } from '~/hooks/useIntlCronParser';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { cronFromBackend } from '~/lib/cron';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
 import { toUIString } from '~/utils/numbers';
 
 const RecurringPage: NextPageWithUser = () => {
-  const { t, toUIDate, i18n } = useTranslationWithUtils();
+  const { t, toUIDate } = useTranslationWithUtils();
 
   const recurringExpensesQuery = api.expense.getRecurringExpenses.useQuery();
 
@@ -59,10 +60,7 @@ const RecurringPage: NextPageWithUser = () => {
                   {i18nReady
                     ? `: 
                 
-                ${cronParser.toString(e.job.schedule, {
-                  use24HourTimeFormat: true,
-                  locale: i18n.language.split('-')[0],
-                })}`
+                ${cronParser(cronFromBackend(e.job.schedule))}`
                     : ''}
                 </p>
                 <p className="text-xs text-gray-500">{toUIDate(e.expense.expenseDate)}</p>

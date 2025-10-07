@@ -11,6 +11,7 @@ import { currencyConversion, toSafeBigInt, toUIString } from '~/utils/numbers';
 
 import { toast } from 'sonner';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { cronToBackend } from '~/lib/cron';
 import { cn } from '~/lib/utils';
 import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { Button } from '../ui/button';
@@ -122,7 +123,7 @@ export const AddOrEditExpensePage: React.FC<{
           expenseDate,
           expenseId,
           transactionId,
-          cronExpression,
+          cronExpression: cronExpression ? cronToBackend(cronExpression) : undefined,
         },
         {
           onSuccess: (d) => {

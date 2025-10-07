@@ -14,12 +14,9 @@ export interface CronTextResult {
   value?: string;
 }
 
-export function getCronText(cronParser: any, cronString: string, locale?: string): CronTextResult {
+export function getCronText(cronParser: any, cronString: string): CronTextResult {
   try {
-    const value = cronParser.toString(cronString.trim(), {
-      use24HourTimeFormat: true,
-      locale,
-    });
+    const value = cronParser(cronString.trim());
     return { status: true, value };
   } catch (error) {
     return { status: false };
@@ -512,11 +509,7 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
 
             <div className="h-19">
               {(() => {
-                const cronString = getCronText(
-                  cronParser,
-                  cronExpression,
-                  i18n.language.split('-')[0],
-                );
+                const cronString = getCronText(cronParser, cronExpression);
                 if (cronString.status)
                   return (
                     <p className="bg-card text-card-foreground overflow-clip rounded-sm p-3">

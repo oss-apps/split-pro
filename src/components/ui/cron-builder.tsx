@@ -281,9 +281,7 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
 
   const handleMonthToggle = useCallback((monthIndex: number | string) => {
     const monthNum = (typeof monthIndex === 'number' ? monthIndex : parseInt(monthIndex, 10)) + 1;
-    setMonths((prev) =>
-      prev.includes(monthNum) ? prev.filter((m) => m !== monthNum) : [...prev, monthNum],
-    );
+    setMonths([monthNum]);
   }, []);
 
   // Month button component with pressed state
@@ -329,9 +327,7 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
   const handleDayOfWeekToggle = useCallback((dayIndex: number | string) => {
     const dayNum =
       typeof dayIndex === 'number' || dayIndex === 'L' ? dayIndex : parseInt(dayIndex, 10);
-    setDaysOfWeek((prev) =>
-      prev.includes(dayNum) ? prev.filter((d) => d !== dayNum) : [...prev, dayNum],
-    );
+    setDaysOfWeek([dayNum]);
   }, []);
 
   // Day of week button component with pressed state
@@ -394,9 +390,7 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
 
   const handleDayOfMonthToggle = useCallback((day: number | string) => {
     const dayNum = typeof day === 'number' || day === 'L' ? day : parseInt(day, 10);
-    setDaysOfMonth((prev) =>
-      prev.includes(dayNum) ? prev.filter((d) => d !== dayNum) : [...prev, dayNum],
-    );
+    setDaysOfMonth([dayNum]);
   }, []);
 
   const renderDaysOfMonthGrid = () => (

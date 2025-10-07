@@ -276,7 +276,6 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
       setCronExpression('');
       onChange('');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scheduleType, minutes, hours, daysOfMonth, months, daysOfWeek, custom]);
 
   const handleMonthToggle = useCallback((monthIndex: number | string) => {

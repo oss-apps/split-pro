@@ -45,7 +45,7 @@ BEGIN
     -- STEP 3: Set notified to false in the ExpenseRecurrence table
     UPDATE "ExpenseRecurrence"
     SET notified = false
-    WHERE expenseId = original_expense_id;
+    WHERE id = (SELECT "recurrenceId" FROM "Expense" WHERE id = original_expense_id);
 
     -- STEP 4: Return the new expense ID
     RETURN new_expense_id;

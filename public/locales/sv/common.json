@@ -61,6 +61,7 @@
     "cancel": "Avbryt",
     "close": "Stäng",
     "confirm": "Bekräfta",
+    "connect": "Anslut",
     "create": "Skapa",
     "edit_expense": "Redigera utgift",
     "export": "Exportera",
@@ -68,6 +69,7 @@
     "import": "Importera",
     "invite": "Bjud in",
     "leave": "Lämna",
+    "reconnect": "Återanslut",
     "save": "Spara",
     "settle_up": "Gör kvitt",
     "submit": "Skicka"
@@ -92,6 +94,18 @@
     "sending": "Skickar...",
     "setup_instructions": "Docker-installationsinstruktioner",
     "trouble_logging_in": "Problem med att logga in? Kontakta"
+  },
+  "bank_transactions": {
+    "choose_bank_provider": "Välj bank",
+    "no_bank_providers_found": "Ingen bank hittades",
+    "plaid": {
+      "bank_connected_successfully": "Bank ansluten",
+      "bank_connection_cancelled": "Anslutning till banken blev avbruten",
+      "bank_connection_failed": "Kunde inte ansluta till banken"
+    },
+    "search_bank": "Sök bank",
+    "select_bank_provider": "Välj bank",
+    "to_bank": "bank"
   },
   "currency_conversion": {
     "amount_to_receive": "Belopp att ta emot",
@@ -183,15 +197,21 @@
         "search_friends": "Sök vänner, grupper eller lägg till via email"
       }
     },
+    "already_added": "Redan tillagd",
     "balance_list": {
       "are_settled_up": "är kvitt",
       "is_settled_up": "är kvitt",
       "press_balance_info": "Tryck på enskild saldo för att göra kvitt"
     },
+    "bank_transactions": "Transaktioner",
+    "clear": "Rensa",
     "delete_expense_details": {
       "text": "Denna åtgärd går inte att ångra. Denna utgift kommer att raderas permanent.",
       "title": "Är du helt säker?"
     },
+    "no_transactions_yet": "Inga transaktioner ännu",
+    "pending": "Reserverad",
+    "submit_all": "Skicka alla",
     "title": "Lägg till utgift",
     "title_mobile": "Lägg till"
   },

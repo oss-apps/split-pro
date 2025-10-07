@@ -55,7 +55,7 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
     () => (
       <Link href="/recurring">
         <Button variant="ghost" size="sm">
-          <RefreshCcwDot className="text-primary size-6" />
+          <RefreshCcwDot className="size-6" />
         </Button>
       </Link>
     ),

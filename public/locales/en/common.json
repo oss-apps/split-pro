@@ -302,6 +302,7 @@
     "activity": "Activity",
     "add": "Add",
     "add_expense": "Add Expense",
+    "recurring": "Recurring",
     "balances": "Balances",
     "groups": "Groups"
   },
@@ -314,7 +315,9 @@
     "days_of_month": "Days of Month",
     "months": "Months",
     "never": "No schedule configured",
+    "empty": "No recurring expenses yet",
     "recurring": "Recurring",
+    "expense_for_the_amount_of": "Expense {{name}} for the amount of {{amount}} {{currency}}",
     "schedule_type": {
       "never": "Never",
       "custom": "Custom",

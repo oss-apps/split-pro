@@ -425,24 +425,22 @@ export const expenseRouter = createTRPCRouter({
   }),
 
   getRecurringExpenses: protectedProcedure.query(async ({ ctx }) => {
-    const expenses = await db.expenseParticipant.findMany({
-      where: {
-        userId: ctx.session.user.id,
-        expense: {
-          NOT: {
-            recurrenceId: null,
-          },
-        },
-      },
-      orderBy: {
-        expense: {
-          createdAt: 'desc',
-        },
-      },
+    const recurrences = await db.expenseRecurrence.findMany({
       include: {
+        job: true,
         expense: {
+          take: 1,
+          orderBy: { createdAt: 'desc' },
+          where: {
+            deletedBy: null,
+            expenseParticipants: {
+              some: {
+                userId: ctx.session.user.id,
+              },
+            },
+            recurrenceId: { not: null },
+          },
           include: {
-            recurrence: true,
             addedByUser: {
               select: {
                 name: true,
@@ -456,7 +454,9 @@ export const expenseRouter = createTRPCRouter({
       },
     });
 
-    return expenses;
+    return recurrences
+      .filter((r) => r.expense.length > 0)
+      .map((r) => ({ ...r, expense: r.expense[0]! }));
   }),
 
   getUploadUrl: protectedProcedure

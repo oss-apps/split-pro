@@ -4,8 +4,9 @@ import { type User as NextUser } from 'next-auth';
 import { toUIString } from '~/utils/numbers';
 
 import type { inferRouterOutputs } from '@trpc/server';
-import { PencilIcon } from 'lucide-react';
+import { Landmark, PencilIcon } from 'lucide-react';
 import React, { type ComponentProps, useCallback } from 'react';
+import { useIntlCronParser } from '~/hooks/useIntlCronParser';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { isCurrencyCode } from '~/lib/currency';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
@@ -17,7 +18,6 @@ import { Button } from '../ui/button';
 import { CategoryIcon } from '../ui/categoryIcons';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
-import { Landmark } from 'lucide-react';
 
 type ExpenseDetailsOutput = NonNullable<inferRouterOutputs<ExpenseRouter>['getExpenseDetails']>;
 
@@ -28,7 +28,9 @@ interface ExpenseDetailsProps {
 }
 
 const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
-  const { displayName, toUIDate, t } = useTranslationWithUtils();
+  const { displayName, toUIDate, t, i18n } = useTranslationWithUtils();
+
+  const { cronParser, i18nReady } = useIntlCronParser();
 
   return (
     <>
@@ -67,6 +69,19 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
                 {t('ui.on')} {toUIDate(expense.createdAt, { year: true })}
               </p>
             )}
+            {expense.recurrence ? (
+              <p className="text-primary text-sm">
+                {t('recurrence.recurring')}
+                {i18nReady
+                  ? `: 
+                
+                ${cronParser.toString(expense.recurrence.job.schedule, {
+                  use24HourTimeFormat: true,
+                  locale: i18n.language.split('-')[0],
+                })}`
+                  : ''}
+              </p>
+            ) : null}
           </div>
         </div>
         <div>

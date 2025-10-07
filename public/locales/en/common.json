@@ -314,6 +314,7 @@
     "days_of_month": "Days of Month",
     "months": "Months",
     "never": "No schedule configured",
+    "recurring": "Recurring",
     "schedule_type": {
       "never": "Never",
       "custom": "Custom",

@@ -1,5 +1,4 @@
 // copied from: https://github.com/vpfaiz/cron-builder-ui/
-import cronstrue from 'cronstrue';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ToggleGroup, ToggleGroupItem } from './toggle-group';
 import { Label } from './label';
@@ -8,16 +7,18 @@ import { Button } from './button';
 import { cn } from '~/lib/utils';
 import { format } from 'date-fns';
 import { TFunction, useTranslation } from 'next-i18next';
+import { useIntlCronParser } from '~/hooks/useIntlCronParser';
 
 export interface CronTextResult {
   status: boolean;
   value?: string;
 }
 
-export function getCronText(cronString: string): CronTextResult {
+export function getCronText(cronParser: any, cronString: string, locale?: string): CronTextResult {
   try {
-    const value = cronstrue.toString(cronString.trim(), {
+    const value = cronParser.toString(cronString.trim(), {
       use24HourTimeFormat: true,
+      locale,
     });
     return { status: true, value };
   } catch (error) {
@@ -164,7 +165,7 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
 
     // Helper to safely parse numeric values from cron parts
     const parseNumbers = (part?: string): number[] => {
-      if (part === '*' || part === '?' || !part) return [];
+      if (part === '*' || !part) return [];
       return part
         .split(',')
         .map((v) => parseInt(v.trim(), 10))
@@ -173,9 +174,9 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
 
     try {
       // Check for standard patterns
-      if (min !== '*' && hour === '*' && dom === '*' && month === '*' && dow === '?') {
+      if (min !== '*' && hour === '*' && dom === '*' && month === '*' && dow === '*') {
         return { type: 'hour', values: { minutes: parseNumbers(min) } };
-      } else if (min !== '*' && hour !== '*' && dom === '*' && month === '*' && dow === '?') {
+      } else if (min !== '*' && hour !== '*' && dom === '*' && month === '*' && dow === '*') {
         return {
           type: 'day',
           values: {
@@ -183,7 +184,7 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
             hours: parseNumbers(hour),
           },
         };
-      } else if (min !== '*' && hour !== '*' && dom === '?' && month === '*' && dow !== '*') {
+      } else if (min !== '*' && hour !== '*' && dom === '*' && month === '*' && dow !== '*') {
         return {
           type: 'week',
           values: {
@@ -192,7 +193,7 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
             daysOfWeek: parseNumbers(dow),
           },
         };
-      } else if (min !== '*' && hour !== '*' && dom !== '*' && month === '*' && dow === '?') {
+      } else if (min !== '*' && hour !== '*' && dom !== '*' && month === '*' && dow === '*') {
         return {
           type: 'month',
           values: {
@@ -224,6 +225,8 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
   );
   const [custom, setCustom] = useState<string>(initialParsed.values.custom || defaultSchedule);
   const [cronExpression, setCronExpression] = useState(defaultSchedule);
+
+  const { cronParser } = useIntlCronParser();
 
   function loadDefaults() {
     setMinutes([0]);
@@ -269,7 +272,7 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
         expression = '';
     }
 
-    if (getCronText(expression).status) {
+    if (getCronText(cronParser, expression).status) {
       setCronExpression(expression);
       onChange(expression);
     } else {
@@ -507,24 +510,30 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
               />
             )}
 
-            {(() => {
-              const cronString = getCronText(cronExpression);
-              if (cronString.status)
-                return (
-                  <p className="bg-card text-card-foreground overflow-clip rounded-sm p-3">
-                    {cronString.value}{' '}
-                    <span className="bg-accent text-accent-foreground rounded-sm p-1 px-2 font-mono">
-                      cron({cronExpression})
-                    </span>
-                  </p>
+            <div className="h-19">
+              {(() => {
+                const cronString = getCronText(
+                  cronParser,
+                  cronExpression,
+                  i18n.language.split('-')[0],
                 );
-              else
-                return (
-                  <p className={'text-destructive text-sm font-medium'}>
-                    {t('errors.invalid_cron_expression')}
-                  </p>
-                );
-            })()}
+                if (cronString.status)
+                  return (
+                    <p className="bg-card text-card-foreground overflow-clip rounded-sm p-3">
+                      {cronString.value}{' '}
+                      <span className="bg-accent text-accent-foreground rounded-sm p-1 px-2 font-mono">
+                        cron({cronExpression})
+                      </span>
+                    </p>
+                  );
+                else
+                  return (
+                    <p className={'text-destructive text-sm font-medium'}>
+                      {t('errors.invalid_cron_expression')}
+                    </p>
+                  );
+              })()}
+            </div>
           </div>
         )}
       </div>

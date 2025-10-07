@@ -331,6 +331,15 @@ export const expenseRouter = createTRPCRouter({
           deletedByUser: true,
           updatedByUser: true,
           group: true,
+          recurrence: {
+            include: {
+              job: {
+                select: {
+                  schedule: true,
+                },
+              },
+            },
+          },
           conversionTo: {
             include: {
               expenseParticipants: {
@@ -369,6 +378,10 @@ export const expenseRouter = createTRPCRouter({
             amount: 0n,
           });
         });
+      }
+
+      if (expense?.recurrence?.job.schedule) {
+        expense.recurrence.job.schedule = expense.recurrence.job.schedule.replaceAll('$', 'L');
       }
 
       return expense;

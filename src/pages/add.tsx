@@ -32,6 +32,7 @@ const AddPage: NextPageWithUser<{
     setExpenseDate,
     setCategory,
     resetState,
+    setCronExpression,
   } = useAddExpenseStore((s) => s.actions);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
 
@@ -115,6 +116,9 @@ const AddPage: NextPageWithUser<{
     );
     useAddExpenseStore.setState({ showFriends: false });
     setExpenseDate(expenseQuery.data.expenseDate);
+    if (expenseQuery.data.recurrence) {
+      setCronExpression(expenseQuery.data.recurrence.job.schedule);
+    }
   }, [
     _expenseId,
     expenseQuery.data,
@@ -127,6 +131,7 @@ const AddPage: NextPageWithUser<{
     setGroup,
     setPaidBy,
     setParticipants,
+    setCronExpression,
   ]);
 
   return (

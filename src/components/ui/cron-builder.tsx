@@ -442,8 +442,8 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
             const date = e.target.valueAsDate;
             setValue(e.target.value);
             if (date) {
-              setHours([date.getHours()]);
-              setMinutes([date.getMinutes()]);
+              setHours([date.getUTCHours()]);
+              setMinutes([date.getUTCMinutes()]);
             }
           }}
           className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"

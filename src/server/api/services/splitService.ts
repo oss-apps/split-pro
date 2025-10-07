@@ -208,6 +208,11 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
     },
     include: {
       expenseParticipants: true,
+      recurrence: {
+        include: {
+          job: true,
+        },
+      },
     },
   });
 
@@ -335,6 +340,27 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
     }),
   );
 
+  if (expense.recurrence?.job) {
+    // Only delete the cron job if there's no other linked expense
+    const linkedExpenses = await db.expense.count({
+      where: {
+        recurrenceId: expense.recurrenceId,
+        id: {
+          not: expense.id,
+        },
+      },
+    });
+
+    if (linkedExpenses === 0) {
+      operations.push(db.$executeRaw`SELECT cron.unschedule(${expense.recurrence.job.jobname})`);
+      operations.push(
+        db.expenseRecurrence.delete({
+          where: { id: expense.recurrence.id },
+        }),
+      );
+    }
+  }
+
   await db.$transaction(operations);
   sendExpensePushNotification(expenseId).catch(console.error);
 }
@@ -365,6 +391,11 @@ export async function editExpense(
     where: { id: expenseId },
     include: {
       expenseParticipants: true,
+      recurrence: {
+        include: {
+          job: true,
+        },
+      },
     },
   });
 
@@ -589,6 +620,9 @@ export async function editExpense(
     }
   });
 
+  if (expense.recurrence?.job) {
+    operations.push(db.$executeRaw`SELECT cron.unschedule(${expense.recurrence.job.jobname})`);
+  }
   await db.$transaction(operations);
   await updateGroupExpenseForIfBalanceIsZero(
     paidBy,

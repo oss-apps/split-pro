@@ -110,13 +110,21 @@ export const expenseRouter = createTRPCRouter({
         if (expense && input.cronExpression) {
           const [{ schedule }] = await createRecurringExpenseJob(expense.id, input.cronExpression);
           console.log('Created recurring expense job with jobid:', schedule);
+
           await db.expense.update({
             where: { id: expense.id },
             data: {
               recurrence: {
-                create: {
-                  job: {
-                    connect: { jobid: schedule },
+                upsert: {
+                  create: {
+                    job: {
+                      connect: { jobid: schedule },
+                    },
+                  },
+                  update: {
+                    job: {
+                      connect: { jobid: schedule },
+                    },
                   },
                 },
               },

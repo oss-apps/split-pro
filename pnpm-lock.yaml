@@ -18,9 +18,6 @@ importers:
       '@aws-sdk/s3-request-presigner':
         specifier: ^3.515.0
         version: 3.817.0
-      '@date-fns/tz':
-        specifier: ^1.4.1
-        version: 1.4.1
       '@ducanh2912/next-pwa':
         specifier: ^10.2.9
         version: 10.2.9(@types/babel__core@7.20.5)(next@15.4.7(@babel/core@7.27.1)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(webpack@5.99.9)
@@ -76,8 +73,8 @@ importers:
         specifier: ^3.3.0
         version: 3.3.0
       date-fns:
-        specifier: ^4.1.0
-        version: 4.1.0
+        specifier: ^3.3.1
+        version: 3.6.0
       i18next:
         specifier: ^25.2.1
         version: 25.2.1(typescript@5.7.2)
@@ -1054,9 +1051,6 @@ packages:
 
   '@date-fns/tz@1.2.0':
     resolution: {integrity: sha512-LBrd7MiJZ9McsOgxqWX7AaxrDjcFVjWH/tIKJd7pnR7McaslGYOP1QmmiBXdJH/H/yLCT+rcQ7FaPBUxRGUtrg==}
-
-  '@date-fns/tz@1.4.1':
-    resolution: {integrity: sha512-P5LUNhtbj6YfI3iJjw5EL9eUAG6OitD0W3fWQcpQjDRc/QIsL0tRNuO1PcDvPccWL1fSTXXdE1ds+l95DV/OFA==}
 
   '@ducanh2912/next-pwa@10.2.9':
     resolution: {integrity: sha512-Wtu823+0Ga1owqSu1I4HqKgeRYarduCCKwsh1EJmJiJqgbt+gvVf5cFwFH8NigxYyyEvriAro4hzm0pMSrXdRQ==}
@@ -3567,6 +3561,9 @@ packages:
 
   date-fns-jalali@4.1.0-0:
     resolution: {integrity: sha512-hTIP/z+t+qKwBDcmmsnmjWTduxCg+5KfdqWQvb2X/8C9+knYY6epN/pfxdDuyVlSVeFz0sM5eEfwIUQ70U4ckg==}
+
+  date-fns@3.6.0:
+    resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
 
   date-fns@4.1.0:
     resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
@@ -7275,8 +7272,6 @@ snapshots:
 
   '@date-fns/tz@1.2.0': {}
 
-  '@date-fns/tz@1.4.1': {}
-
   '@ducanh2912/next-pwa@10.2.9(@types/babel__core@7.20.5)(next@15.4.7(@babel/core@7.27.1)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(webpack@5.99.9)':
     dependencies:
       fast-glob: 3.3.2
@@ -9924,6 +9919,8 @@ snapshots:
       is-data-view: 1.0.2
 
   date-fns-jalali@4.1.0-0: {}
+
+  date-fns@3.6.0: {}
 
   date-fns@4.1.0: {}
 

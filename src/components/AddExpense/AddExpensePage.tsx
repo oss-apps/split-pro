@@ -1,4 +1,4 @@
-import { HeartHandshakeIcon, Landmark, X } from 'lucide-react';
+import { HeartHandshakeIcon, Landmark, RefreshCcwDot, X } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -11,6 +11,7 @@ import { currencyConversion, toSafeBigInt, toUIString } from '~/utils/numbers';
 
 import { toast } from 'sonner';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { cronToBackend } from '~/lib/cron';
 import { cn } from '~/lib/utils';
 import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { Button } from '../ui/button';
@@ -20,6 +21,7 @@ import AddBankTransactions from './AddBankTransactions';
 import { CategoryPicker } from './CategoryPicker';
 import { CurrencyPicker } from './CurrencyPicker';
 import { DateSelector } from './DateSelector';
+import { RecurrenceInput } from './RecurrenceInput';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { SplitTypeSection } from './SplitTypeSection';
 import { UploadFile } from './UploadFile';
@@ -48,6 +50,7 @@ export const AddOrEditExpensePage: React.FC<{
   const splitType = useAddExpenseStore((s) => s.splitType);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
   const transactionId = useAddExpenseStore((s) => s.transactionId);
+  const cronExpression = useAddExpenseStore((s) => s.cronExpression);
 
   const {
     setCurrency,
@@ -120,6 +123,7 @@ export const AddOrEditExpensePage: React.FC<{
           expenseDate,
           expenseId,
           transactionId,
+          cronExpression: cronExpression ? cronToBackend(cronExpression) : undefined,
         },
         {
           onSuccess: (d) => {
@@ -162,6 +166,7 @@ export const AddOrEditExpensePage: React.FC<{
     setMultipleTransactions,
     transactionId,
     setIsTransactionLoading,
+    cronExpression,
   ]);
 
   const handleDescriptionChange = useCallback(
@@ -275,7 +280,7 @@ export const AddOrEditExpensePage: React.FC<{
               <>
                 <SplitTypeSection />
 
-                <div className="mt-4 flex items-center justify-between sm:mt-10">
+                <div className="mt-4 flex items-start justify-between sm:mt-10">
                   <DateSelector
                     mode="single"
                     required
@@ -297,26 +302,28 @@ export const AddOrEditExpensePage: React.FC<{
                       }
                       onClick={addExpense}
                     >
-                      {t('actions.submit')}
+                      {t('actions.save')}
                     </Button>
                   </div>
                 </div>
               </>
             ) : null}
           </div>
-          <div className="flex items-center justify-around gap-4 px-4 lg:px-0">
-            {/* place for recurring button */}
+          <div className="flex items-center justify-evenly px-4 lg:px-0">
+            <RecurrenceInput>
+              <Button variant="ghost" size="sm">
+                <RefreshCcwDot
+                  className={cn(
+                    cronExpression && 'text-primary',
+                    (!amtStr || !description) && 'invisible',
+                    'size-6',
+                  )}
+                />
+                <span className="sr-only">Toggle recurring expense options</span>
+              </Button>
+            </RecurrenceInput>
             <SponsorUs />
             <div className="flex gap-2">
-              <Button
-                variant="ghost"
-                className={cn('px-2', transactionId ? 'text-red-500' : 'invisible')}
-                disabled={!transactionId}
-                onClick={clearFields}
-              >
-                <X className="h-6 w-6" />
-              </Button>
-
               <AddBankTransactions
                 // clearFields={clearFields}
                 onUpdateAmount={onUpdateAmount}
@@ -331,6 +338,14 @@ export const AddOrEditExpensePage: React.FC<{
                   />
                 </Button>
               </AddBankTransactions>
+              <Button
+                variant="ghost"
+                className={cn('px-2', transactionId ? 'text-red-500' : 'invisible')}
+                disabled={!transactionId}
+                onClick={clearFields}
+              >
+                <X className="h-6 w-6" />
+              </Button>
             </div>
           </div>
         </>
@@ -342,7 +357,7 @@ export const AddOrEditExpensePage: React.FC<{
 const SponsorUs = () => {
   const { t } = useTranslation();
   return (
-    <div className="flex w-full justify-center">
+    <div className="flex justify-center">
       <Link href="https://github.com/sponsors/krokosik" target="_blank" className="mx-auto">
         <Button
           variant="outline"

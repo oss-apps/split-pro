@@ -99,3 +99,42 @@ export async function sendExpensePushNotification(expenseId: string) {
 
   await Promise.all(pushNotifications);
 }
+
+export async function checkRecurrenceNotifications() {
+  try {
+    const recurrences = await db.expenseRecurrence.findMany({
+      where: {
+        NOT: {
+          notified: true,
+        },
+      },
+      include: {
+        expense: {
+          select: { id: true },
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+        },
+      },
+    });
+
+    await Promise.all(
+      recurrences
+        .filter((r) => r.expense[0])
+        .map(async (r) => {
+          await sendExpensePushNotification(r.expense[0]!.id);
+          await db.expenseRecurrence.update({
+            where: {
+              id: r.id,
+            },
+            data: {
+              notified: true,
+            },
+          });
+        }),
+    );
+  } catch (e) {
+    console.error('Error sending recurrence notifications', e);
+  } finally {
+    setTimeout(checkRecurrenceNotifications, 1000 * 60); // Check every minute
+  }
+}

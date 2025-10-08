@@ -129,7 +129,8 @@
     "unsubscribe_error": "Error unsubscribing notification",
     "upload_failed": "Failed to upload file",
     "uploading_error": "Error uploading file",
-    "valid_email": "Enter valid email"
+    "valid_email": "Enter valid email",
+    "invalid_cron_expression": "Invalid cron expression"
   },
   "bank_transactions": {
     "choose_bank_provider": "Choose bank provider",
@@ -301,8 +302,30 @@
     "activity": "Activity",
     "add": "Add",
     "add_expense": "Add Expense",
+    "recurring": "Recurring",
     "balances": "Balances",
     "groups": "Groups"
+  },
+  "recurrence": {
+    "title": "Recurrence",
+    "description": "Set up automatic recurrence for this expense.",
+    "cron_expression": "Cron Expression",
+    "time_of_day": "Time of Day",
+    "days_of_week": "Days of Week",
+    "days_of_month": "Days of Month",
+    "months": "Months",
+    "never": "No schedule configured",
+    "empty": "No recurring expenses yet",
+    "recurring": "Recurring",
+    "expense_for_the_amount_of": "Expense {{name}} for the amount of {{amount}} {{currency}}",
+    "schedule_type": {
+      "never": "Never",
+      "custom": "Custom",
+      "day": "Daily",
+      "month": "Monthly",
+      "week": "Weekly",
+      "year": "Yearly"
+    }
   },
   "ui": {
     "added_by": "Added by",

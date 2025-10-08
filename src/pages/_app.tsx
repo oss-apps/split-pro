@@ -8,7 +8,7 @@ import { SessionProvider, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
 import { appWithTranslation, useTranslation } from 'next-i18next';
-import i18nConfig from 'next-i18next.config.js';
+import i18nConfig from '@/next-i18next.config.js';
 import { ThemeProvider } from '~/components/ui/theme-provider';
 import '~/styles/globals.css';
 import { LoadingSpinner } from '~/components/ui/spinner';

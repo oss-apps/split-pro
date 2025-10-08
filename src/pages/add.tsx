@@ -1,18 +1,19 @@
+import { type GetServerSideProps } from 'next';
+import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { useTranslation } from 'next-i18next';
 import { AddOrEditExpensePage } from '~/components/AddExpense/AddExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
 import { env } from '~/env';
+import { cronFromBackend } from '~/lib/cron';
 import { parseCurrencyCode } from '~/lib/currency';
+import { isBankConnectionConfigured } from '~/server/bankTransactionHelper';
 import { isStorageConfigured } from '~/server/storage';
 import { useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
-import { type GetServerSideProps } from 'next';
-import { isBankConnectionConfigured } from '~/server/bankTransactionHelper';
 
 const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;
@@ -32,6 +33,7 @@ const AddPage: NextPageWithUser<{
     setExpenseDate,
     setCategory,
     resetState,
+    setCronExpression,
   } = useAddExpenseStore((s) => s.actions);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
 
@@ -115,6 +117,9 @@ const AddPage: NextPageWithUser<{
     );
     useAddExpenseStore.setState({ showFriends: false });
     setExpenseDate(expenseQuery.data.expenseDate);
+    if (expenseQuery.data.recurrence) {
+      setCronExpression(cronFromBackend(expenseQuery.data.recurrence.job.schedule));
+    }
   }, [
     _expenseId,
     expenseQuery.data,
@@ -127,6 +132,7 @@ const AddPage: NextPageWithUser<{
     setGroup,
     setPaidBy,
     setParticipants,
+    setCronExpression,
   ]);
 
   return (

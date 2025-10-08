@@ -1,7 +1,7 @@
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import * as React from 'react';
-import { type DayButton, DayPicker, getDefaultClassNames } from 'react-day-picker';
-
+import { type DayButton, DayPicker, getDefaultClassNames, Locale } from 'react-day-picker';
 import { Button, buttonVariants } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
 
@@ -18,9 +18,26 @@ function Calendar({
   buttonVariant?: React.ComponentProps<typeof Button>['variant'];
 }) {
   const defaultClassNames = getDefaultClassNames();
+  const { i18n } = useTranslation();
+  const [locale, setLocale] = React.useState<Locale | undefined>(undefined);
+  React.useEffect(() => {
+    const userLocale = i18n.language;
+    (async () => {
+      try {
+        const [first, second] = i18n.language.split('-');
+        const key = `${first}${second?.toUpperCase() ?? ''}`;
+        // @ts-ignore
+        const { [key]: dayPickerLocale } = await import('react-day-picker/locale');
+        setLocale(dayPickerLocale);
+      } catch (e) {
+        setLocale(undefined);
+      }
+    })();
+  }, [i18n]);
 
   return (
     <DayPicker
+      locale={locale}
       showOutsideDays={showOutsideDays}
       className={cn(
         'group/calendar bg-background p-3 [--cell-size:2rem] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent',

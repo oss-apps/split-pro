@@ -61,6 +61,7 @@
     "cancel": "Annuler",
     "close": "Fermer",
     "confirm": "Confirmer",
+    "connect": "Se connecter",
     "create": "Créer",
     "edit_expense": "Éditer la dépense",
     "export": "Exporter",
@@ -68,6 +69,7 @@
     "import": "Importer",
     "invite": "Inviter",
     "leave": "Quitter",
+    "reconnect": "Se reconnecter",
     "save": "Enregistrer",
     "settle_up": "Enregistrer un règlement",
     "submit": "Valider"
@@ -91,7 +93,19 @@
     "send_magic_link": "Envoyer le lien de connexion",
     "sending": "Envoi en cours…",
     "setup_instructions": "instructions de configuration Docker",
-    "trouble_logging_in": "Un problème pour te connecter ? Contacte-nous"
+    "trouble_logging_in": "Un problème pour te connecter ? Contact"
+  },
+  "bank_transactions": {
+    "choose_bank_provider": "Choix de la banque",
+    "no_bank_providers_found": "Aucune banque trouvée",
+    "plaid": {
+      "bank_connected_successfully": "Banque connectée avec succès",
+      "bank_connection_cancelled": "La connexion avec la banque a été annulée",
+      "bank_connection_failed": "Échec de la connexion avec la banque"
+    },
+    "search_bank": "Rechercher une banque",
+    "select_bank_provider": "Sélectionner une banque",
+    "to_bank": "à la banque"
   },
   "currency_conversion": {
     "amount_to_receive": "Montant à recevoir",
@@ -183,15 +197,21 @@
         "search_friends": "Rechercher des ami⋅es, des groupes ou ajouter une adresse mail"
       }
     },
+    "already_added": "Déjà ajouté",
     "balance_list": {
       "are_settled_up": "sont quittes",
       "is_settled_up": "est quitte",
       "press_balance_info": "Clique sur un solde pour effectuer un règlement"
     },
+    "bank_transactions": "Transactions bancaires",
+    "clear": "Effacer",
     "delete_expense_details": {
       "text": "Cette action n'est pas réversible. Ceci supprimera définitivement ta dépense.",
       "title": "Veux-tu vraiment supprimer cette dépense ?"
     },
+    "no_transactions_yet": "Aucune transaction pour l'instant",
+    "pending": "En attente",
+    "submit_all": "Tout enregistrer",
     "title": "Ajouter une dépense",
     "title_mobile": "Ajouter"
   },
@@ -273,7 +293,7 @@
   },
   "meta": {
     "application_name": "SplitPro",
-    "description": "Partagez vos dépenses entre ami⋅es. Gratuitement.",
+    "description": "Partagez vos dépenses entre ami⋅es. C'est gratuit !",
     "title": "SplitPro : partagez vos dépenses entre ami⋅es. C'est gratuit !"
   },
   "navigation": {

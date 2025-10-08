@@ -1,5 +1,9 @@
 {
   "features": {
+    "bank_connection": {
+      "description": "Lägg till utgifter snabbare med en integration till GoCardless eller Plaid banktransaktions-API",
+      "title": "Bankanslutning"
+    },
     "currency_conversion": {
       "description": "Konvertera snabbt mellan olika valutor med hjälp av aktuella eller historiska växelkurser",
       "title": "Valutakonvertering"

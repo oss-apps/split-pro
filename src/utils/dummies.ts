@@ -1,212 +1,147 @@
-import { SplitType } from '@prisma/client';
+import { faker } from '@faker-js/faker';
+import { SplitType, type User } from '@prisma/client';
 
-export const dummyUsers = [
-  {
-    name: 'Alice',
-    email: 'alice@example.com',
-    currency: 'USD',
-  },
-  {
-    name: 'Bob',
-    email: 'bob@example.com',
-    currency: 'EUR',
-  },
-  {
-    name: 'Charlie',
-    email: 'charlie@example.com',
-    currency: 'GBP',
-  },
-  {
-    name: 'Diana',
-    email: 'diana@example.com',
-    currency: 'JPY',
-  },
-  {
-    name: 'Evan',
-    email: 'evan@example.com',
-    currency: 'CNY',
-  },
+const SEED = 2137;
+
+faker.seed(SEED);
+faker.setDefaultRefDate('2025-01-01T00:00:00.000Z');
+
+const domains = ['example.com', 'test.com', 'demo.com', 'sample.com', 'mail.com'];
+
+const majorCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'CNY', 'INR', 'AUD', 'CAD'] as const;
+const oddCurrencies = [
+  'ALL', // 0 decimals
+  'BHD', // 3 decimals
+  'CHF', // roundging 0.05
+] as const;
+const weightedCurrencies = [
+  ...majorCurrencies.map((value) => ({ weight: 0.95, value })),
+  ...oddCurrencies.map((value) => ({ weight: 0.05, value })),
 ];
 
-export const dummyExpenses = [
-  {
-    name: 'Sushi dinner at Nobu',
-    category: 'diningOut',
-    amount: 18500,
-    currency: 'USD',
-    splitType: SplitType.EQUAL,
-    paidByIndex: 0,
-    participantIndices: [0, 1, 2],
-  },
-  {
-    name: 'Grocery shopping at Whole Foods',
-    category: 'groceries',
-    amount: 12750,
-    currency: 'USD',
-    splitType: SplitType.PERCENTAGE,
-    paidByIndex: 1,
-    participantIndices: [0, 1, 2, 3],
-  },
-  {
-    name: 'Movie tickets for Avengers',
-    category: 'movies',
-    amount: 4800,
-    currency: 'USD',
-    splitType: SplitType.EQUAL,
-    paidByIndex: 2,
-    participantIndices: [1, 2, 3],
-  },
-  {
-    name: 'Uber to airport',
-    category: 'taxi',
-    amount: 5500,
-    currency: 'USD',
-    splitType: SplitType.EXACT,
-    paidByIndex: 0,
-    participantIndices: [0, 1],
-  },
-  {
-    name: 'Hotel booking in Tokyo',
-    category: 'travel',
-    amount: 450000,
-    currency: 'JPY',
-    splitType: SplitType.EQUAL,
-    paidByIndex: 3,
-    participantIndices: [0, 1, 2, 3, 4],
-  },
-  {
-    name: 'Train tickets to Kyoto',
-    category: 'train',
-    amount: 28000,
-    currency: 'JPY',
-    splitType: SplitType.SHARE,
-    paidByIndex: 4,
-    participantIndices: [3, 4],
-  },
-  {
-    name: 'Coffee at Starbucks',
-    category: 'diningOut',
-    amount: 2200,
-    currency: 'USD',
-    splitType: SplitType.EQUAL,
-    paidByIndex: 1,
-    participantIndices: [1, 2],
-  },
-  {
-    name: 'Electricity bill apartment',
-    category: 'utilities',
-    amount: 8900,
-    currency: 'USD',
-    splitType: SplitType.ADJUSTMENT,
-    paidByIndex: 2,
-    participantIndices: [0, 1, 2],
-  },
-  {
-    name: 'Dinner at local ramen shop',
-    category: 'diningOut',
-    amount: 6800,
-    currency: 'JPY',
-    splitType: SplitType.EQUAL,
-    paidByIndex: 0,
-    participantIndices: [0, 3, 4],
-  },
-  {
-    name: 'Gas for rental car',
-    category: 'fuel',
-    amount: 7200,
-    currency: 'USD',
-    splitType: SplitType.PERCENTAGE,
-    paidByIndex: 3,
-    participantIndices: [1, 2, 3],
-  },
-  {
-    name: 'Spotify Premium family plan',
-    category: 'music',
-    amount: 1599,
-    currency: 'USD',
-    splitType: SplitType.EQUAL,
-    paidByIndex: 4,
-    participantIndices: [0, 1, 2, 3, 4],
-  },
-  {
-    name: 'Grocery supplies for party',
-    category: 'groceries',
-    amount: 15600,
-    currency: 'USD',
-    splitType: SplitType.EXACT,
-    paidByIndex: 0,
-    participantIndices: [0, 1, 2, 3],
-  },
-  {
-    name: 'Karaoke night in Shibuya',
-    category: 'music',
-    amount: 12500,
-    currency: 'JPY',
-    splitType: SplitType.EQUAL,
-    paidByIndex: 1,
-    participantIndices: [1, 3, 4],
-  },
-  {
-    name: 'Internet bill for apartment',
-    category: 'utilities',
-    amount: 6999,
-    currency: 'USD',
-    splitType: SplitType.SHARE,
-    paidByIndex: 2,
-    participantIndices: [0, 1, 2],
-  },
-  {
-    name: 'Pizza delivery for game night',
-    category: 'diningOut',
-    amount: 4500,
-    currency: 'USD',
-    splitType: SplitType.EQUAL,
-    paidByIndex: 3,
-    participantIndices: [1, 2, 3, 4],
-  },
-  {
-    name: 'Museum tickets in Tokyo',
-    category: 'travel',
-    amount: 4200,
-    currency: 'JPY',
-    splitType: SplitType.PERCENTAGE,
-    paidByIndex: 4,
-    participantIndices: [0, 3, 4],
-  },
-  {
-    name: 'Parking at downtown mall',
-    category: 'parking',
-    amount: 1800,
-    currency: 'USD',
-    splitType: SplitType.EQUAL,
-    paidByIndex: 0,
-    participantIndices: [0, 1],
-  },
-  {
-    name: 'Phone bill monthly',
-    category: 'phone',
-    amount: 8500,
-    currency: 'USD',
-    splitType: SplitType.ADJUSTMENT,
-    paidByIndex: 1,
-    participantIndices: [1, 2, 3],
-  },
-  {
-    name: 'Brunch at local cafe',
-    category: 'diningOut',
-    amount: 8900,
-    currency: 'USD',
-    splitType: SplitType.EXACT,
-    paidByIndex: 2,
-    participantIndices: [0, 1, 2, 4],
-  },
-  {
-    name: 'Convenience store snacks',
-    category: 'groceries',
-    amount: 1800,
-    currency: 'JPY',
-    splitType: SplitType.EQUAL,
-    paidByIndex: 3,
-    participantIndices: [3, 4],
-  },
-];
+export const dummyUsers = (() => {
+  const users: User[] = [];
+
+  while (users.length < 10_000) {
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const name = `${firstName} ${lastName}`;
+    const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@${faker.helpers.arrayElement(domains)}`;
+    const currency = faker.helpers.weightedArrayElement(weightedCurrencies);
+
+    users.push({
+      id: users.length,
+      currency,
+      name,
+      email,
+      bankingId: null,
+      emailVerified: null,
+      image: null,
+      obapiProviderId: null,
+      preferredLanguage: 'en',
+    });
+  }
+
+  return users;
+})();
+
+const gaussianRandom = (mean = 0, stdev = 1) => {
+  const u = 1 - faker.number.float({ min: 0, max: 1 }); // Converting [0,1) to (0,1)
+  const v = faker.number.float({ min: 0, max: 1 });
+  const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  // Transform to the desired mean and standard deviation:
+  return z * stdev + mean;
+};
+
+export const groups = (() => {
+  const getGroupMemberCount = () => {
+    const res = gaussianRandom(15, 3);
+    return Math.max(Math.round(res), 3);
+  };
+
+  const groups = [];
+
+  const weightedTypes = [
+    { weight: 0.3, value: 'trip' },
+    { weight: 0.3, value: 'job' },
+    { weight: 0.3, value: 'household' },
+    { weight: 0.1, value: 'cow_friends' },
+  ];
+
+  while (groups.length < 200) {
+    const type = faker.helpers.weightedArrayElement(weightedTypes);
+
+    const publicId = faker.string.nanoid();
+    const memberCount = getGroupMemberCount();
+    const memberSet = new Set<number>();
+    while (memberSet.size < memberCount) {
+      memberSet.add(faker.number.int({ min: 0, max: dummyUsers.length - 1 }));
+    }
+    const members = Array.from(memberSet).map((index) => dummyUsers[index]!);
+    const currency = faker.helpers.weightedArrayElement(
+      Object.entries(
+        members.reduce<Record<string, number>>((acc, user) => {
+          acc[user.currency] = (acc[user.currency] ?? 0) + 1;
+          return acc;
+        }, {}),
+      ).map(([value, weight]) => ({ value, weight })),
+    );
+
+    switch (type) {
+      case 'trip': {
+        const destination = faker.location.city();
+        const year = faker.number.int({ min: 2018, max: 2025 });
+        const name = `${destination} Trip ${year}`;
+
+        groups.push({
+          name,
+          publicId,
+          defaultCurrency: currency,
+          members,
+          createdBy: members[0]!,
+        });
+        break;
+      }
+      case 'job': {
+        const company = faker.company.name();
+        const name = `Expenses at ${company}`;
+
+        groups.push({
+          name,
+          publicId,
+          defaultCurrency: currency,
+          members,
+          createdBy: members[0]!,
+        });
+        break;
+      }
+      case 'household': {
+        const street = faker.location.street();
+        const name = `Household at ${street}`;
+
+        groups.push({
+          name,
+          publicId,
+          defaultCurrency: currency,
+          members,
+          createdBy: members[0]!,
+        });
+        break;
+      }
+      case 'cow_friends': {
+        const cow = faker.animal.cow();
+        const adj = faker.word.adjective({ length: { min: 4, max: 10 } });
+        const name = `${adj} ${cow}s`;
+
+        groups.push({
+          name,
+          publicId,
+          defaultCurrency: currency,
+          members,
+          createdBy: members[0]!,
+        });
+        break;
+      }
+    }
+  }
+})();

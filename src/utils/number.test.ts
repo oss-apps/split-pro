@@ -1,5 +1,5 @@
 // filepath: /home/wiktor/kod/split-pro/src/utils/number.test.ts
-import { toUIString } from './numbers';
+import { toSafeBigInt, toUIString } from './numbers';
 import type { CurrencyCode } from '../lib/currency';
 
 describe('toUIString', () => {
@@ -90,5 +90,43 @@ describe('toUIString', () => {
       const currencyCode: CurrencyCode = 'USD';
       expect(toUIString(value, true, currencyCode)).toBe('-123,456,789.00');
     });
+  });
+});
+
+describe('toSafeBigInt', () => {
+  it.each([
+    ['integer positive', '100', 10000n],
+    ['integer negative', '-100', -10000n],
+    ['decimal positive', '100.25', 10025n],
+    ['decimal negative', '-100.25', -10025n],
+    ['decimal with comma positive', '100,25', 10025n],
+    ['decimal with comma negative', '-100,25', -10025n],
+    ['number type positive', 100.25, 10025n],
+    ['number type negative', -100.25, -10025n],
+    ['zero', '0', 0n],
+    ['negative zero', '-0', 0n],
+    ['zero decimal', '0.00', 0n],
+    ['multiple dots', '1.2.3', 120n],
+    ['multiple commas', '1,2,3', 120n],
+  ])('%s: %s -> %s', (_label, input, expected) => {
+    expect(toSafeBigInt(input)).toBe(expected);
+  });
+
+  it.each([
+    ['alphanumeric', '123abc'],
+    ['empty string', ''],
+    ['letters', 'abc'],
+    ['just dot', '.'],
+    ['just minus', '-'],
+    ['minus and dot', '-.'],
+    ['whitespace', '   '],
+    ['null', null],
+    ['undefined', undefined],
+  ])('invalid input %s -> 0n', (_label, input) => {
+    expect(toSafeBigInt(input as string)).toBe(0n);
+  });
+
+  it('negative zero decimal', () => {
+    expect(toSafeBigInt('-0.01')).toBe(-1n);
   });
 });

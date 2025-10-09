@@ -4,19 +4,22 @@ export function toSafeBigInt(num: number | string) {
   if ('number' === typeof num) {
     return BigInt(Math.round(num * 100));
   } else if ('string' === typeof num) {
-    if ('' === num.trim()) {
+    if ('' === num.trim() || /[^0-9.,+-]/g.test(num)) {
       return 0n;
     }
     const parsed = parseFloat(num);
-    if (isNaN(parsed)) {
+    if (isNaN(parsed) || !isFinite(parsed)) {
       return 0n;
     }
-    const num_unified_decimal = num.replace(',', '.');
-    const parts = num_unified_decimal.split('.');
-    const whole = BigInt(parts[0]!);
+    const num_unified_decimal = num.replace(',', '.').trim();
+    const isNegative = num_unified_decimal.startsWith('-');
+    const unsigned = isNegative ? num_unified_decimal.slice(1) : num_unified_decimal;
+    const parts = unsigned.split('.');
+    const whole = BigInt(parts[0] ?? '0');
     const fraction = BigInt(Math.round(parseFloat(`0.${parts[1] ?? '0'}`) * 100));
 
-    return whole * 100n + fraction;
+    const value = whole * 100n + fraction;
+    return isNegative ? -value : value;
   } else {
     return 0n;
   }

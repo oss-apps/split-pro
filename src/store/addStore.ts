@@ -401,7 +401,8 @@ export function calculateSplitShareBasedOnAmount(
   switch (splitType) {
     case SplitType.EQUAL:
       participants.forEach((p) => {
-        splitShares[p.id]![splitType] = 0n === p.amount && participants.length > 1 ? 0n : 1n;
+        splitShares[p.id]![splitType] =
+          (p.id === paidBy?.id ? amount : 0n) === p.amount && participants.length > 1 ? 0n : 1n;
       });
 
       break;

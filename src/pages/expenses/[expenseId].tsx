@@ -21,6 +21,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   const { t } = useTranslation('expense_details');
   const router = useRouter();
   const expenseId = router.query.expenseId as string;
+  const keepAdding = !!router.query.keepAdding;
 
   const expenseQuery = api.expense.getExpenseDetails.useQuery({ expenseId });
 
@@ -32,7 +33,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
       <MainLayout
         title={
           <div className="flex items-center gap-2">
-            <Link href="/activity">
+            <Link href={keepAdding ? '/add' : '/activity'}>
               <ChevronLeftIcon className="mr-1 h-6 w-6" />
             </Link>
             <p className="text-[16px] font-normal">{t('ui.expense_details', { ns: 'common' })}</p>

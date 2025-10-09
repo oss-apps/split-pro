@@ -129,8 +129,24 @@ export const AddOrEditExpensePage: React.FC<{
           onSuccess: (d) => {
             if (d) {
               const id = d?.id ?? expenseId;
-              router
-                .push(group?.id ? `/groups/${group.id}/expenses/${id}` : `/expenses/${id}`)
+
+              let navPromise: () => Promise<any> = () => Promise.resolve(true);
+
+              const { friendId, groupId } = router.query;
+
+              if (friendId && !groupId) {
+                navPromise = () => router.push(`/balances/${friendId as string}/expenses/${id}`);
+              } else if (groupId) {
+                navPromise = () => router.push(`/groups/${groupId as string}/expenses/${id}`);
+              } else {
+                navPromise = () => router.push(`/expenses/${id}?keepAdding=1`);
+              }
+
+              if (expenseId) {
+                navPromise = async () => router.back();
+              }
+
+              navPromise()
                 .then(() => resetState())
                 .catch(console.error);
             }
@@ -228,10 +244,14 @@ export const AddOrEditExpensePage: React.FC<{
     );
   }, [amount, currency, onConvertAmount]);
 
+  const onBackButtonPress = useCallback(() => {
+    router.back();
+  }, [router]);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <Button variant="ghost" className="text-primary px-0" onClick={router.back}>
+        <Button variant="ghost" className="text-primary px-0" onClick={onBackButtonPress}>
           {t('actions.cancel')}
         </Button>
         <div className="text-center">

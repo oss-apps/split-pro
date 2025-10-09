@@ -205,7 +205,7 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
       );
       return `${t('expense_details.add_expense_details.split_type_section.types.exact.remaining')} ${currency} ${toUIString(amount - totalAmount, true)}`;
     },
-    fmtShareText: (share) => removeTrailingZeros(toUIString(share)),
+    fmtShareText: (share) => share.toString(),
     step: null,
   },
   {

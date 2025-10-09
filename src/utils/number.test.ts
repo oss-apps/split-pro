@@ -108,6 +108,7 @@ describe('toSafeBigInt', () => {
     ['zero decimal', '0.00', 0n],
     ['multiple dots', '1.2.3', 120n],
     ['multiple commas', '1,2,3', 120n],
+    ['issue #370', '-100,01', -10001n],
   ])('%s: %s -> %s', (_label, input, expected) => {
     expect(toSafeBigInt(input)).toBe(expected);
   });

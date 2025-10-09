@@ -1,0 +1,337 @@
+{
+  "account": {
+    "change_language": "Cambia lingua",
+    "change_language_details": {
+      "messages": {
+        "language_changed": "Lingua cambiata con successo"
+      },
+      "placeholder": "Seleziona una lingua",
+      "title": "Seleziona una lingua"
+    },
+    "download_app": "Scarica l'app",
+    "download_app_details": {
+      "download_as_pwa": "Puoi scaricare SplitPro come PWA sulla tua home screen.",
+      "title": "Scarica l'app",
+      "using_android": "Se utilizzi Android, guarda questo",
+      "using_ios": "Se utilizzi iOS, guarda questo",
+      "video": "video"
+    },
+    "download_splitpro_data": "Scarica i dati di SplitPro",
+    "edit_name": {
+      "placeholder": "Inserisci il nome",
+      "title": "Modifica nome"
+    },
+    "follow_on_x": "Seguici su X",
+    "import_from_splitwise": "Importa da Splitwise",
+    "import_from_splitwise_details": {
+      "choose_file": "Scegli file",
+      "export_splitwise_data_button": "Esporta dati Splitwise",
+      "follow_to_export_splitwise_data": "Segui questo link per esportare i dati splitwise",
+      "messages": {
+        "import_success": "Importazione riuscita"
+      },
+      "no_file_chosen": "Nessun file scelto",
+      "note": "Nota: al momento supporta solo l'importazione di amici e gruppi. Non importerà transazioni. Ci stiamo lavorando."
+    },
+    "logout": "Esci",
+    "messages": {
+      "submit_error": "Invio del feedback fallito",
+      "submit_success": "Feedback inviato"
+    },
+    "notifications": {
+      "disable_notification": "Disabilita notifiche",
+      "enable_notification": "Abilita notifiche",
+      "messages": {
+        "notification_granted": "Riceverai ora le notifiche"
+      }
+    },
+    "star_on_github": "Metti una stella su GitHub",
+    "submit_feedback": "Invia feedback",
+    "submit_feedback_details": {
+      "placeholder": "Inserisci il tuo feedback",
+      "title": "Invia feedback"
+    },
+    "support_us": "Supportaci",
+    "title": "Account",
+    "write_review": "Scrivi una recensione"
+  },
+  "actions": {
+    "add_expense": "Aggiungi spesa",
+    "back": "Indietro",
+    "cancel": "Annulla",
+    "close": "Chiudi",
+    "confirm": "Conferma",
+    "create": "Crea",
+    "edit_expense": "Modifica spesa",
+    "export": "Esporta",
+    "import": "Importa",
+    "invite": "Invita",
+    "leave": "Abbandona",
+    "save": "Salva",
+    "settle_up": "Regola",
+    "submit": "Invia"
+  },
+  "actors": {
+    "all": "Tutti",
+    "friends": "Amici",
+    "groups": "Gruppi",
+    "members": "Membri",
+    "owner": "Proprietario",
+    "you": "Tu",
+    "you_accusativus": "Tu",
+    "you_dativus": "Te"
+  },
+  "auth": {
+    "continue_with": "Continua con {{provider}}",
+    "email_placeholder": "Inserisci la tua email",
+    "no_providers_configured": "Nessun provider di autenticazione configurato",
+    "no_providers_instructions": "Si prega di configurare almeno un provider di autenticazione per accedere. Consulta le",
+    "or": "oppure",
+    "otp_sent": "Abbiamo inviato un'e-mail con l'OTP. Controllare la posta in arrivo e fare clic sul link contenuto nell'e-mail per accedere.",
+    "send_magic_link": "Invia link magico",
+    "sending": "Invio in corso...",
+    "setup_instructions": "istruzioni di configurazione Docker",
+    "submit": "Invia",
+    "trouble_logging_in": "Problemi ad accedere? Contatta"
+  },
+  "currency_conversion": {
+    "amount_to_receive": "Importo da ricevere",
+    "description": "Converti l'importo in una valuta diversa.",
+    "exchange_rate": "Tasso di cambio",
+    "fetching_rate": "Recupero tasso...",
+    "rate": "Tasso",
+    "success_toast": "Conversione valuta impostata con successo",
+    "title": "Conversione valuta"
+  },
+  "errors": {
+    "currency_conversion_error": "Errore durante l'impostazione della conversione valuta",
+    "email_invalid": "L'e-mail non è valida, si prega di riprovare l'accesso.",
+    "email_required": "Email richiesta",
+    "feedback_min_length": "Il feedback deve contenere almeno 10 caratteri",
+    "feedback_required": "Il feedback è obbligatorio",
+    "group_name_update_failed": "Errore nell'aggiornamento del nome del gruppo",
+    "import_failed": "Errore durante l'importazione del file",
+    "invalid_currency_code": "Codice valuta non valido",
+    "language_change_failed": "Errore nel cambiare lingua",
+    "name_required": "Il nome è obbligatorio",
+    "notification_not_supported": "Le notifiche non sono supportate",
+    "otp_invalid": "OTP non valido",
+    "otp_required": "OTP richiesto",
+    "request_error": "Errore durante la richiesta delle notifiche",
+    "saving_expense": "Errore durante il salvataggio della spesa",
+    "setting_update_failed": "Errore nell'aggiornamento dell'impostazione",
+    "signin_error": "Si è verificato un errore durante l'accesso: ",
+    "signup_disabled": "La registrazione di nuovi account è disabilitata in questa istanza",
+    "something_went_wrong": "Qualcosa è andato storto",
+    "subscribe_error": "Impossibile attivare le notifiche",
+    "unsubscribe_error": "Errore durante la disattivazione delle notifiche",
+    "upload_failed": "Caricamento file fallito",
+    "upload_file_less_than": "Il file deve essere inferiore a",
+    "uploading_error": "Errore durante il caricamento del file",
+    "valid_email": "Inserisci un'email valida"
+  },
+  "expense_details": {
+    "add_expense": "Aggiungi spesa",
+    "add_expense_details": {
+      "add_new_expense": "Aggiungi nuova spesa",
+      "amount_placeholder": "Inserisci importo",
+      "description_placeholder": "Inserisci descrizione",
+      "pick_a_date": "Scegli una data",
+      "select_user_or_group": {
+        "add_to_split_pro": "Aggiungi a Split Pro",
+        "note": "Nota: l'invio di inviti è disabilitato per ora a causa dello spam",
+        "only_one_group_time": "Puoi operare su un solo gruppo alla volta",
+        "send_invite": "Invia invito all'utente",
+        "warning": "Attenzione: non usare \"Invia invito\" se l'email non è valida. Usa invece \"Aggiungi a Split Pro\". Il tuo account verrà bloccato se questa funzione viene utilizzata in modo improprio"
+      },
+      "split_type_section": {
+        "split_equally": "diviso equamente",
+        "split_unequally": "diviso non equamente",
+        "types": {
+          "adjustment": {
+            "remaining_to_split_equally": "Rimanenti da dividere equamente",
+            "title": "Aggiustamento"
+          },
+          "equal": {
+            "per_person": "a persona",
+            "title": "Uguale"
+          },
+          "exact": {
+            "remaining": "Rimanenti",
+            "title": "Esatto"
+          },
+          "percentage": {
+            "remaining": "Rimanenti",
+            "title": "Percentuale"
+          },
+          "share": {
+            "shares": "Condivisione/i",
+            "title": "Condivisioni",
+            "total_shares": "Condivisioni totali"
+          }
+        }
+      },
+      "sponsor_us": "Supportaci",
+      "upload_file": {
+        "messages": {
+          "upload_success": "File caricato con successo"
+        }
+      },
+      "user_input": {
+        "add_more_friends": "Cerca amici, gruppi o aggiungi email",
+        "cannot_change_group": "Impossibile cambiare gruppo durante la modifica",
+        "remove_group": "Premi elimina per rimuovere il gruppo",
+        "search_friends": "Cerca amici, gruppi o aggiungi email"
+      }
+    },
+    "balance_list": {
+      "are_settled_up": "siete pari",
+      "is_settled_up": "è pari",
+      "press_balance_info": "Premi sul saldo individuale per avviare il regolamento"
+    },
+    "delete_expense_details": {
+      "text": "L'azione eliminerà definitivamente la spesa e non sarà reversibile",
+      "title": "Sei sicuro di voler eliminare questa spesa?"
+    },
+    "title": "Aggiungi spesa",
+    "title_mobile": "Aggiungi"
+  },
+  "group_details": {
+    "add_members": "Aggiungi membri",
+    "copied": "Copiato",
+    "create_group": {
+      "group_name_placeholder": "Nome del gruppo",
+      "title": "Crea un gruppo"
+    },
+    "group_info": {
+      "actions": "Azioni",
+      "archive_group": "Archivia gruppo",
+      "archive_group_details": {
+        "can_archive": "Questo gruppo verrà archiviato e nascosto dalla tua lista principale dei gruppi. Potrai comunque accedervi più tardi se necessario.",
+        "cant_archive": "Non è possibile archiviare un gruppo con saldi in sospeso. Tutti i saldi devono essere saldati prima.",
+        "title": "Sei sicuro di voler archiviare questo gruppo?"
+      },
+      "archived": "Archiviato",
+      "delete_group": "Elimina gruppo",
+      "delete_group_details": {
+        "can_delete": "L'azione non sarà reversibile",
+        "cant_delete": "Non è possibile eliminare il gruppo finché tutti non saldano il saldo",
+        "title": "Sei assolutamente sicuro?"
+      },
+      "group_created": "Creazione gruppo",
+      "leave_group": "Abbandona gruppo",
+      "leave_group_details": {
+        "can_leave": "L'azione non sarà reversibile",
+        "cant_leave": "Non puoi lasciare il gruppo finché il saldo in sospeso non sarà saldato",
+        "title": "Sei assolutamente sicuro?"
+      },
+      "members": "Membri",
+      "recalculate_balances": "Ricalcola saldi",
+      "recalculate_balances_details": {
+        "description": "Se i saldi non corrispondono alle spese, puoi ricalcolarli. Nota che potrebbe richiedere del tempo se il numero di spese è elevato. I saldi esterni al gruppo non saranno interessati.",
+        "title": "Sei sicuro?"
+      },
+      "remove_member_details": {
+        "can_remove": "Stai per rimuovere questo membro dal gruppo",
+        "cant_remove": "Non puoi rimuovere il membro finché il suo saldo non è saldato",
+        "title": "Sei assolutamente sicuro?"
+      },
+      "simplify_debts": "Semplifica debiti",
+      "title": "Informazioni gruppo"
+    },
+    "group_statistics": {
+      "first_expense": "Prima spesa",
+      "title": "Statistiche gruppo",
+      "total_expenses": "Spese totali"
+    },
+    "messages": {
+      "balances_recalculated": "Saldi ricalcolati con successo",
+      "group_archived": "Gruppo archiviato con successo",
+      "group_name_updated": "Nome del gruppo aggiornato"
+    },
+    "no_members": {
+      "add_members": "Aggiungi membri",
+      "add_members_details": {
+        "add_to_split_pro": "Aggiungi a Split Pro",
+        "note": "Nota: l'invio di inviti è disabilitato per ora a causa dello spam",
+        "placeholder": "Inserisci il nome o l'email",
+        "send_invite": "Invia invito all'utente",
+        "title": "Aggiungi membri",
+        "warning": "Attenzione: non usare \"Invia invito\" se l'email non è valida. Usa invece \"Aggiungi a Split Pro\". Il tuo account verrà bloccato se questa funzione viene utilizzata in modo improprio"
+      },
+      "copied": "Copiato",
+      "invite_link": "Condividi il link d'invito",
+      "no_members": "Nessun membro nel gruppo ancora."
+    },
+    "tabs": {
+      "balances": "Saldi",
+      "expenses": "Spese"
+    },
+    "title": "Saldi in sospeso del gruppo"
+  },
+  "invite_message": {
+    "in_splitpro": "in Splitpro",
+    "join_to": "Unisciti a",
+    "text": "Unisciti al gruppo e potrai aggiungere, gestire spese e tracciare i tuoi saldi"
+  },
+  "meta": {
+    "application_name": "SplitPro",
+    "description": "Dividi le spese con i tuoi amici gratuitamente",
+    "title": "SplitPro: Dividi le spese con i tuoi amici gratuitamente"
+  },
+  "navigation": {
+    "account": "Account",
+    "activity": "Attività",
+    "add": "Aggiungi",
+    "add_expense": "Aggiungi spesa",
+    "app_name": "SplitPro",
+    "balances": "Saldi",
+    "groups": "Gruppi"
+  },
+  "ui": {
+    "added_by": "Aggiunto da",
+    "and": "e",
+    "balance": "saldo",
+    "balances": "saldi",
+    "delete": "Elimina",
+    "deleted_by": "Eliminato da",
+    "edited_by": "Modificato da",
+    "expense": {
+      "for": "per",
+      "from": "da",
+      "paid_by": "Pagato da",
+      "received_by": "Ricevuto da",
+      "to": "a",
+      "user": {
+        "deleted": "ha eliminato",
+        "get": "riceve",
+        "lent": "ha prestato",
+        "owe": "deve",
+        "paid": "ha pagato",
+        "pay": "paga",
+        "received": "ha ricevuto"
+      },
+      "you": {
+        "deleted": "hai eliminato",
+        "get": "ricevi",
+        "lent": "hai prestato",
+        "owe": "devi",
+        "paid": "hai pagato",
+        "pay": "paga",
+        "received": "hai ricevuto"
+      }
+    },
+    "expense_details": "Dettagli spesa",
+    "no_activity": "Nessuna attività ancora",
+    "not_involved": "Non coinvolto",
+    "on": "il",
+    "or": "o",
+    "outstanding_balances": "Saldi in sospeso",
+    "select_currency": "Seleziona valuta",
+    "settle_up_name": "Regola",
+    "settled_up": "Regolato",
+    "settlement": "Regolamento",
+    "share_text": "Dai un'occhiata a SplitPro. È un'alternativa gratuita e open source a Splitwise",
+    "today": "Oggi"
+  }
+}

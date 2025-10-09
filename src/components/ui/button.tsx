@@ -1,5 +1,5 @@
-import { Slot } from '@radix-ui/react-slot';
 import { type VariantProps, cva } from 'class-variance-authority';
+import { Slot as SlotPrimitive } from 'radix-ui';
 import * as React from 'react';
 
 import { cn } from '~/lib/utils';
@@ -7,7 +7,7 @@ import { cn } from '~/lib/utils';
 import { LoadingSpinner } from './spinner';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-35',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-35',
   {
     variants: {
       variant: {
@@ -38,13 +38,41 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   loading?: boolean;
+  responsiveIcon?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, children, loading, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'button';
+  (
+    {
+      className = '',
+      variant = 'default',
+      size,
+      asChild = false,
+      responsiveIcon = false,
+      children,
+      loading,
+      ...props
+    },
+    ref,
+  ) => {
+    const Comp = asChild ? SlotPrimitive.Slot : 'button';
     return (
-      <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props}>
+      <Comp
+        className={cn(
+          buttonVariants({
+            variant,
+            size,
+            className: cn(
+              className,
+              responsiveIcon
+                ? 'responsive-icon xs:gap-1 xs:text-sm xs:w-40 w-auto lg:w-[180px]'
+                : '',
+            ),
+          }),
+        )}
+        ref={ref}
+        {...props}
+      >
         {loading ? <LoadingSpinner /> : children}
       </Comp>
     );

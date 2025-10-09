@@ -1,0 +1,66 @@
+{
+  "features": {
+    "debt_simplification": {
+      "description": "Simplifica automaticamente as dívidas do grupo para reduzir o número de transações necessárias entre amigos",
+      "title": "Simplificação de Dívidas"
+    },
+    "groups_and_friends": {
+      "description": "Podes adicionar multiplos grupos e adicionar despesas diretamente. Tudo será consolidado",
+      "title": "Grupos e Amigos"
+    },
+    "i18": {
+      "description": "Disponível em múltiplas línguas para tornar a divisão de despesas acessível em todo o mundo",
+      "title": "Internacionalização"
+    },
+    "import_splitwise": {
+      "description": "Não tens de migrar as despesas manualmente. Poderás importar utilizadores e grupos do splitwise",
+      "title": "Importar do splitwise"
+    },
+    "multiple_currencies": {
+      "description": "Necessitas de adicionar despesas em várias moedas para o mesmo utilizador? Sem problema!",
+      "title": "Multiplas moedas"
+    },
+    "open_source": {
+      "description": "Por uma maior transparência para todos. Fácil de usar como self host",
+      "title": "Código aberto"
+    },
+    "push_notifications": {
+      "description": "Nunca percas notificações importantes. Sê notificado quando alguém adiciona uma despesa ou paga a sua dívida",
+      "title": "Notificações Push"
+    },
+    "pwa_support": {
+      "description": "Adoras apps móveis? Nós tratámos disso. Instala como PWA e tu nem vais notar a diferença!",
+      "title": "Suporte a PWA"
+    },
+    "title": "Funcionalidades",
+    "unequal_split": {
+      "description": "Opções de divisão avançadas. Por quotas, percentagem ou montantes exatos.",
+      "title": "Divisão Costumizada"
+    },
+    "upload_receipts": {
+      "description": "Anexa os recibos às despesas",
+      "title": "Carregar recibos"
+    }
+  },
+  "footer": {
+    "built_by": "Construído por"
+  },
+  "hero": {
+    "add_expense_button": "Adicionar Despesa",
+    "star_github_button": "Star us on github",
+    "subtitle_link": "código aberto",
+    "subtitle_part1": "Um",
+    "subtitle_part2": "alternativa ao SplitWise",
+    "title_highlight": "gratuito",
+    "title_part1": "Split Expenses with your friends for"
+  },
+  "meta": {
+    "description": "SplitPro: Divide as tuas despesas com os teus amigos gratuitamente",
+    "title": "SplitPro: Divide as tuas despesas com os teus amigos gratuitamente"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "privacy": "Privacidade",
+    "terms": "Termos"
+  }
+}

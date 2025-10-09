@@ -1,33 +1,42 @@
-import { format } from 'date-fns';
-import { CalendarIcon, HeartHandshakeIcon } from 'lucide-react';
+import { HeartHandshakeIcon, Landmark, RefreshCcwDot, X } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { type CurrencyCode } from '~/lib/currency';
-import { cn } from '~/lib/utils';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
-import { toSafeBigInt } from '~/utils/numbers';
+import { currencyConversion, toSafeBigInt, toUIString } from '~/utils/numbers';
 
+import { toast } from 'sonner';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { cronToBackend } from '~/lib/cron';
+import { cn } from '~/lib/utils';
+import { CurrencyConversion } from '../Friend/CurrencyConversion';
+import { Button } from '../ui/button';
+import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
+import { Input } from '../ui/input';
+import AddBankTransactions from './AddBankTransactions';
 import { CategoryPicker } from './CategoryPicker';
 import { CurrencyPicker } from './CurrencyPicker';
+import { DateSelector } from './DateSelector';
+import { RecurrenceInput } from './RecurrenceInput';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { SplitTypeSection } from './SplitTypeSection';
-import UploadFile from './UploadFile';
+import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
-import { Button } from '../ui/button';
-import { Calendar } from '../ui/calendar';
-import { Input } from '../ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
   expenseId?: string;
-}> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
+  bankConnectionEnabled: boolean;
+}> = ({ isStorageConfigured, enableSendingInvites, expenseId, bankConnectionEnabled }) => {
+  const { t } = useTranslationWithUtils();
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
+  const isNegative = useAddExpenseStore((s) => s.isNegative);
   const participants = useAddExpenseStore((s) => s.participants);
   const group = useAddExpenseStore((s) => s.group);
   const currency = useAddExpenseStore((s) => s.currency);
@@ -40,6 +49,8 @@ export const AddOrEditExpensePage: React.FC<{
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const splitType = useAddExpenseStore((s) => s.splitType);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
+  const transactionId = useAddExpenseStore((s) => s.transactionId);
+  const cronExpression = useAddExpenseStore((s) => s.cronExpression);
 
   const {
     setCurrency,
@@ -50,19 +61,22 @@ export const AddOrEditExpensePage: React.FC<{
     resetState,
     setSplitScreenOpen,
     setExpenseDate,
+    setTransactionId,
+    setMultipleTransactions,
+    setIsTransactionLoading,
   } = useAddExpenseStore((s) => s.actions);
 
-  const addExpenseMutation = api.user.addOrEditExpense.useMutation();
-  const addGroupExpenseMutation = api.group.addOrEditExpense.useMutation();
+  const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
   const updateProfile = api.user.updateUserDetail.useMutation();
 
   const onCurrencyPick = useCallback(
-    (currency: CurrencyCode) => {
-      updateProfile.mutate({ currency });
+    (newCurrency: CurrencyCode) => {
+      updateProfile.mutate({ currency: newCurrency });
 
-      setCurrency(currency);
+      previousCurrencyRef.current = currency;
+      setCurrency(newCurrency);
     },
-    [setCurrency, updateProfile],
+    [currency, setCurrency, updateProfile],
   );
 
   const router = useRouter();
@@ -76,7 +90,7 @@ export const AddOrEditExpensePage: React.FC<{
     [setAmount, setAmountStr],
   );
 
-  const addExpense = useCallback(() => {
+  const addExpense = useCallback(async () => {
     if (!paidBy) {
       return;
     }
@@ -86,69 +100,56 @@ export const AddOrEditExpensePage: React.FC<{
       return;
     }
 
-    if (group) {
-      addGroupExpenseMutation.mutate(
+    setMultipleTransactions([]);
+    setIsTransactionLoading(false);
+
+    const sign = isNegative ? -1n : 1n;
+
+    try {
+      await addExpenseMutation.mutateAsync(
         {
           name: description,
           currency,
-          amount,
-          groupId: group.id,
+          amount: amount * sign,
+          groupId: group?.id ?? null,
           splitType,
           participants: participants.map((p) => ({
             userId: p.id,
-            amount: p.amount ?? 0n,
+            amount: (p.amount ?? 0n) * sign,
           })),
           paidBy: paidBy.id,
           category,
           fileKey,
           expenseDate,
           expenseId,
+          transactionId,
+          cronExpression: cronExpression ? cronToBackend(cronExpression) : undefined,
         },
         {
           onSuccess: (d) => {
             if (d) {
+              const id = d?.id ?? expenseId;
               router
-                .push(`/groups/${group.id}/expenses/${d?.id ?? expenseId}`)
+                .push(group?.id ? `/groups/${group.id}/expenses/${id}` : `/expenses/${id}`)
                 .then(() => resetState())
                 .catch(console.error);
             }
           },
         },
       );
-    } else {
-      addExpenseMutation.mutate(
-        {
-          expenseId,
-          name: description,
-          currency,
-          amount,
-          splitType,
-          participants: participants.map((p) => ({
-            userId: p.id,
-            amount: p.amount ?? 0n,
-          })),
-          paidBy: paidBy.id,
-          category,
-          fileKey,
-          expenseDate,
-        },
-        {
-          onSuccess: (d) => {
-            if (participants[1] && d) {
-              router
-                .push(`expenses/${d?.id ?? expenseId}`)
-                .then(() => resetState())
-                .catch(console.error);
-            }
-          },
-        },
-      );
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error('An unexpected error occurred while submitting the expense.');
+      }
     }
   }, [
     setSplitScreenOpen,
-    addGroupExpenseMutation,
     description,
     currency,
+    isNegative,
     amount,
     participants,
     category,
@@ -162,6 +163,10 @@ export const AddOrEditExpensePage: React.FC<{
     splitType,
     fileKey,
     isExpenseSettled,
+    setMultipleTransactions,
+    transactionId,
+    setIsTransactionLoading,
+    cronExpression,
   ]);
 
   const handleDescriptionChange = useCallback(
@@ -171,154 +176,199 @@ export const AddOrEditExpensePage: React.FC<{
     [setDescription],
   );
 
-  const onCancel = useCallback(() => {
-    if (expenseId) {
-      router
-        .push((group ? '/groups/' + group.id : '') + '/expenses/' + expenseId)
-        .catch(console.error);
-    } else if (participants.length === 1) {
-      router.push('/balances').catch(console.error);
-    } else {
-      resetState();
+  const onAmountChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      onUpdateAmount(value);
+      previousCurrencyRef.current = null;
+    },
+    [onUpdateAmount],
+  );
+
+  const clearFields = useCallback(() => {
+    setAmount(0n);
+    setDescription('');
+    setAmountStr('');
+    setTransactionId();
+    setExpenseDate(new Date());
+  }, [setAmount, setDescription, setAmountStr, setTransactionId, setExpenseDate]);
+
+  const previousCurrencyRef = React.useRef<CurrencyCode | null>(null);
+
+  const onConvertAmount: React.ComponentProps<typeof CurrencyConversion>['onSubmit'] = useCallback(
+    ({ amount: absAmount, rate }) => {
+      const targetAmount = (absAmount >= 0n ? 1n : -1n) * currencyConversion(absAmount, rate);
+      onUpdateAmount(toUIString(targetAmount));
+      previousCurrencyRef.current = null;
+    },
+    [onUpdateAmount],
+  );
+
+  const currencyConversionComponent = useMemo(() => {
+    if (
+      currency === previousCurrencyRef.current ||
+      previousCurrencyRef.current === null ||
+      !amount ||
+      0n === amount
+    ) {
+      return null;
     }
-  }, [expenseId, group, participants.length, resetState, router]);
+
+    return (
+      <CurrencyConversion
+        onSubmit={onConvertAmount}
+        amount={amount}
+        currency={previousCurrencyRef.current}
+        editingTargetCurrency={currency}
+      >
+        <Button size="icon" variant="secondary" className="size-8">
+          <CURRENCY_CONVERSION_ICON className="size-4" />
+        </Button>
+      </CurrencyConversion>
+    );
+  }, [amount, currency, onConvertAmount]);
 
   return (
-    <>
-      <div className="flex flex-col gap-4 px-4 py-2">
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" className=" px-0 text-primary" onClick={onCancel}>
-            Cancel
-          </Button>
-          <div className="text-center">Add new expense</div>
-          <Button
-            variant="ghost"
-            className=" px-0 text-primary"
-            disabled={
-              addExpenseMutation.isPending ||
-              addGroupExpenseMutation.isPending ||
-              !amount ||
-              description === '' ||
-              isFileUploading
-            }
-            onClick={addExpense}
-          >
-            Save
-          </Button>{' '}
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" className="text-primary px-0" onClick={router.back}>
+          {t('actions.cancel')}
+        </Button>
+        <div className="text-center">
+          {expenseId ? t('actions.edit_expense') : t('actions.add_expense')}
         </div>
-        <UserInput isEditing={!!expenseId} />
-        {showFriends || (participants.length === 1 && !group) ? (
-          <SelectUserOrGroup enableSendingInvites={enableSendingInvites} />
-        ) : (
-          <>
-            <div className="mt-4 flex gap-2 sm:mt-10">
-              <CategoryPicker category={category} onCategoryPick={setCategory} />
-              <Input
-                placeholder="Enter description"
-                value={description}
-                onChange={handleDescriptionChange}
-                className="text-lg placeholder:text-sm"
-                autoFocus
-              />
-            </div>
-            <div className="flex gap-2">
-              <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
-              <Input
-                placeholder="Enter amount"
-                className="text-lg placeholder:text-sm"
-                type="number"
-                inputMode="decimal"
-                value={amtStr}
-                min="0"
-                onChange={(e) => onUpdateAmount(e.target.value)}
-              />
-            </div>
-            <div className="h-[180px]">
-              {amount && description !== '' && (
-                <>
-                  <SplitTypeSection />
+        <Button
+          variant="ghost"
+          className="text-primary px-0"
+          disabled={
+            addExpenseMutation.isPending || !amount || '' === description || isFileUploading
+          }
+          onClick={addExpense}
+        >
+          {t('actions.save')}
+        </Button>{' '}
+      </div>
+      <UserInput isEditing={!!expenseId} />
+      {showFriends || (1 === participants.length && !group) ? (
+        <SelectUserOrGroup enableSendingInvites={enableSendingInvites} />
+      ) : (
+        <>
+          <div className="mt-4 flex gap-2 sm:mt-10">
+            <CategoryPicker category={category} onCategoryPick={setCategory} />
+            <Input
+              placeholder={t('expense_details.add_expense_details.description_placeholder')}
+              value={description}
+              onChange={handleDescriptionChange}
+              className="text-lg placeholder:text-sm"
+              autoFocus
+            />
+          </div>
+          <div className="flex gap-2">
+            <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
+            <Input
+              placeholder={t('expense_details.add_expense_details.amount_placeholder')}
+              className="text-lg placeholder:text-sm"
+              type="number"
+              inputMode="decimal"
+              value={amtStr}
+              onChange={onAmountChange}
+              rightIcon={currencyConversionComponent}
+            />
+          </div>
+          <div className="h-[180px]">
+            {amount && '' !== description ? (
+              <>
+                <SplitTypeSection />
 
-                  <div className="mt-4 flex items-center  justify-between sm:mt-10">
-                    <div className="flex flex-wrap items-center gap-4">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            className={cn(
-                              'justify-start px-0 text-left font-normal',
-                              !expenseDate && 'text-muted-foreground',
-                            )}
-                          >
-                            <CalendarIcon className="mr-2 h-6 w-6 text-primary" />
-                            {expenseDate ? (
-                              format(expenseDate, 'yyyy-MM-dd') ===
-                              format(new Date(), 'yyyy-MM-dd') ? (
-                                'Today'
-                              ) : (
-                                format(expenseDate, 'MMM dd')
-                              )
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
-                          <Calendar
-                            mode="single"
-                            selected={expenseDate}
-                            onSelect={setExpenseDate}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      {isStorageConfigured ? <UploadFile /> : null}
-                      <Button
-                        className=" min-w-[100px]"
-                        size="sm"
-                        loading={
-                          addExpenseMutation.isPending ||
-                          addGroupExpenseMutation.isPending ||
-                          isFileUploading
-                        }
-                        disabled={
-                          addExpenseMutation.isPending ||
-                          addGroupExpenseMutation.isPending ||
-                          !amount ||
-                          description === '' ||
-                          isFileUploading ||
-                          !isExpenseSettled
-                        }
-                        onClick={() => addExpense()}
-                      >
-                        Submit
-                      </Button>
-                    </div>
+                <div className="mt-4 flex items-start justify-between sm:mt-10">
+                  <DateSelector
+                    mode="single"
+                    required
+                    selected={expenseDate}
+                    onSelect={setExpenseDate}
+                  />
+                  <div className="flex items-center gap-4">
+                    {isStorageConfigured ? <UploadFile /> : null}
+                    <Button
+                      className="min-w-[100px]"
+                      size="sm"
+                      loading={addExpenseMutation.isPending || isFileUploading}
+                      disabled={
+                        addExpenseMutation.isPending ||
+                        !amount ||
+                        '' === description ||
+                        isFileUploading ||
+                        !isExpenseSettled
+                      }
+                      onClick={addExpense}
+                    >
+                      {t('actions.save')}
+                    </Button>
                   </div>
-                </>
-              )}
-            </div>
-            <div className=" flex w-full justify-center">
-              <Link
-                href="https://github.com/sponsors/KMKoushik"
-                target="_blank"
-                className="mx-auto"
+                </div>
+              </>
+            ) : null}
+          </div>
+          <div className="flex items-center justify-evenly px-4 lg:px-0">
+            <RecurrenceInput>
+              <Button variant="ghost" size="sm">
+                <RefreshCcwDot
+                  className={cn(
+                    cronExpression && 'text-primary',
+                    (!amtStr || !description) && 'invisible',
+                    'size-6',
+                  )}
+                />
+                <span className="sr-only">Toggle recurring expense options</span>
+              </Button>
+            </RecurrenceInput>
+            <SponsorUs />
+            <div className="flex gap-2">
+              <AddBankTransactions
+                // clearFields={clearFields}
+                onUpdateAmount={onUpdateAmount}
+                bankConnectionEnabled={bankConnectionEnabled}
               >
                 <Button
-                  variant="outline"
-                  className="text-md  justify-between rounded-full border-pink-500 hover:text-foreground/80"
+                  variant="ghost"
+                  className="hover:text-foreground/80 items-center justify-between px-2"
                 >
-                  <div className="flex items-center gap-4">
-                    <HeartHandshakeIcon className="h-5 w-5 text-pink-500" />
-                    Sponsor us
-                  </div>
+                  <Landmark
+                    className={cn(transactionId ? 'text-primary' : 'text-white-500', 'h-6 w-6')}
+                  />
                 </Button>
-              </Link>
+              </AddBankTransactions>
+              <Button
+                variant="ghost"
+                className={cn('px-2', transactionId ? 'text-red-500' : 'invisible')}
+                disabled={!transactionId}
+                onClick={clearFields}
+              >
+                <X className="h-6 w-6" />
+              </Button>
             </div>
-          </>
-        )}
-      </div>
-    </>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+const SponsorUs = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="flex justify-center">
+      <Link href="https://github.com/sponsors/krokosik" target="_blank" className="mx-auto">
+        <Button
+          variant="outline"
+          className="text-md hover:text-foreground/80 justify-between rounded-full border-pink-500"
+        >
+          <div className="flex items-center gap-4">
+            <HeartHandshakeIcon className="h-5 w-5 text-pink-500" />
+            {t('expense_details.add_expense_details.sponsor_us')}
+          </div>
+        </Button>
+      </Link>
+    </div>
   );
 };

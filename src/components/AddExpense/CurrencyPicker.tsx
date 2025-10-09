@@ -1,67 +1,82 @@
-import { Check } from 'lucide-react';
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 
-import { CURRENCIES, type CurrencyCode } from '~/lib/currency';
-import { cn } from '~/lib/utils';
+import {
+  CURRENCIES,
+  type CurrencyCode,
+  FRANKFURTER_CURRENCIES,
+  parseCurrencyCode,
+} from '~/lib/currency';
 
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../ui/command';
-import { AppDrawer, DrawerClose } from '../ui/drawer';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { GeneralPicker } from '../GeneralPicker';
+import { Button } from '../ui/button';
+
+const FRANKFURTER_FILTERED_CURRENCIES = Object.fromEntries(
+  Object.entries(CURRENCIES).filter(([code]) => FRANKFURTER_CURRENCIES.includes(code)),
+);
 
 function CurrencyPickerInner({
+  className,
   currentCurrency = 'USD',
   onCurrencyPick,
+  showOnlyFrankfurter = false,
 }: {
+  className?: string;
   currentCurrency: CurrencyCode;
   onCurrencyPick: (currency: CurrencyCode) => void;
+  showOnlyFrankfurter?: boolean;
 }) {
+  const { t, getCurrencyName } = useTranslationWithUtils(['currencies']);
+
   const onSelect = useCallback(
     (currentValue: string) => {
-      const currency = currentValue.split('-')[0]?.toUpperCase() ?? 'USD';
-      onCurrencyPick(currency as CurrencyCode);
+      onCurrencyPick(parseCurrencyCode(currentValue));
     },
     [onCurrencyPick],
   );
 
+  const trigger = useMemo(
+    () => (
+      <Button variant="outline" className="w-[70px] rounded-lg py-2 text-base">
+        {currentCurrency}
+      </Button>
+    ),
+    [currentCurrency],
+  );
+
+  const extractValue = useCallback((currency: { code: CurrencyCode }) => currency.code, []);
+  const extractKey = useCallback((currency: { code: CurrencyCode }) => currency.code, []);
+  const selected = useCallback(
+    (currency: { code: CurrencyCode }) => currency.code === currentCurrency,
+    [currentCurrency],
+  );
+  const renderCurrency = useCallback(
+    (currency: { code: CurrencyCode }) => {
+      const translatedName = getCurrencyName(currency.code);
+      return (
+        <>
+          <p>{translatedName}</p>
+          <p className="text-muted-foreground">{currency.code}</p>
+        </>
+      );
+    },
+    [getCurrencyName],
+  );
+
   return (
-    <AppDrawer
-      trigger={
-        <div className="flex w-[70px] justify-center rounded-lg border py-2  text-center text-base">
-          {currentCurrency}
-        </div>
-      }
-      title="Select currency"
-      className="h-[70vh]"
-      shouldCloseOnAction
-    >
-      <Command className="h-[50vh]">
-        <CommandInput className="text-lg" placeholder="Search currency" />
-        <CommandEmpty>No currency found.</CommandEmpty>
-        <CommandGroup className="h-full overflow-auto">
-          {Object.values(CURRENCIES).map((framework) => (
-            <CommandItem
-              key={`${framework.code}-${framework.name}`}
-              value={`${framework.code}-${framework.name}`}
-              onSelect={onSelect}
-            >
-              <DrawerClose className="flex items-center">
-                <Check
-                  className={cn(
-                    'mr-2 h-4 w-4',
-                    `${framework.code}-${framework.name.toLowerCase()}`.startsWith(currentCurrency)
-                      ? 'opacity-100'
-                      : 'opacity-0',
-                  )}
-                />
-                <div className="flex gap-2">
-                  <p>{framework.name}</p>
-                  <p className=" text-muted-foreground">{framework.code}</p>
-                </div>
-              </DrawerClose>
-            </CommandItem>
-          ))}
-        </CommandGroup>
-      </Command>
-    </AppDrawer>
+    <GeneralPicker
+      className={className}
+      trigger={trigger}
+      title={t('title')}
+      placeholderText={t('placeholder')}
+      noOptionsText={t('no_currency_found')}
+      onSelect={onSelect}
+      items={Object.values(showOnlyFrankfurter ? FRANKFURTER_FILTERED_CURRENCIES : CURRENCIES)}
+      extractValue={extractValue}
+      extractKey={extractKey}
+      selected={selected}
+      render={renderCurrency}
+    />
   );
 }
 

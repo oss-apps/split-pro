@@ -1,18 +1,14 @@
 import { SplitType } from '@prisma/client';
 import { getAllBalancesForGroup, getGroupsWithBalances } from '@prisma/client/sql';
+
 import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
 import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
-import { db } from '~/server/db';
 
-import {
-  createGroupExpense,
-  editExpense,
-  recalculateGroupBalances,
-} from '../services/splitService';
+import { recalculateGroupBalances } from '../services/splitService';
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
@@ -56,38 +52,44 @@ export const groupRouter = createTRPCRouter({
     return groups;
   }),
 
-  getAllGroupsWithBalances: protectedProcedure.query(async ({ ctx }) => {
-    const groupBalances = await ctx.db.$queryRawTyped(getGroupsWithBalances(ctx.session.user.id));
+  getAllGroupsWithBalances: protectedProcedure
+    .input(z.object({ getArchived: z.boolean() }).optional())
+    .query(async ({ ctx, input }) => {
+      let groupBalances = await ctx.db.$queryRawTyped(getGroupsWithBalances(ctx.session.user.id));
 
-    const _groups = groupBalances
-      .map((b) => {
-        return {
-          id: b.id,
-          name: b.name,
-        };
-      })
-      .filter((obj, index, self) => index === self.findIndex((t) => t.id === obj.id));
-
-    const groupsWithBalances = _groups.map((group) => {
-      const balancesForGroup: Record<string, bigint> = {};
-      groupBalances
-        .filter((b) => {
-          return b.id == group.id;
+      // filter out archived groups if getArchived is false
+      if (!input?.getArchived) {
+        groupBalances.filter((b) => b.archivedAt != null);
+      }
+      const _groups = groupBalances
+        .map((b) => {
+          return {
+            id: b.id,
+            name: b.name,
+          };
         })
-        .forEach((b) => {
-          if (b.currency != null && b.balance != null) {
-            balancesForGroup[b.currency] = b.balance;
-          }
-        });
+        .filter((obj, index, self) => index === self.findIndex((t) => t.id === obj.id));
 
-      return {
-        ...group,
-        balances: balancesForGroup,
-      };
-    });
+      const groupsWithBalances = _groups.map((group) => {
+        const balancesForGroup: Record<string, bigint> = {};
+        groupBalances
+          .filter((b) => {
+            return b.id == group.id;
+          })
+          .forEach((b) => {
+            if (b.currency != null && b.balance != null) {
+              balancesForGroup[b.currency] = b.balance;
+            }
+          });
 
-    return groupsWithBalances;
-  }),
+        return {
+          ...group,
+          balances: balancesForGroup,
+        };
+      });
+
+      return groupsWithBalances;
+    }),
 
   joinGroup: protectedProcedure
     .input(z.object({ groupId: z.string() }))
@@ -110,129 +112,6 @@ export const groupRouter = createTRPCRouter({
       });
 
       return group;
-    }),
-
-  addOrEditExpense: groupProcedure
-    .input(
-      z.object({
-        paidBy: z.number(),
-        name: z.string(),
-        category: z.string(),
-        amount: z.bigint(),
-        splitType: z.enum([
-          SplitType.ADJUSTMENT,
-          SplitType.EQUAL,
-          SplitType.PERCENTAGE,
-          SplitType.SHARE,
-          SplitType.EXACT,
-          SplitType.SETTLEMENT,
-        ]),
-        currency: z.string(),
-        participants: z.array(z.object({ userId: z.number(), amount: z.bigint() })),
-        fileKey: z.string().optional(),
-        expenseDate: z.date().optional(),
-        expenseId: z.string().optional(),
-      }),
-    )
-    .mutation(async ({ input, ctx }) => {
-      if (input.expenseId) {
-        const expenseParticipant = await db.expenseParticipant.findUnique({
-          where: {
-            expenseId_userId: {
-              expenseId: input.expenseId,
-              userId: ctx.session.user.id,
-            },
-          },
-        });
-
-        if (!expenseParticipant) {
-          throw new TRPCError({
-            code: 'UNAUTHORIZED',
-            message: 'You are not the participant of the expense',
-          });
-        }
-      }
-
-      try {
-        const expense = input.expenseId
-          ? await editExpense(
-              input.expenseId,
-              input.paidBy,
-              input.name,
-              input.category,
-              input.amount,
-              input.splitType,
-              input.currency,
-              input.participants,
-              ctx.session.user.id,
-              input.expenseDate ?? new Date(),
-              input.fileKey,
-            )
-          : await createGroupExpense(
-              input.groupId,
-              input.paidBy,
-              input.name,
-              input.category,
-              input.amount,
-              input.splitType,
-              input.currency,
-              input.participants,
-              ctx.session.user.id,
-              input.expenseDate ?? new Date(),
-              input.fileKey,
-            );
-
-        return expense;
-      } catch (error) {
-        console.error(error);
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create expense' });
-      }
-    }),
-
-  getExpenses: groupProcedure
-    .input(z.object({ groupId: z.number() }))
-    .query(async ({ input, ctx }) => {
-      const expenses = await ctx.db.expense.findMany({
-        where: {
-          groupId: input.groupId,
-          deletedBy: null,
-        },
-        orderBy: {
-          expenseDate: 'desc',
-        },
-        include: {
-          expenseParticipants: true,
-          paidByUser: true,
-          deletedByUser: true,
-        },
-        take: 100,
-      });
-
-      return expenses;
-    }),
-
-  getExpenseDetails: groupProcedure
-    .input(z.object({ expenseId: z.string() }))
-    .query(async ({ input }) => {
-      const expense = await db.expense.findUnique({
-        where: {
-          id: input.expenseId,
-        },
-        include: {
-          expenseParticipants: {
-            include: {
-              user: true,
-            },
-          },
-          expenseNotes: true,
-          addedByUser: true,
-          paidByUser: true,
-          deletedByUser: true,
-          updatedByUser: true,
-        },
-      });
-
-      return expense;
     }),
 
   getGroupDetails: groupProcedure.query(async ({ input, ctx }) => {
@@ -368,22 +247,6 @@ export const groupRouter = createTRPCRouter({
     .input(z.object({ groupId: z.number(), userId: z.number().optional() }))
     .mutation(async ({ input, ctx }) => {
       const userId = input.userId ?? ctx.session.user.id;
-      const nonZeroBalance = await ctx.db.groupBalance.findFirst({
-        where: {
-          groupId: input.groupId,
-          userId,
-          amount: {
-            not: 0,
-          },
-        },
-      });
-
-      if (nonZeroBalance) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'User has a non-zero balance in this group',
-        });
-      }
 
       const group = await ctx.db.group.findUnique({
         where: {
@@ -398,6 +261,17 @@ export const groupRouter = createTRPCRouter({
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Only group creator can remove someone from the group',
+        });
+      }
+
+      const groupBalances = await ctx.db.$queryRawTyped(getAllBalancesForGroup(input.groupId));
+
+      const finalGroupBalances = group.simplifyDebts ? simplifyDebts(groupBalances) : groupBalances;
+
+      if (finalGroupBalances.some((b) => b.paidBy === userId && 0n !== b.amount)) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'User has a non-zero balance in this group',
         });
       }
 
@@ -442,6 +316,66 @@ export const groupRouter = createTRPCRouter({
       return updatedGroup;
     }),
 
+  toggleArchive: groupProcedure
+    .input(z.object({ groupId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const group = await ctx.db.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+        include: {
+          groupBalances: true,
+        },
+      });
+
+      if (!group) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
+      }
+
+      // Check if user is a member of the group
+      const isInGroup = await ctx.db.groupUser.findFirst({
+        where: {
+          groupId: input.groupId,
+          userId: ctx.session.user.id,
+        },
+      });
+
+      if (!isInGroup) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only group members can archive/unarchive the group',
+        });
+      }
+
+      const isArchiving = !group.archivedAt;
+
+      // Only check balances when archiving (not when unarchiving)
+      if (isArchiving) {
+        const groupBalances = await ctx.db.$queryRawTyped(getAllBalancesForGroup(input.groupId));
+
+        const balanceWithNonZero = groupBalances.find((b) => 0n !== b.amount);
+
+        if (balanceWithNonZero) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message:
+              'Cannot archive group with outstanding balances. All balances must be settled first.',
+          });
+        }
+      }
+
+      const updatedGroup = await ctx.db.group.update({
+        where: {
+          id: input.groupId,
+        },
+        data: {
+          archivedAt: isArchiving ? new Date() : null,
+        },
+      });
+
+      return updatedGroup;
+    }),
+
   delete: groupProcedure
     .input(z.object({ groupId: z.number() }))
     .mutation(async ({ input, ctx }) => {
@@ -458,7 +392,9 @@ export const groupRouter = createTRPCRouter({
         throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Only creator can delete the group' });
       }
 
-      const balanceWithNonZero = group?.groupBalances.find((b) => b.amount !== 0n);
+      const groupBalances = await ctx.db.$queryRawTyped(getAllBalancesForGroup(input.groupId));
+
+      const balanceWithNonZero = groupBalances.find((b) => 0n !== b.amount);
 
       if (balanceWithNonZero) {
         throw new TRPCError({

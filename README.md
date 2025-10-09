@@ -6,13 +6,6 @@
   <h1 align="center">SplitPro</h1>
   <h2 align="center">An open source alternative to Splitwise</h2>
 
-<p align="center">
-    <a href="https://splitpro.app"><strong>To our App »</strong></a>
-    <br />
-    <br />
-  </p>
-</p>
-
 ## About
 
 SplitPro aims to provide an open-source way to share expenses with your friends.
@@ -30,8 +23,17 @@ It currently has most of the important features.
 - Push notification
 - Download your data
 - Import from splitwise
+- simplify group debts
+- community translations, feel free to add your language!
+- **UPCOMING** currency conversion, quickly convert expenses and group balances
+- **UPCOMING** recurrent transactions
+- **UPCOMING** bank account transaction integration
 
 **More features coming every day**
+
+## Versions
+
+Split Pro is for self hosting. To get the most recent features you can build an image from source. Stabilized changes which you can see in GitHub releases are available as Docker images on DockerHub and ghcr. In the past we used to have a community hosted instance at https://splitpro.app, but it is no longer maintained and stuck at version `1.3.4`
 
 ---
 
@@ -49,6 +51,17 @@ I managed to find a good app [spliit.app](https://spliit.app/) by [Sebastien Cas
 
 _That's when I decided to work on this_
 
+## Translations
+
+The app translations are managed using [a Weblate project](https://hosted.weblate.org/projects/splitpro/).
+You can easily add missing translations, fix issues you find and a new language! Just be aware that a new language
+also needs to be added in the code and open an issue for that once you finish translating the files.
+Here is the current state of translation:
+
+<a href="https://hosted.weblate.org/engage/splitpro/">
+<img src="https://hosted.weblate.org/widget/splitpro/multi-auto.svg" alt="Translation status" />
+</a>
+
 ## FAQ
 
 #### How numerically stable is the internal logic?
@@ -58,6 +71,14 @@ All numbers are stored in the DB as `BigInt` data, with no floats what so ever, 
 #### How are leftover pennies handled?
 
 In case of an expense that cannot be split evenly, the leftover amounts are distributed randomly across participants. The assignment is as equal as possible, in the context of a single expense (similar to Splitwise).
+
+#### Currency rate providers
+
+Currency rate APIs are usually paywalled or rate limited, except for banking institutions. We provide 3 providers, with a developer friendly interface for adding new ones, if you are in need of more capabilities. To save your rate limits, we cache each API call in the DB and try to get as much rates as possible in a single request.
+
+- [frankfurter](https://frankfurter.dev/) - completely free, but has a limited set of currencies. Check by fetching https://api.frankfurter.dev/v1/currencies
+- [Open Exchange Rates](https://openexchangerates.org/) - very capable with a generous 1000 requests/day. Requires an account and an API key. While the free version only allows USD as the base currency, we simply join the rates together. Fetching ALL rates for a single day means one API call, so unless you want to do hundreds of searches in the past, you should be fine.
+- [NBP](https://api.nbp.pl/en.html) - the central bank of Poland. Similiar case as OXR, but uses PLN as base currency and does not require an account/API key. The downside is that while table A has the most relevant (for Poland) currencies and is updated daily, table B with all the remaining ones is only published on Wednesdays. So if you need these currencies, the rates might be out of date. They also state that there is an API rate limit, but without a number, so it is to be reported.
 
 ## Tech stack
 
@@ -108,6 +129,7 @@ pnpm i
 - Copy the env.example file into .env
 - Setup google oauth required for auth https://next-auth.js.org/providers/google or Email provider by setting SMTP details
 - Login to minio console using `splitpro` user and password `password` and [create access keys](http://localhost:9001/access-keys/new-account) and the R2 related env variables
+- If you want to use bank integration please create a free account on [GoCardless](https://gocardless.com/bank-account-data/) or [Plaid](https://plaid.com) and then enter the the related env variables, read more in the README_BANKTRANSACTIONS.md` file.
 
 ### Run the app
 
@@ -124,6 +146,9 @@ We are grateful for the support of our sponsors.
 <a href="https://hekuta.net/en" target="_blank">
   <img src="https://avatars.githubusercontent.com/u/70084358?v=4" alt="hekuta" style="width:60px;height:60px;">
 </a>
+<a href="https://github.com/igorrrpawlowski"><img src="https:&#x2F;&#x2F;github.com&#x2F;igorrrpawlowski.png" width="60px" alt="User avatar: igorrrpawlowski" /></a>
+<a href="https://github.com/probeonstimpack"><img src="https:&#x2F;&#x2F;github.com&#x2F;probeonstimpack.png" width="60px" alt="User avatar: Marcel Szmeterowicz" /></a>
+<a href="https://github.com/mexicanhatman"><img src="https://avatars.githubusercontent.com/u/78694887?v=4" width="60px" alt="User avatar: mexicanhatman" /></a>
 
 ## Star History
 

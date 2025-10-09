@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Juegos",
+        "movies": "Películas",
+        "music": "Música",
+        "other": "Entretenimiento",
+        "sports": "Deportes"
+      },
+      "name": "Entretenimiento"
+    },
+    "food": {
+      "items": {
+        "diningOut": "Comer afuera",
+        "groceries": "Comestibles",
+        "liquor": "Bebidas alcohólicas",
+        "other": "Comida y Bebidas"
+      },
+      "name": "Comida y Bebidas"
+    },
+    "general": {
+      "items": {
+        "general": "General",
+        "other": "General"
+      },
+      "name": "General"
+    },
+    "home": {
+      "items": {
+        "electronics": "Electrónica",
+        "furniture": "Muebles",
+        "maintenance": "Mantenimiento",
+        "mortgage": "Hipoteca",
+        "other": "Hogar",
+        "pets": "Mascotas",
+        "rent": "Alquiler",
+        "services": "Servicios",
+        "supplies": "Suministros"
+      },
+      "name": "Hogar"
+    },
+    "life": {
+      "items": {
+        "childcare": "Cuidado de niños",
+        "clothing": "Ropa",
+        "education": "Educación",
+        "gifts": "Regalos",
+        "insurance": "Seguro",
+        "medical": "Médico",
+        "other": "Vida",
+        "taxes": "Impuestos"
+      },
+      "name": "Vida"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "Bicicleta",
+        "bus": "Colectivo",
+        "car": "Auto",
+        "fuel": "Combustible",
+        "hotel": "Hotel",
+        "other": "Viajes",
+        "parking": "Estacionamiento",
+        "plane": "Avión",
+        "taxi": "Taxi",
+        "train": "Tren"
+      },
+      "name": "Viajes"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "Limpieza",
+        "electricity": "Electricidad",
+        "gas": "Gas",
+        "internet": "Internet",
+        "other": "Servicios",
+        "phone": "Teléfono",
+        "trash": "Basura",
+        "water": "Agua"
+      },
+      "name": "Servicios"
+    }
+  },
+  "title": "Categorías"
+}

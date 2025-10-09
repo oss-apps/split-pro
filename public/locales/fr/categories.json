@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Jeux",
+        "movies": "Films",
+        "music": "Musique",
+        "other": "Divertissements (autre)",
+        "sports": "Sports"
+      },
+      "name": "Divertissements"
+    },
+    "food": {
+      "items": {
+        "diningOut": "Restaurant",
+        "groceries": "Courses",
+        "liquor": "Alcools",
+        "other": "Nourriture & boissons (autre)"
+      },
+      "name": "Nourriture & boissons"
+    },
+    "general": {
+      "items": {
+        "general": "Général",
+        "other": "Général (autre)"
+      },
+      "name": "Général"
+    },
+    "home": {
+      "items": {
+        "electronics": "Appareils électroniques",
+        "furniture": "Meubles",
+        "maintenance": "Entretien courant",
+        "mortgage": "Prêt",
+        "other": "Habitat (autre)",
+        "pets": "Animaux",
+        "rent": "Loyer",
+        "services": "Réparations",
+        "supplies": "Fournitures"
+      },
+      "name": "Habitat"
+    },
+    "life": {
+      "items": {
+        "childcare": "Garde d'enfants",
+        "clothing": "Habits",
+        "education": "Formations",
+        "gifts": "Cadeaux",
+        "insurance": "Assurance",
+        "medical": "Médical",
+        "other": "Vie courante (autre)",
+        "taxes": "Impôts et taxes"
+      },
+      "name": "Vie courante"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "Vélo",
+        "bus": "Bus & car",
+        "car": "Voiture",
+        "fuel": "Essence",
+        "hotel": "Hôtel",
+        "other": "Déplacements (autre)",
+        "parking": "Parking",
+        "plane": "Avion",
+        "taxi": "Taxi",
+        "train": "Train"
+      },
+      "name": "Déplacements"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "Ménage",
+        "electricity": "Électricité",
+        "gas": "Gaz",
+        "internet": "Internet",
+        "other": "Autres frais",
+        "phone": "Téléphonie",
+        "trash": "Déchets",
+        "water": "Eau"
+      },
+      "name": "Frais courants"
+    }
+  },
+  "title": "Catégories"
+}

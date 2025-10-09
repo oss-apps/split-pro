@@ -3,11 +3,9 @@ import { toast } from 'sonner';
 
 import { joinGroup } from '~/server/api/services/splitService';
 import { getServerAuthSession } from '~/server/auth';
-import { type NextPageWithUser } from '~/types';
+import type { NextPageWithUser } from '~/types';
 
-const Home: NextPageWithUser = ({}) => {
-  return <div />;
-};
+const Home: NextPageWithUser = () => <div />;
 
 Home.auth = true;
 

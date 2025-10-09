@@ -1,20 +1,26 @@
+import { type GetServerSideProps } from 'next';
+import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-
 import { AddOrEditExpensePage } from '~/components/AddExpense/AddExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
 import { env } from '~/env';
-import { type CurrencyCode } from '~/lib/currency';
+import { cronFromBackend } from '~/lib/cron';
+import { parseCurrencyCode } from '~/lib/currency';
+import { isBankConnectionConfigured } from '~/server/bankTransactionHelper';
 import { isStorageConfigured } from '~/server/storage';
 import { useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
+import { customServerSideTranslations } from '~/utils/i18n/server';
 
 const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
-}> = ({ user, isStorageConfigured, enableSendingInvites }) => {
+  bankConnectionEnabled: boolean;
+}> = ({ user, isStorageConfigured, enableSendingInvites, bankConnectionEnabled }) => {
+  const { t } = useTranslation('add_page');
   const {
     setCurrentUser,
     setGroup,
@@ -25,7 +31,9 @@ const AddPage: NextPageWithUser<{
     setPaidBy,
     setAmountStr,
     setExpenseDate,
+    setCategory,
     resetState,
+    setCronExpression,
   } = useAddExpenseStore((s) => s.actions);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
 
@@ -38,9 +46,10 @@ const AddPage: NextPageWithUser<{
       name: user.name ?? null,
       email: user.email ?? null,
       image: user.image ?? null,
+      obapiProviderId: user.obapiProviderId ?? null,
+      bankingId: user.bankingId ?? null,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [setCurrentUser, user]);
 
   const router = useRouter();
   const { friendId, groupId, expenseId } = router.query;
@@ -58,7 +67,7 @@ const AddPage: NextPageWithUser<{
     { enabled: !!_friendId && !_expenseId },
   );
 
-  const expenseQuery = api.user.getExpenseDetails.useQuery(
+  const expenseQuery = api.expense.getExpenseDetails.useQuery(
     { expenseId: _expenseId },
     { enabled: !!_expenseId },
   );
@@ -70,31 +79,34 @@ const AddPage: NextPageWithUser<{
 
       setParticipants([
         currentUser,
-        ...groupQuery.data.groupUsers.map((gu) => gu.user).filter((u) => u.id !== currentUser.id),
+        ...groupQuery.data.groupUsers
+          .map((gu) => gu.user)
+          .filter((user) => user.id !== currentUser.id),
       ]);
       useAddExpenseStore.setState({ showFriends: false });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupId, groupQuery.isPending, groupQuery.data, currentUser]);
+  }, [groupId, groupQuery.isPending, groupQuery.data, currentUser, setGroup, setParticipants]);
 
   useEffect(() => {
     if (friendId && currentUser && friendQuery.data) {
       setParticipants([currentUser, friendQuery.data]);
       useAddExpenseStore.setState({ showFriends: false });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [friendId, friendQuery.isPending, friendQuery.data, currentUser]);
+  }, [friendId, friendQuery.isPending, friendQuery.data, currentUser, setParticipants]);
 
   useEffect(() => {
     if (!_expenseId || !expenseQuery.data) {
       return;
     }
 
-    expenseQuery.data.group && setGroup(expenseQuery.data.group);
+    if (expenseQuery.data.group) {
+      setGroup(expenseQuery.data.group);
+    }
     setPaidBy(expenseQuery.data.paidByUser);
-    setCurrency(expenseQuery.data.currency as CurrencyCode);
+    setCurrency(parseCurrencyCode(expenseQuery.data.currency));
     setAmountStr((Number(expenseQuery.data.amount) / 100).toString());
     setDescription(expenseQuery.data.name);
+    setCategory(expenseQuery.data.category);
     setAmount(expenseQuery.data.amount);
     setParticipants(
       expenseQuery.data.expenseParticipants.map((ep) => ({
@@ -105,13 +117,28 @@ const AddPage: NextPageWithUser<{
     );
     useAddExpenseStore.setState({ showFriends: false });
     setExpenseDate(expenseQuery.data.expenseDate);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [_expenseId, expenseQuery.data]);
+    if (expenseQuery.data.recurrence) {
+      setCronExpression(cronFromBackend(expenseQuery.data.recurrence.job.schedule));
+    }
+  }, [
+    _expenseId,
+    expenseQuery.data,
+    setAmount,
+    setAmountStr,
+    setCategory,
+    setCurrency,
+    setDescription,
+    setExpenseDate,
+    setGroup,
+    setPaidBy,
+    setParticipants,
+    setCronExpression,
+  ]);
 
   return (
     <>
       <Head>
-        <title>Add Expense</title>
+        <title>{_expenseId ? t('actions.edit_expense') : t('actions.add_expense')}</title>
       </Head>
       <MainLayout hideAppBar>
         {currentUser && (!_expenseId || expenseQuery.data) && (
@@ -119,6 +146,7 @@ const AddPage: NextPageWithUser<{
             isStorageConfigured={isStorageConfigured}
             enableSendingInvites={enableSendingInvites}
             expenseId={_expenseId}
+            bankConnectionEnabled={!!bankConnectionEnabled}
           />
         )}
       </MainLayout>
@@ -130,11 +158,11 @@ AddPage.auth = true;
 
 export default AddPage;
 
-export async function getServerSideProps() {
-  return {
-    props: {
-      isStorageConfigured: !!isStorageConfigured(),
-      enableSendingInvites: !!env.ENABLE_SENDING_INVITES,
-    },
-  };
-}
+export const getServerSideProps: GetServerSideProps = async (context) => ({
+  props: {
+    isStorageConfigured: !!isStorageConfigured(),
+    enableSendingInvites: !!env.ENABLE_SENDING_INVITES,
+    bankConnectionEnabled: !!isBankConnectionConfigured(),
+    ...(await customServerSideTranslations(context.locale, ['common', 'categories', 'currencies'])),
+  },
+});

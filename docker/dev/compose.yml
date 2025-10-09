@@ -2,7 +2,7 @@ name: split-pro-dev
 
 services:
   postgres:
-    image: postgres:16
+    image: ossapps/postgres
     container_name: ${POSTGRES_CONTAINER_NAME:-splitpro-db}
     restart: always
     environment:
@@ -12,11 +12,16 @@ services:
       - POSTGRES_PORT=${POSTGRES_PORT:-5432}
     volumes:
       - database:/var/lib/postgresql/data
+    command: >
+      postgres
+      -c shared_preload_libraries=pg_cron
+      -c cron.database_name=${POSTGRES_DB:-splitpro}
+      -c cron.timezone=UTC
     ports:
       - '${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}'
 
   minio:
-    image: minio/minio
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
     container_name: splitpro-storage-dev
     ports:
       - 9002:9002

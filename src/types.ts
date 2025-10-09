@@ -2,36 +2,48 @@ import { type NextPage } from 'next';
 import { type User } from 'next-auth';
 import { z } from 'zod';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithUser<T = {}> = NextPage<{ user: User } & T> & { auth: boolean };
 
-export type PushMessage = { title: string; message: string };
+export interface PushMessage {
+  title: string;
+  message: string;
+  data?: { url?: string };
+}
 
-export type SplitwisePicture = {
+export interface SplitwisePicture {
   small: string;
   medium: string;
   large: string;
-};
+}
 
-export type SplitwiseBalance = {
+export interface SplitwiseBalance {
   currency_code: string;
   amount: string;
-};
+}
 
-export type SplitwiseUser = {
+export interface SplitwiseUser {
   id: number;
   first_name: string;
   last_name: string | null;
   email: string;
   balance: SplitwiseBalance[];
   picture: SplitwisePicture;
-};
+}
 
-export type SplitwiseGroup = {
+export interface SplitwiseGroup {
   id: number;
   name: string;
   members: SplitwiseUser[];
-};
+}
+
+export interface TransactionAddInputModel {
+  date: Date;
+  description: string;
+  amount: string;
+  currency: string;
+  transactionId?: string;
+  expenseId?: string;
+}
 
 const SplitwisePictureSchema = z.object({
   small: z.string(),

@@ -1,8 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { type TFunction, useTranslation } from 'next-i18next';
 import { z } from 'zod';
 
 import { AppDrawer } from '~/components/ui/drawer';
@@ -11,53 +12,94 @@ import { api } from '~/utils/api';
 
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
 
-const groupSchema = z.object({
-  name: z.string({ required_error: 'Name is required' }).min(1, { message: 'Name is required' }),
-});
+const groupSchema = (t: TFunction) =>
+  z.object({
+    name: z
+      .string({ required_error: t('errors.name_required') })
+      .min(1, { message: t('errors.name_required') }),
+  });
+
+type CreateGroupFormValues = z.infer<ReturnType<typeof groupSchema>>;
 
 export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { t } = useTranslation();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const createGroup = api.group.create.useMutation(undefined);
   const utils = api.useUtils();
 
-  const groupForm = useForm<z.infer<typeof groupSchema>>({
-    resolver: zodResolver(groupSchema),
+  const groupForm = useForm<CreateGroupFormValues>({
+    resolver: zodResolver(groupSchema(t)),
   });
 
   const router = useRouter();
 
-  async function onGroupSubmit(values: z.infer<typeof groupSchema>) {
-    await createGroup.mutateAsync(
-      { name: values.name },
-      {
-        onSuccess: (data) => {
-          utils.group.getAllGroupsWithBalances.refetch().catch(console.error);
-          router
-            .push(`/groups/${data.id}`)
-            .then(() => setDrawerOpen(false))
-            .catch(console.error);
+  const onGroupSubmit = useCallback(
+    async (values: CreateGroupFormValues) => {
+      await createGroup.mutateAsync(
+        { name: values.name },
+        {
+          onSuccess: (data) => {
+            utils.group.getAllGroupsWithBalances.refetch().catch(console.error);
+            router
+              .push(`/groups/${data.id}`)
+              .then(() => setDrawerOpen(false))
+              .catch(console.error);
+          },
         },
-      },
-    );
-  }
+      );
+    },
+    [router, createGroup, utils.group.getAllGroupsWithBalances],
+  );
+
+  const handleOpenChange = useCallback(
+    (openVal: boolean) => {
+      if (openVal !== drawerOpen) {
+        setDrawerOpen(openVal);
+      }
+    },
+    [drawerOpen],
+  );
+
+  const handleLeftActionClick = useCallback(() => setDrawerOpen(false), []);
+
+  const handleActionClick = useCallback(async () => {
+    await groupForm.handleSubmit(onGroupSubmit)();
+  }, [groupForm, onGroupSubmit]);
+
+  const field = useCallback(
+    ({ field }: any) => (
+      <FormItem className="w-full">
+        <FormControl>
+          <Input
+            placeholder={t('group_details.create_group.group_name_placeholder')}
+            className="w-full py-2 text-lg"
+            {...field}
+          />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    ),
+    [t],
+  );
+
+  const avatarColors = React.useMemo(
+    () => ['#80C7B7', '#D9C27E', '#F4B088', '#FFA5AA', '#9D9DD3'],
+    [],
+  );
 
   return (
     <>
       <AppDrawer
         open={drawerOpen}
-        onOpenChange={(openVal) => {
-          if (openVal !== drawerOpen) setDrawerOpen(openVal);
-        }}
+        onOpenChange={handleOpenChange}
         trigger={children}
-        leftAction="Cancel"
-        leftActionOnClick={() => setDrawerOpen(false)}
-        title="Create a group"
+        leftAction={t('actions.cancel')}
+        leftActionOnClick={handleLeftActionClick}
+        title={t('group_details.create_group.title')}
         className="h-[70vh]"
-        actionTitle="Submit"
-        actionOnClick={async () => {
-          await groupForm.handleSubmit(onGroupSubmit)();
-        }}
+        actionTitle={t('actions.submit')}
+        actionOnClick={handleActionClick}
       >
         <div className="w-full">
           <Form {...groupForm}>
@@ -69,20 +111,9 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
                 size={50}
                 name={groupForm.watch('name')}
                 variant="bauhaus"
-                colors={['#80C7B7', '#D9C27E', '#F4B088', '#FFA5AA', '#9D9DD3']}
+                colors={avatarColors}
               />
-              <FormField
-                control={groupForm.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormControl>
-                      <Input placeholder="Group name" className="w-full py-2 text-lg" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <FormField control={groupForm.control} name="name" render={field} />
             </form>
           </Form>
         </div>

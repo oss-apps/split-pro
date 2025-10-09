@@ -1,16 +1,21 @@
 import { type Group, type GroupUser } from '@prisma/client';
 import { Share, UserPlus } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'next-i18next';
 
 import { Button } from '~/components/ui/button';
 
 import AddMembers from './AddMembers';
 
-const NoMembers: React.FC<{
-  group: Group & { groupUsers: Array<GroupUser> };
+interface NoMembersProps {
+  group: Group & { groupUsers: GroupUser[] };
   enableSendingInvites: boolean;
-}> = ({ group, enableSendingInvites }) => {
+}
+
+const NoMembers: React.FC<NoMembersProps> = ({ group, enableSendingInvites }) => {
+  const { t } = useTranslation();
   const [isCopied, setIsCopied] = useState(false);
+  const isArchived = !!group.archivedAt;
 
   async function copyToClipboard() {
     const inviteLink = `${window.location.origin}/join-group?groupId=${group.publicId}`;
@@ -23,22 +28,27 @@ const NoMembers: React.FC<{
 
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4">
-      <p className="mb-4 text-center text-gray-500">No members in the group yet.</p>
-      <Button className="w-[200px]">
-        <AddMembers group={group} enableSendingInvites={enableSendingInvites}>
-          <UserPlus className="h-5 w-5 text-primary-foreground" />
-          <p>Add Members</p>
-        </AddMembers>
-      </Button>
-      <p className="text-gray-400">or</p>
-      <Button className="flex w-[200px] items-center gap-2" onClick={copyToClipboard}>
+      <p className="mb-4 text-center text-gray-500">{t('group_details.no_members.no_members')}</p>
+
+      <AddMembers group={group} enableSendingInvites={enableSendingInvites}>
+        <Button className="w-[200px]" disabled={isArchived}>
+          <UserPlus className="text-primary-foreground" /> {t('group_details.add_members')}
+        </Button>
+      </AddMembers>
+
+      <p className="text-gray-400">{t('ui.or')}</p>
+      <Button
+        className="flex w-[200px] items-center gap-2"
+        onClick={copyToClipboard}
+        disabled={isArchived}
+      >
         {!isCopied ? (
           <>
             <Share className="h-5 w-5" />
-            Share invite link
+            {t('group_details.no_members.invite_link')}
           </>
         ) : (
-          'Copied'
+          t('group_details.copied')
         )}
       </Button>
     </div>

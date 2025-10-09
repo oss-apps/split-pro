@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Giochi",
+        "movies": "Film",
+        "music": "Musica",
+        "other": "Intrattenimento",
+        "sports": "Sport"
+      },
+      "name": "Intrattenimento"
+    },
+    "food": {
+      "items": {
+        "diningOut": "Cene fuori",
+        "groceries": "Spesa",
+        "liquor": "Alcolici",
+        "other": "Cibo e bevande"
+      },
+      "name": "Cibo e bevande"
+    },
+    "general": {
+      "items": {
+        "general": "Generale",
+        "other": "Generale"
+      },
+      "name": "Generale"
+    },
+    "home": {
+      "items": {
+        "electronics": "Elettronica",
+        "furniture": "Mobili",
+        "maintenance": "Manutenzione",
+        "mortgage": "Mutuo",
+        "other": "Casa",
+        "pets": "Animali domestici",
+        "rent": "Affitto",
+        "services": "Servizi",
+        "supplies": "Forniture"
+      },
+      "name": "Casa"
+    },
+    "life": {
+      "items": {
+        "childcare": "Cura dei bambini",
+        "clothing": "Abbigliamento",
+        "education": "Istruzione",
+        "gifts": "Regali",
+        "insurance": "Assicurazione",
+        "medical": "Spese mediche",
+        "other": "Vita",
+        "taxes": "Tasse"
+      },
+      "name": "Vita"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "Bicicletta",
+        "bus": "Autobus",
+        "car": "Auto",
+        "fuel": "Carburante",
+        "hotel": "Hotel",
+        "other": "Viaggi",
+        "parking": "Parcheggio",
+        "plane": "Aereo",
+        "taxi": "Taxi",
+        "train": "Treno"
+      },
+      "name": "Viaggi"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "Pulizie",
+        "electricity": "Elettricità",
+        "gas": "Gas",
+        "internet": "Internet",
+        "other": "Utenze",
+        "phone": "Telefone",
+        "trash": "Spazzatura",
+        "water": "Acqua"
+      },
+      "name": "Utenze"
+    }
+  },
+  "title": "Categorie"
+}

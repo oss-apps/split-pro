@@ -1,48 +1,65 @@
 import { type Balance, SplitType, type User } from '@prisma/client';
-import { ArrowRightIcon } from 'lucide-react';
-import { type User as NextUser } from 'next-auth';
+import { ArrowRightIcon, HandCoins } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
+import { DEFAULT_CATEGORY } from '~/lib/category';
 import { api } from '~/utils/api';
 import { BigMath, toSafeBigInt, toUIString } from '~/utils/numbers';
 
-import { FriendBalance } from './FirendBalance';
-import { UserAvatar } from '../ui/avatar';
+import { FriendBalance } from './FriendBalance';
 import { Button } from '../ui/button';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
+import { EntityAvatar } from '../ui/avatar';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { useSession } from 'next-auth/react';
 
 export const SettleUp: React.FC<{
-  balances: Array<Balance>;
+  balances?: Balance[];
   friend: User;
-  currentUser: NextUser;
-}> = ({ balances, friend, currentUser }) => {
+}> = ({ balances, friend }) => {
+  const { t, displayName } = useTranslationWithUtils();
+  const { data } = useSession();
+  const currentUser = data?.user;
+
+  if (!currentUser) {
+    return null;
+  }
+
+  if (!balances) {
+    return (
+      <Button size="sm" variant="outline" responsiveIcon disabled>
+        <span className="xs:inline hidden">{t('actions.settle_up')}</span>
+      </Button>
+    );
+  }
+
   const [balanceToSettle, setBalanceToSettle] = useState<Balance | undefined>(
-    balances.length > 1 ? undefined : balances[0],
+    1 < balances.length ? undefined : balances[0],
   );
   const [amount, setAmount] = useState<string>(
-    balances.length > 1 ? '' : toUIString(BigMath.abs(balances[0]?.amount ?? 0n)),
+    1 < balances.length ? '' : toUIString(BigMath.abs(balances[0]?.amount ?? 0n)),
   );
 
-  const isCurrentUserPaying = (balanceToSettle?.amount ?? 0) < 0;
+  const isCurrentUserPaying = 0 > (balanceToSettle?.amount ?? 0);
 
   function onSelectBalance(balance: Balance) {
     setBalanceToSettle(balance);
     setAmount(toUIString(BigMath.abs(balance.amount)));
   }
 
-  const addExpenseMutation = api.user.addOrEditExpense.useMutation();
+  const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
   const utils = api.useUtils();
 
   function saveExpense() {
-    if (!balanceToSettle || !amount || !parseFloat(amount)) {
+    if (!balanceToSettle || !amount || !parseFloat(amount) || !currentUser) {
       return;
     }
 
     addExpenseMutation.mutate(
       {
-        name: 'Settle up',
+        name: t('ui.settle_up_name'),
         currency: balanceToSettle.currency,
         amount: toSafeBigInt(amount),
         splitType: SplitType.SETTLEMENT,
@@ -57,7 +74,8 @@ export const SettleUp: React.FC<{
           },
         ],
         paidBy: isCurrentUserPaying ? currentUser.id : friend.id,
-        category: 'general',
+        category: DEFAULT_CATEGORY,
+        groupId: null,
       },
       {
         onSuccess: () => {
@@ -65,7 +83,7 @@ export const SettleUp: React.FC<{
         },
         onError: (error) => {
           console.error('Error while saving expense:', error);
-          toast.error('Error while saving expense');
+          toast.error(t('errors.saving_expense'));
         },
       },
     );
@@ -76,10 +94,10 @@ export const SettleUp: React.FC<{
       trigger={
         <Button
           size="sm"
-          className="flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500 px-3  text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 focus-visible:outline-none lg:w-[180px] "
+          className="flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500 px-3 text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 focus-visible:outline-hidden lg:w-[180px]"
           disabled={!balances.length}
         >
-          Settle up
+          <HandCoins className="size-4" /> {t('actions.settle_up')}
         </Button>
       }
       disableTrigger={!balances?.length}
@@ -95,40 +113,40 @@ export const SettleUp: React.FC<{
       <div className="flex items-center justify-between px-2">
         <div>
           {balanceToSettle &&
-            (balances.length > 1 ? (
+            (1 < balances.length ? (
               <Button
                 size="sm"
                 variant="ghost"
-                className=" text-cyan-500 lg:hidden"
+                className="text-cyan-500 lg:hidden"
                 onClick={() => setBalanceToSettle(undefined)}
               >
-                Back
+                {t('actions.back')}
               </Button>
             ) : (
               <DrawerClose>
                 <Button
                   size="sm"
                   variant="ghost"
-                  className=" text-cyan-500 lg:hidden"
-                  onClick={() => (balances.length > 1 ? setBalanceToSettle(undefined) : null)}
+                  className="text-cyan-500 lg:hidden"
+                  onClick={() => (1 < balances.length ? setBalanceToSettle(undefined) : null)}
                 >
-                  Back
+                  {t('actions.back')}
                 </Button>
               </DrawerClose>
             ))}
         </div>
-        <div className="mb-2 mt-4 text-center">
-          {balanceToSettle ? 'Settle up' : 'Select currency'}
+        <div className="mt-4 mb-2 text-center">
+          {balanceToSettle ? t('ui.settle_up_name') : t('ui.select_currency')}
         </div>
         {balanceToSettle && (
           <DrawerClose>
             <Button
               size="sm"
               variant="ghost"
-              className=" mx-auto text-cyan-500 lg:hidden"
+              className="mx-auto text-cyan-500 lg:hidden"
               onClick={() => saveExpense()}
             >
-              Save
+              {t('actions.save')}
             </Button>
           </DrawerClose>
         )}
@@ -149,23 +167,23 @@ export const SettleUp: React.FC<{
         <div className="mt-10 flex flex-col items-center gap-6">
           <div className="flex flex-col items-center">
             <div className="flex items-center gap-5">
-              <UserAvatar user={isCurrentUserPaying ? currentUser : friend} />
+              <EntityAvatar entity={isCurrentUserPaying ? currentUser : friend} />
               <ArrowRightIcon className="h-6 w-6 text-gray-600" />
-              <UserAvatar user={isCurrentUserPaying ? friend : currentUser} />
+              <EntityAvatar entity={isCurrentUserPaying ? friend : currentUser} />
             </div>
             <p className="mt-2 text-center text-sm text-gray-400">
               {isCurrentUserPaying
-                ? `You're paying ${friend.name ?? friend.email}`
-                : `${friend.name ?? friend.email} is paying you`}
+                ? `${t('actors.you')} ${t('ui.expense.you.pay')} ${displayName(friend)}`
+                : `${displayName(friend)} ${t('ui.expense.user.pay')} ${t('actors.you')}`}
             </p>
           </div>
-          <div className="mt-3 flex  items-center gap-2">
+          <div className="mt-3 flex items-center gap-2">
             <p className="text-lg">{balanceToSettle.currency}</p>
             <Input
               type="number"
               value={amount}
               inputMode="decimal"
-              className="mx-auto  w-[150px] text-lg"
+              className="mx-auto w-[150px] text-lg"
               onChange={(e) => setAmount(e.target.value)}
             />
           </div>
@@ -174,26 +192,26 @@ export const SettleUp: React.FC<{
       <div className="mt-8 hidden items-center justify-center gap-4 px-2 lg:flex">
         <div>
           {balanceToSettle &&
-            (balances.length > 1 ? (
+            (1 < balances.length ? (
               <Button size="sm" variant="secondary" onClick={() => setBalanceToSettle(undefined)}>
-                Back
+                {t('actions.back')}
               </Button>
             ) : (
               <DrawerClose>
                 <Button
                   size="sm"
                   variant="secondary"
-                  onClick={() => (balances.length > 1 ? setBalanceToSettle(undefined) : null)}
+                  onClick={() => (1 < balances.length ? setBalanceToSettle(undefined) : null)}
                 >
-                  Back
+                  {t('actions.back')}
                 </Button>
               </DrawerClose>
             ))}
         </div>
         {balanceToSettle && (
           <DrawerClose>
-            <Button size="sm" className=" mx-auto " onClick={() => saveExpense()}>
-              Save
+            <Button size="sm" className="mx-auto" onClick={() => saveExpense()}>
+              {t('actions.save')}
             </Button>
           </DrawerClose>
         )}

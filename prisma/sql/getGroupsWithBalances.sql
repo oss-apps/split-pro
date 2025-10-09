@@ -1,5 +1,5 @@
 -- @param {Int} $1:id of the user
-SELECT "Group"."id", "Group".name, CAST(Coalesce(sum("ExpenseParticipant".amount),0) as BIGINT) as balance, Coalesce("Expense".currency, "Group"."defaultCurrency") as currency
+SELECT "Group"."id", "Group".name, CAST(Coalesce(sum("ExpenseParticipant".amount),0) as BIGINT) as balance, Coalesce("Expense".currency, "Group"."defaultCurrency") as currency, "Group"."archivedAt"
 FROM "GroupUser"
 JOIN "Group" ON "GroupUser"."groupId" = "Group".id
 LEFT JOIN "Expense" ON "Expense"."groupId" = "Group".id

@@ -1,16 +1,22 @@
 import { type User } from '@prisma/client';
 import { type getAllBalancesForGroup } from '@prisma/client/sql';
 import React from 'react';
+import { useTranslation } from 'next-i18next';
 
 import { BigMath, toUIString } from '~/utils/numbers';
 
-type GroupMyBalanceProps = {
+interface GroupMyBalanceProps {
   userId: number;
-  groupBalances: getAllBalancesForGroup.Result[];
-  users: User[];
-};
+  groupBalances: getAllBalancesForGroup.Result[] | undefined;
+  users: User[] | undefined;
+}
 
-const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, users }) => {
+const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
+  userId,
+  groupBalances = [],
+  users = [],
+}) => {
+  const { t } = useTranslation();
   const userMap = users.reduce(
     (acc, user) => {
       acc[user.id] = user;
@@ -44,46 +50,42 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
     {} as Record<string, bigint>,
   );
 
-  const youLent = Object.entries(cumulatedBalances).filter(([_, amount]) => amount > 0);
-  const youOwe = Object.entries(cumulatedBalances).filter(([_, amount]) => amount < 0);
+  const youLent = Object.entries(cumulatedBalances).filter(([_, amount]) => 0 < amount);
+  const youOwe = Object.entries(cumulatedBalances).filter(([_, amount]) => 0 > amount);
 
   return (
     <div className="flex gap-2">
       <div className="flex flex-col gap-2">
-        {youLent.length > 0 ? (
+        {0 < youLent.length ? (
           <div className="flex flex-wrap gap-1 text-emerald-500">
-            You lent
-            {youLent.map(([currency, amount], index, arr) => {
-              return (
-                <React.Fragment key={currency}>
-                  <div className="flex gap-1 font-semibold">
-                    {currency} {toUIString(amount)}
-                  </div>
-                  {index < arr.length - 1 ? <span>+</span> : null}
-                </React.Fragment>
-              );
-            })}
+            {t('actors.you')} {t('ui.expense.you.lent')}
+            {youLent.map(([currency, amount], index, arr) => (
+              <React.Fragment key={currency}>
+                <div className="flex gap-1 font-semibold">
+                  {currency} {toUIString(amount)}
+                </div>
+                {index < arr.length - 1 ? <span>+</span> : null}
+              </React.Fragment>
+            ))}
           </div>
         ) : null}
 
-        {youOwe.length > 0 ? (
+        {0 < youOwe.length ? (
           <div className="text-orange-6000 flex flex-wrap gap-1 text-orange-600">
-            You owe
-            {youOwe.map(([currency, amount], index, arr) => {
-              return (
-                <React.Fragment key={currency}>
-                  <div className="flex gap-1 font-semibold">
-                    {currency} {toUIString(amount)}
-                  </div>
-                  {index < arr.length - 1 ? <span>+</span> : null}
-                </React.Fragment>
-              );
-            })}
+            {t('actors.you')} {t('ui.expense.you.owe')}
+            {youOwe.map(([currency, amount], index, arr) => (
+              <React.Fragment key={currency}>
+                <div className="flex gap-1 font-semibold">
+                  {currency} {toUIString(amount)}
+                </div>
+                {index < arr.length - 1 ? <span>+</span> : null}
+              </React.Fragment>
+            ))}
           </div>
         ) : null}
 
-        {youLent.length === 0 && youOwe.length === 0 ? (
-          <div className="text-gray-500">You are all settled up</div>
+        {0 === youLent.length && 0 === youOwe.length ? (
+          <div className="text-gray-500">{t('ui.settled_up')}</div>
         ) : null}
 
         {Object.entries(friendBalances)
@@ -94,7 +96,9 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
               <div key={friendId} className="text-sm text-gray-500">
                 {Object.entries(balances).map(([currency, amount]) => (
                   <div key={currency}>
-                    {amount > 0 ? `${friend?.name} owes you` : `You owe ${friend?.name}`}{' '}
+                    {0 < amount
+                      ? `${friend?.name} ${t('ui.expense.user.owe')} ${t('actors.you_dativus').toLowerCase()}`
+                      : `${t('actors.you')} ${t('ui.expense.you.owe')} ${friend?.name}`}{' '}
                     {toUIString(amount)} {currency}
                   </div>
                 ))}
@@ -102,10 +106,10 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({ userId, groupBalances, 
             );
           })}
 
-        {Object.keys(friendBalances).length > 2 ? (
+        {2 < Object.keys(friendBalances).length ? (
           <div className="text-sm text-gray-500">
-            +{Object.keys(friendBalances).length - 2} balance
-            {Object.keys(friendBalances).length > 3 ? 's' : ''}...
+            +{Object.keys(friendBalances).length - 2}{' '}
+            {Object.keys(friendBalances).length === 3 ? t('ui.balance') : t('ui.balances')}...
           </div>
         ) : null}
       </div>

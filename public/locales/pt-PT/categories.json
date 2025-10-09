@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Jogos",
+        "movies": "Filmes",
+        "music": "Música",
+        "other": "Entretenimento",
+        "sports": "Desportos"
+      },
+      "name": "Entretenimento"
+    },
+    "food": {
+      "items": {
+        "diningOut": "Jantar Fora",
+        "groceries": "Mercearia",
+        "liquor": "Bebidas Alcoólicas",
+        "other": "Comida & Bebidas"
+      },
+      "name": "Comida & Bebidas"
+    },
+    "general": {
+      "items": {
+        "general": "Geral",
+        "other": "Geral"
+      },
+      "name": "Geral"
+    },
+    "home": {
+      "items": {
+        "electronics": "Eletrónica",
+        "furniture": "Mobília",
+        "maintenance": "Manutenção",
+        "mortgage": "Hipoteca",
+        "other": "Casa",
+        "pets": "Animais de Estimação",
+        "rent": "Arrendamento",
+        "services": "Serviços",
+        "supplies": "Suprimentos"
+      },
+      "name": "Casa"
+    },
+    "life": {
+      "items": {
+        "childcare": "Cuidado Infantil",
+        "clothing": "Vestuário",
+        "education": "Educação",
+        "gifts": "Presentes",
+        "insurance": "Seguro",
+        "medical": "Saúde",
+        "other": "Vida",
+        "taxes": "Impostos"
+      },
+      "name": "Vida"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "Bicicleta",
+        "bus": "Autocarro",
+        "car": "Carro",
+        "fuel": "Combustível",
+        "hotel": "Hotel",
+        "other": "Viagem",
+        "parking": "Estacionamento",
+        "plane": "Avião",
+        "taxi": "Táxi",
+        "train": "Comboio"
+      },
+      "name": "Viagem"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "Limpeza",
+        "electricity": "Eletricidade",
+        "gas": "Gás",
+        "internet": "Internet",
+        "other": "Utilidades",
+        "phone": "Telefone",
+        "trash": "Lixo",
+        "water": "Água"
+      },
+      "name": "Utilidades"
+    }
+  },
+  "title": "Categorias"
+}

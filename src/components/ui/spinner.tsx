@@ -1,9 +1,17 @@
+import useEnableAfter from '~/hooks/useEnableAfter';
 import { cn } from '~/lib/utils';
 
-export const LoadingSpinner: React.FC<React.SVGProps<SVGSVGElement>> = ({
+export const LoadingSpinner: React.FC<React.SVGProps<SVGSVGElement> & { delay?: number }> = ({
   className,
+  delay = 0,
   ...props
 }) => {
+  const showProgress = useEnableAfter(delay);
+
+  if (!showProgress) {
+    return null;
+  }
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

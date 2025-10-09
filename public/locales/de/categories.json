@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Spiele",
+        "movies": "Filme",
+        "music": "Musik",
+        "other": "Unterhaltung",
+        "sports": "Sport"
+      },
+      "name": "Unterhaltung"
+    },
+    "food": {
+      "items": {
+        "diningOut": "Auswärts essen",
+        "groceries": "Lebensmittel",
+        "liquor": "Alkohol",
+        "other": "Essen & Trinken"
+      },
+      "name": "Essen & Trinken"
+    },
+    "general": {
+      "items": {
+        "general": "Allgemein",
+        "other": "Allgemein"
+      },
+      "name": "Allgemein"
+    },
+    "home": {
+      "items": {
+        "electronics": "Elektronik",
+        "furniture": "Möbel",
+        "maintenance": "Wartung",
+        "mortgage": "Hypothek",
+        "other": "Zuhause",
+        "pets": "Haustiere",
+        "rent": "Miete",
+        "services": "Dienstleistungen",
+        "supplies": "Materialien"
+      },
+      "name": "Zuhause"
+    },
+    "life": {
+      "items": {
+        "childcare": "Kinderbetreuung",
+        "clothing": "Kleidung",
+        "education": "Bildung",
+        "gifts": "Geschenke",
+        "insurance": "Versicherung",
+        "medical": "Medizinisch",
+        "other": "Leben",
+        "taxes": "Steuern"
+      },
+      "name": "Leben"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "Fahrrad",
+        "bus": "Bus",
+        "car": "Auto",
+        "fuel": "Kraftstoff",
+        "hotel": "Hotel",
+        "other": "Reisen",
+        "parking": "Parken",
+        "plane": "Flugzeug",
+        "taxi": "Taxi",
+        "train": "Zug"
+      },
+      "name": "Reisen"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "Reinigung",
+        "electricity": "Strom",
+        "gas": "Gas",
+        "internet": "Internet",
+        "other": "Nebenkosten",
+        "phone": "Telefon",
+        "trash": "Müll",
+        "water": "Wasser"
+      },
+      "name": "Nebenkosten"
+    }
+  },
+  "title": "Kategorien"
+}

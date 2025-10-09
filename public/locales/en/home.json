@@ -1,0 +1,74 @@
+{
+  "features": {
+    "currency_conversion": {
+      "description": "Quickly convert between different currencies using up-to-date or historical exchange rates",
+      "title": "Currency Conversion"
+    },
+    "debt_simplification": {
+      "description": "Automatically simplify group debts to reduce the number of transactions needed between friends",
+      "title": "Debt Simplification"
+    },
+    "groups_and_friends": {
+      "description": "Can create multiple groups or add balance directly. Everything will be consolidated",
+      "title": "Groups and Friends"
+    },
+    "i18": {
+      "description": "Available in multiple languages to make expense splitting accessible worldwide",
+      "title": "Internationalization"
+    },
+    "bank_connection": {
+      "title": "Bank connection",
+      "description": "Add expenses faster with a integration to GoCardless or Plaid bank account transactions api"
+    },
+    "import_splitwise": {
+      "description": "Don't have to manually migrate balances. You can import users and groups from splitwise",
+      "title": "Import from splitwise"
+    },
+    "multiple_currencies": {
+      "description": "Need to add expense with different currency for same user? No problem!",
+      "title": "Multiple currencies"
+    },
+    "open_source": {
+      "description": "Which makes it hard to become evil. Easy to self host",
+      "title": "Open source"
+    },
+    "push_notifications": {
+      "description": "Never miss important notifications. Get notified when someone adds an expense or settles up",
+      "title": "Push notification"
+    },
+    "pwa_support": {
+      "description": "Love mobile apps? We got you covered. Install it as a PWA and you won't even notice!",
+      "title": "PWA support"
+    },
+    "title": "Features",
+    "unequal_split": {
+      "description": "Advanced split options. By shares, percentage or exact amounts.",
+      "title": "Unequal Split"
+    },
+    "upload_receipts": {
+      "description": "Upload receipts along with the expense",
+      "title": "Upload Receipts"
+    }
+  },
+  "footer": {
+    "built_by": "Built by"
+  },
+  "hero": {
+    "add_expense_button": "Add Expense",
+    "star_github_button": "Star us on github",
+    "subtitle_link": "open source",
+    "subtitle_part1": "An",
+    "subtitle_part2": "alternative to SplitWise",
+    "title_highlight": "free",
+    "title_part1": "Split Expenses with your friends for"
+  },
+  "meta": {
+    "description": "SplitPro: Split Expenses with your friends for free",
+    "title": "SplitPro: Split Expenses with your friends for free"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  }
+}

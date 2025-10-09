@@ -1,0 +1,353 @@
+{
+  "account": {
+    "change_language": "Ändra språk",
+    "change_language_details": {
+      "messages": {
+        "language_changed": "Språk ändrat"
+      },
+      "placeholder": "Välj ett språk",
+      "title": "Välj ett språk"
+    },
+    "download_app": "Ladda ner app",
+    "download_app_details": {
+      "download_as_pwa": "Du kan ladda ner SplitPro som en PWA till din hemskärm.",
+      "title": "Ladda ner app",
+      "using_android": "Om du använder Android, kolla in denna",
+      "using_ios": "Om du använder iOS, kolla in denna",
+      "video": "video"
+    },
+    "download_splitpro_data": "Ladda ner SplitPro data",
+    "edit_name": {
+      "placeholder": "Ange namn",
+      "title": "Redigera namn"
+    },
+    "follow_on_x": "Följ oss på X",
+    "import_from_splitwise": "Importera från Splitwise",
+    "import_from_splitwise_details": {
+      "choose_file": "Välj fil",
+      "export_splitwise_data_button": "Exportera splitwise data",
+      "follow_to_export_splitwise_data": "Följ denna länk för att exportera splitwise data",
+      "messages": {
+        "import_success": "Import lyckades"
+      },
+      "no_file_chosen": "Ingen fil vald",
+      "note": "Notera: Vi stödjer för närvarande endast import av vänner och grupper. Transaktioner kommer inte importeras. Vi arbetar på det."
+    },
+    "logout": "Logga ut",
+    "messages": {
+      "submit_error": "Kunde inte skicka feedback",
+      "submit_success": "Feedback skickat"
+    },
+    "notifications": {
+      "disable_notification": "Inaktivera notifikationer",
+      "enable_notification": "Aktivera notifikationer",
+      "messages": {
+        "notification_granted": "Du kommer att få notifikationer nu"
+      }
+    },
+    "star_on_github": "Betygsätt oss på GitHub",
+    "submit_feedback": "Skicka feedback",
+    "submit_feedback_details": {
+      "placeholder": "Skriv din feedback",
+      "title": "Skicka feedback"
+    },
+    "support_us": "Sponsra oss",
+    "title": "Konto",
+    "write_review": "Skriv en recension"
+  },
+  "actions": {
+    "add_expense": "Lägg till utgift",
+    "back": "Tillbaka",
+    "cancel": "Avbryt",
+    "close": "Stäng",
+    "confirm": "Bekräfta",
+    "connect": "Anslut",
+    "create": "Skapa",
+    "edit_expense": "Redigera utgift",
+    "export": "Exportera",
+    "fetch": "Hämta",
+    "import": "Importera",
+    "invite": "Bjud in",
+    "leave": "Lämna",
+    "reconnect": "Återanslut",
+    "save": "Spara",
+    "settle_up": "Gör kvitt",
+    "submit": "Skicka"
+  },
+  "actors": {
+    "all": "Alla",
+    "friends": "Vänner",
+    "groups": "Grupper",
+    "members": "Medlemmar",
+    "owner": "Ägare",
+    "you": "Du",
+    "you_accusativus": "Dig",
+    "you_dativus": "Dig"
+  },
+  "auth": {
+    "continue_with": "Fortsätt med {{provider}}",
+    "email_placeholder": "Ange din email",
+    "no_providers_configured": "Inga autentiseringsleverantörer konfigurerade",
+    "no_providers_instructions": "Vänligen konfigurera minst en autentiseringsleverantör för att logga in. Se",
+    "otp_sent": "Vi har skickat ett mail med OTP. Kontrollera din inkorg och klicka på länken i mailet för att logga in.",
+    "send_magic_link": "Skicka magisk länk",
+    "sending": "Skickar...",
+    "setup_instructions": "Docker-installationsinstruktioner",
+    "trouble_logging_in": "Problem med att logga in? Kontakta"
+  },
+  "bank_transactions": {
+    "choose_bank_provider": "Välj bank",
+    "no_bank_providers_found": "Ingen bank hittades",
+    "plaid": {
+      "bank_connected_successfully": "Bank ansluten",
+      "bank_connection_cancelled": "Anslutning till banken blev avbruten",
+      "bank_connection_failed": "Kunde inte ansluta till banken"
+    },
+    "search_bank": "Sök bank",
+    "select_bank_provider": "Välj bank",
+    "to_bank": "bank"
+  },
+  "currency_conversion": {
+    "amount_to_receive": "Belopp att ta emot",
+    "description": "Konvertera beloppet till en annan valuta.",
+    "exchange_rate": "Växelkurs",
+    "fetching_rate": "Hämtar kurs...",
+    "rate": "Kurs",
+    "success_toast": "Valutaomvandling inställd",
+    "title": "Valutaomvandling"
+  },
+  "errors": {
+    "currency_conversion_error": "Fel vid valutaomvandling",
+    "email_invalid": "Email är ogiltlig, försök igen.",
+    "email_required": "Email krävs",
+    "feedback_min_length": "Feedback måste vara minst 10 tecken",
+    "feedback_required": "Feedback krävs",
+    "group_name_update_failed": "Fel vid uppdatering av gruppnamn",
+    "import_failed": "Fel vid import",
+    "invalid_currency_code": "Ogiltig valutakod {{code}}",
+    "language_change_failed": "Fel vid ändring av språk",
+    "less_than": "Filen ska vara mindre än",
+    "name_required": "Namn krävs",
+    "notification_not_supported": "Notifikationer stöds inte",
+    "otp_invalid": "Ogiltlig OTP",
+    "otp_required": "OTP krävs",
+    "request_error": "Fel vid begäran om notifikationer",
+    "saving_expense": "Fel vid sparande av utgift",
+    "setting_update_failed": "Misslyckades med att uppdatera inställning",
+    "signin_error": "Ett fel uppstod vid inloggning: ",
+    "signup_disabled": "Registrering av nya konton är inaktiverat",
+    "something_went_wrong": "Något gick fel",
+    "subscribe_error": "Kan inte prenumerera på notifikationer",
+    "unsubscribe_error": "Fel vid avslutning av prenumeration",
+    "upload_failed": "Uppladdning misslyckades",
+    "uploading_error": "Fel vid uppladdning av fil",
+    "valid_email": "Ange giltig e-post"
+  },
+  "expense_details": {
+    "add_expense": "Lägg till utgift",
+    "add_expense_details": {
+      "add_new_expense": "Lägg till ny utgift",
+      "amount_placeholder": "Ange belopp",
+      "description_placeholder": "Ange beskrivning",
+      "pick_a_date": "Välj datum",
+      "select_user_or_group": {
+        "add_to_split_pro": "Lägg till i SplitPro",
+        "note": "Notera: Skicka inbjudan är för tillfället inaktiverat på grund av spam",
+        "only_one_group_time": "Du kan bara välja en grupp åt gången",
+        "send_invite": "Skicka inbjudan till användare",
+        "warning": "Varning: Skicka inte en inbjudan om det är ogiltlig email. Använd istället lägg till till SplitPro. Ditt konto kommer att blockeras om denna funktion används felaktigt"
+      },
+      "split_type_section": {
+        "split_equally": "dela lika",
+        "split_unequally": "dela ojämnt",
+        "types": {
+          "adjustment": {
+            "remaining_to_split_equally": "Kvar att dela lika",
+            "title": "Justering"
+          },
+          "equal": {
+            "per_person": "per person",
+            "title": "Jämnt"
+          },
+          "exact": {
+            "remaining": "Kvar",
+            "title": "Exakt"
+          },
+          "percentage": {
+            "remaining": "Kvar",
+            "title": "Procent"
+          },
+          "share": {
+            "shares": "Del(ar)",
+            "title": "Dela",
+            "total_shares": "Totala delningar"
+          }
+        }
+      },
+      "sponsor_us": "Sponsra oss",
+      "upload_file": {
+        "messages": {
+          "upload_success": "Fil uppladdad"
+        }
+      },
+      "user_input": {
+        "add_more_friends": "Sök vänner, grupper eller lägg till via email",
+        "cannot_change_group": "Kan inte ändra grupp medan du redigerar",
+        "remove_group": "Tryck på radera för att ta bort grupp",
+        "search_friends": "Sök vänner, grupper eller lägg till via email"
+      }
+    },
+    "already_added": "Redan tillagd",
+    "balance_list": {
+      "are_settled_up": "är kvitt",
+      "is_settled_up": "är kvitt",
+      "press_balance_info": "Tryck på enskild saldo för att göra kvitt"
+    },
+    "bank_transactions": "Transaktioner",
+    "clear": "Rensa",
+    "delete_expense_details": {
+      "text": "Denna åtgärd går inte att ångra. Denna utgift kommer att raderas permanent.",
+      "title": "Är du helt säker?"
+    },
+    "no_transactions_yet": "Inga transaktioner ännu",
+    "pending": "Reserverad",
+    "submit_all": "Skicka alla",
+    "title": "Lägg till utgift",
+    "title_mobile": "Lägg till"
+  },
+  "group_details": {
+    "add_members": "Lägg till medlemmar",
+    "copied": "Kopierad",
+    "create_group": {
+      "group_name_placeholder": "Gruppnamn",
+      "title": "Skapa en grupp"
+    },
+    "group_info": {
+      "actions": "Åtgärder",
+      "archive_group": "Arkivera grupp",
+      "archive_group_details": {
+        "can_archive": "Denna grupp kommer att arkiveras och döljas från din huvudlista över grupper. Du kan fortfarande komma åt den senare om det behövs.",
+        "cant_archive": "Kan inte arkivera grupp med utestående saldon. Alla saldon måste kvittas först.",
+        "title": "Är du säker på att du vill arkivera denna grupp?"
+      },
+      "archived": "Arkiverad",
+      "delete_group": "Radera grupp",
+      "delete_group_details": {
+        "can_delete": "Denna åtgärd kan inte ångras",
+        "cant_delete": "Kan inte radera gruppen förrän alla har kvittat sina saldon",
+        "title": "Är du helt säker?"
+      },
+      "group_created": "Grupp skapad",
+      "leave_group": "Lämna grupp",
+      "leave_group_details": {
+        "can_leave": "Denna åtgärd kan inte ångras",
+        "cant_leave": "Kan inte lämna gruppen förrän ditt saldo är kvittat",
+        "title": "Är du helt säker?"
+      },
+      "members": "Medlemmar",
+      "recalculate_balances": "Räkna om saldon",
+      "recalculate_balances_details": {
+        "description": "Om saldon inte matchar utgifter, kan du räkna om dem. Notera att det kan ta tid om antalet utgifter är stort. Saldon utanför gruppen påverkas inte.",
+        "title": "Är du säker?"
+      },
+      "remove_member_details": {
+        "can_remove": "Du är på väg att ta bort denna medlem från gruppen",
+        "cant_remove": "Kan inte ta bort medlem förrän deras utestående saldo är kvittat",
+        "title": "Är du helt säker?"
+      },
+      "simplify_debts": "Förenkla skulder",
+      "title": "Gruppinfo"
+    },
+    "group_statistics": {
+      "first_expense": "Första utgiften",
+      "title": "Gruppstatistik",
+      "total_expenses": "Totala utgifter"
+    },
+    "messages": {
+      "balances_recalculated": "Saldon omräknade",
+      "group_archived": "Grupp arkiverad framgångsrikt",
+      "group_name_updated": "Gruppnamn uppdaterat"
+    },
+    "no_members": {
+      "add_members": "Lägg till medlemmar",
+      "add_members_details": {
+        "add_to_split_pro": "Lägg till i Split Pro",
+        "note": "Notera: Skicka inbjudan är inaktiverat för tillfället på grund av skräppost",
+        "placeholder": "Ange namn eller email",
+        "send_invite": "Skicka inbjudan till användare",
+        "title": "Lägg till medlemmar",
+        "warning": "Varning: Skicka inte en inbjudan om det är ogiltlig email. Använd istället lägg till i Split Pro. Ditt konto kommer att blockeras om denna funktion används felaktigt"
+      },
+      "no_members": "Inga medlemmar i gruppen ännu."
+    },
+    "tabs": {
+      "balances": "Saldon",
+      "expenses": "Utgifter"
+    },
+    "title": "Saldon"
+  },
+  "invite_message": {
+    "in_splitpro": "i Splitpro",
+    "join_to": "Gå med",
+    "text": "Gå med i gruppen så kan du lägga till, hantera utgifter och följa dina saldon"
+  },
+  "meta": {
+    "application_name": "SplitPro",
+    "description": "Dela utgifter med dina vänner gratis",
+    "title": "SplitPro: Dela utgifter med dina vänner gratis"
+  },
+  "navigation": {
+    "account": "Konto",
+    "activity": "Aktivitet",
+    "add": "Lägg till",
+    "add_expense": "Lägg till utgift",
+    "balances": "Saldon",
+    "groups": "Grupper"
+  },
+  "ui": {
+    "added_by": "Tillagd av",
+    "and": "och",
+    "balance": "saldo",
+    "balances": "saldon",
+    "delete": "Radera",
+    "deleted_by": "Raderad av",
+    "edited_by": "Redigerad av",
+    "expense": {
+      "for": "för",
+      "from": "från",
+      "paid_by": "Betald av",
+      "received_by": "Mottagen av",
+      "to": "till",
+      "user": {
+        "deleted": "raderade",
+        "get": "får",
+        "lent": "lånade ut",
+        "owe": "är skyldig",
+        "paid": "betalade",
+        "pay": "betalar",
+        "received": "fick"
+      },
+      "you": {
+        "deleted": "raderade",
+        "get": "får",
+        "lent": "lånade ut",
+        "owe": "är skyldig",
+        "paid": "betalade",
+        "pay": "betala",
+        "received": "fick"
+      }
+    },
+    "expense_details": "Utgiftsdetaljer",
+    "no_activity": "Inga aktiviteter än",
+    "not_involved": "Inte involverad",
+    "on": "på",
+    "or": "eller",
+    "outstanding_balances": "Saldon",
+    "select_currency": "Välj valuta",
+    "settle_up_name": "Gör kvitt",
+    "settled_up": "Kvitt",
+    "settlement": "Kvittning",
+    "share_text": "Kolla in SplitPro. Det är ett gratis open source-alternativ till Splitwise",
+    "today": "Idag"
+  }
+}

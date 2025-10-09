@@ -2,11 +2,11 @@ import { type getAllBalancesForGroup } from '@prisma/client/sql';
 
 import { simplifyDebts } from './simplify';
 
-type MinimalEdge = {
+interface MinimalEdge {
   userOne: number;
   userTwo: number;
   amount: bigint;
-};
+}
 
 const sortByIds = (a: getAllBalancesForGroup.Result, b: getAllBalancesForGroup.Result) => {
   if (a.paidBy === b.paidBy) {

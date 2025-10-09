@@ -2,14 +2,20 @@ import { PrismaClient } from '@prisma/client';
 
 import { env } from '~/env';
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
+declare namespace globalThis {
+  // oxlint-disable-next-line no-unused-vars
+  let prisma: PrismaClient | undefined;
+}
 
 export const db =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    log: env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
-  });
+  globalThis.prisma ??
+  (await (async () => {
+    const prisma = new PrismaClient({
+      log: 'development' === env.NODE_ENV ? ['error', 'warn'] : ['error'],
+    });
+    return prisma;
+  })());
 
-if (env.NODE_ENV !== 'production') globalForPrisma.prisma = db;
+if ('production' !== env.NODE_ENV) {
+  globalThis.prisma = db;
+}

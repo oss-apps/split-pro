@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Spel",
+        "movies": "Filmer",
+        "music": "Musik",
+        "other": "Underhållning",
+        "sports": "Sport"
+      },
+      "name": "Underhållning"
+    },
+    "food": {
+      "items": {
+        "diningOut": "Restaurang",
+        "groceries": "Matvaror",
+        "liquor": "Dryck",
+        "other": "Mat & Dryck"
+      },
+      "name": "Mat & Dryck"
+    },
+    "general": {
+      "items": {
+        "general": "Allmänt",
+        "other": "Allmänt"
+      },
+      "name": "Allmänt"
+    },
+    "home": {
+      "items": {
+        "electronics": "Elektronik",
+        "furniture": "Möbler",
+        "maintenance": "Underhåll",
+        "mortgage": "Lån",
+        "other": "Hem",
+        "pets": "Husdjur",
+        "rent": "Hyra",
+        "services": "Tjänster",
+        "supplies": "Tillbehör"
+      },
+      "name": "Hem"
+    },
+    "life": {
+      "items": {
+        "childcare": "Barnvård",
+        "clothing": "Kläder",
+        "education": "Utbildning",
+        "gifts": "Gåvor",
+        "insurance": "Försäkring",
+        "medical": "Medicin",
+        "other": "Liv",
+        "taxes": "Skatter"
+      },
+      "name": "Liv"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "Cykel",
+        "bus": "Buss",
+        "car": "Bil",
+        "fuel": "Bränsle",
+        "hotel": "Hotell",
+        "other": "Resor",
+        "parking": "Parkering",
+        "plane": "Flyg",
+        "taxi": "Taxi",
+        "train": "Tåg"
+      },
+      "name": "Resor"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "Tvätt",
+        "electricity": "El",
+        "gas": "Gas",
+        "internet": "Internet",
+        "other": "Verktyg",
+        "phone": "Telefon",
+        "trash": "Avfall",
+        "water": "Vatten"
+      },
+      "name": "Verktyg"
+    }
+  },
+  "title": "Kategorier"
+}

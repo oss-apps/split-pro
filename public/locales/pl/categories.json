@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Gry",
+        "movies": "Filmy",
+        "music": "Muzyka",
+        "other": "Rozrywka",
+        "sports": "Sport"
+      },
+      "name": "Rozrywka"
+    },
+    "food": {
+      "items": {
+        "diningOut": "Jedzenie na mieście",
+        "groceries": "Zakupy spożywcze",
+        "liquor": "Alkohol",
+        "other": "Jedzenie i Napoje"
+      },
+      "name": "Jedzenie i Napoje"
+    },
+    "general": {
+      "items": {
+        "general": "Ogólne",
+        "other": "Ogólne"
+      },
+      "name": "Ogólne"
+    },
+    "home": {
+      "items": {
+        "electronics": "Elektronika",
+        "furniture": "Meble",
+        "maintenance": "Konserwacja",
+        "mortgage": "Kredyt hipoteczny",
+        "other": "Dom",
+        "pets": "Zwierzęta",
+        "rent": "Czynsz",
+        "services": "Usługi",
+        "supplies": "Wyposażenie"
+      },
+      "name": "Dom"
+    },
+    "life": {
+      "items": {
+        "childcare": "Opieka nad dziećmi",
+        "clothing": "Odzież",
+        "education": "Edukacja",
+        "gifts": "Prezenty",
+        "insurance": "Ubezpieczenie",
+        "medical": "Medyczne",
+        "other": "Życie",
+        "taxes": "Podatki"
+      },
+      "name": "Życie"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "Rower",
+        "bus": "Autobus",
+        "car": "Samochód",
+        "fuel": "Paliwo",
+        "hotel": "Hotel",
+        "other": "Podróże",
+        "parking": "Parking",
+        "plane": "Samolot",
+        "taxi": "Taxi",
+        "train": "Pociąg"
+      },
+      "name": "Podróże"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "Sprzątanie",
+        "electricity": "Elektryczność",
+        "gas": "Gaz",
+        "internet": "Internet",
+        "other": "Media",
+        "phone": "Telefon",
+        "trash": "Śmieci",
+        "water": "Woda"
+      },
+      "name": "Media"
+    }
+  },
+  "title": "Kategorie"
+}

@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Games",
+        "movies": "Movies",
+        "music": "Music",
+        "other": "Entertainment",
+        "sports": "Sports"
+      },
+      "name": "Entertainment"
+    },
+    "food": {
+      "items": {
+        "diningOut": "Dining Out",
+        "groceries": "Groceries",
+        "liquor": "Liquor",
+        "other": "Food & Drinks"
+      },
+      "name": "Food & Drinks"
+    },
+    "general": {
+      "items": {
+        "general": "General",
+        "other": "General"
+      },
+      "name": "General"
+    },
+    "home": {
+      "items": {
+        "electronics": "Electronics",
+        "furniture": "Furniture",
+        "maintenance": "Maintenance",
+        "mortgage": "Mortgage",
+        "other": "Home",
+        "pets": "Pets",
+        "rent": "Rent",
+        "services": "Services",
+        "supplies": "Supplies"
+      },
+      "name": "Home"
+    },
+    "life": {
+      "items": {
+        "childcare": "Childcare",
+        "clothing": "Clothing",
+        "education": "Education",
+        "gifts": "Gifts",
+        "insurance": "Insurance",
+        "medical": "Medical",
+        "other": "Life",
+        "taxes": "Taxes"
+      },
+      "name": "Life"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "Bicycle",
+        "bus": "Bus",
+        "car": "Car",
+        "fuel": "Fuel",
+        "hotel": "Hotel",
+        "other": "Travel",
+        "parking": "Parking",
+        "plane": "Plane",
+        "taxi": "Taxi",
+        "train": "Train"
+      },
+      "name": "Travel"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "Cleaning",
+        "electricity": "Electricity",
+        "gas": "Gas",
+        "internet": "Internet",
+        "other": "Utilities",
+        "phone": "Phone",
+        "trash": "Trash",
+        "water": "Water"
+      },
+      "name": "Utilities"
+    }
+  },
+  "title": "Categories"
+}

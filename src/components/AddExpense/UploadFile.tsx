@@ -1,6 +1,7 @@
 import { ImagePlus, Image as ImageUploaded } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'next-i18next';
 
 import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { useAddExpenseStore } from '~/store/addStore';
@@ -9,8 +10,8 @@ import { api } from '~/utils/api';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
-const getImgHeightAndWidth = (file: File) => {
-  return new Promise<{ width: number; height: number }>((resolve, reject) => {
+const getImgHeightAndWidth = (file: File) =>
+  new Promise<{ width: number; height: number }>((resolve, reject) => {
     const img = new Image();
     img.src = URL.createObjectURL(file);
     img.onload = () => {
@@ -21,30 +22,31 @@ const getImgHeightAndWidth = (file: File) => {
       reject(error);
     };
   });
-};
 
 export const UploadFile: React.FC = () => {
+  const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
   const { setFileUploading, setFileKey } = useAddExpenseStore((s) => s.actions);
 
-  const getUploadUrl = api.user.getUploadUrl.useMutation();
+  const getUploadUrl = api.expense.getUploadUrl.useMutation();
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
+    const { files } = event.target;
 
     const file = files?.[0];
 
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     if (file.size > FILE_SIZE_LIMIT) {
-      toast.error(`File should be less than ${FILE_SIZE_LIMIT / 1024 / 1024}MB`);
+      toast.error(`${t('errors.less_than')} ${FILE_SIZE_LIMIT / 1024 / 1024}MB`);
       return;
     }
 
     setFile(file);
 
-    const { height, width } = await getImgHeightAndWidth(file);
-    console.log('height:', height, 'width:', width);
+    await getImgHeightAndWidth(file);
 
     setFileUploading(true);
     try {
@@ -60,19 +62,18 @@ export const UploadFile: React.FC = () => {
       });
 
       if (!response.ok) {
-        toast.error('Failed to upload file');
+        toast.error(t('errors.upload_failed'));
         console.error('Failed to upload file:', response.statusText);
         setFile(null);
         return;
       }
 
-      toast.success('File uploaded successfully');
+      toast.success(t('expense_details.add_expense_details.upload_file.messages.upload_success'));
 
       setFileKey(key);
-      console.log('Setting file key', key);
     } catch (error) {
       console.error('Error getting upload url:', error);
-      toast.error(`Error uploading file`);
+      toast.error(t('errors.uploading_error'));
     } finally {
       setFileUploading(false);
     }
@@ -81,7 +82,7 @@ export const UploadFile: React.FC = () => {
   return (
     <Label htmlFor="picture" className="cursor-pointer">
       {file ? (
-        <ImageUploaded className="h-6 w-6 text-primary" />
+        <ImageUploaded className="text-primary h-6 w-6" />
       ) : (
         <ImagePlus className="h-6 w-6 text-gray-300" />
       )}

@@ -1,8 +1,6 @@
-import Avatar from 'boring-avatars';
-import clsx from 'clsx';
-import { format } from 'date-fns';
-import { motion } from 'framer-motion';
+import { clsx } from 'clsx';
 import {
+  Archive,
   BarChartHorizontal,
   Check,
   ChevronLeft,
@@ -10,63 +8,71 @@ import {
   DoorOpen,
   Info,
   Merge,
+  PlusIcon,
   Share,
   Trash2,
   UserPlus,
   X,
 } from 'lucide-react';
+import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { Fragment, useState } from 'react';
+import { Fragment, useCallback, useState } from 'react';
 import { toast } from 'sonner';
-
-import { UpdateName } from '~/components/Account/UpdateDetails';
 import { BalanceList } from '~/components/Expense/BalanceList';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
 import AddMembers from '~/components/group/AddMembers';
 import GroupMyBalance from '~/components/group/GroupMyBalance';
 import NoMembers from '~/components/group/NoMembers';
 import MainLayout from '~/components/Layout/MainLayout';
-import { UserAvatar } from '~/components/ui/avatar';
+import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { Label } from '~/components/ui/label';
-import { SimpleConfirmationDialog } from '~/components/ui/SimpleConfirmationDialog';
+import { SimpleConfirmationDialog } from '~/components/SimpleConfirmationDialog';
 import { Switch } from '~/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { UpdateName } from '~/components/Account/UpdateName';
 import { env } from '~/env';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { db } from '~/server/db';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
+import { customServerSideTranslations } from '~/utils/i18n/server';
 import { toUIString } from '~/utils/numbers';
+import { getAllBalancesForGroup } from '@prisma/client/sql';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
 }> = ({ user, enableSendingInvites }) => {
+  const { displayName, toUIDate, t } = useTranslationWithUtils();
   const router = useRouter();
   const groupId = parseInt(router.query.groupId as string);
 
   const groupDetailQuery = api.group.getGroupDetails.useQuery({ groupId });
   const groupTotalQuery = api.group.getGroupTotals.useQuery({ groupId });
-  const expensesQuery = api.group.getExpenses.useQuery({ groupId });
+  const expensesQuery = api.expense.getGroupExpenses.useQuery({ groupId });
   const deleteGroupMutation = api.group.delete.useMutation();
   const leaveGroupMutation = api.group.leaveGroup.useMutation();
+  const toggleArchiveMutation = api.group.toggleArchive.useMutation();
   const toggleSimplifyDebtsMutation = api.group.toggleSimplifyDebts.useMutation();
   const updateGroupDetailsMutation = api.group.updateGroupDetails.useMutation();
   const recalculateGroupBalancesMutation = api.group.recalculateBalances.useMutation();
 
   const [isInviteCopied, setIsInviteCopied] = useState(false);
 
-  async function inviteMembers() {
-    if (!groupDetailQuery.data) return;
-    const inviteLink =
-      window.location.origin + '/join-group?groupId=' + groupDetailQuery.data.publicId;
+  const inviteMembers = useCallback(async () => {
+    if (!groupDetailQuery.data) {
+      return;
+    }
+    const inviteLink = `${window.location.origin}/join-group?groupId=${groupDetailQuery.data.publicId}`;
 
     if (navigator.share) {
       navigator
         .share({
-          title: `Join to ${groupDetailQuery.data.name} in Splitpro`,
-          text: 'Join to the group and you can add, manage expenses, and track your balances',
+          title: `${t('invite_message.join_to')} ${groupDetailQuery.data.name} ${t('invite_message.in_splitpro')}`,
+          text: t('invite_message.text'),
           url: inviteLink,
         })
         .then(() => console.info('Successful share'))
@@ -78,79 +84,79 @@ const BalancePage: NextPageWithUser<{
         setIsInviteCopied(false);
       }, 2000);
     }
-  }
+  }, [groupDetailQuery.data, t]);
 
   const isAdmin = groupDetailQuery.data?.userId === user.id;
-  const canDelete =
+  const isArchived = !!groupDetailQuery.data?.archivedAt;
+  const canDeleteOrArchive =
     groupDetailQuery.data?.userId === user.id &&
-    !groupDetailQuery.data?.groupBalances.find((b) => b.amount !== 0n);
+    !groupDetailQuery.data?.groupBalances.find((bal) => 0n !== bal.amount);
   const canLeave = !groupDetailQuery.data?.groupBalances.find(
-    (b) => b.amount !== 0n && b.paidBy === user.id,
+    (bal) => 0n !== bal.amount && bal.paidBy === user.id,
   );
 
-  function onRecalculateBalances() {
+  const onRecalculateBalances = useCallback(() => {
     recalculateGroupBalancesMutation.mutate(
       { groupId },
       {
         onSuccess: () => {
           void groupDetailQuery.refetch();
-          toast.success('Balances recalculated successfully');
+          toast.success(t('ui.messages.balances_recalculated'));
         },
-        onError: () => {
-          toast.error('Something went wrong');
+        onError: (e) => {
+          toast.error(t('errors.something_went_wrong'));
+          console.error(e);
         },
       },
     );
-  }
+  }, [groupId, groupDetailQuery, recalculateGroupBalancesMutation, t]);
 
-  function onGroupDelete() {
+  const onGroupDelete = useCallback(() => {
     deleteGroupMutation.mutate(
       { groupId },
       {
         onSuccess: () => {
           router.replace('/groups').catch(console.error);
         },
-        onError: () => {
-          toast.error('Something went wrong');
+        onError: (e) => {
+          toast.error(t('errors.something_went_wrong'));
+          console.error(e);
         },
       },
     );
-  }
+  }, [groupId, deleteGroupMutation, router, t]);
 
-  function onGroupLeave(userId?: number) {
-    leaveGroupMutation.mutate(
-      { groupId, userId },
-      {
-        onSuccess: () => {
-          if (!userId) {
-            router.replace('/groups').catch(console.error);
-          } else {
-            groupDetailQuery.refetch().catch(console.error);
-          }
+  const onGroupLeave = useCallback(
+    (userId?: number) => {
+      leaveGroupMutation.mutate(
+        { groupId, userId },
+        {
+          onSuccess: () => {
+            if (!userId) {
+              router.replace('/groups').catch(console.error);
+            } else {
+              groupDetailQuery.refetch().catch(console.error);
+            }
+          },
+          onError: (e) => {
+            toast.error(t('errors.something_went_wrong'));
+            console.error(e);
+          },
         },
-        onError: () => {
-          toast.error('Something went wrong');
-        },
-      },
-    );
-  }
+      );
+    },
+    [groupId, leaveGroupMutation, groupDetailQuery, router, t],
+  );
 
   return (
     <>
       <Head>
-        <title>Group outstanding balances</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>{t('ui.title')}</title>
       </Head>
       <MainLayout
         title={
           <div className="flex items-center">
-            <Button
-              variant="ghost"
-              onClick={async () => {
-                await router.replace(`/groups`);
-              }}
-              className="mr-2 p-0"
-            >
+            <Button variant="ghost" onClick={() => router.replace(`/groups`)} className="mr-2 p-0">
               <ChevronLeft className="h-6 w-6" />
             </Button>
             <p className="text-lg">{groupDetailQuery.data?.name}</p>
@@ -159,47 +165,48 @@ const BalancePage: NextPageWithUser<{
         actions={
           <div className="flex gap-2">
             <AppDrawer
-              title="Group statistics"
+              title={t('group_details.group_statistics.title')}
               trigger={<BarChartHorizontal className="h-6 w-6" />}
               className="h-[85vh]"
             >
-              <div className="">
-                <p className="font-semibold">Total expenses</p>
+              <>
+                <p className="font-semibold">
+                  {t('group_details.group_statistics.total_expenses')}
+                </p>
                 <div className="mt-2 flex flex-wrap gap-1">
-                  {groupTotalQuery.data?.map((total, index, arr) => {
-                    return total._sum.amount != null ? (
+                  {groupTotalQuery.data?.map((total, index, arr) =>
+                    null != total._sum.amount ? (
                       <Fragment key={total.currency}>
                         <div className="flex flex-wrap gap-1">
                           {total.currency} {toUIString(total._sum.amount)}
                         </div>
                         {index < arr.length - 1 ? <span>+</span> : null}
                       </Fragment>
-                    ) : null;
-                  })}
+                    ) : null,
+                  )}
                 </div>
-                {expensesQuery?.data && expensesQuery?.data?.length > 0 && (
+                {expensesQuery?.data && expensesQuery.data[expensesQuery.data.length - 1] && (
                   <div className="mt-8">
-                    <p className="font-semibold">First expense</p>
+                    <p className="font-semibold">
+                      {t('group_details.group_statistics.first_expense')}
+                    </p>
                     <p>
-                      {expensesQuery.data[expensesQuery.data.length - 1]?.createdAt
-                        ? format(
-                            expensesQuery.data[expensesQuery.data.length - 1]!.createdAt,
-                            'MMM dd, yyyy',
-                          )
-                        : '--'}
+                      {toUIDate(expensesQuery.data[expensesQuery.data.length - 1]!.createdAt, {
+                        year: true,
+                      })}
                     </p>
                   </div>
                 )}
-              </div>
+              </>
             </AppDrawer>
             <AppDrawer
-              title="Group info"
+              title={t('group_details.group_info.title')}
               trigger={<Info className="h-6 w-6" />}
               className="h-[85vh]"
             >
               <>
                 <div className="flex items-center justify-between">
-                  <div className="text-xl font-semibold text-primary">
+                  <div className="text-primary text-xl font-semibold">
                     {groupDetailQuery.data?.name ?? ''}
                   </div>
                   {isAdmin && (
@@ -212,10 +219,10 @@ const BalancePage: NextPageWithUser<{
                             groupId,
                             name: values.name,
                           });
-                          toast.success('Updated group name', { duration: 1500 });
+                          toast.success(t('ui.messages.group_name_updated'), { duration: 1500 });
                           await groupDetailQuery.refetch();
                         } catch (error) {
-                          toast.error('Error in updating group name');
+                          toast.error(t('errors.group_name_update_failed'));
                           console.error(error);
                         }
                       }}
@@ -223,16 +230,16 @@ const BalancePage: NextPageWithUser<{
                   )}
                 </div>
 
-                <p className="mt-5 font-semibold">Members</p>
+                <p className="mt-5 font-semibold">{t('group_details.group_info.members')}</p>
                 <div className="mt-2 flex flex-col gap-2">
                   {groupDetailQuery.data?.groupUsers.map((groupUser) => (
                     <div key={groupUser.userId} className="flex items-center justify-between">
                       <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
-                        <UserAvatar user={groupUser.user} />
-                        <p>{groupUser.user.name ?? groupUser.user.email}</p>
+                        <EntityAvatar entity={groupUser.user} />
+                        <p>{displayName(groupUser.user)}</p>
                       </div>
                       {groupUser.userId === groupDetailQuery.data?.userId ? (
-                        <p className="text-sm text-gray-400">owner</p>
+                        <p className="text-sm text-gray-400">{t('actors.owner')}</p>
                       ) : (
                         isAdmin &&
                         (() => {
@@ -242,11 +249,15 @@ const BalancePage: NextPageWithUser<{
 
                           return (
                             <SimpleConfirmationDialog
-                              title={canLeave ? 'Are you absolutely sure?' : ''}
+                              title={
+                                canLeave
+                                  ? t('group_details.group_info.remove_member_details.title')
+                                  : ''
+                              }
                               description={
                                 canLeave
-                                  ? 'You are about to remove this member from the group'
-                                  : "Can't remove member until their outstanding balance is settled"
+                                  ? t('group_details.group_info.remove_member_details.can_remove')
+                                  : t('group_details.group_info.remove_member_details.cant_remove')
                               }
                               hasPermission={canLeave}
                               onConfirm={() => onGroupLeave(groupUser.userId)}
@@ -267,18 +278,19 @@ const BalancePage: NextPageWithUser<{
                   ))}
                 </div>
               </>
-              {groupDetailQuery?.data?.createdAt && (
+              {groupDetailQuery.data?.createdAt && (
                 <div className="mt-8">
-                  <p className="font-semibold ">Group created</p>
-                  <p>{format(groupDetailQuery.data?.createdAt, 'MMM dd, yyyy')}</p>
+                  <p className="font-semibold">{t('group_details.group_info.group_created')}</p>
+                  <p>{toUIDate(groupDetailQuery.data.createdAt, { year: true })}</p>
                 </div>
               )}
               <div className="mt-8">
-                <p className="font-semibold ">Actions</p>
+                <p className="font-semibold">{t('group_details.group_info.actions')}</p>
                 <div className="child:h-7 mt-2 flex flex-col">
                   <Label className="flex cursor-pointer items-center justify-between">
                     <p className="flex items-center">
-                      <Merge className="mr-2 size-4" /> Simplify debts
+                      <Merge className="mr-2 size-4" />{' '}
+                      {t('group_details.group_info.simplify_debts')}
                     </p>
                     <Switch
                       id="simplify-debts"
@@ -291,7 +303,7 @@ const BalancePage: NextPageWithUser<{
                               void groupDetailQuery.refetch();
                             },
                             onError: () => {
-                              toast.error('Failed to update setting');
+                              toast.error(t('errors.setting_update_failed'));
                             },
                           },
                         );
@@ -300,27 +312,57 @@ const BalancePage: NextPageWithUser<{
                   </Label>
                   {isAdmin && (
                     <SimpleConfirmationDialog
-                      title="Are you sure?"
-                      description="If balances do not match expenses, you can recalculate them. Note that it may take some time if the expense count is large. Balances outside the group will not be affected."
+                      title={t('group_details.group_info.recalculate_balances_details.title')}
+                      description={t(
+                        'group_details.group_info.recalculate_balances_details.description',
+                      )}
                       hasPermission
                       onConfirm={onRecalculateBalances}
                       loading={recalculateGroupBalancesMutation.isPending}
                       variant="default"
                     >
-                      <Button variant="ghost" className="justify-start p-0 text-left text-primary">
-                        <Construction className="mr-2 h-5 w-5" /> Recalculate balances
+                      <Button variant="ghost" className="text-primary justify-start p-0 text-left">
+                        <Construction className="mr-2 h-5 w-5" />{' '}
+                        {t('group_details.group_info.recalculate_balances')}
                       </Button>
                     </SimpleConfirmationDialog>
                   )}
+                  <Label className="flex cursor-pointer items-center justify-between">
+                    <p className="flex items-center">
+                      <Archive className="mr-2 size-4" />{' '}
+                      {t('group_details.group_info.archive_group')}
+                    </p>
+                    <Switch
+                      id="archive-group"
+                      checked={groupDetailQuery.data?.archivedAt !== null}
+                      onCheckedChange={() => {
+                        toggleArchiveMutation.mutate(
+                          { groupId },
+                          {
+                            onSuccess: () => {
+                              void groupDetailQuery.refetch();
+                            },
+                            onError: (error) => {
+                              toast.error(error.message);
+                            },
+                          },
+                        );
+                      }}
+                    />
+                  </Label>
                   {isAdmin ? (
                     <SimpleConfirmationDialog
-                      title={canDelete ? 'Are you absolutely sure?' : ''}
-                      description={
-                        canDelete
-                          ? 'This action cannot be reversed'
-                          : "Can't delete the group until everyone settles up the balance"
+                      title={
+                        canDeleteOrArchive
+                          ? t('group_details.group_info.delete_group_details.title')
+                          : ''
                       }
-                      hasPermission={canDelete}
+                      description={
+                        canDeleteOrArchive
+                          ? t('group_details.group_info.delete_group_details.can_delete')
+                          : t('group_details.group_info.delete_group_details.cant_delete')
+                      }
+                      hasPermission={canDeleteOrArchive}
                       onConfirm={onGroupDelete}
                       loading={deleteGroupMutation.isPending}
                       variant="destructive"
@@ -329,16 +371,19 @@ const BalancePage: NextPageWithUser<{
                         variant="ghost"
                         className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
                       >
-                        <Trash2 className="mr-2 size-4" /> Delete group
+                        <Trash2 className="mr-2 size-4" />{' '}
+                        {t('group_details.group_info.delete_group')}
                       </Button>
                     </SimpleConfirmationDialog>
                   ) : (
                     <SimpleConfirmationDialog
-                      title={canLeave ? 'Are you absolutely sure?' : ''}
+                      title={
+                        canLeave ? t('group_details.group_info.leave_group_details.title') : ''
+                      }
                       description={
                         canLeave
-                          ? 'This action cannot be reversed'
-                          : "Can't leave the group until your outstanding balance is settled"
+                          ? t('group_details.group_info.leave_group_details.can_leave')
+                          : t('group_details.group_info.leave_group_details.cant_leave')
                       }
                       hasPermission={canLeave}
                       onConfirm={onGroupLeave}
@@ -349,7 +394,8 @@ const BalancePage: NextPageWithUser<{
                         variant="ghost"
                         className="justify-start p-0 text-left text-red-500 hover:text-red-500 hover:opacity-90"
                       >
-                        <DoorOpen className="mr-2 h-5 w-5" /> Leave group
+                        <DoorOpen className="mr-2 h-5 w-5" />{' '}
+                        {t('group_details.group_info.leave_group')}
                       </Button>
                     </SimpleConfirmationDialog>
                   )}
@@ -360,83 +406,79 @@ const BalancePage: NextPageWithUser<{
         }
         header={
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              onClick={async () => {
-                await router.replace(`/groups`);
-              }}
-              className="mr-2 p-0"
-            >
+            <Button variant="ghost" onClick={() => router.replace(`/groups`)} className="mr-2 p-0">
               <ChevronLeft className="h-6 w-6" />
             </Button>
-            <Avatar
-              size={30}
-              name={groupDetailQuery.data?.name}
-              variant="bauhaus"
-              colors={['#80C7B7', '#D9C27E', '#F4B088', '#FFA5AA', '#9D9DD3']}
-            />
+            <EntityAvatar entity={groupDetailQuery.data} size={30} />
             <p className="text-lg">{groupDetailQuery.data?.name}</p>
           </div>
         }
+        loading={groupDetailQuery.isPending}
       >
-        {groupDetailQuery.isPending ? null : groupDetailQuery.data?.groupUsers.length === 1 &&
-          !expensesQuery.data?.length ? (
+        {1 === groupDetailQuery.data?.groupUsers.length && !expensesQuery.data?.length ? (
           <div className="h-[85vh]">
             <NoMembers group={groupDetailQuery.data} enableSendingInvites={enableSendingInvites} />
           </div>
         ) : (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div className="mb-4 px-4">
+          <div className="transition-discrete starting:opacity-0">
+            <div className="mb-4">
+              {isArchived && (
+                <div className="mb-4 flex justify-center gap-2 overflow-y-auto pb-4">
+                  <p>
+                    {t('group_details.group_info.archived')} {t('ui.on')}{' '}
+                    {toUIDate(groupDetailQuery.data!.archivedAt!)}
+                  </p>
+                </div>
+              )}
               <GroupMyBalance
                 userId={user.id}
-                groupBalances={groupDetailQuery.data?.groupBalances ?? []}
-                users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
+                groupBalances={groupDetailQuery.data?.groupBalances}
+                users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user)}
               />
             </div>
-            <div className=" mb-4 flex justify-center gap-2 overflow-y-auto border-b px-2 pb-4">
+            <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b pb-4">
               <Link href={`/add?groupId=${groupId}`}>
-                <Button size="sm" className="gap-1 text-sm lg:w-[180px]">
-                  Add Expense
+                <Button size="sm" className="w-40 gap-1 text-sm lg:w-[180px]" disabled={isArchived}>
+                  <PlusIcon className="size-4" /> {t('actions.add_expense')}
                 </Button>
               </Link>
-              <Button size="sm" className="gap-1 text-sm" variant="secondary">
-                {groupDetailQuery.data ? (
-                  <AddMembers
-                    group={groupDetailQuery.data}
-                    enableSendingInvites={enableSendingInvites}
-                  >
-                    <UserPlus className="size-4 text-gray-400" /> Add members
-                  </AddMembers>
-                ) : null}
-              </Button>
+
+              <AddMembers group={groupDetailQuery.data} enableSendingInvites={enableSendingInvites}>
+                <Button size="sm" responsiveIcon variant="secondary" disabled={isArchived}>
+                  <UserPlus className="size-4 text-gray-400" /> {t('group_details.add_members')}
+                </Button>
+              </AddMembers>
+
               <Button
                 size="sm"
-                className="gap-1 text-sm lg:w-[180px]"
+                responsiveIcon
                 variant="secondary"
                 onClick={inviteMembers}
+                disabled={isArchived}
               >
                 {isInviteCopied ? (
                   <>
-                    <Check className="size-4 text-gray-400" /> Copied
+                    <Check className="size-4" /> {t('group_details.copied')}
                   </>
                 ) : (
                   <>
-                    <Share className="size-4 text-gray-400" /> Invite
+                    <Share className="size-4 text-gray-400" /> {t('actions.invite')}
                   </>
                 )}
               </Button>
             </div>
-            <Tabs defaultValue="expenses" className="px-2">
+            <Tabs defaultValue="expenses">
               <TabsList className="mx-auto grid w-full max-w-96 grid-cols-2">
-                <TabsTrigger value="expenses">Expenses</TabsTrigger>
-                <TabsTrigger value="balances">Balances</TabsTrigger>
+                <TabsTrigger value="expenses">{t('group_details.tabs.expenses')}</TabsTrigger>
+                <TabsTrigger value="balances">{t('group_details.tabs.balances')}</TabsTrigger>
               </TabsList>
               <TabsContent value="expenses">
                 <ExpenseList
                   userId={user.id}
-                  expenses={expensesQuery.data ?? []}
+                  expenses={expensesQuery.data}
                   contactId={groupId}
                   isLoading={expensesQuery.isPending}
+                  isGroup
                 />
               </TabsContent>
               <TabsContent value="balances">
@@ -447,7 +489,7 @@ const BalancePage: NextPageWithUser<{
                 />
               </TabsContent>
             </Tabs>
-          </motion.div>
+          </div>
         )}
       </MainLayout>
     </>
@@ -458,10 +500,26 @@ BalancePage.auth = true;
 
 export default BalancePage;
 
-export async function getServerSideProps() {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const group = await db.group.findFirst({
+    where: {
+      id: Number(context.query.groupId),
+    },
+  });
+
+  if (!group) {
+    return {
+      redirect: {
+        destination: '/groups',
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: {
+      ...(await customServerSideTranslations(context.locale, ['common', 'currencies'])),
       enableSendingInvites: env.ENABLE_SENDING_INVITES,
     },
   };
-}
+};

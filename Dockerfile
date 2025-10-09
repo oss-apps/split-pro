@@ -12,7 +12,7 @@ RUN apk update && apk add --no-cache libc6-compat
 
 WORKDIR /app
 RUN npm i -g corepack@latest && corepack enable
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml prisma/ ./
+COPY package.json pnpm-lock.yaml prisma/ ./
 
 RUN pnpm install
 
@@ -33,7 +33,6 @@ RUN apk update \
 COPY --from=base /app/next.config.js .
 COPY --from=base /app/package.json .
 COPY --from=base /app/pnpm-lock.yaml .
-COPY --from=base /app/pnpm-workspace.yaml .
 
 COPY --from=base  /app/.next/standalone ./
 COPY --from=base  /app/.next/static ./.next/static
@@ -43,7 +42,6 @@ COPY --from=base  /app/prisma/schema.prisma ./prisma/schema.prisma
 COPY --from=base  /app/prisma/migrations ./prisma/migrations
 COPY --from=base  /app/node_modules/prisma ./node_modules/prisma
 COPY --from=base  /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=base  /app/node_modules/sharp ./node_modules/sharp
 
 RUN npm i -g corepack@latest \
     && corepack enable \

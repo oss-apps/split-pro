@@ -20,6 +20,9 @@ const createMockUser = (id: number, name: string, email: string): User => ({
   currency: 'USD',
   emailVerified: null,
   image: null,
+  preferredLanguage: 'en',
+  obapiProviderId: null,
+  bankingId: null,
 });
 
 const user1: User = createMockUser(1, 'Alice', 'alice@example.com');
@@ -27,12 +30,11 @@ const user2: User = createMockUser(2, 'Bob', 'bob@example.com');
 const user3: User = createMockUser(3, 'Charlie', 'charlie@example.com');
 
 // Create participants with initial amounts
-const createParticipants = (users: User[], amounts: bigint[] = []): Participant[] => {
-  return users.map((user, index) => ({
+const createParticipants = (users: User[], amounts: bigint[] = []): Participant[] =>
+  users.map((user, index) => ({
     ...user,
     amount: amounts[index] ?? 0n,
   }));
-};
 
 // Helper to create split shares structure
 const createSplitShares = (participants: Participant[], splitType: SplitType, shares: bigint[]) => {
@@ -689,7 +691,9 @@ describe('calculateSplitShareBasedOnAmount', () => {
       const participants = createParticipants([user1, user2], [-6000n, -4000n]);
 
       Object.values(SplitType).forEach((splitType) => {
-        if (splitType === SplitType.SETTLEMENT) return; // Skip settlement as it's not implemented
+        if (splitType === SplitType.SETTLEMENT) {
+          return;
+        } // Skip settlement as it's not implemented
 
         const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
         participants.forEach((p) => {

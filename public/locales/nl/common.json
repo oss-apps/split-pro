@@ -1,0 +1,102 @@
+{
+  "meta": {
+    "title": "SplitPro: Deel uitgaven gratis met je vrienden",
+    "description": "Deel uitgaven gratis met je vrienden",
+    "application_name": "SplitPro"
+  },
+  "navigation": {
+    "balances": "Saldos",
+    "groups": "Groepen",
+    "add_expense": "Voeg Uitgave Toe",
+    "add": "Voeg Toe",
+    "activity": "Activiteit",
+    "account": "Account"
+  },
+  "actors": {
+    "you": "Jij",
+    "you_dativus": "Jij",
+    "you_accusativus": "Jij",
+    "friends": "Vrienden",
+    "groups": "Groepen",
+    "members": "Leden",
+    "owner": "Eigenaar",
+    "all": "Alle"
+  },
+  "actions": {
+    "cancel": "Annuleer",
+    "confirm": "Bevestig",
+    "submit": "Dien In",
+    "close": "Sluit",
+    "back": "Terug",
+    "create": "Creëer",
+    "save": "Sla Op",
+    "leave": "Verlaat",
+    "invite": "Nodig Uit",
+    "export": "Exporteer",
+    "import": "Importeer",
+    "fetch": "Haal Op",
+    "add_expense": "Voeg Uitgave Toe",
+    "edit_expense": "Pas Uitgave Aan",
+    "settle_up": "Regel het"
+  },
+  "auth": {
+    "continue_with": "Doorgaan met {{provider}}",
+    "email_placeholder": "Voer je e-mail in",
+    "no_providers_configured": "Geen authenticatieproviders geconfigureerd",
+    "no_providers_instructions": "Configureer ten minste één authenticatieprovider om in te loggen. Zie de",
+    "otp_sent": "We hebben een e-mail met de OTP verzonden. Controleer je inbox en klik op de link in de e-mail om in te loggen.",
+    "send_magic_link": "Stuur magische link",
+    "sending": "Verzenden...",
+    "setup_instructions": "Docker installatie-instructies",
+    "trouble_logging_in": "Problemen met inloggen? Neem contact op"
+  },
+  "currency_conversion": {
+    "title": "Valuta conversie",
+    "description": "Converteer het bedrag naar een andere valuta.",
+    "amount_to_receive": "Bedrag te ontvangen",
+    "exchange_rate": "Wisselkoers",
+    "fetching_rate": "Ophaalsnelheid...",
+    "rate": "Verhouding",
+    "success_toast": "Valuta conversie geslaagd"
+  },
+  "ui": {
+    "expense": {
+      "you": {
+        "lent": "uitgeleend",
+        "owe": "schuldig zijn",
+        "paid": "betaald",
+        "pay": "betaal",
+        "get": "krijgt",
+        "received": "kreeg",
+        "deleted": "verwijderde"
+      },
+      "user": {
+        "lent": "uitgeleend",
+        "owe": "is schuldig",
+        "paid": "betaalde",
+        "pay": "betaalt",
+        "get": "krijgt",
+        "received": "ontving",
+        "deleted": "verwijderde"
+      },
+      "for": "voor",
+      "paid_by": "Betaald door",
+      "received_by": "Ontvangen door",
+      "to": "aan",
+      "from": "van"
+    },
+    "balance": "saldo",
+    "balances": "saldos",
+    "or": "of",
+    "and": "en",
+    "today": "Vandaag",
+    "delete": "Verwijder",
+    "edited_by": "Aangepast door",
+    "deleted_by": "Verwijderd door"
+  },
+  "group_details": {
+    "tabs": {
+      "balances": "Saldos"
+    }
+  }
+}

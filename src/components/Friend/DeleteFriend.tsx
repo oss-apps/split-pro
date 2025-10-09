@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { api } from '~/utils/api';
 
 import { Button } from '../ui/button';
-import { SimpleConfirmationDialog } from '../ui/SimpleConfirmationDialog';
+import { SimpleConfirmationDialog } from '../SimpleConfirmationDialog';
 
 export const DeleteFriend: React.FC<{
   friendId: number;
@@ -21,10 +21,11 @@ export const DeleteFriend: React.FC<{
     try {
       await deleteFriendMutation.mutateAsync({ friendId });
     } catch (e) {
+      console.error('Failed to delete friend', e);
       toast.error('Failed to delete user');
       return;
     }
-    utils.user.getBalances.invalidate().catch(console.error);
+    utils.expense.getBalances.invalidate().catch(console.error);
 
     await router.replace(`/balances`);
   };

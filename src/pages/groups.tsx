@@ -1,116 +1,108 @@
 import { PlusIcon } from '@heroicons/react/24/solid';
-import clsx from 'clsx';
-import { motion } from 'framer-motion';
+import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
-import Link from 'next/link';
-
+import { useMemo } from 'react';
+import { BalanceEntry } from '~/components/Expense/BalanceEntry';
 import { CreateGroup } from '~/components/group/CreateGroup';
 import MainLayout from '~/components/Layout/MainLayout';
-import { GroupAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '~/components/ui/accordion';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
-import { BigMath, toUIString } from '~/utils/numbers';
+import { withI18nStaticProps } from '~/utils/i18n/server';
+import { BigMath } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser = () => {
+  const { t } = useTranslation();
   const groupQuery = api.group.getAllGroupsWithBalances.useQuery();
+  const archivedGroupQuery = api.group.getAllGroupsWithBalances.useQuery({ getArchived: true });
+
+  const actions = useMemo(
+    () => (
+      <CreateGroup>
+        <PlusIcon className="text-primary h-6 w-6" />
+      </CreateGroup>
+    ),
+    [],
+  );
 
   return (
     <>
       <Head>
-        <title>Groups</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>{t('navigation.groups')}</title>
       </Head>
-      <MainLayout
-        title="Groups"
-        actions={
-          <CreateGroup>
-            <PlusIcon className="h-6 w-6 text-primary" />
-          </CreateGroup>
-        }
-      >
-        <div className="mt-2">
-          <div className="mt-5 flex flex-col gap-8 px-4 pb-36">
-            {groupQuery.isPending ? null : groupQuery.data?.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mt-[30vh] flex flex-col items-center justify-center gap-20"
-              >
-                <CreateGroup>
-                  <Button>
-                    <PlusIcon className="mr-2 h-4 w-4" />
-                    Create Group
-                  </Button>
-                </CreateGroup>
-              </motion.div>
-            ) : (
-              groupQuery.data?.map((g) => {
+      <MainLayout title={t('navigation.groups')} actions={actions} loading={groupQuery.isPending}>
+        <div className="mt-7 flex flex-col gap-8 pb-36">
+          {0 === groupQuery.data?.length ? (
+            <div className="mt-[30vh] flex flex-col items-center justify-center gap-20">
+              <CreateGroup>
+                <Button>
+                  <PlusIcon className="mr-2 h-4 w-4" />
+                  {t('actions.create')}
+                </Button>
+              </CreateGroup>
+            </div>
+          ) : (
+            <>
+              {/* Active Groups */}
+              {groupQuery.data?.map((g) => {
                 const [currency, amount] = Object.entries(g.balances).reduce((first, second) => {
                   return BigMath.abs(second[1]) > BigMath.abs(first[1]) ? second : first;
                 });
 
-                const multiCurrency = Object.values(g.balances).filter((b) => b !== 0n).length > 1;
+                const multiCurrency = 1 < Object.values(g.balances).filter((b) => 0n !== b).length;
                 return (
-                  <GroupBalance
+                  <BalanceEntry
                     key={g.id}
-                    groupId={g.id}
-                    name={g.name}
+                    id={g.id}
+                    entity={g}
                     amount={amount}
-                    isPositive={amount >= 0}
+                    isPositive={0 <= amount}
                     currency={currency}
-                    multiCurrency={multiCurrency}
+                    hasMore={multiCurrency}
                   />
                 );
-              })
-            )}
-          </div>
+              })}
+
+              {/* Archived Groups Accordion */}
+              {archivedGroupQuery.data && archivedGroupQuery.data.length > 0 && (
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="archived-groups">
+                    <AccordionTrigger className="text-left text-sm text-gray-400">
+                      {t('group_details.group_info.archived')} ({archivedGroupQuery.data.length})
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="mt-7 flex flex-col gap-8">
+                        {archivedGroupQuery.data.map((g) => (
+                          <BalanceEntry
+                            key={g.id}
+                            id={g.id}
+                            entity={g}
+                            amount={0n}
+                            isPositive
+                            currency=""
+                          />
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              )}
+            </>
+          )}
         </div>
       </MainLayout>
     </>
   );
 };
 
-const GroupBalance: React.FC<{
-  groupId: number;
-  name: string;
-  amount: bigint;
-  isPositive: boolean;
-  currency: string;
-  multiCurrency?: boolean;
-}> = ({ name, amount, isPositive, currency, groupId, multiCurrency }) => {
-  return (
-    <Link href={`/groups/${groupId}`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <GroupAvatar name={name} size={40} />
-          <div className=" text-foreground">{name}</div>
-        </div>
-        <div>
-          {amount === 0n ? (
-            <div className="text-sm text-gray-400">Settled up</div>
-          ) : (
-            <>
-              <div
-                className={clsx(
-                  'text-right text-xs',
-                  isPositive ? 'text-emerald-500' : 'text-orange-600',
-                )}
-              >
-                {isPositive ? 'you lent' : 'you owe'}
-              </div>
-              <div className={`${isPositive ? 'text-emerald-500' : 'text-orange-600'} text-right`}>
-                {currency} {toUIString(amount)}
-                {multiCurrency ? '*' : ''}
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-    </Link>
-  );
-};
-
 BalancePage.auth = true;
+
+export const getStaticProps = withI18nStaticProps(['common']);
 
 export default BalancePage;

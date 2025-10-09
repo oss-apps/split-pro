@@ -7,7 +7,7 @@ import { Button } from '~/components/ui/button';
 import { toUIString } from '~/utils/numbers';
 
 interface ExportCSVProps {
-  expenses: Array<Expense & { expenseParticipants: ExpenseParticipant[] }>;
+  expenses?: (Expense & { expenseParticipants: ExpenseParticipant[] })[];
   fileName: string;
   currentUserId: number;
   friendName: string;
@@ -16,7 +16,7 @@ interface ExportCSVProps {
 }
 
 export const Export: React.FC<ExportCSVProps> = ({
-  expenses,
+  expenses = [],
   fileName,
   currentUserId,
   friendName,
@@ -64,7 +64,7 @@ export const Export: React.FC<ExportCSVProps> = ({
       csvHeaders,
       ...csvData.map((row) =>
         row
-          .map((cell) => (typeof cell === 'string' && cell.includes(',') ? `"${cell}"` : cell))
+          .map((cell) => ('string' === typeof cell && cell.includes(',') ? `"${cell}"` : cell))
           .join(','),
       ),
     ].join('\n');
@@ -83,13 +83,7 @@ export const Export: React.FC<ExportCSVProps> = ({
   };
 
   return (
-    <Button
-      size="sm"
-      variant="secondary"
-      className="w-[150px] gap-1 text-sm lg:w-[180px]"
-      onClick={exportToCSV}
-      disabled={disabled}
-    >
+    <Button size="sm" variant="secondary" responsiveIcon onClick={exportToCSV} disabled={disabled}>
       <Download className="h-4 w-4 text-white" size={20} /> Export
     </Button>
   );

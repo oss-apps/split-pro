@@ -2,12 +2,12 @@ import { SplitType, type User } from '@prisma/client';
 import { ArrowRightIcon } from 'lucide-react';
 import React, { type ReactNode, useCallback, useState } from 'react';
 import { toast } from 'sonner';
-
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { DEFAULT_CATEGORY } from '~/lib/category';
 import { api } from '~/utils/api';
 import { BigMath, toSafeBigInt } from '~/utils/numbers';
-import { displayName } from '~/utils/strings';
 
-import { UserAvatar } from '../ui/avatar';
+import { EntityAvatar } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
@@ -20,22 +20,28 @@ export const GroupSettleUp: React.FC<{
   children: ReactNode;
   groupId: number;
 }> = ({ amount, currency, friend, user, children, groupId }) => {
+  const { displayName, t } = useTranslationWithUtils();
   const [amountStr, setAmountStr] = useState((Number(BigMath.abs(amount)) / 100).toString());
 
-  const addExpenseMutation = api.group.addOrEditExpense.useMutation();
+  const onChangeAmount = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setAmountStr(value);
+  }, []);
+
+  const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
   const utils = api.useUtils();
 
-  const sender = amount < 0 ? user : friend;
-  const receiver = amount < 0 ? friend : user;
+  const sender = 0 > amount ? user : friend;
+  const receiver = 0 > amount ? friend : user;
 
   const saveExpense = useCallback(() => {
-    if (toSafeBigInt(amountStr) === 0n) {
+    if (0n === toSafeBigInt(amountStr)) {
       return;
     }
 
     addExpenseMutation.mutate(
       {
-        name: 'Settle up',
+        name: t('ui.settle_up_name'),
         currency: currency,
         amount: toSafeBigInt(amountStr),
         splitType: SplitType.SETTLEMENT,
@@ -51,7 +57,7 @@ export const GroupSettleUp: React.FC<{
           },
         ],
         paidBy: sender.id,
-        category: 'general',
+        category: DEFAULT_CATEGORY,
       },
       {
         onSuccess: () => {
@@ -59,47 +65,65 @@ export const GroupSettleUp: React.FC<{
         },
         onError: (error) => {
           console.error('Error while saving expense:', error);
-          toast.error('Error while saving expense');
+          toast.error(t('errors.saving_expense'));
         },
       },
     );
-  }, [sender, receiver, amountStr, utils, addExpenseMutation, currency, groupId]);
+  }, [sender, receiver, amountStr, utils, addExpenseMutation, currency, groupId, t]);
 
   return (
     <AppDrawer
       trigger={children}
       leftAction=""
-      title="Settlement"
+      title=""
       className="h-[70vh]"
       actionTitle=""
       shouldCloseOnAction
     >
+      <div className="flex items-center justify-between px-2">
+        <DrawerClose>
+          <Button size="sm" variant="ghost" className="text-cyan-500 lg:hidden">
+            {t('actions.back')}
+          </Button>
+        </DrawerClose>
+        <div className="mt-4 mb-2 text-center">{t('ui.settlement')}</div>
+        <DrawerClose>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-cyan-500 lg:hidden"
+            onClick={saveExpense}
+          >
+            {t('actions.save')}
+          </Button>
+        </DrawerClose>
+      </div>
       <div className="mt-10 flex flex-col items-center gap-6">
         <div className="flex flex-col items-center">
           <div className="flex items-center gap-5">
-            <UserAvatar user={sender} />
+            <EntityAvatar entity={sender} />
             <ArrowRightIcon className="h-6 w-6 text-gray-600" />
-            <UserAvatar user={receiver} />
+            <EntityAvatar entity={receiver} />
           </div>
           <p className="mt-2 text-center text-sm text-gray-400">
-            {displayName(sender)} pays {displayName(receiver)}
+            {displayName(sender)} {t('ui.expense.user.pay')} {displayName(receiver)}
           </p>
         </div>
-        <div className="mt-3 flex  items-center gap-2">
+        <div className="mt-3 flex items-center gap-2">
           <p className="text-lg">{currency}</p>
           <Input
             type="number"
             value={amountStr}
             inputMode="decimal"
-            className="mx-auto  w-[150px] text-lg"
-            onChange={(e) => setAmountStr(e.target.value)}
+            className="mx-auto w-[150px] text-lg"
+            onChange={onChangeAmount}
           />
         </div>
       </div>
       <div className="mt-8 hidden items-center justify-center gap-4 px-2 lg:flex">
         <DrawerClose>
-          <Button size="sm" className=" mx-auto " onClick={() => saveExpense()}>
-            Save
+          <Button size="sm" className="mx-auto" onClick={saveExpense}>
+            {t('actions.save')}
           </Button>
         </DrawerClose>
       </div>

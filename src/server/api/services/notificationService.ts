@@ -56,10 +56,10 @@ export async function sendExpensePushNotification(expenseId: string) {
 
   const participants = expense.deletedBy
     ? expense.expenseParticipants.filter(
-        ({ userId, amount }) => userId !== expense.deletedBy && amount !== 0n,
+        ({ userId, amount }) => userId !== expense.deletedBy && 0n !== amount,
       )
     : expense.expenseParticipants.filter(
-        ({ userId, amount }) => userId !== expense.addedBy && amount !== 0n,
+        ({ userId, amount }) => userId !== expense.addedBy && 0n !== amount,
       );
 
   const subscriptions = await db.pushNotification.findMany({
@@ -98,4 +98,43 @@ export async function sendExpensePushNotification(expenseId: string) {
   const pushNotifications = subscriptions.map((s) => pushNotification(s.subscription, pushData));
 
   await Promise.all(pushNotifications);
+}
+
+export async function checkRecurrenceNotifications() {
+  try {
+    const recurrences = await db.expenseRecurrence.findMany({
+      where: {
+        NOT: {
+          notified: true,
+        },
+      },
+      include: {
+        expense: {
+          select: { id: true },
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+        },
+      },
+    });
+
+    await Promise.all(
+      recurrences
+        .filter((r) => r.expense[0])
+        .map(async (r) => {
+          await sendExpensePushNotification(r.expense[0]!.id);
+          await db.expenseRecurrence.update({
+            where: {
+              id: r.id,
+            },
+            data: {
+              notified: true,
+            },
+          });
+        }),
+    );
+  } catch (e) {
+    console.error('Error sending recurrence notifications', e);
+  } finally {
+    setTimeout(checkRecurrenceNotifications, 1000 * 60); // Check every minute
+  }
 }

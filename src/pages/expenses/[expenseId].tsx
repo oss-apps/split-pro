@@ -1,39 +1,42 @@
 import { env } from 'process';
 
+import { SplitType } from '@prisma/client';
 import { ChevronLeftIcon, PencilIcon } from 'lucide-react';
+import { type GetServerSideProps } from 'next';
+import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-
 import { DeleteExpense } from '~/components/Expense/DeleteExpense';
-import ExpenseDetails from '~/components/Expense/ExpensePage';
+import ExpenseDetails, { EditCurrencyConversion } from '~/components/Expense/ExpenseDetails';
 import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
+import { customServerSideTranslations } from '~/utils/i18n/server';
 
 const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
   user,
   storagePublicUrl,
 }) => {
+  const { t } = useTranslation();
   const router = useRouter();
   const expenseId = router.query.expenseId as string;
 
-  const expenseQuery = api.user.getExpenseDetails.useQuery({ expenseId });
+  const expenseQuery = api.expense.getExpenseDetails.useQuery({ expenseId });
 
   return (
     <>
       <Head>
-        <title>Outstanding balances</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>{expenseQuery.data?.name ?? ''}</title>
       </Head>
       <MainLayout
         title={
           <div className="flex items-center gap-2">
-            <Link href={`/activity`}>
+            <Link href="/activity">
               <ChevronLeftIcon className="mr-1 h-6 w-6" />
             </Link>
-            <p className="text-[16px] font-normal">Expense details</p>
+            <p className="text-[16px] font-normal">{t('ui.expense_details')}</p>
           </div>
         }
         actions={
@@ -41,11 +44,15 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
             {!expenseQuery.data?.deletedBy ? (
               <div className="flex items-center gap-1">
                 <DeleteExpense expenseId={expenseId} />
-                <Link href={`/add?expenseId=${expenseId}`}>
-                  <Button variant="ghost">
-                    <PencilIcon className="mr-1 h-4 w-4" />
-                  </Button>
-                </Link>
+                {expenseQuery.data?.splitType !== SplitType.CURRENCY_CONVERSION ? (
+                  <Link href={`/add?expenseId=${expenseId}`}>
+                    <Button variant="ghost">
+                      <PencilIcon className="mr-1 h-4 w-4" />
+                    </Button>
+                  </Link>
+                ) : (
+                  <EditCurrencyConversion expense={expenseQuery.data} />
+                )}
               </div>
             ) : null}
           </div>
@@ -65,12 +72,11 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
 
 ExpensesPage.auth = true;
 
-export async function getServerSideProps() {
-  return {
-    props: {
-      storagePublicUrl: env.R2_PUBLIC_URL,
-    },
-  };
-}
+export const getServerSideProps: GetServerSideProps = async (context) => ({
+  props: {
+    storagePublicUrl: env.R2_PUBLIC_URL,
+    ...(await customServerSideTranslations(context.locale, ['common'])),
+  },
+});
 
 export default ExpensesPage;

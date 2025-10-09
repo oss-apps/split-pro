@@ -1,7 +1,6 @@
 name: Check
 
 on:
-  - push
   - pull_request
 
 jobs:
@@ -46,14 +45,14 @@ jobs:
           pnpm db:dev
           pnpm generate --sql
 
-      - name: Check code formatting
+      - name: Apply prettier formatting
         run: pnpm prettier --check .
-
-      - name: Run tsc
-        run: pnpm tsc --noEmit
 
       - name: Run lint
         run: pnpm lint
+
+      - name: Run tsc
+        run: pnpm tsgo --noEmit
 
       - name: Run tests
         run: pnpm test

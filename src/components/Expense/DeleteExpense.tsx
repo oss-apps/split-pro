@@ -1,39 +1,43 @@
 import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useCallback } from 'react';
+import { useTranslation } from 'next-i18next';
+import { toast } from 'sonner';
 
 import { api } from '~/utils/api';
 
 import { Button } from '../ui/button';
-import { SimpleConfirmationDialog } from '../ui/SimpleConfirmationDialog';
+import { SimpleConfirmationDialog } from '../SimpleConfirmationDialog';
 
 export const DeleteExpense: React.FC<{
   expenseId: string;
   friendId?: number;
   groupId?: number;
-}> = ({ expenseId, friendId, groupId }) => {
+}> = ({ expenseId }) => {
+  const { t } = useTranslation();
   const router = useRouter();
 
-  const deleteExpenseMutation = api.user.deleteExpense.useMutation();
+  const deleteExpenseMutation = api.expense.deleteExpense.useMutation();
 
-  const onDeleteExpense = async () => {
-    await deleteExpenseMutation.mutateAsync({ expenseId });
-    if (groupId) {
-      await router.replace(`/groups/${groupId}`);
+  const onDeleteExpense = useCallback(async () => {
+    try {
+      await deleteExpenseMutation.mutateAsync({ expenseId });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(`Error: ${error.message}`);
+      } else {
+        console.error('Unexpected error:', error);
+        toast.error('An unexpected error occurred while deleting the expense.');
+      }
       return;
     }
-    if (friendId) {
-      await router.replace(`/balances/${friendId}`);
-      return;
-    }
-
-    await router.replace(`/balances`);
-  };
+    router.back();
+  }, [expenseId, deleteExpenseMutation, router]);
 
   return (
     <SimpleConfirmationDialog
-      title="Are you absolutely sure?"
-      description="This action cannot be undone. This will permanently delete your expense."
+      title={t('expense_details.delete_expense_details.title')}
+      description={t('expense_details.delete_expense_details.text')}
       hasPermission
       onConfirm={onDeleteExpense}
       loading={deleteExpenseMutation.isPending}

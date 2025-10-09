@@ -142,7 +142,7 @@ const ExpenseParticipantEntry: React.FC<{
       <p>
         {displayName(participant.user, userId)}{' '}
         {t(
-          `ui.expense.${userId === participant.userId ? 'you' : 'user'}.${participant.amount < 0 ? 'received' : 'owe'}`,
+          `ui.expense.${userId === participant.userId ? 'you' : 'user'}.${participant.amount < 0 ? 'owe' : 'get'}`,
         )}{' '}
         {currency} {toUIString(participant.amount)}
       </p>

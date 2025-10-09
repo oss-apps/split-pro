@@ -1,5 +1,5 @@
 import { ImagePlus, Image as ImageUploaded } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
 
@@ -27,6 +27,8 @@ export const UploadFile: React.FC = () => {
   const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
   const { setFileUploading, setFileKey } = useAddExpenseStore((s) => s.actions);
+
+  const fileKey = useAddExpenseStore((s) => s.fileKey);
 
   const getUploadUrl = api.expense.getUploadUrl.useMutation();
 
@@ -81,7 +83,7 @@ export const UploadFile: React.FC = () => {
 
   return (
     <Label htmlFor="picture" className="cursor-pointer">
-      {file ? (
+      {file || fileKey ? (
         <ImageUploaded className="text-primary h-6 w-6" />
       ) : (
         <ImagePlus className="h-6 w-6 text-gray-300" />

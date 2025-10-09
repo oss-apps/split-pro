@@ -52,6 +52,7 @@ export const AddOrEditExpensePage: React.FC<{
   const transactionId = useAddExpenseStore((s) => s.transactionId);
   const cronExpression = useAddExpenseStore((s) => s.cronExpression);
 
+
   const {
     setCurrency,
     setCategory,
@@ -68,6 +69,30 @@ export const AddOrEditExpensePage: React.FC<{
 
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
   const updateProfile = api.user.updateUserDetail.useMutation();
+
+  React.useEffect(() => {
+    if (expenseData) {
+      setDescription(expenseData.name);
+      setAmount(expenseData.amount);
+      setAmountStr(toUIString(expenseData.amount));
+      setCurrency(expenseData.currency as CurrencyCode);
+      setCategory(expenseData.category);
+      setExpenseDate(expenseData.expenseDate);
+
+      if (expenseData.fileKey) {
+        setFileKey(expenseData.fileKey);
+      }
+    }
+  }, [
+    expenseData,
+    setDescription,
+    setAmount,
+    setAmountStr,
+    setCurrency,
+    setCategory,
+    setExpenseDate,
+    setFileKey,
+  ]);
 
   const onCurrencyPick = useCallback(
     (newCurrency: CurrencyCode) => {

@@ -26,6 +26,7 @@ const AddPage: NextPageWithUser<{
     setGroup,
     setParticipants,
     setCurrency,
+    setFileKey,
     setAmount,
     setDescription,
     setPaidBy,
@@ -108,6 +109,8 @@ const AddPage: NextPageWithUser<{
     setDescription(expenseQuery.data.name);
     setCategory(expenseQuery.data.category);
     setAmount(expenseQuery.data.amount);
+    setFileKey(expenseQuery.data.fileKey ?? '');
+
     setParticipants(
       expenseQuery.data.expenseParticipants.map((ep) => ({
         ...ep.user,
@@ -127,6 +130,7 @@ const AddPage: NextPageWithUser<{
     setAmountStr,
     setCategory,
     setCurrency,
+    setFileKey,
     setDescription,
     setExpenseDate,
     setGroup,

@@ -1,4 +1,5 @@
-import { type GroupBalance, type User } from '@prisma/client';
+import { type User } from '@prisma/client';
+import { type getAllBalancesForGroup } from '@prisma/client/sql';
 import React from 'react';
 import { useTranslation } from 'next-i18next';
 
@@ -6,8 +7,8 @@ import { BigMath, toUIString } from '~/utils/numbers';
 
 interface GroupMyBalanceProps {
   userId: number;
-  groupBalances?: GroupBalance[];
-  users?: User[];
+  groupBalances: getAllBalancesForGroup.Result[] | undefined;
+  users: User[] | undefined;
 }
 
 const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
@@ -26,10 +27,13 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
 
   const friendBalances = groupBalances.reduce(
     (acc, balance) => {
-      if (balance.userId === userId && 0 < BigMath.abs(balance.amount)) {
-        acc[balance.firendId] ??= {};
-        const friendBalance = acc[balance.firendId]!;
-        friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0n) + balance.amount;
+      if (balance.paidBy === userId && balance.amount != null && BigMath.abs(balance.amount) > 0) {
+        if (!acc[balance.borrowedBy]) {
+          acc[balance.borrowedBy] = {};
+        }
+        const friendBalance = acc[balance.borrowedBy]!;
+        friendBalance[balance.currency] =
+          (friendBalance[balance.currency] ?? 0n) + (balance.amount ?? 0n);
       }
       return acc;
     },

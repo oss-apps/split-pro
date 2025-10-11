@@ -1,4 +1,7 @@
-import type { GroupBalance, User } from '@prisma/client';
+import type { User } from '@prisma/client';
+import { type getAllBalancesForGroup } from '@prisma/client/sql';
+import { Info } from 'lucide-react';
+
 import { clsx } from 'clsx';
 import { type ComponentProps, Fragment, useCallback, useMemo } from 'react';
 import { EntityAvatar } from '~/components/ui/avatar';
@@ -19,9 +22,10 @@ interface UserWithBalance {
 }
 
 export const BalanceList: React.FC<{
-  groupBalances?: GroupBalance[];
-  users?: User[];
-}> = ({ groupBalances = [], users = [] }) => {
+  groupId: number;
+  groupBalances: getAllBalancesForGroup.Result[];
+  users: User[];
+}> = ({ groupId, groupBalances, users }) => {
   const { displayName, t } = useTranslationWithUtils();
   const userQuery = api.user.me.useQuery();
 
@@ -34,16 +38,17 @@ export const BalanceList: React.FC<{
       return acc;
     }, {});
     groupBalances
-      .filter(({ amount }) => 0 < BigMath.abs(amount))
+      .filter(({ amount }) => amount != null && BigMath.abs(amount) > 0)
       .forEach((balance) => {
-        if (!res[balance.userId]!.balances[balance.firendId]) {
-          res[balance.userId]!.balances[balance.firendId] = {};
+        if (!res[balance.paidBy]!.balances[balance.borrowedBy]) {
+          res[balance.paidBy]!.balances[balance.borrowedBy] = {};
         }
-        const friendBalance = res[balance.userId]!.balances[balance.firendId]!;
-        friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0n) + balance.amount;
+        const friendBalance = res[balance.paidBy]!.balances[balance.borrowedBy]!;
+        friendBalance[balance.currency] =
+          (friendBalance[balance.currency] ?? 0n) + (balance.amount ?? 0n);
 
-        res[balance.userId]!.total[balance.currency] =
-          (res[balance.userId]!.total[balance.currency] ?? 0n) + balance.amount;
+        res[balance.paidBy]!.total[balance.currency] =
+          (res[balance.paidBy]!.total[balance.currency] ?? 0n) + (balance.amount ?? 0n);
       });
 
     return res;
@@ -164,7 +169,7 @@ export const BalanceList: React.FC<{
                               user={user}
                               amount={amount}
                               currency={currency}
-                              groupId={groupBalances[0]!.groupId}
+                              groupId={groupId}
                             >
                               <Button size="icon" variant="secondary" className="size-8">
                                 <SETTLEUP_ICON className="size-4" />

@@ -11,7 +11,7 @@ jobs:
       DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/postgres"
     services:
       postgres:
-        image: postgres
+        image: ossapps/postgres
         env:
           POSTGRES_PASSWORD: postgres
         options: >-

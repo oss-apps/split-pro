@@ -128,7 +128,25 @@ describe('calculateParticipantSplit', () => {
       expect(totalOwed).toBe(0n); // Total should always balance      // Payer should get the remainder
       expect(result.participants[0]?.amount).toBeGreaterThanOrEqual(6667n);
     });
+
+    it('should handle single participant as payer', () => {
+      const participants = createParticipants([user1]);
+      const splitShares = createSplitShares(participants, SplitType.EQUAL, [1n]);
+
+      const result = calculateParticipantSplit(
+        10000n,
+        participants,
+        SplitType.EQUAL,
+        splitShares,
+        user1,
+      );
+
+      expect(result.participants[0]?.amount).toBe(0n); // Payer pays and owes nothing
+      expect(result.canSplitScreenClosed).toBe(true);
+    });
   });
+
+  
 
   describe('SplitType.PERCENTAGE', () => {
     it('should split amount by percentage', () => {
@@ -848,6 +866,33 @@ describe('calculateSplitShareBasedOnAmount', () => {
 
       // Should not throw an error and splitShares should remain empty
       expect(Object.keys(splitShares)).toHaveLength(0);
+    });
+
+    it('should handle when one participant owes entire amount', () => {
+      const participants = createParticipants([user1, user2], [10000n, -10000n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(10000n, participants, SplitType.EQUAL, splitShares, user1);
+
+      expect(splitShares[user1.id]![SplitType.EQUAL]).toBe(0n);
+      expect(splitShares[user2.id]![SplitType.EQUAL]).toBe(1n);
+    });
+
+    it('should handle self-payment (no money flow) scenario', () => {
+      const participants = createParticipants([user1, user2, user3], [0n, 0n, 0n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(10000n, participants, SplitType.EQUAL, splitShares, user1);
+
+      expect(splitShares[user1.id]![SplitType.EQUAL]).toBe(1n);
+      expect(splitShares[user2.id]![SplitType.EQUAL]).toBe(0n);
+      expect(splitShares[user3.id]![SplitType.EQUAL]).toBe(0n);
     });
 
     it('should handle undefined paidBy', () => {

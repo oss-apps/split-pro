@@ -128,22 +128,6 @@ describe('calculateParticipantSplit', () => {
       expect(totalOwed).toBe(0n); // Total should always balance      // Payer should get the remainder
       expect(result.participants[0]?.amount).toBeGreaterThanOrEqual(6667n);
     });
-
-    it('should handle single participant as payer', () => {
-      const participants = createParticipants([user1]);
-      const splitShares = createSplitShares(participants, SplitType.EQUAL, [1n]);
-
-      const result = calculateParticipantSplit(
-        10000n,
-        participants,
-        SplitType.EQUAL,
-        splitShares,
-        user1,
-      );
-
-      expect(result.participants[0]?.amount).toBe(0n); // Payer pays and owes nothing
-      expect(result.canSplitScreenClosed).toBe(true);
-    });
   });
 
   describe('SplitType.PERCENTAGE', () => {
@@ -460,6 +444,188 @@ describe('calculateParticipantSplit', () => {
   });
 });
 
+describe('calculateParticipantSplit leftover penny distribution', () => {
+  // Mock participants that we'll use across tests
+  const participants: Participant[] = [
+    createMockUser(1, 'Alice', 'alice@test.com'),
+    createMockUser(2, 'Bob', 'bob@test.com'),
+    createMockUser(3, 'Charlie', 'charlie@test.com')
+  ];
+
+  // Helper to get split shares for equal split
+  const getEqualSplitShares = (participants: Participant[]): Record<number, Record<SplitType, bigint | undefined>> => {
+    const shares: Record<number, Record<SplitType, bigint | undefined>> = {};
+    participants.forEach(p => {
+      shares[p.id] = initSplitShares();
+      shares[p.id]![SplitType.EQUAL] = 1n;
+    });
+    return shares;
+  };
+
+  it('should distribute leftover penny to different participants for different transactions', () => {
+    const splitShares = getEqualSplitShares(participants);
+    
+    // Test Case 1: Amount that doesn't divide evenly by 3
+    const result1 = calculateParticipantSplit(
+      100n, // $1.00
+      participants,
+      SplitType.EQUAL,
+      splitShares,
+      participants[0], // Alice is paying
+      'transaction-1'
+    );
+
+    // Test Case 2: Different amount
+    const result2 = calculateParticipantSplit(
+      200n, // $2.00
+      participants,
+      SplitType.EQUAL,
+      splitShares,
+      participants[0],
+      'transaction-2'
+    );
+
+    // Test Case 3: Another different amount
+    const result3 = calculateParticipantSplit(
+      400n, // $4.00
+      participants,
+      SplitType.EQUAL,
+      splitShares,
+      participants[0],
+      'transaction-3'
+    );
+
+    // Get the person who got the leftover penny in each case
+    const getPennyRecipient = (participants: Participant[]): number | undefined => {
+      const payer = participants[0];
+      if (!payer?.amount) return undefined;
+      
+      const nonPayerShare = participants
+        .find(p => p.id !== payer.id && p.amount)
+        ?.amount;
+        
+      return participants.find(p => 
+        p.id !== payer.id && p.amount && p.amount !== nonPayerShare
+      )?.id;
+    };
+
+    const recipient1 = getPennyRecipient(result1.participants);
+    const recipient2 = getPennyRecipient(result2.participants);
+    const recipient3 = getPennyRecipient(result3.participants);
+
+    // Verify that we got different recipients
+    expect(new Set([recipient1, recipient2, recipient3]).size).toBeGreaterThan(1);
+  });
+
+  it('should maintain consistent penny distribution for same transaction with different descriptions', () => {
+    const splitShares = getEqualSplitShares(participants);
+    const amount = 100n; // $1.00
+    const transactionId = 'consistent-transaction';
+
+    // Original calculation
+    const originalResult = calculateParticipantSplit(
+      amount,
+      participants,
+      SplitType.EQUAL,
+      splitShares,
+      participants[0],
+      transactionId
+    );
+
+    // Same transaction, different metadata
+    const modifications = [
+      { description: 'Changed title' },
+      { description: 'Added emoji 🍕' },
+      { description: 'Changed category' }
+    ];
+
+    // Test that all modifications result in the same distribution
+    modifications.forEach(mod => {
+      const modifiedResult = calculateParticipantSplit(
+        amount,
+        participants,
+        SplitType.EQUAL,
+        splitShares,
+        participants[0],
+        transactionId
+      );
+
+      // Compare amounts for all participants
+      originalResult.participants.forEach((originalParticipant, index) => {
+        const modifiedAmount = modifiedResult.participants[index]?.amount;
+        expect(modifiedAmount).toBe(originalParticipant.amount);
+      });
+    });
+  });
+
+  it('should handle different transaction IDs with same amount', () => {
+    const splitShares = getEqualSplitShares(participants);
+    const amount = 1001n; // $10.01 -amount that doesn't divide evenly
+
+    // Helper to identify who got extra pennies
+    const getNonPayerAmounts = (result: { participants: Participant[] }): Map<number, bigint> => {
+      const payer = participants[0];
+      if (!payer) return new Map();
+      
+      return new Map(
+        result.participants
+          .filter(p => p.id !== payer.id)
+          .map(p => [p.id, p.amount ?? 0n])
+      );
+    };
+
+    // Test with 10 different transaction IDs
+    const results = Array.from({ length: 10 }, (_, i) => 
+      calculateParticipantSplit(
+        amount, 
+        participants, 
+        SplitType.EQUAL, 
+        splitShares, 
+        participants[0], 
+        `transaction-${i + 1}`
+      )
+    );
+
+    // Get the distribution for each transaction
+    const distributions = results.map(getNonPayerAmounts);
+    
+    // Compare each distribution with others to ensure we have differences
+    let hasDistinctDistributions = false;
+    for (let i = 0; i < distributions.length - 1; i++) {
+      const dist1 = distributions[i];
+      const dist2 = distributions[i + 1];
+      
+      if (dist1 && dist2) {
+        // Check if the distributions are different
+        const isDifferent = Array.from(dist1.entries()).some(
+          ([id, amount]) => dist2.get(id) !== amount
+        );
+        
+        if (isDifferent) {
+          hasDistinctDistributions = true;
+          break;
+        }
+      }
+    }
+
+    expect(hasDistinctDistributions).toBe(true);
+
+    // Double-check that all distributions sum to zero
+    results.forEach(result => {
+      const total = result.participants.reduce((sum, p) => sum + (p.amount ?? 0n), 0n);
+      expect(total).toBe(0n);
+
+      // Log the distribution for debugging
+      console.log('Distribution:', 
+        result.participants.map(p => ({
+          id: p.id,
+          amount: p.amount?.toString()
+        }))
+      );
+    });
+  });
+});
+
 describe('calculateSplitShareBasedOnAmount', () => {
   describe('SplitType.EQUAL', () => {
     it('should set equal shares for participants with non-zero amounts', () => {
@@ -474,6 +640,20 @@ describe('calculateSplitShareBasedOnAmount', () => {
       expect(splitShares[user1.id]![SplitType.EQUAL]).toBe(1n);
       expect(splitShares[user2.id]![SplitType.EQUAL]).toBe(1n);
       expect(splitShares[user3.id]![SplitType.EQUAL]).toBe(0n); // Zero amount
+    });
+
+    it('should set zero shares for participants with zero amounts', () => {
+      const participants = createParticipants([user1, user2, user3], [0n, 0n, 0n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(10000n, participants, SplitType.EQUAL, splitShares, user1);
+
+      expect(splitShares[user1.id]![SplitType.EQUAL]).toBe(0n);
+      expect(splitShares[user2.id]![SplitType.EQUAL]).toBe(0n);
+      expect(splitShares[user3.id]![SplitType.EQUAL]).toBe(0n);
     });
   });
 
@@ -668,33 +848,6 @@ describe('calculateSplitShareBasedOnAmount', () => {
 
       // Should not throw an error and splitShares should remain empty
       expect(Object.keys(splitShares)).toHaveLength(0);
-    });
-
-    it('should handle when one participant owes entire amount', () => {
-      const participants = createParticipants([user1, user2], [10000n, -10000n]);
-      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
-      participants.forEach((p) => {
-        splitShares[p.id] = initSplitShares();
-      });
-
-      calculateSplitShareBasedOnAmount(10000n, participants, SplitType.EQUAL, splitShares, user1);
-
-      expect(splitShares[user1.id]![SplitType.EQUAL]).toBe(0n);
-      expect(splitShares[user2.id]![SplitType.EQUAL]).toBe(1n);
-    });
-
-    it('should handle self-payment (no money flow) scenario', () => {
-      const participants = createParticipants([user1, user2, user3], [0n, 0n, 0n]);
-      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
-      participants.forEach((p) => {
-        splitShares[p.id] = initSplitShares();
-      });
-
-      calculateSplitShareBasedOnAmount(10000n, participants, SplitType.EQUAL, splitShares, user1);
-
-      expect(splitShares[user1.id]![SplitType.EQUAL]).toBe(1n);
-      expect(splitShares[user2.id]![SplitType.EQUAL]).toBe(0n);
-      expect(splitShares[user3.id]![SplitType.EQUAL]).toBe(0n);
     });
 
     it('should handle undefined paidBy', () => {

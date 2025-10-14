@@ -5,7 +5,6 @@ import { create } from 'zustand';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { type CurrencyCode } from '~/lib/currency';
 import type { TransactionAddInputModel } from '~/types';
-import { shuffleArray } from '~/utils/array';
 import { BigMath } from '~/utils/numbers';
 
 export type Participant = User & { amount?: bigint };
@@ -104,6 +103,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
             s.splitType,
             s.splitShares,
             s.paidBy,
+            s.transactionId
           ),
         };
       }),
@@ -117,6 +117,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
           splitType,
           state.splitShares,
           state.paidBy,
+          state.transactionId
         ),
       })),
     setSplitShare: (splitType, userId, share) =>
@@ -162,6 +163,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
             state.splitType,
             splitShares,
             state.paidBy,
+            state.transactionId
           ),
         };
       }),
@@ -191,6 +193,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
             splitType,
             splitShares,
             state.paidBy,
+            state.transactionId
           ),
         };
       }),
@@ -248,7 +251,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     setPaidBy: (paidBy) =>
       set((s) => ({
         paidBy,
-        ...calculateParticipantSplit(s.amount, s.participants, s.splitType, s.splitShares, paidBy),
+        ...calculateParticipantSplit(s.amount, s.participants, s.splitType, s.splitShares, paidBy, s.description),
       })),
     setCurrentUser: (currentUser) =>
       set((s) => {
@@ -305,6 +308,7 @@ export function calculateParticipantSplit(
   splitType: SplitType,
   splitShares: SplitShares,
   paidBy?: Participant,
+  transactionId: string = ''
 ) {
   let canSplitScreenClosed = true;
   if (0n === amount) {
@@ -374,10 +378,45 @@ export function calculateParticipantSplit(
   const participantsToPick = updatedParticipants.filter((p) => p.amount);
 
   if (0 < participantsToPick.length) {
-    shuffleArray(participantsToPick);
+    
+    const hash = (value: number, inputs: { amount: bigint; transactionId: string }): number => {
+      let hash = 5381;
+
+      // Hash the transactionId first to give it more weight
+      for (let i = 0; i < inputs.transactionId.length; i++) {
+        const char = inputs.transactionId.charCodeAt(i);
+        hash = ((hash << 5) + hash) + char;
+        hash = hash & hash;
+      }
+
+      // Multiply by a large prime to amplify the transaction ID's influence
+      hash *= 31;
+
+      // Then add amount's influence
+      const amountStr = inputs.amount.toString();
+      const lastDigits = amountStr.slice(-6);
+      for (let i = 0; i < lastDigits.length; i++) {
+        const char = lastDigits.charCodeAt(i);
+        hash = ((hash << 5) + hash) + char;
+        hash = hash & hash;
+      }
+
+      // Finally add participant's influence
+      hash = ((hash << 5) + hash) + value;
+      hash = hash & hash;
+      
+      return Math.abs(hash);
+    };
+    
+    const shuffled = [...participantsToPick].sort((a, b) => {
+      const hashA = hash(a.id, { amount, transactionId });
+      const hashB = hash(b.id, { amount, transactionId });
+      return hashA - hashB;
+    });
+    
     let i = 0;
     while (0n !== penniesLeft) {
-      const p = participantsToPick[i % participantsToPick.length]!;
+      const p = shuffled[i % shuffled.length]!;
       p.amount! -= BigMath.sign(penniesLeft);
       penniesLeft -= BigMath.sign(penniesLeft);
       i++;
@@ -397,12 +436,12 @@ export function calculateSplitShareBasedOnAmount(
   splitType: SplitType,
   splitShares: SplitShares,
   paidBy?: User,
+  description: string = '',
 ) {
   switch (splitType) {
     case SplitType.EQUAL:
       participants.forEach((p) => {
-        splitShares[p.id]![splitType] =
-          (p.id === paidBy?.id ? amount : 0n) === p.amount && participants.length > 1 ? 0n : 1n;
+        splitShares[p.id]![splitType] = 0n === p.amount && participants.length > 1 ? 0n : 1n;
       });
 
       break;

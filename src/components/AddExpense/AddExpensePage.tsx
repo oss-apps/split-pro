@@ -1,4 +1,4 @@
-import { HeartHandshakeIcon, Landmark, X } from 'lucide-react';
+import { HeartHandshakeIcon } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -11,12 +11,8 @@ import { currencyConversion, toSafeBigInt, toUIString } from '~/utils/numbers';
 
 import { toast } from 'sonner';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-import { cn } from '~/lib/utils';
-import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { Button } from '../ui/button';
-import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
 import { Input } from '../ui/input';
-import AddBankTransactions from './AddBankTransactions';
 import { CategoryPicker } from './CategoryPicker';
 import { CurrencyPicker } from './CurrencyPicker';
 import { DateSelector } from './DateSelector';
@@ -24,13 +20,14 @@ import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { SplitTypeSection } from './SplitTypeSection';
 import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
+import { CurrencyConversion } from '../Friend/CurrencyConversion';
+import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
   expenseId?: string;
-  bankConnectionEnabled: boolean;
-}> = ({ isStorageConfigured, enableSendingInvites, expenseId, bankConnectionEnabled }) => {
+}> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
   const { t } = useTranslationWithUtils();
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
@@ -47,8 +44,6 @@ export const AddOrEditExpensePage: React.FC<{
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const splitType = useAddExpenseStore((s) => s.splitType);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
-  const transactionId = useAddExpenseStore((s) => s.transactionId);
-
 
   const {
     setCurrency,
@@ -59,37 +54,10 @@ export const AddOrEditExpensePage: React.FC<{
     resetState,
     setSplitScreenOpen,
     setExpenseDate,
-    setTransactionId,
-    setMultipleTransactions,
-    setIsTransactionLoading,
   } = useAddExpenseStore((s) => s.actions);
 
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
   const updateProfile = api.user.updateUserDetail.useMutation();
-
-  React.useEffect(() => {
-    if (expenseData) {
-      setDescription(expenseData.name);
-      setAmount(expenseData.amount);
-      setAmountStr(toUIString(expenseData.amount));
-      setCurrency(expenseData.currency as CurrencyCode);
-      setCategory(expenseData.category);
-      setExpenseDate(expenseData.expenseDate);
-
-      if (expenseData.fileKey) {
-        setFileKey(expenseData.fileKey);
-      }
-    }
-  }, [
-    expenseData,
-    setDescription,
-    setAmount,
-    setAmountStr,
-    setCurrency,
-    setCategory,
-    setExpenseDate,
-    setFileKey,
-  ]);
 
   const onCurrencyPick = useCallback(
     (newCurrency: CurrencyCode) => {
@@ -122,9 +90,6 @@ export const AddOrEditExpensePage: React.FC<{
       return;
     }
 
-    setMultipleTransactions([]);
-    setIsTransactionLoading(false);
-
     const sign = isNegative ? -1n : 1n;
 
     try {
@@ -144,7 +109,6 @@ export const AddOrEditExpensePage: React.FC<{
           fileKey,
           expenseDate,
           expenseId,
-          transactionId,
         },
         {
           onSuccess: (d) => {
@@ -184,9 +148,6 @@ export const AddOrEditExpensePage: React.FC<{
     splitType,
     fileKey,
     isExpenseSettled,
-    setMultipleTransactions,
-    transactionId,
-    setIsTransactionLoading,
   ]);
 
   const handleDescriptionChange = useCallback(
@@ -204,14 +165,6 @@ export const AddOrEditExpensePage: React.FC<{
     },
     [onUpdateAmount],
   );
-
-  const clearFields = useCallback(() => {
-    setAmount(0n);
-    setDescription('');
-    setAmountStr('');
-    setTransactionId();
-    setExpenseDate(new Date());
-  }, [setAmount, setDescription, setAmountStr, setTransactionId, setExpenseDate]);
 
   const previousCurrencyRef = React.useRef<CurrencyCode | null>(null);
 
@@ -329,35 +282,7 @@ export const AddOrEditExpensePage: React.FC<{
               </>
             ) : null}
           </div>
-          <div className="flex items-center justify-around gap-4 px-4 lg:px-0">
-            {/* place for recurring button */}
-            <SponsorUs />
-            <div className="flex gap-2">
-              <Button
-                variant="ghost"
-                className={cn('px-2', transactionId ? 'text-red-500' : 'invisible')}
-                disabled={!transactionId}
-                onClick={clearFields}
-              >
-                <X className="h-6 w-6" />
-              </Button>
-
-              <AddBankTransactions
-                // clearFields={clearFields}
-                onUpdateAmount={onUpdateAmount}
-                bankConnectionEnabled={bankConnectionEnabled}
-              >
-                <Button
-                  variant="ghost"
-                  className="hover:text-foreground/80 items-center justify-between px-2"
-                >
-                  <Landmark
-                    className={cn(transactionId ? 'text-primary' : 'text-white-500', 'h-6 w-6')}
-                  />
-                </Button>
-              </AddBankTransactions>
-            </div>
-          </div>
+          <SponsorUs />
         </>
       )}
     </div>

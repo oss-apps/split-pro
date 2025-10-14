@@ -251,7 +251,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     setPaidBy: (paidBy) =>
       set((s) => ({
         paidBy,
-        ...calculateParticipantSplit(s.amount, s.participants, s.splitType, s.splitShares, paidBy, s.description),
+        ...calculateParticipantSplit(s.amount, s.participants, s.splitType, s.splitShares, paidBy),
       })),
     setCurrentUser: (currentUser) =>
       set((s) => {
@@ -435,8 +435,7 @@ export function calculateSplitShareBasedOnAmount(
   participants: Participant[],
   splitType: SplitType,
   splitShares: SplitShares,
-  paidBy?: User,
-  description: string = '',
+  paidBy?: User
 ) {
   switch (splitType) {
     case SplitType.EQUAL:

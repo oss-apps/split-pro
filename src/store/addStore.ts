@@ -15,22 +15,23 @@ export interface AddExpenseState {
   amount: bigint;
   amountStr: string;
   isNegative: boolean;
-  currentUser: User | undefined;
+  currentUser?: User;
   splitType: SplitType;
-  group: Group | undefined;
+  group?: Group;
   participants: Participant[];
   splitShares: SplitShares;
   description: string;
   currency: CurrencyCode;
   category: string;
   nameOrEmail: string;
-  paidBy: User | undefined;
+  paidBy?: User;
   showFriends: boolean;
   isFileUploading: boolean;
   fileKey?: string;
   canSplitScreenClosed: boolean;
   splitScreenOpen: boolean;
-  expenseDate: Date | undefined;
+  expenseDate: Date;
+  cronExpression: string;
   transactionId?: string;
   multipleTransactions: TransactionAddInputModel[];
   isTransactionLoading: boolean;
@@ -58,6 +59,7 @@ export interface AddExpenseState {
     setTransactionId: (transactionId?: string) => void;
     setMultipleTransactions: (multipleTransactions: TransactionAddInputModel[]) => void;
     setIsTransactionLoading: (isTransactionLoading: boolean) => void;
+    setCronExpression: (cronExpression: string) => void;
   };
 }
 
@@ -67,7 +69,6 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   isNegative: false,
   splitType: SplitType.EQUAL,
   participants: [],
-  group: undefined,
   splitShares: {
     [SplitType.EQUAL]: {},
     [SplitType.PERCENTAGE]: {},
@@ -79,17 +80,16 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   currency: 'USD',
   category: DEFAULT_CATEGORY,
   nameOrEmail: '',
-  paidBy: undefined,
-  currentUser: undefined,
   description: '',
   showFriends: true,
   isFileUploading: false,
-  fileKey: undefined,
   canSplitScreenClosed: true,
   splitScreenOpen: false,
-  expenseDate: undefined,
+  expenseDate: new Date(),
+  repeatEvery: 1,
   multipleTransactions: [],
   isTransactionLoading: false,
+  cronExpression: '',
   actions: {
     setAmount: (realAmount) =>
       set((s) => {
@@ -278,6 +278,16 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         group: undefined,
         amountStr: '',
         splitShares: s.currentUser ? { [s.currentUser.id]: initSplitShares() } : {},
+        isNegative: false,
+        canSplitScreenClosed: true,
+        splitScreenOpen: false,
+        expenseDate: new Date(),
+        transactionId: undefined,
+        multipleTransactions: [],
+        isTransactionLoading: false,
+        cronExpression: '',
+        isFileUploading: false,
+        paidBy: s.currentUser,
       }));
     },
     setSplitScreenOpen: (splitScreenOpen) => set({ splitScreenOpen }),
@@ -285,6 +295,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     setTransactionId: (transactionId) => set({ transactionId }),
     setMultipleTransactions: (multipleTransactions) => set({ multipleTransactions }),
     setIsTransactionLoading: (isTransactionLoading) => set({ isTransactionLoading }),
+    setCronExpression: (cronExpression) => set({ cronExpression }),
   },
 }));
 
@@ -390,7 +401,8 @@ export function calculateSplitShareBasedOnAmount(
   switch (splitType) {
     case SplitType.EQUAL:
       participants.forEach((p) => {
-        splitShares[p.id]![splitType] = 0n === p.amount && participants.length > 1 ? 0n : 1n;
+        splitShares[p.id]![splitType] =
+          (p.id === paidBy?.id ? amount : 0n) === p.amount && participants.length > 1 ? 0n : 1n;
       });
 
       break;

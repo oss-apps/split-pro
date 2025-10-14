@@ -10,6 +10,9 @@ import { BigMath, toUIString } from '~/utils/numbers';
 import { type TFunction } from 'next-i18next';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { withI18nStaticProps } from '~/utils/i18n/server';
+import { RefreshCcwDot } from 'lucide-react';
+import { Button } from '~/components/ui/button';
+import React from 'react';
 
 function getPaymentString(
   user: User,
@@ -48,13 +51,28 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
   const { displayName, t, toUIDate } = useTranslationWithUtils();
   const expensesQuery = api.expense.getAllExpenses.useQuery();
 
+  const actions = React.useMemo(
+    () => (
+      <Link href="/recurring">
+        <Button variant="ghost" size="sm">
+          <RefreshCcwDot className="size-6" />
+        </Button>
+      </Link>
+    ),
+    [],
+  );
+
   return (
     <>
       <Head>
         <title>{t('navigation.activity')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainLayout title={t('navigation.activity')} loading={expensesQuery.isPending}>
+      <MainLayout
+        title={t('navigation.activity')}
+        actions={actions}
+        loading={expensesQuery.isPending}
+      >
         <div className="flex flex-col gap-4">
           {!expensesQuery.data?.length ? (
             <div className="mt-[30vh] text-center text-gray-400">{t('ui.no_activity')}</div>
@@ -86,18 +104,16 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                   </p>
                 )}
 
-                <div>
-                  {getPaymentString(
-                    user,
-                    e.expense.amount,
-                    e.expense.paidBy,
-                    e.amount,
-                    e.expense.splitType === SplitType.SETTLEMENT,
-                    e.expense.currency,
-                    t,
-                    !!e.expense.deletedBy,
-                  )}
-                </div>
+                {getPaymentString(
+                  user,
+                  e.expense.amount,
+                  e.expense.paidBy,
+                  e.amount,
+                  e.expense.splitType === SplitType.SETTLEMENT,
+                  e.expense.currency,
+                  t,
+                  !!e.expense.deletedBy,
+                )}
                 <p className="text-xs text-gray-500">{toUIDate(e.expense.expenseDate)}</p>
               </div>
             </Link>

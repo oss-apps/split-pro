@@ -1,4 +1,4 @@
-import { HeartHandshakeIcon } from 'lucide-react';
+import { HeartHandshakeIcon, Landmark, RefreshCcwDot, X } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -11,23 +11,28 @@ import { currencyConversion, toSafeBigInt, toUIString } from '~/utils/numbers';
 
 import { toast } from 'sonner';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { cronToBackend } from '~/lib/cron';
+import { cn } from '~/lib/utils';
+import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { Button } from '../ui/button';
+import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
 import { Input } from '../ui/input';
+import AddBankTransactions from './AddBankTransactions';
 import { CategoryPicker } from './CategoryPicker';
 import { CurrencyPicker } from './CurrencyPicker';
 import { DateSelector } from './DateSelector';
+import { RecurrenceInput } from './RecurrenceInput';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { SplitTypeSection } from './SplitTypeSection';
 import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
-import { CurrencyConversion } from '../Friend/CurrencyConversion';
-import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
   expenseId?: string;
-}> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
+  bankConnectionEnabled: boolean;
+}> = ({ isStorageConfigured, enableSendingInvites, expenseId, bankConnectionEnabled }) => {
   const { t } = useTranslationWithUtils();
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
@@ -44,6 +49,8 @@ export const AddOrEditExpensePage: React.FC<{
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const splitType = useAddExpenseStore((s) => s.splitType);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
+  const transactionId = useAddExpenseStore((s) => s.transactionId);
+  const cronExpression = useAddExpenseStore((s) => s.cronExpression);
 
   const {
     setCurrency,
@@ -54,6 +61,9 @@ export const AddOrEditExpensePage: React.FC<{
     resetState,
     setSplitScreenOpen,
     setExpenseDate,
+    setTransactionId,
+    setMultipleTransactions,
+    setIsTransactionLoading,
   } = useAddExpenseStore((s) => s.actions);
 
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
@@ -90,6 +100,9 @@ export const AddOrEditExpensePage: React.FC<{
       return;
     }
 
+    setMultipleTransactions([]);
+    setIsTransactionLoading(false);
+
     const sign = isNegative ? -1n : 1n;
 
     try {
@@ -109,13 +122,31 @@ export const AddOrEditExpensePage: React.FC<{
           fileKey,
           expenseDate,
           expenseId,
+          transactionId,
+          cronExpression: cronExpression ? cronToBackend(cronExpression) : undefined,
         },
         {
           onSuccess: (d) => {
             if (d) {
               const id = d?.id ?? expenseId;
-              router
-                .push(group?.id ? `/groups/${group.id}/expenses/${id}` : `/expenses/${id}`)
+
+              let navPromise: () => Promise<any> = () => Promise.resolve(true);
+
+              const { friendId, groupId } = router.query;
+
+              if (friendId && !groupId) {
+                navPromise = () => router.push(`/balances/${friendId as string}/expenses/${id}`);
+              } else if (groupId) {
+                navPromise = () => router.push(`/groups/${groupId as string}/expenses/${id}`);
+              } else {
+                navPromise = () => router.push(`/expenses/${id}?keepAdding=1`);
+              }
+
+              if (expenseId) {
+                navPromise = async () => router.back();
+              }
+
+              navPromise()
                 .then(() => resetState())
                 .catch(console.error);
             }
@@ -148,6 +179,10 @@ export const AddOrEditExpensePage: React.FC<{
     splitType,
     fileKey,
     isExpenseSettled,
+    setMultipleTransactions,
+    transactionId,
+    setIsTransactionLoading,
+    cronExpression,
   ]);
 
   const handleDescriptionChange = useCallback(
@@ -165,6 +200,14 @@ export const AddOrEditExpensePage: React.FC<{
     },
     [onUpdateAmount],
   );
+
+  const clearFields = useCallback(() => {
+    setAmount(0n);
+    setDescription('');
+    setAmountStr('');
+    setTransactionId();
+    setExpenseDate(new Date());
+  }, [setAmount, setDescription, setAmountStr, setTransactionId, setExpenseDate]);
 
   const previousCurrencyRef = React.useRef<CurrencyCode | null>(null);
 
@@ -201,10 +244,14 @@ export const AddOrEditExpensePage: React.FC<{
     );
   }, [amount, currency, onConvertAmount]);
 
+  const onBackButtonPress = useCallback(() => {
+    router.back();
+  }, [router]);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <Button variant="ghost" className="text-primary px-0" onClick={router.back}>
+        <Button variant="ghost" className="text-primary px-0" onClick={onBackButtonPress}>
           {t('actions.cancel')}
         </Button>
         <div className="text-center">
@@ -253,7 +300,7 @@ export const AddOrEditExpensePage: React.FC<{
               <>
                 <SplitTypeSection />
 
-                <div className="mt-4 flex items-center justify-between sm:mt-10">
+                <div className="mt-4 flex items-start justify-between sm:mt-10">
                   <DateSelector
                     mode="single"
                     required
@@ -275,14 +322,52 @@ export const AddOrEditExpensePage: React.FC<{
                       }
                       onClick={addExpense}
                     >
-                      {t('actions.submit')}
+                      {t('actions.save')}
                     </Button>
                   </div>
                 </div>
               </>
             ) : null}
           </div>
-          <SponsorUs />
+          <div className="flex items-center justify-evenly px-4 lg:px-0">
+            <RecurrenceInput>
+              <Button variant="ghost" size="sm">
+                <RefreshCcwDot
+                  className={cn(
+                    cronExpression && 'text-primary',
+                    (!amtStr || !description) && 'invisible',
+                    'size-6',
+                  )}
+                />
+                <span className="sr-only">Toggle recurring expense options</span>
+              </Button>
+            </RecurrenceInput>
+            <SponsorUs />
+            <div className="flex gap-2">
+              <AddBankTransactions
+                // clearFields={clearFields}
+                onUpdateAmount={onUpdateAmount}
+                bankConnectionEnabled={bankConnectionEnabled}
+              >
+                <Button
+                  variant="ghost"
+                  className="hover:text-foreground/80 items-center justify-between px-2"
+                >
+                  <Landmark
+                    className={cn(transactionId ? 'text-primary' : 'text-white-500', 'h-6 w-6')}
+                  />
+                </Button>
+              </AddBankTransactions>
+              <Button
+                variant="ghost"
+                className={cn('px-2', transactionId ? 'text-red-500' : 'invisible')}
+                disabled={!transactionId}
+                onClick={clearFields}
+              >
+                <X className="h-6 w-6" />
+              </Button>
+            </div>
+          </div>
         </>
       )}
     </div>
@@ -292,7 +377,7 @@ export const AddOrEditExpensePage: React.FC<{
 const SponsorUs = () => {
   const { t } = useTranslation();
   return (
-    <div className="flex w-full justify-center">
+    <div className="flex justify-center">
       <Link href="https://github.com/sponsors/krokosik" target="_blank" className="mx-auto">
         <Button
           variant="outline"

@@ -14,6 +14,7 @@ export type CreateExpense = Omit<
   | 'fileKey'
   | 'transactionId'
   | 'otherConversion'
+  | 'recurrenceId'
 > & {
   expenseDate?: Date;
   fileKey?: string;
@@ -45,6 +46,7 @@ export const createExpenseSchema = z.object({
   expenseDate: z.date().optional(),
   expenseId: z.string().optional(),
   otherConversion: z.string().optional(),
+  cronExpression: z.string().optional(),
 }) satisfies z.ZodType<CreateExpense>;
 
 export const createCurrencyConversionSchema = z.object({

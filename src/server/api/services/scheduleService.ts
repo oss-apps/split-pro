@@ -20,3 +20,10 @@ export const createRecurringDeleteBankCacheJob = async (frequency: 'weekly' | 'm
   `;
   }
 };
+
+export const createRecurringExpenseJob = (expenseId: string, cronExpression: string) =>
+  db.$queryRawUnsafe<[{ schedule: bigint }]>(
+    `SELECT cron.schedule($1, $2, $$ SELECT duplicate_expense_with_participants('${expenseId}'::UUID); $$);`,
+    expenseId,
+    cronExpression,
+  );

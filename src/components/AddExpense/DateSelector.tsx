@@ -16,11 +16,11 @@ export const DateSelector: React.FC<DayPickerProps & PropsSingleRequired> = (cal
           <Button
             variant="ghost"
             className={cn(
-              'justify-start px-0 text-left font-normal',
+              'h-9 justify-start p-0 text-left font-normal',
               !calendarProps.selected && 'text-muted-foreground',
             )}
           >
-            <CalendarIcon className="text-primary mr-2 h-6 w-6" />
+            <CalendarIcon className="text-primary mr-2 size-6" />
             {calendarProps.selected ? (
               toUIDate(calendarProps.selected, { useToday: true })
             ) : (

@@ -19,6 +19,7 @@ import { currencyRateProvider } from '../services/currencyRateService';
 import { isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
+import { createRecurringExpenseJob } from '../services/scheduleService';
 
 export const expenseRouter = createTRPCRouter({
   getBalances: protectedProcedure.query(async ({ ctx }) => {
@@ -105,6 +106,31 @@ export const expenseRouter = createTRPCRouter({
         const expense = input.expenseId
           ? await editExpense(input, ctx.session.user.id)
           : await createExpense(input, ctx.session.user.id);
+
+        if (expense && input.cronExpression) {
+          const [{ schedule }] = await createRecurringExpenseJob(expense.id, input.cronExpression);
+          console.log('Created recurring expense job with jobid:', schedule);
+
+          await db.expense.update({
+            where: { id: expense.id },
+            data: {
+              recurrence: {
+                upsert: {
+                  create: {
+                    job: {
+                      connect: { jobid: schedule },
+                    },
+                  },
+                  update: {
+                    job: {
+                      connect: { jobid: schedule },
+                    },
+                  },
+                },
+              },
+            },
+          });
+        }
 
         return expense;
       } catch (error) {
@@ -313,6 +339,15 @@ export const expenseRouter = createTRPCRouter({
           deletedByUser: true,
           updatedByUser: true,
           group: true,
+          recurrence: {
+            include: {
+              job: {
+                select: {
+                  schedule: true,
+                },
+              },
+            },
+          },
           conversionTo: {
             include: {
               expenseParticipants: {
@@ -353,6 +388,10 @@ export const expenseRouter = createTRPCRouter({
         });
       }
 
+      if (expense?.recurrence?.job.schedule) {
+        expense.recurrence.job.schedule = expense.recurrence.job.schedule.replaceAll('$', 'L');
+      }
+
       return expense;
     }),
 
@@ -391,6 +430,41 @@ export const expenseRouter = createTRPCRouter({
     });
 
     return expenses;
+  }),
+
+  getRecurringExpenses: protectedProcedure.query(async ({ ctx }) => {
+    const recurrences = await db.expenseRecurrence.findMany({
+      include: {
+        job: true,
+        expense: {
+          take: 1,
+          orderBy: { createdAt: 'desc' },
+          where: {
+            deletedBy: null,
+            expenseParticipants: {
+              some: {
+                userId: ctx.session.user.id,
+              },
+            },
+            recurrenceId: { not: null },
+          },
+          include: {
+            addedByUser: {
+              select: {
+                name: true,
+                email: true,
+                image: true,
+                id: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return recurrences
+      .filter((r) => r.expense.length > 0)
+      .map((r) => ({ ...r, expense: r.expense[0]! }));
   }),
 
   getUploadUrl: protectedProcedure

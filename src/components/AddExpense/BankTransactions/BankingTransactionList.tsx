@@ -37,6 +37,9 @@ export const BankingTransactionList: React.FC<{
   const userQuery = api.user.me.useQuery();
   const transactions = api.bankTransactions.getTransactions.useQuery(
     userQuery.data?.obapiProviderId,
+    {
+      enabled: bankConnectionEnabled && !!userQuery.data?.obapiProviderId,
+    },
   );
 
   const expensesQuery = api.user.getOwnExpenses.useQuery();
@@ -67,10 +70,6 @@ export const BankingTransactionList: React.FC<{
     const transaction = expensesQuery?.data?.find((item) => item.transactionId === transactionId);
     return transaction?.group?.name ? ` to ${transaction.group.name}` : '';
   };
-
-  if (!bankConnectionEnabled) {
-    return null;
-  }
 
   const transactionsArray = returnTransactionsArray();
 
@@ -113,6 +112,10 @@ export const BankingTransactionList: React.FC<{
     //   setMultipleTransactions([]);
     // }
   }, []);
+
+  if (!bankConnectionEnabled || !userQuery.data?.obapiProviderId) {
+    return null;
+  }
 
   return (
     <AppDrawer

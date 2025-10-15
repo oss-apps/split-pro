@@ -1,38 +1,43 @@
-import { HeartHandshakeIcon, Landmark, RefreshCcwDot, X } from 'lucide-react';
-import { useTranslation } from 'next-i18next';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import React, { useCallback, useMemo } from 'react';
+import { HeartHandshakeIcon, Landmark, RefreshCcwDot, X } from "lucide-react";
+import { useTranslation } from "next-i18next";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useCallback, useMemo } from "react";
 
-import { type CurrencyCode } from '~/lib/currency';
-import { useAddExpenseStore } from '~/store/addStore';
-import { api } from '~/utils/api';
-import { currencyConversion, toSafeBigInt, toUIString } from '~/utils/numbers';
+import { type CurrencyCode } from "~/lib/currency";
+import { useAddExpenseStore } from "~/store/addStore";
+import { api } from "~/utils/api";
+import { currencyConversion, toSafeBigInt, toUIString } from "~/utils/numbers";
 
-import { toast } from 'sonner';
-import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-import { cronToBackend } from '~/lib/cron';
-import { cn } from '~/lib/utils';
-import { CurrencyConversion } from '../Friend/CurrencyConversion';
-import { Button } from '../ui/button';
-import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
-import { Input } from '../ui/input';
-import AddBankTransactions from './AddBankTransactions';
-import { CategoryPicker } from './CategoryPicker';
-import { CurrencyPicker } from './CurrencyPicker';
-import { DateSelector } from './DateSelector';
-import { RecurrenceInput } from './RecurrenceInput';
-import { SelectUserOrGroup } from './SelectUserOrGroup';
-import { SplitTypeSection } from './SplitTypeSection';
-import { UploadFile } from './UploadFile';
-import { UserInput } from './UserInput';
+import { toast } from "sonner";
+import { useTranslationWithUtils } from "~/hooks/useTranslationWithUtils";
+import { cronToBackend } from "~/lib/cron";
+import { cn } from "~/lib/utils";
+import { CurrencyConversion } from "../Friend/CurrencyConversion";
+import { Button } from "../ui/button";
+import { CURRENCY_CONVERSION_ICON } from "../ui/categoryIcons";
+import { Input } from "../ui/input";
+import AddBankTransactions from "./AddBankTransactions";
+import { CategoryPicker } from "./CategoryPicker";
+import { CurrencyPicker } from "./CurrencyPicker";
+import { DateSelector } from "./DateSelector";
+import { RecurrenceInput } from "./RecurrenceInput";
+import { SelectUserOrGroup } from "./SelectUserOrGroup";
+import { SplitTypeSection } from "./SplitTypeSection";
+import { UploadFile } from "./UploadFile";
+import { UserInput } from "./UserInput";
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
   expenseId?: string;
   bankConnectionEnabled: boolean;
-}> = ({ isStorageConfigured, enableSendingInvites, expenseId, bankConnectionEnabled }) => {
+}> = ({
+  isStorageConfigured,
+  enableSendingInvites,
+  expenseId,
+  bankConnectionEnabled,
+}) => {
   const { t } = useTranslationWithUtils();
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
@@ -83,7 +88,7 @@ export const AddOrEditExpensePage: React.FC<{
 
   const onUpdateAmount = useCallback(
     (amt: string) => {
-      const _amt = amt.replace(',', '.');
+      const _amt = amt.replace(",", ".");
       setAmountStr(_amt);
       setAmount(toSafeBigInt(_amt));
     },
@@ -123,7 +128,9 @@ export const AddOrEditExpensePage: React.FC<{
           expenseDate,
           expenseId,
           transactionId,
-          cronExpression: cronExpression ? cronToBackend(cronExpression) : undefined,
+          cronExpression: cronExpression
+            ? cronToBackend(cronExpression)
+            : undefined,
         },
         {
           onSuccess: (d) => {
@@ -135,9 +142,11 @@ export const AddOrEditExpensePage: React.FC<{
               const { friendId, groupId } = router.query;
 
               if (friendId && !groupId) {
-                navPromise = () => router.push(`/balances/${friendId as string}/expenses/${id}`);
+                navPromise = () =>
+                  router.push(`/balances/${friendId as string}/expenses/${id}`);
               } else if (groupId) {
-                navPromise = () => router.push(`/groups/${groupId as string}/expenses/${id}`);
+                navPromise = () =>
+                  router.push(`/groups/${groupId as string}/expenses/${id}`);
               } else {
                 navPromise = () => router.push(`/expenses/${id}?keepAdding=1`);
               }
@@ -158,7 +167,9 @@ export const AddOrEditExpensePage: React.FC<{
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error('An unexpected error occurred while submitting the expense.');
+        toast.error(
+          "An unexpected error occurred while submitting the expense.",
+        );
       }
     }
   }, [
@@ -187,7 +198,7 @@ export const AddOrEditExpensePage: React.FC<{
 
   const handleDescriptionChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setDescription(e.target.value.toString() ?? '');
+      setDescription(e.target.value.toString() ?? "");
     },
     [setDescription],
   );
@@ -203,17 +214,26 @@ export const AddOrEditExpensePage: React.FC<{
 
   const clearFields = useCallback(() => {
     setAmount(0n);
-    setDescription('');
-    setAmountStr('');
+    setDescription("");
+    setAmountStr("");
     setTransactionId();
     setExpenseDate(new Date());
-  }, [setAmount, setDescription, setAmountStr, setTransactionId, setExpenseDate]);
+  }, [
+    setAmount,
+    setDescription,
+    setAmountStr,
+    setTransactionId,
+    setExpenseDate,
+  ]);
 
   const previousCurrencyRef = React.useRef<CurrencyCode | null>(null);
 
-  const onConvertAmount: React.ComponentProps<typeof CurrencyConversion>['onSubmit'] = useCallback(
+  const onConvertAmount: React.ComponentProps<
+    typeof CurrencyConversion
+  >["onSubmit"] = useCallback(
     ({ amount: absAmount, rate }) => {
-      const targetAmount = (absAmount >= 0n ? 1n : -1n) * currencyConversion(absAmount, rate);
+      const targetAmount =
+        (absAmount >= 0n ? 1n : -1n) * currencyConversion(absAmount, rate);
       onUpdateAmount(toUIString(targetAmount));
       previousCurrencyRef.current = null;
     },
@@ -251,22 +271,29 @@ export const AddOrEditExpensePage: React.FC<{
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <Button variant="ghost" className="text-primary px-0" onClick={onBackButtonPress}>
-          {t('actions.cancel')}
+        <Button
+          variant="ghost"
+          className="text-primary px-0"
+          onClick={onBackButtonPress}
+        >
+          {t("actions.cancel")}
         </Button>
         <div className="text-center">
-          {expenseId ? t('actions.edit_expense') : t('actions.add_expense')}
+          {expenseId ? t("actions.edit_expense") : t("actions.add_expense")}
         </div>
         <Button
           variant="ghost"
           className="text-primary px-0"
           disabled={
-            addExpenseMutation.isPending || !amount || '' === description || isFileUploading
+            addExpenseMutation.isPending ||
+            !amount ||
+            "" === description ||
+            isFileUploading
           }
           onClick={addExpense}
         >
-          {t('actions.save')}
-        </Button>{' '}
+          {t("actions.save")}
+        </Button>{" "}
       </div>
       <UserInput isEditing={!!expenseId} />
       {showFriends || (1 === participants.length && !group) ? (
@@ -276,7 +303,9 @@ export const AddOrEditExpensePage: React.FC<{
           <div className="mt-4 flex gap-2 sm:mt-10">
             <CategoryPicker category={category} onCategoryPick={setCategory} />
             <Input
-              placeholder={t('expense_details.add_expense_details.description_placeholder')}
+              placeholder={t(
+                "expense_details.add_expense_details.description_placeholder",
+              )}
               value={description}
               onChange={handleDescriptionChange}
               className="text-lg placeholder:text-sm"
@@ -284,9 +313,14 @@ export const AddOrEditExpensePage: React.FC<{
             />
           </div>
           <div className="flex gap-2">
-            <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
+            <CurrencyPicker
+              currentCurrency={currency}
+              onCurrencyPick={onCurrencyPick}
+            />
             <Input
-              placeholder={t('expense_details.add_expense_details.amount_placeholder')}
+              placeholder={t(
+                "expense_details.add_expense_details.amount_placeholder",
+              )}
               className="text-lg placeholder:text-sm"
               type="number"
               inputMode="decimal"
@@ -296,7 +330,7 @@ export const AddOrEditExpensePage: React.FC<{
             />
           </div>
           <div className="h-[180px]">
-            {amount && '' !== description ? (
+            {amount && "" !== description ? (
               <>
                 <SplitTypeSection />
 
@@ -316,13 +350,13 @@ export const AddOrEditExpensePage: React.FC<{
                       disabled={
                         addExpenseMutation.isPending ||
                         !amount ||
-                        '' === description ||
+                        "" === description ||
                         isFileUploading ||
                         !isExpenseSettled
                       }
                       onClick={addExpense}
                     >
-                      {t('actions.save')}
+                      {t("actions.save")}
                     </Button>
                   </div>
                 </div>
@@ -334,12 +368,14 @@ export const AddOrEditExpensePage: React.FC<{
               <Button variant="ghost" size="sm">
                 <RefreshCcwDot
                   className={cn(
-                    cronExpression && 'text-primary',
-                    (!amtStr || !description) && 'invisible',
-                    'size-6',
+                    cronExpression && "text-primary",
+                    (!amtStr || !description) && "invisible",
+                    "size-6",
                   )}
                 />
-                <span className="sr-only">Toggle recurring expense options</span>
+                <span className="sr-only">
+                  Toggle recurring expense options
+                </span>
               </Button>
             </RecurrenceInput>
             <SponsorUs />
@@ -354,13 +390,19 @@ export const AddOrEditExpensePage: React.FC<{
                   className="hover:text-foreground/80 items-center justify-between px-2"
                 >
                   <Landmark
-                    className={cn(transactionId ? 'text-primary' : 'text-white-500', 'h-6 w-6')}
+                    className={cn(
+                      transactionId ? "text-primary" : "text-white-500",
+                      "h-6 w-6",
+                    )}
                   />
                 </Button>
               </AddBankTransactions>
               <Button
                 variant="ghost"
-                className={cn('px-2', transactionId ? 'text-red-500' : 'invisible')}
+                className={cn(
+                  "px-2",
+                  transactionId ? "text-red-500" : "invisible",
+                )}
                 disabled={!transactionId}
                 onClick={clearFields}
               >
@@ -378,14 +420,18 @@ const SponsorUs = () => {
   const { t } = useTranslation();
   return (
     <div className="flex justify-center">
-      <Link href="https://github.com/sponsors/krokosik" target="_blank" className="mx-auto">
+      <Link
+        href="https://github.com/sponsors/krokosik"
+        target="_blank"
+        className="mx-auto"
+      >
         <Button
           variant="outline"
           className="text-md hover:text-foreground/80 justify-between rounded-full border-pink-500"
         >
           <div className="flex items-center gap-4">
             <HeartHandshakeIcon className="h-5 w-5 text-pink-500" />
-            {t('expense_details.add_expense_details.sponsor_us')}
+            {t("expense_details.add_expense_details.sponsor_us")}
           </div>
         </Button>
       </Link>

@@ -3,7 +3,7 @@ import type { SplitType } from '@prisma/client';
 import { addDays } from 'date-fns';
 import type { CategoryItem } from '~/lib/category';
 import { generateExpenseName } from './expenseNameGenerator';
-import { type DummyGroupInfo, DummyGroupType } from './groupGenerator';
+import { type DummyGroupInfo, type DummyGroupType } from './groupGenerator';
 import {
   CATEGORY_AMOUNT_RANGES,
   DIRECT_EXPENSE_AMOUNT_RANGE,
@@ -152,7 +152,7 @@ export const generateGroupExpenses = (group: DummyGroupInfo) => {
   const expenses = [];
 
   const addUntil =
-    group.type === DummyGroupType.Trip
+    group.type === 'trip'
       ? addDays(group.createdAt, faker.number.int({ min: 3, max: 14 }))
       : faker.date.recent();
 
@@ -307,3 +307,5 @@ export const generateAllExpenses = (users: DummyUserInfo[], groups: DummyGroupIn
 
   return [...groupExpenses, ...directExpenses];
 };
+
+export type DummyExpenseInfo = ReturnType<typeof generateAllExpenses>[number];

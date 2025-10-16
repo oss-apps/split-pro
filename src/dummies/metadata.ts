@@ -1,5 +1,5 @@
 import type { CategoryItem } from '~/lib/category';
-import { DummyGroupType } from './groupGenerator';
+import type { DummyGroupType } from './groupGenerator';
 
 /**
  * Amount ranges for each category (in cents, already BigInt values)
@@ -74,7 +74,7 @@ export const CATEGORY_AMOUNT_RANGES = {
  * Weights should sum to approximately 1.0
  */
 export const GROUP_TYPE_CATEGORY_AFFINITY = {
-  [DummyGroupType.Trip]: {
+  trip: {
     travel: 0.4,
     food: 0.35,
     entertainment: 0.15,
@@ -83,7 +83,7 @@ export const GROUP_TYPE_CATEGORY_AFFINITY = {
     home: 0.02,
     general: 0.01,
   },
-  [DummyGroupType.Job]: {
+  job: {
     food: 0.5,
     utilities: 0.2,
     travel: 0.15,
@@ -92,7 +92,7 @@ export const GROUP_TYPE_CATEGORY_AFFINITY = {
     entertainment: 0.02,
     general: 0.01,
   },
-  [DummyGroupType.Household]: {
+  household: {
     utilities: 0.35,
     home: 0.3,
     food: 0.2,
@@ -101,7 +101,7 @@ export const GROUP_TYPE_CATEGORY_AFFINITY = {
     entertainment: 0.02,
     general: 0.01,
   },
-  [DummyGroupType.CowFriends]: {
+  friends: {
     food: 0.35,
     entertainment: 0.3,
     travel: 0.15,
@@ -131,10 +131,10 @@ export const DIRECT_EXPENSE_AMOUNT_RANGE = [500n, 15000n] as const; // $5.00–$
  * These are base expectations; actual counts are randomized around these
  */
 export const EXPENSE_FREQUENCY_BY_GROUP_TYPE = {
-  [DummyGroupType.Trip]: [5, 30], // 5–30 expenses per trip
-  [DummyGroupType.Job]: [15, 100], // 15–100 expenses per job group
-  [DummyGroupType.Household]: [20, 200], // 20–200 expenses per household
-  [DummyGroupType.CowFriends]: [3, 20], // 3–20 expenses per friend group
+  trip: [5, 30], // 5–30 expenses per trip
+  job: [15, 100], // 15–100 expenses per job group
+  household: [20, 200], // 20–200 expenses per household
+  friends: [3, 20], // 3–20 expenses per friend group
 } as const;
 
 /**
@@ -259,9 +259,10 @@ export const EXPENSE_NAME_TEMPLATES = {
  */
 export const SPLIT_TYPE_WEIGHTS = {
   EQUAL: 0.6, // Most common: even splits
-  PERCENTAGE: 0.2, // Some custom percentages
+  PERCENTAGE: 0.15, // Some custom percentages
   EXACT: 0.15, // Specific amounts
   SHARE: 0.05, // Share-based splits
+  ADJUSTMENT: 0.05, // Small adjustments
 } as const;
 
 /**

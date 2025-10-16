@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 
-const USER_COUNT = 1000;
+const USER_COUNT = 150;
 
 const weightedCurrencies = [
   { value: 'USD', weight: 60 },

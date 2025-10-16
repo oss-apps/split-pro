@@ -3,8 +3,9 @@ import { generateAllExpenses } from './expenseGenerator';
 import { generateUsers } from './userGenerator';
 import { generateGroups } from './groupGenerator';
 import { createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { argv } from 'node:process';
+import { formatSeedStatisticsMarkdown, generateSeedStatistics } from './stats';
 import '~/utils/bigintPolyfill';
 
 const SEED = 2137;
@@ -42,3 +43,10 @@ If you did not intend to change the dummy data, please investigate the cause of 
   console.warn('***********************************************');
   console.warn(msg);
 }
+
+// Generate and save seed statistics as markdown
+const stats = generateSeedStatistics(dummyUsers, dummyGroups, dummyExpenses);
+const statsMarkdown = formatSeedStatisticsMarkdown(stats);
+await writeFile('./SEED_STATISTICS.md', statsMarkdown).catch((err) => {
+  console.warn('Failed to write seed statistics:', err instanceof Error ? err.message : err);
+});

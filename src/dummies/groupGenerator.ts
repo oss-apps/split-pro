@@ -1,34 +1,29 @@
 import { faker } from '@faker-js/faker';
 import type { DummyCurrencyCode, DummyUserInfo } from './userGenerator';
 
-const GROUP_COUNT = 200;
+const GROUP_COUNT = 150;
 
-export enum DummyGroupType {
-  Trip,
-  Job,
-  Household,
-  CowFriends,
-}
+export type DummyGroupType = 'trip' | 'job' | 'household' | 'friends';
 
 const groupNameGenerators = {
-  [DummyGroupType.Trip]: (date: Date) => {
+  trip: (date: Date) => {
     const destination = faker.location.city();
     return `${destination} Trip ${date.getFullYear()}`;
   },
-  [DummyGroupType.Job]: () => {
+  job: () => {
     const company = faker.company.name();
     return `Expenses at ${company}`;
   },
-  [DummyGroupType.Household]: () => {
+  household: () => {
     const street = faker.location.street();
     return `Household at ${street}`;
   },
-  [DummyGroupType.CowFriends]: () => {
+  friends: () => {
     const cow = faker.animal.cow();
     const adj = faker.word.adjective({ length: { min: 4, max: 10 } });
     return `${adj} ${cow}s`;
   },
-};
+} as const satisfies Record<DummyGroupType, any>;
 
 const gaussianRandom = (mean = 0, stdev = 1) => {
   const u = 1 - faker.number.float({ min: 0, max: 1 }); // Converting [0,1) to (0,1)
@@ -40,18 +35,18 @@ const gaussianRandom = (mean = 0, stdev = 1) => {
 
 export const generateGroups = (users: DummyUserInfo[]) => {
   const getGroupMemberCount = () => {
-    const res = gaussianRandom(6, 1);
-    return Math.max(Math.round(res), 3);
+    const res = gaussianRandom(6, 2);
+    return Math.max(Math.round(res), 4);
   };
 
   const groups = [];
 
   const weightedTypes = [
-    { weight: 0.3, value: DummyGroupType.Trip },
-    { weight: 0.3, value: DummyGroupType.Job },
-    { weight: 0.3, value: DummyGroupType.Household },
-    { weight: 0.1, value: DummyGroupType.CowFriends },
-  ];
+    { weight: 0.3, value: 'trip' },
+    { weight: 0.3, value: 'job' },
+    { weight: 0.3, value: 'household' },
+    { weight: 0.1, value: 'friends' },
+  ] as const;
 
   while (groups.length < GROUP_COUNT) {
     const type = faker.helpers.weightedArrayElement(weightedTypes);

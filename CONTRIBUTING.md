@@ -99,3 +99,9 @@ There is also a markdown report being generated on each run and you can see it i
 like the most connected accounts, which you can log into to have a populated app.
 
 If you need to tweak the script for your use case (like faster seeding with less expenses or DB stress testing), feel free to tweak the parameters in the `src/dummies` directory.
+
+## AI Contribution policy
+
+While I am not against the usage of AI and also utilize it to some extent in this repo, I would like to establish the following policy and AI contributions. Each PR must explicitly
+state that it was made with the use of AI and to what extent. The changes also MUST be reviewed and I reserve the right to instantly close a PR without comment, as I am not willing to sacrifice
+my time for someone who could not even read and understand what they are submitting.

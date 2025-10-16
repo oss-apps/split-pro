@@ -97,3 +97,5 @@ You can use it for development and it is strongly advised, when reporting issues
 is deterministic. If the database was not seeded automatically, you can run `pnpm prisma migrate reset` to get back to the pure seeded state.
 There is also a markdown report being generated on each run and you can see it in the project root directory. It features some useful statistic
 like the most connected accounts, which you can log into to have a populated app.
+
+If you need to tweak the script for your use case (like faster seeding with less expenses or DB stress testing), feel free to tweak the parameters in the `src/dummies` directory.

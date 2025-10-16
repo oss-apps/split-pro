@@ -1,13 +1,10 @@
 import { faker } from '@faker-js/faker';
+import type { DummyUserInfo } from './userGenerator';
 
 /**
  * Selects participants and payers for expenses based on context
  * Handles both group and direct user-to-user expenses
  */
-
-export interface SimpleUser {
-  id: number;
-}
 
 /**
  * Selects a payer from a group of participants
@@ -21,7 +18,10 @@ export interface SimpleUser {
  * selectPayer([{id: 1}, {id: 2}, {id: 3}])
  * // Returns: {id: 2}
  */
-export const selectPayer = (participants: SimpleUser[], preferredPayerId?: number): SimpleUser => {
+export const selectPayer = (
+  participants: DummyUserInfo[],
+  preferredPayerId?: number,
+): DummyUserInfo => {
   if (participants.length === 0) {
     throw new Error('Cannot select payer: no participants provided');
   }
@@ -62,13 +62,13 @@ export const selectPayer = (participants: SimpleUser[], preferredPayerId?: numbe
  * // Could return: [{id: 1}, {id: 2}, {id: 3}] (subset strategy)
  */
 export const selectGroupParticipants = (
-  groupMembers: SimpleUser[],
+  groupMembers: DummyUserInfo[],
   strategyWeights: Record<'allMembers' | 'subset' | 'pair', number> = {
     allMembers: 0.4,
     subset: 0.5,
     pair: 0.1,
   },
-): SimpleUser[] => {
+): DummyUserInfo[] => {
   if (groupMembers.length === 0) {
     throw new Error('Cannot select participants: no group members provided');
   }
@@ -126,8 +126,8 @@ export const selectGroupParticipants = (
  * // Could return: [{id: 1}, {id: 2}, {id: 3}] (3 people hanging out)
  */
 export const selectDirectExpenseParticipants = (
-  potentialParticipants: SimpleUser[],
-): SimpleUser[] => {
+  potentialParticipants: DummyUserInfo[],
+): DummyUserInfo[] => {
   if (potentialParticipants.length < 2) {
     throw new Error('Cannot create direct expense: at least 2 participants required');
   }
@@ -159,10 +159,10 @@ export const selectDirectExpenseParticipants = (
  * // Returns: [{id: 1}, {id: 2}] (prefers group member 1, includes 2 for variety)
  */
 export const filterParticipantsByGroup = (
-  potentialParticipants: SimpleUser[],
-  groupMembers: SimpleUser[],
+  potentialParticipants: DummyUserInfo[],
+  groupMembers: DummyUserInfo[],
   minRequired = 2,
-): SimpleUser[] => {
+): DummyUserInfo[] => {
   if (potentialParticipants.length === 0) {
     throw new Error('No potential participants provided');
   }

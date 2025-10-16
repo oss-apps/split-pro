@@ -1,16 +1,5 @@
-/**
- * Currency conversion multipliers from USD to other currencies
- * Used to convert amount ranges to realistic values in different currencies
- * Base currency is USD (multiplier = 1)
- */
-export const CURRENCY_MULTIPLIERS = {
-  USD: 1,
-  EUR: 0.8588,
-  GBP: 0.7462,
-  JPY: 151,
-  BHD: 0.376,
-  CHF: 0.7968,
-} as const;
+import type { CategoryItem } from '~/lib/category';
+import { DummyGroupType } from './groupGenerator';
 
 /**
  * Amount ranges for each category (in cents, already BigInt values)
@@ -77,7 +66,7 @@ export const CATEGORY_AMOUNT_RANGES = {
 
   // General category
   general: [500n, 20000n], // $5.00–$200.00 for misc
-} as const;
+} as const satisfies Record<CategoryItem, readonly [bigint, bigint]>;
 
 /**
  * Group type to category affinity weights
@@ -85,7 +74,7 @@ export const CATEGORY_AMOUNT_RANGES = {
  * Weights should sum to approximately 1.0
  */
 export const GROUP_TYPE_CATEGORY_AFFINITY = {
-  trip: {
+  [DummyGroupType.Trip]: {
     travel: 0.4,
     food: 0.35,
     entertainment: 0.15,
@@ -94,7 +83,7 @@ export const GROUP_TYPE_CATEGORY_AFFINITY = {
     home: 0.02,
     general: 0.01,
   },
-  job: {
+  [DummyGroupType.Job]: {
     food: 0.5,
     utilities: 0.2,
     travel: 0.15,
@@ -103,7 +92,7 @@ export const GROUP_TYPE_CATEGORY_AFFINITY = {
     entertainment: 0.02,
     general: 0.0,
   },
-  household: {
+  [DummyGroupType.Household]: {
     utilities: 0.35,
     home: 0.3,
     food: 0.2,
@@ -112,7 +101,7 @@ export const GROUP_TYPE_CATEGORY_AFFINITY = {
     entertainment: 0.02,
     general: 0.01,
   },
-  cow_friends: {
+  [DummyGroupType.CowFriends]: {
     food: 0.35,
     entertainment: 0.3,
     travel: 0.15,
@@ -122,6 +111,8 @@ export const GROUP_TYPE_CATEGORY_AFFINITY = {
     general: 0.02,
   },
 } as const;
+
+export type DummyGroupCategory = keyof (typeof GROUP_TYPE_CATEGORY_AFFINITY)[DummyGroupType];
 
 /**
  * Direct user-to-user expense categories
@@ -140,10 +131,10 @@ export const DIRECT_EXPENSE_AMOUNT_RANGE = [500n, 15000n] as const; // $5.00–$
  * These are base expectations; actual counts are randomized around these
  */
 export const EXPENSE_FREQUENCY_BY_GROUP_TYPE = {
-  trip: [5, 30], // 5–30 expenses per trip
-  job: [15, 100], // 15–100 expenses per job group
-  household: [20, 200], // 20–200 expenses per household
-  cow_friends: [3, 20], // 3–20 expenses per friend group
+  [DummyGroupType.Trip]: [5, 30], // 5–30 expenses per trip
+  [DummyGroupType.Job]: [15, 100], // 15–100 expenses per job group
+  [DummyGroupType.Household]: [20, 200], // 20–200 expenses per household
+  [DummyGroupType.CowFriends]: [3, 20], // 3–20 expenses per friend group
 } as const;
 
 /**

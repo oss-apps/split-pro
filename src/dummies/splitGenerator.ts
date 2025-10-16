@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { SplitType } from '@prisma/client';
+import { type SplitShares, initSplitShares } from '~/store/addStore';
 
 /**
  * Generates realistic split shares for expense distribution
@@ -18,9 +19,12 @@ interface ParticipantId {
  * @param participants - Array of participant IDs
  * @returns Record mapping participant ID to share value (0n = excluded, 1n = included)
  */
-export const generateEqualShares = (participants: ParticipantId[]): Record<number, bigint> =>
-  participants.reduce<Record<number, bigint>>((acc, p) => {
-    acc[p.id] = 1n; // All participants included in equal split
+const generateEqualShares = (participants: ParticipantId[]): SplitShares =>
+  participants.reduce<SplitShares>((acc, p) => {
+    acc[p.id] = {
+      ...initSplitShares(),
+      [SplitType.EQUAL]: 1n,
+    }; // All participants included in equal split
     return acc;
   }, {});
 
@@ -32,13 +36,18 @@ export const generateEqualShares = (participants: ParticipantId[]): Record<numbe
  * @param participants - Array of participant IDs
  * @returns Record mapping participant ID to percentage share (0-10000 representing 0-100%)
  */
-export const generatePercentageShares = (participants: ParticipantId[]): Record<number, bigint> => {
+const generatePercentageShares = (participants: ParticipantId[]): SplitShares => {
   if (participants.length === 0) {
     return {};
   }
 
   if (participants.length === 1) {
-    return { [participants[0]!.id]: 10000n }; // 100%
+    return {
+      [participants[0]!.id]: {
+        ...initSplitShares(),
+        [SplitType.PERCENTAGE]: 10000n,
+      },
+    }; // 100%
   }
 
   // Generate random percentages for first n-1 participants
@@ -48,11 +57,17 @@ export const generatePercentageShares = (participants: ParticipantId[]): Record<
   const lastParticipantPercentage = Math.max(0, 100 - totalPercentage);
 
   // Convert percentages to the format used (0-10000)
-  const shares: Record<number, bigint> = {};
+  const shares: SplitShares = {};
   percentages.forEach((percentage, index) => {
-    shares[participants[index]!.id] = BigInt(percentage * 100);
+    shares[participants[index]!.id] = {
+      ...initSplitShares(),
+      [SplitType.PERCENTAGE]: BigInt(percentage * 100),
+    };
   });
-  shares[participants[participants.length - 1]!.id] = BigInt(lastParticipantPercentage * 100);
+  shares[participants[participants.length - 1]!.id] = {
+    ...initSplitShares(),
+    [SplitType.PERCENTAGE]: BigInt(lastParticipantPercentage * 100),
+  };
 
   return shares;
 };
@@ -65,15 +80,15 @@ export const generatePercentageShares = (participants: ParticipantId[]): Record<
  * @param participants - Array of participant IDs
  * @returns Record mapping participant ID to share count (multiplied by 100)
  */
-export const generateShareBasedShares = (participants: ParticipantId[]): Record<number, bigint> => {
+const generateShareBasedShares = (participants: ParticipantId[]): SplitShares => {
   if (participants.length === 0) {
     return {};
   }
 
-  return participants.reduce<Record<number, bigint>>((acc, p) => {
+  return participants.reduce<SplitShares>((acc, p) => {
     // Each participant gets 1-4 shares
     const shareCount = faker.number.int({ min: 1, max: 4 });
-    acc[p.id] = BigInt(shareCount * 100);
+    acc[p.id] = { ...initSplitShares(), [SplitType.SHARE]: BigInt(shareCount * 100) };
     return acc;
   }, {});
 };
@@ -88,10 +103,7 @@ export const generateShareBasedShares = (participants: ParticipantId[]): Record<
  * @param totalAmount - Total expense amount in cents
  * @returns Record mapping participant ID to their exact share amount
  */
-export const generateExactShares = (
-  participants: ParticipantId[],
-  totalAmount: bigint,
-): Record<number, bigint> => {
+const generateExactShares = (participants: ParticipantId[], totalAmount: bigint): SplitShares => {
   if (participants.length === 0) {
     return {};
   }
@@ -101,12 +113,12 @@ export const generateExactShares = (
   const sharePerPerson = totalAmount / BigInt(participants.length);
   const remainder = totalAmount % BigInt(participants.length);
 
-  const shares: Record<number, bigint> = {};
+  const shares: SplitShares = {};
 
   participants.forEach((p, index) => {
     // Distribute remainder to first participant(s)
     const extra = index < Number(remainder) ? 1n : 0n;
-    shares[p.id] = sharePerPerson + extra;
+    shares[p.id] = { ...initSplitShares(), [SplitType.EXACT]: sharePerPerson + extra };
   });
 
   return shares;
@@ -115,34 +127,29 @@ export const generateExactShares = (
 /**
  * Generates adjustment-based split shares
  * Participants specify adjustments on top of a base equal split
- * Can be positive (owes more) or negative (owes less)
+ * Can be positive (owes more) only
  *
  * @param participants - Array of participant IDs
  * @param totalAmount - Total expense amount in cents
  * @returns Record mapping participant ID to adjustment amount
  */
-export const generateAdjustmentShares = (
+const generateAdjustmentShares = (
   participants: ParticipantId[],
   totalAmount: bigint,
-): Record<number, bigint> => {
+): SplitShares => {
   if (participants.length === 0) {
     return {};
   }
 
   const baseAmount = totalAmount / BigInt(participants.length);
 
-  const shares: Record<number, bigint> = {};
-  let totalAdjustment = 0n;
+  const shares: SplitShares = {};
 
-  // Generate adjustments for all but the last participant
-  participants.slice(0, -1).forEach((p) => {
-    const adjustment = BigInt(faker.number.int({ min: -25, max: 25 })) * (baseAmount / 100n);
-    shares[p.id] = adjustment;
-    totalAdjustment += adjustment;
+  // Generate adjustments for all participants
+  participants.forEach((p) => {
+    const adjustment = BigInt(faker.number.int({ min: 0, max: 25 })) * (baseAmount / 100n);
+    shares[p.id] = { ...initSplitShares(), [SplitType.ADJUSTMENT]: adjustment };
   });
-
-  // Last participant gets adjustment to balance everything out
-  shares[participants[participants.length - 1]!.id] = -totalAdjustment;
 
   return shares;
 };
@@ -164,7 +171,7 @@ export const generateSplitShares = (
   splitType: SplitType,
   participants: ParticipantId[],
   totalAmount = 0n,
-): Record<number, bigint> => {
+): SplitShares => {
   switch (splitType) {
     case SplitType.EQUAL:
       return generateEqualShares(participants);

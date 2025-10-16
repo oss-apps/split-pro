@@ -40,7 +40,7 @@ const gaussianRandom = (mean = 0, stdev = 1) => {
 
 export const generateGroups = (users: DummyUserInfo[]) => {
   const getGroupMemberCount = () => {
-    const res = gaussianRandom(15, 3);
+    const res = gaussianRandom(6, 1);
     return Math.max(Math.round(res), 3);
   };
 
@@ -79,7 +79,7 @@ export const generateGroups = (users: DummyUserInfo[]) => {
       publicId,
       defaultCurrency: currency as DummyCurrencyCode,
       members,
-      createdBy: faker.helpers.arrayElement(members).id,
+      userId: faker.helpers.arrayElement(members).id,
       createdAt,
       type,
     });

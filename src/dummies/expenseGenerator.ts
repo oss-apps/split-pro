@@ -105,6 +105,8 @@ export const generateGroupExpense = (group: DummyGroupInfo, expenseDate: Date) =
   // Select payer (optionally prefer group creator, but we'll do random for simplicity)
   const payer = selectPayer(participants);
 
+  const addedBy = selectPayer(participants, payer.id);
+
   // Select category based on group type
   const category = selectCategoryByGroupType(group.type);
 
@@ -126,7 +128,8 @@ export const generateGroupExpense = (group: DummyGroupInfo, expenseDate: Date) =
     amount,
     currency: group.defaultCurrency,
     splitType,
-    paidBy: payer.id,
+    paidBy: payer,
+    addedBy: addedBy.id,
     participants: [...participants],
     splitShares,
     expenseDate,
@@ -182,6 +185,9 @@ export const generateDirectExpense = (participants: DummyUserInfo[]) => {
   // Select payer
   const payer = selectPayer(participants);
 
+  // Select addedBy (someone other than payer)
+  const addedBy = selectPayer(participants, payer.id);
+
   // Select category (restrict to direct expense categories)
   const category = faker.helpers.arrayElement(DIRECT_EXPENSE_CATEGORIES);
 
@@ -213,7 +219,9 @@ export const generateDirectExpense = (participants: DummyUserInfo[]) => {
     amount,
     currency,
     splitType,
-    paidBy: payer.id,
+    paidBy: payer,
+    addedBy: addedBy.id,
+    groupId: null,
     participants: [...participants],
     splitShares,
     expenseDate,

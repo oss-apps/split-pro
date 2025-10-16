@@ -32,8 +32,8 @@ export function generateSplitDescription(
   splitType: SplitType,
   participants: Participant[],
   splitShares: AddExpenseState['splitShares'],
-  paidBy: Participant | undefined,
-  currentUser: Participant | undefined,
+  paidBy?: Participant,
+  currentUser?: Participant,
 ): string {
   // Only enhance the description for EQUAL split type
   if (splitType !== SplitType.EQUAL) {
@@ -59,7 +59,7 @@ export function generateSplitDescription(
   // Case 1: Paying for exactly one person
   if (selectedParticipants.length === 1) {
     const beneficiary = selectedParticipants[0];
-    const beneficiaryName = beneficiary?.name?.split(' ')[0] || beneficiary?.email || 'someone';
+    const beneficiaryName = displayName(t, beneficiary as User, currentUser.id) || 'someone';
     return `${t('ui.expense.user.paid')} ${t('ui.expense.for')} ${beneficiaryName}`;
   }
 

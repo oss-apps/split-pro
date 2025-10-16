@@ -90,7 +90,7 @@ export const GROUP_TYPE_CATEGORY_AFFINITY = {
     life: 0.1,
     home: 0.03,
     entertainment: 0.02,
-    general: 0.0,
+    general: 0.01,
   },
   [DummyGroupType.Household]: {
     utilities: 0.35,

@@ -274,3 +274,11 @@ export const PARTICIPANT_SELECTION_STRATEGY = {
   subset: 0.5, // 50%: include 50–100% of members
   pair: 0.1, // 10%: include only specific pairs
 } as const;
+
+export const EXPENSE_EDIT_WEIGHTS = {
+  splitType: 0.3, // 30% chance to edit split
+  participants: 0.3, // 30% chance to change participants
+  amount: 0.2, // 20% chance to edit amount (and split)
+  payer: 0.1, // 10% chance to change payer (and split)
+  name: 0.1, // 10% chance to change name
+} as const;

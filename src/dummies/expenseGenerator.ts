@@ -10,6 +10,7 @@ import {
   DIRECT_EXPENSE_CATEGORIES,
   DIRECT_EXPENSE_FREQUENCY_PER_PAIR,
   type DummyGroupCategory,
+  EXPENSE_EDIT_WEIGHTS,
   EXPENSE_FREQUENCY_BY_GROUP_TYPE,
   GROUP_TYPE_CATEGORY_AFFINITY,
   RANDOM_PAIR_PROBABILITY,
@@ -130,6 +131,7 @@ export const generateGroupExpense = (group: DummyGroupInfo, expenseDate: Date) =
     splitType,
     paidBy: payer,
     addedBy: addedBy.id,
+    createdAt: faker.date.between({ from: expenseDate, to: addDays(expenseDate, 7) }),
     participants: [...participants],
     splitShares,
     expenseDate,
@@ -221,6 +223,7 @@ export const generateDirectExpense = (participants: DummyUserInfo[]) => {
     splitType,
     paidBy: payer,
     addedBy: addedBy.id,
+    createdAt: faker.date.between({ from: expenseDate, to: addDays(expenseDate, 7) }),
     groupId: null,
     participants: [...participants],
     splitShares,
@@ -305,7 +308,93 @@ export const generateAllExpenses = (users: DummyUserInfo[], groups: DummyGroupIn
   // Generate direct expenses
   const directExpenses = generateDirectExpenses(users, groups);
 
-  return [...groupExpenses, ...directExpenses];
+  return [...groupExpenses, ...directExpenses].map((expense, idx) => ({
+    ...expense,
+    idx,
+  }));
 };
 
 export type DummyExpenseInfo = ReturnType<typeof generateAllExpenses>[number];
+
+export const selectEditType = () => {
+  const weightedTypes = Object.entries(EXPENSE_EDIT_WEIGHTS).map(([editType, weight]) => ({
+    value: editType,
+    weight,
+  }));
+
+  return faker.helpers.weightedArrayElement(weightedTypes);
+};
+
+export const generateExpenseEdits = (expenses: DummyExpenseInfo[]) =>
+  expenses
+    .filter(() => faker.datatype.boolean({ probability: 0.1 }))
+    .map((expense) => {
+      const editType = selectEditType();
+
+      const expenseEdit = {
+        ...expense,
+        updatedAt: faker.date.between({
+          from: expense.createdAt,
+          to: addDays(expense.createdAt, 30),
+        }),
+        updatedBy: selectPayer(expense.participants, expense.addedBy),
+      };
+
+      switch (editType) {
+        case 'splitType':
+          expenseEdit.splitType = selectSplitType();
+          expenseEdit.splitShares = generateSplitShares(
+            expenseEdit.splitType,
+            expenseEdit.participants,
+            expenseEdit.amount,
+          );
+          break;
+        case 'amount':
+          expenseEdit.amount = generateAmountForCategory(
+            expenseEdit.category,
+            expenseEdit.currency,
+          );
+          expenseEdit.splitShares = generateSplitShares(
+            expenseEdit.splitType,
+            expenseEdit.participants,
+            expenseEdit.amount,
+          );
+          break;
+        case 'payer':
+          expenseEdit.paidBy = selectPayer(expenseEdit.participants, expenseEdit.paidBy.id);
+          expenseEdit.splitShares = generateSplitShares(
+            expenseEdit.splitType,
+            expenseEdit.participants,
+            expenseEdit.amount,
+          );
+          break;
+        case 'participants':
+          expenseEdit.participants = selectGroupParticipants(expenseEdit.participants);
+          if (!expenseEdit.participants.some((p) => p.id === expenseEdit.paidBy.id)) {
+            expenseEdit.paidBy = selectPayer(expenseEdit.participants);
+          }
+          expenseEdit.splitShares = generateSplitShares(
+            expenseEdit.splitType,
+            expenseEdit.participants,
+            expenseEdit.amount,
+          );
+          break;
+        case 'name':
+          expenseEdit.name = generateExpenseName(expenseEdit.category);
+          break;
+      }
+
+      return expenseEdit;
+    });
+
+export const generateExpensesToDelete = (expenses: DummyExpenseInfo[]) =>
+  expenses
+    .filter(() => faker.datatype.boolean({ probability: 0.1 }))
+    .map((expense) => ({
+      ...expense,
+      deletedAt: faker.date.between({
+        from: expense.createdAt,
+        to: addDays(expense.createdAt, 30),
+      }),
+      deletedBy: selectPayer(expense.participants, expense.addedBy),
+    }));

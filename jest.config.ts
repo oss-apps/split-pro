@@ -5,13 +5,7 @@
 
 import type { Config } from 'jest';
 import nextJest from 'next/jest.js';
-
-// @ts-expect-error we are extending BigInt prototype for JSON serialization
-// oxlint-disable-next-line no-extend-native
-BigInt.prototype.toJSON = function toJSON() {
-  // Custom JSON serialization for BigInt to avoid errors in Jest
-  return this.toString();
-};
+import '~/utils/bigintPolyfill';
 
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files in your test environment

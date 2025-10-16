@@ -1,20 +1,17 @@
 import { faker } from '@faker-js/faker';
 
-const MAJOR_CURRENCY_PROB = 0.95;
 const USER_COUNT = 1000;
 
-const majorCurrencies = ['USD', 'EUR', 'GBP'] as const;
-const oddCurrencies = [
-  'JPY', // 0 decimals
-  'BHD', // 3 decimals
-  'CHF', // roundging 0.05
-] as const;
 const weightedCurrencies = [
-  ...majorCurrencies.map((value) => ({ weight: MAJOR_CURRENCY_PROB, value })),
-  ...oddCurrencies.map((value) => ({ weight: 1 - MAJOR_CURRENCY_PROB, value })),
-];
+  { value: 'USD', weight: 60 },
+  { value: 'EUR', weight: 20 },
+  { value: 'GBP', weight: 15 },
+  { value: 'JPY', weight: 2 },
+  { value: 'BHD', weight: 2 },
+  { value: 'CHF', weight: 1 },
+] as const;
 
-export type DummyCurrencyCode = (typeof majorCurrencies)[number] | (typeof oddCurrencies)[number];
+export type DummyCurrencyCode = (typeof weightedCurrencies)[number]['value'];
 
 /**
  * Currency conversion multipliers from USD to other currencies

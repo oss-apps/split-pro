@@ -2,6 +2,10 @@ import { faker } from '@faker-js/faker';
 import { generateAllExpenses } from './expenseGenerator';
 import { generateUsers } from './userGenerator';
 import { generateGroups } from './groupGenerator';
+import { createHash } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
+import { argv } from 'node:process';
+import '~/utils/bigintPolyfill';
 
 const SEED = 2137;
 
@@ -11,3 +15,30 @@ faker.setDefaultRefDate('2025-01-01T00:00:00.000Z');
 export const dummyUsers = generateUsers();
 export const dummyGroups = generateGroups(dummyUsers);
 export const dummyExpenses = generateAllExpenses(dummyUsers, dummyGroups);
+
+// Create a checksum of all generated data to verify determinism
+const dataToHash = JSON.stringify({
+  users: dummyUsers,
+  groups: dummyGroups,
+  expenses: dummyExpenses,
+  seed: SEED,
+});
+
+const hash = createHash('sha256').update(dataToHash).digest('hex');
+
+const savedHash = await readFile('./prisma/seed-checksum.txt', 'utf-8').catch(() => null);
+
+if (savedHash && savedHash !== hash) {
+  const msg = `Generated data checksum does not match saved checksum! This may indicate non-deterministic data generation.
+If you intended to change the dummy data, update the checksum in prisma/seed-checksum.txt to the new value:
+  echo "${hash}" > prisma/seed-checksum.txt
+If you did not intend to change the dummy data, please investigate the cause of the discrepancy.`;
+
+  if (argv.includes('--strict')) {
+    throw new Error(msg);
+  }
+  console.warn('***********************************************');
+  console.warn('WARNING: Data checksum mismatch!');
+  console.warn('***********************************************');
+  console.warn(msg);
+}

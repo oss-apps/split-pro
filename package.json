@@ -10,6 +10,7 @@
     "db:studio": "prisma studio",
     "db:dev": "prisma migrate dev",
     "db:seed": "prisma db seed",
+    "db:verify-seed-hash": "tsx src/dummies/index.ts --strict",
     "prisma:prod": "prisma migrate deploy",
     "dev": "next dev --turbopack",
     "postinstall": "prisma generate",

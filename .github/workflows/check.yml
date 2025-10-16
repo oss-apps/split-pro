@@ -39,5 +39,8 @@ jobs:
       - name: Run tests
         run: pnpm test
 
+      - name: Verify seed hash
+        run: pnpm db:verify-seed-hash
+
       - name: Run build
         run: pnpm build --no-lint

@@ -77,6 +77,7 @@ export const generateGroups = (users: DummyUserInfo[]) => {
       userId: faker.helpers.arrayElement(members).id,
       createdAt,
       type,
+      simplifyDebts: faker.datatype.boolean(0.7),
     });
   }
   return groups;

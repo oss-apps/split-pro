@@ -87,7 +87,7 @@ const generateAmountForCategory = (category: CategoryItem, currency: DummyCurren
 
   const [min, max] = convertAmountRangeToCurrency(amountRange[0], amountRange[1], currency);
 
-  return BigInt(faker.number.int({ min: Number(min), max: Number(max) }));
+  return faker.number.bigInt({ min, max });
 };
 
 /**
@@ -115,7 +115,8 @@ export const generateGroupExpense = (group: DummyGroupInfo, expenseDate: Date) =
   const name = generateExpenseName(category as any);
 
   // Generate amount in group's currency
-  const amount = generateAmountForCategory(category, group.defaultCurrency);
+  const amount =
+    generateAmountForCategory(category, group.defaultCurrency) * BigInt(participants.length);
 
   // Select split type
   const splitType = selectSplitType();
@@ -205,7 +206,8 @@ export const generateDirectExpense = (participants: DummyUserInfo[]) => {
     DIRECT_EXPENSE_AMOUNT_RANGE[1],
     currency,
   );
-  const amount = BigInt(faker.number.int({ min: Number(minAmount), max: Number(maxAmount) }));
+  const amount =
+    faker.number.bigInt({ min: minAmount, max: maxAmount }) * BigInt(participants.length);
 
   // Select split type
   const splitType = selectSplitType();

@@ -335,10 +335,6 @@ export const generateExpenseEdits = (expenses: DummyExpenseInfo[]) =>
 
       const expenseEdit = {
         ...expense,
-        updatedAt: faker.date.between({
-          from: expense.createdAt,
-          to: addDays(expense.createdAt, 30),
-        }),
         updatedBy: selectPayer(expense.participants, expense.addedBy),
       };
 
@@ -394,9 +390,5 @@ export const generateExpensesToDelete = (expenses: DummyExpenseInfo[]) =>
     .filter(() => faker.datatype.boolean({ probability: 0.1 }))
     .map((expense) => ({
       ...expense,
-      deletedAt: faker.date.between({
-        from: expense.createdAt,
-        to: addDays(expense.createdAt, 30),
-      }),
       deletedBy: selectPayer(expense.participants, expense.addedBy),
     }));

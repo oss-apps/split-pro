@@ -34,6 +34,7 @@ const AddPage: NextPageWithUser<{
     setCategory,
     resetState,
     setCronExpression,
+    setFileKey,
   } = useAddExpenseStore((s) => s.actions);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
 
@@ -120,6 +121,9 @@ const AddPage: NextPageWithUser<{
     if (expenseQuery.data.recurrence) {
       setCronExpression(cronFromBackend(expenseQuery.data.recurrence.job.schedule));
     }
+    if (expenseQuery.data.fileKey) {
+      setFileKey(expenseQuery.data.fileKey);
+    }
   }, [
     _expenseId,
     expenseQuery.data,
@@ -133,6 +137,7 @@ const AddPage: NextPageWithUser<{
     setPaidBy,
     setParticipants,
     setCronExpression,
+    setFileKey,
   ]);
 
   return (

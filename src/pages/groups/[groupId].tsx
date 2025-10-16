@@ -41,6 +41,7 @@ import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { toUIString } from '~/utils/numbers';
+import { getAllBalancesForGroup } from '@prisma/client/sql';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
@@ -91,7 +92,7 @@ const BalancePage: NextPageWithUser<{
     groupDetailQuery.data?.userId === user.id &&
     !groupDetailQuery.data?.groupBalances.find((bal) => 0n !== bal.amount);
   const canLeave = !groupDetailQuery.data?.groupBalances.find(
-    (bal) => 0n !== bal.amount && bal.userId === user.id,
+    (bal) => 0n !== bal.amount && bal.paidBy === user.id,
   );
 
   const onRecalculateBalances = useCallback(() => {
@@ -243,7 +244,7 @@ const BalancePage: NextPageWithUser<{
                         isAdmin &&
                         (() => {
                           const canLeave = !groupDetailQuery.data?.groupBalances.find(
-                            (b) => 0n !== b.amount && b.userId === groupUser.userId,
+                            (b) => b.amount !== 0n && b.paidBy === groupUser.userId,
                           );
 
                           return (
@@ -482,8 +483,9 @@ const BalancePage: NextPageWithUser<{
               </TabsContent>
               <TabsContent value="balances">
                 <BalanceList
-                  groupBalances={groupDetailQuery.data?.groupBalances}
-                  users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user)}
+                  groupId={groupId}
+                  groupBalances={groupDetailQuery.data?.groupBalances ?? []}
+                  users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user) ?? []}
                 />
               </TabsContent>
             </Tabs>

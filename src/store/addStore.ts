@@ -9,7 +9,7 @@ import { shuffleArray } from '~/utils/array';
 import { BigMath } from '~/utils/numbers';
 
 export type Participant = User & { amount?: bigint };
-type SplitShares = Record<number, Record<SplitType, bigint | undefined>>;
+export type SplitShares = Record<number, Record<SplitType, bigint | undefined>>;
 
 export interface AddExpenseState {
   amount: bigint;

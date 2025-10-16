@@ -10,6 +10,7 @@
     "db:studio": "prisma studio",
     "db:dev": "prisma migrate dev",
     "db:seed": "prisma db seed",
+    "db:verify-seed-hash": "tsx src/dummies/index.ts --strict",
     "prisma:prod": "prisma migrate deploy",
     "dev": "next dev --turbopack",
     "postinstall": "prisma generate",
@@ -75,6 +76,7 @@
     "zustand": "^4.5.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "10.1.0",
     "@tailwindcss/postcss": "^4.1.10",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.21",
@@ -82,7 +84,7 @@
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
     "@types/web-push": "^3.6.3",
-    "@typescript/native-preview": "7.0.0-dev.20250921.1",
+    "@typescript/native-preview": "7.0.0-dev.20251016.1",
     "husky": "^9.1.7",
     "jest": "30.0.5",
     "jest-environment-jsdom": "30.0.5",

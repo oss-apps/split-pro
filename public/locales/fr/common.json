@@ -124,6 +124,7 @@
     "feedback_required": "Fournis des informations",
     "group_name_update_failed": "Une erreur est survenue lors de la mise à jour du nom du groupe",
     "import_failed": "Une erreur est survenue lors de l'import du fichier",
+    "invalid_cron_expression": "Expression cron invalide",
     "invalid_currency_code": "Le code de devise {{code}} est invalide",
     "language_change_failed": "Le changement de langage a échoué",
     "less_than": "Le poids du fichier doit être inférieur à",
@@ -298,11 +299,15 @@
   },
   "navigation": {
     "account": "Compte",
-    "activity": "Historique",
+    "activity": "Activité",
     "add": "Ajouter",
     "add_expense": "Nouvelle dépense",
     "balances": "Soldes",
-    "groups": "Groupes"
+    "groups": "Groupes",
+    "recurring": "Dépenses récurrentes"
+  },
+  "recurrence": {
+    "recurring": "Récurrente"
   },
   "ui": {
     "added_by": "Ajoutée par",

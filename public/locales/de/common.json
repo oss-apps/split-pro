@@ -61,6 +61,7 @@
     "cancel": "Abbrechen",
     "close": "Schließen",
     "confirm": "Bestätigen",
+    "connect": "Verbinden",
     "create": "Erstellen",
     "edit_expense": "Ausgabe bearbeiten",
     "export": "Exportieren",
@@ -68,6 +69,7 @@
     "import": "Importieren",
     "invite": "Einladen",
     "leave": "Verlassen",
+    "reconnect": "Wieder verbinden",
     "save": "Speichern",
     "settle_up": "Ausgleichen",
     "submit": "Speichern"
@@ -113,6 +115,7 @@
     "group_name_update_failed": "Fehler beim Aktualisieren des Gruppennamens",
     "group_required": "Gruppe eingeben",
     "import_failed": "Fehler beim Importieren der Datei",
+    "invalid_cron_expression": "Ungültiger Cron-Ausdruck",
     "invalid_currency_code": "Ungültiger Währungscode {{code}}",
     "language_change_failed": "Fehler beim Ändern der Sprache",
     "less_than": "Datei sollte kleiner als",
@@ -186,15 +189,18 @@
         "search_friends": "Freunde, Gruppen suchen oder E-Mail hinzufügen"
       }
     },
+    "already_added": "Bereits hinzugefügt",
     "balance_list": {
       "are_settled_up": "bist ausgeglichen",
       "is_settled_up": "ist ausgeglichen",
       "press_balance_info": "Drücke auf einen einzelnen Saldo, um die Abrechnung zu starten"
     },
+    "bank_transactions": "Banktransaktionen",
     "delete_expense_details": {
       "text": "Diese Aktion kann nicht rückgängig gemacht werden. Diese Ausgabe wird dauerhaft gelöscht.",
       "title": "Bist du dir absolut sicher?"
     },
+    "pending": "Ausstehend",
     "title": "Ausgabe hinzufügen",
     "title_mobile": "Hinzufügen"
   },
@@ -285,7 +291,23 @@
     "add": "Hinzufügen",
     "add_expense": "Ausgabe hinzufügen",
     "balances": "Salden",
-    "groups": "Gruppen"
+    "groups": "Gruppen",
+    "recurring": "Wiederkehrend"
+  },
+  "recurrence": {
+    "cron_expression": "Cron-Ausdruck",
+    "days_of_week": "Wochentage",
+    "expense_for_the_amount_of": "Ausgabe {{name}} in Höhe von {{amount}} {{currency}}",
+    "months": "Monate",
+    "never": "Kein Zeitplan festgelegt",
+    "recurring": "Wiederkehrend",
+    "schedule_type": {
+      "day": "Täglich",
+      "month": "Monatlich",
+      "week": "Wöchentlich",
+      "year": "Jährlich"
+    },
+    "time_of_day": "Tageszeit"
   },
   "ui": {
     "added_by": "Hinzugefügt von",

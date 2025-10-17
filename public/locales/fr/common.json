@@ -307,7 +307,25 @@
     "recurring": "Dépenses récurrentes"
   },
   "recurrence": {
-    "recurring": "Récurrente"
+    "cron_expression": "Expression « cron »",
+    "days_of_month": "Jours dans le mois",
+    "days_of_week": "Jours de la semaine",
+    "description": "Définir une récurrence automatique pour cette dépense.",
+    "empty": "Aucune dépense récurrente pour l'instant",
+    "expense_for_the_amount_of": "Dépense {{name}} pour un montant de {{amount}}{{currency}}",
+    "months": "Mois",
+    "never": "Aucun programme planifié",
+    "recurring": "Récurrente",
+    "schedule_type": {
+      "custom": "Personnalisée",
+      "day": "Quotidienne",
+      "month": "Mensuelle",
+      "never": "Jamais",
+      "week": "Hebdomadaire",
+      "year": "Annuelle"
+    },
+    "time_of_day": "Heure journalière",
+    "title": "Récurrence"
   },
   "ui": {
     "added_by": "Ajoutée par",

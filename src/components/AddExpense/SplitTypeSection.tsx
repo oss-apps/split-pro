@@ -376,17 +376,18 @@ export const UserAndAmount: React.FC<{ user: Participant; currency: string }> = 
   user,
   currency,
 }) => {
+  const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const amount = useAddExpenseStore((s) => s.amount);
 
   const shareAmount = paidBy?.id === user.id ? (user.amount ?? 0n) - amount : user.amount;
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex h-11 items-center gap-2">
       <EntityAvatar entity={user} size={30} />
       <div className="flex flex-col items-start">
         <p>{user.name ?? user.email}</p>
-        <p className="'text-gray-400' text-sm text-gray-400">
+        <p className={cn(canSplitScreenClosed || 'hidden', 'text-sm text-gray-400')}>
           {0n < (shareAmount ?? 0n) ? '-' : ''} {currency} {toUIString(shareAmount)}
         </p>
       </div>

@@ -21,6 +21,7 @@ import { EntityAvatar } from '../ui/avatar';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { cn } from '~/lib/utils';
 
 export const SplitTypeSection: React.FC = () => {
   const { t, displayName, generateSplitDescription } = useTranslationWithUtils(['expense_details']);
@@ -139,6 +140,7 @@ interface SplitSectionPropsBase {
   iconComponent: LucideIcon;
   prefix: string;
   isBoolean?: boolean;
+  isCurrency?: boolean;
   fmtSummartyText: (
     amount: bigint,
     currency: string,
@@ -154,12 +156,20 @@ interface BooleanSplitSectionProps extends SplitSectionPropsBase {
 }
 
 interface NumericSplitSectionProps extends SplitSectionPropsBase {
-  isBoolean: false;
   fmtShareText: (share: bigint) => string;
   step: number | null;
 }
 
-type SplitSectionProps = BooleanSplitSectionProps | NumericSplitSectionProps;
+interface CurrencySplitSectionProps extends SplitSectionPropsBase {
+  isCurrency: true;
+  fmtShareText: (share: bigint) => string;
+  step: number | null;
+}
+
+type SplitSectionProps =
+  | BooleanSplitSectionProps
+  | NumericSplitSectionProps
+  | CurrencySplitSectionProps;
 
 const CURRENCY_TOKEN = '__CURRENCY__';
 
@@ -182,7 +192,6 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
     splitType: SplitType.PERCENTAGE,
     iconComponent: Percent,
     prefix: '%',
-    isBoolean: false,
     fmtSummartyText: (amount, currency, participants, splitShares) => {
       const remainingPercentage =
         10000n -
@@ -199,7 +208,7 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
     splitType: SplitType.EXACT,
     iconComponent: DollarSign,
     prefix: CURRENCY_TOKEN,
-    isBoolean: false,
+    isCurrency: true,
     fmtSummartyText: (amount, currency, participants, splitShares) => {
       const totalAmount = participants.reduce(
         (acc, p) => acc + (splitShares[p.id]?.[SplitType.EXACT] ?? 0n),
@@ -214,7 +223,6 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
     splitType: SplitType.SHARE,
     iconComponent: BarChart2,
     prefix: t('ui.add_expense_details.split_type_section.types.share.shares'),
-    isBoolean: false,
     fmtSummartyText: (_amount, _currency, participants, splitShares) => {
       const totalShares = participants.reduce(
         (acc, p) => acc + (splitShares[p.id]?.[SplitType.SHARE] ?? 0n),
@@ -229,8 +237,16 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
     splitType: SplitType.ADJUSTMENT,
     iconComponent: Plus,
     prefix: CURRENCY_TOKEN,
-    isBoolean: false,
-    fmtSummartyText: () => '',
+    isCurrency: true,
+    fmtSummartyText: (amount, _c, _p, splitShares) => {
+      const totalAdjustment = Object.values(splitShares).reduce(
+        (acc, shares) => acc + (shares[SplitType.ADJUSTMENT] ?? 0n),
+        0n,
+      );
+      return totalAdjustment > amount
+        ? `Total adjustment exceeds amount by ${toUIString(totalAdjustment - amount, true)}`
+        : ' ';
+    },
     fmtShareText: (share) => removeTrailingZeros(toUIString(share)),
     step: null,
   },
@@ -284,7 +300,9 @@ const SplitSection: React.FC<SplitSectionProps> = (props) => {
   return (
     <div className="relative mt-4 flex flex-col gap-6 px-2">
       <div className="mb-2 flex grow justify-center">
-        <div className={canSplitScreenClosed ? 'text-gray-300' : 'text-red-500'}>{summaryText}</div>
+        <div className={cn(canSplitScreenClosed ? 'text-gray-300' : 'text-red-500', 'h-6')}>
+          {summaryText}
+        </div>
       </div>
       {isBoolean && (
         <div className="absolute top-0 right-0">
@@ -316,6 +334,7 @@ const ParticipantRow = ({
   p,
   prefix,
   isBoolean,
+  isCurrency,
   share,
   currency,
   onToggleBoolean,
@@ -354,19 +373,16 @@ const ParticipantRow = ({
           <Check className="h-6 w-6 text-cyan-500" />
         ) : null
       ) : (
-        <div className="flex items-center gap-1">
-          <p className="text-xs">{prefix.replace(CURRENCY_TOKEN, currency)}</p>
-          <Input
-            type="number"
-            value={share ? fmtShareText(share) : ''}
-            inputMode="decimal"
-            className="ml-2 w-20 text-lg"
-            placeholder="0"
-            min={0}
-            step={step ?? 0.01}
-            onChange={onInputChange}
-          />
-        </div>
+        <Input
+          type="number"
+          defaultValue={share ? fmtShareText(share) : ''}
+          inputMode="decimal"
+          className={cn(isCurrency ? 'w-1/3' : 'w-20', 'ml-2 text-lg')}
+          placeholder="0"
+          min={0}
+          step={step ?? 0.01}
+          onChange={onInputChange}
+        />
       )}
     </div>
   );

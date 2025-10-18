@@ -4,7 +4,7 @@ import { Info } from 'lucide-react';
 import { Fragment, useMemo } from 'react';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { api } from '~/utils/api';
-import { BigMath, toUIString } from '~/utils/numbers';
+import { BigMath } from '~/utils/numbers';
 
 import { GroupSettleUp } from '../Friend/GroupSettleup';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
@@ -20,7 +20,7 @@ export const BalanceList: React.FC<{
   groupBalances?: GroupBalance[];
   users?: User[];
 }> = ({ groupBalances = [], users = [] }) => {
-  const { displayName, t } = useTranslationWithUtils(['expense_details']);
+  const { displayName, t, getCurrencyHelpersCached } = useTranslationWithUtils('expense_details');
   const userQuery = api.user.me.useQuery();
 
   const userMap = useMemo(() => {
@@ -90,7 +90,9 @@ export const BalanceList: React.FC<{
                             0 < totalAmount[1] ? 'text-emerald-500' : 'text-orange-600',
                           )}
                         >
-                          {toUIString(totalAmount[1])} {totalAmount[0]}
+                          {getCurrencyHelpersCached(totalAmount[0]).toUIString(
+                            BigMath.abs(totalAmount[1]),
+                          )}
                         </span>
                       </>
                     )}
@@ -129,7 +131,7 @@ export const BalanceList: React.FC<{
                                   0 < amount ? 'text-emerald-500' : 'text-orange-600',
                                 )}
                               >
-                                {toUIString(amount)} {currency}
+                                {getCurrencyHelpersCached(currency).toUIString(BigMath.abs(amount))}
                               </span>
                               <span className="text-gray-400">
                                 {' '}

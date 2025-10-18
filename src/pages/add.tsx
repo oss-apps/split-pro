@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { useTranslation } from 'next-i18next';
 import { AddOrEditExpensePage } from '~/components/AddExpense/AddExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
 import { env } from '~/env';
@@ -12,12 +11,13 @@ import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { type GetServerSideProps } from 'next';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
 }> = ({ user, isStorageConfigured, enableSendingInvites }) => {
-  const { t } = useTranslation('add_page');
+  const { t, getCurrencyHelpersCached } = useTranslationWithUtils('add_page');
   const {
     setCurrentUser,
     setGroup,
@@ -101,7 +101,9 @@ const AddPage: NextPageWithUser<{
     }
     setPaidBy(expenseQuery.data.paidByUser);
     setCurrency(parseCurrencyCode(expenseQuery.data.currency));
-    setAmountStr((Number(expenseQuery.data.amount) / 100).toString());
+    setAmountStr(
+      getCurrencyHelpersCached(expenseQuery.data.currency).toUIString(expenseQuery.data.amount),
+    );
     setDescription(expenseQuery.data.name);
     setCategory(expenseQuery.data.category);
     setAmount(expenseQuery.data.amount);

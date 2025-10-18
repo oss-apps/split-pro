@@ -8,7 +8,6 @@ import { type CurrencyCode } from '~/lib/currency';
 import { cn } from '~/lib/utils';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
-import { toSafeBigInt } from '~/utils/numbers';
 
 import { Button } from '../ui/button';
 import { Calendar } from '../ui/calendar';
@@ -22,13 +21,13 @@ import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
 import { toast } from 'sonner';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { CurrencyInput } from '../ui/currency-input';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
   expenseId?: string;
 }> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
-  const { t, toUIDate } = useTranslationWithUtils(['expense_details']);
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
   const isNegative = useAddExpenseStore((s) => s.isNegative);
@@ -44,6 +43,8 @@ export const AddOrEditExpensePage: React.FC<{
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const splitType = useAddExpenseStore((s) => s.splitType);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
+
+  const { t, toUIDate } = useTranslationWithUtils('expense_details');
 
   const {
     setCurrency,
@@ -71,10 +72,13 @@ export const AddOrEditExpensePage: React.FC<{
   const router = useRouter();
 
   const onUpdateAmount = useCallback(
-    (amt: string) => {
-      const _amt = amt.replace(',', '.');
-      setAmountStr(_amt);
-      setAmount(toSafeBigInt(_amt));
+    ({ strValue, bigIntValue }: { strValue?: string; bigIntValue?: bigint }) => {
+      if (strValue !== undefined) {
+        setAmountStr(strValue);
+      }
+      if (bigIntValue !== undefined) {
+        setAmount(bigIntValue);
+      }
     },
     [setAmount, setAmountStr],
   );
@@ -156,14 +160,6 @@ export const AddOrEditExpensePage: React.FC<{
     [setDescription],
   );
 
-  const onAmountChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = e.target;
-      onUpdateAmount(value);
-    },
-    [onUpdateAmount],
-  );
-
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
@@ -203,13 +199,14 @@ export const AddOrEditExpensePage: React.FC<{
           </div>
           <div className="flex gap-2">
             <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
-            <Input
+            <CurrencyInput
               placeholder={t('ui.add_expense_details.amount_placeholder')}
-              className="text-lg placeholder:text-sm"
-              type="number"
-              inputMode="decimal"
-              value={amtStr}
-              onChange={onAmountChange}
+              currency={currency}
+              strValue={amtStr}
+              bigIntValue={amount}
+              allowNegative
+              hideSymbol
+              onValueChange={onUpdateAmount}
             />
           </div>
           <div className="h-[180px]">

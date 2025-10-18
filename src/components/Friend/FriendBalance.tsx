@@ -1,13 +1,12 @@
 import { type Balance, type User } from '@prisma/client';
 import { clsx } from 'clsx';
 
-import { toUIString } from '~/utils/numbers';
-
-import { useTranslation } from 'next-i18next';
 import { EntityAvatar } from '../ui/avatar';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 export const FriendBalance: React.FC<{ user: User; balance: Balance }> = ({ user, balance }) => {
-  const { t } = useTranslation();
+  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { toUIString } = getCurrencyHelpersCached(balance.currency);
   const isPositive = 0 < balance.amount;
 
   return (
@@ -23,7 +22,7 @@ export const FriendBalance: React.FC<{ user: User; balance: Balance }> = ({ user
           {t('ui.actors.you')} {isPositive ? t('ui.expense.you.lent') : t('ui.expense.you.owe')}
         </div>
         <div className={`${isPositive ? 'text-green-500' : 'text-orange-600'} flex text-right`}>
-          {balance.currency} {toUIString(balance.amount)}
+          {toUIString(balance.amount)}
         </div>
       </div>
     </div>

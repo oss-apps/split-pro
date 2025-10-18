@@ -40,12 +40,12 @@ import { db } from '~/server/db';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
-import { toUIString } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
 }> = ({ user, enableSendingInvites }) => {
-  const { displayName, toUIDate, t } = useTranslationWithUtils(['groups_details']);
+  const { displayName, toUIDate, t, getCurrencyHelpersCached } =
+    useTranslationWithUtils('groups_details');
   const router = useRouter();
   const groupId = parseInt(router.query.groupId as string);
 
@@ -175,7 +175,7 @@ const BalancePage: NextPageWithUser<{
                     null != total._sum.amount ? (
                       <Fragment key={total.currency}>
                         <div className="flex flex-wrap gap-1">
-                          {total.currency} {toUIString(total._sum.amount)}
+                          {getCurrencyHelpersCached(total.currency).toUIString(total._sum.amount)}
                         </div>
                         {index < arr.length - 1 ? <span>+</span> : null}
                       </Fragment>

@@ -3,10 +3,11 @@ import { nanoid } from 'nanoid';
 
 import { db } from '~/server/db';
 import { type SplitwiseGroup, type SplitwiseUser } from '~/types';
-import { toSafeBigInt } from '~/utils/numbers';
 
 import type { CreateExpense } from '~/types/expense.types';
 import { sendExpensePushNotification } from './notificationService';
+import { getCurrencyHelpers } from '~/utils/numbers';
+import { isCurrencyCode } from '~/lib/currency';
 
 export async function joinGroup(userId: number, publicGroupId: string) {
   const group = await db.group.findUnique({
@@ -777,6 +778,9 @@ export async function importUserBalanceFromSplitWise(
     {} as Record<string, User>,
   );
 
+  const currencyHelperCache: Record<string, ReturnType<typeof getCurrencyHelpers>['toSafeBigInt']> =
+    {};
+
   for (const user of splitWiseUsers) {
     const dbUser = userMap[user.email];
     if (!dbUser) {
@@ -784,8 +788,15 @@ export async function importUserBalanceFromSplitWise(
     }
 
     for (const balance of user.balance) {
-      const amount = toSafeBigInt(balance.amount);
       const currency = balance.currency_code;
+
+      if (!currencyHelperCache[currency]) {
+        currencyHelperCache[currency] = getCurrencyHelpers({
+          currency: isCurrencyCode(currency) ? currency : 'USD',
+        }).toSafeBigInt;
+      }
+
+      const amount = currencyHelperCache[currency](balance.amount);
       const existingBalance = await db.balance.findUnique({
         where: {
           userId_currency_friendId: {

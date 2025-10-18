@@ -17,13 +17,13 @@ import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/st
 import { removeTrailingZeros } from '~/utils/numbers';
 
 import { type TFunction, useTranslation } from 'next-i18next';
+import type { CurrencyCode } from '~/lib/currency';
+import { cn } from '~/lib/utils';
 import { EntityAvatar } from '../ui/avatar';
+import { CurrencyInput } from '../ui/currency-input';
 import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { cn } from '~/lib/utils';
-import { CurrencyCode } from '~/lib/currency';
-import { CurrencyInput } from '../ui/currency-input';
 
 export const SplitTypeSection: React.FC = () => {
   const { t, displayName, generateSplitDescription } = useTranslationWithUtils(['expense_details']);
@@ -145,9 +145,7 @@ interface SplitSectionPropsBase {
   isCurrency?: boolean;
   fmtSummartyText: (
     amount: bigint,
-    currency: string,
-    participants: AddExpenseState['participants'],
-    splitShares: AddExpenseState['splitShares'],
+    totalShares: bigint,
     toUIString: (val: unknown) => string,
   ) => string;
 }
@@ -180,12 +178,8 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
     iconComponent: Equal,
     prefix: '',
     isBoolean: true,
-    fmtSummartyText: (amount, currency, participants, splitShares, toUIString) => {
-      const totalParticipants = participants.filter(
-        (p) => 0n !== splitShares[p.id]?.[SplitType.EQUAL],
-      ).length;
-      return `${currency} ${0 < totalParticipants ? toUIString(amount / BigInt(totalParticipants)) : 0} ${t('ui.add_expense_details.split_type_section.types.equal.per_person')}`;
-    },
+    fmtSummartyText: (amount, totalShares, toUIString) =>
+      `${totalShares > 0 ? toUIString(amount / totalShares) : 0} ${t('ui.add_expense_details.split_type_section.types.equal.per_person')}`,
     fmtShareText: null,
     step: null,
   },
@@ -193,13 +187,8 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
     splitType: SplitType.PERCENTAGE,
     iconComponent: Percent,
     prefix: '%',
-    fmtSummartyText: (amount, currency, participants, splitShares) => {
-      const remainingPercentage =
-        10000n -
-        participants.reduce(
-          (acc, p) => acc + (splitShares[p.id]?.[SplitType.PERCENTAGE] ?? 0n),
-          0n,
-        );
+    fmtSummartyText: (amount, totalShares) => {
+      const remainingPercentage = 10000n - totalShares;
       return `${t('ui.add_expense_details.split_type_section.types.percentage.remaining')} ${Number(remainingPercentage) / 100}%`;
     },
     fmtShareText: (share) => (Number(share) / 100).toString(),
@@ -210,13 +199,8 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
     iconComponent: DollarSign,
     prefix: '',
     isCurrency: true,
-    fmtSummartyText: (amount, currency, participants, splitShares, toUIString) => {
-      const totalAmount = participants.reduce(
-        (acc, p) => acc + (splitShares[p.id]?.[SplitType.EXACT] ?? 0n),
-        0n,
-      );
-      return `${t('ui.add_expense_details.split_type_section.types.exact.remaining')} ${toUIString(amount - totalAmount)}`;
-    },
+    fmtSummartyText: (amount, totalShares, toUIString) =>
+      `${t('ui.add_expense_details.split_type_section.types.exact.remaining')} ${toUIString(amount - totalShares)}`,
     fmtShareText: (share, toUIString) => removeTrailingZeros(toUIString(share)),
     step: null,
   },
@@ -224,13 +208,8 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
     splitType: SplitType.SHARE,
     iconComponent: BarChart2,
     prefix: t('ui.add_expense_details.split_type_section.types.share.shares'),
-    fmtSummartyText: (_amount, _currency, participants, splitShares) => {
-      const totalShares = participants.reduce(
-        (acc, p) => acc + (splitShares[p.id]?.[SplitType.SHARE] ?? 0n),
-        0n,
-      );
-      return `${t('ui.add_expense_details.split_type_section.types.share.total_shares')} ${Number(totalShares) / 100}`;
-    },
+    fmtSummartyText: (_amount, totalShares) =>
+      `${t('ui.add_expense_details.split_type_section.types.share.total_shares')} ${Number(totalShares) / 100}`,
     fmtShareText: (share) => (Number(share) / 100).toString(),
     step: 1,
   },
@@ -239,15 +218,10 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
     iconComponent: Plus,
     isCurrency: true,
     prefix: '',
-    fmtSummartyText: (amount, _c, _p, splitShares, toUIString) => {
-      const totalAdjustment = Object.values(splitShares).reduce(
-        (acc, shares) => acc + (shares[SplitType.ADJUSTMENT] ?? 0n),
-        0n,
-      );
-      return totalAdjustment > amount
-        ? `Total adjustment exceeds amount by ${toUIString(totalAdjustment - amount)}`
-        : ' ';
-    },
+    fmtSummartyText: (amount, totalShares, toUIString) =>
+      totalShares > amount
+        ? `Total adjustment exceeds amount by ${toUIString(totalShares - amount)}`
+        : ' ',
     fmtShareText: (share, toUIString) => removeTrailingZeros(toUIString(share)),
     step: null,
   },
@@ -255,6 +229,16 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
 
 const SplitSection: React.FC<SplitSectionProps> = (props) => {
   const participants = useAddExpenseStore((s) => s.participants);
+  const totalShares = useAddExpenseStore((s) =>
+    s.participants.reduce(
+      (acc, p) =>
+        acc + (s.splitShares[p.id]?.[s.splitType] ?? (s.splitType === SplitType.EQUAL ? 1n : 0n)),
+      0n,
+    ),
+  );
+  const allSelected = useAddExpenseStore((s) =>
+    s.participants.every((p) => 0n !== s.splitShares[p.id]?.[s.splitType]),
+  );
   const currency = useAddExpenseStore((s) => s.currency);
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils('expense_details');
   const { toUIString, toSafeBigInt } = getCurrencyHelpersCached(currency);
@@ -264,15 +248,6 @@ const SplitSection: React.FC<SplitSectionProps> = (props) => {
   const { setSplitShare } = useAddExpenseStore((s) => s.actions);
 
   const { fmtSummartyText, splitType, isBoolean } = props;
-
-  const summaryText = useMemo(
-    () => fmtSummartyText(amount, currency, participants, splitShares, toUIString),
-    [amount, currency, participants, fmtSummartyText, splitShares, toUIString],
-  );
-  const allSelected = useMemo(
-    () => participants.every((p) => 0n !== splitShares[p.id]?.[splitType]),
-    [participants, splitShares, splitType],
-  );
 
   const selectAll = useCallback(() => {
     participants.forEach((p) => {
@@ -304,7 +279,7 @@ const SplitSection: React.FC<SplitSectionProps> = (props) => {
     <div className="relative mt-4 flex flex-col gap-6 px-2">
       <div className="mb-2 flex grow justify-center">
         <div className={cn(canSplitScreenClosed ? 'text-gray-300' : 'text-red-500', 'h-6')}>
-          {summaryText}
+          {fmtSummartyText(amount, totalShares, toUIString)}
         </div>
       </div>
       {isBoolean && (

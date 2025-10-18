@@ -29,41 +29,49 @@ export const getCurrencyHelpers = ({
   const decimalMultiplier = parseInt(`1${'0'.repeat(decimalDigits)}`, 10);
   const decimalMultiplierN = BigInt(decimalMultiplier);
 
-  const bigIntToNumber = (value: bigint) =>
+  const bigIntToNumber = (value: bigint): number =>
     Number(BigMath.abs(value) / decimalMultiplierN) +
     Number(BigMath.abs(value) % decimalMultiplierN) / decimalMultiplier;
 
-  const toSafeBigInt = (stringNumber: string | number | bigint) => {
-    if (typeof stringNumber === 'bigint') {
-      return stringNumber;
-    }
-    if (typeof stringNumber === 'number') {
-      const int = Math.round(stringNumber * decimalMultiplier);
-      return BigInt(!Number.isNaN(int) ? int : 0);
+  const toSafeBigInt = (stringNumber: string | number | bigint): bigint => {
+    if (typeof stringNumber === 'string') {
+      return parseToBigIntBeforeSubmit(sanitizeInput(stringNumber));
     }
 
-    return toSafeBigInt(parseToNumberBeforeSubmit(stringNumber));
+    return parseToBigIntBeforeSubmit(stringNumber);
   };
 
-  /* Parse localized string number to number before submit */
-  const parseToNumberBeforeSubmit = (stringNumber: string | number | bigint) => {
+  /* Parse sanitized string to number before submit */
+  const parseToBigIntBeforeSubmit = (stringNumber: string | number | bigint): bigint => {
     if (typeof stringNumber === 'number') {
-      return stringNumber;
+      if (Number.isNaN(stringNumber)) {
+        return 0n;
+      } else {
+        return (
+          BigInt(Math.round(stringNumber) * decimalMultiplier) +
+          BigInt(Math.round((stringNumber % 1) * decimalMultiplier))
+        );
+      }
     }
     if (typeof stringNumber === 'bigint') {
-      return bigIntToNumber(stringNumber);
+      return stringNumber;
     }
 
     if (stringNumber === '') {
-      return 0;
+      return 0n;
     }
 
-    return parseFloat(
-      stringNumber
-        .replace(currencySymbol, '')
-        .replace(literalSeparator, '')
-        .replace(new RegExp(`\\${thousandSeparator}`, 'g'), '')
-        .replace(new RegExp(`\\${decimalSeparator}`), '.'),
+    const cleanStr = stringNumber
+      .replace(currencySymbol, '')
+      .replace(literalSeparator, '')
+      .replace(new RegExp(`\\${thousandSeparator}`, 'g'), '')
+      .replace(new RegExp(`\\${decimalSeparator}`), '.');
+
+    const [integerPart = '0', decimalPart = ''] = cleanStr.split('.');
+
+    return (
+      BigInt(integerPart) * decimalMultiplierN +
+      BigInt(parseFloat(`0.${decimalPart || '0'}`) * decimalMultiplier)
     );
   };
 
@@ -130,7 +138,11 @@ export const getCurrencyHelpers = ({
     }
 
     if (typeof value === 'bigint') {
-      return parseToCleanString(bigIntToNumber(value));
+      const integer = `${value / decimalMultiplierN}`;
+      const fraction = `${value}`.slice(-decimalDigits);
+      return normalizeToMaxLength(
+        decimalDigits > 0 ? `${integer}${decimalSeparator}${fraction}` : integer,
+      );
     }
 
     if (value === '') {
@@ -159,7 +171,32 @@ export const getCurrencyHelpers = ({
     }
 
     const normalizedToMaxLength = normalizeToMaxLength(value);
-    return formatter.format(parseToNumberBeforeSubmit(normalizedToMaxLength));
+    const bigintValue = parseToBigIntBeforeSubmit(normalizedToMaxLength);
+    const parts = formatter.formatToParts(bigintValue / decimalMultiplierN);
+    const auxParts = formatter.formatToParts(
+      Number(BigMath.abs(bigintValue) % decimalMultiplierN) / decimalMultiplier,
+    );
+    const fractionPart = auxParts.find(({ type }) => type === 'fraction');
+    const decimalPart = auxParts.find(({ type }) => type === 'decimal');
+
+    const hasFraction = parts.some(({ type }) => type === 'fraction');
+
+    if (fractionPart && decimalPart) {
+      if (!hasFraction) {
+        const lastIntegerIndex = parts.findLastIndex(({ type }) => type === 'integer');
+        parts.splice(lastIntegerIndex + 1, 0, decimalPart, fractionPart);
+      } else {
+        parts.forEach((part) => {
+          if (part.type === 'fraction') {
+            part.value = fractionPart.value;
+          } else if (part.type === 'decimal') {
+            part.value = decimalPart.value;
+          }
+        });
+      }
+    }
+
+    return parts.map(({ value }) => value).join('');
   };
 
   const toUIString = (value: unknown) => {
@@ -172,7 +209,6 @@ export const getCurrencyHelpers = ({
 
   return {
     parseToCleanString,
-    parseToNumberBeforeSubmit,
     toUIString,
     stripCurrencySymbol,
     format,

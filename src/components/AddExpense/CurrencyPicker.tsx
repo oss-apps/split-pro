@@ -23,7 +23,7 @@ function CurrencyPickerInner({
 
   const trigger = useMemo(
     () => (
-      <div className="flex w-[70px] justify-center rounded-lg border py-2 text-center text-base">
+      <div className="flex w-[70px] cursor-pointer justify-center rounded-lg border py-2 text-center text-base">
         {currentCurrency}
       </div>
     ),

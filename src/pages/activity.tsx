@@ -17,7 +17,6 @@ function getPaymentString(
   paidBy: number,
   expenseUserAmt: bigint,
   isSettlement: boolean,
-  currency: string,
   t: TFunction,
   toUIString: (value: bigint) => string,
   isDeleted?: boolean,
@@ -30,7 +29,7 @@ function getPaymentString(
     return (
       <div className={`${user.id === paidBy ? 'text-emerald-500' : 'text-orange-500'} text-sm`}>
         {t('ui.actors.you')}{' '}
-        {user.id === paidBy ? t('ui.expense.you.paid') : t('ui.expense.you.received')} {currency}{' '}
+        {user.id === paidBy ? t('ui.expense.you.paid') : t('ui.expense.you.received')}{' '}
         {toUIString(amount)}
       </div>
     );
@@ -38,8 +37,8 @@ function getPaymentString(
     return (
       <div className={`${user.id === paidBy ? 'text-emerald-500' : 'text-orange-500'} text-sm`}>
         {user.id === paidBy
-          ? `${t('ui.actors.you')} ${t('ui.expense.you.lent')} ${currency} ${toUIString(BigMath.abs(expenseUserAmt))}`
-          : `${t('ui.actors.you')} ${t('ui.expense.you.owe')} ${currency} ${toUIString(expenseUserAmt)}`}
+          ? `${t('ui.actors.you')} ${t('ui.expense.you.lent')} ${toUIString(BigMath.abs(expenseUserAmt))}`
+          : `${t('ui.actors.you')} ${t('ui.expense.you.owe')} ${toUIString(expenseUserAmt)}`}
       </div>
     );
   }
@@ -100,7 +99,6 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                       e.expense.paidBy,
                       e.amount,
                       e.expense.splitType === SplitType.SETTLEMENT,
-                      e.expense.currency,
                       t,
                       toUIString,
                       !!e.expense.deletedBy,

@@ -27,7 +27,7 @@ export const GeneralPicker: React.FC<{
   title,
   selected,
 }) => (
-  <AppDrawer trigger={trigger} title={title} className="h-[40vh]" shouldCloseOnAction>
+  <AppDrawer trigger={trigger} title={title} className="h-[70vh]" shouldCloseOnAction>
     <Command className="h-[50vh]">
       <CommandInput className="text-lg" placeholder={placeholderText} />
       <CommandList>

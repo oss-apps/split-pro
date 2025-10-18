@@ -29,8 +29,18 @@ export const BalanceList: React.FC<{
       return acc;
     }, {});
     groupBalances
-      .filter(({ amount }) => 0 < BigMath.abs(amount))
+      .filter(
+        ({ amount, userId, firendId }) =>
+          0 < BigMath.abs(amount) && userId !== firendId && res[userId] && res[firendId],
+      )
       .forEach((balance) => {
+        if (!res[balance.userId]) {
+          res[balance.userId] = {
+            user: users.find((u) => u.id === balance.userId) ?? ({} as User),
+            balances: {},
+            total: {},
+          };
+        }
         if (!res[balance.userId]!.balances[balance.firendId]) {
           res[balance.userId]!.balances[balance.firendId] = {};
         }

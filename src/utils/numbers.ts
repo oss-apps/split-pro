@@ -29,10 +29,6 @@ export const getCurrencyHelpers = ({
   const decimalMultiplier = parseInt(`1${'0'.repeat(decimalDigits)}`, 10);
   const decimalMultiplierN = BigInt(decimalMultiplier);
 
-  const bigIntToNumber = (value: bigint): number =>
-    Number(BigMath.abs(value) / decimalMultiplierN) +
-    Number(BigMath.abs(value) % decimalMultiplierN) / decimalMultiplier;
-
   const toSafeBigInt = (stringNumber: string | number | bigint): bigint => {
     if (typeof stringNumber === 'string') {
       return parseToBigIntBeforeSubmit(sanitizeInput(stringNumber));
@@ -71,7 +67,7 @@ export const getCurrencyHelpers = ({
 
     return (
       BigInt(integerPart) * decimalMultiplierN +
-      BigInt(parseFloat(`0.${decimalPart || '0'}`) * decimalMultiplier)
+      BigInt(Math.round(parseFloat(`0.${decimalPart || '0'}`) * decimalMultiplier))
     );
   };
 

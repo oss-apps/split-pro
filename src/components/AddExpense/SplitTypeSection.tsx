@@ -14,7 +14,7 @@ import React, { type ChangeEvent, type PropsWithChildren, useCallback, useMemo }
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 import { type Participant, useAddExpenseStore } from '~/store/addStore';
-import { removeTrailingZeros } from '~/utils/numbers';
+import { BigMath } from '~/utils/numbers';
 
 import { type TFunction, useTranslation } from 'next-i18next';
 import type { CurrencyCode } from '~/lib/currency';
@@ -221,7 +221,7 @@ const SplitSection: React.FC<SplitSectionProps> = (props) => {
   const splitShares = useAddExpenseStore((s) => s.splitShares);
   const { setSplitShare } = useAddExpenseStore((s) => s.actions);
 
-  const { fmtSummartyText, splitType, isBoolean } = props;
+  const { fmtSummartyText, splitType, isBoolean, isCurrency } = props;
 
   const selectAll = useCallback(() => {
     participants.forEach((p) => {
@@ -243,10 +243,12 @@ const SplitSection: React.FC<SplitSectionProps> = (props) => {
       setSplitShare(
         splitType,
         userId,
-        value === undefined || '' === value ? 0n : toSafeBigInt(value),
+        value === undefined || '' === value
+          ? 0n
+          : BigMath.abs(toSafeBigInt(isCurrency ? value : parseFloat(value))),
       );
     },
-    [setSplitShare, splitType, toSafeBigInt],
+    [setSplitShare, splitType, toSafeBigInt, isCurrency],
   );
 
   return (

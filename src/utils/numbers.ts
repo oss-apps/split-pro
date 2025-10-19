@@ -116,7 +116,7 @@ export const getCurrencyHelpers = ({
   };
 
   const normalizeToMaxLength = (inputString: string) => {
-    const sanitized = sanitizeInput(inputString, true);
+    const sanitized = sanitizeInput(inputString);
     const trimmedExceedingDecimals = trimExceedingDecimals(sanitized);
     return trimmedExceedingDecimals.endsWith(decimalSeparator)
       ? trimmedExceedingDecimals.slice(0, -1)
@@ -124,7 +124,7 @@ export const getCurrencyHelpers = ({
   };
 
   /* Parse various input types to clean string number */
-  const parseToCleanString = (value: unknown) => {
+  const parseToCleanString = (value: unknown, signed = false) => {
     if (value === formatter.format(0)) {
       return '';
     }
@@ -134,7 +134,7 @@ export const getCurrencyHelpers = ({
     }
 
     if (typeof value === 'bigint') {
-      const sign = value < 0n ? '-' : '';
+      const sign = value < 0n && signed ? '-' : '';
       const integer = `${value / decimalMultiplierN}`;
       const fraction = `${value}`.slice(-decimalDigits);
       return (
@@ -165,12 +165,12 @@ export const getCurrencyHelpers = ({
   };
 
   /* Format a string number to localized, beautified currency string */
-  const format = (value: string) => {
+  const format = (value: string, signed = false) => {
     if (value === '') {
       return formatter.format(0);
     }
 
-    const sign = value.startsWith('-') ? '-' : '';
+    const sign = value.startsWith('-') && signed ? '-' : '';
     const normalizedToMaxLength = normalizeToMaxLength(value);
     const bigintValue = parseToBigIntBeforeSubmit(normalizedToMaxLength);
     const parts = formatter.formatToParts(BigMath.abs(bigintValue) / decimalMultiplierN);
@@ -201,9 +201,9 @@ export const getCurrencyHelpers = ({
     return sign + parts.map(({ value }) => value).join('');
   };
 
-  const toUIString = (value: unknown) => {
-    const cleanString = parseToCleanString(value);
-    return format(cleanString);
+  const toUIString = (value: unknown, signed = false) => {
+    const cleanString = parseToCleanString(value, signed);
+    return format(cleanString, signed);
   };
 
   const stripCurrencySymbol = (value: string) =>
@@ -212,6 +212,7 @@ export const getCurrencyHelpers = ({
   return {
     parseToCleanString,
     toUIString,
+    toUIStringSigned: (value: unknown) => toUIString(value, true),
     stripCurrencySymbol,
     format,
     formatter,

@@ -12,10 +12,11 @@ describe('getCurrencyHelpers', () => {
 
         it.each([
           [12345n, '$123.45'],
-          [-12345n, '-$123.45'],
-          [-50n, '-$0.5'],
+          [-12345n, '$123.45'],
+          [-50n, '$0.5'],
           [-0n, '$0'],
           [99999999999999999999999999999n, '$999,999,999,999,999,999,999,999,999.99'],
+          [-99999999999999999999999999999n, '$999,999,999,999,999,999,999,999,999.99'],
         ])('should format %p as %p ', (value, expected) => {
           expect(toUIString(value)).toBe(expected);
         });
@@ -29,6 +30,17 @@ describe('getCurrencyHelpers', () => {
           const value = 123400n;
           expect(toUIString(value)).toBe('$1,234');
         });
+
+        it.each([
+          [12345n, '$123.45'],
+          [-12345n, '-$123.45'],
+          [-50n, '-$0.5'],
+          [-0n, '$0'],
+          [99999999999999999999999999999n, '$999,999,999,999,999,999,999,999,999.99'],
+          [-99999999999999999999999999999n, '-$999,999,999,999,999,999,999,999,999.99'],
+        ])('should format %p as %p with signed flag', (value, expected) => {
+          expect(toUIString(value, true)).toBe(expected);
+        });
       });
       describe('JPY (no decimals)', () => {
         const currency = 'JPY';
@@ -37,8 +49,8 @@ describe('getCurrencyHelpers', () => {
 
         it.each([
           [12345n, '¥12,345'],
-          [-12345n, '-¥12,345'],
-          [-50n, '-¥50'],
+          [-12345n, '¥12,345'],
+          [-50n, '¥50'],
           [-0n, '¥0'],
         ])('should format %p as %p ', (value, expected) => {
           expect(toUIString(value)).toBe(expected);
@@ -56,8 +68,8 @@ describe('getCurrencyHelpers', () => {
 
         it.each([
           [12345n, '123,45 €'],
-          [-12345n, '-123,45 €'],
-          [-50n, '-0,5 €'],
+          [-12345n, '123,45 €'],
+          [-50n, '0,5 €'],
           [-0n, '0 €'],
         ])('should format %p as %p ', (value, expected) => {
           expect(toUIString(value)).toBe(expected);

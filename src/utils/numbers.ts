@@ -116,7 +116,7 @@ export const getCurrencyHelpers = ({
   };
 
   const normalizeToMaxLength = (inputString: string) => {
-    const sanitized = sanitizeInput(inputString);
+    const sanitized = sanitizeInput(inputString, true);
     const trimmedExceedingDecimals = trimExceedingDecimals(sanitized);
     return trimmedExceedingDecimals.endsWith(decimalSeparator)
       ? trimmedExceedingDecimals.slice(0, -1)
@@ -134,10 +134,14 @@ export const getCurrencyHelpers = ({
     }
 
     if (typeof value === 'bigint') {
+      const sign = value < 0n ? '-' : '';
       const integer = `${value / decimalMultiplierN}`;
       const fraction = `${value}`.slice(-decimalDigits);
-      return normalizeToMaxLength(
-        decimalDigits > 0 ? `${integer}${decimalSeparator}${fraction}` : integer,
+      return (
+        sign +
+        normalizeToMaxLength(
+          decimalDigits > 0 ? `${integer}${decimalSeparator}${fraction}` : integer,
+        )
       );
     }
 
@@ -166,11 +170,13 @@ export const getCurrencyHelpers = ({
       return formatter.format(0);
     }
 
+    const sign = value.startsWith('-') ? '-' : '';
     const normalizedToMaxLength = normalizeToMaxLength(value);
     const bigintValue = parseToBigIntBeforeSubmit(normalizedToMaxLength);
-    const parts = formatter.formatToParts(bigintValue / decimalMultiplierN);
+    const parts = formatter.formatToParts(BigMath.abs(bigintValue) / decimalMultiplierN);
     const auxParts = formatter.formatToParts(
-      Number(BigMath.abs(bigintValue) % decimalMultiplierN) / decimalMultiplier,
+      (Number(BigMath.abs(bigintValue) % decimalMultiplierN) / decimalMultiplier) *
+        Number(BigMath.sign(bigintValue)),
     );
     const fractionPart = auxParts.find(({ type }) => type === 'fraction');
     const decimalPart = auxParts.find(({ type }) => type === 'decimal');
@@ -192,7 +198,7 @@ export const getCurrencyHelpers = ({
       }
     }
 
-    return parts.map(({ value }) => value).join('');
+    return sign + parts.map(({ value }) => value).join('');
   };
 
   const toUIString = (value: unknown) => {

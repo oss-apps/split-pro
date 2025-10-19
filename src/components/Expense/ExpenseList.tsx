@@ -5,7 +5,6 @@ import Link from 'next/link';
 import React from 'react';
 import { CategoryIcon } from '~/components/ui/categoryIcons';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
-import { toUIString } from '~/utils/numbers';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 export const ExpenseList: React.FC<{
@@ -17,8 +16,9 @@ export const ExpenseList: React.FC<{
   isGroup?: boolean;
   isLoading?: boolean;
 }> = ({ userId, isGroup = false, expenses = [], contactId, isLoading }) => {
-  const { displayName, toUIDate, t } = useTranslationWithUtils(['expense_details']);
-
+  const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils([
+    'expense_details',
+  ]);
   return (
     <>
       {expenses.map((e) => {
@@ -30,6 +30,7 @@ export const ExpenseList: React.FC<{
         const yourExpenseAmount = youPaid
           ? (yourExpense?.amount ?? 0n)
           : -(yourExpense?.amount ?? 0n);
+        const { toUIString } = getCurrencyHelpersCached(e.currency);
 
         return (
           <Link
@@ -56,7 +57,7 @@ export const ExpenseList: React.FC<{
                   <span className="text-[10px]">{isSettlement ? '  🎉  ' : null}</span>
                   {displayName(e.paidByUser, userId)}{' '}
                   {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`, { ns: 'common' })}{' '}
-                  {e.currency} {toUIString(e.amount)}
+                  {toUIString(e.amount)}
                 </p>
               </div>
             </div>
@@ -73,7 +74,6 @@ export const ExpenseList: React.FC<{
                     <div
                       className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
                     >
-                      <span className="font-light">{e.currency}</span>{' '}
                       {toUIString(yourExpenseAmount)}
                     </div>
                   </>

@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, PlusIcon } from 'lucide-react';
+import { ChevronLeftIcon, HandCoins, PlusIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -12,13 +12,12 @@ import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
-import { toUIString } from '~/utils/numbers';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { type GetServerSideProps } from 'next';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
-  const { t, displayName } = useTranslationWithUtils();
+  const { t, displayName, getCurrencyHelpersCached } = useTranslationWithUtils();
   const router = useRouter();
   const { friendId } = router.query;
 
@@ -86,7 +85,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                     {youOwe?.map((bal, index) => (
                       <span key={bal.currency}>
                         <span className="font-semibold tracking-wide">
-                          {bal.currency} {toUIString(bal.amount)}
+                          {getCurrencyHelpersCached(bal.currency).toUIString(bal.amount)}
                         </span>
                         {youOwe.length - 1 === index ? '' : ' + '}
                       </span>
@@ -102,7 +101,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                     {youLent?.map((bal, index) => (
                       <span key={bal.currency}>
                         <span className="font-semibold tracking-wide">
-                          {bal.currency} {toUIString(bal.amount)}
+                          {getCurrencyHelpersCached(bal.currency).toUIString(bal.amount)}
                         </span>
                         {youLent.length - 1 === index ? '' : ' + '}
                       </span>
@@ -112,7 +111,15 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               </div>
             </div>
             <div className="mt-6 mb-4 flex justify-center gap-2">
-              <SettleUp balances={balances.data} friend={friendQuery.data} />
+              <SettleUp balances={balances.data} friend={friendQuery.data}>
+                <Button
+                  size="sm"
+                  className="flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500 px-3 text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 focus-visible:outline-hidden lg:w-[180px]"
+                  disabled={!balances.data?.length}
+                >
+                  <HandCoins className="size-4" /> {t('ui.actions.settle_up')}
+                </Button>
+              </SettleUp>
               <Link href={`/add?friendId=${friendQuery.data.id}`}>
                 <Button size="sm" variant="secondary" responsiveIcon>
                   <PlusIcon className="size-4" /> {t('ui.actions.add_expense')}

@@ -93,10 +93,10 @@ export const SelectUserOrGroup: React.FC<{
             <div>{t('ui.add_expense_details.select_user_or_group.note')}</div>
           )}
         </div>
-        <div className="flex justify-center gap-4">
+        <div className="flex flex-wrap justify-center gap-x-4">
           {enableSendingInvites && (
             <Button
-              className="mt-4 w-full text-cyan-500 hover:text-cyan-500"
+              className="mt-4 text-cyan-500 hover:text-cyan-500"
               variant="outline"
               disabled={!isEmail.success}
               onClick={() => onAddEmailClick(false)}
@@ -106,7 +106,7 @@ export const SelectUserOrGroup: React.FC<{
             </Button>
           )}
           <Button
-            className="mt-4 w-full text-cyan-500 hover:text-cyan-500"
+            className="mt-4 text-cyan-500 hover:text-cyan-500"
             variant="outline"
             disabled={!isEmail.success}
             onClick={() => onAddEmailClick(false)}

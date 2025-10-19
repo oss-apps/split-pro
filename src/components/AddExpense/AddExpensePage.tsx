@@ -8,7 +8,6 @@ import { type CurrencyCode } from '~/lib/currency';
 import { cn } from '~/lib/utils';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
-import { toSafeBigInt } from '~/utils/numbers';
 
 import { Button } from '../ui/button';
 import { Calendar } from '../ui/calendar';
@@ -17,18 +16,18 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { CategoryPicker } from './CategoryPicker';
 import { CurrencyPicker } from './CurrencyPicker';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
-import { SplitTypeSection } from './SplitTypeSection';
+import { PayerSelectionForm, SplitExpenseForm } from './SplitTypeSection';
 import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
 import { toast } from 'sonner';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { CurrencyInput } from '../ui/currency-input';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
   expenseId?: string;
 }> = ({ isStorageConfigured, enableSendingInvites, expenseId }) => {
-  const { t, toUIDate } = useTranslationWithUtils(['expense_details']);
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
   const isNegative = useAddExpenseStore((s) => s.isNegative);
@@ -44,6 +43,11 @@ export const AddOrEditExpensePage: React.FC<{
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const splitType = useAddExpenseStore((s) => s.splitType);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
+  const currentUser = useAddExpenseStore((s) => s.currentUser);
+  const splitShares = useAddExpenseStore((s) => s.splitShares);
+
+  const { t, toUIDate, displayName, generateSplitDescription } =
+    useTranslationWithUtils('expense_details');
 
   const {
     setCurrency,
@@ -71,10 +75,13 @@ export const AddOrEditExpensePage: React.FC<{
   const router = useRouter();
 
   const onUpdateAmount = useCallback(
-    (amt: string) => {
-      const _amt = amt.replace(',', '.');
-      setAmountStr(_amt);
-      setAmount(toSafeBigInt(_amt));
+    ({ strValue, bigIntValue }: { strValue?: string; bigIntValue?: bigint }) => {
+      if (strValue !== undefined) {
+        setAmountStr(strValue);
+      }
+      if (bigIntValue !== undefined) {
+        setAmount(bigIntValue);
+      }
     },
     [setAmount, setAmountStr],
   );
@@ -156,14 +163,6 @@ export const AddOrEditExpensePage: React.FC<{
     [setDescription],
   );
 
-  const onAmountChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = e.target;
-      onUpdateAmount(value);
-    },
-    [onUpdateAmount],
-  );
-
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
@@ -203,19 +202,43 @@ export const AddOrEditExpensePage: React.FC<{
           </div>
           <div className="flex gap-2">
             <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
-            <Input
+            <CurrencyInput
               placeholder={t('ui.add_expense_details.amount_placeholder')}
-              className="text-lg placeholder:text-sm"
-              type="number"
-              inputMode="decimal"
-              value={amtStr}
-              onChange={onAmountChange}
+              currency={currency}
+              strValue={amtStr}
+              bigIntValue={amount}
+              allowNegative
+              hideSymbol
+              onValueChange={onUpdateAmount}
             />
           </div>
           <div className="h-[180px]">
             {amount && '' !== description ? (
               <>
-                <SplitTypeSection />
+                <div className="flex flex-col items-center justify-center text-sm text-gray-400 sm:mt-4 sm:flex-row">
+                  <p>
+                    {t(`ui.expense.${isNegative ? 'received_by' : 'paid_by'}`, {
+                      ns: 'common',
+                    })}
+                  </p>
+                  <PayerSelectionForm>
+                    <Button variant="ghost" className="text-primary h-8 px-1.5 py-0 text-base">
+                      {displayName(paidBy, currentUser?.id, 'dativus')}
+                    </Button>
+                  </PayerSelectionForm>
+                  <p>{t('ui.and', { ns: 'common' })} </p>
+                  <SplitExpenseForm>
+                    <Button variant="ghost" className="text-primary h-8 px-1.5 py-0 text-base">
+                      {generateSplitDescription(
+                        splitType,
+                        participants,
+                        splitShares,
+                        paidBy,
+                        currentUser,
+                      )}
+                    </Button>
+                  </SplitExpenseForm>
+                </div>
 
                 <div className="mt-4 flex items-center justify-between sm:mt-10">
                   <div className="flex flex-wrap items-center gap-4">

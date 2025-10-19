@@ -1,94 +1,158 @@
 // filepath: /home/wiktor/kod/split-pro/src/utils/number.test.ts
-import { toUIString } from './numbers';
-import type { CurrencyCode } from '../lib/currency';
+import { getCurrencyHelpers } from './numbers';
 
-describe('toUIString', () => {
-  describe('USD currency (2 decimal places)', () => {
-    const currencyCode: CurrencyCode = 'USD';
-    const toUIStringUnsigned = (val: bigint) => toUIString(val, false, currencyCode);
-    const toUIStringSigned = (val: bigint) => toUIString(val, true, currencyCode);
+describe('getCurrencyHelpers', () => {
+  describe('toUIString', () => {
+    describe('en-US locale', () => {
+      const locale = 'en-US';
 
-    it.each([
-      [12300n, '123.00'],
-      [12345n, '123.45'],
-      [50n, '0.50'],
-      [5n, '0.05'],
-      [0n, '0.00'],
-    ])('should format unsigned %p as %p', (value, expected) => {
-      expect(toUIStringUnsigned(value)).toBe(expected);
+      describe('USD', () => {
+        const currency = 'USD';
+        const { toUIString } = getCurrencyHelpers({ locale, currency });
+
+        it.each([
+          [12345n, '$123.45'],
+          [-12345n, '$123.45'],
+          [-50n, '$0.5'],
+          [-0n, '$0'],
+          [99999999999999999999999999999n, '$999,999,999,999,999,999,999,999,999.99'],
+        ])('should format %p as %p ', (value, expected) => {
+          expect(toUIString(value)).toBe(expected);
+        });
+
+        it('should format with thousands separators for large numbers', () => {
+          const value = 12345678900n;
+          expect(toUIString(value)).toBe('$123,456,789');
+        });
+
+        it('should insert thousands separators for single ~1k values', () => {
+          const value = 123400n;
+          expect(toUIString(value)).toBe('$1,234');
+        });
+      });
+      describe('JPY (no decimals)', () => {
+        const currency = 'JPY';
+
+        const { toUIString } = getCurrencyHelpers({ locale, currency });
+
+        it.each([
+          [12345n, '¥12,345'],
+          [-12345n, '¥12,345'],
+          [-50n, '¥50'],
+          [-0n, '¥0'],
+        ])('should format %p as %p ', (value, expected) => {
+          expect(toUIString(value)).toBe(expected);
+        });
+      });
     });
 
-    it.each([
-      [12345n, '123.45'],
-      [-12345n, '-123.45'],
-      [-50n, '-0.50'],
-      [-0n, '0.00'],
-    ])('should format signed %p as %p', (value, expected) => {
-      expect(toUIStringSigned(value)).toBe(expected);
-    });
+    describe('bg-BG locale', () => {
+      const locale = 'bg-BG';
 
-    it('should ignore sign if signed parameter is false', () => {
-      expect(toUIStringUnsigned(-12345n)).toBe('123.45');
+      describe('EUR', () => {
+        const currency = 'EUR';
+
+        const { toUIString } = getCurrencyHelpers({ locale, currency });
+
+        it.each([
+          [12345n, '123,45 €'],
+          [-12345n, '123,45 €'],
+          [-50n, '0,5 €'],
+          [-0n, '0 €'],
+        ])('should format %p as %p ', (value, expected) => {
+          expect(toUIString(value)).toBe(expected);
+        });
+
+        it('should format with thousands separators for large numbers', () => {
+          expect(toUIString(12345678900n)).toBe('123 456 789 €');
+          expect(toUIString(5678900n)).toBe('56 789 €');
+        });
+
+        it('should not insert thousands separators for single ~1k values', () => {
+          const value = 123400n;
+          expect(toUIString(value)).toBe('1234 €');
+        });
+      });
     });
   });
 
-  describe('AFN currency (0 decimal places)', () => {
-    const currencyCode: CurrencyCode = 'AFN';
-    const toUIStringUnsigned = (val: bigint) => toUIString(val, false, currencyCode);
-    const toUIStringSigned = (val: bigint) => toUIString(val, true, currencyCode);
-
-    it.each([
-      [12300n, '123'],
-      [12345n, '123'],
-      [12399n, '123'],
-      [50n, '0'],
-      [5n, '0'],
-      [99n, '0'],
-      [0n, '0'],
-    ])('should format unsigned %p as %p', (value, expected) => {
-      expect(toUIStringUnsigned(value)).toBe(expected);
+  describe('toSafeBigInt', () => {
+    const { toSafeBigInt } = getCurrencyHelpers({
+      locale: 'en-US',
+      currency: 'USD',
     });
 
     it.each([
-      [12300n, '123'],
-      [-12300n, '-123'],
-      [-700n, '-7'],
-      [-50n, '0'],
-      [-0n, '0'],
-    ])('should format signed %p as %p', (value, expected) => {
-      expect(toUIStringSigned(value)).toBe(expected);
+      ['123.45', 12345n],
+      ['0.99', 99n],
+      ['1000', 100000n],
+      ['1000.5', 100050n],
+      ['0', 0n],
+      ['', 0n],
+      ['invalid', 0n],
+      [123.45, 12345n],
+      [0.99, 99n],
+      [1000, 100000n],
+      [1000.5, 100050n],
+      [NaN, 0n],
+      [0, 0n],
+      [12345n, 12345n],
+      [0n, 0n],
+    ])('should parse %p to %p ', (input, expected) => {
+      expect(toSafeBigInt(input)).toBe(expected);
     });
 
-    it('should ignore sign if signed parameter is false for AFN', () => {
-      expect(toUIStringUnsigned(-12300n)).toBe('123');
+    it.each([
+      ['-123.45', -12345n],
+      ['-0.99', -99n],
+      ['-1000', -100000n],
+      ['-1000.5', -100050n],
+
+      [-123.45, -12345n],
+      [-0.99, -99n],
+      [-1000, -100000n],
+      [-1000.5, -100050n],
+    ])('should parse %p to %p with signed flag', (input, expected) => {
+      expect(toSafeBigInt(input, true)).toBe(expected);
+    });
+
+    it.each([
+      ['123456789012345678901234567890.12', 12345678901234567890123456789012n],
+      ['0.000000000000000000000000000001', 0n],
+      ['-123456789012345678901234567890.12', -12345678901234567890123456789012n],
+    ])('should parse big numbers %p to %p ', (input, expected) => {
+      expect(toSafeBigInt(input, true)).toBe(expected);
     });
   });
 
-  it('should use USD as default currency if none provided', () => {
-    expect(toUIString(12345n)).toBe('123.45');
-  });
-
-  it('should default to absolute value if signed parameter is undefined', () => {
-    expect(toUIString(-12345n, undefined, 'USD')).toBe('123.45');
-  });
-
-  describe('Locale-specific formatting', () => {
-    it('should format with thousands separators (commas) and dot decimal for default en-US locale', () => {
-      const value = 12345678900n;
-      const currencyCode: CurrencyCode = 'USD';
-      expect(toUIString(value, false, currencyCode)).toBe('123,456,789.00');
+  describe('sanitizeInput', () => {
+    const { sanitizeInput } = getCurrencyHelpers({
+      locale: 'en-US',
+      currency: 'USD',
     });
 
-    it('should format with thousands separators for a currency with 0 decimal places (e.g., JPY/AFN)', () => {
-      const value = 123456700n;
-      const currencyCode: CurrencyCode = 'AFN';
-      expect(toUIString(value, false, currencyCode)).toBe('1,234,567');
+    it.each([
+      ['123.45', '123.45'],
+      ['1,234.56', '1234.56'],
+      ['1,234.56789', '1234.56'],
+      ['$1,234.56', '1234.56'],
+      ['$1,234.56789', '1234.56'],
+      ['-123.45', '123.45'],
+      ['abc123.45xyz', '123.45'],
+      ['..123..45..', '.12'],
+      ['', ''],
+    ])('should sanitize %p to %p', (input, expected) => {
+      expect(sanitizeInput(input, false)).toBe(expected);
     });
 
-    it('should handle negative numbers with locale-specific formatting', () => {
-      const value = -12345678900n;
-      const currencyCode: CurrencyCode = 'USD';
-      expect(toUIString(value, true, currencyCode)).toBe('-123,456,789.00');
+    it.each([
+      ['-123.45', '-123.45'],
+      ['(-123.45)', '-123.45'],
+      ['-$1,234.56', '-1234.56'],
+      ['abc-123.45xyz', '-123.45'],
+      ['--123.45', '-123.45'],
+    ])('should sanitize %p to %p with signed flag', (input, expected) => {
+      expect(sanitizeInput(input, true)).toBe(expected);
     });
   });
 });

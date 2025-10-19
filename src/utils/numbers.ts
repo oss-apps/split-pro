@@ -1,5 +1,4 @@
-import type { CurrencyCode } from '~/lib/currency';
-import { CURRENCIES, isCurrencyCode } from '~/lib/currency';
+import { CURRENCIES, type CurrencyCode, isCurrencyCode } from '~/lib/currency';
 
 export const getCurrencyHelpers = ({
   locale = 'en-US',
@@ -29,9 +28,9 @@ export const getCurrencyHelpers = ({
   const decimalMultiplier = parseInt(`1${'0'.repeat(decimalDigits)}`, 10);
   const decimalMultiplierN = BigInt(decimalMultiplier);
 
-  const toSafeBigInt = (stringNumber: string | number | bigint): bigint => {
+  const toSafeBigInt = (stringNumber: string | number | bigint, signed = false): bigint => {
     if (typeof stringNumber === 'string') {
-      return parseToBigIntBeforeSubmit(sanitizeInput(stringNumber));
+      return parseToBigIntBeforeSubmit(sanitizeInput(stringNumber, signed));
     }
 
     return parseToBigIntBeforeSubmit(stringNumber);
@@ -43,10 +42,10 @@ export const getCurrencyHelpers = ({
       if (Number.isNaN(stringNumber)) {
         return 0n;
       } else {
-        return (
-          BigInt(Math.round(stringNumber) * decimalMultiplier) +
-          BigInt(Math.round((stringNumber % 1) * decimalMultiplier))
-        );
+        const integerPart = BigInt(Math.floor(Math.abs(stringNumber)) * decimalMultiplier);
+        const fractionPart = BigInt(Math.round((Math.abs(stringNumber) % 1) * decimalMultiplier));
+        const sign = BigInt(Math.sign(stringNumber));
+        return (integerPart + fractionPart) * sign;
       }
     }
     if (typeof stringNumber === 'bigint') {
@@ -67,7 +66,8 @@ export const getCurrencyHelpers = ({
 
     return (
       BigInt(integerPart) * decimalMultiplierN +
-      BigInt(Math.round(parseFloat(`0.${decimalPart || '0'}`) * decimalMultiplier))
+      BigInt(Math.round(parseFloat(`0.${decimalPart || '0'}`) * decimalMultiplier)) *
+        (integerPart.startsWith('-') ? -1n : 1n)
     );
   };
 

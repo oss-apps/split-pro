@@ -1,5 +1,5 @@
 // filepath: /home/wiktor/kod/split-pro/src/utils/number.test.ts
-import { getCurrencyHelpers } from './numbers';
+import { getCurrencyHelpers } from '../utils/numbers';
 
 describe('getCurrencyHelpers', () => {
   describe('toUIString', () => {

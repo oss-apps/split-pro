@@ -103,7 +103,7 @@ const BalancePage: NextPageWithUser<{
           toast.success(t('ui.messages.balances_recalculated'));
         },
         onError: (e) => {
-          toast.error(t('ui.errors.something_went_wrong', { ns: 'common' }));
+          toast.error(t('errors.something_went_wrong', { ns: 'common' }));
           console.error(e);
         },
       },
@@ -118,7 +118,7 @@ const BalancePage: NextPageWithUser<{
           router.replace('/groups').catch(console.error);
         },
         onError: (e) => {
-          toast.error(t('ui.errors.something_went_wrong', { ns: 'common' }));
+          toast.error(t('errors.something_went_wrong', { ns: 'common' }));
           console.error(e);
         },
       },

@@ -40,15 +40,21 @@ function simplifyDebtsForSingleCurrency(
     simplified.flatMap((row, source) => {
       const res: GroupBalance[] = [];
       row.forEach((amount, sink) => {
-        const balance = groupBalances.find(
-          (balance) => balance.userId === nodes[source] && balance.firendId === nodes[sink],
-        )!;
-
         if (0n === amount) {
           return;
         }
 
+        const balance =
+          groupBalances.find(
+            (balance) => balance.userId === nodes[source] && balance.firendId === nodes[sink],
+          ) ?? {};
+
         res.push({
+          userId: nodes[source]!,
+          firendId: nodes[sink]!,
+          currency: groupBalances[0]!.currency,
+          updatedAt: new Date(),
+          groupId: groupBalances[0]!.groupId,
           ...balance,
           amount,
         });

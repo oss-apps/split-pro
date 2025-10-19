@@ -9,6 +9,7 @@ import { BigMath } from '~/utils/numbers';
 import { GroupSettleUp } from '../Friend/GroupSettleup';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { toast } from 'sonner';
 
 interface UserWithBalance {
   user: User;
@@ -40,6 +41,8 @@ export const BalanceList: React.FC<{
             balances: {},
             total: {},
           };
+          console.error('BalanceList: userId not found in users list', balance.userId);
+          toast.error(t('common:errors.group_balances_malformed'));
         }
         if (!res[balance.userId]!.balances[balance.firendId]) {
           res[balance.userId]!.balances[balance.firendId] = {};
@@ -52,7 +55,7 @@ export const BalanceList: React.FC<{
       });
 
     return res;
-  }, [groupBalances, users]);
+  }, [groupBalances, users, t]);
 
   return (
     <>

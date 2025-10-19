@@ -722,7 +722,7 @@ export async function recalculateGroupBalances(groupId: number) {
       }
 
       operations.push(
-        db.groupBalance.update({
+        db.groupBalance.upsert({
           where: {
             groupId_currency_firendId_userId: {
               groupId,
@@ -731,13 +731,20 @@ export async function recalculateGroupBalances(groupId: number) {
               firendId: participant.userId,
             },
           },
-          data: {
+          create: {
+            amount: -participant.amount,
+            groupId,
+            currency: groupExpense.currency,
+            userId: groupExpense.paidBy,
+            firendId: participant.userId,
+          },
+          update: {
             amount: {
               increment: -participant.amount,
             },
           },
         }),
-        db.groupBalance.update({
+        db.groupBalance.upsert({
           where: {
             groupId_currency_firendId_userId: {
               groupId,
@@ -746,7 +753,14 @@ export async function recalculateGroupBalances(groupId: number) {
               firendId: groupExpense.paidBy,
             },
           },
-          data: {
+          create: {
+            amount: participant.amount,
+            groupId,
+            currency: groupExpense.currency,
+            userId: participant.userId,
+            firendId: groupExpense.paidBy,
+          },
+          update: {
             amount: {
               increment: participant.amount,
             },

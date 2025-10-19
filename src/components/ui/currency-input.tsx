@@ -39,7 +39,7 @@ const CurrencyInput = React.forwardRef<
         value={strValue}
         onFocus={() => onValueChange({ strValue: parseToCleanString(strValue) })}
         onBlur={() => {
-          const formattedValue = format(strValue);
+          const formattedValue = format(strValue, allowNegative);
           return onValueChange({
             strValue: hideSymbol ? stripCurrencySymbol(formattedValue) : formattedValue,
           });
@@ -47,7 +47,7 @@ const CurrencyInput = React.forwardRef<
         onChange={(e) => {
           const rawValue = e.target.value;
           const strValue = sanitizeInput(rawValue, allowNegative);
-          const bigIntValue = toSafeBigInt(strValue);
+          const bigIntValue = toSafeBigInt(strValue, allowNegative);
           onValueChange({ strValue, bigIntValue });
         }}
         {...props}

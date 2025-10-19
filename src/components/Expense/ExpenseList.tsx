@@ -56,7 +56,10 @@ export const ExpenseList: React.FC<{
                 >
                   <span className="text-[10px]">{isSettlement ? '  🎉  ' : null}</span>
                   {displayName(e.paidByUser, userId)}{' '}
-                  {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`, { ns: 'common' })}{' '}
+                  {t(
+                    `ui.expense.${e.paidByUser.id === userId ? 'you' : 'user'}.${e.amount < 0n ? 'received' : 'paid'}`,
+                    { ns: 'common' },
+                  )}{' '}
                   {toUIString(e.amount)}
                 </p>
               </div>

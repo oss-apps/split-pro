@@ -10,10 +10,10 @@ import {
   Plus,
   X,
 } from 'lucide-react';
-import React, { type ChangeEvent, useCallback, useMemo } from 'react';
+import React, { type ChangeEvent, type PropsWithChildren, useCallback, useMemo } from 'react';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
-import { type AddExpenseState, type Participant, useAddExpenseStore } from '~/store/addStore';
+import { type Participant, useAddExpenseStore } from '~/store/addStore';
 import { removeTrailingZeros } from '~/utils/numbers';
 
 import { type TFunction, useTranslation } from 'next-i18next';
@@ -25,65 +25,24 @@ import { AppDrawer, DrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
-export const SplitTypeSection: React.FC = () => {
-  const { t, displayName, generateSplitDescription } = useTranslationWithUtils(['expense_details']);
-  const isNegative = useAddExpenseStore((s) => s.isNegative);
+export const PayerSelectionForm: React.FC<PropsWithChildren> = ({ children }) => {
+  const { t } = useTranslationWithUtils('expense_details');
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const participants = useAddExpenseStore((s) => s.participants);
-  const currentUser = useAddExpenseStore((s) => s.currentUser);
-  const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
-  const splitType = useAddExpenseStore((s) => s.splitType);
-  const splitScreenOpen = useAddExpenseStore((s) => s.splitScreenOpen);
-  const splitShares = useAddExpenseStore((s) => s.splitShares);
-
-  const { setSplitScreenOpen } = useAddExpenseStore((s) => s.actions);
 
   return (
-    <div className="flex items-center justify-center text-[16px] text-gray-400 sm:mt-4">
-      <p className="text-[16px]">
-        {t(`ui.expense.${isNegative ? 'received_by' : 'paid_by'}`, { ns: 'common' })}{' '}
-      </p>
-      <AppDrawer
-        trigger={
-          <p className="overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 lg:max-w-48">
-            {displayName(paidBy, currentUser?.id, 'dativus')}
-          </p>
-        }
-        title={t('ui.expense.paid_by', { ns: 'common' })}
-        className="h-[70vh]"
-        shouldCloseOnAction
-      >
-        <div className="flex flex-col gap-6 overflow-auto">
-          {participants.map((participant) => (
-            <PayerRow
-              key={participant.id}
-              p={participant}
-              isPaying={participant.id === paidBy?.id}
-            />
-          ))}
-        </div>
-      </AppDrawer>
-      <p>{t('ui.and', { ns: 'common' })} </p>
-      <AppDrawer
-        trigger={
-          <div className="max-w-40 overflow-hidden px-1.5 text-[16.5px] text-nowrap text-ellipsis text-cyan-500 md:max-w-48 lg:max-w-56">
-            {generateSplitDescription(splitType, participants, splitShares, paidBy, currentUser)}
-          </div>
-        }
-        title={t(
-          `ui.add_expense_details.split_type_section.types.${splitType.toLowerCase()}.title`,
-        )}
-        className="h-[85vh] lg:h-[70vh]"
-        shouldCloseOnAction
-        dismissible={canSplitScreenClosed}
-        actionTitle={t('ui.actions.save', { ns: 'common' })}
-        actionDisabled={!canSplitScreenClosed}
-        open={splitScreenOpen}
-        onOpenChange={setSplitScreenOpen}
-      >
-        <SplitExpenseForm />
-      </AppDrawer>
-    </div>
+    <AppDrawer
+      trigger={children}
+      title={t('ui.expense.paid_by', { ns: 'common' })}
+      className="h-[70vh]"
+      shouldCloseOnAction
+    >
+      <div className="flex flex-col gap-6 overflow-auto">
+        {participants.map((participant) => (
+          <PayerRow key={participant.id} p={participant} isPaying={participant.id === paidBy?.id} />
+        ))}
+      </div>
+    </AppDrawer>
   );
 };
 
@@ -105,10 +64,14 @@ const PayerRow = ({ p, isPaying }: { p: Participant; isPaying: boolean }) => {
   );
 };
 
-const SplitExpenseForm: React.FC = () => {
+export const SplitExpenseForm: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation('expense_details');
   const splitType = useAddExpenseStore((s) => s.splitType);
   const { setSplitType } = useAddExpenseStore((s) => s.actions);
+  const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
+  const splitScreenOpen = useAddExpenseStore((s) => s.splitScreenOpen);
+
+  const { setSplitScreenOpen } = useAddExpenseStore((s) => s.actions);
 
   const onTabChange = useCallback(
     (value: string) => {
@@ -120,20 +83,32 @@ const SplitExpenseForm: React.FC = () => {
   const splitProps = useMemo(() => getSplitProps(t), [t]);
 
   return (
-    <Tabs value={splitType} className="mx-auto mt-5 w-full" onValueChange={onTabChange}>
-      <TabsList className="w-full justify-between">
-        {splitProps.map(({ splitType, iconComponent: Icon }) => (
-          <TabsTrigger key={splitType} value={splitType} className="text-xs">
-            <Icon className="h-5 w-5" />
-          </TabsTrigger>
+    <AppDrawer
+      trigger={children}
+      title={t(`ui.add_expense_details.split_type_section.types.${splitType.toLowerCase()}.title`)}
+      className="h-[85vh] lg:h-[70vh]"
+      shouldCloseOnAction
+      dismissible={canSplitScreenClosed}
+      actionTitle={t('common:ui.actions.save')}
+      actionDisabled={!canSplitScreenClosed}
+      open={splitScreenOpen}
+      onOpenChange={setSplitScreenOpen}
+    >
+      <Tabs value={splitType} className="mx-auto mt-5 w-full" onValueChange={onTabChange}>
+        <TabsList className="w-full justify-between">
+          {splitProps.map(({ splitType, iconComponent: Icon }) => (
+            <TabsTrigger key={splitType} value={splitType} className="text-xs">
+              <Icon className="h-5 w-5" />
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        {splitProps.map((props) => (
+          <TabsContent key={props.splitType} value={props.splitType}>
+            <SplitSection {...props} />
+          </TabsContent>
         ))}
-      </TabsList>
-      {splitProps.map((props) => (
-        <TabsContent key={props.splitType} value={props.splitType}>
-          <SplitSection {...props} />
-        </TabsContent>
-      ))}
-    </Tabs>
+      </Tabs>
+    </AppDrawer>
   );
 };
 

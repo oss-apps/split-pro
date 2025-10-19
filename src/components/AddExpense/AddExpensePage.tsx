@@ -16,7 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { CategoryPicker } from './CategoryPicker';
 import { CurrencyPicker } from './CurrencyPicker';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
-import { SplitTypeSection } from './SplitTypeSection';
+import { PayerSelectionForm, SplitExpenseForm } from './SplitTypeSection';
 import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
 import { toast } from 'sonner';
@@ -43,8 +43,11 @@ export const AddOrEditExpensePage: React.FC<{
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const splitType = useAddExpenseStore((s) => s.splitType);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
+  const currentUser = useAddExpenseStore((s) => s.currentUser);
+  const splitShares = useAddExpenseStore((s) => s.splitShares);
 
-  const { t, toUIDate } = useTranslationWithUtils('expense_details');
+  const { t, toUIDate, displayName, generateSplitDescription } =
+    useTranslationWithUtils('expense_details');
 
   const {
     setCurrency,
@@ -212,7 +215,30 @@ export const AddOrEditExpensePage: React.FC<{
           <div className="h-[180px]">
             {amount && '' !== description ? (
               <>
-                <SplitTypeSection />
+                <div className="flex flex-col items-center justify-center text-sm text-gray-400 sm:mt-4 sm:flex-row">
+                  <p>
+                    {t(`ui.expense.${isNegative ? 'received_by' : 'paid_by'}`, {
+                      ns: 'common',
+                    })}
+                  </p>
+                  <PayerSelectionForm>
+                    <Button variant="ghost" className="text-primary h-8 px-1.5 py-0 text-base">
+                      {displayName(paidBy, currentUser?.id, 'dativus')}
+                    </Button>
+                  </PayerSelectionForm>
+                  <p>{t('ui.and', { ns: 'common' })} </p>
+                  <SplitExpenseForm>
+                    <Button variant="ghost" className="text-primary h-8 px-1.5 py-0 text-base">
+                      {generateSplitDescription(
+                        splitType,
+                        participants,
+                        splitShares,
+                        paidBy,
+                        currentUser,
+                      )}
+                    </Button>
+                  </SplitExpenseForm>
+                </div>
 
                 <div className="mt-4 flex items-center justify-between sm:mt-10">
                   <div className="flex flex-wrap items-center gap-4">

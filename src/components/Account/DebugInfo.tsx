@@ -44,9 +44,9 @@ export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string |
 
   const copyToClipboard = useCallback(() => {
     // Copy to clipboard
-    const debugInfo = [navigator.userAgent];
+    const debugInfo = [`UserAgent: ${navigator.userAgent}`];
     if (gitRevision) {
-      debugInfo.push(`${t('account.debug_info_details.git')} ${gitRevision}`);
+      debugInfo.push(`${t('account.debug_info_details.git')}: ${gitRevision}`);
     }
     if (process.env.NEXT_PUBLIC_VERSION) {
       debugInfo.push(

@@ -53,13 +53,24 @@
     },
     "support_us": "Sponsor us",
     "title": "Account",
-    "write_review": "Write a review"
+    "write_review": "Write a review",
+    "debug_info": "Debug info",
+    "debug_info_details": {
+      "title": "Debug Information",
+      "description": "Paste the information below when creating a support request:",
+      "user_agent": "UserAgent",
+      "git": "Git",
+      "version": "Version",
+      "new_version_available": "A new version is available:",
+      "copy_failed": "Failed to copy debug info to clipboard"
+    }
   },
   "actions": {
     "add_expense": "Add expense",
     "back": "Back",
     "cancel": "Cancel",
     "close": "Close",
+    "copy": "Copy",
     "confirm": "Confirm",
     "create": "Create",
     "edit_expense": "Edit expense",

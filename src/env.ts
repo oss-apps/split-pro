@@ -1,4 +1,5 @@
 import { createEnv } from '@t3-oss/env-nextjs';
+import { execSync } from 'node:child_process';
 import { z } from 'zod';
 
 export const env = createEnv({
@@ -83,6 +84,7 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_FRANKFURTER_USED: z.boolean().default(false),
     NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT: z.boolean().default(false),
+    NEXT_PUBLIC_VERSION: z.string().optional(),
   },
 
   /**
@@ -143,6 +145,7 @@ export const env = createEnv({
     OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: !!process.env.OIDC_ALLOW_DANGEROUS_EMAIL_LINKING,
     NEXT_PUBLIC_FRANKFURTER_USED: process.env.CURRENCY_RATE_PROVIDER === 'frankfurter',
     NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT: process.env.NEXTAUTH_URL?.includes('splitpro.app') ?? false,
+    NEXT_PUBLIC_VERSION: process.env.APP_VERSION,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

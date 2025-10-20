@@ -150,7 +150,9 @@ const BalancePage: NextPageWithUser<{
   return (
     <>
       <Head>
-        <title>{t('ui.title')}</title>
+        <title>
+          {groupDetailQuery.data?.name} | {t('group_details.title')}
+        </title>
       </Head>
       <MainLayout
         title={

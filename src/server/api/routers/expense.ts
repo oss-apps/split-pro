@@ -224,25 +224,27 @@ export const expenseRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const expenses = await db.expense.findMany({
         where: {
-          OR: [
+          AND: [
             {
-              paidBy: ctx.session.user.id,
               expenseParticipants: {
                 some: {
                   userId: input.friendId,
+                  amount: {
+                    not: 0n,
+                  },
                 },
               },
             },
             {
-              paidBy: input.friendId,
               expenseParticipants: {
                 some: {
                   userId: ctx.session.user.id,
+                  amount: {
+                    not: 0n,
+                  },
                 },
               },
             },
-          ],
-          AND: [
             {
               deletedBy: null,
             },

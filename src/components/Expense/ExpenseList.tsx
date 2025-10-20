@@ -12,6 +12,7 @@ import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { toUIString } from '~/utils/numbers';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { api } from '~/utils/api';
+import { useRouter } from 'next/router';
 
 type ExpensesOutput =
   | inferRouterOutputs<ExpenseRouter>['getGroupExpenses']
@@ -59,10 +60,17 @@ export const ExpenseList: React.FC<{
 
 const Expense: ExpenseComponent = ({ e, userId }) => {
   const { displayName, toUIDate, t } = useTranslationWithUtils();
+  const router = useRouter();
+  const { friendId } = router.query;
 
   const youPaid = e.paidBy === userId && e.amount >= 0n;
-  const yourExpense = e.expenseParticipants.find((partecipant) => partecipant.userId === userId);
-  const yourExpenseAmount = youPaid ? (yourExpense?.amount ?? 0n) : -(yourExpense?.amount ?? 0n);
+  const yourExpense = e.expenseParticipants.find((participant) => participant.userId === userId);
+  const theirExpense = e.expenseParticipants.find(
+    (participant) => participant.userId.toString() === friendId,
+  );
+  const yourExpenseAmount = youPaid
+    ? (theirExpense?.amount ?? yourExpense?.amount ?? 0n)
+    : -(yourExpense?.amount ?? 0n);
 
   return (
     <>

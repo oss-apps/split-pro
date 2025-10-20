@@ -19,6 +19,8 @@ import { CategoryIcon } from '../ui/categoryIcons';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
 import { cronFromBackend } from '~/lib/cron';
+import Link from 'next/link';
+import { cn } from '~/lib/utils';
 
 type ExpenseDetailsOutput = NonNullable<inferRouterOutputs<ExpenseRouter>['getExpenseDetails']>;
 
@@ -70,6 +72,17 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
                 {t('ui.on')} {toUIDate(expense.createdAt, { year: true })}
               </p>
             )}
+            {expense.group && (
+              <p className="flex items-center gap-2 text-sm text-gray-500">
+                {t('ui.in_group')}{' '}
+                <Link href={`/groups/${expense.group.id}`}>
+                  <Button variant="outline" size="sm" className="flex items-center gap-2">
+                    <EntityAvatar entity={expense.group} size={25} />
+                    {expense.group.name}
+                  </Button>
+                </Link>
+              </p>
+            )}
             {expense.recurrence ? (
               <p className="text-primary text-sm">
                 {t('recurrence.recurring')}
@@ -89,17 +102,26 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
         </div>
       </div>
       <Separator />
-      <div className="mt-10 flex items-center gap-5">
-        <EntityAvatar entity={expense.paidByUser} size={35} />
-        <p>
-          {displayName(expense.paidByUser, user.id)}{' '}
-          {t(
-            `ui.expense.${expense.paidByUser.id === user.id ? 'you' : 'user'}.${expense.amount < 0 ? 'received' : 'paid'}`,
-          )}{' '}
-          {expense.currency} {toUIString(expense.amount)}
-        </p>
+
+      <div className="mt-10 flex items-center gap-2">
+        <Link href={`/balances/${expense.paidByUser.id === user.id ? '' : expense.paidByUser.id}`}>
+          <Button variant="outline" size="lg" className="flex items-center gap-2 p-4">
+            <EntityAvatar entity={expense.paidByUser} size={32} />
+            {displayName(expense.paidByUser, user.id)}{' '}
+          </Button>
+        </Link>
+        <div className="flex flex-wrap gap-2">
+          <p className="text-white">
+            {t(
+              `ui.expense.${expense.paidByUser.id === user.id ? 'you' : 'user'}.${expense.amount < 0 ? 'received' : 'paid'}`,
+            )}{' '}
+          </p>
+          <p className={cn(expense.amount > 0 ? 'text-red-500' : 'text-green-500')}>
+            {expense.currency} {toUIString(expense.amount)}
+          </p>
+        </div>
       </div>
-      <div className="mt-4 ml-14 flex flex-col gap-4">
+      <div className="xs:ml-14 mt-4 flex flex-col gap-4">
         {expense.expenseParticipants
           .filter((participant) => 0n !== participant.amount)
           .map((participant) => (
@@ -137,15 +159,27 @@ const ExpenseParticipantEntry: React.FC<{
   const { displayName, t } = useTranslationWithUtils();
 
   return (
-    <div key={participant.userId} className="flex items-center gap-2 text-sm text-gray-500">
-      <EntityAvatar entity={participant.user} size={25} />
-      <p>
-        {displayName(participant.user, userId)}{' '}
-        {t(
-          `ui.expense.${userId === participant.userId ? 'you' : 'user'}.${participant.amount < 0 ? 'owe' : 'get'}`,
-        )}{' '}
-        {currency} {toUIString(participant.amount)}
-      </p>
+    <div key={participant.userId} className="xs:flex-row flex flex-col items-center gap-2 text-sm">
+      <Link href={`/balances/${participant.userId === userId ? '' : participant.userId}`}>
+        <Button
+          variant={participant.userId === userId ? 'secondary' : 'outline'}
+          size="sm"
+          className="flex items-center gap-2"
+        >
+          <EntityAvatar entity={participant.user} size={25} />
+          {displayName(participant.user, userId)}{' '}
+        </Button>
+      </Link>
+      <div className="flex flex-wrap gap-2">
+        <p>
+          {t(
+            `ui.expense.${userId === participant.userId ? 'you' : 'user'}.${participant.amount < 0 ? 'owe' : 'get'}`,
+          )}{' '}
+        </p>
+        <p className={cn(participant.amount < 0 ? 'text-red-500' : 'text-green-500')}>
+          {currency} {toUIString(participant.amount)}
+        </p>
+      </div>
     </div>
   );
 };

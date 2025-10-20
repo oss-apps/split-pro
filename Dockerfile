@@ -1,5 +1,6 @@
 ARG ALPINE_VERSION=3.21
 ARG NODE_VERSION=22.16.0
+ARG APP_VERSION
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS base
 
@@ -51,6 +52,7 @@ RUN npm i -g corepack@latest \
 # set this so it throws error where starting server
 ENV SKIP_ENV_VALIDATION="false"
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+ENV APP_VERSION=${APP_VERSION}
 
 COPY ./start.sh ./start.sh
 

@@ -72,6 +72,17 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
                 {t('ui.on')} {toUIDate(expense.createdAt, { year: true })}
               </p>
             )}
+            {expense.group && (
+              <p className="flex items-center gap-2 text-sm text-gray-500">
+                {t('ui.in_group')}{' '}
+                <Link href={`/groups/${expense.group.id}`}>
+                  <Button variant="outline" size="sm" className="flex items-center gap-2">
+                    <EntityAvatar entity={expense.group} size={25} />
+                    {expense.group.name}
+                  </Button>
+                </Link>
+              </p>
+            )}
             {expense.recurrence ? (
               <p className="text-primary text-sm">
                 {t('recurrence.recurring')}
@@ -91,6 +102,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
         </div>
       </div>
       <Separator />
+
       <div className="mt-10 flex items-center gap-2">
         <Link href={`/balances/${expense.paidByUser.id === user.id ? '' : expense.paidByUser.id}`}>
           <Button variant="outline" size="lg" className="flex items-center gap-2 p-4">
@@ -149,13 +161,17 @@ const ExpenseParticipantEntry: React.FC<{
   return (
     <div key={participant.userId} className="xs:flex-row flex flex-col items-center gap-2 text-sm">
       <Link href={`/balances/${participant.userId === userId ? '' : participant.userId}`}>
-        <Button variant="outline" size="sm" className="flex items-center gap-2">
+        <Button
+          variant={participant.userId === userId ? 'secondary' : 'outline'}
+          size="sm"
+          className="flex items-center gap-2"
+        >
           <EntityAvatar entity={participant.user} size={25} />
           {displayName(participant.user, userId)}{' '}
         </Button>
       </Link>
-      <div className="ml-2 flex flex-wrap gap-2">
-        <p className="text-white">
+      <div className="flex flex-wrap gap-2">
+        <p>
           {t(
             `ui.expense.${userId === participant.userId ? 'you' : 'user'}.${participant.amount < 0 ? 'owe' : 'get'}`,
           )}{' '}

@@ -53,7 +53,17 @@
     },
     "support_us": "Patrocinanos",
     "title": "Cuenta",
-    "write_review": "Escribir una reseña"
+    "write_review": "Escribir una reseña",
+    "debug_info": "Información de depuración",
+    "debug_info_details": {
+      "title": "Información de depuración",
+      "description": "Pegá la siguiente información cuando crees un pedido de soporte:",
+      "user_agent": "UserAgent",
+      "git": "Git",
+      "version": "Versión",
+      "new_version_available": "Hay una nueva versión disponible:",
+      "copy_failed": "No se pudo copiar la info de depuración al portapapeles"
+    }
   },
   "actions": {
     "add_expense": "Agregar gasto",
@@ -65,11 +75,15 @@
     "edit_expense": "Editar gasto",
     "export": "Exportar",
     "import": "Importar",
+    "copy": "Copiar",
+    "fetch": "Obtener",
     "invite": "Invitar",
     "leave": "Salir",
     "save": "Guardar",
     "settle_up": "Liquidar",
-    "submit": "Enviar"
+    "submit": "Enviar",
+    "reconnect": "Reconectar",
+    "connect": "Conectar"
   },
   "actors": {
     "all": "Todos",
@@ -112,6 +126,7 @@
     "import_failed": "Error al importar el archivo",
     "invalid_currency_code": "Código de moneda inválido",
     "language_change_failed": "Error al cambiar el idioma",
+    "less_than": "El archivo debe ser menor a",
     "name_required": "El nombre es requerido",
     "notification_not_supported": "Las notificaciones no son compatibles",
     "otp_invalid": "OTP inválido",
@@ -123,11 +138,23 @@
     "signup_disabled": "El registro de nuevas cuentas está deshabilitado en esta instancia",
     "something_went_wrong": "Algo salió mal",
     "subscribe_error": "No se puede suscribir a las notificaciones",
+    "invalid_cron_expression": "Expresión CRON inválida",
     "unsubscribe_error": "Error al cancelar la suscripción a las notificaciones",
     "upload_failed": "Error al subir el archivo",
-    "upload_file_less_than": "El archivo debe ser menor de",
     "uploading_error": "Error al subir el archivo",
     "valid_email": "Ingresá un correo electrónico válido"
+  },
+  "bank_transactions": {
+    "choose_bank_provider": "Elegí proveedor bancario",
+    "select_bank_provider": "Seleccioná proveedor bancario",
+    "search_bank": "Buscar banco",
+    "no_bank_providers_found": "No se encontraron proveedores bancarios",
+    "to_bank": "al banco",
+    "plaid": {
+      "bank_connected_successfully": "Banco conectado exitosamente",
+      "bank_connection_failed": "No se pudo conectar con el banco",
+      "bank_connection_cancelled": "Conexión bancaria cancelada"
+    }
   },
   "expense_details": {
     "add_expense": "Agregar gasto",
@@ -193,11 +220,21 @@
       "title": "¿Estás absolutamente seguro?"
     },
     "title": "Agregar gasto",
-    "title_mobile": "Agregar"
+    "title_mobile": "Agregar",
+    "clear": "Limpiar",
+    "bank_transactions": "Movimientos bancarios",
+    "submit_all": "Enviar todo",
+    "pending": "Pendiente",
+    "no_transactions_yet": "Todavía no hay movimientos",
+    "already_added": "Ya agregado"
   },
   "group_details": {
     "add_members": "Agregar miembros",
     "copied": "Copiado",
+    "create_group": {
+      "group_name_placeholder": "Nombre del grupo",
+      "title": "Crear un grupo"
+    },
     "group_info": {
       "actions": "Acciones",
       "archive_group": "Archivar grupo",
@@ -281,7 +318,29 @@
     "add_expense": "Agregar Gasto",
     "app_name": "SplitPro",
     "balances": "Saldos",
-    "groups": "Grupos"
+    "groups": "Grupos",
+    "recurring": "Recurrentes"
+  },
+  "recurrence": {
+    "title": "Recurrencia",
+    "description": "Configurá una recurrencia automática para este gasto.",
+    "cron_expression": "Expresión CRON",
+    "time_of_day": "Hora del día",
+    "days_of_week": "Días de la semana",
+    "days_of_month": "Días del mes",
+    "months": "Meses",
+    "never": "Sin recurrencia configurada",
+    "empty": "Todavía no hay gastos recurrentes",
+    "recurring": "Recurrente",
+    "expense_for_the_amount_of": "Gasto {{name}} por {{amount}} {{currency}}",
+    "schedule_type": {
+      "never": "Nunca",
+      "custom": "Personalizada",
+      "day": "Diaria",
+      "month": "Mensual",
+      "week": "Semanal",
+      "year": "Anual"
+    }
   },
   "ui": {
     "added_by": "Agregado por",
@@ -327,6 +386,7 @@
     "settled_up": "Liquidado",
     "settlement": "Liquidación",
     "share_text": "Echale un vistazo a SplitPro. Es una alternativa gratuita de código abierto a Splitwise",
+    "in_group": "En el grupo",
     "today": "Hoy"
   }
 }

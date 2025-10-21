@@ -1,5 +1,9 @@
 {
   "features": {
+    "currency_conversion": {
+      "description": "Convertí rápidamente entre distintas monedas usando tipos de cambio actuales o históricos",
+      "title": "Conversión de moneda"
+    },
     "debt_simplification": {
       "description": "Simplifica automáticamente las deudas del grupo para reducir el número de transacciones necesarias entre amigos",
       "title": "Simplificación de Deudas"
@@ -11,6 +15,10 @@
     "i18": {
       "description": "Disponible en múltiples idiomas para hacer que la división de gastos sea accesible en todo el mundo",
       "title": "Internacionalización"
+    },
+    "bank_connection": {
+      "title": "Conexión bancaria",
+      "description": "Agregá gastos más rápido integrando las transacciones bancarias con GoCardless o Plaid"
     },
     "import_splitwise": {
       "description": "No tenés que migrar saldos manualmente. Podés importar usuarios y grupos desde Splitwise",

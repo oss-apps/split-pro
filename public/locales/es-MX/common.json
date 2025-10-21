@@ -34,6 +34,10 @@
       "note": "Nota: Actualmente solo soporta la importación de amigos y grupos. No importará transacciones. Estamos trabajando en ello."
     },
     "logout": "Cerrar sesión",
+    "messages": {
+      "submit_error": "Error al enviar los comentarios",
+      "submit_success": "Comentarios enviados"
+    },
     "notifications": {
       "disable_notification": "Deshabilitar notificaciones",
       "enable_notification": "Habilitar notificaciones",
@@ -49,7 +53,17 @@
     },
     "support_us": "Patrocínanos",
     "title": "Cuenta",
-    "write_review": "Escribir una reseña"
+    "write_review": "Escribir una reseña",
+    "debug_info": "Información de depuración",
+    "debug_info_details": {
+      "title": "Información de depuración",
+      "description": "Pega la siguiente información cuando abras una solicitud de soporte:",
+      "user_agent": "UserAgent",
+      "git": "Git",
+      "version": "Versión",
+      "new_version_available": "Hay una nueva versión disponible:",
+      "copy_failed": "No se pudo copiar la información de depuración al portapapeles"
+    }
   },
   "actions": {
     "add_expense": "Añadir gasto",
@@ -61,11 +75,15 @@
     "edit_expense": "Editar gasto",
     "export": "Exportar",
     "import": "Importar",
+    "copy": "Copiar",
+    "fetch": "Obtener",
     "invite": "Invitar",
     "leave": "Salir",
     "save": "Guardar",
     "settle_up": "Liquidar",
-    "submit": "Enviar"
+    "submit": "Enviar",
+    "reconnect": "Reconectar",
+    "connect": "Conectar"
   },
   "actors": {
     "all": "Todos",
@@ -106,6 +124,7 @@
     "group_name_update_failed": "Error al actualizar el nombre del grupo",
     "import_failed": "Error al importar el archivo",
     "language_change_failed": "Error al cambiar el idioma",
+    "invalid_currency_code": "Código de moneda inválido {{code}}",
     "name_required": "El nombre es requerido",
     "notification_not_supported": "Las notificaciones no son compatibles",
     "otp_invalid": "OTP inválido",
@@ -118,9 +137,24 @@
     "something_went_wrong": "Algo salió mal",
     "submit_error": "Error al enviar los comentarios",
     "subscribe_error": "No se puede suscribir a las notificaciones",
+    "less_than": "El archivo debe ser menor que",
+    "uploading_error": "Error al subir el archivo",
+    "invalid_cron_expression": "Expresión CRON inválida",
     "unsubscribe_error": "Error al cancelar la suscripción a las notificaciones",
     "upload_failed": "Error al subir el archivo",
     "valid_email": "Introduce un correo electrónico válido"
+  },
+  "bank_transactions": {
+    "choose_bank_provider": "Elige un proveedor bancario",
+    "select_bank_provider": "Selecciona un proveedor bancario",
+    "search_bank": "Buscar banco",
+    "no_bank_providers_found": "No se encontraron proveedores bancarios",
+    "to_bank": "al banco",
+    "plaid": {
+      "bank_connected_successfully": "Banco conectado correctamente",
+      "bank_connection_failed": "No se pudo conectar con el banco",
+      "bank_connection_cancelled": "Conexión bancaria cancelada"
+    }
   },
   "expense_details": {
     "add_expense": "Añadir gasto",
@@ -186,7 +220,13 @@
       "title": "¿Estás absolutamente seguro?"
     },
     "title": "Añadir gasto",
-    "title_mobile": "Añadir"
+    "title_mobile": "Añadir",
+    "clear": "Limpiar",
+    "bank_transactions": "Transacciones bancarias",
+    "submit_all": "Enviar todo",
+    "pending": "Pendiente",
+    "no_transactions_yet": "Todavía no hay transacciones",
+    "already_added": "Ya se añadió"
   },
   "group_details": {
     "add_members": "Añadir miembros",
@@ -278,7 +318,29 @@
     "add_expense": "Añadir Gasto",
     "app_name": "SplitPro",
     "balances": "Saldos",
-    "groups": "Grupos"
+    "groups": "Grupos",
+    "recurring": "Recurrentes"
+  },
+  "recurrence": {
+    "title": "Recurrencia",
+    "description": "Configura una recurrencia automática para este gasto.",
+    "cron_expression": "Expresión CRON",
+    "time_of_day": "Hora del día",
+    "days_of_week": "Días de la semana",
+    "days_of_month": "Días del mes",
+    "months": "Meses",
+    "never": "Sin recurrencia configurada",
+    "empty": "Todavía no hay gastos recurrentes",
+    "recurring": "Recurrente",
+    "expense_for_the_amount_of": "Gasto {{name}} por {{amount}} {{currency}}",
+    "schedule_type": {
+      "never": "Nunca",
+      "custom": "Personalizada",
+      "day": "Diaria",
+      "month": "Mensual",
+      "week": "Semanal",
+      "year": "Anual"
+    }
   },
   "ui": {
     "added_by": "Añadido por",
@@ -324,6 +386,7 @@
     "settled_up": "Liquidado",
     "settlement": "Liquidación",
     "share_text": "Echa un vistazo a SplitPro. Es una alternativa gratuita de código abierto a Splitwise",
+    "in_group": "En el grupo",
     "today": "Hoy"
   }
 }

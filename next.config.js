@@ -41,6 +41,7 @@ const nextConfigFunction = async (phase) => {
     const withPWA = (await import('@ducanh2912/next-pwa')).default({
       dest: 'public',
       disable: 'development' === process.env.NODE_ENV,
+      buildExcludes: [/_next\/dynamic-css-manifest\.json$/],
     });
     return withPWA(nextConfig);
   }

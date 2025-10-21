@@ -51,15 +51,10 @@ const BalancePage: NextPageWithUser = () => {
             <>
               {/* Active Groups */}
               {groupQuery.data?.map((g) => {
-                const [currency, amount] = Object.entries(g.balances).reduce(
-                  (acc, balance) => {
-                    if (BigMath.abs(balance[1]) > BigMath.abs(acc[1])) {
-                      return balance;
-                    }
-                    return acc;
-                  },
-                  [g.defaultCurrency, 0n],
-                );
+                const [currency, amount] = Object.entries(g.balances).reduce((first, second) => {
+                  return BigMath.abs(second[1]) > BigMath.abs(first[1]) ? second : first;
+                });
+
                 const multiCurrency = 1 < Object.values(g.balances).filter((b) => 0n !== b).length;
                 return (
                   <BalanceEntry

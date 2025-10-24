@@ -4,9 +4,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import {
-  CURRENCY_CONVERSION_ICON,
   CategoryIcon,
-  SETTLEUP_ICON,
+  CURRENCY_CONVERSION_ICON as CurrencyConversionIcon,
+  SETTLEUP_ICON as SettleUpIcon,
 } from '~/components/ui/categoryIcons';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { toUIString } from '~/utils/numbers';
@@ -71,6 +71,10 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
   const yourExpenseAmount = youPaid
     ? (theirExpense?.amount ?? yourExpense?.amount ?? 0n)
     : -(yourExpense?.amount ?? 0n);
+  const isYouPayer = e.paidBy === userId;
+  const amountStatementKey = `ui.expense.statements.${isYouPayer ? 'you' : 'user'}_${
+    e.amount < 0n ? 'received_amount' : 'paid_amount'
+  }`;
 
   return (
     <>
@@ -82,9 +86,11 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
         <div>
           <p className="max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">{e.name}</p>
           <p className="flex text-center text-xs text-gray-500">
-            {displayName(e.paidByUser, userId)}{' '}
-            {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`)} {e.currency}{' '}
-            {toUIString(e.amount)}
+            {t(amountStatementKey, {
+              user: displayName(e.paidByUser, userId),
+              currency: e.currency,
+              amount: toUIString(e.amount),
+            })}
           </p>
         </div>
       </div>
@@ -94,7 +100,7 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
             <div
               className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
             >
-              {t('actors.you')} {t(`ui.expense.you.${youPaid ? 'lent' : 'owe'}`)}
+              {t(`ui.expense.statements.${youPaid ? 'you_lent' : 'you_owe'}`)}
             </div>
             <div className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}>
               <span className="font-light">{e.currency}</span> {toUIString(yourExpenseAmount)}
@@ -115,18 +121,29 @@ const Settlement: ExpenseComponent = ({ e, userId }) => {
 
   const receiverId = e.expenseParticipants.find((p) => p.userId !== e.paidBy)?.userId;
   const userDetails = api.user.getUserDetails.useQuery({ userId: receiverId! });
-
+  const isYouPayer = e.paidBy === userId;
+  const isYouReceiver = receiverId === userId;
+  const settlementStatementKey = `ui.expense.statements.${
+    isYouPayer ? 'you' : 'user'
+  }_${e.amount < 0n ? 'received_amount_from_user' : 'paid_amount_to_user'}`;
+  const receiverLabel = isYouReceiver
+    ? t('actors.you_dativus').toLowerCase()
+    : displayName(userDetails.data, userId);
+  const payerLabel = displayName(e.paidByUser, userId);
   return (
     <div className="flex items-center gap-4">
       <div className="inline-block max-w-min text-center text-xs text-gray-500">
         {toUIDate(e.expenseDate)}
       </div>
-      <SETTLEUP_ICON className="size-5 text-gray-400" />
+      <SettleUpIcon className="size-5 text-gray-400" />
       <div>
         <p className="flex text-center text-sm text-gray-400">
-          {displayName(e.paidByUser, userId)}{' '}
-          {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`)} {e.currency}{' '}
-          {toUIString(e.amount)} {t('ui.expense.to')} {displayName(userDetails.data, userId)}
+          {t(settlementStatementKey, {
+            payer: payerLabel,
+            receiver: receiverLabel,
+            currency: e.currency,
+            amount: toUIString(e.amount),
+          })}
         </p>
       </div>
     </div>
@@ -144,7 +161,7 @@ const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
       <div className="inline-block max-w-min text-center text-xs text-gray-500">
         {toUIDate(e.expenseDate)}
       </div>
-      <CURRENCY_CONVERSION_ICON className="size-5 text-gray-400" />
+      <CurrencyConversionIcon className="size-5 text-gray-400" />
       <div>
         <p className="max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">
           {/* @ts-ignore */}
@@ -152,8 +169,10 @@ const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
           {toUIString(e.conversionTo.amount)}
         </p>
         <p className="flex text-center text-xs text-gray-500">
-          {t('ui.expense.for')} {displayName(e.paidByUser, userId)} {t('ui.and')}{' '}
-          {displayName(userDetails.data, userId)}
+          {t('ui.expense.statements.for_users', {
+            payer: displayName(e.paidByUser, userId),
+            receiver: displayName(userDetails.data, userId),
+          })}
         </p>
       </div>
     </div>

@@ -58,9 +58,7 @@ const BalancePage: NextPageWithUser = () => {
               <div className="w-1/2 rounded-2xl border px-2 py-2">
                 <div className="mt-2 px-1">
                   <div className="flex items-center justify-center gap-2 text-center">
-                    <p className="text-sm">
-                      {t('actors.you')} {t('ui.expense.you.owe')}
-                    </p>
+                    <p className="text-sm">{t('ui.expense.statements.you_owe')}</p>
                   </div>
                 </div>
                 <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
@@ -79,9 +77,7 @@ const BalancePage: NextPageWithUser = () => {
               <div className="w-1/2 rounded-2xl border px-2 py-2">
                 <div className="mt-2 flex flex-col justify-center px-1">
                   <div className="flex items-center justify-center gap-2">
-                    <p className="text-sm">
-                      {t('actors.you')} {t('ui.expense.you.lent')}
-                    </p>
+                    <p className="text-sm">{t('ui.expense.statements.you_lent')}</p>
                   </div>
                 </div>
                 <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">

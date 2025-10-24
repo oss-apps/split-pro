@@ -18,6 +18,9 @@ import { useAddExpenseStore } from '~/store/addStore';
 import { useAppStore } from '~/store/appStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
+import { registerICU } from '~/utils/i18n/registerICU';
+
+registerICU();
 
 const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });
 const toastOptions = { duration: 1500 };

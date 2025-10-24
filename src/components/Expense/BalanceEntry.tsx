@@ -36,7 +36,7 @@ export const BalanceEntry: React.FC<{
               isPositive ? 'text-emerald-500' : 'text-orange-600',
             )}
           >
-            {t('actors.you')} {t(`ui.expense.you.${isPositive ? 'lent' : 'owe'}`)}
+            {t(`ui.expense.statements.${isPositive ? 'you_lent' : 'you_owe'}`)}
           </div>
           <div className={`${isPositive ? 'text-emerald-500' : 'text-orange-600'} text-right`}>
             {currency} {toUIString(amount)}

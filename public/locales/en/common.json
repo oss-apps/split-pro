@@ -133,7 +133,7 @@
     "request_error": "Error requesting notification",
     "saving_expense": "Error while saving expense",
     "setting_update_failed": "Failed to update setting",
-    "signin_error": "An error occurred while signing in: ",
+    "signin_error": "An error occurred while signing in: {{error}}",
     "signup_disabled": "Signup of new accounts is disabled on this instance",
     "something_went_wrong": "Something went wrong",
     "subscribe_error": "Cannot subscribe to notification",
@@ -358,7 +358,6 @@
         "lent": "lent",
         "owe": "owes",
         "paid": "paid",
-        "pay": "pays",
         "received": "received"
       },
       "you": {
@@ -369,6 +368,27 @@
         "paid": "paid",
         "pay": "pay",
         "received": "received"
+      },
+      "statements": {
+        "you_lent": "You lent",
+        "you_owe": "You owe",
+        "you_lent_amount": "You lent {{currency}} {{amount}}",
+        "you_owe_amount": "You owe {{currency}} {{amount}}",
+        "you_paid_amount": "You paid {{currency}} {{amount}}",
+        "you_received_amount": "You received {{currency}} {{amount}}",
+        "you_pay_user": "You pay {{user}}",
+        "user_pays_you": "{{user}} pays you",
+        "friend_owes_you": "{{friend}} owes {{youDative}}",
+        "you_owe_friend": "You owe {{friend}}",
+        "paid_for_beneficiary": "paid for {{beneficiary}}",
+        "user_paid_amount": "{{user}} paid {{currency}} {{amount}}",
+        "user_received_amount": "{{user}} received {{currency}} {{amount}}",
+        "user_paid_amount_to_user": "{{payer}} paid {{currency}} {{amount}} to {{receiver}}",
+        "user_received_amount_from_user": "{{payer}} received {{currency}} {{amount}} from {{receiver}}",
+        "you_paid_amount_to_user": "You paid {{currency}} {{amount}} to {{receiver}}",
+        "you_received_amount_from_user": "You received {{currency}} {{amount}} from {{payer}}",
+        "for_users": "for {{payer}} and {{receiver}}",
+        "user_pays_user": "{{payer}} pays {{receiver}}"
       }
     },
     "expense_details": "Expense details",
@@ -383,6 +403,7 @@
     "settlement": "Settlement",
     "share_text": "Check out SplitPro. It's an open source free alternative for Splitwise",
     "today": "Today",
-    "in_group": "In group"
+    "in_group": "In group",
+    "remaining_balances": "+{{count}} {{count, plural, one {balance} other {balances}}}..."
   }
 }

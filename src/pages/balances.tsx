@@ -1,6 +1,5 @@
 import { ArrowUpOnSquareIcon } from '@heroicons/react/24/outline';
 import { Download, PlusIcon } from 'lucide-react';
-import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useCallback } from 'react';
@@ -10,13 +9,13 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { NotificationModal } from '~/components/NotificationModal';
 import { Button } from '~/components/ui/button';
 import { useIsPwa } from '~/hooks/useIsPwa';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
-import { toUIString } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser = () => {
-  const { t } = useTranslation();
+  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const isPwa = useIsPwa();
   const balanceQuery = api.expense.getBalances.useQuery();
 
@@ -67,7 +66,7 @@ const BalancePage: NextPageWithUser = () => {
                   {balanceQuery.data?.youOwe.map((balance, index) => (
                     <span key={balance.currency} className="flex gap-1">
                       <span className="text-orange-600">
-                        {balance.currency.toUpperCase()} {toUIString(balance.amount)}
+                        {getCurrencyHelpersCached(balance.currency).toUIString(balance.amount)}
                       </span>
                       {index !== balanceQuery.data.youOwe.length - 1 ? <span>+</span> : null}
                     </span>
@@ -88,7 +87,7 @@ const BalancePage: NextPageWithUser = () => {
                   {balanceQuery.data?.youGet.map((balance, index) => (
                     <span key={balance.currency} className="flex gap-1">
                       <span className="text-emerald-500">
-                        {balance.currency.toUpperCase()} {toUIString(balance.amount)}
+                        {getCurrencyHelpersCached(balance.currency).toUIString(balance.amount)}
                       </span>
                       {index !== balanceQuery.data.youGet.length - 1 ? (
                         <span className="text-gray-400">+</span>

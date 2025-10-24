@@ -9,7 +9,6 @@ import {
   SETTLEUP_ICON,
 } from '~/components/ui/categoryIcons';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
-import { toUIString } from '~/utils/numbers';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
@@ -59,7 +58,7 @@ export const ExpenseList: React.FC<{
 };
 
 const Expense: ExpenseComponent = ({ e, userId }) => {
-  const { displayName, toUIDate, t } = useTranslationWithUtils();
+  const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const router = useRouter();
   const { friendId } = router.query;
 
@@ -72,6 +71,8 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
     ? (theirExpense?.amount ?? yourExpense?.amount ?? 0n)
     : -(yourExpense?.amount ?? 0n);
 
+  const { toUIString } = getCurrencyHelpersCached(e.currency);
+
   return (
     <>
       <div className="flex items-center gap-4">
@@ -83,8 +84,7 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
           <p className="max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">{e.name}</p>
           <p className="flex text-center text-xs text-gray-500">
             {displayName(e.paidByUser, userId)}{' '}
-            {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`)} {e.currency}{' '}
-            {toUIString(e.amount)}
+            {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`)} {toUIString(e.amount)}
           </p>
         </div>
       </div>
@@ -111,7 +111,9 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
 };
 
 const Settlement: ExpenseComponent = ({ e, userId }) => {
-  const { displayName, toUIDate, t } = useTranslationWithUtils();
+  const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
+
+  const { toUIString } = getCurrencyHelpersCached(e.currency);
 
   const receiverId = e.expenseParticipants.find((p) => p.userId !== e.paidBy)?.userId;
   const userDetails = api.user.getUserDetails.useQuery({ userId: receiverId! });
@@ -125,8 +127,8 @@ const Settlement: ExpenseComponent = ({ e, userId }) => {
       <div>
         <p className="flex text-center text-sm text-gray-400">
           {displayName(e.paidByUser, userId)}{' '}
-          {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`)} {e.currency}{' '}
-          {toUIString(e.amount)} {t('ui.expense.to')} {displayName(userDetails.data, userId)}
+          {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`)} {toUIString(e.amount)}{' '}
+          {t('ui.expense.to')} {displayName(userDetails.data, userId)}
         </p>
       </div>
     </div>
@@ -134,7 +136,7 @@ const Settlement: ExpenseComponent = ({ e, userId }) => {
 };
 
 const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
-  const { displayName, toUIDate, t } = useTranslationWithUtils();
+  const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
 
   const receiverId = e.expenseParticipants.find((p) => p.userId !== e.paidBy)?.userId;
   const userDetails = api.user.getUserDetails.useQuery({ userId: receiverId! });
@@ -147,9 +149,11 @@ const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
       <CURRENCY_CONVERSION_ICON className="size-5 text-gray-400" />
       <div>
         <p className="max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">
-          {/* @ts-ignore */}
-          {e.currency} {toUIString(e.amount)} ➡️ {e.conversionTo.currency} {/* @ts-ignore */}
-          {toUIString(e.conversionTo.amount)}
+          {getCurrencyHelpersCached(e.currency).toUIString(e.amount)} ➡️{' '}
+          {
+            /* @ts-ignore */
+            getCurrencyHelpersCached(e.conversionTo.currency).toUIString(e.conversionTo.amount)
+          }
         </p>
         <p className="flex text-center text-xs text-gray-500">
           {t('ui.expense.for')} {displayName(e.paidByUser, userId)} {t('ui.and')}{' '}

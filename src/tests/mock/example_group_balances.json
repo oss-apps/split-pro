@@ -1,0 +1,1490 @@
+[
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 14,
+    "firendId": 3,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 3,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 14,
+    "firendId": 1,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 1,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 14,
+    "firendId": 4,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 4,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 14,
+    "firendId": 7,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 7,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 14,
+    "firendId": 9,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 9,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 14,
+    "firendId": 12,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 12,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 14,
+    "firendId": 11,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 11,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 14,
+    "firendId": 13,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 13,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 14,
+    "firendId": 10,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 10,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 14,
+    "firendId": 8,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "NZD",
+    "userId": 8,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 14,
+    "firendId": 4,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 4,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 6,
+    "firendId": 3,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 3,
+    "firendId": 6,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 6,
+    "firendId": 1,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 14,
+    "firendId": 7,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 7,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 14,
+    "firendId": 9,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 9,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 14,
+    "firendId": 12,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 12,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 14,
+    "firendId": 3,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 3,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 14,
+    "firendId": 1,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 1,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 14,
+    "firendId": 8,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 8,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 14,
+    "firendId": 11,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 11,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 14,
+    "firendId": 13,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 13,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 14,
+    "firendId": 10,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 10,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 1,
+    "firendId": 6,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 6,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 14,
+    "firendId": 6,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 6,
+    "firendId": 8,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "USD",
+    "userId": 8,
+    "firendId": 6,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 7,
+    "firendId": 9,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 9,
+    "firendId": 7,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 4,
+    "firendId": 6,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 6,
+    "firendId": 4,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 4,
+    "firendId": 7,
+    "amount": "2700",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 7,
+    "firendId": 4,
+    "amount": "-2700",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 4,
+    "firendId": 9,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 9,
+    "firendId": 4,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 3,
+    "firendId": 4,
+    "amount": "5495",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 4,
+    "firendId": 3,
+    "amount": "-5495",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 3,
+    "firendId": 6,
+    "amount": "81537",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 6,
+    "firendId": 3,
+    "amount": "-81537",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 3,
+    "firendId": 7,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 7,
+    "firendId": 3,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 3,
+    "firendId": 9,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 9,
+    "firendId": 3,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 10,
+    "firendId": 3,
+    "amount": "-12227",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 3,
+    "firendId": 10,
+    "amount": "12227",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 10,
+    "firendId": 6,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 6,
+    "firendId": 10,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 10,
+    "firendId": 7,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 7,
+    "firendId": 10,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 10,
+    "firendId": 9,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 9,
+    "firendId": 10,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 14,
+    "firendId": 3,
+    "amount": "-78708",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 3,
+    "firendId": 14,
+    "amount": "78708",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 14,
+    "firendId": 4,
+    "amount": "2600",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 4,
+    "firendId": 14,
+    "amount": "-2600",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 14,
+    "firendId": 6,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 6,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 14,
+    "firendId": 7,
+    "amount": "427",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 7,
+    "firendId": 14,
+    "amount": "-427",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 14,
+    "firendId": 9,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 9,
+    "firendId": 14,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 14,
+    "firendId": 10,
+    "amount": "227",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 10,
+    "firendId": 14,
+    "amount": "-227",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 1,
+    "firendId": 4,
+    "amount": "-2700",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 4,
+    "firendId": 1,
+    "amount": "2700",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 1,
+    "firendId": 6,
+    "amount": "32517",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 6,
+    "firendId": 1,
+    "amount": "-32517",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 1,
+    "firendId": 7,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 7,
+    "firendId": 1,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 1,
+    "firendId": 9,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 9,
+    "firendId": 1,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 1,
+    "firendId": 14,
+    "amount": "30417",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 14,
+    "firendId": 1,
+    "amount": "-30417",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 13,
+    "firendId": 1,
+    "amount": "1000",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 1,
+    "firendId": 13,
+    "amount": "-1000",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 13,
+    "firendId": 3,
+    "amount": "20738",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 3,
+    "firendId": 13,
+    "amount": "-20738",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 13,
+    "firendId": 4,
+    "amount": "2400",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 4,
+    "firendId": 13,
+    "amount": "-2400",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 13,
+    "firendId": 6,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 6,
+    "firendId": 13,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 13,
+    "firendId": 7,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 7,
+    "firendId": 13,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 13,
+    "firendId": 9,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 9,
+    "firendId": 13,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 13,
+    "firendId": 14,
+    "amount": "-13999",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 14,
+    "firendId": 13,
+    "amount": "13999",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 10,
+    "firendId": 1,
+    "amount": "9400",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 1,
+    "firendId": 10,
+    "amount": "-9400",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 10,
+    "firendId": 4,
+    "amount": "400",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 4,
+    "firendId": 10,
+    "amount": "-400",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 13,
+    "firendId": 10,
+    "amount": "-6400",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 10,
+    "firendId": 13,
+    "amount": "6400",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 8,
+    "firendId": 1,
+    "amount": "-29917",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 1,
+    "firendId": 8,
+    "amount": "29917",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 8,
+    "firendId": 3,
+    "amount": "46133",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 3,
+    "firendId": 8,
+    "amount": "-46133",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 8,
+    "firendId": 4,
+    "amount": "-1800",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 4,
+    "firendId": 8,
+    "amount": "1800",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 8,
+    "firendId": 6,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 6,
+    "firendId": 8,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 8,
+    "firendId": 7,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 7,
+    "firendId": 8,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 8,
+    "firendId": 9,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 9,
+    "firendId": 8,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 8,
+    "firendId": 10,
+    "amount": "-8500",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 10,
+    "firendId": 8,
+    "amount": "8500",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 8,
+    "firendId": 13,
+    "amount": "15500",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 13,
+    "firendId": 8,
+    "amount": "-15500",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 8,
+    "firendId": 14,
+    "amount": "-9672",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 14,
+    "firendId": 8,
+    "amount": "9672",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 11,
+    "firendId": 1,
+    "amount": "-960",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 1,
+    "firendId": 11,
+    "amount": "960",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 11,
+    "firendId": 3,
+    "amount": "44672",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 3,
+    "firendId": 11,
+    "amount": "-44672",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 11,
+    "firendId": 4,
+    "amount": "24985",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 4,
+    "firendId": 11,
+    "amount": "-24985",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 11,
+    "firendId": 6,
+    "amount": "6300",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 6,
+    "firendId": 11,
+    "amount": "-6300",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 11,
+    "firendId": 7,
+    "amount": "1100",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 7,
+    "firendId": 11,
+    "amount": "-1100",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 11,
+    "firendId": 8,
+    "amount": "18124",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 8,
+    "firendId": 11,
+    "amount": "-18124",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 11,
+    "firendId": 9,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 9,
+    "firendId": 11,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 11,
+    "firendId": 10,
+    "amount": "1140",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 10,
+    "firendId": 11,
+    "amount": "-1140",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 11,
+    "firendId": 13,
+    "amount": "-2176",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 13,
+    "firendId": 11,
+    "amount": "2176",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 11,
+    "firendId": 14,
+    "amount": "24385",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 14,
+    "firendId": 11,
+    "amount": "-24385",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 11,
+    "firendId": 17,
+    "amount": "9043",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 17,
+    "firendId": 11,
+    "amount": "-9043",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "EUR",
+    "userId": 3,
+    "firendId": 12,
+    "amount": "-4637",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "EUR",
+    "userId": 12,
+    "firendId": 3,
+    "amount": "4637",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "EUR",
+    "userId": 1,
+    "firendId": 3,
+    "amount": "-9251",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "EUR",
+    "userId": 3,
+    "firendId": 1,
+    "amount": "9251",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "EUR",
+    "userId": 1,
+    "firendId": 12,
+    "amount": "-12760",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "EUR",
+    "userId": 12,
+    "firendId": 1,
+    "amount": "12760",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 1,
+    "firendId": 3,
+    "amount": "5808",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 3,
+    "firendId": 1,
+    "amount": "-5808",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 12,
+    "firendId": 1,
+    "amount": "-26585",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 1,
+    "firendId": 12,
+    "amount": "26585",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 12,
+    "firendId": 4,
+    "amount": "2000",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 4,
+    "firendId": 12,
+    "amount": "-2000",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 12,
+    "firendId": 6,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 6,
+    "firendId": 12,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 12,
+    "firendId": 7,
+    "amount": "2500",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 7,
+    "firendId": 12,
+    "amount": "-2500",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 12,
+    "firendId": 8,
+    "amount": "-7888",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 8,
+    "firendId": 12,
+    "amount": "7888",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 12,
+    "firendId": 9,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 9,
+    "firendId": 12,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 12,
+    "firendId": 10,
+    "amount": "-4067",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 10,
+    "firendId": 12,
+    "amount": "4067",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 12,
+    "firendId": 13,
+    "amount": "1500",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 13,
+    "firendId": 12,
+    "amount": "-1500",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 12,
+    "firendId": 14,
+    "amount": "4800",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 14,
+    "firendId": 12,
+    "amount": "-4800",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 12,
+    "firendId": 17,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 17,
+    "firendId": 12,
+    "amount": "0",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 12,
+    "firendId": 3,
+    "amount": "-9922",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 3,
+    "firendId": 12,
+    "amount": "9922",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 12,
+    "firendId": 11,
+    "amount": "20277",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  },
+  {
+    "groupId": 2,
+    "currency": "PLN",
+    "userId": 11,
+    "firendId": 12,
+    "amount": "-20277",
+    "updatedAt": "2025-10-19T06:44:46.676Z"
+  }
+]

@@ -1,8 +1,9 @@
 import { SplitType } from '@prisma/client';
+import { isCurrencyCode } from '~/lib/currency';
 
 import { db } from '~/server/db';
 import { pushNotification } from '~/server/notification';
-import { toUIString } from '~/utils/numbers';
+import { getCurrencyHelpers } from '~/utils/numbers';
 
 export async function sendExpensePushNotification(expenseId: string) {
   const expense = await db.expense.findUnique({
@@ -68,6 +69,10 @@ export async function sendExpensePushNotification(expenseId: string) {
         in: participants.map((p) => p.userId),
       },
     },
+  });
+
+  const { toUIString } = getCurrencyHelpers({
+    currency: isCurrencyCode(expense.currency) ? expense.currency : 'USD',
   });
 
   const pushData = {

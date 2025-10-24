@@ -1,7 +1,13 @@
 import { type GroupBalance } from '@prisma/client';
 import { addHours } from 'date-fns';
+import rawRealGraph from './mock/example_group_balances.json';
+import { simplifyDebts } from '~/lib/simplify';
 
-import { simplifyDebts } from './simplify';
+const realGraph = rawRealGraph.map(({ amount, updatedAt, ...rest }) => ({
+  ...rest,
+  amount: BigInt(amount),
+  updatedAt: new Date(updatedAt),
+}));
 
 interface MinimalEdge {
   userOne: number;
@@ -145,26 +151,56 @@ describe('simplifyDebts', () => {
     expect(simplifyDebts(graph).filter((balance) => 0 < balance.amount).length).toBe(expected);
   });
 
-  it.each([{ graph: smallGraph }, { graph: largeGraph }, { graph: denseGraph }])(
-    'preserves the total balance per user',
-    ({ graph }) => {
-      const startingBalances = graph.reduce(
-        (acc, balance) => {
-          acc[balance.userId] = (acc[balance.userId] ?? 0n) + balance.amount;
-          return acc;
-        },
-        {} as Record<number, bigint>,
-      );
+  it.each([
+    ['small', smallGraph],
+    ['large', largeGraph],
+    ['dense', denseGraph],
+    ['real', realGraph],
+  ])('preserves metadata for %s graph', (name, graph) => {
+    const result = simplifyDebts(graph);
+    for (const balance of result) {
+      expect(balance.groupId).toBeDefined();
+      expect(balance.currency).toBeDefined();
+      expect(balance.userId).toBeDefined();
+      expect(balance.firendId).toBeDefined();
+      expect(balance.updatedAt).toBeDefined();
+    }
+  });
 
-      const userBalances = simplifyDebts(graph).reduce(
-        (acc, balance) => {
-          acc[balance.userId] = (acc[balance.userId] ?? 0n) + balance.amount;
-          return acc;
-        },
-        {} as Record<number, bigint>,
-      );
+  it.each([
+    ['small', smallGraph],
+    ['large', largeGraph],
+    ['dense', denseGraph],
+    ['real', realGraph],
+  ])('preserves the total balance per user for %s graph', (name, graph) => {
+    const startingBalances = graph.reduce(
+      (acc, balance) => {
+        acc[balance.userId] = (acc[balance.userId] ?? 0n) + balance.amount;
+        return acc;
+      },
+      {} as Record<number, bigint>,
+    );
 
-      expect(startingBalances).toEqual(userBalances);
-    },
-  );
+    const userBalances = simplifyDebts(graph).reduce(
+      (acc, balance) => {
+        acc[balance.userId] = (acc[balance.userId] ?? 0n) + balance.amount;
+        return acc;
+      },
+      {} as Record<number, bigint>,
+    );
+
+    expect(startingBalances).toEqual(userBalances);
+  });
+
+  it.each([
+    ['small', smallGraph],
+    ['large', largeGraph],
+    ['dense', denseGraph],
+    ['real', realGraph],
+  ])('produces no self-loops for %s graph', (name, graph) => {
+    const result = simplifyDebts(graph);
+    for (const balance of result) {
+      expect(balance.userId).not.toBe(balance.firendId);
+    }
+  });
 });

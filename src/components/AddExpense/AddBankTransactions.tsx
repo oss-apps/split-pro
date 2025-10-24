@@ -6,10 +6,9 @@ import { isCurrencyCode } from '~/lib/currency';
 
 const AddBankTransactions: React.FC<{
   // clearFields: () => void;
-  onUpdateAmount: (amount: string) => void;
   bankConnectionEnabled: boolean;
   children: React.ReactNode;
-}> = ({ bankConnectionEnabled, onUpdateAmount, children }) => {
+}> = ({ bankConnectionEnabled, children }) => {
   // const participants = useAddExpenseStore((s) => s.participants);
   // const group = useAddExpenseStore((s) => s.group);
   // const category = useAddExpenseStore((s) => s.category);
@@ -28,6 +27,7 @@ const AddBankTransactions: React.FC<{
     // setSplitScreenOpen,
     setExpenseDate,
     setTransactionId,
+    setAmountStr,
     // setMultipleTransactions,
     // setIsTransactionLoading,
   } = useAddExpenseStore((s) => s.actions);
@@ -124,10 +124,10 @@ const AddBankTransactions: React.FC<{
       } else {
         console.warn(`Invalid currency code: ${obj.currency}`);
       }
-      onUpdateAmount(obj.amount);
+      setAmountStr(obj.amount);
       setTransactionId(obj.transactionId);
     },
-    [setExpenseDate, setDescription, setCurrency, onUpdateAmount, setTransactionId],
+    [setExpenseDate, setDescription, setCurrency, setAmountStr, setTransactionId],
   );
 
   // const handleSetMultipleTransactions = useCallback(

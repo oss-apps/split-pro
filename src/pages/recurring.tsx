@@ -10,14 +10,17 @@ import { cronFromBackend } from '~/lib/cron';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
-import { toUIString } from '~/utils/numbers';
 
 const RecurringPage: NextPageWithUser = () => {
-  const { t, toUIDate } = useTranslationWithUtils();
+  const { t, toUIDate, getCurrencyHelpersCached } = useTranslationWithUtils();
 
   const recurringExpensesQuery = api.expense.getRecurringExpenses.useQuery();
 
   const { cronParser, i18nReady } = useIntlCronParser();
+
+  const { toUIString } = getCurrencyHelpersCached(
+    recurringExpensesQuery.data?.[0]?.expense.currency ?? 'USD',
+  );
 
   return (
     <>

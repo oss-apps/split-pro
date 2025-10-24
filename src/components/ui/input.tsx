@@ -2,14 +2,11 @@ import * as React from 'react';
 
 import { cn } from '~/lib/utils';
 
-export type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
+export type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
+  rightIcon?: React.ReactNode;
+};
 
-function Input({
-  className,
-  type,
-  rightIcon,
-  ...props
-}: React.ComponentProps<'input'> & { rightIcon?: React.ReactNode }) {
+const Input: React.FC<InputProps> = ({ className, type, rightIcon, ...props }) => {
   return (
     <div className="relative w-full">
       <input
@@ -26,6 +23,8 @@ function Input({
       {rightIcon && <span className="absolute top-1/2 right-3 -translate-y-1/2">{rightIcon}</span>}
     </div>
   );
-}
+};
+
+Input.displayName = 'Input';
 
 export { Input };

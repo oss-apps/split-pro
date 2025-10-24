@@ -1,9 +1,8 @@
-import { useTranslation } from 'next-i18next';
+import { clsx } from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { EntityAvatar } from '../ui/avatar';
-import { clsx } from 'clsx';
-import { toUIString } from '~/utils/numbers';
 
 export const BalanceEntry: React.FC<{
   entity: { name?: string | null; image?: string | null; email?: string | null };
@@ -13,7 +12,8 @@ export const BalanceEntry: React.FC<{
   id: number;
   hasMore?: boolean;
 }> = ({ entity, amount, isPositive, currency, id, hasMore }) => {
-  const { t } = useTranslation();
+  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { toUIString } = getCurrencyHelpersCached(currency);
   const router = useRouter();
 
   const currentRoute = router.pathname;
@@ -39,7 +39,7 @@ export const BalanceEntry: React.FC<{
             {t('actors.you')} {t(`ui.expense.you.${isPositive ? 'lent' : 'owe'}`)}
           </div>
           <div className={`${isPositive ? 'text-emerald-500' : 'text-orange-600'} text-right`}>
-            {currency} {toUIString(amount)}
+            {toUIString(amount)}
             <span className="mt-0.5 text-xs">{hasMore ? '*' : ''}</span>
           </div>
         </div>

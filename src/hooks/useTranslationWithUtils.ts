@@ -1,5 +1,9 @@
 import { useTranslation } from 'next-i18next';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
+import {
+  CurrencyHelpersContext,
+  type CurrencyHelpersType,
+} from '~/contexts/CurrencyHelpersContext';
 import {
   type ParametersExceptTranslation,
   displayName as dn,
@@ -9,13 +13,17 @@ import {
 } from '~/utils/strings';
 
 export const useTranslationWithUtils = (
-  namespaces?: string[],
+  namespaces?: string[] | string,
 ): ReturnType<typeof useTranslation> & {
   displayName: typeof displayName;
   generateSplitDescription: typeof generateSplitDescription;
   toUIDate: typeof toUIDate;
   getCurrencyName: typeof getCurrencyName;
+  getCurrencyHelpersCached: (currency: string) => CurrencyHelpersType;
 } => {
+  if (typeof namespaces === 'string') {
+    namespaces = [namespaces];
+  }
   if (!namespaces || namespaces.length === 0) {
     namespaces = ['common'];
   }
@@ -41,9 +49,35 @@ export const useTranslationWithUtils = (
     [translation.t],
   );
 
+  const context = useContext(CurrencyHelpersContext);
+
+  const getCurrencyHelpersCached = useCallback(
+    (currency: string) => {
+      if (!context) {
+        throw new Error('useCurrencyHelpers must be used within a CurrencyHelpersProvider');
+      }
+      return context.getCachedCurrencyHelpers(currency, translation.i18n.language);
+    },
+    [context, translation.i18n.language],
+  );
+
   // @ts-ignore
   return useMemo(
-    () => ({ ...translation, displayName, generateSplitDescription, toUIDate, getCurrencyName }),
-    [translation, displayName, generateSplitDescription, toUIDate, getCurrencyName],
+    () => ({
+      ...translation,
+      displayName,
+      generateSplitDescription,
+      toUIDate,
+      getCurrencyName,
+      getCurrencyHelpersCached,
+    }),
+    [
+      translation,
+      displayName,
+      generateSplitDescription,
+      toUIDate,
+      getCurrencyName,
+      getCurrencyHelpersCached,
+    ],
   );
 };

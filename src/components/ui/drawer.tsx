@@ -222,7 +222,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
                 size="sm"
                 className="w-[100px]"
                 onClick={leftActionOnClick}
-                asChild
+                asChild={shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined}
               >
                 {(shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined) ? (
                   <DialogClose>{leftAction}</DialogClose>
@@ -275,7 +275,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
                 variant="ghost"
                 className="text-primary px-0 text-left"
                 onClick={leftActionOnClick}
-                asChild
+                asChild={shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined}
               >
                 {(shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined) ? (
                   <DrawerClose>{leftAction}</DrawerClose>

@@ -45,7 +45,7 @@ export const GeneralPicker: React.FC<{
       title={title}
       open={open}
       onOpenChange={setOpen}
-      className={cn('h-[40vh]', className)}
+      className={cn('h-[70vh]', className)}
       shouldCloseOnAction
     >
       <Command className="h-[50vh]">

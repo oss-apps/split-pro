@@ -141,6 +141,7 @@
     "upload_failed": "Failed to upload file",
     "uploading_error": "Error uploading file",
     "valid_email": "Enter valid email",
+    "group_balances_malformed": "Group balances data is malformed, please report an issue or try recalculating.",
     "invalid_cron_expression": "Invalid cron expression"
   },
   "bank_transactions": {
@@ -174,7 +175,7 @@
         "split_unequally": "split unequally",
         "types": {
           "adjustment": {
-            "remaining_to_split_equally": "Remaining to split eauqlly",
+            "remaining_to_split_equally": "Remaining to split equally",
             "title": "Adjustment"
           },
           "equal": {

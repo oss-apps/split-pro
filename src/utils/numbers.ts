@@ -1,50 +1,225 @@
-import { CURRENCIES, type CurrencyCode } from '~/lib/currency';
+import { CURRENCIES, type CurrencyCode, isCurrencyCode } from '~/lib/currency';
 
-export function toSafeBigInt(num: number | string) {
-  if ('number' === typeof num) {
-    return BigInt(Math.round(num * 100));
-  } else if ('string' === typeof num) {
-    if ('' === num.trim() || /[^0-9.,+-]/g.test(num)) {
+export const getCurrencyHelpers = ({
+  locale = 'en-US',
+  currency = 'USD',
+}: {
+  locale?: string;
+  currency?: string;
+}) => {
+  currency = isCurrencyCode(currency) ? currency : 'USD';
+  const { decimalDigits } = CURRENCIES[currency as CurrencyCode];
+
+  const formatter = new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: decimalDigits,
+  });
+
+  const currencySymbol =
+    formatter.formatToParts(4).find(({ type }) => type === 'currency')?.value ?? '';
+  const thousandSeparator =
+    formatter.formatToParts(11111111).find(({ type }) => type === 'group')?.value ?? '';
+  const decimalSeparator =
+    formatter.formatToParts(1.1).find(({ type }) => type === 'decimal')?.value ?? '.';
+  const literalSeparator =
+    formatter.formatToParts(1.1).find(({ type }) => type === 'literal')?.value ?? '';
+  const decimalMultiplier = parseInt(`1${'0'.repeat(decimalDigits)}`, 10);
+  const decimalMultiplierN = BigInt(decimalMultiplier);
+
+  const toSafeBigInt = (stringNumber: string | number | bigint, signed = false): bigint => {
+    if (typeof stringNumber === 'string') {
+      return parseToBigIntBeforeSubmit(sanitizeInput(stringNumber, signed));
+    }
+
+    return parseToBigIntBeforeSubmit(stringNumber);
+  };
+
+  /* Parse sanitized string to number before submit */
+  const parseToBigIntBeforeSubmit = (stringNumber: string | number | bigint): bigint => {
+    if (typeof stringNumber === 'number') {
+      if (Number.isNaN(stringNumber)) {
+        return 0n;
+      } else {
+        const integerPart = BigInt(Math.floor(Math.abs(stringNumber)) * decimalMultiplier);
+        const fractionPart = BigInt(Math.round((Math.abs(stringNumber) % 1) * decimalMultiplier));
+        const sign = BigInt(Math.sign(stringNumber));
+        return (integerPart + fractionPart) * sign;
+      }
+    }
+    if (typeof stringNumber === 'bigint') {
+      return stringNumber;
+    }
+
+    if (stringNumber === '') {
       return 0n;
     }
-    const parsed = parseFloat(num);
-    if (isNaN(parsed) || !isFinite(parsed)) {
-      return 0n;
+
+    const cleanStr = stringNumber
+      .replace(currencySymbol, '')
+      .replace(literalSeparator, '')
+      .replace(new RegExp(`\\${thousandSeparator}`, 'g'), '')
+      .replace(new RegExp(`\\${decimalSeparator}`), '.');
+
+    const [integerPart = '0', decimalPart = ''] = cleanStr.split('.');
+
+    return (
+      BigInt(integerPart) * decimalMultiplierN +
+      BigInt(Math.round(parseFloat(`0.${decimalPart || '0'}`) * decimalMultiplier)) *
+        (integerPart.startsWith('-') ? -1n : 1n)
+    );
+  };
+
+  const trimExceedingDecimals = (inputString: string) => {
+    const [integer, decimals = ''] = inputString.split(decimalSeparator);
+    const trimmedDecimals = decimals.slice(0, decimalDigits);
+    return [integer, trimmedDecimals].join(decimalSeparator);
+  };
+
+  /* Sanitize input by allowing only digits, negative sign, and one decimal separator */
+  const sanitizeInput = (input: string, signed = false) => {
+    let cleaned = '';
+    let hasDecimalSeparator = false;
+    let hasNegativeSign = false;
+
+    `${input}`.split('').forEach((letter) => {
+      //allowing only one separator
+      if (letter === decimalSeparator && !hasDecimalSeparator) {
+        cleaned += letter;
+        hasDecimalSeparator = true;
+        return;
+      }
+      // when a user presses '-' sign, switch the sign of the number
+      if (letter === '-' && !hasNegativeSign) {
+        hasNegativeSign = true;
+      }
+
+      if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(letter)) {
+        cleaned += letter;
+      }
+    });
+    if (
+      signed &&
+      hasNegativeSign &&
+      parseFloat(cleaned) !== 0 &&
+      !Number.isNaN(parseFloat(cleaned))
+    ) {
+      cleaned = `-${cleaned}`;
     }
-    const num_unified_decimal = num.replace(',', '.').trim();
-    const isNegative = num_unified_decimal.startsWith('-');
-    const unsigned = isNegative ? num_unified_decimal.slice(1) : num_unified_decimal;
-    const parts = unsigned.split('.');
-    const whole = BigInt(parts[0] ?? '0');
-    const fraction = BigInt(Math.round(parseFloat(`0.${parts[1] ?? '0'}`) * 100));
 
-    const value = whole * 100n + fraction;
-    return isNegative ? -value : value;
-  } else {
-    return 0n;
-  }
-}
+    if (hasDecimalSeparator) {
+      return trimExceedingDecimals(cleaned);
+    }
 
-export function toUIString(num = 0n, signed = false, currencyCode: CurrencyCode = 'USD') {
-  const { decimalDigits } = CURRENCIES[currencyCode];
-  const maxDecimals = 10n ** BigInt(decimalDigits);
-  const decimalPart = num % 100n;
-  const wholePart = BigMath.abs(num) / 100n;
-  const res =
-    wholePart.toLocaleString(undefined, {
-      maximumFractionDigits: 0,
-    }) +
-    (0 < decimalDigits
-      ? (Number(decimalPart) / Number(maxDecimals))
-          .toLocaleString(undefined, {
-            minimumFractionDigits: decimalDigits,
-            maximumFractionDigits: decimalDigits,
-            signDisplay: 'never',
-          })
-          .slice(1) // Remove leading '0.'
-      : '');
-  return (signed && 0n > num && 0 !== parseFloat(res) ? '-' : '') + res;
-}
+    return cleaned;
+  };
+
+  const normalizeToMaxLength = (inputString: string) => {
+    const sanitized = sanitizeInput(inputString);
+    const trimmedExceedingDecimals = trimExceedingDecimals(sanitized);
+    return trimmedExceedingDecimals.endsWith(decimalSeparator)
+      ? trimmedExceedingDecimals.slice(0, -1)
+      : trimmedExceedingDecimals;
+  };
+
+  /* Parse various input types to clean string number */
+  const parseToCleanString = (value: unknown, signed = false) => {
+    if (value === formatter.format(0)) {
+      return '';
+    }
+
+    if (typeof value === 'number') {
+      return `${value}`.replace('.', decimalSeparator);
+    }
+
+    if (typeof value === 'bigint') {
+      const sign = value < 0n && signed ? '-' : '';
+      const integer = `${value / decimalMultiplierN}`;
+      const fraction = `${value}`.slice(-decimalDigits);
+      return (
+        sign +
+        normalizeToMaxLength(
+          decimalDigits > 0 ? `${integer}${decimalSeparator}${fraction}` : integer,
+        )
+      );
+    }
+
+    if (value === '') {
+      return '';
+    }
+
+    if (value === currencySymbol) {
+      return '';
+    }
+
+    if (typeof value === 'undefined' || value === null) {
+      return '';
+    }
+
+    if (typeof value === 'string') {
+      return normalizeToMaxLength(value);
+    }
+
+    return '';
+  };
+
+  /* Format a string number to localized, beautified currency string */
+  const format = (value: string, signed = false) => {
+    if (value === '') {
+      return formatter.format(0);
+    }
+
+    const sign = value.startsWith('-') && signed ? '-' : '';
+    const normalizedToMaxLength = normalizeToMaxLength(value);
+    const bigintValue = parseToBigIntBeforeSubmit(normalizedToMaxLength);
+    const parts = formatter.formatToParts(BigMath.abs(bigintValue) / decimalMultiplierN);
+    const auxParts = formatter.formatToParts(
+      (Number(BigMath.abs(bigintValue) % decimalMultiplierN) / decimalMultiplier) *
+        Number(BigMath.sign(bigintValue)),
+    );
+    const fractionPart = auxParts.find(({ type }) => type === 'fraction');
+    const decimalPart = auxParts.find(({ type }) => type === 'decimal');
+
+    const hasFraction = parts.some(({ type }) => type === 'fraction');
+
+    if (fractionPart && decimalPart) {
+      if (!hasFraction) {
+        const lastIntegerIndex = parts.findLastIndex(({ type }) => type === 'integer');
+        parts.splice(lastIntegerIndex + 1, 0, decimalPart, fractionPart);
+      } else {
+        parts.forEach((part) => {
+          if (part.type === 'fraction') {
+            part.value = fractionPart.value;
+          } else if (part.type === 'decimal') {
+            part.value = decimalPart.value;
+          }
+        });
+      }
+    }
+
+    return sign + parts.map(({ value }) => value).join('');
+  };
+
+  const toUIString = (value: unknown, signed = false) => {
+    const cleanString = parseToCleanString(value, signed);
+    return format(cleanString, signed);
+  };
+
+  const stripCurrencySymbol = (value: string) =>
+    value.replace(new RegExp(`\\${currencySymbol}`, 'g'), '').trim();
+
+  return {
+    parseToCleanString,
+    toUIString,
+    toUIStringSigned: (value: unknown) => toUIString(value, true),
+    stripCurrencySymbol,
+    format,
+    formatter,
+    sanitizeInput,
+    toSafeBigInt,
+  };
+};
 
 export function removeTrailingZeros(num: string) {
   if (num.includes('.')) {

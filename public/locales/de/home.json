@@ -1,6 +1,7 @@
 {
   "features": {
     "bank_connection": {
+      "description": "Füge Ausgaben schneller hinzu, dank einer Integration mit GoCardless oder der Plaid-API für Bankkontotransaktionen.",
       "title": "Bankverbindung"
     },
     "currency_conversion": {

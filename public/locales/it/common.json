@@ -8,6 +8,9 @@
       "placeholder": "Seleziona una lingua",
       "title": "Seleziona una lingua"
     },
+    "debug_info_details": {
+      "new_version_available": "È disponibile una nuova versione:"
+    },
     "download_app": "Scarica l'app",
     "download_app_details": {
       "download_as_pwa": "Puoi scaricare SplitPro come PWA sulla tua home screen.",
@@ -61,6 +64,7 @@
     "cancel": "Annulla",
     "close": "Chiudi",
     "confirm": "Conferma",
+    "copy": "Copia",
     "create": "Crea",
     "edit_expense": "Modifica spesa",
     "export": "Esporta",

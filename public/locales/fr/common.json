@@ -8,6 +8,16 @@
       "placeholder": "Choisir une langue",
       "title": "Choisir une langue"
     },
+    "debug_info": "Info de débug",
+    "debug_info_details": {
+      "copy_failed": "Échec de la copie des infos de débug",
+      "description": "Collez les informations suivantes lorsque que vous faites une demande au support :",
+      "git": "Git",
+      "new_version_available": "Une nouvelle version est disponible :",
+      "title": "Informations de débogage",
+      "user_agent": "UserAgent",
+      "version": "Version"
+    },
     "download_app": "Télécharger l'app",
     "download_app_details": {
       "download_as_pwa": "Tu peux télécharger SplitPro en tant que PWA (Aplication Web Progressive) sur ton écran d'accueil.",
@@ -62,6 +72,7 @@
     "close": "Fermer",
     "confirm": "Confirmer",
     "connect": "Se connecter",
+    "copy": "Copier",
     "create": "Créer",
     "edit_expense": "Éditer la dépense",
     "export": "Exporter",
@@ -122,6 +133,7 @@
     "email_required": "L'adresse mail est requise",
     "feedback_min_length": "Le texte doit faire au moins 10 caractères",
     "feedback_required": "Fournis des informations",
+    "group_balances_malformed": "Les données des soldes de groupe sont erronées, merci d'essayer de relancer leur calcul ou de reporter une erreur sinon.",
     "group_name_update_failed": "Une erreur est survenue lors de la mise à jour du nom du groupe",
     "import_failed": "Une erreur est survenue lors de l'import du fichier",
     "invalid_cron_expression": "Expression cron invalide",
@@ -361,6 +373,7 @@
       }
     },
     "expense_details": "Détails de la dépense",
+    "in_group": "dans le groupe",
     "no_activity": "Aucune activité pour l'instant",
     "not_involved": "Non concerné⋅e",
     "on": "sur",

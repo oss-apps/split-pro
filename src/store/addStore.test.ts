@@ -6,7 +6,7 @@ import {
   calculateSplitShareBasedOnAmount,
   initSplitShares,
   useAddExpenseStore,
-} from '~/store/addStore';
+} from './addStore';
 
 // Mock dependencies
 jest.mock('~/utils/array', () => ({
@@ -994,52 +994,52 @@ describe('Penny distribution preservation', () => {
 
   it('should preserve different penny distributions when editing expenses', () => {
     const store = useAddExpenseStore.getState();
-    
+
     store.actions.setCurrentUser(user1);
     store.actions.setPaidBy(user1);
     store.actions.setAmount(4n);
-    
+
     const distributionA: Participant[] = [
-      { ...user1, amount: 3n },   
-      { ...user2, amount: -2n },  
-      { ...user3, amount: -1n },  
+      { ...user1, amount: 3n },
+      { ...user2, amount: -2n },
+      { ...user3, amount: -1n },
     ];
-    
+
     store.actions.setParticipants(distributionA, SplitType.EQUAL);
     const resultA = useAddExpenseStore.getState().participants;
-    
+
     store.actions.resetState();
     store.actions.setCurrentUser(user1);
     store.actions.setPaidBy(user1);
     store.actions.setAmount(4n);
-    
+
     const distributionB: Participant[] = [
-      { ...user1, amount: 2n },   
-      { ...user2, amount: -1n },  
-      { ...user3, amount: -1n },  
+      { ...user1, amount: 2n },
+      { ...user2, amount: -1n },
+      { ...user3, amount: -1n },
     ];
-    
+
     store.actions.setParticipants(distributionB, SplitType.EQUAL);
     const resultB = useAddExpenseStore.getState().participants;
-    
+
     expect(resultA[0]!.amount).toBe(3n);
     expect(resultA[1]!.amount).toBe(-2n);
     expect(resultA[2]!.amount).toBe(-1n);
-    
+
     expect(resultB[0]!.amount).toBe(2n);
     expect(resultB[1]!.amount).toBe(-1n);
     expect(resultB[2]!.amount).toBe(-1n);
-    
+
     expect(resultA[0]!.amount).not.toBe(resultB[0]!.amount);
   });
 
   it('should maintain amounts across multiple edits', () => {
     const store = useAddExpenseStore.getState();
-    
+
     store.actions.setCurrentUser(user1);
     store.actions.setPaidBy(user1);
     store.actions.setAmount(4n);
-    
+
     const edit1: Participant[] = [
       { ...user1, amount: 3n },
       { ...user2, amount: -2n },
@@ -1049,7 +1049,7 @@ describe('Penny distribution preservation', () => {
     let result = useAddExpenseStore.getState().participants;
     expect(result[0]!.amount).toBe(3n);
     expect(result[1]!.amount).toBe(-2n);
-    
+
     const edit2: Participant[] = [
       { ...user1, amount: 2n },
       { ...user2, amount: -1n },
@@ -1059,11 +1059,10 @@ describe('Penny distribution preservation', () => {
     result = useAddExpenseStore.getState().participants;
     expect(result[0]!.amount).toBe(2n);
     expect(result[1]!.amount).toBe(-1n);
-    
+
     store.actions.setParticipants(edit1, SplitType.EQUAL);
     result = useAddExpenseStore.getState().participants;
     expect(result[0]!.amount).toBe(3n);
     expect(result[1]!.amount).toBe(-2n);
   });
-
 });

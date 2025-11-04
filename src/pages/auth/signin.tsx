@@ -78,6 +78,12 @@ const Home: NextPage<{
     }
   }, [error, t]);
 
+  useEffect(() => {
+    if (providers.length === 0) {
+      toast.error(t('errors.no_providers'), { duration: 8000 });
+    }
+  }, [providers.length, t]);
+
   const onEmailSubmit = useCallback(async () => {
     setEmailStatus('sending');
     const email = emailForm.getValues().email.toLowerCase();
@@ -201,7 +207,12 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);
-  const providers = await getProviders();
+  let providers: Record<string, ClientSafeProvider> | null = null;
+  try {
+    providers = await getProviders();
+  } catch (error) {
+    console.error(error);
+  }
   const { callbackUrl, error } = context.query;
 
   if (session) {

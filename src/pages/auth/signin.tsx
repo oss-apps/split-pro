@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
+import { LoadingSpinner } from '~/components/ui/spinner';
 import { LanguageSelector } from '~/components/LanguageSelector';
 import { env } from '~/env';
 import { getServerAuthSession } from '~/server/auth';
@@ -53,10 +54,12 @@ const Home: NextPage<{
   feedbackEmail: string;
   providers: ClientSafeProvider[];
   callbackUrl?: string;
-}> = ({ error, providers, feedbackEmail, callbackUrl }) => {
+}> = ({ error, providers: serverProviders, feedbackEmail, callbackUrl }) => {
   const { t } = useTranslation('signin');
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
   const [showVerificationStep, setShowVerificationStep] = useState(false);
+  const [providers, setProviders] = useState<ClientSafeProvider[]>(serverProviders);
+  const [isLoadingProviders, setIsLoadingProviders] = useState(false);
 
   const emailForm = useForm<EmailFormValues>({
     resolver: zodResolver(emailSchema(t)),
@@ -64,6 +67,30 @@ const Home: NextPage<{
       email: '',
     },
   });
+
+  // Client-side fallback for getProviders when server-side call fails
+  useEffect(() => {
+    if (serverProviders.length > 0) {
+      return;
+    }
+
+    void (async () => {
+      setIsLoadingProviders(true);
+      try {
+        const clientProviders = await getProviders();
+        if (clientProviders && Object.keys(clientProviders).length > 0) {
+          setProviders(Object.values(clientProviders));
+        } else {
+          throw new Error('No providers returned from getProviders()');
+        }
+      } catch (error) {
+        console.error('Error fetching providers client-side:', error);
+        toast.error(t('errors.no_providers'), { duration: 8000 });
+      } finally {
+        setIsLoadingProviders(false);
+      }
+    })();
+  }, [serverProviders.length, t]);
 
   useEffect(() => {
     if (error) {
@@ -77,12 +104,6 @@ const Home: NextPage<{
       }
     }
   }, [error, t]);
-
-  useEffect(() => {
-    if (providers.length === 0) {
-      toast.error(t('errors.no_providers'), { duration: 8000 });
-    }
-  }, [providers.length, t]);
 
   const onEmailSubmit = useCallback(async () => {
     setEmailStatus('sending');
@@ -151,51 +172,62 @@ const Home: NextPage<{
             <LanguageSelector />
           </div>
 
-          {providers
-            .filter((provider) => 'email' !== provider.id)
-            .map((provider) => (
-              <Button
-                className="mx-auto flex w-[300px] items-center gap-3 bg-white hover:bg-gray-100 focus:bg-gray-100"
-                onClick={handleProviderSignIn(provider.id)}
-                key={provider.id}
-              >
-                {providerSvgs[provider.id as keyof typeof providerSvgs]}
-                {t('auth.continue_with', { provider: provider.name })}
-              </Button>
-            ))}
-          {providers && 2 === providers.length && (
-            <div className="mt-6 flex w-[300px] items-center justify-between gap-2">
-              <p className="bg-background z-10 ml-[150px] -translate-x-1/2 px-4 text-sm">
-                {t('ui.or', { ns: 'common' })}
-              </p>
-              <div className="absolute h-px w-[300px] bg-linear-to-r from-zinc-800 via-zinc-300 to-zinc-800" />
+          {isLoadingProviders ? (
+            <div className="flex h-[200px] w-[300px] items-center justify-center">
+              <LoadingSpinner className="h-8 w-8" />
             </div>
-          )}
-          {providers.find((provider) => 'email' === provider.id) ? (
+          ) : (
             <>
-              <Form {...emailForm}>
-                <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="mt-6 space-y-8">
-                  <FormField control={emailForm.control} name="email" render={field} />
+              {providers
+                .filter((provider) => 'email' !== provider.id)
+                .map((provider) => (
                   <Button
-                    className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
-                    type="submit"
-                    disabled={'sending' === emailStatus}
+                    className="mx-auto flex w-[300px] items-center gap-3 bg-white hover:bg-gray-100 focus:bg-gray-100"
+                    onClick={handleProviderSignIn(provider.id)}
+                    key={provider.id}
                   >
-                    {'sending' === emailStatus ? t('auth.sending') : t('auth.send_magic_link')}
+                    {providerSvgs[provider.id as keyof typeof providerSvgs]}
+                    {t('auth.continue_with', { provider: provider.name })}
                   </Button>
-                </form>
-              </Form>
+                ))}
+              {providers && 2 === providers.length && (
+                <div className="mt-6 flex w-[300px] items-center justify-between gap-2">
+                  <p className="bg-background z-10 ml-[150px] -translate-x-1/2 px-4 text-sm">
+                    {t('ui.or', { ns: 'common' })}
+                  </p>
+                  <div className="absolute h-px w-[300px] bg-linear-to-r from-zinc-800 via-zinc-300 to-zinc-800" />
+                </div>
+              )}
+              {providers.find((provider) => 'email' === provider.id) ? (
+                <>
+                  <Form {...emailForm}>
+                    <form
+                      onSubmit={emailForm.handleSubmit(onEmailSubmit)}
+                      className="mt-6 space-y-8"
+                    >
+                      <FormField control={emailForm.control} name="email" render={field} />
+                      <Button
+                        className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
+                        type="submit"
+                        disabled={'sending' === emailStatus}
+                      >
+                        {'sending' === emailStatus ? t('auth.sending') : t('auth.send_magic_link')}
+                      </Button>
+                    </form>
+                  </Form>
+                </>
+              ) : null}
+              {feedbackEmail && (
+                <p className="text-muted-foreground mt-6 w-[300px] text-center text-sm">
+                  {t('auth.trouble_logging_in')}
+                  <br />
+                  {/* oxlint-disable-next-line next/no-html-link-for-pages */}
+                  <a className="underline" href={feedbackEmailLink}>
+                    {feedbackEmail ?? ''}
+                  </a>
+                </p>
+              )}
             </>
-          ) : null}
-          {feedbackEmail && (
-            <p className="text-muted-foreground mt-6 w-[300px] text-center text-sm">
-              {t('auth.trouble_logging_in')}
-              <br />
-              {/* oxlint-disable-next-line next/no-html-link-for-pages */}
-              <a className="underline" href={feedbackEmailLink}>
-                {feedbackEmail ?? ''}
-              </a>
-            </p>
           )}
         </div>
       </main>

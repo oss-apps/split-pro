@@ -19,7 +19,7 @@
     "start-with-latest-migrations": "prisma migrate deploy && next start",
     "d": "pnpm dx && pnpm dev",
     "dx": "pnpm i && pnpm dx:up && pnpm db:dev",
-    "dx:up": "docker compose -f docker/dev/compose.yml up -d",
+    "dx:up": "docker compose -f docker/dev/compose.yml --env-file .env up -d",
     "dx:down": "docker compose -f docker/dev/compose.yml down",
     "test": "jest",
     "test:watch": "jest --watch",

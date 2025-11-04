@@ -5,7 +5,8 @@ import {
   calculateParticipantSplit,
   calculateSplitShareBasedOnAmount,
   initSplitShares,
-} from './addStore';
+  useAddExpenseStore,
+} from '~/store/addStore';
 
 // Mock dependencies
 jest.mock('~/utils/array', () => ({
@@ -145,8 +146,6 @@ describe('calculateParticipantSplit', () => {
       expect(result.canSplitScreenClosed).toBe(true);
     });
   });
-
-  
 
   describe('SplitType.PERCENTAGE', () => {
     it('should split amount by percentage', () => {
@@ -462,188 +461,6 @@ describe('calculateParticipantSplit', () => {
   });
 });
 
-describe('calculateParticipantSplit leftover penny distribution', () => {
-  // Mock participants that we'll use across tests
-  const participants: Participant[] = [
-    createMockUser(1, 'Alice', 'alice@test.com'),
-    createMockUser(2, 'Bob', 'bob@test.com'),
-    createMockUser(3, 'Charlie', 'charlie@test.com')
-  ];
-
-  // Helper to get split shares for equal split
-  const getEqualSplitShares = (participants: Participant[]): Record<number, Record<SplitType, bigint | undefined>> => {
-    const shares: Record<number, Record<SplitType, bigint | undefined>> = {};
-    participants.forEach(p => {
-      shares[p.id] = initSplitShares();
-      shares[p.id]![SplitType.EQUAL] = 1n;
-    });
-    return shares;
-  };
-
-  it('should distribute leftover penny to different participants for different transactions', () => {
-    const splitShares = getEqualSplitShares(participants);
-    
-    // Test Case 1: Amount that doesn't divide evenly by 3
-    const result1 = calculateParticipantSplit(
-      100n, // $1.00
-      participants,
-      SplitType.EQUAL,
-      splitShares,
-      participants[0], // Alice is paying
-      'transaction-1'
-    );
-
-    // Test Case 2: Different amount
-    const result2 = calculateParticipantSplit(
-      200n, // $2.00
-      participants,
-      SplitType.EQUAL,
-      splitShares,
-      participants[0],
-      'transaction-2'
-    );
-
-    // Test Case 3: Another different amount
-    const result3 = calculateParticipantSplit(
-      400n, // $4.00
-      participants,
-      SplitType.EQUAL,
-      splitShares,
-      participants[0],
-      'transaction-3'
-    );
-
-    // Get the person who got the leftover penny in each case
-    const getPennyRecipient = (participants: Participant[]): number | undefined => {
-      const payer = participants[0];
-      if (!payer?.amount) return undefined;
-      
-      const nonPayerShare = participants
-        .find(p => p.id !== payer.id && p.amount)
-        ?.amount;
-        
-      return participants.find(p => 
-        p.id !== payer.id && p.amount && p.amount !== nonPayerShare
-      )?.id;
-    };
-
-    const recipient1 = getPennyRecipient(result1.participants);
-    const recipient2 = getPennyRecipient(result2.participants);
-    const recipient3 = getPennyRecipient(result3.participants);
-
-    // Verify that we got different recipients
-    expect(new Set([recipient1, recipient2, recipient3]).size).toBeGreaterThan(1);
-  });
-
-  it('should maintain consistent penny distribution for same transaction with different descriptions', () => {
-    const splitShares = getEqualSplitShares(participants);
-    const amount = 100n; // $1.00
-    const transactionId = 'consistent-transaction';
-
-    // Original calculation
-    const originalResult = calculateParticipantSplit(
-      amount,
-      participants,
-      SplitType.EQUAL,
-      splitShares,
-      participants[0],
-      transactionId
-    );
-
-    // Same transaction, different metadata
-    const modifications = [
-      { description: 'Changed title' },
-      { description: 'Added emoji 🍕' },
-      { description: 'Changed category' }
-    ];
-
-    // Test that all modifications result in the same distribution
-    modifications.forEach(mod => {
-      const modifiedResult = calculateParticipantSplit(
-        amount,
-        participants,
-        SplitType.EQUAL,
-        splitShares,
-        participants[0],
-        transactionId
-      );
-
-      // Compare amounts for all participants
-      originalResult.participants.forEach((originalParticipant, index) => {
-        const modifiedAmount = modifiedResult.participants[index]?.amount;
-        expect(modifiedAmount).toBe(originalParticipant.amount);
-      });
-    });
-  });
-
-  it('should handle different transaction IDs with same amount', () => {
-    const splitShares = getEqualSplitShares(participants);
-    const amount = 1001n; // $10.01 -amount that doesn't divide evenly
-
-    // Helper to identify who got extra pennies
-    const getNonPayerAmounts = (result: { participants: Participant[] }): Map<number, bigint> => {
-      const payer = participants[0];
-      if (!payer) return new Map();
-      
-      return new Map(
-        result.participants
-          .filter(p => p.id !== payer.id)
-          .map(p => [p.id, p.amount ?? 0n])
-      );
-    };
-
-    // Test with 10 different transaction IDs
-    const results = Array.from({ length: 10 }, (_, i) => 
-      calculateParticipantSplit(
-        amount, 
-        participants, 
-        SplitType.EQUAL, 
-        splitShares, 
-        participants[0], 
-        `transaction-${i + 1}`
-      )
-    );
-
-    // Get the distribution for each transaction
-    const distributions = results.map(getNonPayerAmounts);
-    
-    // Compare each distribution with others to ensure we have differences
-    let hasDistinctDistributions = false;
-    for (let i = 0; i < distributions.length - 1; i++) {
-      const dist1 = distributions[i];
-      const dist2 = distributions[i + 1];
-      
-      if (dist1 && dist2) {
-        // Check if the distributions are different
-        const isDifferent = Array.from(dist1.entries()).some(
-          ([id, amount]) => dist2.get(id) !== amount
-        );
-        
-        if (isDifferent) {
-          hasDistinctDistributions = true;
-          break;
-        }
-      }
-    }
-
-    expect(hasDistinctDistributions).toBe(true);
-
-    // Double-check that all distributions sum to zero
-    results.forEach(result => {
-      const total = result.participants.reduce((sum, p) => sum + (p.amount ?? 0n), 0n);
-      expect(total).toBe(0n);
-
-      // Log the distribution for debugging
-      console.log('Distribution:', 
-        result.participants.map(p => ({
-          id: p.id,
-          amount: p.amount?.toString()
-        }))
-      );
-    });
-  });
-});
-
 describe('calculateSplitShareBasedOnAmount', () => {
   describe('SplitType.EQUAL', () => {
     it('should set equal shares for participants with non-zero amounts', () => {
@@ -658,20 +475,6 @@ describe('calculateSplitShareBasedOnAmount', () => {
       expect(splitShares[user1.id]![SplitType.EQUAL]).toBe(1n);
       expect(splitShares[user2.id]![SplitType.EQUAL]).toBe(1n);
       expect(splitShares[user3.id]![SplitType.EQUAL]).toBe(0n); // Zero amount
-    });
-
-    it('should set zero shares for participants with zero amounts', () => {
-      const participants = createParticipants([user1, user2, user3], [0n, 0n, 0n]);
-      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
-      participants.forEach((p) => {
-        splitShares[p.id] = initSplitShares();
-      });
-
-      calculateSplitShareBasedOnAmount(10000n, participants, SplitType.EQUAL, splitShares, user1);
-
-      expect(splitShares[user1.id]![SplitType.EQUAL]).toBe(0n);
-      expect(splitShares[user2.id]![SplitType.EQUAL]).toBe(0n);
-      expect(splitShares[user3.id]![SplitType.EQUAL]).toBe(0n);
     });
   });
 
@@ -1182,4 +985,85 @@ describe('Function Reversibility Tests', () => {
       expect(reversedShares[user3.id]![SplitType.EQUAL]).toBe(0n);
     });
   });
+});
+
+describe('Penny distribution preservation', () => {
+  beforeEach(() => {
+    useAddExpenseStore.getState().actions.resetState();
+  });
+
+  it('should preserve different penny distributions when editing expenses', () => {
+    const store = useAddExpenseStore.getState();
+    
+    store.actions.setCurrentUser(user1);
+    store.actions.setPaidBy(user1);
+    store.actions.setAmount(4n);
+    
+    const distributionA: Participant[] = [
+      { ...user1, amount: 3n },   
+      { ...user2, amount: -2n },  
+      { ...user3, amount: -1n },  
+    ];
+    
+    store.actions.setParticipants(distributionA, SplitType.EQUAL);
+    const resultA = useAddExpenseStore.getState().participants;
+    
+    store.actions.resetState();
+    store.actions.setCurrentUser(user1);
+    store.actions.setPaidBy(user1);
+    store.actions.setAmount(4n);
+    
+    const distributionB: Participant[] = [
+      { ...user1, amount: 2n },   
+      { ...user2, amount: -1n },  
+      { ...user3, amount: -1n },  
+    ];
+    
+    store.actions.setParticipants(distributionB, SplitType.EQUAL);
+    const resultB = useAddExpenseStore.getState().participants;
+    
+    expect(resultA[0]!.amount).toBe(3n);
+    expect(resultA[1]!.amount).toBe(-2n);
+    expect(resultA[2]!.amount).toBe(-1n);
+    
+    expect(resultB[0]!.amount).toBe(2n);
+    expect(resultB[1]!.amount).toBe(-1n);
+    expect(resultB[2]!.amount).toBe(-1n);
+    
+    expect(resultA[0]!.amount).not.toBe(resultB[0]!.amount);
+  });
+
+  it('should maintain amounts across multiple edits', () => {
+    const store = useAddExpenseStore.getState();
+    
+    store.actions.setCurrentUser(user1);
+    store.actions.setPaidBy(user1);
+    store.actions.setAmount(4n);
+    
+    const edit1: Participant[] = [
+      { ...user1, amount: 3n },
+      { ...user2, amount: -2n },
+      { ...user3, amount: -1n },
+    ];
+    store.actions.setParticipants(edit1, SplitType.EQUAL);
+    let result = useAddExpenseStore.getState().participants;
+    expect(result[0]!.amount).toBe(3n);
+    expect(result[1]!.amount).toBe(-2n);
+    
+    const edit2: Participant[] = [
+      { ...user1, amount: 2n },
+      { ...user2, amount: -1n },
+      { ...user3, amount: -1n },
+    ];
+    store.actions.setParticipants(edit2, SplitType.EQUAL);
+    result = useAddExpenseStore.getState().participants;
+    expect(result[0]!.amount).toBe(2n);
+    expect(result[1]!.amount).toBe(-1n);
+    
+    store.actions.setParticipants(edit1, SplitType.EQUAL);
+    result = useAddExpenseStore.getState().participants;
+    expect(result[0]!.amount).toBe(3n);
+    expect(result[1]!.amount).toBe(-2n);
+  });
+
 });

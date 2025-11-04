@@ -5,10 +5,11 @@ import { create } from 'zustand';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { type CurrencyCode } from '~/lib/currency';
 import type { TransactionAddInputModel } from '~/types';
+import { shuffleArray } from '~/utils/array';
 import { BigMath } from '~/utils/numbers';
 
 export type Participant = User & { amount?: bigint };
-type SplitShares = Record<number, Record<SplitType, bigint | undefined>>;
+export type SplitShares = Record<number, Record<SplitType, bigint | undefined>>;
 
 export interface AddExpenseState {
   amount: bigint;
@@ -102,8 +103,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
             s.participants,
             s.splitType,
             s.splitShares,
-            s.paidBy,
-            s.transactionId
+            s.paidBy
           ),
         };
       }),
@@ -116,8 +116,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
           state.participants,
           splitType,
           state.splitShares,
-          state.paidBy,
-          state.transactionId
+          state.paidBy
         ),
       })),
     setSplitShare: (splitType, userId, share) =>
@@ -162,8 +161,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
             participants,
             state.splitType,
             splitShares,
-            state.paidBy,
-            state.transactionId
+            state.paidBy
           ),
         };
       }),
@@ -173,6 +171,32 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
           res[p.id] = initSplitShares();
           return res;
         }, {});
+        
+       
+        const hasExistingAmounts = participants.some((p) => p.amount !== undefined && p.amount !== 0n);
+        
+        if (hasExistingAmounts) {
+          
+          if (splitType) {
+            calculateSplitShareBasedOnAmount(
+              state.amount,
+              participants,
+              splitType,
+              splitShares,
+              state.paidBy,
+            );
+          } else {
+            splitType = SplitType.EQUAL;
+          }
+          return {
+            splitType,
+            splitShares,
+            participants, 
+            canSplitScreenClosed: true,
+          };
+        }
+        
+        
         if (splitType) {
           calculateSplitShareBasedOnAmount(
             state.amount,
@@ -192,8 +216,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
             participants,
             splitType,
             splitShares,
-            state.paidBy,
-            state.transactionId
+            state.paidBy
           ),
         };
       }),
@@ -307,8 +330,7 @@ export function calculateParticipantSplit(
   participants: Participant[],
   splitType: SplitType,
   splitShares: SplitShares,
-  paidBy?: Participant,
-  transactionId: string = ''
+  paidBy?: Participant
 ) {
   let canSplitScreenClosed = true;
   if (0n === amount) {
@@ -374,52 +396,19 @@ export function calculateParticipantSplit(
     return { ...p, amount: -(p.amount ?? 0n) };
   });
 
-  let penniesLeft = updatedParticipants.reduce((acc, p) => acc + (p.amount ?? 0n), 0n);
-  const participantsToPick = updatedParticipants.filter((p) => p.amount);
+  if (canSplitScreenClosed) {
+    let penniesLeft = updatedParticipants.reduce((acc, p) => acc + (p.amount ?? 0n), 0n);
+    const participantsToPick = updatedParticipants.filter((p) => p.amount);
 
-  if (0 < participantsToPick.length) {
-    
-    const hash = (value: number, inputs: { amount: bigint; transactionId: string }): number => {
-      let hash = 5381;
-
-      // Hash the transactionId first to give it more weight
-      for (let i = 0; i < inputs.transactionId.length; i++) {
-        const char = inputs.transactionId.charCodeAt(i);
-        hash = ((hash << 5) + hash) + char;
-        hash = hash & hash;
+    if (0 < participantsToPick.length) {
+      shuffleArray(participantsToPick);
+      let i = 0;
+      while (0n !== penniesLeft) {
+        const p = participantsToPick[i % participantsToPick.length]!;
+        p.amount! -= BigMath.sign(penniesLeft);
+        penniesLeft -= BigMath.sign(penniesLeft);
+        i++;
       }
-
-      // Multiply by a large prime to amplify the transaction ID's influence
-      hash *= 31;
-
-      // Then add amount's influence
-      const amountStr = inputs.amount.toString();
-      const lastDigits = amountStr.slice(-6);
-      for (let i = 0; i < lastDigits.length; i++) {
-        const char = lastDigits.charCodeAt(i);
-        hash = ((hash << 5) + hash) + char;
-        hash = hash & hash;
-      }
-
-      // Finally add participant's influence
-      hash = ((hash << 5) + hash) + value;
-      hash = hash & hash;
-      
-      return Math.abs(hash);
-    };
-    
-    const shuffled = [...participantsToPick].sort((a, b) => {
-      const hashA = hash(a.id, { amount, transactionId });
-      const hashB = hash(b.id, { amount, transactionId });
-      return hashA - hashB;
-    });
-    
-    let i = 0;
-    while (0n !== penniesLeft) {
-      const p = shuffled[i % shuffled.length]!;
-      p.amount! -= BigMath.sign(penniesLeft);
-      penniesLeft -= BigMath.sign(penniesLeft);
-      i++;
     }
   }
 
@@ -440,7 +429,8 @@ export function calculateSplitShareBasedOnAmount(
   switch (splitType) {
     case SplitType.EQUAL:
       participants.forEach((p) => {
-        splitShares[p.id]![splitType] = 0n === p.amount && participants.length > 1 ? 0n : 1n;
+        splitShares[p.id]![splitType] =
+          (p.id === paidBy?.id ? amount : 0n) === p.amount && participants.length > 1 ? 0n : 1n;
       });
 
       break;

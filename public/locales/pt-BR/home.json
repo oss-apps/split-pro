@@ -1,5 +1,9 @@
 {
   "features": {
+    "bank_connection": {
+      "description": "Adicione despesas mais rapidamente integrando uma conta bancária com GoCardless ou Plaid",
+      "title": "Conexão bancária"
+    },
     "currency_conversion": {
       "description": "Converta moedas rapidamente usando taxas de câmbio atualizadas ou históricas",
       "title": "Conversão de moedas"

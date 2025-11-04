@@ -120,6 +120,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
       {
         usersWithBalance: usersWithBalance.filter((user) => selectedUsers[user.id]),
         groups: groups.filter((group) => selectedGroups[group.id]),
+        expenses: expenses.filter((expense) => selectedExpenses[expense.id]),
       },
       {
         onSuccess: () => {

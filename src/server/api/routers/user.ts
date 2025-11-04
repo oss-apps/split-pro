@@ -6,12 +6,17 @@ import { env } from '~/env';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
-import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
+import {
+  SplitwiseExpenseSchema,
+  SplitwiseGroupSchema,
+  SplitwiseUserWithBalanceSchema,
+} from '~/types';
 
 // import { sendExpensePushNotification } from '../services/notificationService';
 import {
   getCompleteFriendsDetails,
   getCompleteGroupDetails,
+  importExpenseFromSplitwise,
   importGroupFromSplitwise,
   importUserBalanceFromSplitWise,
 } from '../services/splitService';
@@ -239,13 +244,20 @@ export const userRouter = createTRPCRouter({
   importUsersFromSplitWise: protectedProcedure
     .input(
       z.object({
-        usersWithBalance: z.array(SplitwiseUserSchema),
+        usersWithBalance: z.array(SplitwiseUserWithBalanceSchema),
         groups: z.array(SplitwiseGroupSchema),
+        expenses: z.array(SplitwiseExpenseSchema),
       }),
     )
     .mutation(async ({ input, ctx }) => {
       await importUserBalanceFromSplitWise(ctx.session.user.id, input.usersWithBalance);
       await importGroupFromSplitwise(ctx.session.user.id, input.groups);
+      await importExpenseFromSplitwise(
+        ctx.session.user.id,
+        input.expenses,
+        input.usersWithBalance,
+        input.groups,
+      );
     }),
 
   getWebPushPublicKey: protectedProcedure.query(() => env.WEB_PUSH_PUBLIC_KEY ?? ''),

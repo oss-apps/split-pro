@@ -30,8 +30,7 @@
       "messages": {
         "import_success": "Import lyckades"
       },
-      "no_file_chosen": "Ingen fil vald",
-      "note": "Notera: Vi stödjer för närvarande endast import av vänner och grupper. Transaktioner kommer inte importeras. Vi arbetar på det."
+      "no_file_chosen": "Ingen fil vald"
     },
     "logout": "Logga ut",
     "messages": {

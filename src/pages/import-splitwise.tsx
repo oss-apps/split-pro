@@ -3,7 +3,7 @@ import { DownloadCloud } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
 import MainLayout from '~/components/Layout/MainLayout';
@@ -12,16 +12,24 @@ import { Checkbox } from '~/components/ui/checkbox';
 import { Input } from '~/components/ui/input';
 import { Separator } from '~/components/ui/separator';
 import { LoadingSpinner } from '~/components/ui/spinner';
-import { type NextPageWithUser, type SplitwiseGroup, type SplitwiseUser } from '~/types';
+import {
+  type NextPageWithUser,
+  type SplitwiseExpense,
+  type SplitwiseGroup,
+  type SplitwiseUserWithBalance,
+} from '~/types';
 import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
+import { set } from 'date-fns';
 
 const ImportSpliwisePage: NextPageWithUser = () => {
   const { t } = useTranslation();
-  const [usersWithBalance, setUsersWithBalance] = useState<SplitwiseUser[]>([]);
+  const [usersWithBalance, setUsersWithBalance] = useState<SplitwiseUserWithBalance[]>([]);
   const [groups, setGroups] = useState<SplitwiseGroup[]>([]);
+  const [expenses, setExpenses] = useState<SplitwiseExpense[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<Record<string, boolean>>({});
   const [selectedGroups, setSelectedGroups] = useState<Record<string, boolean>>({});
+  const [selectedExpenses, setSelectedExpenses] = useState<Record<string, boolean>>({});
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const router = useRouter();
@@ -39,11 +47,11 @@ const ImportSpliwisePage: NextPageWithUser = () => {
 
     try {
       const json = JSON.parse(await file.text()) as Record<string, unknown>;
-      const friendsWithOutStandingBalance: SplitwiseUser[] = [];
+      const friendsWithOutStandingBalance: SplitwiseUserWithBalance[] = [];
       for (const friend of json.friends as Record<string, unknown>[]) {
         const balance = friend.balance as { currency_code: string; amount: string }[];
         if (balance.length && 'confirmed' === friend.registration_status) {
-          friendsWithOutStandingBalance.push(friend as unknown as SplitwiseUser);
+          friendsWithOutStandingBalance.push(friend as unknown as SplitwiseUserWithBalance);
         }
       }
 
@@ -72,11 +80,38 @@ const ImportSpliwisePage: NextPageWithUser = () => {
           {} as Record<string, boolean>,
         ),
       );
+
+      const _expenses = (json.expenses as SplitwiseExpense[]).filter((e) => !e.deleted_at);
+
+      setExpenses(_expenses);
     } catch (e) {
       console.error(e);
       toast.error(t('errors.import_failed'));
     }
   };
+
+  useEffect(() => {
+    if (!expenses || !expenses.length) {
+      setSelectedExpenses({});
+      return;
+    }
+
+    setSelectedExpenses(
+      expenses.reduce(
+        (acc, expense) => {
+          const isUserSelected = expense.users.some((user) => selectedUsers[user.user_id]);
+          const isGroupSelected = expense.group_id ? selectedGroups[expense.group_id] : false;
+
+          if (isUserSelected || isGroupSelected) {
+            acc[expense.id] = true;
+          }
+
+          return acc;
+        },
+        {} as Record<string, boolean>,
+      ),
+    );
+  }, [expenses, selectedUsers, selectedGroups]);
 
   const importMutation = api.user.importUsersFromSplitWise.useMutation();
 
@@ -155,9 +190,6 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             {importMutation.isPending ? <LoadingSpinner /> : t('actions.import')}
           </Button>
         </div>
-        <div className="mt-4 text-sm text-gray-400">
-          {t('account.import_from_splitwise_details.note')}
-        </div>
 
         {uploadedFile ? (
           <>
@@ -232,6 +264,18 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                 ))}
               </div>
             ) : null}
+            <div className="mt-8 flex flex-col gap-3">
+              <div className="flex justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <div className="flex font-semibold">
+                    <p>{t('account.import_from_splitwise_details.selected_expenses')}</p>
+                  </div>
+                </div>
+                <div className="flex shrink-0 flex-wrap justify-end gap-1">
+                  {Object.keys(selectedExpenses).length}
+                </div>
+              </div>
+            </div>
           </>
         ) : (
           <div className="mt-20 flex flex-col items-center justify-center gap-4">

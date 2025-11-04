@@ -2,12 +2,12 @@ import { type User } from '@prisma/client';
 import { nanoid } from 'nanoid';
 
 import { db } from '~/server/db';
-import { type SplitwiseGroup, type SplitwiseUser } from '~/types';
+import { type SplitwiseGroup, type SplitwiseUser, type SplitwiseUserWithBalance } from '~/types';
 
-import type { CreateExpense } from '~/types/expense.types';
-import { sendExpensePushNotification } from './notificationService';
-import { getCurrencyHelpers } from '~/utils/numbers';
 import { isCurrencyCode } from '~/lib/currency';
+import type { CreateExpense } from '~/types/expense.types';
+import { getCurrencyHelpers } from '~/utils/numbers';
+import { sendExpensePushNotification } from './notificationService';
 
 export async function joinGroup(userId: number, publicGroupId: string) {
   const group = await db.group.findUnique({
@@ -826,7 +826,7 @@ export async function recalculateGroupBalances(groupId: number) {
 
 export async function importUserBalanceFromSplitWise(
   currentUserId: number,
-  splitWiseUsers: SplitwiseUser[],
+  splitWiseUsers: SplitwiseUserWithBalance[],
 ) {
   const operations = [];
 

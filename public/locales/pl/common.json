@@ -30,8 +30,7 @@
       "messages": {
         "import_success": "Import zakończony pomyślnie"
       },
-      "no_file_chosen": "Nie wybrano pliku",
-      "note": "Uwaga: Obecnie obsługuje tylko importowanie znajomych i grup. Nie importuje transakcji. Pracujemy nad tym."
+      "no_file_chosen": "Nie wybrano pliku"
     },
     "logout": "Wyloguj",
     "messages": {

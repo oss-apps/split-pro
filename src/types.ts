@@ -26,14 +26,43 @@ export interface SplitwiseUser {
   first_name: string;
   last_name: string | null;
   email: string;
-  balance: SplitwiseBalance[];
   picture: SplitwisePicture;
 }
+
+export type SplitwiseUserWithBalance = SplitwiseUser & {
+  balance: SplitwiseBalance[];
+};
 
 export interface SplitwiseGroup {
   id: number;
   name: string;
-  members: SplitwiseUser[];
+  members: SplitwiseUserWithBalance[];
+}
+
+export interface SplitWiseCategory {
+  id: number;
+  name: string;
+}
+
+export interface SplitwiseUserInExpense {
+  user: SplitwiseUser;
+  user_id: number;
+  paid_share: string;
+  owed_share: string;
+  net_balance: string;
+}
+
+export interface SplitwiseExpense {
+  id: number;
+  group_id: number | null;
+  description: string;
+  payment: boolean;
+  cost: string;
+  currency_code: string;
+  date: string;
+  category: SplitWiseCategory;
+  users: SplitwiseUserInExpense[];
+  deleted_at: string | null;
 }
 
 export interface TransactionAddInputModel {

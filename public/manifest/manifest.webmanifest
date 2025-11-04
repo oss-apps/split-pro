@@ -3,7 +3,7 @@
   "background_color": "#ffffff",
   "display": "standalone",
   "scope": "/",
-  "start_url": "/balances",
+  "start_url": "/groups",
   "name": "SplitPro",
   "short_name": "SplitPro",
   "description": "Split Expenses with your friends for free",

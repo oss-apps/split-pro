@@ -28,7 +28,7 @@
   ],
   "theme_color": "#030711",
   "background_color": "#030711",
-  "start_url": "/balances",
+  "start_url": "/groups",
   "display": "standalone",
   "orientation": "portrait",
   "screenshots": [

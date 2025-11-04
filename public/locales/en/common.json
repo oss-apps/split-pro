@@ -53,13 +53,24 @@
     },
     "support_us": "Sponsor us",
     "title": "Account",
-    "write_review": "Write a review"
+    "write_review": "Write a review",
+    "debug_info": "Debug info",
+    "debug_info_details": {
+      "title": "Debug Information",
+      "description": "Paste the information below when creating a support request:",
+      "user_agent": "UserAgent",
+      "git": "Git",
+      "version": "Version",
+      "new_version_available": "A new version is available:",
+      "copy_failed": "Failed to copy debug info to clipboard"
+    }
   },
   "actions": {
     "add_expense": "Add expense",
     "back": "Back",
     "cancel": "Cancel",
     "close": "Close",
+    "copy": "Copy",
     "confirm": "Confirm",
     "create": "Create",
     "edit_expense": "Edit expense",
@@ -130,6 +141,7 @@
     "upload_failed": "Failed to upload file",
     "uploading_error": "Error uploading file",
     "valid_email": "Enter valid email",
+    "group_balances_malformed": "Group balances data is malformed, please report an issue or try recalculating.",
     "invalid_cron_expression": "Invalid cron expression"
   },
   "bank_transactions": {
@@ -163,7 +175,7 @@
         "split_unequally": "split unequally",
         "types": {
           "adjustment": {
-            "remaining_to_split_equally": "Remaining to split eauqlly",
+            "remaining_to_split_equally": "Remaining to split equally",
             "title": "Adjustment"
           },
           "equal": {
@@ -371,6 +383,7 @@
     "settled_up": "Settled up",
     "settlement": "Settlement",
     "share_text": "Check out SplitPro. It's an open source free alternative for Splitwise",
-    "today": "Today"
+    "today": "Today",
+    "in_group": "In group"
   }
 }

@@ -6,7 +6,7 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
-import { BigMath, toUIString } from '~/utils/numbers';
+import { getCurrencyHelpers } from '~/utils/numbers';
 import { type TFunction } from 'next-i18next';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { withI18nStaticProps } from '~/utils/i18n/server';
@@ -20,8 +20,8 @@ function getPaymentString(
   paidBy: number,
   expenseUserAmt: bigint,
   isSettlement: boolean,
-  currency: string,
   t: TFunction,
+  toUIString: (value: bigint) => string,
   isDeleted?: boolean,
 ) {
   if (isDeleted) {
@@ -32,23 +32,25 @@ function getPaymentString(
     return (
       <div className={`${user.id === paidBy ? 'text-emerald-500' : 'text-orange-500'} text-sm`}>
         {t('actors.you')}{' '}
-        {user.id === paidBy ? t('ui.expense.you.paid') : t('ui.expense.you.received')} {currency}{' '}
+        {user.id === paidBy ? t('ui.expense.you.paid') : t('ui.expense.you.received')}{' '}
         {toUIString(amount)}
       </div>
     );
   } else {
     return (
-      <div className={`${user.id === paidBy ? 'text-emerald-500' : 'text-orange-500'} text-sm`}>
-        {user.id === paidBy
-          ? `${t('actors.you')} ${t('ui.expense.you.lent')} ${currency} ${toUIString(BigMath.abs(expenseUserAmt))}`
-          : `${t('actors.you')} ${t('ui.expense.you.owe')} ${currency} ${toUIString(expenseUserAmt)}`}
+      <div
+        className={`${(user.id === paidBy) !== amount < 0n ? 'text-emerald-500' : 'text-orange-500'} text-sm`}
+      >
+        {t(`actors.you`)}{' '}
+        {t(`ui.expense.you.${(user.id === paidBy) !== amount < 0n ? 'lent' : 'owe'}`)}{' '}
+        {toUIString(expenseUserAmt)}
       </div>
     );
   }
 }
 
 const ActivityPage: NextPageWithUser = ({ user }) => {
-  const { displayName, t, toUIDate } = useTranslationWithUtils();
+  const { displayName, t, toUIDate, i18n } = useTranslationWithUtils();
   const expensesQuery = api.expense.getAllExpenses.useQuery();
 
   const actions = React.useMemo(
@@ -77,47 +79,56 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
           {!expensesQuery.data?.length ? (
             <div className="mt-[30vh] text-center text-gray-400">{t('ui.no_activity')}</div>
           ) : null}
-          {expensesQuery.data?.map((e) => (
-            <Link href={`/expenses/${e.expenseId}`} key={e.expenseId} className="flex gap-2">
-              <div className="mt-1">
-                <EntityAvatar entity={e.expense.paidByUser} size={30} />
-              </div>
-              <div>
-                {e.expense.deletedByUser ? (
-                  <p className="text-red-500 opacity-70">
-                    <span className="font-semibold">
-                      {displayName(e.expense.deletedByUser, user.id)}
-                    </span>{' '}
-                    {t(
-                      `ui.expense.${e.expense.deletedByUser.id === user.id ? 'you' : 'user'}.deleted`,
-                    )}{' '}
-                    <span className="font-semibold">{e.expense.name}</span>
-                  </p>
-                ) : (
-                  <p className="text-gray-300">
-                    <span className="font-semibold text-gray-300">
-                      {displayName(e.expense.paidByUser, user.id)}
-                    </span>{' '}
-                    {t(`ui.expense.${e.expense.paidByUser.id === user.id ? 'you' : 'user'}.paid`)}{' '}
-                    {t('ui.expense.for')}{' '}
-                    <span className="font-semibold text-gray-300">{e.expense.name}</span>
-                  </p>
-                )}
+          {expensesQuery.data?.map((e) => {
+            const { toUIString } = getCurrencyHelpers({
+              locale: i18n.language,
+              currency: e.expense.currency,
+            });
 
-                {getPaymentString(
-                  user,
-                  e.expense.amount,
-                  e.expense.paidBy,
-                  e.amount,
-                  e.expense.splitType === SplitType.SETTLEMENT,
-                  e.expense.currency,
-                  t,
-                  !!e.expense.deletedBy,
-                )}
-                <p className="text-xs text-gray-500">{toUIDate(e.expense.expenseDate)}</p>
-              </div>
-            </Link>
-          ))}
+            return (
+              <Link href={`/expenses/${e.expenseId}`} key={e.expenseId} className="flex gap-2">
+                <div className="mt-1">
+                  <EntityAvatar entity={e.expense.paidByUser} size={30} />
+                </div>
+                <div>
+                  {e.expense.deletedByUser ? (
+                    <p className="text-red-500 opacity-70">
+                      <span className="font-semibold">
+                        {displayName(e.expense.deletedByUser, user.id)}
+                      </span>{' '}
+                      {t(
+                        `ui.expense.${e.expense.deletedByUser.id === user.id ? 'you' : 'user'}.deleted`,
+                      )}{' '}
+                      <span className="font-semibold">{e.expense.name}</span>
+                    </p>
+                  ) : (
+                    <p className="text-gray-300">
+                      <span className="font-semibold text-gray-300">
+                        {displayName(e.expense.paidByUser, user.id)}
+                      </span>{' '}
+                      {t(
+                        `ui.expense.${e.expense.paidByUser.id === user.id ? 'you' : 'user'}.${e.expense.amount > 0n ? 'paid' : 'received'}`,
+                      )}{' '}
+                      {toUIString(e.expense.amount)} {t('ui.expense.for')}{' '}
+                      <span className="font-semibold text-gray-300">{e.expense.name}</span>
+                    </p>
+                  )}
+
+                  {getPaymentString(
+                    user,
+                    e.expense.amount,
+                    e.expense.paidBy,
+                    e.amount,
+                    e.expense.splitType === SplitType.SETTLEMENT,
+                    t,
+                    toUIString,
+                    !!e.expense.deletedBy,
+                  )}
+                  <p className="text-xs text-gray-500">{toUIDate(e.expense.expenseDate)}</p>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </MainLayout>
     </>

@@ -40,12 +40,11 @@ import { db } from '~/server/db';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
-import { toUIString } from '~/utils/numbers';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
 }> = ({ user, enableSendingInvites }) => {
-  const { displayName, toUIDate, t } = useTranslationWithUtils();
+  const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const router = useRouter();
   const groupId = parseInt(router.query.groupId as string);
 
@@ -100,7 +99,7 @@ const BalancePage: NextPageWithUser<{
       {
         onSuccess: () => {
           void groupDetailQuery.refetch();
-          toast.success(t('ui.messages.balances_recalculated'));
+          toast.success(t('group_details.messages.balances_recalculated'));
         },
         onError: (e) => {
           toast.error(t('errors.something_went_wrong'));
@@ -150,7 +149,9 @@ const BalancePage: NextPageWithUser<{
   return (
     <>
       <Head>
-        <title>{t('ui.title')}</title>
+        <title>
+          {groupDetailQuery.data?.name} | {t('group_details.title')}
+        </title>
       </Head>
       <MainLayout
         title={
@@ -177,7 +178,7 @@ const BalancePage: NextPageWithUser<{
                     null != total._sum.amount ? (
                       <Fragment key={total.currency}>
                         <div className="flex flex-wrap gap-1">
-                          {total.currency} {toUIString(total._sum.amount)}
+                          {getCurrencyHelpersCached(total.currency).toUIString(total._sum.amount)}
                         </div>
                         {index < arr.length - 1 ? <span>+</span> : null}
                       </Fragment>

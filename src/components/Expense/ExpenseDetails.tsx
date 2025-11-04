@@ -1,8 +1,6 @@
 import { isSameDay } from 'date-fns';
 import { type User as NextUser } from 'next-auth';
 
-import { toUIString } from '~/utils/numbers';
-
 import type { inferRouterOutputs } from '@trpc/server';
 import { Landmark, PencilIcon } from 'lucide-react';
 import React, { type ComponentProps, useCallback } from 'react';
@@ -29,9 +27,10 @@ interface ExpenseDetailsProps {
 }
 
 const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
-  const { displayName, toUIDate, t } = useTranslationWithUtils();
+  const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
 
   const { cronParser, i18nReady } = useIntlCronParser();
+  const { toUIString } = getCurrencyHelpersCached(expense.currency);
 
   return (
     <>
@@ -45,9 +44,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
               <p>{expense.name}</p>
               {expense.transactionId && <Landmark className="h-4 w-4 text-emerald-500" />}
             </div>
-            <p className="text-2xl font-semibold">
-              {expense.currency} {toUIString(expense.amount)}
-            </p>
+            <p className="text-2xl font-semibold">{toUIString(expense.amount)}</p>
             {!isSameDay(expense.expenseDate, expense.createdAt) ? (
               <p className="text-sm text-gray-500">
                 {toUIDate(expense.expenseDate, { year: true })}
@@ -96,7 +93,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
           {t(
             `ui.expense.${expense.paidByUser.id === user.id ? 'you' : 'user'}.${expense.amount < 0 ? 'received' : 'paid'}`,
           )}{' '}
-          {expense.currency} {toUIString(expense.amount)}
+          {toUIString(expense.amount)}
         </p>
       </div>
       <div className="mt-4 ml-14 flex flex-col gap-4">
@@ -134,7 +131,8 @@ const ExpenseParticipantEntry: React.FC<{
   userId: number;
   currency: string;
 }> = ({ participant, userId, currency }) => {
-  const { displayName, t } = useTranslationWithUtils();
+  const { displayName, t, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { toUIString } = getCurrencyHelpersCached(currency);
 
   return (
     <div key={participant.userId} className="flex items-center gap-2 text-sm text-gray-500">
@@ -144,7 +142,7 @@ const ExpenseParticipantEntry: React.FC<{
         {t(
           `ui.expense.${userId === participant.userId ? 'you' : 'user'}.${participant.amount < 0 ? 'owe' : 'get'}`,
         )}{' '}
-        {currency} {toUIString(participant.amount)}
+        {toUIString(participant.amount)}
       </p>
     </div>
   );

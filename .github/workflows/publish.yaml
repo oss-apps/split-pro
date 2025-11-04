@@ -59,6 +59,7 @@ jobs:
 
           docker build \
             --progress=plain \
+            --build-arg APP_VERSION="$APP_VERSION" \
             -t "ossapps/splitpro-$BUILD_PLATFORM:$CHANNEL" \
             -t "ossapps/splitpro-$BUILD_PLATFORM:$GIT_SHA" \
             -t "ossapps/splitpro-$BUILD_PLATFORM:$APP_VERSION" \

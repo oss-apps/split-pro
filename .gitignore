@@ -52,3 +52,5 @@ src/server/random.code-workspace
 certificates
 
 .vscode
+
+SEED_STATISTICS.md

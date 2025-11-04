@@ -1,5 +1,7 @@
 import { SiGithub, SiX } from '@icons-pack/react-simple-icons';
 import {
+  BadgeInfo,
+  BugOff,
   CreditCard,
   Download,
   DownloadCloud,
@@ -34,12 +36,15 @@ import {
 } from '~/server/bankTransactionHelper';
 import { api } from '~/utils/api';
 import type { NextPageWithUser } from '~/types';
+import { DebugInfo } from '~/components/Account/DebugInfo';
+import { execSync } from 'node:child_process';
 
 const AccountPage: NextPageWithUser<{
   feedBackPossible: boolean;
   bankConnectionEnabled: boolean;
   bankConnection: string;
-}> = ({ user, feedBackPossible, bankConnectionEnabled, bankConnection }) => {
+  gitRevision: string | null;
+}> = ({ user, feedBackPossible, bankConnectionEnabled, bankConnection, gitRevision }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const userQuery = api.user.me.useQuery();
@@ -170,6 +175,13 @@ const AccountPage: NextPageWithUser<{
             <DownloadCloud className="size-5 text-violet-500" />
             {t('account.import_from_splitwise')}
           </AccountButton>
+
+          <DebugInfo gitRevision={gitRevision}>
+            <AccountButton>
+              <BadgeInfo className="size-5 text-red-700" />
+              {t('account.debug_info')}
+            </AccountButton>
+          </DebugInfo>
         </div>
 
         <div className="mt-2 flex justify-center">
@@ -188,13 +200,21 @@ const AccountPage: NextPageWithUser<{
 
 AccountPage.auth = true;
 
-export const getServerSideProps: GetServerSideProps = async (context) => ({
-  props: {
-    feedbackPossible: !!env.FEEDBACK_EMAIL,
-    bankConnectionEnabled: !!isBankConnectionConfigured(),
-    bankConnection: whichBankConnectionConfigured(),
-    ...(await customServerSideTranslations(context.locale, ['common'])),
-  },
-});
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  let gitRevision = null;
+  try {
+    gitRevision = execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim();
+  } catch {}
+
+  return {
+    props: {
+      feedbackPossible: !!env.FEEDBACK_EMAIL,
+      bankConnectionEnabled: !!isBankConnectionConfigured(),
+      bankConnection: whichBankConnectionConfigured(),
+      gitRevision,
+      ...(await customServerSideTranslations(context.locale, ['common'])),
+    },
+  };
+};
 
 export default AccountPage;

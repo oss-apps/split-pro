@@ -1,7 +1,7 @@
 import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { api } from '~/utils/api';
-import { BigMath, toSafeBigInt } from '~/utils/numbers';
+import { BigMath } from '~/utils/numbers';
 
 import { toast } from 'sonner';
 import { env } from '~/env';
@@ -27,7 +27,7 @@ export const CurrencyConversion: React.FC<{
     rate: number;
   }) => Promise<void> | void;
 }> = ({ amount, editingRate, editingTargetCurrency, currency, children, onSubmit }) => {
-  const { t } = useTranslationWithUtils();
+  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
 
   const [amountStr, setAmountStr] = useState('');
   const [rate, setRate] = useState('');
@@ -121,7 +121,7 @@ export const CurrencyConversion: React.FC<{
       }
 
       await onSubmit({
-        amount: toSafeBigInt(amountStr),
+        amount: getCurrencyHelpersCached(currency).toSafeBigInt(amountStr),
         rate: Number(rate),
         from: currency,
         to: targetCurrency,
@@ -131,7 +131,7 @@ export const CurrencyConversion: React.FC<{
       console.error(error);
       toast.error(t('errors.currency_conversion_error'));
     }
-  }, [onSubmit, targetCurrency, amountStr, rate, currency, t]);
+  }, [onSubmit, targetCurrency, amountStr, rate, currency, getCurrencyHelpersCached, t]);
 
   return (
     <AppDrawer

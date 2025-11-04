@@ -6,7 +6,7 @@ import {
   calculateSplitShareBasedOnAmount,
   initSplitShares,
   useAddExpenseStore,
-} from './addStore';
+} from '~/store/addStore';
 
 // Mock dependencies
 jest.mock('~/utils/array', () => ({

@@ -89,3 +89,19 @@ You can build the project with:
 ```bash
 pnpm build
 ```
+
+## Seed data
+
+There is an extensive seed data generation script, which handles the creation of tens of users, groups and thousands of expenses with various categories, names, split types etc.
+You can use it for development and it is strongly advised, when reporting issues to point to the seeded user/group/expense as the data creation
+is deterministic. If the database was not seeded automatically, you can run `pnpm prisma migrate reset` to get back to the pure seeded state.
+There is also a markdown report being generated on each run and you can see it in the project root directory. It features some useful statistic
+like the most connected accounts, which you can log into to have a populated app.
+
+If you need to tweak the script for your use case (like faster seeding with less expenses or DB stress testing), feel free to tweak the parameters in the `src/dummies` directory.
+
+## AI Contribution policy
+
+While I am not against the usage of AI and also utilize it to some extent in this repo, I would like to establish the following policy and AI contributions. Each PR must explicitly
+state that it was made with the use of AI and to what extent. The changes also MUST be reviewed and I reserve the right to instantly close a PR without comment, as I am not willing to sacrifice
+my time for someone who could not even read and understand what they are submitting.

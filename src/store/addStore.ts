@@ -375,6 +375,7 @@ export function calculateParticipantSplit(
       canSplitScreenClosed = amount === totalSplitShare;
 
       updatedParticipants = participants.map((p) => ({ ...p, amount: getSplitShare(p) }));
+
       break;
     case SplitType.ADJUSTMENT:
       const totalAdjustment = participants.reduce((acc, p) => acc + (getSplitShare(p) ?? 0n), 0n);

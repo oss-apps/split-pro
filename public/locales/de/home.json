@@ -1,5 +1,8 @@
 {
   "features": {
+    "bank_connection": {
+      "title": "Bankverbindung"
+    },
     "currency_conversion": {
       "description": "Schnelle Umrechnung zwischen verschiedenen Währungen unter Verwendung aktueller oder historischer Wechselkurse",
       "title": "Währungsumrechnung"

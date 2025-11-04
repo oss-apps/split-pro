@@ -70,7 +70,7 @@ export const UserInput: React.FC<{
   };
 
   return (
-    <div className="mt-4 flex flex-wrap gap-2 border-b pb-4">
+    <div className="mt-4 flex gap-2 overflow-x-auto border-b pb-4 sm:flex-wrap">
       {group ? (
         <div className="flex items-center gap-2 rounded-full bg-slate-800 p-0.5 pr-4">
           <EntityAvatar entity={group} size={30} />

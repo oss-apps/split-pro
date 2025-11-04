@@ -3,7 +3,7 @@ import { clsx } from 'clsx';
 import { type ComponentProps, Fragment, useCallback, useMemo } from 'react';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { api } from '~/utils/api';
-import { BigMath, toUIString } from '~/utils/numbers';
+import { BigMath } from '~/utils/numbers';
 
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { CurrencyConversion } from '../Friend/CurrencyConversion';
@@ -11,6 +11,7 @@ import { GroupSettleUp } from '../Friend/GroupSettleup';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { Button } from '../ui/button';
 import { CURRENCY_CONVERSION_ICON, SETTLEUP_ICON } from '../ui/categoryIcons';
+import { toast } from 'sonner';
 
 interface UserWithBalance {
   user: User;
@@ -22,7 +23,7 @@ export const BalanceList: React.FC<{
   groupBalances?: GroupBalance[];
   users?: User[];
 }> = ({ groupBalances = [], users = [] }) => {
-  const { displayName, t } = useTranslationWithUtils();
+  const { displayName, t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const userQuery = api.user.me.useQuery();
 
   const addOrEditCurrencyConversionMutation = api.expense.addOrEditCurrencyConversion.useMutation();
@@ -34,8 +35,20 @@ export const BalanceList: React.FC<{
       return acc;
     }, {});
     groupBalances
-      .filter(({ amount }) => 0 < BigMath.abs(amount))
+      .filter(
+        ({ amount, userId, firendId }) =>
+          0 < BigMath.abs(amount) && userId !== firendId && res[userId] && res[firendId],
+      )
       .forEach((balance) => {
+        if (!res[balance.userId]) {
+          res[balance.userId] = {
+            user: users.find((u) => u.id === balance.userId) ?? ({} as User),
+            balances: {},
+            total: {},
+          };
+          console.error('BalanceList: userId not found in users list', balance.userId);
+          toast.error(t('common:errors.group_balances_malformed'));
+        }
         if (!res[balance.userId]!.balances[balance.firendId]) {
           res[balance.userId]!.balances[balance.firendId] = {};
         }
@@ -47,7 +60,7 @@ export const BalanceList: React.FC<{
       });
 
     return res;
-  }, [groupBalances, users]);
+  }, [groupBalances, users, t]);
 
   return (
     <Accordion type="multiple">
@@ -72,8 +85,8 @@ export const BalanceList: React.FC<{
                     <span className="text-gray-400">
                       {' '}
                       {isCurrentUser
-                        ? t('expense_details.balance_list.are_settled_up')
-                        : t('expense_details.balance_list.is_settled_up')}
+                        ? t('ui.balance_list.are_settled_up')
+                        : t('ui.balance_list.is_settled_up')}
                     </span>
                   ) : (
                     <>
@@ -89,7 +102,9 @@ export const BalanceList: React.FC<{
                           0 < totalAmount[1] ? 'text-emerald-500' : 'text-orange-600',
                         )}
                       >
-                        {toUIString(totalAmount[1])} {totalAmount[0]}
+                        {getCurrencyHelpersCached(totalAmount[0]).toUIString(
+                          BigMath.abs(totalAmount[1]),
+                        )}
                       </span>
                     </>
                   )}
@@ -145,7 +160,7 @@ export const BalanceList: React.FC<{
                                   0 < amount ? 'text-emerald-500' : 'text-orange-600',
                                 )}
                               >
-                                {toUIString(amount)} {currency}
+                                {getCurrencyHelpersCached(currency).toUIString(BigMath.abs(amount))}
                               </span>
                               <span className="xs:inline hidden text-gray-400">
                                 {' '}

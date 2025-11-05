@@ -10,6 +10,7 @@ import { BigMath } from '~/utils/numbers';
 import { EntityAvatar } from '../ui/avatar';
 import { CurrencyInput } from '../ui/currency-input';
 import { AppDrawer } from '../ui/drawer';
+import { useSession } from 'next-auth/react';
 
 export const GroupSettleUp: React.FC<{
   amount: bigint;
@@ -19,6 +20,7 @@ export const GroupSettleUp: React.FC<{
   children: ReactNode;
   groupId: number;
 }> = ({ amount: _amount, currency, friend, user, children, groupId }) => {
+  const { data } = useSession();
   const { displayName, t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const [amount, setAmount] = useState<bigint>(BigMath.abs(_amount));
   const [amountStr, setAmountStr] = useState(getCurrencyHelpersCached(currency).toUIString(amount));
@@ -38,8 +40,8 @@ export const GroupSettleUp: React.FC<{
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
   const utils = api.useUtils();
 
-  const sender = 0 > amount ? user : friend;
-  const receiver = 0 > amount ? friend : user;
+  const sender = 0 > _amount ? user : friend;
+  const receiver = 0 > _amount ? friend : user;
 
   const saveExpense = React.useCallback(() => {
     if (!amount) {
@@ -97,7 +99,9 @@ export const GroupSettleUp: React.FC<{
             <EntityAvatar entity={receiver} />
           </div>
           <p className="mt-2 text-center text-sm text-gray-400">
-            {displayName(sender)} {t('ui.expense.user.pay')} {displayName(receiver)}
+            {displayName(sender, data?.user.id)}{' '}
+            {t(`ui.expense.${sender.id === data?.user.id ? 'you' : 'user'}.pay`)}{' '}
+            {displayName(receiver, data?.user.id)}
           </p>
         </div>
         <CurrencyInput

@@ -118,6 +118,7 @@
   "errors": {
     "currency_conversion_error": "Error while setting currency conversion",
     "email_invalid": "Email is invalid, please try the signin flow again.",
+    "no_providers": "Error when fetching authentication providers. Please check backend logs.",
     "email_required": "Email is required",
     "feedback_min_length": "Feedback should be at least 10 characters",
     "feedback_required": "Feedback is required",

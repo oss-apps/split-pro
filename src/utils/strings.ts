@@ -3,6 +3,7 @@ import { format, isToday } from 'date-fns';
 import { type TFunction } from 'next-i18next';
 import { type CurrencyCode } from '~/lib/currency';
 import { type AddExpenseState, type Participant } from '~/store/addStore';
+import { getSupportedLanguages } from './i18n/client';
 
 export type ParametersExceptTranslation<F> = F extends (t: TFunction, ...rest: infer R) => any
   ? R
@@ -24,8 +25,24 @@ export const toUIDate = (
   t: TFunction,
   date: Date,
   { useToday = false, year = false } = {},
-): string =>
-  useToday && isToday(date) ? t('ui.today') : format(date, year ? 'dd MMM yyyy' : 'MMM dd');
+): string => {
+  const todayTranslation = t('ui.today', { returnDetails: true });
+
+  if (useToday && isToday(date)) {
+    return todayTranslation.res;
+  }
+
+  if (year) {
+    return Intl.DateTimeFormat(todayTranslation.usedLng, {
+      dateStyle: 'long',
+    }).format(date);
+  }
+
+  return format(date, 'MMM dd', {
+    locale: getSupportedLanguages().find((lang) => lang.code === todayTranslation.usedLng)
+      ?.dateLocale,
+  });
+};
 
 export function generateSplitDescription(
   t: TFunction,

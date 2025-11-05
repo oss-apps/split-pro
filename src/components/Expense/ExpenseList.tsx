@@ -2,7 +2,7 @@ import { SplitType } from '@prisma/client';
 import { type inferRouterOutputs } from '@trpc/server';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
+import React, { type JSX } from 'react';
 import {
   CURRENCY_CONVERSION_ICON,
   CategoryIcon,
@@ -35,13 +35,30 @@ export const ExpenseList: React.FC<{
     return <NoExpenses />;
   }
 
+  const { i18n } = useTranslationWithUtils();
+
   return (
     <>
-      {expenses.map((e) => {
+      {expenses.reduce((acc, e, idx, arr) => {
+        const prev = arr[idx - 1];
+        const currMonth = new Date(e.expenseDate).getMonth();
+        const prevMonth = prev ? new Date(prev.expenseDate).getMonth() : null;
+        const isFirstOfMonth = idx === 0 || currMonth !== prevMonth;
+
+        if (isFirstOfMonth) {
+          acc.push(
+            <div key={`month-${e.id}`}>
+              {new Intl.DateTimeFormat(i18n.language, { month: 'long', year: 'numeric' }).format(
+                e.expenseDate,
+              )}
+            </div>,
+          );
+        }
+
         const isSettlement = e.splitType === SplitType.SETTLEMENT;
         const isCurrencyConversion = e.splitType === SplitType.CURRENCY_CONVERSION;
 
-        return (
+        acc.push(
           <Link
             href={`/${isGroup ? 'groups' : 'balances'}/${contactId}/expenses/${e.id}`}
             key={e.id}
@@ -50,9 +67,11 @@ export const ExpenseList: React.FC<{
             {isSettlement && <Settlement e={e} userId={userId} />}
             {isCurrencyConversion && <CurrencyConversion e={e} userId={userId} />}
             {!isSettlement && !isCurrencyConversion && <Expense e={e} userId={userId} />}
-          </Link>
+          </Link>,
         );
-      })}
+
+        return acc;
+      }, [] as JSX.Element[])}
     </>
   );
 };

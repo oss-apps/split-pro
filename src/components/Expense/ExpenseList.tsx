@@ -97,7 +97,7 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
               {t('actors.you')} {t(`ui.expense.you.${youPaid ? 'lent' : 'owe'}`)}
             </div>
             <div className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}>
-              <span className="font-light">{e.currency}</span> {toUIString(yourExpenseAmount)}
+              {toUIString(yourExpenseAmount)}
             </div>
           </>
         ) : (

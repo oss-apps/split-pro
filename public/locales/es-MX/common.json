@@ -30,8 +30,7 @@
       "messages": {
         "import_success": "Importación exitosa"
       },
-      "no_file_chosen": "Ningún archivo seleccionado",
-      "note": "Nota: Actualmente solo soporta la importación de amigos y grupos. No importará transacciones. Estamos trabajando en ello."
+      "no_file_chosen": "Ningún archivo seleccionado"
     },
     "logout": "Cerrar sesión",
     "notifications": {

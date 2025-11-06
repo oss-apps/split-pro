@@ -2,12 +2,18 @@ import { type User } from '@prisma/client';
 import { nanoid } from 'nanoid';
 
 import { db } from '~/server/db';
-import { type SplitwiseGroup, type SplitwiseUser } from '~/types';
+import {
+  SplitwiseCategoryMap,
+  type SplitwiseExpense,
+  type SplitwiseGroup,
+  type SplitwiseUser,
+  type SplitwiseUserWithBalance,
+} from '~/types';
 
-import type { CreateExpense } from '~/types/expense.types';
-import { sendExpensePushNotification } from './notificationService';
-import { getCurrencyHelpers } from '~/utils/numbers';
 import { isCurrencyCode } from '~/lib/currency';
+import type { CreateExpense } from '~/types/expense.types';
+import { getCurrencyHelpers } from '~/utils/numbers';
+import { sendExpensePushNotification } from './notificationService';
 
 export async function joinGroup(userId: number, publicGroupId: string) {
   const group = await db.group.findUnique({
@@ -741,6 +747,17 @@ export async function getCompleteGroupDetails(userId: number) {
   return groups;
 }
 
+export async function getCompleteExpenseDetails(userId: number) {
+  const expenses = await db.expense.findMany({
+    where: {},
+    include: {
+      expenseParticipants: true,
+    },
+  });
+
+  return expenses;
+}
+
 export async function recalculateGroupBalances(groupId: number) {
   const groupExpenses = await db.expense.findMany({
     where: {
@@ -826,7 +843,7 @@ export async function recalculateGroupBalances(groupId: number) {
 
 export async function importUserBalanceFromSplitWise(
   currentUserId: number,
-  splitWiseUsers: SplitwiseUser[],
+  splitWiseUsers: SplitwiseUserWithBalance[],
 ) {
   const operations = [];
 
@@ -1026,6 +1043,124 @@ export async function importGroupFromSplitwise(
         },
       });
     });
+
+  await db.$transaction(operations);
+}
+
+export async function importExpenseFromSplitwise(
+  currentUserId: number,
+  splitwiseExpenses: SplitwiseExpense[],
+  splitwiseUsers: SplitwiseUser[],
+  splitwiseGroups: SplitwiseGroup[],
+) {
+  const splitwiseUserMap: Record<string, SplitwiseUser> = {};
+
+  for (const user of splitwiseUsers) {
+    splitwiseUserMap[user.id.toString()] = user;
+  }
+
+  for (const user of splitwiseGroups.flatMap((g) => g.members)) {
+    splitwiseUserMap[user.id.toString()] = user;
+  }
+
+  const users = await createUsersFromSplitwise(Object.values(splitwiseUserMap));
+
+  const userMap = users.reduce(
+    (acc, user) => {
+      if (user.email) {
+        acc[user.email] = user;
+      }
+      return acc;
+    },
+    {} as Record<string, User>,
+  );
+
+  const operations = [];
+  const currencyHelperCache: Record<string, ReturnType<typeof getCurrencyHelpers>['toSafeBigInt']> =
+    {};
+
+  const splitwiseGroupIds = [
+    ...new Set(splitwiseExpenses.map((e) => e.group_id?.toString()).filter(Boolean) as string[]),
+  ];
+
+  const dbGroups = await db.group.findMany({
+    where: {
+      splitwiseGroupId: {
+        in: splitwiseGroupIds,
+      },
+    },
+    select: {
+      id: true,
+      splitwiseGroupId: true,
+    },
+  });
+
+  const dbGroupMap = dbGroups.reduce(
+    (acc, group) => {
+      if (group.splitwiseGroupId) {
+        acc[group.splitwiseGroupId] = group.id;
+      }
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  for (const expense of splitwiseExpenses) {
+    const currency = isCurrencyCode(expense.currency_code) ? expense.currency_code : 'USD';
+
+    if (!currencyHelperCache[currency]) {
+      currencyHelperCache[currency] = getCurrencyHelpers({ currency }).toSafeBigInt;
+    }
+    const currencyHelper = currencyHelperCache[currency];
+
+    const payer = expense.users.find((u) => parseFloat(u.paid_share) > 0);
+    if (!payer) {
+      // oxlint-disable-next-line no-continue
+      continue;
+    }
+
+    const email = splitwiseUserMap[payer.user_id.toString()]?.email;
+    const paidBy = email ? userMap[email]?.id : undefined;
+    if (!paidBy) {
+      // oxlint-disable-next-line no-continue
+      continue;
+    }
+
+    const participants = expense.users
+      .map((user) => {
+        const splitwiseUser = splitwiseUserMap[user.user_id.toString()];
+        const userId = splitwiseUser ? userMap[splitwiseUser.email]?.id : undefined;
+        const amount = currencyHelper(user.owed_share);
+        return { userId, amount };
+      })
+      .filter((p) => p.userId && p.amount !== 0n) as { userId: number; amount: bigint }[];
+
+    const totalAmount = currencyHelper(expense.cost);
+    const dbGroupId = expense.group_id ? dbGroupMap[expense.group_id.toString()] : undefined;
+
+    const splitwiseCreator = splitwiseUserMap[expense.created_by.id.toString()];
+    const addedBy =
+      (splitwiseCreator ? userMap[splitwiseCreator.email]?.id : undefined) ?? currentUserId;
+
+    operations.push(
+      db.expense.create({
+        data: {
+          name: expense.description,
+          amount: totalAmount,
+          category: SplitwiseCategoryMap[expense.category.id] ?? 'general',
+          currency,
+          paidBy,
+          groupId: dbGroupId,
+          splitType: expense.payment ? 'SETTLEMENT' : 'EXACT',
+          addedBy,
+          expenseDate: new Date(expense.date),
+          expenseParticipants: {
+            create: participants,
+          },
+        },
+      }),
+    );
+  }
 
   await db.$transaction(operations);
 }

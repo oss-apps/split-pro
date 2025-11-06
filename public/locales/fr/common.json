@@ -30,8 +30,7 @@
       "messages": {
         "import_success": "L'import est un succès"
       },
-      "no_file_chosen": "Aucun fichier choisi",
-      "note": "Note : l'import ne fonctionne actuellement que pour les ami⋅es et les groupes, mais pas pour les transactions. On y travaille !"
+      "no_file_chosen": "Aucun fichier choisi"
     },
     "logout": "Déconnexion",
     "messages": {

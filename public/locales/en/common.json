@@ -30,8 +30,8 @@
       "messages": {
         "import_success": "Import successful"
       },
-      "no_file_chosen": "No file chosen",
-      "note": "Note: It currently only supports importing friends and groups. It will not import transactions. We are working on it."
+      "selected_expenses": "Selected expenses",
+      "no_file_chosen": "No file chosen"
     },
     "logout": "Logout",
     "messages": {

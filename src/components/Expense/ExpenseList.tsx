@@ -2,7 +2,7 @@ import { SplitType } from '@prisma/client';
 import { type inferRouterOutputs } from '@trpc/server';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { type JSX } from 'react';
+import React from 'react';
 import {
   CURRENCY_CONVERSION_ICON,
   CategoryIcon,
@@ -37,41 +37,47 @@ export const ExpenseList: React.FC<{
 
   const { i18n } = useTranslationWithUtils();
 
+  let lastDate: Date | null = null;
+
   return (
     <>
-      {expenses.reduce((acc, e, idx, arr) => {
-        const prev = arr[idx - 1];
-        const currMonth = new Date(e.expenseDate).getMonth();
-        const prevMonth = prev ? new Date(prev.expenseDate).getMonth() : null;
-        const isFirstOfMonth = idx === 0 || currMonth !== prevMonth;
+      {expenses.map((e) => {
+        const currentDate = e.expenseDate;
+        let isFirstOfMonth = false;
 
-        if (isFirstOfMonth) {
-          acc.push(
-            <div key={`month-${e.id}`}>
-              {new Intl.DateTimeFormat(i18n.language, { month: 'long', year: 'numeric' }).format(
-                e.expenseDate,
-              )}
-            </div>,
-          );
+        if (
+          lastDate === null ||
+          currentDate.getMonth() !== lastDate.getMonth() ||
+          currentDate.getFullYear() !== lastDate.getFullYear()
+        ) {
+          isFirstOfMonth = true;
         }
+
+        lastDate = currentDate;
 
         const isSettlement = e.splitType === SplitType.SETTLEMENT;
         const isCurrencyConversion = e.splitType === SplitType.CURRENCY_CONVERSION;
 
-        acc.push(
-          <Link
-            href={`/${isGroup ? 'groups' : 'balances'}/${contactId}/expenses/${e.id}`}
-            key={e.id}
-            className="flex items-center justify-between py-2"
-          >
-            {isSettlement && <Settlement e={e} userId={userId} />}
-            {isCurrencyConversion && <CurrencyConversion e={e} userId={userId} />}
-            {!isSettlement && !isCurrencyConversion && <Expense e={e} userId={userId} />}
-          </Link>,
+        return (
+          <React.Fragment key={e.id}>
+            {isFirstOfMonth && (
+              <div className="pt-4 text-xs font-semibold text-gray-500 uppercase">
+                {new Intl.DateTimeFormat(i18n.language, { month: 'long', year: 'numeric' }).format(
+                  currentDate,
+                )}
+              </div>
+            )}
+            <Link
+              href={`/${isGroup ? 'groups' : 'balances'}/${contactId}/expenses/${e.id}`}
+              className="flex items-center justify-between py-2"
+            >
+              {isSettlement && <Settlement e={e} userId={userId} />}
+              {isCurrencyConversion && <CurrencyConversion e={e} userId={userId} />}
+              {!isSettlement && !isCurrencyConversion && <Expense e={e} userId={userId} />}
+            </Link>
+          </React.Fragment>
         );
-
-        return acc;
-      }, [] as JSX.Element[])}
+      })}
     </>
   );
 };

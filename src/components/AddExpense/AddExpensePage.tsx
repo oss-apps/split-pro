@@ -27,6 +27,7 @@ import { CurrencyInput } from '../ui/currency-input';
 import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { currencyConversion } from '~/utils/numbers';
 import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
+import type { TransactionAddInputModel } from '~/types';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
@@ -53,6 +54,7 @@ export const AddOrEditExpensePage: React.FC<{
   const splitShares = useAddExpenseStore((s) => s.splitShares);
   const transactionId = useAddExpenseStore((s) => s.transactionId);
   const cronExpression = useAddExpenseStore((s) => s.cronExpression);
+  const multipleTransactions = useAddExpenseStore((s) => s.multipleTransactions);
 
   const { t, displayName, generateSplitDescription } = useTranslationWithUtils();
 
@@ -98,6 +100,18 @@ export const AddOrEditExpensePage: React.FC<{
     [setAmount, setAmountStr],
   );
 
+  const addViaBankTransaction = useCallback(
+    (obj: TransactionAddInputModel) => {
+      setExpenseDate(obj.date);
+      setDescription(obj.description);
+      setCurrency(obj.currency);
+      setAmountStr(obj.amountStr);
+      setAmount(obj.amount);
+      setTransactionId(obj.transactionId);
+    },
+    [setExpenseDate, setDescription, setCurrency, setAmountStr, setAmount, setTransactionId],
+  );
+
   const addExpense = useCallback(async () => {
     if (!paidBy) {
       return;
@@ -115,48 +129,60 @@ export const AddOrEditExpensePage: React.FC<{
 
     try {
       await addExpenseMutation.mutateAsync(
-        {
-          name: description,
-          currency,
-          amount: amount * sign,
-          groupId: group?.id ?? null,
-          splitType,
-          participants: participants.map((p) => ({
-            userId: p.id,
-            amount: (p.amount ?? 0n) * sign,
-          })),
-          paidBy: paidBy.id,
-          category,
-          fileKey,
-          expenseDate,
-          expenseId,
-          transactionId,
-          cronExpression: cronExpression ? cronToBackend(cronExpression) : undefined,
-        },
+        [
+          {
+            name: description,
+            currency,
+            amount: amount * sign,
+            groupId: group?.id ?? null,
+            splitType,
+            participants: participants.map((p) => ({
+              userId: p.id,
+              amount: (p.amount ?? 0n) * sign,
+            })),
+            paidBy: paidBy.id,
+            category,
+            fileKey,
+            expenseDate,
+            expenseId,
+            transactionId,
+            cronExpression: cronExpression ? cronToBackend(cronExpression) : undefined,
+          },
+        ],
         {
           onSuccess: (d) => {
             if (d) {
-              const id = d?.id ?? expenseId;
-
-              let navPromise: () => Promise<any> = () => Promise.resolve(true);
-
-              const { friendId, groupId } = router.query;
-
-              if (friendId && !groupId) {
-                navPromise = () => router.push(`/balances/${friendId as string}/expenses/${id}`);
-              } else if (groupId) {
-                navPromise = () => router.push(`/groups/${groupId as string}/expenses/${id}`);
+              if (multipleTransactions.length > 0) {
+                const allTransactions = [...multipleTransactions];
+                const transactionToAdd = allTransactions.pop();
+                if (transactionToAdd) {
+                  setMultipleTransactions(allTransactions);
+                  addViaBankTransaction(transactionToAdd);
+                }
+                return;
               } else {
-                navPromise = () => router.push(`/expenses/${id}?keepAdding=1`);
-              }
+                const id = d?.id ?? expenseId;
 
-              if (expenseId) {
-                navPromise = async () => router.back();
-              }
+                let navPromise: () => Promise<any> = () => Promise.resolve(true);
 
-              navPromise()
-                .then(() => resetState())
-                .catch(console.error);
+                const { friendId, groupId } = router.query;
+
+                if (friendId && !groupId) {
+                  navPromise = () => router.push(`/balances/${friendId as string}/expenses/${id}`);
+                } else if (groupId) {
+                  navPromise = () => router.push(`/groups/${groupId as string}/expenses/${id}`);
+                } else {
+                  navPromise = () => router.push(`/expenses/${id}?keepAdding=1`);
+                }
+
+                if (expenseId) {
+                  navPromise = async () => router.back();
+                }
+
+                navPromise()
+                  .then(() => resetState())
+                  .catch(console.error);
+              }
             }
           },
         },
@@ -191,6 +217,8 @@ export const AddOrEditExpensePage: React.FC<{
     transactionId,
     setIsTransactionLoading,
     cronExpression,
+    multipleTransactions,
+    addViaBankTransaction,
   ]);
 
   const handleDescriptionChange = useCallback(
@@ -207,6 +235,11 @@ export const AddOrEditExpensePage: React.FC<{
     setTransactionId();
     setExpenseDate(new Date());
   }, [setAmount, setDescription, setAmountStr, setTransactionId, setExpenseDate]);
+
+  const clearTransaction = useCallback(() => {
+    clearFields();
+    setMultipleTransactions([]);
+  }, [clearFields, setMultipleTransactions]);
 
   const previousCurrencyRef = React.useRef<CurrencyCode | null>(null);
 
@@ -368,8 +401,9 @@ export const AddOrEditExpensePage: React.FC<{
             <SponsorUs />
             <div className="flex gap-2">
               <AddBankTransactions
-                // clearFields={clearFields}
+                clearFields={clearFields}
                 bankConnectionEnabled={bankConnectionEnabled}
+                addViaBankTransaction={addViaBankTransaction}
               >
                 <Button
                   variant="ghost"
@@ -384,7 +418,7 @@ export const AddOrEditExpensePage: React.FC<{
                 variant="ghost"
                 className={cn('px-2', transactionId ? 'text-red-500' : 'invisible')}
                 disabled={!transactionId}
-                onClick={clearFields}
+                onClick={clearTransaction}
               >
                 <X className="h-6 w-6" />
               </Button>

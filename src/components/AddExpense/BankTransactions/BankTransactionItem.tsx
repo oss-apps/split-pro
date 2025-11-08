@@ -1,10 +1,17 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Button } from '../../ui/button';
-// import { Checkbox } from '../../ui/checkbox';
-// import type { TransactionAddInputModel } from '~/types';
+import { Checkbox } from '../../ui/checkbox';
+import type { TransactionAddInputModel } from '~/types';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { cn } from '~/lib/utils';
 import type { TransactionWithPendingStatus } from './BankingTransactionList';
+import { AnimatePresence, motion } from 'motion/react';
+
+const checkboxAnimationInitial = { opacity: 0, x: -8 };
+const checkboxAnimationAnimate = { opacity: 1, x: 0 };
+const checkboxAnimationExit = { opacity: 0, x: -8 };
+const checkboxAnimationTransition = { duration: 0.2, ease: 'easeOut' as const };
+const contentLayoutTransition = { duration: 0.2, ease: 'easeOut' as const };
 
 export const BankTransactionItem: React.FC<{
   index: number;
@@ -12,14 +19,17 @@ export const BankTransactionItem: React.FC<{
   item: TransactionWithPendingStatus;
   onTransactionRowClick: (item: TransactionWithPendingStatus, multiple: boolean) => void;
   groupName: string;
-  // multipleTransactions: TransactionAddInputModel[];
-}> = ({ index, alreadyAdded, item, onTransactionRowClick, groupName }) => {
+  multipleTransactions: TransactionAddInputModel[];
+}> = ({ index, alreadyAdded, item, onTransactionRowClick, groupName, multipleTransactions }) => {
   const { t, toUIDate } = useTranslationWithUtils();
+  const [isHovered, setIsHovered] = useState(false);
 
-  // const createCheckboxHandler = useCallback(
-  //   (item: TransactionWithPendingStatus) => () => onTransactionRowClick(item, true),
-  //   [onTransactionRowClick],
-  // );
+  const createCheckboxHandler = useCallback(
+    (item: TransactionWithPendingStatus) => () => {
+      onTransactionRowClick(item, true);
+    },
+    [onTransactionRowClick],
+  );
 
   const createClickHandler = useCallback(
     () => onTransactionRowClick(item, false),
@@ -30,17 +40,61 @@ export const BankTransactionItem: React.FC<{
     ? Number(item.transactionAmount.amount) < 0
     : false;
 
+  const hasMultiple = multipleTransactions.length > 0;
+
+  const isChecked = multipleTransactions?.some(
+    (cItem) => cItem.transactionId === item.transactionId,
+  );
+
+  const shouldShowCheckbox = (hasMultiple || isHovered) && (!alreadyAdded || hasMultiple);
+
+  const handleMouseEnter = useCallback(() => setIsHovered(true), []);
+  const handleMouseLeave = useCallback(() => setIsHovered(false), []);
+
   return (
-    <div className="flex items-center justify-between px-2 py-2" key={index}>
-      <div className="flex items-center gap-4">
-        {/* <Checkbox
-          checked={multipleTransactions?.some(
-            (cItem) => cItem.transactionId === item.transactionId,
-          )}
-          disabled={alreadyAdded}
-          onCheckedChange={createCheckboxHandler(item)}
-          className="h-6 w-6 md:h-4 md:w-4"
-        /> */}
+    <div
+      className="group flex items-center justify-between px-2 py-2"
+      key={index}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div className="relative flex items-center">
+        <div className="lg:hidden">
+          <Checkbox
+            checked={isChecked}
+            disabled={alreadyAdded}
+            onCheckedChange={createCheckboxHandler(item)}
+            className="h-6 w-6 md:h-4 md:w-4"
+          />
+        </div>
+
+        <div className="hidden lg:block">
+          <AnimatePresence>
+            {shouldShowCheckbox && (
+              <motion.div
+                key="checkbox"
+                initial={checkboxAnimationInitial}
+                animate={checkboxAnimationAnimate}
+                exit={checkboxAnimationExit}
+                transition={checkboxAnimationTransition}
+              >
+                <Checkbox
+                  checked={isChecked}
+                  disabled={alreadyAdded}
+                  onCheckedChange={createCheckboxHandler(item)}
+                  className="h-6 w-6 md:h-4 md:w-4"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      <motion.div
+        className="flex grow items-center gap-4"
+        layout
+        transition={contentLayoutTransition}
+      >
         <Button className="flex items-center gap-4" variant="ghost" disabled={alreadyAdded}>
           <div className="text-xs text-gray-500">
             {toUIDate(new Date(item.bookingDate), { useToday: true })
@@ -51,7 +105,7 @@ export const BankTransactionItem: React.FC<{
                 </div>
               ))}
           </div>
-          <div onClick={createClickHandler}>
+          <div onClick={hasMultiple ? createCheckboxHandler(item) : createClickHandler}>
             <p
               className={cn(
                 'line-clamp-2 text-left text-sm whitespace-break-spaces lg:text-base',
@@ -66,7 +120,8 @@ export const BankTransactionItem: React.FC<{
             </p>
           </div>
         </Button>
-      </div>
+      </motion.div>
+
       <div className="min-w-10 shrink-0">
         <div
           className={cn(

@@ -82,14 +82,22 @@ export const BankingTransactionList: React.FC<{
     (item: TransactionWithPendingStatus, multiple: boolean) => {
       if (!isCurrencyCode(item.transactionAmount.currency)) {
         console.warn(`Invalid currency code: ${item.transactionAmount.currency}`);
+        return;
       }
 
-      const normalizedAmount = item.transactionAmount.amount.replace('-', '').replace(',', '.');
-      const bigIntAmount = BigInt(Math.round(Number(normalizedAmount) * 100));
+      const normalizedAmount = item.transactionAmount.amount.replaceAll('-', '').replace(',', '.');
+      const parsedAmount = Number(normalizedAmount);
+
+      if (isNaN(parsedAmount) || !isFinite(parsedAmount)) {
+        console.warn(`Invalid amount: ${item.transactionAmount.amount}`);
+        return;
+      }
+
+      const bigIntAmount = BigInt(Math.round(parsedAmount * 100));
 
       const transactionData: TransactionAddInputModel = {
         date: new Date(item.bookingDate),
-        amountStr: item.transactionAmount.amount.replace('-', ''),
+        amountStr: item.transactionAmount.amount.replaceAll('-', ''),
         amount: bigIntAmount,
         currency: parseCurrencyCode(item.transactionAmount.currency),
         description: item.description,

@@ -53,41 +53,42 @@ const AddBankTransactions: React.FC<{
         return true;
       })
       .map((tempItem) => {
-        if (tempItem) {
-          const { participants: tempParticipants } = calculateParticipantSplit(
-            tempItem.amount,
-            participants,
-            splitType,
-            splitShares,
-            paidBy,
-          );
+        const { participants: tempParticipants } = calculateParticipantSplit(
+          tempItem.amount,
+          participants,
+          splitType,
+          splitShares,
+          paidBy,
+        );
 
-          return {
-            name: tempItem.description,
-            currency: tempItem.currency,
-            amount: tempItem.amount,
-            groupId: group?.id ?? null,
-            splitType,
-            participants: tempParticipants.map((p) => ({
-              userId: p.id,
-              amount: p.amount ?? 0n,
-            })),
-            paidBy: paidBy.id,
-            category,
-            fileKey,
-            expenseDate: tempItem.date,
-            expenseId: tempItem.expenseId,
-            transactionId: tempItem.transactionId,
-          };
-        }
-      });
+        return {
+          name: tempItem.description,
+          currency: tempItem.currency,
+          amount: tempItem.amount,
+          groupId: group?.id ?? null,
+          splitType,
+          participants: tempParticipants.map((p) => ({
+            userId: p.id,
+            amount: p.amount ?? 0n,
+          })),
+          paidBy: paidBy.id,
+          category,
+          fileKey,
+          expenseDate: tempItem.date,
+          expenseId: tempItem.expenseId,
+          transactionId: tempItem.transactionId,
+        };
+      }) as CreateExpense[];
 
-    await addExpenseMutation.mutateAsync(expenses as CreateExpense[], {
+    await addExpenseMutation.mutateAsync(expenses, {
       onSuccess: () => {
         setMultipleTransactions([]);
         setIsTransactionLoading(false);
         router.back();
         resetState();
+      },
+      onError: () => {
+        setIsTransactionLoading(false);
       },
     });
   }, [

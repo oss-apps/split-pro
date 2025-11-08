@@ -95,7 +95,12 @@ export const BankTransactionItem: React.FC<{
         layout
         transition={contentLayoutTransition}
       >
-        <Button className="flex items-center gap-4" variant="ghost" disabled={alreadyAdded}>
+        <Button
+          className="flex items-center gap-4"
+          variant="ghost"
+          disabled={alreadyAdded}
+          onClick={hasMultiple ? createCheckboxHandler(item) : createClickHandler}
+        >
           <div className="text-xs text-gray-500">
             {toUIDate(new Date(item.bookingDate), { useToday: true })
               .split(' ')
@@ -105,7 +110,7 @@ export const BankTransactionItem: React.FC<{
                 </div>
               ))}
           </div>
-          <div onClick={hasMultiple ? createCheckboxHandler(item) : createClickHandler}>
+          <div>
             <p
               className={cn(
                 'line-clamp-2 text-left text-sm whitespace-break-spaces lg:text-base',

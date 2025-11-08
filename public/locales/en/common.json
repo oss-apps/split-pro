@@ -220,6 +220,12 @@
       "text": "This action cannot be undone. This will permanently delete your expense.",
       "title": "Are you absolutely sure?"
     },
+    "multiple_transactions": {
+      "title": "Add multiple transactions",
+      "description": "You have selected multiple transactions. How do you want to add them?",
+      "add_all": "Add all",
+      "add_one_by_one": "Add one by one"
+    },
     "title": "Add expense",
     "title_mobile": "Add",
     "clear": "Clear",

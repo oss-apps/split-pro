@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["relationJoins"]
+  previewFeatures = ["relationJoins", "views"]
 }
 
 datasource db {
@@ -286,4 +286,16 @@ model job_run_details {
   job job? @relation("job_run_details", fields: [jobid], references: [jobid], onDelete: Cascade)
 
   @@schema("cron")
+}
+
+/// Unified balance view that calculates balances from expenses
+/// Replaces both Balance and GroupBalance tables
+view BalanceView {
+  groupId  Int?
+  currency String
+  userId   Int
+  friendId Int
+  amount   BigInt
+
+  @@schema("public")
 }

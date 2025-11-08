@@ -28,6 +28,7 @@ const AddBankTransactions: React.FC<{
     setExpenseDate,
     setTransactionId,
     setAmountStr,
+    setAmount,
     // setMultipleTransactions,
     // setIsTransactionLoading,
   } = useAddExpenseStore((s) => s.actions);
@@ -115,6 +116,11 @@ const AddBankTransactions: React.FC<{
   //   setMultipleTransactions,
   // ]);
 
+  const convertToBigInt = useCallback((amount: string) => {
+    const normalizedAmount = amount.replace(',', '.');
+    return BigInt(Math.round(Number(normalizedAmount) * 100));
+  }, []);
+
   const addViaBankTransaction = useCallback(
     (obj: TransactionAddInputModel) => {
       setExpenseDate(obj.date);
@@ -125,9 +131,18 @@ const AddBankTransactions: React.FC<{
         console.warn(`Invalid currency code: ${obj.currency}`);
       }
       setAmountStr(obj.amount);
+      setAmount(convertToBigInt(obj.amount));
       setTransactionId(obj.transactionId);
     },
-    [setExpenseDate, setDescription, setCurrency, setAmountStr, setTransactionId],
+    [
+      setExpenseDate,
+      setDescription,
+      setCurrency,
+      setAmountStr,
+      setAmount,
+      setTransactionId,
+      convertToBigInt,
+    ],
   );
 
   // const handleSetMultipleTransactions = useCallback(

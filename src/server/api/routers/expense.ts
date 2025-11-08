@@ -82,6 +82,7 @@ export const expenseRouter = createTRPCRouter({
   addOrEditExpense: protectedProcedure
     .input(z.array(createExpenseSchema))
     .mutation(async ({ input: expenses, ctx }) => {
+      const results = [];
       for (const input of expenses) {
         if (input.expenseId) {
           await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
@@ -136,7 +137,7 @@ export const expenseRouter = createTRPCRouter({
             });
           }
 
-          return expense;
+          results.push(expense);
         } catch (error) {
           console.error(error);
           throw new TRPCError({
@@ -145,6 +146,7 @@ export const expenseRouter = createTRPCRouter({
           });
         }
       }
+      return results;
     }),
 
   addOrEditCurrencyConversion: protectedProcedure

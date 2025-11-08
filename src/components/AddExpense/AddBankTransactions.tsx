@@ -82,12 +82,14 @@ const AddBankTransactions: React.FC<{
         }
       });
 
-    await addExpenseMutation.mutateAsync(expenses as CreateExpense[]);
-
-    setMultipleTransactions([]);
-    setIsTransactionLoading(false);
-    router.back();
-    resetState();
+    await addExpenseMutation.mutateAsync(expenses as CreateExpense[], {
+      onSuccess: () => {
+        setMultipleTransactions([]);
+        setIsTransactionLoading(false);
+        router.back();
+        resetState();
+      },
+    });
   }, [
     setSplitScreenOpen,
     router,

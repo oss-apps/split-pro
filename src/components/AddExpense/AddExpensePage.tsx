@@ -161,7 +161,7 @@ export const AddOrEditExpensePage: React.FC<{
                 }
                 return;
               } else {
-                const id = d?.id ?? expenseId;
+                const id = d[0]?.id ?? expenseId;
 
                 let navPromise: () => Promise<any> = () => Promise.resolve(true);
 

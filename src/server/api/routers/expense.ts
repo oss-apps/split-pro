@@ -72,7 +72,7 @@ export const expenseRouter = createTRPCRouter({
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
       }
 
-      if (input.groupId) {
+      if (input.groupId !== null) {
         const group = await db.group.findUnique({
           where: { id: input.groupId },
           select: { archivedAt: true },
@@ -345,7 +345,7 @@ export const expenseRouter = createTRPCRouter({
         },
       });
 
-      if (expense?.groupId) {
+      if (expense && expense.groupId !== null) {
         const missingGroupMembers = await db.group.findUnique({
           where: {
             id: expense.groupId,
@@ -486,7 +486,7 @@ export const expenseRouter = createTRPCRouter({
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Expense not found' });
       }
 
-      if (expense.groupId) {
+      if (expense.groupId !== null) {
         const group = await db.group.findUnique({
           where: { id: expense.groupId },
           select: { archivedAt: true },

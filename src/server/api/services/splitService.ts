@@ -88,7 +88,7 @@ export async function createExpense(
       return;
     }
 
-    if (groupId) {
+    if (groupId !== null) {
       operations.push(
         db.groupBalance.upsert({
           where: {
@@ -278,7 +278,7 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
         }),
       );
 
-      if (expense.groupId) {
+      if (expense.groupId !== null) {
         operations.push(
           db.groupBalance.upsert({
             where: {
@@ -445,7 +445,7 @@ export async function editExpense(
       );
 
       // Reverse group balances if it's a group expense
-      if (expense.groupId) {
+      if (expense.groupId !== null) {
         operations.push(
           db.groupBalance.update({
             where: {
@@ -568,7 +568,7 @@ export async function editExpense(
     );
 
     // Add new group balances if it's a group expense
-    if (expense.groupId) {
+    if (expense.groupId !== null) {
       operations.push(
         db.groupBalance.upsert({
           where: {

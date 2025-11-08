@@ -20,20 +20,11 @@ import { isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { createRecurringExpenseJob } from '../services/scheduleService';
+import { getCumulatedBalances, getUserBalances } from '../services/balanceService';
 
 export const expenseRouter = createTRPCRouter({
   getBalances: protectedProcedure.query(async ({ ctx }) => {
-    const balancesRaw = await db.balance.findMany({
-      where: {
-        userId: ctx.session.user.id,
-      },
-      orderBy: {
-        amount: 'desc',
-      },
-      include: {
-        friend: true,
-      },
-    });
+    const balancesRaw = await getUserBalances(ctx.session.user.id);
 
     const balances = balancesRaw
       .reduce<((typeof balancesRaw)[number] & { hasMore?: boolean })[]>((acc, current) => {
@@ -54,15 +45,7 @@ export const expenseRouter = createTRPCRouter({
       }, [])
       .sort((a, b) => Number(BigMath.abs(b.amount) - BigMath.abs(a.amount)));
 
-    const cumulatedBalances = await db.balance.groupBy({
-      by: ['currency'],
-      _sum: {
-        amount: true,
-      },
-      where: {
-        userId: ctx.session.user.id,
-      },
-    });
+    const cumulatedBalances = await getCumulatedBalances(ctx.session.user.id);
 
     const youOwe: { currency: string; amount: bigint }[] = [];
     const youGet: { currency: string; amount: bigint }[] = [];

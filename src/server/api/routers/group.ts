@@ -6,6 +6,7 @@ import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 
 import { recalculateGroupBalances } from '../services/splitService';
+import { getGroupBalances } from '../services/balanceService';
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
@@ -256,11 +257,7 @@ export const groupRouter = createTRPCRouter({
         });
       }
 
-      const groupBalances = await ctx.db.groupBalance.findMany({
-        where: {
-          groupId: input.groupId,
-        },
-      });
+      const groupBalances = await getGroupBalances(input.groupId);
 
       const finalGroupBalances = group.simplifyDebts ? simplifyDebts(groupBalances) : groupBalances;
 

@@ -15,22 +15,13 @@ import {
   importGroupFromSplitwise,
   importUserBalanceFromSplitWise,
 } from '../services/splitService';
+import { getBalancesWithFriend, getUserFriends } from '../services/balanceService';
 
 export const userRouter = createTRPCRouter({
   me: protectedProcedure.query(({ ctx }) => ctx.session.user),
 
   getFriends: protectedProcedure.query(async ({ ctx }) => {
-    const balanceWithFriends = await db.balance.findMany({
-      where: {
-        userId: ctx.session.user.id,
-      },
-      select: {
-        friendId: true,
-      },
-      distinct: ['friendId'],
-    });
-
-    const friendsIds = balanceWithFriends.map((friend) => friend.friendId);
+    const friendsIds = await getUserFriends(ctx.session.user.id);
 
     const friends = await db.user.findMany({
       where: {
@@ -92,16 +83,7 @@ export const userRouter = createTRPCRouter({
   getBalancesWithFriend: protectedProcedure
     .input(z.object({ friendId: z.number() }))
     .query(async ({ input, ctx }) => {
-      const balances = db.balance.findMany({
-        where: {
-          userId: ctx.session.user.id,
-          friendId: input.friendId,
-          amount: {
-            not: 0,
-          },
-        },
-      });
-
+      const balances = await getBalancesWithFriend(ctx.session.user.id, input.friendId);
       return balances;
     }),
 
@@ -195,15 +177,7 @@ export const userRouter = createTRPCRouter({
   deleteFriend: protectedProcedure
     .input(z.object({ friendId: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      const friendBalances = await db.balance.findMany({
-        where: {
-          userId: ctx.session.user.id,
-          friendId: input.friendId,
-          amount: {
-            not: 0,
-          },
-        },
-      });
+      const friendBalances = await getBalancesWithFriend(ctx.session.user.id, input.friendId);
 
       if (0 < friendBalances.length) {
         throw new TRPCError({

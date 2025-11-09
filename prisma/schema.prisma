@@ -63,6 +63,8 @@ model User {
   groupUserBalances   GroupBalance[]       @relation("GroupUserBalance")
   associatedGroups    GroupUser[]
   sessions            Session[]
+  balanceViewsA       BalanceView[]        @relation("BalanceViewUserA")
+  balanceViewsB       BalanceView[]        @relation("BalanceViewUserB")
 
   @@schema("public")
 }
@@ -119,6 +121,7 @@ model Group {
   createdBy        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   groupBalances    GroupBalance[]
   groupUsers       GroupUser[]
+  groupBalanceView BalanceView[]
 
   @@schema("public")
 }
@@ -279,6 +282,10 @@ view BalanceView {
   groupId  Int?
   currency String
   amount   BigInt
+
+  userA User   @relation("BalanceViewUserA", fields: [userA_Id], references: [id], onDelete: Cascade)
+  userB User   @relation("BalanceViewUserB", fields: [userB_Id], references: [id], onDelete: Cascade)
+  group Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@schema("public")
 }

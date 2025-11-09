@@ -166,6 +166,8 @@ async function settleBalances() {
       console.log(`Settled ${i + 1} / ${dummyData.balancesToSettle.length} balances`);
     }
   }
+
+  console.log('Finished settling balances');
 }
 
 async function main() {

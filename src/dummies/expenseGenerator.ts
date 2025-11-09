@@ -400,8 +400,10 @@ export const generatePairsToSettle = (
   expenses
     .filter(
       (e) =>
-        -1 === expensesToDelete.findIndex((deleted) => deleted.name === e.name) &&
-        e.groupId !== null,
+        -1 ===
+          expensesToDelete.findIndex(
+            (deleted) => deleted.name === e.name && deleted.amount === e.amount,
+          ) && e.groupId !== null,
     )
     .flatMap((expense) => {
       const payerId = expense.paidBy.id;
@@ -412,7 +414,7 @@ export const generatePairsToSettle = (
             [payerId, participant.id, expense.groupId!, expense.currency as string] as const,
         );
     })
-    .filter(() => faker.datatype.boolean({ probability: 0.01 }))
+    .filter(() => faker.datatype.boolean({ probability: 0.1 }))
     .forEach((tuple) => {
       connections.set(tuple.join('-'), tuple);
     });

@@ -390,3 +390,32 @@ export const generateExpensesToDelete = (expenses: DummyExpenseInfo[]) =>
       ...expense,
       deletedBy: selectPayer(expense.participants, expense.addedBy),
     }));
+
+export const generatePairsToSettle = (
+  expenses: DummyExpenseInfo[],
+  expensesToDelete: DummyExpenseInfo[],
+) => {
+  const connections = new Map<string, readonly [number, number, number, string]>();
+
+  expenses
+    .filter(
+      (e) =>
+        -1 === expensesToDelete.findIndex((deleted) => deleted.name === e.name) &&
+        e.groupId !== null,
+    )
+    .flatMap((expense) => {
+      const payerId = expense.paidBy.id;
+      return expense.participants
+        .filter((p) => p.id !== payerId)
+        .map(
+          (participant) =>
+            [payerId, participant.id, expense.groupId!, expense.currency as string] as const,
+        );
+    })
+    .filter(() => faker.datatype.boolean({ probability: 0.01 }))
+    .forEach((tuple) => {
+      connections.set(tuple.join('-'), tuple);
+    });
+
+  return Array.from(connections.values());
+};

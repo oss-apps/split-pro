@@ -229,6 +229,16 @@ export const expenseRouter = createTRPCRouter({
               },
             },
             {
+              OR: [
+                {
+                  paidBy: ctx.session.user.id,
+                },
+                {
+                  paidBy: input.friendId,
+                },
+              ],
+            },
+            {
               deletedBy: null,
             },
             {

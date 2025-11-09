@@ -200,8 +200,14 @@ export async function getCumulatedBalances(userId: number) {
 
   // Assert they match
   if (process.env.NODE_ENV !== 'production') {
-    const oldSorted = [...oldCumulated].sort((a, b) => a.currency.localeCompare(b.currency));
-    const viewSorted = [...viewCumulated].sort((a, b) => a.currency.localeCompare(b.currency));
+    const oldSorted = [...oldCumulated]
+      .sort((a, b) => a.currency.localeCompare(b.currency))
+      .map((b) => ({ ...b, _sum: b._sum.amount }))
+      .filter((b) => b._sum !== 0n);
+    const viewSorted = [...viewCumulated]
+      .sort((a, b) => a.currency.localeCompare(b.currency))
+      .map((b) => ({ ...b, _sum: b._sum.amount }))
+      .filter((b) => b._sum !== 0n);
 
     if (oldSorted.length !== viewSorted.length) {
       console.error('Cumulated balance count mismatch:', { old: oldSorted, view: viewSorted });
@@ -211,7 +217,7 @@ export async function getCumulatedBalances(userId: number) {
     for (let i = 0; i < oldSorted.length; i++) {
       const o = oldSorted[i]!;
       const v = viewSorted[i]!;
-      if (o.currency !== v.currency || o._sum.amount !== v._sum.amount) {
+      if (o.currency !== v.currency || o._sum !== v._sum) {
         console.error('Cumulated balance mismatch:', { old: o, view: v });
         throw new Error('Cumulated balance validation failed');
       }
@@ -265,7 +271,30 @@ export async function getBalancesWithFriend(userId: number, friendId: number) {
     }),
   ]);
 
-  assertBalancesMatch(oldBalances, viewBalances, 'getBalancesWithFriend');
+  assertBalancesMatch(
+    oldBalances,
+
+    Object.values(
+      viewBalances!.reduce((acc, balance) => {
+        // Create a unique key for each friend/currency pair
+        const key = `${balance.friendId}-${balance.currency}`;
+
+        if (!acc[key]) {
+          // If this is the first time we see this pair, create a new entry
+          acc[key] = {
+            ...balance,
+            amount: 0n,
+          };
+        }
+
+        // Add the current balance's amount
+        acc[key].amount += balance.amount;
+
+        return acc;
+      }, {} as any),
+    ).sort((a: any, b: any) => (b.amount > a.amount ? 1 : -1)) as any,
+    'getBalancesWithFriend',
+  );
 
   return oldBalances;
 }

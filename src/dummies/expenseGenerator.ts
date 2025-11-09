@@ -251,22 +251,14 @@ export const generateDirectExpenses = (users: DummyUserInfo[], groups: DummyGrou
     }
   });
 
-  groups.forEach((group) => {
-    for (let i = 0; i < group.members.length; i++) {
-      for (let j = i + 1; j < group.members.length; j++) {
-        const user1 = group.members[i]!;
-        const user2 = group.members[j]!;
-
-        userConnections.get(user1)?.add(user2);
-        userConnections.get(user2)?.add(user1);
-      }
-    }
-  });
-
   // Also add random pairs
   const randomPairChance = RANDOM_PAIR_PROBABILITY;
   const totalPossiblePairs = (users.length * (users.length - 1)) / 2;
   const randomPairsToGenerate = Math.round(totalPossiblePairs * randomPairChance);
+
+  console.log(
+    `Generating ${randomPairsToGenerate} random user pairs, out of ${totalPossiblePairs} possible.`,
+  );
 
   for (let i = 0; i < randomPairsToGenerate; i++) {
     const user1 = faker.helpers.arrayElement(users);
@@ -276,22 +268,28 @@ export const generateDirectExpenses = (users: DummyUserInfo[], groups: DummyGrou
     userConnections.get(user2)?.add(user1);
   }
 
+  console.log(
+    `Generated ${Array.from(userConnections.values()).reduce((acc, s) => acc + s.size, 0)} total user connections.`,
+  );
+
   // Generate expenses for each connection
   const expenses: ReturnType<typeof generateDirectExpense>[] = [];
 
-  userConnections.forEach((connectedUsers, userId) => {
-    connectedUsers.forEach((connectedUserId) => {
-      if (userId < connectedUserId) {
+  userConnections.forEach((connectedUsers, user) => {
+    connectedUsers.forEach((connectedUser) => {
+      if (user.id < connectedUser.id) {
         // Generate 2-10 expenses for this pair
         const [minExpenses, maxExpenses] = DIRECT_EXPENSE_FREQUENCY_PER_PAIR;
         const expenseCount = faker.number.int({ min: minExpenses, max: maxExpenses });
 
         for (let i = 0; i < expenseCount; i++) {
-          expenses.push(generateDirectExpense([userId, connectedUserId]));
+          expenses.push(generateDirectExpense([user, connectedUser]));
         }
       }
     });
   });
+
+  console.log(`Generated ${expenses.length} direct expenses between user pairs.`);
 
   return expenses;
 };

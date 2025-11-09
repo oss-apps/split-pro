@@ -1,35 +1,5 @@
 import { db } from '~/server/db';
 import type { Balance, BalanceView, GroupBalance, User } from '@prisma/client';
-import { group } from 'console';
-
-/**
- * Balance Service
- *
- * This service provides methods for querying user balances.
- * During the migration phase, it queries both the old Balance/GroupBalance tables
- * AND the new BalanceView, asserting they match.
- */
-
-interface BalanceWithFriend {
-  userId: number;
-  currency: string;
-  friendId: number;
-  amount: bigint;
-  createdAt: Date;
-  updatedAt: Date;
-  importedFromSplitwise: boolean;
-  friend: User;
-  hasMore?: boolean;
-}
-
-interface GroupBalanceResult {
-  groupId: number;
-  currency: string;
-  userId: number;
-  firendId: number;
-  amount: bigint;
-  updatedAt: Date;
-}
 
 /**
  * Deep comparison of balance arrays
@@ -139,7 +109,7 @@ function assertBalancesMatch(
 /**
  * Get all balances for a user (friend balances only, no groups)
  */
-export async function getUserBalances(userId: number): Promise<BalanceWithFriend[]> {
+export async function getUserBalances(userId: number) {
   const [oldBalances, viewBalances] = await Promise.all([
     db.balance.findMany({
       where: { userId },
@@ -302,7 +272,7 @@ export async function getBalancesWithFriend(userId: number, friendId: number) {
 /**
  * Get all group balances for a specific group
  */
-export async function getGroupBalances(groupId: number): Promise<GroupBalanceResult[]> {
+export async function getGroupBalances(groupId: number) {
   const [oldBalances, viewBalances] = await Promise.all([
     db.groupBalance.findMany({
       where: { groupId },

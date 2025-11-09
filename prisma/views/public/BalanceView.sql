@@ -1,65 +1,66 @@
-SELECT
-  CASE
-    WHEN (
-      "ExpenseParticipant"."userId" < "Expense"."paidBy"
-    ) THEN "ExpenseParticipant"."userId"
-    ELSE "Expense"."paidBy"
-  END AS "userA_Id",
-  CASE
-    WHEN (
-      "ExpenseParticipant"."userId" < "Expense"."paidBy"
-    ) THEN "Expense"."paidBy"
-    ELSE "ExpenseParticipant"."userId"
-  END AS "userB_Id",
-  "Expense"."groupId",
-  "Expense".currency,
-  (
+WITH "BaseBalance" AS (
+  SELECT
+    CASE
+      WHEN (ep."userId" < e."paidBy") THEN ep."userId"
+      ELSE e."paidBy"
+    END AS "user_id_A",
+    CASE
+      WHEN (ep."userId" < e."paidBy") THEN e."paidBy"
+      ELSE ep."userId"
+    END AS "user_id_B",
+    e."groupId",
+    e.currency,
     sum(
-      CASE
-        WHEN (
-          "ExpenseParticipant"."userId" < "Expense"."paidBy"
-        ) THEN (- "ExpenseParticipant".amount)
-        ELSE "ExpenseParticipant".amount
-      END
-    )
-  ) :: bigint AS amount
-FROM
-  (
-    "ExpenseParticipant"
-    JOIN "Expense" ON (
-      ("ExpenseParticipant"."expenseId" = "Expense".id)
-    )
-  )
-WHERE
-  (
+      (
+        ep.amount * CASE
+          WHEN (ep."userId" < e."paidBy") THEN 1
+          ELSE '-1' :: integer
+        END
+      )
+    ) AS net_amount,
+    min(e."createdAt") AS "createdAt",
+    max(e."updatedAt") AS "updatedAt"
+  FROM
     (
-      "ExpenseParticipant"."userId" <> "Expense"."paidBy"
+      "ExpenseParticipant" ep
+      JOIN "Expense" e ON ((ep."expenseId" = e.id))
     )
-    AND ("Expense"."deletedAt" IS NULL)
-  )
-GROUP BY
-  CASE
-    WHEN (
-      "ExpenseParticipant"."userId" < "Expense"."paidBy"
-    ) THEN "ExpenseParticipant"."userId"
-    ELSE "Expense"."paidBy"
-  END,
-  CASE
-    WHEN (
-      "ExpenseParticipant"."userId" < "Expense"."paidBy"
-    ) THEN "Expense"."paidBy"
-    ELSE "ExpenseParticipant"."userId"
-  END,
-  "Expense"."groupId",
-  "Expense".currency
-HAVING
-  (
-    sum(
-      CASE
-        WHEN (
-          "ExpenseParticipant"."userId" < "Expense"."paidBy"
-        ) THEN (- "ExpenseParticipant".amount)
-        ELSE "ExpenseParticipant".amount
-      END
-    ) <> (0) :: numeric
-  );
+  WHERE
+    (
+      (ep."userId" <> e."paidBy")
+      AND (e."deletedAt" IS NULL)
+    )
+  GROUP BY
+    CASE
+      WHEN (ep."userId" < e."paidBy") THEN ep."userId"
+      ELSE e."paidBy"
+    END,
+    CASE
+      WHEN (ep."userId" < e."paidBy") THEN e."paidBy"
+      ELSE ep."userId"
+    END,
+    e."groupId",
+    e.currency
+)
+SELECT
+  "BaseBalance"."user_id_A" AS "userId",
+  "BaseBalance"."user_id_B" AS "friendId",
+  "BaseBalance"."groupId",
+  "BaseBalance".currency,
+  "BaseBalance".net_amount AS amount,
+  "BaseBalance"."createdAt",
+  "BaseBalance"."updatedAt"
+FROM
+  "BaseBalance"
+UNION
+ALL
+SELECT
+  "BaseBalance"."user_id_B" AS "userId",
+  "BaseBalance"."user_id_A" AS "friendId",
+  "BaseBalance"."groupId",
+  "BaseBalance".currency,
+  (- "BaseBalance".net_amount) AS amount,
+  "BaseBalance"."createdAt",
+  "BaseBalance"."updatedAt"
+FROM
+  "BaseBalance";

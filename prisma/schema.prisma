@@ -63,8 +63,8 @@ model User {
   groupUserBalances   GroupBalance[]       @relation("GroupUserBalance")
   associatedGroups    GroupUser[]
   sessions            Session[]
-  balanceViewsA       BalanceView[]        @relation("BalanceViewUserA")
-  balanceViewsB       BalanceView[]        @relation("BalanceViewUserB")
+  userBalanceViews    BalanceView[]        @relation("UserBalanceView")
+  friendBalanceViews  BalanceView[]        @relation("FriendBalanceView")
 
   @@schema("public")
 }
@@ -277,15 +277,17 @@ model job_run_details {
 /// Unified balance view that calculates balances from expenses
 /// Replaces both Balance and GroupBalance tables
 view BalanceView {
-  userA_Id Int
-  userB_Id Int
-  groupId  Int?
-  currency String
-  amount   BigInt
+  userId    Int
+  friendId  Int
+  groupId   Int?
+  currency  String
+  amount    BigInt
+  createdAt DateTime
+  updatedAt DateTime
 
-  userA User   @relation("BalanceViewUserA", fields: [userA_Id], references: [id], onDelete: Cascade)
-  userB User   @relation("BalanceViewUserB", fields: [userB_Id], references: [id], onDelete: Cascade)
-  group Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user      User   @relation("UserBalanceView", fields: [userId], references: [id], onDelete: Cascade)
+  friend    User   @relation("FriendBalanceView", fields: [friendId], references: [id], onDelete: Cascade)
+  group     Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@schema("public")
 }

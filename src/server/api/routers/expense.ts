@@ -28,6 +28,7 @@ export const expenseRouter = createTRPCRouter({
 
     const balances = balancesRaw
       .reduce<((typeof balancesRaw)[number] & { hasMore?: boolean })[]>((acc, current) => {
+        // @ts-ignore This will be resolved once we move away from balance tables
         const existing = acc.findIndex((item) => item.friendId === current.friendId);
         if (-1 === existing) {
           acc.push(current);
@@ -59,7 +60,12 @@ export const expenseRouter = createTRPCRouter({
       }
     }
 
-    return { balances, cumulatedBalances, youOwe, youGet };
+    return {
+      balances,
+      cumulatedBalances,
+      youOwe,
+      youGet,
+    };
   }),
 
   addOrEditExpense: protectedProcedure

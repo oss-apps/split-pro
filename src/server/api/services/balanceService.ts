@@ -1,19 +1,23 @@
 import { db } from '~/server/db';
-import type { Balance, BalanceView, GroupBalance, User } from '@prisma/client';
+import type { Balance, BalanceView, GroupBalance } from '@prisma/client';
+
+export class BalanceError extends Error {
+  constructor(context: string) {
+    super(
+      `Balance validation failed: ${context}, please report this on GitHub 1.6-alpha discussion.`,
+    );
+  }
+}
 
 /**
  * Deep comparison of balance arrays
  * Logs differences when found
  */
-function assertBalancesMatch(
+function _assertBalancesMatch(
   oldRaw: (Balance | GroupBalance)[],
   viewRaw: BalanceView[],
   context: string,
 ) {
-  if (process.env.NODE_ENV === 'production') {
-    return; // Skip assertions in production
-  }
-
   const old = oldRaw
     .filter((b) => b.amount !== 0n)
     .map((b) => ({
@@ -84,7 +88,7 @@ function assertBalancesMatch(
       console.error(`[${context}] Extra balance entry:`, longer[l]!);
       l++;
     }
-    throw new Error(`Balance validation failed: count mismatch in ${context}`);
+    throw new BalanceError(context);
   }
 
   for (let i = 0; i < oldSorted.length; i++) {
@@ -101,14 +105,29 @@ function assertBalancesMatch(
         old: o,
         view: v,
       });
-      throw new Error(`Balance validation failed: data mismatch in ${context}`);
+      throw new BalanceError(context);
     }
   }
 }
 
-/**
- * Get all balances for a user (friend balances only, no groups)
- */
+export function assertBalancesMatch(
+  oldRaw: (Balance | GroupBalance)[],
+  viewRaw: BalanceView[],
+  context: string,
+) {
+  try {
+    _assertBalancesMatch(oldRaw, viewRaw, context);
+  } catch (error) {
+    if (error instanceof BalanceError) {
+      console.error(error.message);
+    } else {
+      throw error;
+    }
+  }
+
+  return oldRaw;
+}
+
 export async function getUserBalances(userId: number) {
   const [oldBalances, viewBalances] = await Promise.all([
     db.balance.findMany({
@@ -123,37 +142,15 @@ export async function getUserBalances(userId: number) {
     }),
   ]);
 
-  // Assert they match (excluding friend relation which view doesn't have)
-  assertBalancesMatch(
+  const groupAggregatedViewBalances = getTotalBalances(viewBalances);
+
+  return assertBalancesMatch(
     oldBalances,
-    Object.values(
-      viewBalances!.reduce((acc, balance) => {
-        // Create a unique key for each friend/currency pair
-        const key = `${balance.friendId}-${balance.currency}`;
-
-        if (!acc[key]) {
-          // If this is the first time we see this pair, create a new entry
-          acc[key] = {
-            ...balance,
-            amount: 0n,
-          };
-        }
-
-        // Add the current balance's amount
-        acc[key].amount += balance.amount;
-
-        return acc;
-      }, {} as any),
-    ).sort((a: any, b: any) => (b.amount > a.amount ? 1 : -1)) as any,
+    groupAggregatedViewBalances,
     'getUserBalances',
-  );
-
-  return oldBalances;
+  ) as typeof oldBalances;
 }
 
-/**
- * Get balances grouped by currency for a user
- */
 export async function getCumulatedBalances(userId: number) {
   const [oldCumulated, viewCumulated] = await Promise.all([
     db.balance.groupBy({
@@ -168,8 +165,7 @@ export async function getCumulatedBalances(userId: number) {
     }),
   ]);
 
-  // Assert they match
-  if (process.env.NODE_ENV !== 'production') {
+  try {
     const oldSorted = [...oldCumulated]
       .sort((a, b) => a.currency.localeCompare(b.currency))
       .map((b) => ({ ...b, _sum: b._sum.amount }))
@@ -181,7 +177,7 @@ export async function getCumulatedBalances(userId: number) {
 
     if (oldSorted.length !== viewSorted.length) {
       console.error('Cumulated balance count mismatch:', { old: oldSorted, view: viewSorted });
-      throw new Error('Cumulated balance validation failed');
+      throw new BalanceError('getCumulatedBalances');
     }
 
     for (let i = 0; i < oldSorted.length; i++) {
@@ -189,17 +185,20 @@ export async function getCumulatedBalances(userId: number) {
       const v = viewSorted[i]!;
       if (o.currency !== v.currency || o._sum !== v._sum) {
         console.error('Cumulated balance mismatch:', { old: o, view: v });
-        throw new Error('Cumulated balance validation failed');
+        throw new BalanceError('getCumulatedBalances');
       }
+    }
+  } catch (error) {
+    if (error instanceof BalanceError) {
+      console.error(error.message);
+    } else {
+      throw error;
     }
   }
 
   return oldCumulated;
 }
 
-/**
- * Get all friends for a user (distinct friendIds from balances)
- */
 export async function getUserFriends(userId: number): Promise<number[]> {
   const [oldFriends, viewFriends] = await Promise.all([
     db.balance.findMany({
@@ -215,14 +214,12 @@ export async function getUserFriends(userId: number): Promise<number[]> {
   ]);
 
   const oldIds = oldFriends.map((f) => f.friendId).sort((a, b) => a - b);
+  // oxlint-disable-next-line no-unused-vars This fails due to a bug in balances themselves
   const viewIds = viewFriends.map((f) => f.friendId).sort((a, b) => a - b);
 
   return oldIds;
 }
 
-/**
- * Get balances between a user and a specific friend
- */
 export async function getBalancesWithFriend(userId: number, friendId: number) {
   const [oldBalances, viewBalances] = await Promise.all([
     db.balance.findMany({
@@ -241,37 +238,15 @@ export async function getBalancesWithFriend(userId: number, friendId: number) {
     }),
   ]);
 
-  assertBalancesMatch(
+  const groupAggregatedViewBalances = getTotalBalances(viewBalances);
+
+  return assertBalancesMatch(
     oldBalances,
-
-    Object.values(
-      viewBalances!.reduce((acc, balance) => {
-        // Create a unique key for each friend/currency pair
-        const key = `${balance.friendId}-${balance.currency}`;
-
-        if (!acc[key]) {
-          // If this is the first time we see this pair, create a new entry
-          acc[key] = {
-            ...balance,
-            amount: 0n,
-          };
-        }
-
-        // Add the current balance's amount
-        acc[key].amount += balance.amount;
-
-        return acc;
-      }, {} as any),
-    ).sort((a: any, b: any) => (b.amount > a.amount ? 1 : -1)) as any,
+    groupAggregatedViewBalances,
     'getBalancesWithFriend',
-  );
-
-  return oldBalances;
+  ) as Balance[];
 }
 
-/**
- * Get all group balances for a specific group
- */
 export async function getGroupBalances(groupId: number) {
   const [oldBalances, viewBalances] = await Promise.all([
     db.groupBalance.findMany({
@@ -282,19 +257,27 @@ export async function getGroupBalances(groupId: number) {
     }),
   ]);
 
-  // Assert they match
-  assertBalancesMatch(oldBalances, viewBalances, 'getGroupBalances');
-
-  return oldBalances;
+  return assertBalancesMatch(oldBalances, viewBalances, 'getGroupBalances') as GroupBalance[];
 }
 
 /**
- * Check if user has any non-zero balances with a friend
+ * @deprecated This makeshift logic will be removed when we discard total balances in favor of split ones.
  */
-export async function hasNonZeroBalanceWithFriend(
-  userId: number,
-  friendId: number,
-): Promise<boolean> {
-  const balances = await getBalancesWithFriend(userId, friendId);
-  return balances.length > 0;
+export function getTotalBalances<B extends BalanceView>(balances: B[]): B[] {
+  return Object.values(
+    balances!.reduce((acc, balance) => {
+      const key = `${balance.friendId}-${balance.currency}`;
+
+      if (!acc[key]) {
+        acc[key] = {
+          ...balance,
+          amount: 0n,
+        };
+      }
+
+      acc[key].amount += balance.amount;
+
+      return acc;
+    }, {} as any),
+  ).sort((a: any, b: any) => (b.amount > a.amount ? 1 : -1)) as any;
 }

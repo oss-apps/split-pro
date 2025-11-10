@@ -85,8 +85,8 @@ export const BalanceList: React.FC<{
                     <span className="text-gray-400">
                       {' '}
                       {isCurrentUser
-                        ? t('ui.balance_list.are_settled_up')
-                        : t('ui.balance_list.is_settled_up')}
+                        ? t('expense_details.balance_list.are_settled_up')
+                        : t('expense_details.balance_list.is_settled_up')}
                     </span>
                   ) : (
                     <>

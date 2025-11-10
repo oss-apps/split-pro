@@ -107,21 +107,21 @@ model Balance {
 }
 
 model Group {
-  id               Int            @id @default(autoincrement())
-  publicId         String         @unique
-  name             String
-  userId           Int
-  defaultCurrency  String         @default("USD")
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  splitwiseGroupId String?        @unique
-  simplifyDebts    Boolean        @default(false)
-  archivedAt       DateTime?
-  expenses         Expense[]
-  createdBy        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  groupBalances    GroupBalance[]
-  groupUsers       GroupUser[]
-  groupBalanceView BalanceView[]
+  id                Int            @id @default(autoincrement())
+  publicId          String         @unique
+  name              String
+  userId            Int
+  defaultCurrency   String         @default("USD")
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  splitwiseGroupId  String?        @unique
+  simplifyDebts     Boolean        @default(false)
+  archivedAt        DateTime?
+  expenses          Expense[]
+  createdBy         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  groupBalances     GroupBalance[]
+  groupUsers        GroupUser[]
+  groupBalanceViews BalanceView[]
 
   @@schema("public")
 }
@@ -285,9 +285,9 @@ view BalanceView {
   createdAt DateTime
   updatedAt DateTime
 
-  user      User   @relation("UserBalanceView", fields: [userId], references: [id], onDelete: Cascade)
-  friend    User   @relation("FriendBalanceView", fields: [friendId], references: [id], onDelete: Cascade)
-  group     Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user   User   @relation("UserBalanceView", fields: [userId], references: [id], onDelete: Cascade)
+  friend User   @relation("FriendBalanceView", fields: [friendId], references: [id], onDelete: Cascade)
+  group  Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@schema("public")
 }

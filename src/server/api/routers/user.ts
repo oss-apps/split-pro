@@ -110,18 +110,6 @@ export const userRouter = createTRPCRouter({
       return user;
     }),
 
-  // sendExpensePushNotification: protectedProcedure
-  //   .input(z.object({ expenseId: z.string() }))
-  //   .mutation(async ({ input }) => {
-  //     sendExpensePushNotification(input.expenseId).catch((err) => {
-  //       console.error('Error sending push notification', err);
-  //       throw new TRPCError({
-  //         code: 'INTERNAL_SERVER_ERROR',
-  //         message: 'Failed to send push notification',
-  //       });
-  //     });
-  //   }),
-
   getUserDetails: protectedProcedure
     .input(z.object({ userId: z.number() }))
     .query(async ({ input }) => {
@@ -153,6 +141,24 @@ export const userRouter = createTRPCRouter({
           },
         },
       });
+
+      const viewFriend = await db.user.findUnique({
+        where: {
+          id: input.friendId,
+          userBalanceViews: {
+            some: {
+              friendId: ctx.session.user.id,
+            },
+          },
+        },
+      });
+
+      if (friend?.id !== viewFriend?.id) {
+        console.error(`[getFriend] Friend data mismatch for friendId ${input.friendId}:`, {
+          old: friend,
+          view: viewFriend,
+        });
+      }
 
       return friend;
     }),

@@ -14,7 +14,7 @@ export const CategoryPicker: React.FC<{
 
   const trigger = useMemo(
     () => (
-      <div className="flex w-[73px] justify-center rounded-lg border py-2">
+      <div className="flex w-[73px] cursor-pointer justify-center rounded-lg border py-2">
         <CategoryIcon category={category} size={20} />
       </div>
     ),
@@ -28,7 +28,7 @@ export const CategoryPicker: React.FC<{
           <h3 className="mb-4 text-lg font-semibold">
             {t(`categories_list.${categoryName}.name`)}
           </h3>
-          <div className="flex flex-wrap justify-between gap-2">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(75px,1fr))] gap-4">
             {categoryItems.map((key: string) => {
               const handleClick = useMemo(
                 () => () => {
@@ -41,15 +41,15 @@ export const CategoryPicker: React.FC<{
                 <DrawerClose key={key}>
                   <Button
                     variant="ghost"
-                    className="flex w-[75px] flex-col gap-1 py-8 text-center"
+                    className="flex h-[75px] w-[75px] flex-col items-center justify-start gap-1 justify-self-center py-3 text-center"
                     onClick={handleClick}
                   >
-                    <span className="block text-2xl">
+                    <span className="block flex-shrink-0 text-2xl">
                       <CategoryIcon
                         category={(key === 'other' ? categoryName : key) as CategoryItem}
                       />
                     </span>
-                    <span className="block text-xs capitalize">
+                    <span className="block text-xs text-wrap">
                       {t(`categories_list.${categoryName}.items.${key}`, { ns: 'categories' })}
                     </span>
                   </Button>

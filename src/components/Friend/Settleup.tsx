@@ -1,25 +1,27 @@
 import { type Balance, SplitType, type User } from '@prisma/client';
-import { ArrowRightIcon, HandCoins } from 'lucide-react';
+import { ArrowRightIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { api } from '~/utils/api';
-import { BigMath, toSafeBigInt, toUIString } from '~/utils/numbers';
+import { BigMath } from '~/utils/numbers';
 
-import { FriendBalance } from './FriendBalance';
-import { Button } from '../ui/button';
-import { AppDrawer, DrawerClose } from '../ui/drawer';
-import { Input } from '../ui/input';
-import { EntityAvatar } from '../ui/avatar';
-import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { useSession } from 'next-auth/react';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { EntityAvatar } from '../ui/avatar';
+import { Button } from '../ui/button';
+import { CurrencyInput } from '../ui/currency-input';
+import { AppDrawer } from '../ui/drawer';
+import { FriendBalance } from './FriendBalance';
 
-export const SettleUp: React.FC<{
-  balances?: Balance[];
-  friend: User;
-}> = ({ balances, friend }) => {
-  const { t, displayName } = useTranslationWithUtils();
+export const SettleUp: React.FC<
+  React.PropsWithChildren<{
+    balances?: Balance[];
+    friend: User;
+  }>
+> = ({ children, balances, friend }) => {
+  const { t, displayName, getCurrencyHelpersCached } = useTranslationWithUtils();
   const { data } = useSession();
   const currentUser = data?.user;
 
@@ -38,22 +40,28 @@ export const SettleUp: React.FC<{
   const [balanceToSettle, setBalanceToSettle] = useState<Balance | undefined>(
     1 < balances.length ? undefined : balances[0],
   );
-  const [amount, setAmount] = useState<string>(
-    1 < balances.length ? '' : toUIString(BigMath.abs(balances[0]?.amount ?? 0n)),
+  const [amount, setAmount] = useState<bigint>(
+    1 < balances.length ? 0n : BigMath.abs(balances[0]?.amount ?? 0n),
+  );
+  const [amountStr, setAmountStr] = useState<string>(
+    getCurrencyHelpersCached(balanceToSettle?.currency ?? '').toUIString(amount),
   );
 
   const isCurrentUserPaying = 0 > (balanceToSettle?.amount ?? 0);
 
   function onSelectBalance(balance: Balance) {
     setBalanceToSettle(balance);
-    setAmount(toUIString(BigMath.abs(balance.amount)));
+    setAmount(BigMath.abs(balance.amount));
+    setAmountStr(
+      getCurrencyHelpersCached(balance.currency).toUIString(BigMath.abs(balance.amount)),
+    );
   }
 
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
   const utils = api.useUtils();
 
-  function saveExpense() {
-    if (!balanceToSettle || !amount || !parseFloat(amount) || !currentUser) {
+  const saveExpense = React.useCallback(() => {
+    if (!balanceToSettle || !amount || !currentUser) {
       return;
     }
 
@@ -61,16 +69,16 @@ export const SettleUp: React.FC<{
       {
         name: t('ui.settle_up_name'),
         currency: balanceToSettle.currency,
-        amount: toSafeBigInt(amount),
+        amount,
         splitType: SplitType.SETTLEMENT,
         participants: [
           {
             userId: currentUser.id,
-            amount: isCurrentUserPaying ? toSafeBigInt(amount) : -toSafeBigInt(amount),
+            amount: isCurrentUserPaying ? amount : -amount,
           },
           {
             userId: friend.id,
-            amount: isCurrentUserPaying ? -toSafeBigInt(amount) : toSafeBigInt(amount),
+            amount: isCurrentUserPaying ? -amount : amount,
           },
         ],
         paidBy: isCurrentUserPaying ? currentUser.id : friend.id,
@@ -87,70 +95,49 @@ export const SettleUp: React.FC<{
         },
       },
     );
-  }
+  }, [
+    balanceToSettle,
+    amount,
+    currentUser,
+    isCurrentUserPaying,
+    friend,
+    addExpenseMutation,
+    utils,
+    t,
+  ]);
+
+  const onCurrencyInputValueChange = React.useCallback(
+    ({ strValue, bigIntValue }: { strValue?: string; bigIntValue?: bigint }) => {
+      if (strValue !== undefined) {
+        setAmountStr(strValue);
+      }
+      if (bigIntValue !== undefined) {
+        setAmount(bigIntValue);
+      }
+    },
+    [],
+  );
+
+  const onBackClick = React.useCallback(() => {
+    if (balanceToSettle) {
+      setBalanceToSettle(undefined);
+    }
+  }, [balanceToSettle]);
 
   return (
     <AppDrawer
-      trigger={
-        <Button
-          size="sm"
-          className="flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500 px-3 text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 focus-visible:outline-hidden lg:w-[180px]"
-          disabled={!balances.length}
-        >
-          <HandCoins className="size-4" /> {t('actions.settle_up')}
-        </Button>
-      }
+      trigger={children}
       disableTrigger={!balances?.length}
-      leftAction={''}
-      leftActionOnClick={() => {
-        setBalanceToSettle(undefined);
-      }}
-      title=""
+      leftAction={t('actions.back')}
+      leftActionOnClick={onBackClick}
+      shouldCloseOnLeftAction={false}
+      title={balanceToSettle ? t('ui.settle_up_name') : t('ui.select_currency')}
       className="h-[70vh]"
-      actionTitle=""
+      actionTitle={t('actions.save')}
+      actionDisabled={!balanceToSettle || !amount}
+      actionOnClick={saveExpense}
       shouldCloseOnAction
     >
-      <div className="flex items-center justify-between px-2">
-        <div>
-          {balanceToSettle &&
-            (1 < balances.length ? (
-              <Button
-                size="sm"
-                variant="ghost"
-                className="text-cyan-500 lg:hidden"
-                onClick={() => setBalanceToSettle(undefined)}
-              >
-                {t('actions.back')}
-              </Button>
-            ) : (
-              <DrawerClose>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="text-cyan-500 lg:hidden"
-                  onClick={() => (1 < balances.length ? setBalanceToSettle(undefined) : null)}
-                >
-                  {t('actions.back')}
-                </Button>
-              </DrawerClose>
-            ))}
-        </div>
-        <div className="mt-4 mb-2 text-center">
-          {balanceToSettle ? t('ui.settle_up_name') : t('ui.select_currency')}
-        </div>
-        {balanceToSettle && (
-          <DrawerClose>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="mx-auto text-cyan-500 lg:hidden"
-              onClick={() => saveExpense()}
-            >
-              {t('actions.save')}
-            </Button>
-          </DrawerClose>
-        )}
-      </div>
       {!balanceToSettle ? (
         <div>
           {balances?.map((b) => (
@@ -177,45 +164,15 @@ export const SettleUp: React.FC<{
                 : t('ui.expense.statements.user_pays_you', { user: displayName(friend) })}
             </p>
           </div>
-          <div className="mt-3 flex items-center gap-2">
-            <p className="text-lg">{balanceToSettle.currency}</p>
-            <Input
-              type="number"
-              value={amount}
-              inputMode="decimal"
-              className="mx-auto w-[150px] text-lg"
-              onChange={(e) => setAmount(e.target.value)}
-            />
-          </div>
+          <CurrencyInput
+            currency={balanceToSettle.currency}
+            bigIntValue={amount}
+            strValue={amountStr}
+            className="mx-auto mt-4 w-[150px] text-center text-lg"
+            onValueChange={onCurrencyInputValueChange}
+          />
         </div>
       )}
-      <div className="mt-8 hidden items-center justify-center gap-4 px-2 lg:flex">
-        <div>
-          {balanceToSettle &&
-            (1 < balances.length ? (
-              <Button size="sm" variant="secondary" onClick={() => setBalanceToSettle(undefined)}>
-                {t('actions.back')}
-              </Button>
-            ) : (
-              <DrawerClose>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => (1 < balances.length ? setBalanceToSettle(undefined) : null)}
-                >
-                  {t('actions.back')}
-                </Button>
-              </DrawerClose>
-            ))}
-        </div>
-        {balanceToSettle && (
-          <DrawerClose>
-            <Button size="sm" className="mx-auto" onClick={() => saveExpense()}>
-              {t('actions.save')}
-            </Button>
-          </DrawerClose>
-        )}
-      </div>
     </AppDrawer>
   );
 };

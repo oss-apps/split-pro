@@ -1,5 +1,4 @@
 import { type GetServerSideProps } from 'next';
-import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
@@ -14,13 +13,14 @@ import { useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
   bankConnectionEnabled: boolean;
 }> = ({ user, isStorageConfigured, enableSendingInvites, bankConnectionEnabled }) => {
-  const { t } = useTranslation('add_page');
+  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const {
     setCurrentUser,
     setGroup,
@@ -105,7 +105,9 @@ const AddPage: NextPageWithUser<{
     }
     setPaidBy(expenseQuery.data.paidByUser);
     setCurrency(parseCurrencyCode(expenseQuery.data.currency));
-    setAmountStr((Number(expenseQuery.data.amount) / 100).toString());
+    setAmountStr(
+      getCurrencyHelpersCached(expenseQuery.data.currency).toUIString(expenseQuery.data.amount),
+    );
     setDescription(expenseQuery.data.name);
     setCategory(expenseQuery.data.category);
     setAmount(expenseQuery.data.amount);
@@ -138,6 +140,7 @@ const AddPage: NextPageWithUser<{
     setParticipants,
     setCronExpression,
     setFileKey,
+    getCurrencyHelpersCached,
   ]);
 
   return (

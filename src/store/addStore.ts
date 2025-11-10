@@ -349,6 +349,7 @@ export function calculateParticipantSplit(
       canSplitScreenClosed = amount === totalSplitShare;
 
       updatedParticipants = participants.map((p) => ({ ...p, amount: getSplitShare(p) }));
+
       break;
     case SplitType.ADJUSTMENT:
       const totalAdjustment = participants.reduce((acc, p) => acc + (getSplitShare(p) ?? 0n), 0n);
@@ -370,17 +371,19 @@ export function calculateParticipantSplit(
     return { ...p, amount: -(p.amount ?? 0n) };
   });
 
-  let penniesLeft = updatedParticipants.reduce((acc, p) => acc + (p.amount ?? 0n), 0n);
-  const participantsToPick = updatedParticipants.filter((p) => p.amount);
+  if (canSplitScreenClosed) {
+    let penniesLeft = updatedParticipants.reduce((acc, p) => acc + (p.amount ?? 0n), 0n);
+    const participantsToPick = updatedParticipants.filter((p) => p.amount);
 
-  if (0 < participantsToPick.length) {
-    shuffleArray(participantsToPick);
-    let i = 0;
-    while (0n !== penniesLeft) {
-      const p = participantsToPick[i % participantsToPick.length]!;
-      p.amount! -= BigMath.sign(penniesLeft);
-      penniesLeft -= BigMath.sign(penniesLeft);
-      i++;
+    if (0 < participantsToPick.length) {
+      shuffleArray(participantsToPick);
+      let i = 0;
+      while (0n !== penniesLeft) {
+        const p = participantsToPick[i % participantsToPick.length]!;
+        p.amount! -= BigMath.sign(penniesLeft);
+        penniesLeft -= BigMath.sign(penniesLeft);
+        i++;
+      }
     }
   }
 

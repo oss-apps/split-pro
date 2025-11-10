@@ -1,8 +1,8 @@
 import { type GroupBalance, type User } from '@prisma/client';
 import React from 'react';
-import { useTranslation } from 'next-i18next';
 
-import { BigMath, toUIString } from '~/utils/numbers';
+import { BigMath } from '~/utils/numbers';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 interface GroupMyBalanceProps {
   userId: number;
@@ -15,7 +15,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
   groupBalances = [],
   users = [],
 }) => {
-  const { t } = useTranslation();
+  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const userMap = users.reduce(
     (acc, user) => {
       acc[user.id] = user;
@@ -59,7 +59,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
             {youLent.map(([currency, amount], index, arr) => (
               <React.Fragment key={currency}>
                 <div className="flex gap-1 font-semibold">
-                  {currency} {toUIString(amount)}
+                  {getCurrencyHelpersCached(currency).toUIString(amount)}
                 </div>
                 {index < arr.length - 1 ? <span>+</span> : null}
               </React.Fragment>
@@ -73,7 +73,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
             {youOwe.map(([currency, amount], index, arr) => (
               <React.Fragment key={currency}>
                 <div className="flex gap-1 font-semibold">
-                  {currency} {toUIString(amount)}
+                  {getCurrencyHelpersCached(currency).toUIString(amount)}
                 </div>
                 {index < arr.length - 1 ? <span>+</span> : null}
               </React.Fragment>
@@ -101,7 +101,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
                       : t('ui.expense.statements.you_owe_friend', {
                           friend: friend?.name ?? '',
                         })}{' '}
-                    {toUIString(amount)} {currency}
+                    {getCurrencyHelpersCached(currency).toUIString(amount)}
                   </div>
                 ))}
               </div>

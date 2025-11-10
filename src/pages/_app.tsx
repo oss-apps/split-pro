@@ -10,6 +10,7 @@ import { Toaster } from 'sonner';
 import { appWithTranslation, useTranslation } from 'next-i18next';
 import i18nConfig from '@/next-i18next.config.js';
 import { ThemeProvider } from '~/components/ui/theme-provider';
+import { CurrencyHelpersProvider } from '~/contexts/CurrencyHelpersContext';
 import '~/styles/globals.css';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { env } from '~/env';
@@ -82,14 +83,16 @@ const MyApp: AppType<{ session: Session | null; baseUrl: string }> = ({
         <meta property="og:image" content={`${baseUrl}/og_banner.png`} />
       </Head>
       <SessionProvider session={session}>
-        <ThemeProvider attribute="class" defaultTheme="dark">
-          <Toaster toastOptions={toastOptions} />
-          {(Component as NextPageWithUser).auth ? (
-            <Auth pageProps={pageProps} Page={Component as NextPageWithUser} />
-          ) : (
-            <Component {...pageProps} />
-          )}{' '}
-        </ThemeProvider>
+        <CurrencyHelpersProvider>
+          <ThemeProvider attribute="class" defaultTheme="dark">
+            <Toaster toastOptions={toastOptions} />
+            {(Component as NextPageWithUser).auth ? (
+              <Auth pageProps={pageProps} Page={Component as NextPageWithUser} />
+            ) : (
+              <Component {...pageProps} />
+            )}{' '}
+          </ThemeProvider>
+        </CurrencyHelpersProvider>
       </SessionProvider>
     </main>
   );

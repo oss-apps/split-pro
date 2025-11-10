@@ -4,7 +4,7 @@ import { Download } from 'lucide-react';
 import React from 'react';
 
 import { Button } from '~/components/ui/button';
-import { toUIString } from '~/utils/numbers';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 interface ExportCSVProps {
   expenses?: (Expense & { expenseParticipants: ExpenseParticipant[] })[];
@@ -36,6 +36,8 @@ export const Export: React.FC<ExportCSVProps> = ({
     'Settlement',
   ];
 
+  const { getCurrencyHelpersCached } = useTranslationWithUtils('common');
+
   const exportToCSV = () => {
     const csvHeaders = headers.join(',');
     const csvData = expenses.map((expense) => {
@@ -45,18 +47,19 @@ export const Export: React.FC<ExportCSVProps> = ({
       );
 
       const isSettlement = expense.splitType === SplitType.SETTLEMENT;
+      const { parseToCleanString } = getCurrencyHelpersCached(expense.currency);
 
       return [
         expense.paidBy === currentUserId ? 'You' : friendName,
         expense.name,
         expense.category,
-        toUIString(expense?.amount),
+        parseToCleanString(expense?.amount),
         expense.splitType,
         format(new Date(expense.expenseDate), 'yyyy-MM-dd HH:mm:ss'),
         expense.currency,
-        youPaid && !isSettlement ? toUIString(yourExpense?.amount) : 0n,
-        !youPaid && !isSettlement ? toUIString(yourExpense?.amount) : 0n,
-        isSettlement ? toUIString(yourExpense?.amount) : 0n,
+        youPaid && !isSettlement ? parseToCleanString(yourExpense?.amount) : 0n,
+        !youPaid && !isSettlement ? parseToCleanString(yourExpense?.amount) : 0n,
+        isSettlement ? parseToCleanString(yourExpense?.amount) : 0n,
       ];
     });
 

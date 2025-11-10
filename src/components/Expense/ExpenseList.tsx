@@ -9,7 +9,6 @@ import {
   SETTLEUP_ICON as SettleUpIcon,
 } from '~/components/ui/categoryIcons';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
-import { toUIString } from '~/utils/numbers';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
@@ -59,7 +58,7 @@ export const ExpenseList: React.FC<{
 };
 
 const Expense: ExpenseComponent = ({ e, userId }) => {
-  const { displayName, toUIDate, t } = useTranslationWithUtils();
+  const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const router = useRouter();
   const { friendId } = router.query;
 
@@ -75,6 +74,8 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
   const amountStatementKey = `ui.expense.statements.${isYouPayer ? 'you' : 'user'}_${
     e.amount < 0n ? 'received_amount' : 'paid_amount'
   }`;
+
+  const { toUIString } = getCurrencyHelpersCached(e.currency);
 
   return (
     <>
@@ -103,7 +104,7 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
               {t(`ui.expense.statements.${youPaid ? 'you_lent' : 'you_owe'}`)}
             </div>
             <div className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}>
-              <span className="font-light">{e.currency}</span> {toUIString(yourExpenseAmount)}
+              {toUIString(yourExpenseAmount)}
             </div>
           </>
         ) : (
@@ -117,7 +118,9 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
 };
 
 const Settlement: ExpenseComponent = ({ e, userId }) => {
-  const { displayName, toUIDate, t } = useTranslationWithUtils();
+  const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
+
+  const { toUIString } = getCurrencyHelpersCached(e.currency);
 
   const receiverId = e.expenseParticipants.find((p) => p.userId !== e.paidBy)?.userId;
   const userDetails = api.user.getUserDetails.useQuery({ userId: receiverId! });
@@ -151,7 +154,7 @@ const Settlement: ExpenseComponent = ({ e, userId }) => {
 };
 
 const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
-  const { displayName, toUIDate, t } = useTranslationWithUtils();
+  const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
 
   const receiverId = e.expenseParticipants.find((p) => p.userId !== e.paidBy)?.userId;
   const userDetails = api.user.getUserDetails.useQuery({ userId: receiverId! });
@@ -164,9 +167,11 @@ const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
       <CurrencyConversionIcon className="size-5 text-gray-400" />
       <div>
         <p className="max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">
-          {/* @ts-ignore */}
-          {e.currency} {toUIString(e.amount)} ➡️ {e.conversionTo.currency} {/* @ts-ignore */}
-          {toUIString(e.conversionTo.amount)}
+          {getCurrencyHelpersCached(e.currency).toUIString(e.amount)} ➡️{' '}
+          {
+            /* @ts-ignore */
+            getCurrencyHelpersCached(e.conversionTo.currency).toUIString(e.conversionTo.amount)
+          }
         </p>
         <p className="flex text-center text-xs text-gray-500">
           {t('ui.expense.statements.for_users', {

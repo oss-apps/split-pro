@@ -15,7 +15,7 @@ export const CATEGORIES = {
   life: ['childcare', 'clothing', 'education', 'gifts', 'insurance', 'medical', 'taxes', 'other'],
   travel: ['bicycle', 'bus', 'train', 'car', 'fuel', 'hotel', 'parking', 'plane', 'taxi', 'other'],
   utilities: ['cleaning', 'electricity', 'gas', 'internet', 'trash', 'phone', 'water', 'other'],
-  general: ['general', 'other'],
+  general: ['other'],
 } as const satisfies Record<string, string[]>;
 
 export const DEFAULT_CATEGORY = 'general';

@@ -1,14 +1,10 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["relationJoins"]
+  previewFeatures = ["relationJoins", "views"]
 }
 
 datasource db {
   provider = "postgresql"
-  // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-  // Further reading:
-  // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-  // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
   url      = env("DATABASE_URL")
   schemas  = ["cron", "public"]
 }
@@ -19,12 +15,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? // @db.Text
-  access_token      String? // @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? // @db.Text
+  id_token          String?
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -46,27 +42,29 @@ model User {
   id                  Int                  @id @default(autoincrement())
   name                String?
   email               String?              @unique
-  obapiProviderId     String?
-  bankingId           String?
   emailVerified       DateTime?
   image               String?
   currency            String               @default("USD")
   preferredLanguage   String               @default("")
+  bankingId           String?
+  obapiProviderId     String?
   accounts            Account[]
-  sessions            Session[]
-  groups              Group[]
-  associatedGroups    GroupUser[]
-  expenseParticipants ExpenseParticipant[]
+  friendBalances      Balance[]            @relation("FriendBalance")
+  userBalances        Balance[]            @relation("UserBalance")
+  cachedBankData      CachedBankData[]     @relation("UserCachedBankData")
+  addedExpenses       Expense[]            @relation("AddedByUser")
+  deletedExpenses     Expense[]            @relation("DeletedByUser")
+  paidExpenses        Expense[]            @relation("PaidByUser")
+  updatedExpenses     Expense[]            @relation("UpdatedByUser")
   expenseNotes        ExpenseNote[]
-  userBalances        Balance[]            @relation(name: "UserBalance")
-  cachedBankData      CachedBankData[]     @relation(name: "UserCachedBankData")
-  friendBalances      Balance[]            @relation(name: "FriendBalance")
-  groupUserBalances   GroupBalance[]       @relation(name: "GroupUserBalance")
-  groupFriendBalances GroupBalance[]       @relation(name: "GroupFriendBalance")
-  paidExpenses        Expense[]            @relation(name: "PaidByUser")
-  addedExpenses       Expense[]            @relation(name: "AddedByUser")
-  deletedExpenses     Expense[]            @relation(name: "DeletedByUser")
-  updatedExpenses     Expense[]            @relation(name: "UpdatedByUser")
+  expenseParticipants ExpenseParticipant[]
+  groups              Group[]
+  groupFriendBalances GroupBalance[]       @relation("GroupFriendBalance")
+  groupUserBalances   GroupBalance[]       @relation("GroupUserBalance")
+  associatedGroups    GroupUser[]
+  sessions            Session[]
+  userBalanceViews    BalanceView[]        @relation("UserBalanceView")
+  friendBalanceViews  BalanceView[]        @relation("FriendBalanceView")
 
   @@schema("public")
 }
@@ -76,10 +74,10 @@ model CachedBankData {
   obapiProviderId String   @unique
   data            String
   userId          Int
-  user            User     @relation(name: "UserCachedBankData", fields: [userId], references: [id], onDelete: Cascade)
   lastFetched     DateTime
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  user            User     @relation("UserCachedBankData", fields: [userId], references: [id], onDelete: Cascade)
 
   @@schema("public")
 }
@@ -101,28 +99,29 @@ model Balance {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
   importedFromSplitwise Boolean  @default(false)
-  user                  User     @relation(name: "UserBalance", fields: [userId], references: [id], onDelete: Cascade)
-  friend                User     @relation(name: "FriendBalance", fields: [friendId], references: [id], onDelete: Cascade)
+  friend                User     @relation("FriendBalance", fields: [friendId], references: [id], onDelete: Cascade)
+  user                  User     @relation("UserBalance", fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, currency, friendId])
   @@schema("public")
 }
 
 model Group {
-  id               Int            @id @default(autoincrement())
-  publicId         String         @unique
-  name             String
-  userId           Int
-  defaultCurrency  String         @default("USD")
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  archivedAt       DateTime?
-  splitwiseGroupId String?        @unique
-  createdBy        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  groupUsers       GroupUser[]
-  expenses         Expense[]
-  groupBalances    GroupBalance[]
-  simplifyDebts    Boolean        @default(false)
+  id                Int            @id @default(autoincrement())
+  publicId          String         @unique
+  name              String
+  userId            Int
+  defaultCurrency   String         @default("USD")
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  splitwiseGroupId  String?        @unique
+  simplifyDebts     Boolean        @default(false)
+  archivedAt        DateTime?
+  expenses          Expense[]
+  createdBy         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  groupBalances     GroupBalance[]
+  groupUsers        GroupUser[]
+  groupBalanceViews BalanceView[]
 
   @@schema("public")
 }
@@ -130,8 +129,8 @@ model Group {
 model GroupUser {
   groupId Int
   userId  Int
-  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([groupId, userId])
   @@schema("public")
@@ -144,28 +143,15 @@ model GroupBalance {
   firendId  Int
   amount    BigInt
   updatedAt DateTime @updatedAt
+  friend    User     @relation("GroupFriendBalance", fields: [firendId], references: [id], onDelete: Cascade)
   group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  user      User     @relation(name: "GroupUserBalance", fields: [userId], references: [id], onDelete: Cascade)
-  friend    User     @relation(name: "GroupFriendBalance", fields: [firendId], references: [id], onDelete: Cascade)
+  user      User     @relation("GroupUserBalance", fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([groupId, currency, firendId, userId])
   @@schema("public")
 }
 
-enum SplitType {
-  EQUAL
-  PERCENTAGE
-  EXACT
-  SHARE
-  ADJUSTMENT
-  SETTLEMENT
-  CURRENCY_CONVERSION
-
-  @@schema("public")
-}
-
 model Expense {
-  id                  String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   paidBy              Int
   addedBy             Int
   name                String
@@ -181,19 +167,20 @@ model Expense {
   deletedAt           DateTime?
   deletedBy           Int?
   updatedBy           Int?
-  otherConversion     String?              @unique @db.Uuid
-  recurrenceId        Int?
-  group               Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  paidByUser          User                 @relation(name: "PaidByUser", fields: [paidBy], references: [id], onDelete: Cascade)
-  addedByUser         User                 @relation(name: "AddedByUser", fields: [addedBy], references: [id], onDelete: Cascade)
-  deletedByUser       User?                @relation(name: "DeletedByUser", fields: [deletedBy], references: [id], onDelete: Cascade)
-  updatedByUser       User?                @relation(name: "UpdatedByUser", fields: [updatedBy], references: [id], onDelete: SetNull)
-  conversionTo        Expense?             @relation(name: "CurrencyConversion", fields: [otherConversion], references: [id], onDelete: Cascade)
-  conversionFrom      Expense?             @relation(name: "CurrencyConversion")
-  recurrence          ExpenseRecurrence?   @relation(fields: [recurrenceId], references: [id], onDelete: Cascade)
-  expenseParticipants ExpenseParticipant[]
-  expenseNotes        ExpenseNote[]
   transactionId       String?
+  recurrenceId        Int?
+  id                  String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  otherConversion     String?              @unique @db.Uuid
+  addedByUser         User                 @relation("AddedByUser", fields: [addedBy], references: [id], onDelete: Cascade)
+  deletedByUser       User?                @relation("DeletedByUser", fields: [deletedBy], references: [id], onDelete: Cascade)
+  group               Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  conversionTo        Expense?             @relation("CurrencyConversion", fields: [otherConversion], references: [id], onDelete: Cascade)
+  conversionFrom      Expense?             @relation("CurrencyConversion")
+  paidByUser          User                 @relation("PaidByUser", fields: [paidBy], references: [id], onDelete: Cascade)
+  recurrence          ExpenseRecurrence?   @relation(fields: [recurrenceId], references: [id], onDelete: Cascade)
+  updatedByUser       User?                @relation("UpdatedByUser", fields: [updatedBy], references: [id])
+  expenseNotes        ExpenseNote[]
+  expenseParticipants ExpenseParticipant[]
 
   @@index([groupId])
   @@index([paidBy])
@@ -201,11 +188,11 @@ model Expense {
 }
 
 model ExpenseParticipant {
-  expenseId String  @db.Uuid
   userId    Int
   amount    BigInt
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expenseId String  @db.Uuid
   expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([expenseId, userId])
   @@schema("public")
@@ -213,10 +200,10 @@ model ExpenseParticipant {
 
 model ExpenseNote {
   id          String   @id @default(cuid())
-  expenseId   String   @db.Uuid
   note        String
   createdById Int
   createdAt   DateTime @default(now())
+  expenseId   String   @db.Uuid
   createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
   expense     Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
 
@@ -253,16 +240,15 @@ model PushNotification {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model job {
-  jobid    BigInt  @id @default(autoincrement())
-  schedule String
-  command  String
-  nodename String  @default("localhost")
-  nodeport Int     @default(dbgenerated("inet_server_port()"))
-  database String  @default(dbgenerated("current_database()"))
-  username String  @default(dbgenerated("CURRENT_USER"))
-  active   Boolean @default(true)
-  jobname  String?
-
+  jobid      BigInt             @id @default(autoincrement())
+  schedule   String
+  command    String
+  nodename   String             @default("localhost")
+  nodeport   Int                @default(dbgenerated("inet_server_port()"))
+  database   String             @default(dbgenerated("current_database()"))
+  username   String             @default(dbgenerated("CURRENT_USER"))
+  active     Boolean            @default(true)
+  jobname    String?
   recurrence ExpenseRecurrence? @relation()
   runDetails job_run_details[]  @relation("job_run_details")
 
@@ -286,4 +272,34 @@ model job_run_details {
   job job? @relation("job_run_details", fields: [jobid], references: [jobid], onDelete: Cascade)
 
   @@schema("cron")
+}
+
+/// Unified balance view that calculates balances from expenses
+/// Replaces both Balance and GroupBalance tables
+view BalanceView {
+  userId    Int
+  friendId  Int
+  groupId   Int?
+  currency  String
+  amount    BigInt
+  createdAt DateTime
+  updatedAt DateTime
+
+  user   User   @relation("UserBalanceView", fields: [userId], references: [id], onDelete: Cascade)
+  friend User   @relation("FriendBalanceView", fields: [friendId], references: [id], onDelete: Cascade)
+  group  Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@schema("public")
+}
+
+enum SplitType {
+  EQUAL
+  PERCENTAGE
+  EXACT
+  SHARE
+  ADJUSTMENT
+  SETTLEMENT
+  CURRENCY_CONVERSION
+
+  @@schema("public")
 }

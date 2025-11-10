@@ -141,7 +141,7 @@ export const EXPENSE_FREQUENCY_BY_GROUP_TYPE = {
  * Direct expense frequency per user pair
  * How many expenses are generated for each connected user pair
  */
-export const DIRECT_EXPENSE_FREQUENCY_PER_PAIR = [2, 10] as const;
+export const DIRECT_EXPENSE_FREQUENCY_PER_PAIR = [2, 6] as const;
 
 /**
  * Probability of creating a direct expense between two random users

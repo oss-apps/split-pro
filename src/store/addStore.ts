@@ -7,6 +7,7 @@ import { type CurrencyCode } from '~/lib/currency';
 import type { TransactionAddInputModel } from '~/types';
 import { shuffleArray } from '~/utils/array';
 import { BigMath } from '~/utils/numbers';
+import { cyrb128, splitmix32 } from '~/utils/random';
 
 export type Participant = User & { amount?: bigint };
 export type SplitShares = Record<number, Record<SplitType, bigint | undefined>>;
@@ -374,9 +375,17 @@ export function calculateParticipantSplit(
   if (canSplitScreenClosed) {
     let penniesLeft = updatedParticipants.reduce((acc, p) => acc + (p.amount ?? 0n), 0n);
     const participantsToPick = updatedParticipants.filter((p) => p.amount);
+    const seed =
+      cyrb128(
+        participantsToPick
+          .map((p) => p.amount)
+          .toSorted((a, b) => Number((a ?? 0n) - (b ?? 0n)))
+          .join('-'),
+      )[0] ?? 0;
+    const random = splitmix32(seed);
 
     if (0 < participantsToPick.length) {
-      shuffleArray(participantsToPick);
+      shuffleArray(participantsToPick, random);
       let i = 0;
       while (0n !== penniesLeft) {
         const p = participantsToPick[i % participantsToPick.length]!;

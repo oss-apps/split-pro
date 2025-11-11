@@ -40,7 +40,7 @@ const CurrencyInput: React.FC<
       }}
       onChange={(e) => {
         const rawValue = e.target.value;
-        const strValue = sanitizeInput(rawValue, allowNegative);
+        const strValue = sanitizeInput(rawValue, allowNegative, true);
         const bigIntValue = toSafeBigInt(strValue, allowNegative);
         onValueChange({ strValue, bigIntValue });
       }}

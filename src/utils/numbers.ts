@@ -23,6 +23,7 @@ export const getCurrencyHelpers = ({
     formatter.formatToParts(11111111).find(({ type }) => type === 'group')?.value ?? '';
   const decimalSeparator =
     formatter.formatToParts(1.1).find(({ type }) => type === 'decimal')?.value ?? '.';
+  const alternativeDecimalSeparator = decimalSeparator === '.' ? ',' : '.';
   const literalSeparator =
     formatter.formatToParts(1.1).find(({ type }) => type === 'literal')?.value ?? '';
   const decimalMultiplier = parseInt(`1${'0'.repeat(decimalDigits)}`, 10);
@@ -78,7 +79,7 @@ export const getCurrencyHelpers = ({
   };
 
   /* Sanitize input by allowing only digits, negative sign, and one decimal separator */
-  const sanitizeInput = (input: string, signed = false) => {
+  const sanitizeInput = (input: string, signed = false, alternativeDecimal = false) => {
     let cleaned = '';
     let hasDecimalSeparator = false;
     let hasNegativeSign = false;
@@ -87,6 +88,16 @@ export const getCurrencyHelpers = ({
       //allowing only one separator
       if (letter === decimalSeparator && !hasDecimalSeparator) {
         cleaned += letter;
+        hasDecimalSeparator = true;
+        return;
+      }
+      if (
+        alternativeDecimal &&
+        letter === alternativeDecimalSeparator &&
+        !hasDecimalSeparator &&
+        !input.includes(decimalSeparator)
+      ) {
+        cleaned += decimalSeparator;
         hasDecimalSeparator = true;
         return;
       }

@@ -334,7 +334,7 @@ export const expenseRouter = createTRPCRouter({
               user: true,
             },
           },
-          expenseNotes: true,
+          expenseComments: true,
           addedByUser: true,
           paidByUser: true,
           deletedByUser: true,

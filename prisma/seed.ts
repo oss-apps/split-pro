@@ -1,9 +1,11 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, SplitType } from '@prisma/client';
 
 import { createExpense, deleteExpense, editExpense } from '~/server/api/services/splitService';
 import { dummyData } from '~/dummies';
 import { calculateParticipantSplit, Participant } from '~/store/addStore';
 import assert from 'node:assert';
+import { BigMath } from '~/utils/numbers';
+import { DEFAULT_CATEGORY } from '~/lib/category';
 
 const prisma = new PrismaClient();
 
@@ -122,6 +124,52 @@ async function deleteExpenses() {
   return prisma.expense.findMany({ include: { expenseParticipants: true } });
 }
 
+async function settleBalances() {
+  for (let i = 0; i < dummyData.balancesToSettle.length; i++) {
+    const [userId, friendId, groupId, currency] = dummyData.balancesToSettle[i]!;
+    const groupBalance = await prisma.groupBalance.findFirst({
+      where: {
+        userId,
+        firendId: friendId,
+        groupId,
+        currency,
+      },
+    });
+
+    const sender = 0n > groupBalance!.amount ? friendId : userId;
+    const receiver = 0n > groupBalance!.amount ? userId : friendId;
+
+    await createExpense(
+      {
+        name: 'Settle up',
+        amount: BigMath.abs(groupBalance!.amount),
+        currency,
+        splitType: SplitType.SETTLEMENT,
+        groupId,
+        participants: [
+          {
+            userId: sender,
+            amount: groupBalance!.amount,
+          },
+          {
+            userId: receiver,
+            amount: -groupBalance!.amount,
+          },
+        ],
+        paidBy: sender,
+        category: DEFAULT_CATEGORY,
+      },
+      sender,
+    );
+
+    if ((i + 1) % 100 === 0) {
+      console.log(`Settled ${i + 1} / ${dummyData.balancesToSettle.length} balances`);
+    }
+  }
+
+  console.log('Finished settling balances');
+}
+
 async function main() {
   // await prisma.user.deleteMany();
   // await prisma.expense.deleteMany();
@@ -134,6 +182,7 @@ async function main() {
   await createExpenses();
   await editExpenses();
   await deleteExpenses();
+  await settleBalances();
 }
 
 main()

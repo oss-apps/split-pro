@@ -20,23 +20,15 @@ import { isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { createRecurringExpenseJob } from '../services/scheduleService';
+import { getCumulatedBalances, getUserBalances } from '../services/balanceService';
 
 export const expenseRouter = createTRPCRouter({
   getBalances: protectedProcedure.query(async ({ ctx }) => {
-    const balancesRaw = await db.balance.findMany({
-      where: {
-        userId: ctx.session.user.id,
-      },
-      orderBy: {
-        amount: 'desc',
-      },
-      include: {
-        friend: true,
-      },
-    });
+    const balancesRaw = await getUserBalances(ctx.session.user.id);
 
     const balances = balancesRaw
       .reduce<((typeof balancesRaw)[number] & { hasMore?: boolean })[]>((acc, current) => {
+        // @ts-ignore This will be resolved once we move away from balance tables
         const existing = acc.findIndex((item) => item.friendId === current.friendId);
         if (-1 === existing) {
           acc.push(current);
@@ -54,15 +46,7 @@ export const expenseRouter = createTRPCRouter({
       }, [])
       .sort((a, b) => Number(BigMath.abs(b.amount) - BigMath.abs(a.amount)));
 
-    const cumulatedBalances = await db.balance.groupBy({
-      by: ['currency'],
-      _sum: {
-        amount: true,
-      },
-      where: {
-        userId: ctx.session.user.id,
-      },
-    });
+    const cumulatedBalances = await getCumulatedBalances(ctx.session.user.id);
 
     const youOwe: { currency: string; amount: bigint }[] = [];
     const youGet: { currency: string; amount: bigint }[] = [];
@@ -76,7 +60,12 @@ export const expenseRouter = createTRPCRouter({
       }
     }
 
-    return { balances, cumulatedBalances, youOwe, youGet };
+    return {
+      balances,
+      cumulatedBalances,
+      youOwe,
+      youGet,
+    };
   }),
 
   addOrEditExpense: protectedProcedure
@@ -89,7 +78,7 @@ export const expenseRouter = createTRPCRouter({
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
       }
 
-      if (input.groupId) {
+      if (input.groupId !== null) {
         const group = await db.group.findUnique({
           where: { id: input.groupId },
           select: { archivedAt: true },
@@ -246,6 +235,16 @@ export const expenseRouter = createTRPCRouter({
               },
             },
             {
+              OR: [
+                {
+                  paidBy: ctx.session.user.id,
+                },
+                {
+                  paidBy: input.friendId,
+                },
+              ],
+            },
+            {
               deletedBy: null,
             },
             {
@@ -362,7 +361,7 @@ export const expenseRouter = createTRPCRouter({
         },
       });
 
-      if (expense?.groupId) {
+      if (expense && expense.groupId !== null) {
         const missingGroupMembers = await db.group.findUnique({
           where: {
             id: expense.groupId,
@@ -503,7 +502,7 @@ export const expenseRouter = createTRPCRouter({
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Expense not found' });
       }
 
-      if (expense.groupId) {
+      if (expense.groupId !== null) {
         const group = await db.group.findUnique({
           where: { id: expense.groupId },
           select: { archivedAt: true },

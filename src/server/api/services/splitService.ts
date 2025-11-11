@@ -8,6 +8,7 @@ import type { CreateExpense } from '~/types/expense.types';
 import { sendExpensePushNotification } from './notificationService';
 import { getCurrencyHelpers } from '~/utils/numbers';
 import { isCurrencyCode } from '~/lib/currency';
+import { assertBalancesMatch, getTotalBalances } from './balanceService';
 
 export async function joinGroup(userId: number, publicGroupId: string) {
   const group = await db.group.findUnique({
@@ -88,7 +89,7 @@ export async function createExpense(
       return;
     }
 
-    if (groupId) {
+    if (groupId !== null) {
       operations.push(
         db.groupBalance.upsert({
           where: {
@@ -278,7 +279,7 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
         }),
       );
 
-      if (expense.groupId) {
+      if (expense.groupId !== null) {
         operations.push(
           db.groupBalance.upsert({
             where: {
@@ -445,7 +446,7 @@ export async function editExpense(
       );
 
       // Reverse group balances if it's a group expense
-      if (expense.groupId) {
+      if (expense.groupId !== null) {
         operations.push(
           db.groupBalance.update({
             where: {
@@ -568,7 +569,7 @@ export async function editExpense(
     );
 
     // Add new group balances if it's a group expense
-    if (expense.groupId) {
+    if (expense.groupId !== null) {
       operations.push(
         db.groupBalance.upsert({
           where: {
@@ -681,16 +682,28 @@ async function updateGroupExpenseForIfBalanceIsZero(
 }
 
 export async function getCompleteFriendsDetails(userId: number) {
-  const balances = await db.balance.findMany({
-    where: {
-      userId,
-    },
-    include: {
-      friend: true,
-    },
-  });
+  const [oldBalances, viewBalances] = await Promise.all([
+    db.balance.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        friend: true,
+      },
+    }),
+    db.balanceView.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        friend: true,
+      },
+    }),
+  ]);
 
-  const friends = balances.reduce(
+  assertBalancesMatch(oldBalances, getTotalBalances(viewBalances), 'getCompleteFriendsDetails');
+
+  const friends = oldBalances.reduce(
     (acc, balance) => {
       const { friendId } = balance;
       acc[friendId] ??= {
@@ -735,8 +748,15 @@ export async function getCompleteGroupDetails(userId: number) {
     include: {
       groupUsers: true,
       groupBalances: true,
+      groupBalanceViews: true,
     },
   });
+
+  assertBalancesMatch(
+    groups.flatMap((g) => g.groupBalances),
+    groups.flatMap((g) => g.groupBalanceViews),
+    'getCompleteGroupDetails',
+  );
 
   return groups;
 }

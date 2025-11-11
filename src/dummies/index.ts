@@ -3,6 +3,7 @@ import {
   generateAllExpenses,
   generateExpenseEdits,
   generateExpensesToDelete,
+  generatePairsToSettle,
 } from './expenseGenerator';
 import { generateUsers } from './userGenerator';
 import { generateGroups } from './groupGenerator';
@@ -22,6 +23,7 @@ const dummyGroups = generateGroups(dummyUsers);
 const dummyExpenses = generateAllExpenses(dummyUsers, dummyGroups);
 const dummyExpenseEdits = generateExpenseEdits(dummyExpenses);
 const dummyExpensesToDelete = generateExpensesToDelete(dummyExpenses);
+const dummyBalancesToSettle = generatePairsToSettle(dummyExpenses, dummyExpensesToDelete);
 
 export const dummyData = {
   users: dummyUsers,
@@ -29,6 +31,7 @@ export const dummyData = {
   expenses: dummyExpenses,
   expenseEdits: dummyExpenseEdits,
   expensesToDelete: dummyExpensesToDelete,
+  balancesToSettle: dummyBalancesToSettle,
   seed: SEED,
 };
 

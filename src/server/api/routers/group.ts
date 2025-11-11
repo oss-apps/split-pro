@@ -6,6 +6,7 @@ import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 
 import { recalculateGroupBalances } from '../services/splitService';
+import { assertBalancesMatch, getGroupBalances } from '../services/balanceService';
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
@@ -65,6 +66,10 @@ export const groupRouter = createTRPCRouter({
               groupBalances: {
                 where: { userId: ctx.session.user.id },
               },
+              groupBalanceViews: {
+                where: { userId: ctx.session.user.id, NOT: { groupId: null } },
+              },
+              // We can sort by group balance view instead
               expenses: {
                 orderBy: {
                   createdAt: 'desc',
@@ -75,6 +80,12 @@ export const groupRouter = createTRPCRouter({
           },
         },
       });
+
+      assertBalancesMatch(
+        groups.flatMap((g) => g.group.groupBalances),
+        groups.flatMap((g) => g.group.groupBalanceViews),
+        'getAllGroupsWithBalances',
+      );
 
       const sortedGroupsByLatestExpense = groups.sort((a, b) => {
         const aDate = a.group.expenses[0]?.createdAt ?? new Date(0);
@@ -133,8 +144,15 @@ export const groupRouter = createTRPCRouter({
           },
         },
         groupBalances: true,
+        groupBalanceViews: true,
       },
     });
+
+    assertBalancesMatch(
+      group?.groupBalances || [],
+      group?.groupBalanceViews || [],
+      'getGroupDetails',
+    );
 
     if (group?.simplifyDebts) {
       group.groupBalances = simplifyDebts(group.groupBalances);
@@ -256,12 +274,9 @@ export const groupRouter = createTRPCRouter({
         });
       }
 
-      const groupBalances = await ctx.db.groupBalance.findMany({
-        where: {
-          groupId: input.groupId,
-        },
-      });
+      const groupBalances = await getGroupBalances(input.groupId);
 
+      // @ts-ignore This will be resolved once we move away from balance tables
       const finalGroupBalances = group.simplifyDebts ? simplifyDebts(groupBalances) : groupBalances;
 
       if (finalGroupBalances.some((b) => b.userId === userId && 0n !== b.amount)) {
@@ -321,8 +336,15 @@ export const groupRouter = createTRPCRouter({
         },
         include: {
           groupBalances: true,
+          groupBalanceViews: true,
         },
       });
+
+      assertBalancesMatch(
+        group?.groupBalances || [],
+        group?.groupBalanceViews || [],
+        'toggleArchive',
+      );
 
       if (!group) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
@@ -383,8 +405,15 @@ export const groupRouter = createTRPCRouter({
         },
         include: {
           groupBalances: true,
+          groupBalanceViews: true,
         },
       });
+
+      assertBalancesMatch(
+        group?.groupBalances || [],
+        group?.groupBalanceViews || [],
+        'deleteGroup',
+      );
 
       if (group?.userId !== ctx.session.user.id) {
         throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Only creator can delete the group' });

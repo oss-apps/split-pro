@@ -31,13 +31,6 @@ export function generateSeedStatistics(
       if (userGroupsList) {
         userGroupsList.push(groupIdx);
       }
-
-      // Connect this user to all other members in the group
-      memberIds.forEach((otherId) => {
-        if (userId !== otherId) {
-          connections.get(userId)?.add(otherId);
-        }
-      });
     });
   });
 
@@ -46,6 +39,11 @@ export function generateSeedStatistics(
     expense.participants.forEach((participant) => {
       const userId = typeof participant.id === 'string' ? parseInt(participant.id) : participant.id;
       userExpenses.set(userId, (userExpenses.get(userId) ?? 0) + 1);
+      if (userId === expense.paidBy.id) {
+        return;
+      }
+      connections.get(expense.paidBy.id)?.add(userId);
+      connections.get(userId)?.add(expense.paidBy.id);
     });
   });
 

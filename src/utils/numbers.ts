@@ -79,7 +79,7 @@ export const getCurrencyHelpers = ({
   };
 
   /* Sanitize input by allowing only digits, negative sign, and one decimal separator */
-  const sanitizeInput = (input: string, signed = false) => {
+  const sanitizeInput = (input: string, signed = false, alternativeDecimal = false) => {
     let cleaned = '';
     let hasDecimalSeparator = false;
     let hasNegativeSign = false;
@@ -92,6 +92,7 @@ export const getCurrencyHelpers = ({
         return;
       }
       if (
+        alternativeDecimal &&
         letter === alternativeDecimalSeparator &&
         !hasDecimalSeparator &&
         !input.includes(decimalSeparator)

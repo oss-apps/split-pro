@@ -54,8 +54,8 @@
     "built_by": "Développé par"
   },
   "hero": {
-    "add_expense_button": "Ajouter une dépense",
-    "star_github_button": "Mettez-nous une étoile sur GitHub",
+    "add_expense_button": "Nouvelle dépense",
+    "star_github_button": "Soutiens-nous sur GitHub",
     "subtitle_link": "open source",
     "subtitle_part1": "Une alternative",
     "subtitle_part2": "à Splitwise",
@@ -63,8 +63,8 @@
     "title_part1": "Répartissez vos dépenses entre ami⋅es"
   },
   "meta": {
-    "description": "SplitPro : partagez vos dépenses entre ami⋅es. C'est gratuit !",
-    "title": "SplitPro : partagez vos dépenses entre ami⋅es. C'est gratuit !"
+    "description": "SplitPro : partagez gratuitement vos dépenses entre ami⋅es",
+    "title": "SplitPro : partagez gratuitement vos dépenses entre ami⋅es"
   },
   "nav": {
     "app_name": "SplitPro",

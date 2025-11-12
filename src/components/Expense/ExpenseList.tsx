@@ -42,7 +42,7 @@ export const ExpenseList: React.FC<{
   let lastDate: Date | null = null;
 
   return (
-    <>
+    <div className="flex flex-col gap-3">
       {expenses.map((e) => {
         const currentDate = e.expenseDate;
         let isFirstOfMonth = false;
@@ -84,7 +84,7 @@ export const ExpenseList: React.FC<{
           </React.Fragment>
         );
       })}
-    </>
+    </div>
   );
 };
 

@@ -49,13 +49,7 @@ async function createExpenses() {
         {
           ...expense,
           paidBy: expense.paidBy.id,
-          participants: calculateParticipantSplit(
-            expense.amount,
-            expense.participants as Participant[],
-            expense.splitType,
-            splitShares,
-            expense.paidBy as Participant,
-          ).participants.map((p) => ({
+          participants: calculateParticipantSplit(expense as any).participants.map((p) => ({
             userId: p.id,
             amount: p.amount ?? 0n,
           })),
@@ -81,13 +75,7 @@ async function editExpenses() {
           ...expense,
           expenseId: idLookup.get(idx),
           paidBy: expense.paidBy.id,
-          participants: calculateParticipantSplit(
-            expense.amount,
-            expense.participants as Participant[],
-            expense.splitType,
-            splitShares,
-            expense.paidBy as Participant,
-          ).participants.map((p) => ({
+          participants: calculateParticipantSplit(expense as any).participants.map((p) => ({
             userId: p.id,
             amount: p.amount ?? 0n,
           })),

@@ -60,7 +60,7 @@ export function generateSplitDescription(
   if (selectedParticipants.length === 1) {
     const beneficiary = selectedParticipants[0];
     const beneficiaryName = displayName(t, beneficiary as User, currentUser.id) || 'someone';
-    return `${t('ui.expense.user.paid')} ${t('ui.expense.for')} ${beneficiaryName}`;
+    return t('ui.expense.statements.paid_for_beneficiary', { beneficiary: beneficiaryName });
   }
 
   // Case 2: Splitting with multiple people

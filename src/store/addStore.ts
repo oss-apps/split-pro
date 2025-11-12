@@ -96,30 +96,10 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
       set((s) => {
         const isNegative = realAmount < 0n;
         const amount = BigMath.abs(realAmount);
-        return {
-          amount,
-          isNegative,
-          ...calculateParticipantSplit(
-            amount,
-            s.participants,
-            s.splitType,
-            s.splitShares,
-            s.paidBy,
-          ),
-        };
+        return calculateParticipantSplit({ ...s, isNegative, amount });
       }),
     setAmountStr: (amountStr) => set({ amountStr }),
-    setSplitType: (splitType) =>
-      set((state) => ({
-        splitType,
-        ...calculateParticipantSplit(
-          state.amount,
-          state.participants,
-          splitType,
-          state.splitShares,
-          state.paidBy,
-        ),
-      })),
+    setSplitType: (splitType) => set((state) => calculateParticipantSplit({ ...state, splitType })),
     setSplitShare: (splitType, userId, share) =>
       set((state) => {
         const splitShares: SplitShares = {
@@ -130,16 +110,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
           },
         } as SplitShares;
 
-        return {
-          ...calculateParticipantSplit(
-            state.amount,
-            state.participants,
-            state.splitType,
-            splitShares,
-            state.paidBy,
-          ),
-          splitShares,
-        };
+        return calculateParticipantSplit({ ...state, splitShares });
       }),
     setGroup: (group) => {
       set({ group });
@@ -155,16 +126,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
           participants.push({ ...user });
           splitShares[user.id] = initSplitShares();
         }
-        return {
-          splitShares,
-          ...calculateParticipantSplit(
-            state.amount,
-            participants,
-            state.splitType,
-            splitShares,
-            state.paidBy,
-          ),
-        };
+        return calculateParticipantSplit({ ...state, participants, splitShares });
       }),
     setParticipants: (participants, splitType) =>
       set((state) => {
@@ -183,17 +145,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         } else {
           splitType = SplitType.EQUAL;
         }
-        return {
-          splitType,
-          splitShares,
-          ...calculateParticipantSplit(
-            state.amount,
-            participants,
-            splitType,
-            splitShares,
-            state.paidBy,
-          ),
-        };
+        return calculateParticipantSplit({ ...state, participants, splitType, splitShares });
       }),
     removeLastParticipant: () => {
       set((state) => {
@@ -209,16 +161,11 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         const newParticipants = [...state.participants];
         const { id } = newParticipants.pop()!;
         const { [id]: _, ...rest } = state.splitShares;
-        return {
-          ...calculateParticipantSplit(
-            state.amount,
-            newParticipants,
-            state.splitType,
-            rest,
-            state.paidBy,
-          ),
+        return calculateParticipantSplit({
+          ...state,
+          participants: newParticipants,
           splitShares: rest,
-        };
+        });
       });
     },
     removeParticipant: (userId) => {
@@ -231,26 +178,17 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
 
         const newParticipants = state.participants.filter((p) => p.id !== userId);
         const { [userId]: _, ...rest } = state.splitShares;
-        return {
-          ...calculateParticipantSplit(
-            state.amount,
-            newParticipants,
-            state.splitType,
-            rest,
-            state.paidBy,
-          ),
+        return calculateParticipantSplit({
+          ...state,
+          participants: newParticipants,
           splitShares: rest,
-        };
+        });
       });
     },
     setCurrency: (currency) => set({ currency }),
     setCategory: (category) => set({ category }),
     setNameOrEmail: (nameOrEmail) => set({ nameOrEmail, showFriends: 0 < nameOrEmail.length }),
-    setPaidBy: (paidBy) =>
-      set((s) => ({
-        paidBy,
-        ...calculateParticipantSplit(s.amount, s.participants, s.splitType, s.splitShares, paidBy),
-      })),
+    setPaidBy: (paidBy) => set((state) => calculateParticipantSplit({ ...state, paidBy })),
     setCurrentUser: (currentUser) =>
       set((s) => {
         const cUser = s.participants.find((p) => p.id === currentUser.id);
@@ -300,16 +238,11 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   },
 }));
 
-export function calculateParticipantSplit(
-  amount: bigint,
-  participants: Participant[],
-  splitType: SplitType,
-  splitShares: SplitShares,
-  paidBy?: Participant,
-) {
+export function calculateParticipantSplit(state: AddExpenseState) {
+  const { amount, participants, splitType, splitShares, paidBy, expenseDate } = state;
   let canSplitScreenClosed = true;
   if (0n === amount) {
-    return { participants, canSplitScreenClosed };
+    return { ...state, canSplitScreenClosed };
   }
 
   let updatedParticipants = participants;
@@ -377,10 +310,10 @@ export function calculateParticipantSplit(
     const participantsToPick = updatedParticipants.filter((p) => p.amount);
     const seed =
       cyrb128(
-        participantsToPick
+        `${participantsToPick
           .map((p) => p.amount)
           .toSorted((a, b) => Number((a ?? 0n) - (b ?? 0n)))
-          .join('-'),
+          .join('-')}-${new Intl.DateTimeFormat('en').format(expenseDate)}`,
       )[0] ?? 0;
     const random = splitmix32(seed);
 
@@ -396,7 +329,7 @@ export function calculateParticipantSplit(
     }
   }
 
-  return { participants: updatedParticipants, canSplitScreenClosed };
+  return { ...state, participants: updatedParticipants, canSplitScreenClosed };
 }
 
 export const initSplitShares = (): Record<SplitType, undefined> =>

@@ -134,15 +134,13 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 disabled={!expenses.data || 0 === expenses.data.length}
               />
             </div>
-            <Separator />
-            <div className="mx-4 mt-4 flex flex-col gap-3">
-              <ExpenseList
-                expenses={expenses.data}
-                contactId={_friendId}
-                isLoading={expenses.isPending}
-                userId={user.id}
-              />
-            </div>
+            <Separator className="mt-4" />
+            <ExpenseList
+              expenses={expenses.data}
+              contactId={_friendId}
+              isLoading={expenses.isPending}
+              userId={user.id}
+            />
           </div>
         )}
       </MainLayout>

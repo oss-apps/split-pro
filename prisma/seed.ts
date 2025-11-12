@@ -44,18 +44,21 @@ const idLookup: string[] = [];
 
 async function createExpenses() {
   for (let i = 0; i < dummyData.expenses.length; i++) {
-    const { splitShares, ...expense } = dummyData.expenses[i]!;
+    const { splitShares, amount, paidBy, participants, splitType, ...expense } =
+      dummyData.expenses[i]!;
     const res = await createExpense(
       {
         ...expense,
-        paidBy: expense.paidBy.id,
-        participants: calculateParticipantSplit(
-          expense.amount,
-          expense.participants as Participant[],
-          expense.splitType,
+        paidBy: paidBy.id,
+        amount,
+        splitType,
+        participants: calculateParticipantSplit({
+          amount,
+          participants,
+          splitType,
           splitShares,
-          expense.paidBy as Participant,
-        ).participants.map((p) => ({
+          paidBy,
+        } as any).participants.map((p) => ({
           userId: p.id,
           amount: p.amount ?? 0n,
         })),
@@ -77,20 +80,23 @@ async function createExpenses() {
 
 async function editExpenses() {
   for (let i = 0; i < dummyData.expenseEdits.length; i++) {
-    const { splitShares, idx, ...expense } = dummyData.expenseEdits[i]!;
+    const { splitShares, idx, amount, paidBy, participants, splitType, ...expense } =
+      dummyData.expenseEdits[i]!;
     assert(idLookup[idx], `No expense ID found for index ${idx}`);
     await editExpense(
       {
         ...expense,
         expenseId: idLookup[idx]!,
-        paidBy: expense.paidBy.id,
-        participants: calculateParticipantSplit(
-          expense.amount,
-          expense.participants as Participant[],
-          expense.splitType,
+        paidBy: paidBy.id,
+        amount,
+        splitType,
+        participants: calculateParticipantSplit({
+          amount,
+          participants,
+          splitType,
           splitShares,
-          expense.paidBy as Participant,
-        ).participants.map((p) => ({
+          paidBy,
+        } as any).participants.map((p) => ({
           userId: p.id,
           amount: p.amount ?? 0n,
         })),

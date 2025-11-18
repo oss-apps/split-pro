@@ -90,23 +90,31 @@ export const ExpenseComments: React.FC<{
       textareaRef.current?.focus();
       setLoading(false);
     },
-    [
-      comment,
-      currentUser,
-      expenseId,
-      addCommentMutation,
-      setCommentList,
-      setComment,
-      setLoading,
-      setError,
-      textareaRef,
-    ],
+    [comment, currentUser, expenseId, addCommentMutation, textareaRef],
   ); // <-- Dependency Array
+
+  const handleOnchange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      if (e.target.value.length <= 200) {
+        setComment(e.target.value);
+      }
+    },
+    [setComment],
+  );
+
+  const handleKeyDown = useCallback(
+    async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        await submit(e);
+      }
+    },
+    [submit],
+  );
 
   return (
     <>
       <Separator />
-      <section className="mt-10">
+      <section className="mt-10 flex flex-col">
         <h3 className="mb-3 text-sm font-medium text-gray-500">Comments</h3>
 
         <div className="mb-4 space-y-3">
@@ -135,20 +143,23 @@ export const ExpenseComments: React.FC<{
           )}
         </div>
 
-        <form onSubmit={submit} className="flex flex-col gap-2">
+        <form onSubmit={submit} className="mt-auto flex flex-col gap-2">
           <textarea
             id={`expense-comment-${expenseId}`}
             ref={textareaRef}
             value={comment}
-            onChange={(e) => setComment(e.target.value)}
+            onChange={handleOnchange}
             rows={1}
+            onKeyDown={handleKeyDown}
             className="w-full rounded-md border border-slate-200 p-2 text-sm focus:ring-2 focus:ring-sky-300 focus:outline-none"
             placeholder="Write a comment..."
             disabled={loading}
           />
 
           <div className="flex items-center justify-between">
-            <div className="text-xs text-slate-400">{comment.trim().length}/200</div>
+            <div className={`text-xs text-${comment.length >= 200 ? 'red' : 'slate'}-400`}>
+              {comment.length}/200
+            </div>
             <div className="flex items-center gap-2">
               {error && <div className="mr-2 text-xs text-red-500">{error}</div>}
               <button

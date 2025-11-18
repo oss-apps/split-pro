@@ -56,7 +56,7 @@ model User {
   deletedExpenses     Expense[]            @relation("DeletedByUser")
   paidExpenses        Expense[]            @relation("PaidByUser")
   updatedExpenses     Expense[]            @relation("UpdatedByUser")
-  expenseNotes        ExpenseNote[]
+  expenseComments     ExpenseComment[]
   expenseParticipants ExpenseParticipant[]
   groups              Group[]
   groupFriendBalances GroupBalance[]       @relation("GroupFriendBalance")
@@ -179,7 +179,7 @@ model Expense {
   paidByUser          User                 @relation("PaidByUser", fields: [paidBy], references: [id], onDelete: Cascade)
   recurrence          ExpenseRecurrence?   @relation(fields: [recurrenceId], references: [id], onDelete: Cascade)
   updatedByUser       User?                @relation("UpdatedByUser", fields: [updatedBy], references: [id])
-  expenseNotes        ExpenseNote[]
+  expenseComments     ExpenseComment[]
   expenseParticipants ExpenseParticipant[]
 
   @@index([groupId])
@@ -198,9 +198,9 @@ model ExpenseParticipant {
   @@schema("public")
 }
 
-model ExpenseNote {
+model ExpenseComment {
   id          String   @id @default(cuid())
-  note        String
+  comment     String
   createdById Int
   createdAt   DateTime @default(now())
   expenseId   String   @db.Uuid

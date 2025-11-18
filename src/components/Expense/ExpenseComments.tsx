@@ -103,9 +103,6 @@ export const ExpenseComments: React.FC<{
     ],
   ); // <-- Dependency Array
 
-  // handle clear comment
-  const handleClearComment = () => setComment('');
-
   return (
     <>
       <Separator />

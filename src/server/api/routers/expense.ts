@@ -529,6 +529,28 @@ export const expenseRouter = createTRPCRouter({
 
     return { rate };
   }),
+
+  addComment: protectedProcedure
+    .input(
+      z.object({
+        expenseId: z.string().uuid(),
+        comment: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+
+      return await ctx.db.expenseComment.create({
+        data: {
+          expenseId: input.expenseId,
+          comment: input.comment,
+          createdById: userId,
+        },
+        include: {
+          createdBy: true,
+        },
+      });
+    }),
 });
 
 const validateEditExpensePermission = async (expenseId: string, userId: number): Promise<void> => {

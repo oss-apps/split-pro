@@ -281,7 +281,7 @@ export async function getCompleteGroupDetails(userId: number) {
     },
     include: {
       groupUsers: true,
-      groupBalanceViews: true,
+      groupBalances: true,
     },
   });
 

@@ -145,7 +145,7 @@ export const userRouter = createTRPCRouter({
       const viewFriend = await db.user.findUnique({
         where: {
           id: input.friendId,
-          userBalanceViews: {
+          userBalances: {
             some: {
               friendId: ctx.session.user.id,
             },

@@ -1,4 +1,4 @@
-import { type Balance, SplitType, type User } from '@prisma/client';
+import { type BalanceView, SplitType, type User } from '@prisma/client';
 import { ArrowRightIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
@@ -17,7 +17,7 @@ import { FriendBalance } from './FriendBalance';
 
 export const SettleUp: React.FC<
   React.PropsWithChildren<{
-    balances?: Balance[];
+    balances?: BalanceView[];
     friend: User;
   }>
 > = ({ children, balances, friend }) => {
@@ -37,7 +37,7 @@ export const SettleUp: React.FC<
     );
   }
 
-  const [balanceToSettle, setBalanceToSettle] = useState<Balance | undefined>(
+  const [balanceToSettle, setBalanceToSettle] = useState<BalanceView | undefined>(
     1 < balances.length ? undefined : balances[0],
   );
   const [amount, setAmount] = useState<bigint>(
@@ -49,7 +49,7 @@ export const SettleUp: React.FC<
 
   const isCurrentUserPaying = 0 > (balanceToSettle?.amount ?? 0);
 
-  function onSelectBalance(balance: Balance) {
+  function onSelectBalance(balance: BalanceView) {
     setBalanceToSettle(balance);
     setAmount(BigMath.abs(balance.amount));
     setAmountStr(

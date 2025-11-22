@@ -48,46 +48,39 @@ export async function createExpense(
   }: CreateExpense,
   currentUserId: number,
 ) {
-  const operations = [];
-
   const nonZeroParticipants =
     participants.length > 1 ? participants.filter((p) => 0n !== p.amount) : participants;
 
   // Create expense operation
-  operations.push(
-    db.expense.create({
-      data: {
-        groupId,
-        paidBy,
-        name,
-        category,
-        amount,
-        splitType,
-        currency,
-        expenseParticipants: {
-          create: nonZeroParticipants,
-        },
-        fileKey,
-        addedBy: currentUserId,
-        expenseDate,
-        transactionId,
-        conversionFrom: otherConversion
-          ? {
-              connect: {
-                id: otherConversion ?? null,
-              },
-            }
-          : undefined,
+  const result = await db.expense.create({
+    data: {
+      groupId,
+      paidBy,
+      name,
+      category,
+      amount,
+      splitType,
+      currency,
+      expenseParticipants: {
+        create: nonZeroParticipants,
       },
-    }),
-  );
-
-  // Execute all operations in a transaction
-  const result = await db.$transaction(operations);
-  if (result[0]) {
-    sendExpensePushNotification(result[0].id).catch(console.error);
+      fileKey,
+      addedBy: currentUserId,
+      expenseDate,
+      transactionId,
+      conversionFrom: otherConversion
+        ? {
+            connect: {
+              id: otherConversion ?? null,
+            },
+          }
+        : undefined,
+    },
+  });
+  if (result) {
+    sendExpensePushNotification(result.id).catch(console.error);
   }
-  return result[0];
+  return result;
 }
 
 export async function deleteExpense(expenseId: string, deletedBy: number) {

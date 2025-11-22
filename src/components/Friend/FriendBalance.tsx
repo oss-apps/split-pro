@@ -1,10 +1,11 @@
-import { type BalanceView, type User } from '@prisma/client';
+import { type User } from '@prisma/client';
 import { clsx } from 'clsx';
 
-import { EntityAvatar } from '../ui/avatar';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import type { MinimalBalance } from '~/types/balance.types';
+import { EntityAvatar } from '../ui/avatar';
 
-export const FriendBalance: React.FC<{ user: User; balance: BalanceView }> = ({
+export const FriendBalance: React.FC<{ user: User; balance: MinimalBalance }> = ({
   user,
   balance,
 }) => {

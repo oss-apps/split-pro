@@ -89,6 +89,7 @@ export const userRouter = createTRPCRouter({
       });
 
       return balances.map((b) => ({
+        friendId: input.friendId,
         currency: b.currency,
         amount: b._sum.amount ?? 0n,
       }));
@@ -190,7 +191,22 @@ export const userRouter = createTRPCRouter({
   deleteFriend: protectedProcedure
     .input(z.object({ friendId: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      const friendBalances = await getBalancesWithFriend(ctx.session.user.id, input.friendId);
+      const friendBalances = await db.balanceView.groupBy({
+        by: ['currency'],
+        _sum: { amount: true },
+        where: {
+          userId: ctx.session.user.id,
+          friendId: input.friendId,
+          amount: { not: 0 },
+        },
+        having: {
+          amount: {
+            _sum: {
+              not: 0,
+            },
+          },
+        },
+      });
 
       if (0 < friendBalances.length) {
         throw new TRPCError({

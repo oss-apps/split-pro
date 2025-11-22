@@ -29,32 +29,44 @@ export const expenseRouter = createTRPCRouter({
       where: { userId: ctx.session.user.id },
     });
 
-    const balances = balancesRaw
-      .map((b) => ({
-        ...b,
-        amount: b._sum.amount ?? 0n,
-      }))
-      .reduce<((typeof balancesRaw)[number] & { hasMore?: boolean; amount: bigint })[]>(
-        (acc, current) => {
-          // @ts-ignore This will be resolved once we move away from balance tables
-          const existing = acc.findIndex((item) => item.friendId === current.friendId);
-          if (-1 === existing) {
-            acc.push(current);
-          } else {
-            const existingItem = acc[existing];
-            if (existingItem) {
-              if (BigMath.abs(existingItem.amount) > BigMath.abs(current.amount)) {
-                acc[existing] = { ...existingItem, hasMore: true };
-              } else {
-                acc[existing] = { ...current, hasMore: true };
+    const balances = await Promise.all(
+      balancesRaw
+        .map((b) => ({
+          ...b,
+          amount: b._sum.amount ?? 0n,
+        }))
+        .reduce<((typeof balancesRaw)[number] & { hasMore?: boolean; amount: bigint })[]>(
+          (acc, current) => {
+            // @ts-ignore This will be resolved once we move away from balance tables
+            const existing = acc.findIndex((item) => item.friendId === current.friendId);
+            if (-1 === existing) {
+              acc.push(current);
+            } else {
+              const existingItem = acc[existing];
+              if (existingItem) {
+                if (BigMath.abs(existingItem.amount) > BigMath.abs(current.amount)) {
+                  acc[existing] = { ...existingItem, hasMore: true };
+                } else {
+                  acc[existing] = { ...current, hasMore: true };
+                }
               }
             }
-          }
-          return acc;
-        },
-        [],
-      )
-      .sort((a, b) => Number(BigMath.abs(b.amount) - BigMath.abs(a.amount)));
+            return acc;
+          },
+          [],
+        )
+        .sort((a, b) => Number(BigMath.abs(b.amount) - BigMath.abs(a.amount)))
+        .map(async (balance) => {
+          const friend = await db.user.findUnique({
+            where: { id: balance.friendId },
+            select: { id: true, name: true, email: true, image: true },
+          });
+          return {
+            ...balance,
+            friend: friend!,
+          };
+        }),
+    );
 
     const cumulatedBalances = await db.balanceView.groupBy({
       by: ['currency'],

@@ -15,23 +15,18 @@ import {
   importGroupFromSplitwise,
   importUserBalanceFromSplitWise,
 } from '../services/splitService';
-import { getBalancesWithFriend, getUserFriends } from '../services/balanceService';
 
 export const userRouter = createTRPCRouter({
   me: protectedProcedure.query(({ ctx }) => ctx.session.user),
 
   getFriends: protectedProcedure.query(async ({ ctx }) => {
-    const friendsIds = await getUserFriends(ctx.session.user.id);
-
-    const friends = await db.user.findMany({
-      where: {
-        id: {
-          in: friendsIds,
-        },
-      },
+    const friends = await db.balanceView.findMany({
+      where: { userId: ctx.session.user.id },
+      include: { friend: true },
+      distinct: ['friendId'],
     });
 
-    return friends;
+    return friends.map((f) => f.friend);
   }),
 
   getOwnExpenses: protectedProcedure.query(async ({ ctx }) => {
@@ -83,8 +78,21 @@ export const userRouter = createTRPCRouter({
   getBalancesWithFriend: protectedProcedure
     .input(z.object({ friendId: z.number() }))
     .query(async ({ input, ctx }) => {
-      const balances = await getBalancesWithFriend(ctx.session.user.id, input.friendId);
-      return balances;
+      const balances = await db.balanceView.groupBy({
+        by: ['currency'],
+        _sum: { amount: true },
+        where: {
+          userId: ctx.session.user.id,
+          friendId: input.friendId,
+          amount: { not: 0 },
+        },
+      });
+
+      return balances.map((b) => ({
+        friendId: input.friendId,
+        currency: b.currency,
+        amount: b._sum.amount ?? 0n,
+      }));
     }),
 
   updateUserDetail: protectedProcedure
@@ -145,7 +153,7 @@ export const userRouter = createTRPCRouter({
       const viewFriend = await db.user.findUnique({
         where: {
           id: input.friendId,
-          userBalanceViews: {
+          userBalances: {
             some: {
               friendId: ctx.session.user.id,
             },
@@ -183,7 +191,22 @@ export const userRouter = createTRPCRouter({
   deleteFriend: protectedProcedure
     .input(z.object({ friendId: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      const friendBalances = await getBalancesWithFriend(ctx.session.user.id, input.friendId);
+      const friendBalances = await db.balanceView.groupBy({
+        by: ['currency'],
+        _sum: { amount: true },
+        where: {
+          userId: ctx.session.user.id,
+          friendId: input.friendId,
+          amount: { not: 0 },
+        },
+        having: {
+          amount: {
+            _sum: {
+              not: 0,
+            },
+          },
+        },
+      });
 
       if (0 < friendBalances.length) {
         throw new TRPCError({

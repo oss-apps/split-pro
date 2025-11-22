@@ -1,4 +1,4 @@
-import type { GroupBalance, User } from '@prisma/client';
+import type { BalanceView, User } from '@prisma/client';
 import { clsx } from 'clsx';
 import { type ComponentProps, Fragment, useCallback, useMemo } from 'react';
 import { EntityAvatar } from '~/components/ui/avatar';
@@ -20,7 +20,7 @@ interface UserWithBalance {
 }
 
 export const BalanceList: React.FC<{
-  groupBalances?: GroupBalance[];
+  groupBalances?: BalanceView[];
   users?: User[];
 }> = ({ groupBalances = [], users = [] }) => {
   const { displayName, t, getCurrencyHelpersCached } = useTranslationWithUtils();
@@ -36,8 +36,8 @@ export const BalanceList: React.FC<{
     }, {});
     groupBalances
       .filter(
-        ({ amount, userId, firendId }) =>
-          0 < BigMath.abs(amount) && userId !== firendId && res[userId] && res[firendId],
+        ({ amount, userId, friendId }) =>
+          0 < BigMath.abs(amount) && userId !== friendId && res[userId] && res[friendId],
       )
       .forEach((balance) => {
         if (!res[balance.userId]) {
@@ -49,10 +49,10 @@ export const BalanceList: React.FC<{
           console.error('BalanceList: userId not found in users list', balance.userId);
           toast.error(t('common:errors.group_balances_malformed'));
         }
-        if (!res[balance.userId]!.balances[balance.firendId]) {
-          res[balance.userId]!.balances[balance.firendId] = {};
+        if (!res[balance.userId]!.balances[balance.friendId]) {
+          res[balance.userId]!.balances[balance.friendId] = {};
         }
-        const friendBalance = res[balance.userId]!.balances[balance.firendId]!;
+        const friendBalance = res[balance.userId]!.balances[balance.friendId]!;
         friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0n) + balance.amount;
 
         res[balance.userId]!.total[balance.currency] =
@@ -179,7 +179,7 @@ export const BalanceList: React.FC<{
                               user={user}
                               amount={amount}
                               currency={currency}
-                              groupId={groupBalances[0]!.groupId}
+                              groupId={groupBalances[0]!.groupId!}
                             >
                               <Button size="icon" variant="secondary" className="size-8">
                                 <SETTLEUP_ICON className="size-4" />

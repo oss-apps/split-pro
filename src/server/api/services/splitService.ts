@@ -1,4 +1,4 @@
-import { type User } from '@prisma/client';
+import { SplitType, type User } from '@prisma/client';
 import { nanoid } from 'nanoid';
 
 import { db } from '~/server/db';
@@ -8,6 +8,7 @@ import type { CreateExpense } from '~/types/expense.types';
 import { sendExpensePushNotification } from './notificationService';
 import { getCurrencyHelpers } from '~/utils/numbers';
 import { isCurrencyCode } from '~/lib/currency';
+import { DEFAULT_CATEGORY } from '~/lib/category';
 
 export async function joinGroup(userId: number, publicGroupId: string) {
   const group = await db.group.findUnique({
@@ -319,67 +320,29 @@ export async function importUserBalanceFromSplitWise(
       }
 
       const amount = currencyHelperCache[currency](balance.amount);
-      const existingBalance = await db.balance.findUnique({
-        where: {
-          userId_currency_friendId: {
-            userId: currentUserId,
-            currency,
-            friendId: dbUser.id,
-          },
-        },
-      });
-
-      if (existingBalance?.importedFromSplitwise) {
-        // oxlint-disable-next-line no-continue
-        continue;
-      }
 
       operations.push(
-        db.balance.upsert({
-          where: {
-            userId_currency_friendId: {
-              userId: currentUserId,
-              currency,
-              friendId: dbUser.id,
-            },
-          },
-          update: {
-            amount: {
-              increment: amount,
-            },
-            importedFromSplitwise: true,
-          },
-          create: {
-            userId: currentUserId,
-            currency,
-            friendId: dbUser.id,
+        db.expense.create({
+          data: {
+            name: 'Splitwise Balance Import',
             amount,
-            importedFromSplitwise: true,
-          },
-        }),
-      );
-
-      operations.push(
-        db.balance.upsert({
-          where: {
-            userId_currency_friendId: {
-              userId: dbUser.id,
-              currency,
-              friendId: currentUserId,
-            },
-          },
-          update: {
-            amount: {
-              increment: -amount,
-            },
-            importedFromSplitwise: true,
-          },
-          create: {
-            userId: dbUser.id,
             currency,
-            friendId: currentUserId,
-            amount: -amount,
-            importedFromSplitwise: true,
+            paidBy: currentUserId,
+            splitType: SplitType.EQUAL,
+            expenseParticipants: {
+              create: [
+                {
+                  userId: currentUserId,
+                  amount: amount,
+                },
+                {
+                  userId: dbUser.id,
+                  amount: -amount,
+                },
+              ],
+            },
+            addedBy: currentUserId,
+            category: DEFAULT_CATEGORY,
           },
         }),
       );

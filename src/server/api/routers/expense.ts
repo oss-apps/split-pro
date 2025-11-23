@@ -72,6 +72,7 @@ export const expenseRouter = createTRPCRouter({
       by: ['currency'],
       _sum: { amount: true },
       where: { userId: ctx.session.user.id, amount: { not: 0 } },
+      orderBy: { _sum: { amount: 'desc' } },
     });
 
     const youOwe: { currency: string; amount: bigint }[] = [];
@@ -85,6 +86,8 @@ export const expenseRouter = createTRPCRouter({
         youOwe.push({ currency: b.currency, amount: sumAmount ?? 0 });
       }
     }
+
+    youOwe.reverse();
 
     return {
       balances,

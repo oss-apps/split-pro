@@ -26,7 +26,7 @@ export const expenseRouter = createTRPCRouter({
     const balancesRaw = await db.balanceView.groupBy({
       by: ['friendId', 'currency'],
       _sum: { amount: true },
-      where: { userId: ctx.session.user.id },
+      where: { userId: ctx.session.user.id, friendId: { notIn: ctx.session.user.hiddenFriendIds } },
     });
 
     const balances = await Promise.all(

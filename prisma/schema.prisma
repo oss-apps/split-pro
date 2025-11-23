@@ -61,6 +61,7 @@ model User {
   groups              Group[]
   associatedGroups    GroupUser[]
   sessions            Session[]
+  hiddenFriendIds     Int[]                @default([])
 
   @@schema("public")
 }

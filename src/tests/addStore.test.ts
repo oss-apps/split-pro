@@ -23,6 +23,7 @@ const createMockUser = (id: number, name: string, email: string): User => ({
   preferredLanguage: 'en',
   obapiProviderId: null,
   bankingId: null,
+  hiddenFriendIds: [],
 });
 
 const user1: User = createMockUser(1, 'Alice', 'alice@example.com');

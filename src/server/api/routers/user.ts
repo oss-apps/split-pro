@@ -21,7 +21,7 @@ export const userRouter = createTRPCRouter({
 
   getFriends: protectedProcedure.query(async ({ ctx }) => {
     const friends = await db.balanceView.findMany({
-      where: { userId: ctx.session.user.id },
+      where: { userId: ctx.session.user.id, friendId: { notIn: ctx.session.user.hiddenFriendIds } },
       include: { friend: true },
       distinct: ['friendId'],
     });
@@ -150,24 +150,6 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      const viewFriend = await db.user.findUnique({
-        where: {
-          id: input.friendId,
-          userBalances: {
-            some: {
-              friendId: ctx.session.user.id,
-            },
-          },
-        },
-      });
-
-      if (friend?.id !== viewFriend?.id) {
-        console.error(`[getFriend] Friend data mismatch for friendId ${input.friendId}:`, {
-          old: friend,
-          view: viewFriend,
-        });
-      }
-
       return friend;
     }),
 
@@ -208,6 +190,8 @@ export const userRouter = createTRPCRouter({
         },
       });
 
+      console.log('Friend balances before hiding:', input);
+
       if (0 < friendBalances.length) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
@@ -215,17 +199,14 @@ export const userRouter = createTRPCRouter({
         });
       }
 
-      await db.balance.deleteMany({
+      await db.user.update({
         where: {
-          userId: input.friendId,
-          friendId: ctx.session.user.id,
+          id: ctx.session.user.id,
         },
-      });
-
-      await db.balance.deleteMany({
-        where: {
-          friendId: input.friendId,
-          userId: ctx.session.user.id,
+        data: {
+          hiddenFriendIds: {
+            push: input.friendId,
+          },
         },
       });
     }),

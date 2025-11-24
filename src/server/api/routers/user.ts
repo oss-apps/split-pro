@@ -190,8 +190,6 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      console.log('Friend balances before hiding:', input);
-
       if (0 < friendBalances.length) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
@@ -234,5 +232,15 @@ export const userRouter = createTRPCRouter({
 
   getWebPushPublicKey: protectedProcedure.query(() => env.WEB_PUSH_PUBLIC_KEY ?? ''),
 });
+
+export const getUserMap = async (userIds: number[]) => {
+  const users = await db.user.findMany({
+    where: {
+      id: { in: userIds },
+    },
+  });
+
+  return Object.fromEntries(users.map((u) => [u.id, u]));
+};
 
 export type UserRouter = typeof userRouter;

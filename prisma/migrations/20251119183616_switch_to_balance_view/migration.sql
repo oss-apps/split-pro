@@ -123,12 +123,12 @@ BEGIN
     -- It fires AFTER INSERT on ExpenseParticipant.
 
     UPDATE "User"
-    SET "hiddenFriendIds" = array_remove("hiddenFriendIds", (SELECT "paidBy" FROM "Expense" WHERE id = NEW."expenseId"))
+    SET "hiddenFriendIds" = array_remove("hiddenFriendIds", NEW."paidBy")
     WHERE id = NEW."userId";
 
     UPDATE "User"
     SET "hiddenFriendIds" = array_remove("hiddenFriendIds", NEW."userId")
-    WHERE id = (SELECT "paidBy" FROM "Expense" WHERE id = NEW."expenseId");
+    WHERE id = NEW."paidBy";
 
     RETURN NEW;
 END;

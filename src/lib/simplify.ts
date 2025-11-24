@@ -22,6 +22,10 @@ function simplifyDebtsForSingleCurrency(
   groupBalances: GroupBalance[],
   nodes: number[],
 ): GroupBalance[] {
+  if (groupBalances.length === 0) {
+    return [];
+  }
+
   const adjMatrix = new Array<bigint[]>(nodes.length)
     .fill([])
     .map(() => new Array<bigint>(nodes.length).fill(0n));

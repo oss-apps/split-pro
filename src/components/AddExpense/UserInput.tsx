@@ -65,6 +65,7 @@ export const UserInput: React.FC<{
         obapiProviderId: null,
         bankingId: null,
         preferredLanguage: '',
+        hiddenFriendIds: [],
       });
     }
   };

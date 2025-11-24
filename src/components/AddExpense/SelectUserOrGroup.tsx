@@ -59,6 +59,7 @@ export const SelectUserOrGroup: React.FC<{
           obapiProviderId: null,
           bankingId: null,
           preferredLanguage: '',
+          hiddenFriendIds: [],
         });
         // add email to split pro
       }

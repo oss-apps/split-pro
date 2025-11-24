@@ -20,33 +20,59 @@ import { isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { createRecurringExpenseJob } from '../services/scheduleService';
-import { getCumulatedBalances, getUserBalances } from '../services/balanceService';
+import { getUserMap } from './user';
 
 export const expenseRouter = createTRPCRouter({
   getBalances: protectedProcedure.query(async ({ ctx }) => {
-    const balancesRaw = await getUserBalances(ctx.session.user.id);
+    const [balancesRaw, cumulatedBalances] = await Promise.all([
+      db.balanceView.groupBy({
+        by: ['friendId', 'currency'],
+        _sum: { amount: true },
+        where: {
+          userId: ctx.session.user.id,
+          friendId: { notIn: ctx.session.user.hiddenFriendIds },
+        },
+      }),
+      db.balanceView.groupBy({
+        by: ['currency'],
+        _sum: { amount: true },
+        where: { userId: ctx.session.user.id, amount: { not: 0 } },
+        orderBy: { _sum: { amount: 'desc' } },
+      }),
+    ]);
+
+    const userMap = await getUserMap(balancesRaw.map((b) => b.friendId));
 
     const balances = balancesRaw
-      .reduce<((typeof balancesRaw)[number] & { hasMore?: boolean })[]>((acc, current) => {
-        // @ts-ignore This will be resolved once we move away from balance tables
-        const existing = acc.findIndex((item) => item.friendId === current.friendId);
-        if (-1 === existing) {
-          acc.push(current);
-        } else {
-          const existingItem = acc[existing];
-          if (existingItem) {
-            if (BigMath.abs(existingItem.amount) > BigMath.abs(current.amount)) {
-              acc[existing] = { ...existingItem, hasMore: true };
-            } else {
-              acc[existing] = { ...current, hasMore: true };
+      .map((b) => ({
+        ...b,
+        amount: b._sum.amount ?? 0n,
+      }))
+      .reduce<((typeof balancesRaw)[number] & { hasMore?: boolean; amount: bigint })[]>(
+        (acc, current) => {
+          // @ts-ignore This will be resolved once we move away from balance tables
+          const existing = acc.findIndex((item) => item.friendId === current.friendId);
+          if (-1 === existing) {
+            acc.push(current);
+          } else {
+            const existingItem = acc[existing];
+            if (existingItem) {
+              if (BigMath.abs(existingItem.amount) > BigMath.abs(current.amount)) {
+                acc[existing] = { ...existingItem, hasMore: true };
+              } else {
+                acc[existing] = { ...current, hasMore: true };
+              }
             }
           }
-        }
-        return acc;
-      }, [])
-      .sort((a, b) => Number(BigMath.abs(b.amount) - BigMath.abs(a.amount)));
-
-    const cumulatedBalances = await getCumulatedBalances(ctx.session.user.id);
+          return acc;
+        },
+        [],
+      )
+      .sort((a, b) => Number(BigMath.abs(b.amount) - BigMath.abs(a.amount)))
+      .map((balance) => ({
+        ...balance,
+        friend: userMap[balance.friendId]!,
+      }));
 
     const youOwe: { currency: string; amount: bigint }[] = [];
     const youGet: { currency: string; amount: bigint }[] = [];
@@ -59,6 +85,8 @@ export const expenseRouter = createTRPCRouter({
         youOwe.push({ currency: b.currency, amount: sumAmount ?? 0 });
       }
     }
+
+    youOwe.reverse();
 
     return {
       balances,

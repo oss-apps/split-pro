@@ -44,7 +44,7 @@ const idLookup: Map<number, string> = new Map();
 
 async function createExpenses() {
   await Promise.all(
-    dummyData.expenses.map(async ({ splitShares, ...expense }, idx) => {
+    dummyData.expenses.map(async (expense, idx) => {
       const res = await createExpense(
         {
           ...expense,
@@ -68,7 +68,7 @@ async function createExpenses() {
 
 async function editExpenses() {
   await Promise.all(
-    dummyData.expenseEdits.map(async ({ splitShares, idx, ...expense }) => {
+    dummyData.expenseEdits.map(async ({ idx, ...expense }) => {
       assert(idLookup.get(idx), `No expense ID found for index ${idx}`);
       await editExpense(
         {

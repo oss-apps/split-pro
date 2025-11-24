@@ -106,29 +106,23 @@ ALTER TABLE "public"."User" ADD COLUMN     "hiddenFriendIds" INTEGER[] DEFAULT A
 -- Function to remove a user ID from the hiddenFriendIds array
 CREATE OR REPLACE FUNCTION public.auto_unhide_friend()
 RETURNS TRIGGER AS $$
+DECLARE
+    payer_id INT;
 BEGIN
-    -- If a new participant entry is added/updated
-    -- We must ensure the 'userId' un-hides the 'payer' (and vice versa)
-    -- But since we don't have the Payer ID easily in the Participant row alone,
-    -- we rely on the fact that an Expense creation/update usually touches both parties.
+    SELECT "paidBy" INTO payer_id FROM "Expense" WHERE id = NEW."expenseId";
 
-    -- SCENARIO: Remove the NEW.userId from the Payer's hidden list, and vice versa.
-    -- However, doing this purely from ExpenseParticipant is hard because we need the 'paidBy' from Expense.
-
-    -- SIMPLIFIED APPROACH:
-    -- When money flows, we simply try to remove the IDs from the array.
-    -- PostgreSQL's array_remove function handles this gracefully (does nothing if ID not found).
-
-    -- Note: This trigger logic assumes we can join to the Expense table.
-    -- It fires AFTER INSERT on ExpenseParticipant.
-
+    -- ONLY update if the array actually contains the ID.
+    -- This prevents locking the row if the friend is already visible (which is 99% of cases).
+    
     UPDATE "User"
-    SET "hiddenFriendIds" = array_remove("hiddenFriendIds", NEW."paidBy")
-    WHERE id = NEW."userId";
+    SET "hiddenFriendIds" = array_remove("hiddenFriendIds", payer_id)
+    WHERE id = NEW."userId" 
+    AND "hiddenFriendIds" @> ARRAY[payer_id]; -- Only if array contains payer_id
 
     UPDATE "User"
     SET "hiddenFriendIds" = array_remove("hiddenFriendIds", NEW."userId")
-    WHERE id = NEW."paidBy";
+    WHERE id = payer_id
+    AND "hiddenFriendIds" @> ARRAY[NEW."userId"]; -- Only if array contains userId
 
     RETURN NEW;
 END;

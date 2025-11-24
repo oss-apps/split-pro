@@ -8,6 +8,16 @@
       "placeholder": "Seleziona una lingua",
       "title": "Seleziona una lingua"
     },
+    "debug_info": "Informazioni di debug",
+    "debug_info_details": {
+      "copy_failed": "Errore nel copiare le informazioni di debug",
+      "description": "Incolla le seguenti informazioni al creare una richiesta di supporto:",
+      "git": "Git",
+      "new_version_available": "È disponibile una nuova versione:",
+      "title": "Informazioni di Debug",
+      "user_agent": "UserAgent",
+      "version": "Versione"
+    },
     "download_app": "Scarica l'app",
     "download_app_details": {
       "download_as_pwa": "Puoi scaricare SplitPro come PWA sulla tua home screen.",
@@ -61,12 +71,15 @@
     "cancel": "Annulla",
     "close": "Chiudi",
     "confirm": "Conferma",
+    "connect": "Connettiti",
+    "copy": "Copia",
     "create": "Crea",
     "edit_expense": "Modifica spesa",
     "export": "Esporta",
     "import": "Importa",
     "invite": "Invita",
     "leave": "Abbandona",
+    "reconnect": "Riconnettiti",
     "save": "Salva",
     "settle_up": "Regola",
     "submit": "Invia"

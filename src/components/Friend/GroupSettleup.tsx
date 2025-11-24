@@ -40,8 +40,19 @@ export const GroupSettleUp: React.FC<{
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
   const utils = api.useUtils();
 
-  const sender = 0 > _amount ? user : friend;
-  const receiver = 0 > _amount ? friend : user;
+  const sender = 0 > amount ? user : friend;
+  const receiver = 0 > amount ? friend : user;
+  const payerRole = sender.id === user.id ? 'you' : 'other';
+  const receiverRole = receiver.id === user.id ? 'you' : 'other';
+  const paymentText =
+    payerRole === 'you'
+      ? t('ui.expense.statements.you_pay_user', { user: displayName(receiver) })
+      : receiverRole === 'you'
+        ? t('ui.expense.statements.user_pays_you', { user: displayName(sender) })
+        : t('ui.expense.statements.user_pays_user', {
+            payer: displayName(sender),
+            receiver: displayName(receiver),
+          });
 
   const saveExpense = React.useCallback(() => {
     if (!amount) {
@@ -98,11 +109,7 @@ export const GroupSettleUp: React.FC<{
             <ArrowRightIcon className="h-6 w-6 text-gray-600" />
             <EntityAvatar entity={receiver} />
           </div>
-          <p className="mt-2 text-center text-sm text-gray-400">
-            {displayName(sender, data?.user.id)}{' '}
-            {t(`ui.expense.${sender.id === data?.user.id ? 'you' : 'user'}.pay`)}{' '}
-            {displayName(receiver, data?.user.id)}
-          </p>
+          <p className="mt-2 text-center text-sm text-gray-400">{paymentText}</p>
         </div>
         <CurrencyInput
           currency={currency}

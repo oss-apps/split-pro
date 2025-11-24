@@ -48,13 +48,14 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
 
   const youLent = Object.entries(cumulatedBalances).filter(([_, amount]) => 0 < amount);
   const youOwe = Object.entries(cumulatedBalances).filter(([_, amount]) => 0 > amount);
+  const youDative = t('actors.you_dativus').toLowerCase();
 
   return (
     <div className="flex gap-2">
       <div className="flex flex-col gap-2">
         {0 < youLent.length ? (
           <div className="flex flex-wrap gap-1 text-emerald-500">
-            {t('actors.you')} {t('ui.expense.you.lent')}
+            {t('ui.expense.statements.you_lent')}
             {youLent.map(([currency, amount], index, arr) => (
               <React.Fragment key={currency}>
                 <div className="flex gap-1 font-semibold">
@@ -68,7 +69,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
 
         {0 < youOwe.length ? (
           <div className="text-orange-6000 flex flex-wrap gap-1 text-orange-600">
-            {t('actors.you')} {t('ui.expense.you.owe')}
+            {t('ui.expense.statements.you_owe')}
             {youOwe.map(([currency, amount], index, arr) => (
               <React.Fragment key={currency}>
                 <div className="flex gap-1 font-semibold">
@@ -93,8 +94,13 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
                 {Object.entries(balances).map(([currency, amount]) => (
                   <div key={currency}>
                     {0 < amount
-                      ? `${friend?.name} ${t('ui.expense.user.owe')} ${t('actors.you_dativus').toLowerCase()}`
-                      : `${t('actors.you')} ${t('ui.expense.you.owe')} ${friend?.name}`}{' '}
+                      ? t('ui.expense.statements.friend_owes_you', {
+                          friend: friend?.name ?? '',
+                          youDative,
+                        })
+                      : t('ui.expense.statements.you_owe_friend', {
+                          friend: friend?.name ?? '',
+                        })}{' '}
                     {getCurrencyHelpersCached(currency).toUIString(amount)}
                   </div>
                 ))}
@@ -102,10 +108,11 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
             );
           })}
 
-        {2 < Object.keys(friendBalances).length ? (
+        {Object.keys(friendBalances).length > 2 ? (
           <div className="text-sm text-gray-500">
-            +{Object.keys(friendBalances).length - 2}{' '}
-            {Object.keys(friendBalances).length === 3 ? t('ui.balance') : t('ui.balances')}...
+            {t('ui.remaining_balances', {
+              count: Object.keys(friendBalances).length - 2,
+            })}
           </div>
         ) : null}
       </div>

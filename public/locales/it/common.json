@@ -120,7 +120,7 @@
     "request_error": "Errore durante la richiesta delle notifiche",
     "saving_expense": "Errore durante il salvataggio della spesa",
     "setting_update_failed": "Errore nell'aggiornamento dell'impostazione",
-    "signin_error": "Si è verificato un errore durante l'accesso: ",
+    "signin_error": "Si è verificato un errore durante l'accesso: {{error}}",
     "signup_disabled": "La registrazione di nuovi account è disabilitata in questa istanza",
     "something_went_wrong": "Qualcosa è andato storto",
     "subscribe_error": "Impossibile attivare le notifiche",
@@ -308,7 +308,6 @@
         "lent": "ha prestato",
         "owe": "deve",
         "paid": "ha pagato",
-        "pay": "paga",
         "received": "ha ricevuto"
       },
       "you": {
@@ -319,6 +318,27 @@
         "paid": "hai pagato",
         "pay": "paga",
         "received": "hai ricevuto"
+      },
+      "statements": {
+        "you_lent": "Hai prestato",
+        "you_owe": "Devi",
+        "you_lent_amount": "Hai prestato {{currency}} {{amount}}",
+        "you_owe_amount": "Devi {{currency}} {{amount}}",
+        "you_paid_amount": "Hai pagato {{currency}} {{amount}}",
+        "you_received_amount": "Hai ricevuto {{currency}} {{amount}}",
+        "you_pay_user": "Paghi {{user}}",
+        "user_pays_you": "{{user}} ti paga",
+        "friend_owes_you": "{{friend}} ti deve",
+        "you_owe_friend": "Devi a {{friend}}",
+        "paid_for_beneficiary": "pagato per {{beneficiary}}",
+        "user_paid_amount": "{{user}} ha pagato {{currency}} {{amount}}",
+        "user_received_amount": "{{user}} ha ricevuto {{currency}} {{amount}}",
+        "user_paid_amount_to_user": "{{payer}} ha pagato {{currency}} {{amount}} a {{receiver}}",
+        "user_received_amount_from_user": "{{payer}} ha ricevuto {{currency}} {{amount}} da {{receiver}}",
+        "you_paid_amount_to_user": "Hai pagato {{currency}} {{amount}} a {{receiver}}",
+        "you_received_amount_from_user": "Hai ricevuto {{currency}} {{amount}} da {{payer}}",
+        "for_users": "per {{payer}} e {{receiver}}",
+        "user_pays_user": "{{payer}} paga {{receiver}}"
       }
     },
     "expense_details": "Dettagli spesa",
@@ -332,6 +352,7 @@
     "settled_up": "Regolato",
     "settlement": "Regolamento",
     "share_text": "Dai un'occhiata a SplitPro. È un'alternativa gratuita e open source a Splitwise",
-    "today": "Oggi"
+    "today": "Oggi",
+    "remaining_balances": "+{{count}} {{count, plural, one {saldo} other {saldi}}}..."
   }
 }

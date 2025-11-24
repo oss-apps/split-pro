@@ -102,7 +102,7 @@ const Home: NextPage<{
       } else if ('SessionRequired' === error) {
         return;
       } else {
-        toast.error(t('errors.signin_error') + error);
+        toast.error(t('errors.signin_error', { error }));
         console.error('Error during sign-in:', error);
       }
     }

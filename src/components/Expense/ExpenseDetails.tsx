@@ -1,6 +1,6 @@
 import { isSameDay } from 'date-fns';
 import { type User as NextUser } from 'next-auth';
-
+import type { User as PrismaUser } from '@prisma/client';
 import type { inferRouterOutputs } from '@trpc/server';
 import { Landmark, PencilIcon } from 'lucide-react';
 import React, { type ComponentProps, useCallback } from 'react';
@@ -17,7 +17,8 @@ import { CategoryIcon } from '../ui/categoryIcons';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
 import { cronFromBackend } from '~/lib/cron';
-
+import type { ExpenseCommentType } from './ExpenseComments';
+import { ExpenseComments } from './ExpenseComments';
 type ExpenseDetailsOutput = NonNullable<inferRouterOutputs<ExpenseRouter>['getExpenseDetails']>;
 
 interface ExpenseDetailsProps {
@@ -96,7 +97,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
           {toUIString(expense.amount)}
         </p>
       </div>
-      <div className="mt-4 ml-14 flex flex-col gap-4">
+      <div className="mt-4 mb-4 ml-14 flex flex-col gap-4">
         {expense.expenseParticipants
           .filter((participant) => 0n !== participant.amount)
           .map((participant) => (
@@ -122,6 +123,13 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
           </>
         )}
       </div>
+      {/* test */}
+
+      <ExpenseComments
+        comments={expense.expenseComments as ExpenseCommentType[]}
+        expenseId={expense.id}
+        currentUser={user as unknown as PrismaUser}
+      />
     </>
   );
 };

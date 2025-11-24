@@ -49,8 +49,8 @@ model User {
   bankingId           String?
   obapiProviderId     String?
   accounts            Account[]
-  friendBalances      Balance[]            @relation("FriendBalance")
-  userBalances        Balance[]            @relation("UserBalance")
+  friendBalances      BalanceView[]        @relation("FriendBalanceView")
+  userBalances        BalanceView[]        @relation("UserBalanceView")
   cachedBankData      CachedBankData[]     @relation("UserCachedBankData")
   addedExpenses       Expense[]            @relation("AddedByUser")
   deletedExpenses     Expense[]            @relation("DeletedByUser")
@@ -59,12 +59,9 @@ model User {
   expenseNotes        ExpenseNote[]
   expenseParticipants ExpenseParticipant[]
   groups              Group[]
-  groupFriendBalances GroupBalance[]       @relation("GroupFriendBalance")
-  groupUserBalances   GroupBalance[]       @relation("GroupUserBalance")
   associatedGroups    GroupUser[]
   sessions            Session[]
-  userBalanceViews    BalanceView[]        @relation("UserBalanceView")
-  friendBalanceViews  BalanceView[]        @relation("FriendBalanceView")
+  hiddenFriendIds     Int[]                @default([])
 
   @@schema("public")
 }
@@ -91,6 +88,7 @@ model VerificationToken {
   @@schema("public")
 }
 
+// Deprecated in favor of BalanceView. Kept to preserve existing data for now.
 model Balance {
   userId                Int
   currency              String
@@ -99,29 +97,28 @@ model Balance {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
   importedFromSplitwise Boolean  @default(false)
-  friend                User     @relation("FriendBalance", fields: [friendId], references: [id], onDelete: Cascade)
-  user                  User     @relation("UserBalance", fields: [userId], references: [id], onDelete: Cascade)
+  //  friend                User     @relation("FriendBalance", fields: [friendId], references: [id], onDelete: Cascade)
+  //  user                  User     @relation("UserBalance", fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, currency, friendId])
   @@schema("public")
 }
 
 model Group {
-  id                Int            @id @default(autoincrement())
-  publicId          String         @unique
-  name              String
-  userId            Int
-  defaultCurrency   String         @default("USD")
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  splitwiseGroupId  String?        @unique
-  simplifyDebts     Boolean        @default(false)
-  archivedAt        DateTime?
-  expenses          Expense[]
-  createdBy         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  groupBalances     GroupBalance[]
-  groupUsers        GroupUser[]
-  groupBalanceViews BalanceView[]
+  id               Int           @id @default(autoincrement())
+  publicId         String        @unique
+  name             String
+  userId           Int
+  defaultCurrency  String        @default("USD")
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  splitwiseGroupId String?       @unique
+  simplifyDebts    Boolean       @default(false)
+  archivedAt       DateTime?
+  expenses         Expense[]
+  createdBy        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  groupUsers       GroupUser[]
+  groupBalances    BalanceView[]
 
   @@schema("public")
 }
@@ -136,6 +133,7 @@ model GroupUser {
   @@schema("public")
 }
 
+// Deprecated in favor of BalanceView. Kept to preserve existing data for now.
 model GroupBalance {
   groupId   Int
   currency  String
@@ -143,9 +141,9 @@ model GroupBalance {
   firendId  Int
   amount    BigInt
   updatedAt DateTime @updatedAt
-  friend    User     @relation("GroupFriendBalance", fields: [firendId], references: [id], onDelete: Cascade)
-  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  user      User     @relation("GroupUserBalance", fields: [userId], references: [id], onDelete: Cascade)
+  //  friend    User     @relation("GroupFriendBalance", fields: [firendId], references: [id], onDelete: Cascade)
+  //  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  //  user      User     @relation("GroupUserBalance", fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([groupId, currency, firendId, userId])
   @@schema("public")

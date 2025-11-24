@@ -29,6 +29,7 @@ declare module 'next-auth' {
       obapiProviderId?: string;
       bankingId?: string;
       preferredLanguage: string;
+      hiddenFriendIds: number[];
       // ...other properties
       // role: UserRole;
     };
@@ -43,6 +44,7 @@ declare module 'next-auth' {
     obapiProviderId?: string;
     bankingId?: string;
     preferredLanguage: string;
+    hiddenFriendIds: number[];
   }
 }
 
@@ -114,6 +116,7 @@ export const authOptions: NextAuthOptions = {
         obapiProviderId: user.obapiProviderId,
         bankingId: user.bankingId,
         preferredLanguage: user.preferredLanguage,
+        hiddenFriendIds: user.hiddenFriendIds,
       },
     }),
     async signIn({ user, email }) {

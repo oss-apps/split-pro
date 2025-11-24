@@ -1,4 +1,4 @@
-import { type GroupBalance } from '@prisma/client';
+import { type BalanceView as GroupBalance } from '@prisma/client';
 import { addHours } from 'date-fns';
 import rawRealGraph from './mock/example_group_balances.json';
 import { simplifyDebts } from '~/lib/simplify';
@@ -7,6 +7,7 @@ const realGraph = rawRealGraph.map(({ amount, updatedAt, ...rest }) => ({
   ...rest,
   amount: BigInt(amount),
   updatedAt: new Date(updatedAt),
+  createdAt: new Date(updatedAt),
 }));
 
 interface MinimalEdge {
@@ -17,7 +18,7 @@ interface MinimalEdge {
 
 const sortByIds = (a: GroupBalance, b: GroupBalance) => {
   if (a.userId === b.userId) {
-    return a.firendId - b.firendId;
+    return a.friendId - b.friendId;
   }
   return a.userId - b.userId;
 };
@@ -25,21 +26,23 @@ const sortByIds = (a: GroupBalance, b: GroupBalance) => {
 let dateCounter = 0;
 
 const edgeToGroupBalance = (edge: MinimalEdge): [GroupBalance, GroupBalance] => {
+  const createdAt = addHours(new Date(), dateCounter++);
   const base = {
     groupId: 0,
     currency: 'USD',
-    updatedAt: addHours(new Date(), dateCounter++),
+    updatedAt: createdAt,
+    createdAt,
   };
   return [
     {
       userId: edge.userOne,
-      firendId: edge.userTwo,
+      friendId: edge.userTwo,
       amount: edge.amount,
       ...base,
     },
     {
       userId: edge.userTwo,
-      firendId: edge.userOne,
+      friendId: edge.userOne,
       amount: 0n === edge.amount ? 0n : -edge.amount,
       ...base,
     },
@@ -54,7 +57,7 @@ const padWithZeroBalances: (balances: GroupBalance[], userCount: number) => Grou
   for (let userId = 0; userId < userCount; userId++) {
     for (let friendId = userId + 1; friendId < userCount; friendId++) {
       const found = balances.find(
-        (balance) => balance.userId === userId && balance.firendId === friendId,
+        (balance) => balance.userId === userId && balance.friendId === friendId,
       );
 
       if (!found) {
@@ -90,6 +93,7 @@ const smallGraphResult: GroupBalance[] = getFullBalanceGraph(
 ).map((resultBalance, idx) => ({
   ...resultBalance,
   updatedAt: smallGraph[idx]!.updatedAt,
+  createdAt: smallGraph[idx]!.createdAt,
 }));
 
 // taken from https://medium.com/@mithunmk93/algorithm-behind-splitwises-debt-simplification-feature-8ac485e97688
@@ -162,7 +166,7 @@ describe('simplifyDebts', () => {
       expect(balance.groupId).toBeDefined();
       expect(balance.currency).toBeDefined();
       expect(balance.userId).toBeDefined();
-      expect(balance.firendId).toBeDefined();
+      expect(balance.friendId).toBeDefined();
       expect(balance.updatedAt).toBeDefined();
     }
   });
@@ -200,7 +204,7 @@ describe('simplifyDebts', () => {
   ])('produces no self-loops for %s graph', (name, graph) => {
     const result = simplifyDebts(graph);
     for (const balance of result) {
-      expect(balance.userId).not.toBe(balance.firendId);
+      expect(balance.userId).not.toBe(balance.friendId);
     }
   });
 });

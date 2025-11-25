@@ -288,7 +288,6 @@ export const AddOrEditExpensePage: React.FC<{
               placeholder={t('expense_details.add_expense_details.amount_placeholder')}
               currency={currency}
               strValue={amtStr}
-              bigIntValue={amount}
               allowNegative
               hideSymbol
               onValueChange={onUpdateAmount}

@@ -167,7 +167,6 @@ export const SettleUp: React.FC<
           </div>
           <CurrencyInput
             currency={balanceToSettle.currency}
-            bigIntValue={amount}
             strValue={amountStr}
             className="mx-auto mt-4 w-[150px] text-center text-lg"
             onValueChange={onCurrencyInputValueChange}

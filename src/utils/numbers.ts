@@ -176,7 +176,10 @@ export const getCurrencyHelpers = ({
   };
 
   /* Format a string number to localized, beautified currency string */
-  const format = (value: string, signed = false) => {
+  const format = (
+    value: string,
+    { signed = false, hideSymbol = false }: { signed?: boolean; hideSymbol?: boolean },
+  ) => {
     if (value === '') {
       return formatter.format(0);
     }
@@ -209,22 +212,24 @@ export const getCurrencyHelpers = ({
       }
     }
 
-    return sign + parts.map(({ value }) => value).join('');
+    return (
+      sign +
+      parts
+        .filter(({ type }) => !hideSymbol || type !== 'currency')
+        .map(({ value }) => value)
+        .join('')
+    );
   };
 
-  const toUIString = (value: unknown, signed = false) => {
+  const toUIString = (value: unknown, signed = false, hideSymbol = false) => {
     const cleanString = parseToCleanString(value, signed);
-    return format(cleanString, signed);
+    return format(cleanString, { signed, hideSymbol });
   };
-
-  const stripCurrencySymbol = (value: string) =>
-    value.replace(new RegExp(`\\${currencySymbol}`, 'g'), '').trim();
 
   return {
     parseToCleanString,
     toUIString,
     toUIStringSigned: (value: unknown) => toUIString(value, true),
-    stripCurrencySymbol,
     format,
     formatter,
     sanitizeInput,

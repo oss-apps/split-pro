@@ -1,7 +1,7 @@
 import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { api } from '~/utils/api';
-import { BigMath } from '~/utils/numbers';
+import { BigMath, currencyConversion } from '~/utils/numbers';
 
 import { toast } from 'sonner';
 import { env } from '~/env';
@@ -13,6 +13,7 @@ import { Button } from '../ui/button';
 import { AppDrawer } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
+import { CurrencyInput } from '../ui/currency-input';
 
 export const CurrencyConversion: React.FC<{
   amount: bigint;
@@ -29,6 +30,8 @@ export const CurrencyConversion: React.FC<{
 }> = ({ amount, editingRate, editingTargetCurrency, currency, children, onSubmit }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
 
+  const { toUIString, toSafeBigInt } = getCurrencyHelpersCached(currency);
+
   const [amountStr, setAmountStr] = useState('');
   const [rate, setRate] = useState('');
   const [targetAmountStr, setTargetAmountStr] = useState('');
@@ -41,6 +44,8 @@ export const CurrencyConversion: React.FC<{
     { enabled: currency !== targetCurrency },
   );
 
+  const { toUIString: toUITargetString } = getCurrencyHelpersCached(targetCurrency);
+
   useEffect(() => {
     if (getCurrencyRate.isPending) {
       setRate('');
@@ -49,32 +54,39 @@ export const CurrencyConversion: React.FC<{
   }, [getCurrencyRate.isPending]);
 
   useEffect(() => {
-    setAmountStr((Number(BigMath.abs(amount)) / 100).toString());
+    setAmountStr(toUIString(amount, false, true));
     setRate(editingRate ? editingRate.toFixed(4) : '');
     if (editingTargetCurrency) {
       setTargetCurrency(editingTargetCurrency);
     }
-  }, [amount, editingRate, editingTargetCurrency]);
+  }, [amount, editingRate, editingTargetCurrency, toUIString]);
 
   useEffect(() => {
     if (getCurrencyRate.data?.rate) {
       setRate(getCurrencyRate.data.rate.toFixed(4));
     }
-  }, [getCurrencyRate.data, amountStr]);
+  }, [getCurrencyRate.data]);
 
   const dateDisabled = useMemo(() => ({ after: new Date() }), []);
 
   useEffect(() => {
-    setTargetAmountStr((Number(amountStr) * Number(rate)).toFixed(2));
-  }, [amountStr, rate]);
+    const targetAmount = currencyConversion(toSafeBigInt(amountStr), Number(rate));
+    setTargetAmountStr(toUITargetString(targetAmount, false, true));
+  }, [amountStr, rate, toSafeBigInt, toUITargetString]);
 
-  const onChangeAmount = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    if (Number(value) < 0 || Number.isNaN(Number(value))) {
-      return;
-    }
-    setAmountStr(value);
-  }, []);
+  const onUpdateAmount = useCallback(
+    ({ strValue, bigIntValue }: { strValue?: string; bigIntValue?: bigint }) => {
+      if (bigIntValue !== undefined && bigIntValue > BigMath.abs(amount)) {
+        const safeStr = toUIString(amount, false, true);
+        setAmountStr(safeStr);
+        return;
+      }
+      if (strValue !== undefined) {
+        setAmountStr(strValue);
+      }
+    },
+    [setAmountStr, amount, toUIString],
+  );
 
   const onChangeRate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(',', '.');
@@ -103,14 +115,13 @@ export const CurrencyConversion: React.FC<{
   );
 
   const onChangeTargetAmount = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = e.target;
-      if (Number(value) < 0 || Number.isNaN(Number(value))) {
-        return;
+    ({ bigIntValue }: { strValue?: string; bigIntValue?: bigint }) => {
+      if (bigIntValue) {
+        const amount = currencyConversion(bigIntValue ?? 0n, 1 / Number(rate));
+        setAmountStr(toUIString(amount, false, true));
       }
-      setAmountStr((Number(value) / Number(rate)).toFixed(2));
     },
-    [rate],
+    [rate, toUIString],
   );
 
   const onSave = useCallback(async () => {
@@ -132,6 +143,8 @@ export const CurrencyConversion: React.FC<{
       toast.error(t('errors.currency_conversion_error'));
     }
   }, [onSubmit, targetCurrency, amountStr, rate, currency, getCurrencyHelpersCached, t]);
+
+  console.log(currency, targetCurrency, getCurrencyRate.isPending);
 
   return (
     <AppDrawer
@@ -162,14 +175,12 @@ export const CurrencyConversion: React.FC<{
                   {currency}
                 </Button>
               </div>
-              <Input
+              <CurrencyInput
                 aria-label="Amount"
-                type="number"
-                step="0.01"
-                min={0}
-                value={amountStr}
-                inputMode="decimal"
-                onChange={onChangeAmount}
+                currency={currency}
+                strValue={amountStr}
+                hideSymbol
+                onValueChange={onUpdateAmount}
               />
             </div>
 
@@ -190,14 +201,12 @@ export const CurrencyConversion: React.FC<{
                   />
                 )}
               </div>
-              <Input
+              <CurrencyInput
                 aria-label="Converted Amount"
-                type="number"
-                step="0.01"
-                min={0}
-                value={targetAmountStr}
-                inputMode="decimal"
-                onChange={onChangeTargetAmount}
+                currency={targetCurrency}
+                strValue={targetAmountStr}
+                onValueChange={onChangeTargetAmount}
+                hideSymbol
                 disabled={getCurrencyRate.isPending || currency === targetCurrency}
               />
             </div>
@@ -217,7 +226,7 @@ export const CurrencyConversion: React.FC<{
                     onChange={onChangeRate}
                     disabled={getCurrencyRate.isPending || currency === targetCurrency}
                   />
-                  {getCurrencyRate.isPending && (
+                  {currency !== targetCurrency && getCurrencyRate.isPending && (
                     <span className="pointer-events-none text-xs text-gray-500">
                       {t('currency_conversion.fetching_rate')}
                     </span>

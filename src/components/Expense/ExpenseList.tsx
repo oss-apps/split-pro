@@ -63,7 +63,7 @@ export const ExpenseList: React.FC<{
         return (
           <React.Fragment key={e.id}>
             {isFirstOfMonth && (
-              <div className="flex flex-row gap-3 pt-2">
+              <div className="flex flex-row items-center gap-4 pt-2">
                 <div className="text-xs font-medium text-gray-700 uppercase">
                   {new Intl.DateTimeFormat(i18n.language, {
                     month: 'long',

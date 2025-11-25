@@ -134,7 +134,6 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 disabled={!expenses.data || 0 === expenses.data.length}
               />
             </div>
-            <Separator className="mt-4" />
             <ExpenseList
               expenses={expenses.data}
               contactId={_friendId}

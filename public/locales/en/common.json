@@ -143,6 +143,7 @@
     "uploading_error": "Error uploading file",
     "valid_email": "Enter valid email",
     "group_balances_malformed": "Group balances data is malformed, please report an issue or try recalculating.",
+    "currency_conversion_malformed": "Currency conversion data is malformed",
     "invalid_cron_expression": "Invalid cron expression"
   },
   "bank_transactions": {

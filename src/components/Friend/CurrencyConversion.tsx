@@ -1,7 +1,7 @@
 import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { api } from '~/utils/api';
-import { BigMath, currencyConversion } from '~/utils/numbers';
+import { currencyConversion } from '~/utils/numbers';
 
 import { toast } from 'sonner';
 import { env } from '~/env';
@@ -10,15 +10,15 @@ import { useAddExpenseStore } from '~/store/addStore';
 import { CurrencyPicker } from '../AddExpense/CurrencyPicker';
 import { DateSelector } from '../AddExpense/DateSelector';
 import { Button } from '../ui/button';
+import { CurrencyInput } from '../ui/currency-input';
 import { AppDrawer } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { CurrencyInput } from '../ui/currency-input';
 
 export const CurrencyConversion: React.FC<{
   amount: bigint;
   editingRate?: number;
-  editingTargetCurrency?: CurrencyCode;
+  editingTargetCurrency?: string;
   currency: string;
   children: ReactNode;
   onSubmit: (data: {
@@ -56,7 +56,7 @@ export const CurrencyConversion: React.FC<{
   useEffect(() => {
     setAmountStr(toUIString(amount, false, true));
     setRate(editingRate ? editingRate.toFixed(4) : '');
-    if (editingTargetCurrency) {
+    if (editingTargetCurrency && isCurrencyCode(editingTargetCurrency)) {
       setTargetCurrency(editingTargetCurrency);
     }
   }, [amount, editingRate, editingTargetCurrency, toUIString]);
@@ -75,17 +75,12 @@ export const CurrencyConversion: React.FC<{
   }, [amountStr, rate, toSafeBigInt, toUITargetString]);
 
   const onUpdateAmount = useCallback(
-    ({ strValue, bigIntValue }: { strValue?: string; bigIntValue?: bigint }) => {
-      if (bigIntValue !== undefined && bigIntValue > BigMath.abs(amount)) {
-        const safeStr = toUIString(amount, false, true);
-        setAmountStr(safeStr);
-        return;
-      }
+    ({ strValue }: { strValue?: string; bigIntValue?: bigint }) => {
       if (strValue !== undefined) {
         setAmountStr(strValue);
       }
     },
-    [setAmountStr, amount, toUIString],
+    [setAmountStr],
   );
 
   const onChangeRate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,8 +138,6 @@ export const CurrencyConversion: React.FC<{
       toast.error(t('errors.currency_conversion_error'));
     }
   }, [onSubmit, targetCurrency, amountStr, rate, currency, getCurrencyHelpersCached, t]);
-
-  console.log(currency, targetCurrency, getCurrencyRate.isPending);
 
   return (
     <AppDrawer

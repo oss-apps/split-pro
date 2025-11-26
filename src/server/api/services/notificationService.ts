@@ -48,6 +48,12 @@ export async function sendExpensePushNotification(expenseId: string) {
           email: true,
         },
       },
+      conversionTo: {
+        select: {
+          currency: true,
+          amount: true,
+        },
+      },
     },
   });
 
@@ -71,30 +77,64 @@ export async function sendExpensePushNotification(expenseId: string) {
     },
   });
 
-  const { toUIString } = getCurrencyHelpers({
-    currency: isCurrencyCode(expense.currency) ? expense.currency : 'USD',
-  });
+  // A way to localize it and reuse our utils would be ideal
+  const getUserDisplayName = (user: { name: string | null; email: string | null } | null) =>
+    user?.name ?? user?.email ?? '';
+
+  const formatAmount = (currency: string, amount: bigint) => {
+    const { toUIString } = getCurrencyHelpers({
+      currency: isCurrencyCode(currency) ? currency : 'USD',
+    });
+    return toUIString(amount);
+  };
+
+  const getNotificationContent = (): { title: string; message: string } => {
+    const payer = getUserDisplayName(expense.paidByUser);
+    const adder = getUserDisplayName(expense.addedByUser);
+    const amount = formatAmount(expense.currency, expense.amount);
+
+    // Deleted expense
+    if (expense.deletedBy) {
+      return {
+        title: getUserDisplayName(expense.deletedByUser),
+        message: `Deleted ${expense.name}`,
+      };
+    }
+
+    // Updated expense
+    if (expense.updatedByUser) {
+      return {
+        title: getUserDisplayName(expense.updatedByUser),
+        message: `Updated ${expense.name} ${amount}`,
+      };
+    }
+
+    // Currency conversion
+    if (expense.splitType === SplitType.CURRENCY_CONVERSION && expense.conversionTo) {
+      const toAmount = formatAmount(expense.conversionTo.currency, expense.conversionTo.amount);
+      return {
+        title: adder,
+        message: `${payer} converted ${amount} → ${toAmount}`,
+      };
+    }
+
+    // Settlement
+    if (expense.splitType === SplitType.SETTLEMENT) {
+      return {
+        title: adder,
+        message: `${payer} settled up ${amount}`,
+      };
+    }
+
+    // Regular expense
+    return {
+      title: adder,
+      message: `${payer} paid ${amount} for ${expense.name}`,
+    };
+  };
 
   const pushData = {
-    ...(expense.deletedBy
-      ? {
-          title: `${expense.deletedByUser?.name ?? expense.deletedByUser?.email}`,
-          message: `Deleted ${expense.name}`,
-        }
-      : expense.updatedByUser
-        ? {
-            title: `${expense.updatedByUser.name ?? expense.updatedByUser.email}`,
-            message: `Updated ${expense.name} ${expense.currency} ${toUIString(expense.amount)}`,
-          }
-        : expense.splitType === SplitType.SETTLEMENT
-          ? {
-              title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
-              message: `${expense.paidByUser.name ?? expense.paidByUser.email} settled up ${expense.currency} ${toUIString(expense.amount)}`,
-            }
-          : {
-              title: `${expense.addedByUser.name ?? expense.addedByUser.email}`,
-              message: `${expense.paidByUser.name ?? expense.paidByUser.email} paid  ${expense.currency} ${toUIString(expense.amount)} for ${expense.name}`,
-            }),
+    ...getNotificationContent(),
     data: {
       url: `/expenses/${expenseId}`,
     },

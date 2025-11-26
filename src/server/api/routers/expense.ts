@@ -164,75 +164,47 @@ export const expenseRouter = createTRPCRouter({
       const amountTo = currencyConversion(amount, rate);
       const name = `${from} → ${to} @ ${rate}`;
 
-      const expenseFrom = await (expenseId ? editExpense : createExpense)(
-        {
-          expenseId,
-          name,
-          currency: from,
-          amount,
-          paidBy: senderId,
-          splitType: SplitType.CURRENCY_CONVERSION,
-          category: DEFAULT_CATEGORY,
-          participants: [
-            { userId: senderId, amount: amount },
-            { userId: receiverId, amount: -amount },
-          ],
-          groupId,
-          expenseDate: new Date(),
-        },
-        ctx.session.user.id,
-      );
-
-      if (!expenseFrom) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to upsert currency conversion record',
-        });
-      }
-
-      const otherConversionParams = {
+      const conversionFrom = {
+        expenseId,
         name,
-        currency: to,
-        amount: amountTo,
-        paidBy: receiverId,
+        currency: from,
+        amount,
+        paidBy: senderId,
         splitType: SplitType.CURRENCY_CONVERSION,
         category: DEFAULT_CATEGORY,
         participants: [
-          { userId: senderId, amount: -amountTo },
-          { userId: receiverId, amount: amountTo },
+          { userId: senderId, amount: amount },
+          { userId: receiverId, amount: -amount },
         ],
         groupId,
         expenseDate: new Date(),
       };
 
-      if (expenseId) {
-        const expense = await db.expense.findFirst({
-          select: { otherConversion: true },
-          where: {
-            id: expenseId,
-          },
-        });
+      const conversionTo = {
+        ...conversionFrom,
+        expenseId: undefined,
+        currency: to,
+        amount: amountTo,
+        paidBy: receiverId,
+        participants: [
+          { userId: senderId, amount: -amountTo },
+          { userId: receiverId, amount: amountTo },
+        ],
+      };
 
-        if (expense?.otherConversion) {
-          await editExpense(
-            {
-              expenseId: expense.otherConversion,
-              ...otherConversionParams,
-            },
-            ctx.session.user.id,
-          );
-          return {
-            ...expenseFrom,
-          };
-        }
+      let res = null;
+
+      if (!expenseId) {
+        res = await createExpense(conversionTo, ctx.session.user.id, conversionFrom);
       } else {
-        await createExpense(
-          {
-            ...otherConversionParams,
-            otherConversion: expenseFrom.id,
-          },
-          ctx.session.user.id,
-        );
+        res = await editExpense(conversionFrom, ctx.session.user.id, conversionTo);
+      }
+
+      if (!res) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to upsert currency conversion record',
+        });
       }
     }),
 
@@ -284,7 +256,7 @@ export const expenseRouter = createTRPCRouter({
                 },
                 {
                   NOT: {
-                    otherConversion: null,
+                    conversionToId: null,
                   },
                 },
               ],
@@ -308,7 +280,7 @@ export const expenseRouter = createTRPCRouter({
             },
           },
           paidByUser: true,
-          conversionFrom: true,
+          conversionTo: true,
         },
       });
 
@@ -330,7 +302,7 @@ export const expenseRouter = createTRPCRouter({
             },
             {
               NOT: {
-                otherConversion: null,
+                conversionToId: null,
               },
             },
           ],

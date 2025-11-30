@@ -108,7 +108,7 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
   return (
     <>
       <div className="flex items-center gap-4">
-        <div className="inline-block max-w-min text-center text-xs text-gray-500">
+        <div className="inline-block w-6 text-center text-xs text-gray-500">
           {toUIDate(e.expenseDate)}
         </div>
         <CategoryIcon category={e.category} className="size-5 text-gray-400" />
@@ -152,7 +152,7 @@ const Settlement: ExpenseComponent = ({ e, userId }) => {
 
   return (
     <div className="flex items-center gap-4">
-      <div className="inline-block max-w-min text-center text-xs text-gray-500">
+      <div className="inline-block w-6 text-center text-xs text-gray-500">
         {toUIDate(e.expenseDate)}
       </div>
       <SETTLEUP_ICON className="size-5 text-gray-400" />
@@ -183,7 +183,7 @@ const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
 
   return (
     <div className="flex items-center gap-4">
-      <div className="inline-block max-w-min text-center text-xs text-gray-500">
+      <div className="inline-block w-6 text-center text-xs text-gray-500">
         {toUIDate(e.expenseDate)}
       </div>
       <CURRENCY_CONVERSION_ICON className="size-5 text-gray-400" />

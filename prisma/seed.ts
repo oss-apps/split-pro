@@ -2,7 +2,7 @@ import { PrismaClient, SplitType } from '@prisma/client';
 
 import { createExpense, deleteExpense, editExpense } from '~/server/api/services/splitService';
 import { dummyData } from '~/dummies';
-import { calculateParticipantSplit, Participant } from '~/store/addStore';
+import { calculateParticipantSplit } from '~/store/addStore';
 import assert from 'node:assert';
 import { BigMath } from '~/utils/numbers';
 import { DEFAULT_CATEGORY } from '~/lib/category';

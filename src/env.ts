@@ -1,5 +1,4 @@
 import { createEnv } from '@t3-oss/env-nextjs';
-import { execSync } from 'node:child_process';
 import { z } from 'zod';
 
 export const env = createEnv({
@@ -28,7 +27,8 @@ export const env = createEnv({
       (str) => process.env.VERCEL_URL ?? str,
       process.env.VERCEL ? z.string() : z.string().url(),
     ),
-    CLEAR_BANK_CACHE_FREQUENCY: z.enum(['weekly', 'monthly']).optional(),
+    CLEAR_CACHE_CRON_RULE: z.string().optional(),
+    CACHE_RETENTION_INTERVAL: z.string().optional(),
     ENABLE_SENDING_INVITES: z.boolean(),
     DISABLE_EMAIL_SIGNUP: z.boolean(),
     INVITE_ONLY: z.boolean(),
@@ -99,7 +99,8 @@ export const env = createEnv({
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     NEXTAUTH_URL_INTERNAL: process.env.NEXTAUTH_URL_INTERNAL ?? process.env.NEXTAUTH_URL,
-    CLEAR_BANK_CACHE_FREQUENCY: process.env.CLEAR_BANK_CACHE_FREQUENCY,
+    CLEAR_CACHE_CRON_RULE: process.env.CLEAR_CACHE_CRON_RULE ?? '0 2 * * 0',
+    CACHE_RETENTION_INTERVAL: process.env.CACHE_RETENTION_INTERVAL ?? '2 days',
     ENABLE_SENDING_INVITES: 'true' === process.env.ENABLE_SENDING_INVITES,
     DISABLE_EMAIL_SIGNUP: 'true' === process.env.DISABLE_EMAIL_SIGNUP,
     INVITE_ONLY: 'true' === process.env.INVITE_ONLY,

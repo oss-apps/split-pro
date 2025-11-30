@@ -34,20 +34,7 @@ abstract class CurrencyRateProvider {
 
     await Promise.all(
       Object.entries(data.rates).map(([to, rate]) =>
-        db.currencyRateCache.upsert({
-          where: {
-            from_to_date: { from: data.base, to, date },
-          },
-          create: {
-            from: data.base,
-            to,
-            date,
-            rate,
-          },
-          update: {
-            rate,
-          },
-        }),
+        this.upsertCache(data.base as CurrencyCode, to as CurrencyCode, date, rate),
       ),
     );
 
@@ -183,7 +170,7 @@ class NbpProvider extends CurrencyRateProvider {
 
     return {
       base: 'PLN',
-      rates: Object.fromEntries(response.rates.map((rate) => [rate.code, rate.mid])),
+      rates: Object.fromEntries(response.rates.map((rate) => [rate.code, 1 / rate.mid])),
     };
   }
 

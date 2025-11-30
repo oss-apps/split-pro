@@ -195,7 +195,7 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
           </span>
         ) : (
           <span className={0 < balances[0]!.amount ? 'text-emerald-500' : 'text-orange-600'}>
-            {getCurrencyHelpersCached(balances[0]!.currency).toUIString(balances[0]!.amount)}
+            {getCurrencyHelpersCached(balances[0]!.currency).toUIString(balances[0]!.amount)}*
           </span>
         )}
       </div>

@@ -143,7 +143,9 @@
     "uploading_error": "Error uploading file",
     "valid_email": "Enter valid email",
     "group_balances_malformed": "Group balances data is malformed, please report an issue or try recalculating.",
-    "invalid_cron_expression": "Invalid cron expression"
+    "currency_conversion_malformed": "Currency conversion data is malformed",
+    "invalid_cron_expression": "Invalid cron expression",
+    "currency_conversion_failed": "Failed to convert currencies"
   },
   "bank_transactions": {
     "choose_bank_provider": "Choose bank provider",
@@ -380,11 +382,13 @@
     "on": "on",
     "or": "or",
     "outstanding_balances": "Outstanding balances",
+    "total_balance": "Total balance",
     "select_currency": "Select currency",
     "settle_up_name": "Settle up",
     "settled_up": "Settled up",
     "settlement": "Settlement",
     "share_text": "Check out SplitPro. It's an open source free alternative for Splitwise",
+    "show_all_currencies": "Show all currencies",
     "today": "Today",
     "in_group": "In group"
   }

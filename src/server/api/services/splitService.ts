@@ -44,12 +44,27 @@ export async function createExpense(
     expenseDate,
     fileKey,
     transactionId,
-    otherConversion,
   }: CreateExpense,
   currentUserId: number,
+  conversionFromParams?: CreateExpense,
 ) {
-  const nonZeroParticipants =
-    participants.length > 1 ? participants.filter((p) => 0n !== p.amount) : participants;
+  const nonZeroParticipants = getNonZeroParticipants(participants);
+
+  const conversionFrom = conversionFromParams
+    ? {
+        create: {
+          ...conversionFromParams,
+          addedBy: currentUserId,
+          expenseParticipants: {
+            create: getNonZeroParticipants(conversionFromParams.participants),
+          },
+        },
+      }
+    : undefined;
+  if (conversionFrom) {
+    // @ts-ignore
+    delete conversionFrom.create.participants;
+  }
 
   // Create expense operation
   const result = await db.expense.create({
@@ -68,13 +83,7 @@ export async function createExpense(
       addedBy: currentUserId,
       expenseDate,
       transactionId,
-      conversionFrom: otherConversion
-        ? {
-            connect: {
-              id: otherConversion ?? null,
-            },
-          }
-        : undefined,
+      conversionFrom,
     },
   });
   if (result) {
@@ -89,7 +98,6 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
       id: expenseId,
     },
     include: {
-      expenseParticipants: true,
       recurrence: {
         include: {
           job: true,
@@ -104,8 +112,8 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
     throw new Error('Expense not found');
   }
 
-  if (expense.otherConversion) {
-    await deleteExpense(expense.otherConversion, deletedBy);
+  if (expense.conversionToId) {
+    await deleteExpense(expense.conversionToId, deletedBy);
   }
 
   operations.push(
@@ -158,6 +166,7 @@ export async function editExpense(
     transactionId,
   }: CreateExpense,
   currentUserId: number,
+  conversionToParams?: CreateExpense,
 ) {
   if (!expenseId) {
     throw new Error('Expense ID is required for editing');
@@ -185,7 +194,7 @@ export async function editExpense(
   operations.push(
     db.expenseParticipant.deleteMany({
       where: {
-        expenseId,
+        expenseId: expense.conversionToId ? { in: [expenseId, expense.conversionToId] } : expenseId,
       },
     }),
   );
@@ -211,6 +220,25 @@ export async function editExpense(
       },
     }),
   );
+  if (conversionToParams) {
+    if (!expense.conversionToId) {
+      throw new Error('Conversion to expense not found for editing');
+    }
+    const { participants: toParticipants, ...toExpenseData } = conversionToParams;
+
+    operations.push(
+      db.expense.update({
+        where: { id: expense.conversionToId },
+        data: {
+          ...toExpenseData,
+          expenseParticipants: {
+            create: toParticipants,
+          },
+          updatedBy: currentUserId,
+        },
+      }),
+    );
+  }
 
   if (expense.recurrence?.job) {
     operations.push(db.$executeRaw`SELECT cron.unschedule(${expense.recurrence.job.jobname})`);
@@ -448,3 +476,6 @@ export async function importGroupFromSplitwise(
 
   await db.$transaction(operations);
 }
+
+const getNonZeroParticipants = (participants: { userId: number; amount: bigint }[]) =>
+  participants.length > 1 ? participants.filter((p) => 0n !== p.amount) : participants;

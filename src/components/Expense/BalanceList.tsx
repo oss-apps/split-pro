@@ -125,19 +125,17 @@ export const BalanceList: React.FC<{
                       const sender = 0 < amount ? friend : user;
                       const receiver = 0 < amount ? user : friend;
 
-                      const onSubmit: ComponentProps<typeof CurrencyConversion>['onSubmit'] =
-                        useCallback(
-                          async (data) => {
-                            await addOrEditCurrencyConversionMutation.mutateAsync({
-                              ...data,
-                              senderId: sender.id,
-                              receiverId: receiver.id,
-                              groupId: groupBalances[0]!.groupId,
-                            });
-                            await apiUtils.invalidate();
-                          },
-                          [sender.id, receiver.id],
-                        );
+                      const onSubmit: ComponentProps<
+                        typeof CurrencyConversion
+                      >['onSubmit'] = async (data) => {
+                        await addOrEditCurrencyConversionMutation.mutateAsync({
+                          ...data,
+                          senderId: sender.id,
+                          receiverId: receiver.id,
+                          groupId: groupBalances[0]!.groupId,
+                        });
+                        await apiUtils.invalidate();
+                      };
 
                       return (
                         <div

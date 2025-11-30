@@ -104,35 +104,38 @@ async function deleteExpenses() {
 }
 
 async function settleBalances() {
+  const groupBalances = await prisma.balanceView.findMany();
+  const groupBalanceMap = Object.fromEntries(
+    groupBalances.map((gb) => [`${gb.userId}-${gb.friendId}-${gb.groupId}-${gb.currency}`, gb]),
+  );
+
   await Promise.all(
     dummyData.balancesToSettle.map(async ([userId, friendId, groupId, currency]) => {
-      const groupBalance = await prisma.balanceView.findFirst({
-        where: {
-          userId,
-          friendId,
-          groupId,
-          currency,
-        },
-      });
+      const groupBalance = groupBalanceMap[`${userId}-${friendId}-${groupId}-${currency}`];
 
-      const sender = 0n > groupBalance!.amount ? friendId : userId;
-      const receiver = 0n > groupBalance!.amount ? userId : friendId;
+      if (!groupBalance || groupBalance.amount === 0n) {
+        console.warn(`No balance to settle for ${userId}, ${friendId}, ${groupId}, ${currency}`);
+        return;
+      }
+
+      const sender = 0n > groupBalance.amount ? friendId : userId;
+      const receiver = 0n > groupBalance.amount ? userId : friendId;
 
       await createExpense(
         {
           name: 'Settle up',
-          amount: BigMath.abs(groupBalance!.amount),
+          amount: BigMath.abs(groupBalance.amount),
           currency,
           splitType: SplitType.SETTLEMENT,
           groupId,
           participants: [
             {
               userId: sender,
-              amount: groupBalance!.amount,
+              amount: groupBalance.amount,
             },
             {
               userId: receiver,
-              amount: -groupBalance!.amount,
+              amount: -groupBalance.amount,
             },
           ],
           paidBy: sender,

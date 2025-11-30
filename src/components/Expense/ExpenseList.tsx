@@ -14,6 +14,7 @@ import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
 import { Separator } from '../ui/separator';
 import { cn } from '~/lib/utils';
+import { toast } from 'sonner';
 
 type ExpensesOutput =
   | inferRouterOutputs<ExpenseRouter>['getGroupExpenses']
@@ -63,7 +64,7 @@ export const ExpenseList: React.FC<{
         return (
           <React.Fragment key={e.id}>
             {isFirstOfMonth && (
-              <div className="flex flex-row gap-3 pt-2">
+              <div className="flex flex-row items-center gap-4 pt-2">
                 <div className="text-xs font-medium text-gray-700 uppercase">
                   {new Intl.DateTimeFormat(i18n.language, {
                     month: 'long',
@@ -168,6 +169,14 @@ const Settlement: ExpenseComponent = ({ e, userId }) => {
 
 const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
   const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
+
+  if (!e.conversionTo) {
+    toast.error(t('errors.currency_conversion_malformed'));
+    console.error(
+      'Malformed currency conversion data: no conversionTo present, please report this issue.',
+    );
+    return null;
+  }
 
   const receiverId = e.expenseParticipants.find((p) => p.userId !== e.paidBy)?.userId;
   const userDetails = api.user.getUserDetails.useQuery({ userId: receiverId! });

@@ -212,11 +212,22 @@ export const AddOrEditExpensePage: React.FC<{
 
   const onConvertAmount: React.ComponentProps<typeof CurrencyConversion>['onSubmit'] = useCallback(
     ({ amount: absAmount, rate }) => {
-      const targetAmount = (absAmount >= 0n ? 1n : -1n) * currencyConversion(absAmount, rate);
+      if (!previousCurrencyRef.current) {
+        return;
+      }
+
+      const targetAmount =
+        (absAmount >= 0n ? 1n : -1n) *
+        currencyConversion({
+          amount: absAmount,
+          rate,
+          from: previousCurrencyRef.current,
+          to: currency,
+        });
       setAmount(targetAmount);
       previousCurrencyRef.current = null;
     },
-    [setAmount],
+    [setAmount, currency],
   );
 
   const currencyConversionComponent = React.useMemo(() => {
@@ -288,7 +299,6 @@ export const AddOrEditExpensePage: React.FC<{
               placeholder={t('expense_details.add_expense_details.amount_placeholder')}
               currency={currency}
               strValue={amtStr}
-              bigIntValue={amount}
               allowNegative
               hideSymbol
               onValueChange={onUpdateAmount}

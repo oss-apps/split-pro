@@ -12,7 +12,7 @@
 
 */
 -- DropForeignKey
-ALTER TABLE "public"."Expense" DROP CONSTRAINT "Expense_otherConversion_fkey";
+ALTER TABLE "public"."Expense" DROP CONSTRAINT "Expense_conversionToId_fkey";
 
 -- DropForeignKey
 ALTER TABLE "public"."ExpenseNote" DROP CONSTRAINT "ExpenseNote_expenseUuid_fkey";
@@ -57,7 +57,7 @@ ALTER TABLE "public"."ExpenseParticipant" ADD CONSTRAINT "ExpenseParticipant_pke
 ALTER TABLE "public"."ExpenseNote" ALTER COLUMN "expenseId" SET NOT NULL;
 
 -- AddForeignKey
-ALTER TABLE "public"."Expense" ADD CONSTRAINT "Expense_otherConversion_fkey" FOREIGN KEY ("otherConversion") REFERENCES "public"."Expense"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."Expense" ADD CONSTRAINT "Expense_conversionToId_fkey" FOREIGN KEY ("conversionToId") REFERENCES "public"."Expense"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."ExpenseParticipant" ADD CONSTRAINT "ExpenseParticipant_expenseId_fkey" FOREIGN KEY ("expenseId") REFERENCES "public"."Expense"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -12,11 +12,12 @@ import { BigMath, currencyConversion } from '~/utils/numbers';
 import {
   createCurrencyConversionSchema,
   createExpenseSchema,
+  getBatchCurrencyRatesSchema,
   getCurrencyRateSchema,
 } from '~/types/expense.types';
 import { createExpense, deleteExpense, editExpense } from '../services/splitService';
 import { currencyRateProvider } from '../services/currencyRateService';
-import { isCurrencyCode } from '~/lib/currency';
+import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { createRecurringExpenseJob } from '../services/scheduleService';
@@ -43,36 +44,30 @@ export const expenseRouter = createTRPCRouter({
 
     const userMap = await getUserMap(balancesRaw.map((b) => b.friendId));
 
-    const balances = balancesRaw
-      .map((b) => ({
-        ...b,
-        amount: b._sum.amount ?? 0n,
+    // Group balances by friendId to return all currencies per friend
+    const balancesByFriend = balancesRaw.reduce<
+      Record<number, { currency: string; amount: bigint }[]>
+    >((acc, b) => {
+      const amount = b._sum.amount ?? 0n;
+      if (!acc[b.friendId]) {
+        acc[b.friendId] = [];
+      }
+      acc[b.friendId]!.push({ currency: b.currency, amount });
+      return acc;
+    }, {});
+
+    const balances = Object.entries(balancesByFriend)
+      .map(([friendId, currencies]) => ({
+        friendId: Number(friendId),
+        currencies,
+        friend: userMap[Number(friendId)]!,
+        // For sorting, use the largest absolute value across all currencies
+        maxAmount: currencies.reduce(
+          (max, curr) => (BigMath.abs(curr.amount) > BigMath.abs(max) ? curr.amount : max),
+          0n,
+        ),
       }))
-      .reduce<((typeof balancesRaw)[number] & { hasMore?: boolean; amount: bigint })[]>(
-        (acc, current) => {
-          // @ts-ignore This will be resolved once we move away from balance tables
-          const existing = acc.findIndex((item) => item.friendId === current.friendId);
-          if (-1 === existing) {
-            acc.push(current);
-          } else {
-            const existingItem = acc[existing];
-            if (existingItem) {
-              if (BigMath.abs(existingItem.amount) > BigMath.abs(current.amount)) {
-                acc[existing] = { ...existingItem, hasMore: true };
-              } else {
-                acc[existing] = { ...current, hasMore: true };
-              }
-            }
-          }
-          return acc;
-        },
-        [],
-      )
-      .sort((a, b) => Number(BigMath.abs(b.amount) - BigMath.abs(a.amount)))
-      .map((balance) => ({
-        ...balance,
-        friend: userMap[balance.friendId]!,
-      }));
+      .sort((a, b) => Number(BigMath.abs(b.maxAmount) - BigMath.abs(a.maxAmount)));
 
     const youOwe: { currency: string; amount: bigint }[] = [];
     const youGet: { currency: string; amount: bigint }[] = [];
@@ -161,78 +156,54 @@ export const expenseRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { amount, rate, from, to, senderId, receiverId, groupId, expenseId } = input;
 
-      const amountTo = currencyConversion(amount, rate);
-      const name = `${from} → ${to} @ ${rate}`;
-
-      const expenseFrom = await (expenseId ? editExpense : createExpense)(
-        {
-          expenseId,
-          name,
-          currency: from,
-          amount,
-          paidBy: senderId,
-          splitType: SplitType.CURRENCY_CONVERSION,
-          category: DEFAULT_CATEGORY,
-          participants: [
-            { userId: senderId, amount: amount },
-            { userId: receiverId, amount: -amount },
-          ],
-          groupId,
-          expenseDate: new Date(),
-        },
-        ctx.session.user.id,
-      );
-
-      if (!expenseFrom) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to upsert currency conversion record',
-        });
+      if (!isCurrencyCode(from) || !isCurrencyCode(to)) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid currency code' });
       }
 
-      const otherConversionParams = {
+      const amountTo = currencyConversion({ from, to, amount, rate });
+      const name = `${from} → ${to} @ ${rate}`;
+
+      const conversionFrom = {
+        expenseId,
         name,
-        currency: to,
-        amount: amountTo,
-        paidBy: receiverId,
+        currency: from,
+        amount,
+        paidBy: senderId,
         splitType: SplitType.CURRENCY_CONVERSION,
         category: DEFAULT_CATEGORY,
         participants: [
-          { userId: senderId, amount: -amountTo },
-          { userId: receiverId, amount: amountTo },
+          { userId: senderId, amount: amount },
+          { userId: receiverId, amount: -amount },
         ],
         groupId,
         expenseDate: new Date(),
       };
 
-      if (expenseId) {
-        const expense = await db.expense.findFirst({
-          select: { otherConversion: true },
-          where: {
-            id: expenseId,
-          },
-        });
+      const conversionTo = {
+        ...conversionFrom,
+        expenseId: undefined,
+        currency: to,
+        amount: amountTo,
+        paidBy: receiverId,
+        participants: [
+          { userId: senderId, amount: -amountTo },
+          { userId: receiverId, amount: amountTo },
+        ],
+      };
 
-        if (expense?.otherConversion) {
-          await editExpense(
-            {
-              expenseId: expense.otherConversion,
-              ...otherConversionParams,
-            },
-            ctx.session.user.id,
-          );
-          return {
-            ...expenseFrom,
-          };
-        }
+      let res = null;
+
+      if (!expenseId) {
+        res = await createExpense(conversionTo, ctx.session.user.id, conversionFrom);
       } else {
-        await createExpense(
-          {
-            ...otherConversionParams,
-            otherConversion: expenseFrom.id,
-          },
-          ctx.session.user.id,
-        );
+        res = await editExpense(conversionFrom, ctx.session.user.id, conversionTo);
+      }
+
+      if (!res) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to upsert currency conversion record',
+        });
       }
     }),
 
@@ -284,7 +255,7 @@ export const expenseRouter = createTRPCRouter({
                 },
                 {
                   NOT: {
-                    otherConversion: null,
+                    conversionToId: null,
                   },
                 },
               ],
@@ -308,7 +279,7 @@ export const expenseRouter = createTRPCRouter({
             },
           },
           paidByUser: true,
-          conversionFrom: true,
+          conversionTo: true,
         },
       });
 
@@ -330,7 +301,7 @@ export const expenseRouter = createTRPCRouter({
             },
             {
               NOT: {
-                otherConversion: null,
+                conversionToId: null,
               },
             },
           ],
@@ -557,6 +528,42 @@ export const expenseRouter = createTRPCRouter({
 
     return { rate };
   }),
+
+  getBatchCurrencyRates: protectedProcedure
+    .input(getBatchCurrencyRatesSchema)
+    .query(async ({ input }) => {
+      const { from, to, date } = input;
+
+      if (from.length === 0) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Missing from currency code' });
+      }
+
+      if (!from.every(isCurrencyCode) || !isCurrencyCode(to)) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid currency code' });
+      }
+
+      const rates = new Map<string, number>();
+
+      // Get the first rate to precache rates for the target currency
+      const rate = await currencyRateProvider.getCurrencyRate(from[0] as CurrencyCode, to, date);
+      rates.set(from[0]!, rate);
+
+      if (from.length > 1) {
+        // Fetch rates for remaining currencies and return as map
+        await Promise.all(
+          from.slice(1).map(async (currency) => {
+            const r = await currencyRateProvider.getCurrencyRate(
+              currency as CurrencyCode,
+              to,
+              date,
+            );
+            rates.set(currency, r);
+          }),
+        );
+      }
+
+      return { rates };
+    }),
 });
 
 const validateEditExpensePermission = async (expenseId: string, userId: number): Promise<void> => {

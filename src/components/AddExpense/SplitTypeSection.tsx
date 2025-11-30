@@ -355,7 +355,6 @@ const ParticipantRow = ({
         <div className="flex w-1/2 items-center gap-1">
           <CurrencyInput
             strValue={shareStr}
-            bigIntValue={share ?? 0n}
             currency={currency}
             className="ml-2 text-right"
             onValueChange={onCurrencyInputValueChange}

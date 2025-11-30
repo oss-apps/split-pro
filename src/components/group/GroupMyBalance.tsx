@@ -1,19 +1,22 @@
 import { type BalanceView, type User } from '@prisma/client';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { BigMath } from '~/utils/numbers';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { ConvertibleBalance } from '../Expense/ConvertibleBalance';
 
 interface GroupMyBalanceProps {
   userId: number;
   groupBalances?: BalanceView[];
   users?: User[];
+  groupId: number;
 }
 
 const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
   userId,
   groupBalances = [],
   users = [],
+  groupId,
 }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const userMap = users.reduce(
@@ -38,12 +41,30 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
 
   const cumulatedBalances = Object.values(friendBalances).reduce(
     (acc, balances) => {
-      Object.entries(balances).forEach(([currency, amount]) => {
-        acc[currency] = (acc[currency] ?? 0n) + amount;
-      });
+      if (balances) {
+        Object.entries(balances).forEach(([currency, amount]) => {
+          acc[currency] = (acc[currency] ?? 0n) + amount;
+        });
+      }
       return acc;
     },
     {} as Record<string, bigint>,
+  );
+
+  const youLentBalances = useMemo(
+    () =>
+      Object.entries(cumulatedBalances)
+        .filter(([_, amount]) => 0 < amount)
+        .map(([currency, amount]) => ({ currency, amount })),
+    [cumulatedBalances],
+  );
+
+  const youOweBalances = useMemo(
+    () =>
+      Object.entries(cumulatedBalances)
+        .filter(([_, amount]) => 0 > amount)
+        .map(([currency, amount]) => ({ currency, amount })),
+    [cumulatedBalances],
   );
 
   const youLent = Object.entries(cumulatedBalances).filter(([_, amount]) => 0 < amount);
@@ -54,29 +75,25 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
       <div className="flex flex-col gap-2">
         {0 < youLent.length ? (
           <div className="flex flex-wrap gap-1 text-emerald-500">
-            {t('actors.you')} {t('ui.expense.you.lent')}
-            {youLent.map(([currency, amount], index, arr) => (
-              <React.Fragment key={currency}>
-                <div className="flex gap-1 font-semibold">
-                  {getCurrencyHelpersCached(currency).toUIString(amount)}
-                </div>
-                {index < arr.length - 1 ? <span>+</span> : null}
-              </React.Fragment>
-            ))}
+            {t('actors.you')} {t('ui.expense.you.lent')}{' '}
+            <ConvertibleBalance
+              balances={youLentBalances}
+              storageKey="group-balance-lent-currency"
+              entityId={groupId}
+              showMultiOption
+            />
           </div>
         ) : null}
 
         {0 < youOwe.length ? (
           <div className="text-orange-6000 flex flex-wrap gap-1 text-orange-600">
-            {t('actors.you')} {t('ui.expense.you.owe')}
-            {youOwe.map(([currency, amount], index, arr) => (
-              <React.Fragment key={currency}>
-                <div className="flex gap-1 font-semibold">
-                  {getCurrencyHelpersCached(currency).toUIString(amount)}
-                </div>
-                {index < arr.length - 1 ? <span>+</span> : null}
-              </React.Fragment>
-            ))}
+            {t('actors.you')} {t('ui.expense.you.owe')}{' '}
+            <ConvertibleBalance
+              balances={youOweBalances}
+              storageKey="group-balance-owe-currency"
+              entityId={groupId}
+              showMultiOption
+            />
           </div>
         ) : null}
 

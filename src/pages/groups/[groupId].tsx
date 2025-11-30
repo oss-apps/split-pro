@@ -400,6 +400,7 @@ const BalancePage: NextPageWithUser<{
                 userId={user.id}
                 groupBalances={groupDetailQuery.data?.groupBalances}
                 users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user)}
+                groupId={groupId}
               />
             </div>
             <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b pb-4">

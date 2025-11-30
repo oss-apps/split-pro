@@ -8,6 +8,7 @@ import { BalanceEntry } from '~/components/Expense/BalanceEntry';
 import MainLayout from '~/components/Layout/MainLayout';
 import { NotificationModal } from '~/components/NotificationModal';
 import { Button } from '~/components/ui/button';
+import { ConvertibleBalance } from '~/components/Expense/ConvertibleBalance';
 import { useIsPwa } from '~/hooks/useIsPwa';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { type NextPageWithUser } from '~/types';
@@ -15,7 +16,7 @@ import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
 
 const BalancePage: NextPageWithUser = () => {
-  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { t } = useTranslationWithUtils();
   const isPwa = useIsPwa();
   const balanceQuery = api.expense.getBalances.useQuery();
 
@@ -63,14 +64,11 @@ const BalancePage: NextPageWithUser = () => {
                   </div>
                 </div>
                 <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
-                  {balanceQuery.data?.youOwe.map((balance, index) => (
-                    <span key={balance.currency} className="flex gap-1">
-                      <span className="text-orange-600">
-                        {getCurrencyHelpersCached(balance.currency).toUIString(balance.amount)}
-                      </span>
-                      {index !== balanceQuery.data.youOwe.length - 1 ? <span>+</span> : null}
-                    </span>
-                  ))}
+                  <ConvertibleBalance
+                    balances={balanceQuery.data.youOwe}
+                    storageKey="balance-page-you-owe-currency"
+                    showMultiOption
+                  />
                 </div>
               </div>
             ) : null}
@@ -84,16 +82,11 @@ const BalancePage: NextPageWithUser = () => {
                   </div>
                 </div>
                 <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
-                  {balanceQuery.data?.youGet.map((balance, index) => (
-                    <span key={balance.currency} className="flex gap-1">
-                      <span className="text-emerald-500">
-                        {getCurrencyHelpersCached(balance.currency).toUIString(balance.amount)}
-                      </span>
-                      {index !== balanceQuery.data.youGet.length - 1 ? (
-                        <span className="text-gray-400">+</span>
-                      ) : null}
-                    </span>
-                  ))}
+                  <ConvertibleBalance
+                    balances={balanceQuery.data.youGet}
+                    storageKey="balance-page-you-get-currency"
+                    showMultiOption
+                  />
                 </div>
               </div>
             ) : null}
@@ -106,10 +99,7 @@ const BalancePage: NextPageWithUser = () => {
               key={balance.friend.id}
               id={balance.friend.id}
               entity={balance.friend}
-              amount={balance.amount}
-              isPositive={0n < balance.amount}
-              currency={balance.currency}
-              hasMore={balance.hasMore}
+              balances={balance.currencies}
             />
           ))}
 

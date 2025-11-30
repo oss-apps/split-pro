@@ -80,7 +80,7 @@ abstract class CurrencyRateProvider {
   }
 
   private upsertCache(from: CurrencyCode, to: CurrencyCode, date: Date, rate: number) {
-    return db.currencyRateCache.upsert({
+    return db.cachedCurrencyRate.upsert({
       where: {
         from_to_date: { from, to, date },
       },
@@ -89,26 +89,28 @@ abstract class CurrencyRateProvider {
         to,
         date,
         rate,
+        lastFetched: new Date(),
       },
       update: {
         rate,
+        lastFetched: new Date(),
       },
     });
   }
 
   private async getCache(from: CurrencyCode, to: CurrencyCode, date: Date) {
-    const result = await db.currencyRateCache.findUnique({
+    const result = await db.cachedCurrencyRate.findUnique({
       where: {
         from_to_date: { from, to, date },
       },
     });
     if (result) {
-      void db.currencyRateCache.update({
+      void db.cachedCurrencyRate.update({
         where: {
           from_to_date: { from, to, date },
         },
         data: {
-          insertedAt: new Date(),
+          lastFetched: new Date(),
         },
       });
     }

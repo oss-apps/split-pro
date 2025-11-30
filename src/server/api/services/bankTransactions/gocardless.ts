@@ -1,12 +1,11 @@
 // @deprecated
 
+import { TRPCError } from '@trpc/server';
 import { format, subDays } from 'date-fns';
 import NordigenClient, { type Transaction } from 'nordigen-node';
 import { env } from '~/env';
-import { getDbCachedData, setDbCachedData } from '../dbCache';
-import type { CachedBankData } from '@prisma/client';
+import { db } from '~/server/db';
 import type { TransactionOutput, TransactionOutputItem } from '~/types/bank.types';
-import { TRPCError } from '@trpc/server';
 
 abstract class AbstractBankProvider {
   abstract getTransactions(userId: number, token?: string): Promise<TransactionOutput | undefined>;
@@ -67,8 +66,7 @@ export class GoCardlessService extends AbstractBankProvider {
 
     const accountId = requisitionData.accounts[0];
 
-    const cachedData = await getDbCachedData<CachedBankData, 'cachedBankData'>({
-      key: 'cachedBankData',
+    const cachedData = await db.cachedBankData.findUnique({
       where: { obapiProviderId: accountId, userId },
     });
 
@@ -79,6 +77,12 @@ export class GoCardlessService extends AbstractBankProvider {
           message: ERROR_MESSAGES.FAILED_FETCH_CACHED,
         });
       }
+
+      await db.cachedBankData.update({
+        where: { obapiProviderId: accountId, userId },
+        data: { lastFetched: new Date() },
+      });
+
       return JSON.parse(cachedData.data) as TransactionOutput;
     }
 
@@ -95,18 +99,22 @@ export class GoCardlessService extends AbstractBankProvider {
 
     const formattedTransactions: TransactionOutput = this.formatTransactions(transactions);
 
-    await setDbCachedData({
-      key: 'cachedBankData',
-      where: { obapiProviderId: accountId ?? '', userId },
-      data: {
-        obapiProviderId: accountId ?? '',
-        data: JSON.stringify(formattedTransactions),
-        lastFetched: new Date(),
-        user: {
-          connect: {
-            id: userId,
-          },
+    const data = {
+      obapiProviderId: accountId ?? '',
+      data: JSON.stringify(formattedTransactions),
+      lastFetched: new Date(),
+      user: {
+        connect: {
+          id: userId,
         },
+      },
+    };
+
+    await db.cachedBankData.upsert({
+      where: { obapiProviderId: accountId ?? '', userId },
+      create: data,
+      update: {
+        lastFetched: new Date(),
       },
     });
 

@@ -244,8 +244,25 @@ export function removeTrailingZeros(num: string) {
   return num;
 }
 
-export function currencyConversion(amount: bigint, rate: number) {
-  return BigMath.roundDiv(amount * BigInt(Math.round(rate * 10000)), 10000n);
+export function currencyConversion({
+  from,
+  to,
+  amount,
+  rate,
+}: {
+  from: CurrencyCode;
+  to: CurrencyCode;
+  amount: bigint;
+  rate: number;
+}) {
+  const fromDecimalDigits = CURRENCIES[from].decimalDigits;
+  const toDecimalDigits = CURRENCIES[to].decimalDigits;
+  const preMultiplier = BigInt(10 ** Math.max(toDecimalDigits - fromDecimalDigits, 0));
+  const postMultiplier = BigInt(10 ** Math.max(fromDecimalDigits - toDecimalDigits, 0));
+  return BigMath.roundDiv(
+    amount * preMultiplier * BigInt(Math.round(rate * 10000)),
+    postMultiplier * 10000n,
+  );
 }
 
 export const BigMath = {

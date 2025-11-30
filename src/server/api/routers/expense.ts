@@ -161,7 +161,11 @@ export const expenseRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { amount, rate, from, to, senderId, receiverId, groupId, expenseId } = input;
 
-      const amountTo = currencyConversion(amount, rate);
+      if (!isCurrencyCode(from) || !isCurrencyCode(to)) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid currency code' });
+      }
+
+      const amountTo = currencyConversion({ from, to, amount, rate });
       const name = `${from} → ${to} @ ${rate}`;
 
       const conversionFrom = {

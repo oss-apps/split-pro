@@ -70,9 +70,18 @@ export const CurrencyConversion: React.FC<{
   const dateDisabled = useMemo(() => ({ after: new Date() }), []);
 
   useEffect(() => {
-    const targetAmount = currencyConversion(toSafeBigInt(amountStr), Number(rate));
+    if (!isCurrencyCode(currency) || !isCurrencyCode(targetCurrency)) {
+      return;
+    }
+
+    const targetAmount = currencyConversion({
+      from: currency,
+      to: targetCurrency,
+      amount: toSafeBigInt(amountStr),
+      rate: Number(rate),
+    });
     setTargetAmountStr(toUITargetString(targetAmount, false, true));
-  }, [amountStr, rate, toSafeBigInt, toUITargetString]);
+  }, [amountStr, rate, toSafeBigInt, toUITargetString, currency, targetCurrency]);
 
   const onUpdateAmount = useCallback(
     ({ strValue }: { strValue?: string; bigIntValue?: bigint }) => {
@@ -111,12 +120,17 @@ export const CurrencyConversion: React.FC<{
 
   const onChangeTargetAmount = useCallback(
     ({ bigIntValue }: { strValue?: string; bigIntValue?: bigint }) => {
-      if (bigIntValue) {
-        const amount = currencyConversion(bigIntValue ?? 0n, 1 / Number(rate));
+      if (bigIntValue && isCurrencyCode(currency)) {
+        const amount = currencyConversion({
+          amount: bigIntValue ?? 0n,
+          rate: 1 / Number(rate),
+          from: targetCurrency,
+          to: currency,
+        });
         setAmountStr(toUIString(amount, false, true));
       }
     },
-    [rate, toUIString],
+    [rate, toUIString, targetCurrency, currency],
   );
 
   const onSave = useCallback(async () => {

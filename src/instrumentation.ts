@@ -1,3 +1,5 @@
+import { env } from './env';
+
 /**
  * Add things here to be executed during server startup.
  *
@@ -31,14 +33,18 @@ export async function register() {
       const { createRecurringDeleteBankCacheJob } = await import(
         './server/api/services/scheduleService'
       );
+
       console.log(
-        `Creating cron job for cleaning up bank cache ${process.env.CLEAR_BANK_CACHE_FREQUENCY}`,
+        `Creating cron job for cleaning up bank cache ${env.CLEAR_CACHE_CRON_RULE} with interval ${env.CACHE_RETENTION_INTERVAL}`,
       );
       setTimeout(
         () =>
           createRecurringDeleteBankCacheJob(
-            process.env.CLEAR_BANK_CACHE_FREQUENCY as 'weekly' | 'monthly',
-          ),
+            env.CLEAR_CACHE_CRON_RULE,
+            env.CACHE_RETENTION_INTERVAL,
+          ).catch((err) => {
+            console.error('Error creating recurring delete bank cache job:', err);
+          }),
         1000 * 10,
       );
     }

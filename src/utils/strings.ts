@@ -10,7 +10,7 @@ export type ParametersExceptTranslation<F> = F extends (t: TFunction, ...rest: i
 
 export const displayName = (
   t: TFunction,
-  user?: Pick<User, 'name' | 'email' | 'id'> | null,
+  user?: Partial<User> | null,
   currentUserId?: number,
   useCase?: 'dativus' | 'accusativus',
 ): string => {

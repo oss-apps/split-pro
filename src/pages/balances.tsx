@@ -8,28 +8,22 @@ import { BalanceEntry } from '~/components/Expense/BalanceEntry';
 import MainLayout from '~/components/Layout/MainLayout';
 import { NotificationModal } from '~/components/NotificationModal';
 import { Button } from '~/components/ui/button';
-import {
-  ConvertibleBalance,
-  getConvertibleBalanceSessionKey,
-} from '~/components/Expense/ConvertibleBalance';
+import { ConvertibleBalance } from '~/components/Expense/ConvertibleBalance';
 import { useIsPwa } from '~/hooks/useIsPwa';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
 import { cn } from '~/lib/utils';
-import { useSession } from '~/hooks/useSession';
-import { UI } from 'react-day-picker';
 import { isCurrencyCode } from '~/lib/currency';
+import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
 
 const BalancePage: NextPageWithUser = () => {
   const { t } = useTranslationWithUtils();
   const isPwa = useIsPwa();
   const balanceQuery = api.expense.getBalances.useQuery();
 
-  const [totalBalancePreference, setTotalBalancePreference] = useSession(
-    getConvertibleBalanceSessionKey(),
-  );
+  const selectedCurrency = useCurrencyPreferenceStore((s) => s.getPreference());
 
   const shareWithFriends = useCallback(() => {
     if (navigator.share) {
@@ -65,7 +59,7 @@ const BalancePage: NextPageWithUser = () => {
         <NotificationModal />
         <div className="">
           <div className="mx-4 flex items-stretch justify-between gap-4">
-            {isCurrencyCode(totalBalancePreference) ? (
+            {isCurrencyCode(selectedCurrency) ? (
               <CumulatedBalanceDisplay
                 prefix={`${t('ui.total_balance')}`}
                 cumulatedBalances={[

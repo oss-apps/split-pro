@@ -11,7 +11,7 @@ export const BalanceEntry: React.FC<{
   balances: { currency: string; amount: bigint }[];
   id: number;
 }> = ({ entity, balances, id }) => {
-  const { t } = useTranslationWithUtils();
+  const { t, displayName } = useTranslationWithUtils();
   const router = useRouter();
 
   const currentRoute = router.pathname;
@@ -20,16 +20,16 @@ export const BalanceEntry: React.FC<{
   const totalAmount = balances.reduce((sum, b) => sum + b.amount, 0n);
   const isPositive = 0n < totalAmount;
 
-  const handleClick = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
+  const stopPropagation = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
   }, []);
 
   return (
     <Link className="flex items-center justify-between" href={`${currentRoute}/${id}`}>
       <div className="flex items-center gap-3">
         <EntityAvatar entity={entity} size={35} />
-        <div className="text-foreground">{entity.name ?? entity.email}</div>
+        <div className="text-foreground">{displayName(entity)}</div>
       </div>
       {0n === totalAmount ? (
         <div>
@@ -45,7 +45,7 @@ export const BalanceEntry: React.FC<{
           >
             {t('actors.you')} {t(`ui.expense.you.${isPositive ? 'lent' : 'owe'}`)}
           </div>
-          <div className="text-right" onClick={handleClick}>
+          <div className="text-right" onClick={stopPropagation}>
             <ConvertibleBalance balances={balances} entityId={id} showMultiOption={false} />
           </div>
         </div>

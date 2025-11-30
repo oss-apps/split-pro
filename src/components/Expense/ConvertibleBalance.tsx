@@ -1,45 +1,44 @@
 'use client';
 
 import { EqualApproximately } from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import { useSession } from '~/hooks/useSession';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { api } from '~/utils/api';
 import { currencyConversion } from '~/utils/numbers';
 
+import { isCurrencyCode } from '~/lib/currency';
+import { cn } from '~/lib/utils';
+import { SHOW_ALL_VALUE, useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
 import { Button } from '../ui/button';
+import { Label } from '../ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Skeleton } from '../ui/skeleton';
-import { Label } from '../ui/label';
-import { cn } from '~/lib/utils';
-import { isCurrencyCode } from '~/lib/currency';
 
 interface ConvertibleBalanceProps {
   className?: string;
   balances: { currency: string; amount: bigint }[];
   showMultiOption?: boolean;
+  forceShowButton?: boolean;
   entityId?: number;
 }
-
-export const SHOW_ALL_VALUE = '__SHOW_ALL__';
-
-export const getConvertibleBalanceSessionKey = (entityId?: number) =>
-  `balance-currency-${entityId ?? 'global'}`;
 
 export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
   className = '',
   balances,
   showMultiOption = false,
+  forceShowButton = false,
   entityId,
 }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const [open, setOpen] = useState(false);
 
-  const sessionKey = getConvertibleBalanceSessionKey(entityId);
-  const [selectedCurrency, setSelectedCurrency] = useSession(sessionKey);
+  const selectedCurrency = useCurrencyPreferenceStore((s) => s.getPreference(entityId));
+  const setSelectedCurrency = useCurrencyPreferenceStore(
+    (s) => (preference?: string) => s.setPreference(entityId, preference),
+  );
 
   // Available currencies from balances
   const availableCurrencies = useMemo(
@@ -67,13 +66,6 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
     ? !selectedCurrency || selectedCurrency === SHOW_ALL_VALUE
     : false;
 
-  // Set default currency if showMultiOption is false and no selection
-  useEffect(() => {
-    if (!showMultiOption && !selectedCurrency && 0 < availableCurrencies.length) {
-      setSelectedCurrency(availableCurrencies[0]!);
-    }
-  }, [showMultiOption, selectedCurrency, availableCurrencies, setSelectedCurrency]);
-
   const handleCurrencySelect = useCallback(
     (value: string) => {
       setSelectedCurrency(value);
@@ -99,7 +91,7 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
           console.error(
             `Empty conversion rate returned for ${balance.currency} to ${selectedCurrency}`,
           );
-          setSelectedCurrency(SHOW_ALL_VALUE);
+          setSelectedCurrency();
           return null;
         }
 
@@ -108,7 +100,7 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
           console.error(
             `Invalid selected currency codes: ${selectedCurrency} or ${balance.currency}`,
           );
-          setSelectedCurrency(SHOW_ALL_VALUE);
+          setSelectedCurrency();
           return null;
         }
 
@@ -126,8 +118,12 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
     return total;
   }, [shouldShowAll, balances, ratesQuery, selectedCurrency, t, setSelectedCurrency]);
 
+  if (0 === balances.length) {
+    return <span className={cn('text-gray-500', className)}>{t('ui.settled_up')}</span>;
+  }
+
   // If only one currency, no conversion needed
-  if (1 === balances.length) {
+  if (1 === balances.length && !forceShowButton) {
     const balance = balances[0]!;
     return (
       <span className={0 < balance.amount ? 'text-emerald-500' : 'text-orange-600'}>
@@ -137,13 +133,7 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
   }
 
   return (
-    <span
-      className="flex items-center gap-1"
-      onClick={(e) => {
-        e.stopPropagation();
-        e.preventDefault();
-      }}
-    >
+    <span className="flex items-center gap-1">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -168,16 +158,16 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
             >
               {showMultiOption && (
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={SHOW_ALL_VALUE} id={`${sessionKey}-show-all`} />
-                  <Label htmlFor={`${sessionKey}-show-all`} className="cursor-pointer">
+                  <RadioGroupItem value={SHOW_ALL_VALUE} id={`${entityId}-show-all`} />
+                  <Label htmlFor={`${entityId}-show-all`} className="cursor-pointer">
                     {t('ui.show_all_currencies')}
                   </Label>
                 </div>
               )}
               {availableCurrencies.map((currency) => (
                 <div key={currency} className="flex items-center space-x-2">
-                  <RadioGroupItem value={currency} id={`${sessionKey}-${currency}`} />
-                  <Label htmlFor={`${sessionKey}-${currency}`} className="cursor-pointer">
+                  <RadioGroupItem value={currency} id={`${entityId}-${currency}`} />
+                  <Label htmlFor={`${entityId}-${currency}`} className="cursor-pointer">
                     {currency}
                   </Label>
                 </div>
@@ -197,13 +187,17 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
               {idx < balances.length - 1 ? '+' : ''}
             </span>
           ))
-        ) : ratesQuery.isPending ? (
+        ) : ratesQuery.isLoading ? (
           <Skeleton className="h-5 w-20" />
-        ) : totalConvertedAmount !== null ? (
+        ) : totalConvertedAmount ? (
           <span className={0 < totalConvertedAmount ? 'text-emerald-500' : 'text-orange-600'}>
             {getCurrencyHelpersCached(selectedCurrency!).toUIString(totalConvertedAmount)}
           </span>
-        ) : null}
+        ) : (
+          <span className={0 < balances[0]!.amount ? 'text-emerald-500' : 'text-orange-600'}>
+            {getCurrencyHelpersCached(balances[0]!.currency).toUIString(balances[0]!.amount)}
+          </span>
+        )}
       </div>
     </span>
   );

@@ -1,12 +1,9 @@
 import { type BalanceView, type User } from '@prisma/client';
 import React, { useMemo } from 'react';
 
-import { BigMath } from '~/utils/numbers';
+import { CumulatedBalances } from '~/components/Expense/CumulatedBalances';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-import { ConvertibleBalance, getConvertibleBalanceSessionKey } from '../Expense/ConvertibleBalance';
-import { cn } from '~/lib/utils';
-import { useSession } from '~/hooks/useSession';
-import { isCurrencyCode } from '~/lib/currency';
+import { BigMath } from '~/utils/numbers';
 
 interface GroupMyBalanceProps {
   userId: number;
@@ -22,6 +19,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
   groupId,
 }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
+
   const userMap = useMemo(
     () =>
       users.reduce(
@@ -69,46 +67,10 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
     [friendBalances],
   );
 
-  const youLentBalances = useMemo(
-    () => cumulatedBalances.filter(({ amount }) => 0 < amount),
-    [cumulatedBalances],
-  );
-
-  const youOweBalances = useMemo(
-    () => cumulatedBalances.filter(({ amount }) => amount < 0n),
-    [cumulatedBalances],
-  );
-
-  const sessionKey = getConvertibleBalanceSessionKey(groupId);
-  const [selectedCurrency] = useSession(sessionKey);
-
   return (
     <div className="flex gap-2">
       <div className="flex flex-col gap-2">
-        {isCurrencyCode(selectedCurrency) ? (
-          <CumulatedBalanceDisplay
-            prefix={`${t('ui.total_balance')}: `}
-            groupId={groupId}
-            cumulatedBalances={cumulatedBalances}
-          />
-        ) : (
-          <>
-            <CumulatedBalanceDisplay
-              prefix={`${t('actors.you')} ${t('ui.expense.you.lent')}`}
-              groupId={groupId}
-              cumulatedBalances={youLentBalances}
-            />
-            <CumulatedBalanceDisplay
-              prefix={`${t('actors.you')} ${t('ui.expense.you.owe')}`}
-              groupId={groupId}
-              className="mt-1"
-              cumulatedBalances={youOweBalances}
-            />
-          </>
-        )}
-        {0 === cumulatedBalances.length ? (
-          <div className="text-gray-500">{t('ui.settled_up')}</div>
-        ) : null}
+        <CumulatedBalances entityId={groupId} balances={cumulatedBalances} />
 
         {Object.entries(friendBalances)
           .slice(0, 2)
@@ -139,21 +101,4 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
   );
 };
 
-const CumulatedBalanceDisplay: React.FC<{
-  prefix?: string;
-  groupId: number;
-  className?: string;
-  cumulatedBalances?: { currency: string; amount: bigint }[];
-}> = ({ prefix = '', groupId, className = '', cumulatedBalances }) => {
-  if (!cumulatedBalances || cumulatedBalances.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className={cn('flex flex-wrap gap-1', className)}>
-      {prefix}
-      <ConvertibleBalance balances={cumulatedBalances} entityId={groupId} showMultiOption />
-    </div>
-  );
-};
 export default GroupMyBalance;

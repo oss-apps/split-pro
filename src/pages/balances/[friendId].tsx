@@ -9,12 +9,12 @@ import { SettleUp } from '~/components/Friend/Settleup';
 import MainLayout from '~/components/Layout/MainLayout';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
-import { ConvertibleBalance } from '~/components/Expense/ConvertibleBalance';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { type GetServerSideProps } from 'next';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { CumulatedBalances } from '~/components/Expense/CumulatedBalances';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
   const { t, displayName } = useTranslationWithUtils();
@@ -37,9 +37,6 @@ const FriendPage: NextPageWithUser = ({ user }) => {
     { enabled: !!_friendId },
   );
 
-  const youLent = balances.data?.filter((b) => 0 < b.amount);
-  const youOwe = balances.data?.filter((b) => 0 > b.amount);
-
   return (
     <>
       <Head>
@@ -56,12 +53,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
             <p className="text-lg font-normal">{displayName(friendQuery.data)}</p>
           </div>
         }
-        actions={
-          <DeleteFriend
-            friendId={_friendId}
-            disabled={!(0 === youLent?.length && 0 === youOwe?.length)}
-          />
-        }
+        actions={<DeleteFriend friendId={_friendId} disabled={!(0 === balances.data?.length)} />}
         header={
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center gap-2">
@@ -77,25 +69,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
       >
         {!friendQuery.data ? null : (
           <div className="mb-28 transition-discrete starting:opacity-0">
-            <div className="mx-4 flex flex-wrap gap-2">
-              <div className="text-orange-700">
-                {0 < (youOwe?.length ?? 0) && (
-                  <>
-                    {t('actors.you')} {t('ui.expense.you.owe')}{' '}
-                    <ConvertibleBalance balances={youOwe!} entityId={_friendId} showMultiOption />
-                  </>
-                )}
-              </div>
-              <div>{0 < (youOwe?.length ?? 0) && 0 < (youLent?.length ?? 0) ? '+' : null}</div>
-              <div className="text-emerald-600">
-                {0 < (youLent?.length ?? 0) && (
-                  <>
-                    {t('actors.you')} {t('ui.expense.you.lent')}{' '}
-                    <ConvertibleBalance balances={youLent!} entityId={_friendId} showMultiOption />
-                  </>
-                )}
-              </div>
-            </div>
+            <CumulatedBalances entityId={friendQuery.data.id} balances={balances.data} />
             <div className="mt-6 mb-4 flex justify-center gap-2">
               <SettleUp balances={balances.data} friend={friendQuery.data}>
                 <Button

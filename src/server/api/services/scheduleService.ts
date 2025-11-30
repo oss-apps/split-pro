@@ -6,15 +6,14 @@ export const createRecurringDeleteBankCacheJob = async (
 ) => {
   // Implementation for creating a recurring delete bank cache using pg_cron
 
-  await db.$executeRaw`
-      SELECT cron.schedule('cleanup_cached_bank_data', ${cronExpression}, $$
+  await db.$executeRawUnsafe(`
+      SELECT cron.schedule('cleanup_cached_bank_data', '${cronExpression}', $$
       DELETE FROM "CachedBankData"
-      WHERE "lastFetched" < NOW() - INTERVAL ${interval};
-      DELETE FROM "OtherTable"
-      WHERE "lastFetched" < NOW() - INTERVAL ${interval};
-      VACUUM;
+      WHERE "lastFetched" < NOW() - INTERVAL '${interval}';
+      DELETE FROM "CachedCurrencyRate"
+      WHERE "lastFetched" < NOW() - INTERVAL '${interval}';
       $$);
-    `;
+    `);
 };
 
 export const createRecurringExpenseJob = (expenseId: string, cronExpression: string) =>

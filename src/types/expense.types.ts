@@ -65,3 +65,7 @@ export const getCurrencyRateSchema = z.object({
   to: z.string(),
   date: z.date().transform((date) => new Date(date.toDateString())),
 });
+
+export const getBatchCurrencyRatesSchema = getCurrencyRateSchema.extend({
+  from: z.array(z.string()),
+});

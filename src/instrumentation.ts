@@ -23,24 +23,26 @@ export async function register() {
     return;
   }
 
-  // Create cron jobs
-  console.log('Setting up cron jobs...');
+  if (env.CLEAR_CACHE_CRON_RULE && env.CACHE_RETENTION_INTERVAL) {
+    // Create cron jobs
+    console.log('Setting up cron jobs...');
 
-  const { createRecurringDeleteBankCacheJob } = await import(
-    './server/api/services/scheduleService'
-  );
+    const { createRecurringDeleteBankCacheJob } = await import(
+      './server/api/services/scheduleService'
+    );
 
-  console.log(
-    `Creating cron job for cleaning up bank cache ${env.CLEAR_CACHE_CRON_RULE} with interval ${env.CACHE_RETENTION_INTERVAL}`,
-  );
-  setTimeout(
-    () =>
-      createRecurringDeleteBankCacheJob(
-        env.CLEAR_CACHE_CRON_RULE,
-        env.CACHE_RETENTION_INTERVAL,
-      ).catch((err) => {
-        console.error('Error creating recurring delete bank cache job:', err);
-      }),
-    1000 * 10,
-  );
+    console.log(
+      `Creating cron job for cleaning up bank cache ${env.CLEAR_CACHE_CRON_RULE} with interval ${env.CACHE_RETENTION_INTERVAL}`,
+    );
+    setTimeout(
+      () =>
+        createRecurringDeleteBankCacheJob(
+          env.CLEAR_CACHE_CRON_RULE!,
+          env.CACHE_RETENTION_INTERVAL!,
+        ).catch((err) => {
+          console.error('Error creating recurring delete bank cache job:', err);
+        }),
+      1000 * 10,
+    );
+  }
 }

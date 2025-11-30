@@ -11,14 +11,16 @@ ALTER TYPE "SplitType" ADD VALUE 'CURRENCY_CONVERSION';
 ALTER TABLE "Expense" ADD COLUMN     "conversionToId" TEXT;
 
 -- CreateTable
-CREATE UNLOGGED TABLE "CurrencyRateCache" (
+CREATE UNLOGGED TABLE "public"."CachedCurrencyRate" (
     "from" TEXT NOT NULL,
     "to" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
     "rate" DOUBLE PRECISION NOT NULL,
-    "insertedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "lastFetched" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "CurrencyRateCache_pkey" PRIMARY KEY ("from","to","date")
+    CONSTRAINT "CachedCurrencyRate_pkey" PRIMARY KEY ("from","to","date")
 );
 
 -- CreateIndex

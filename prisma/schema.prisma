@@ -66,19 +66,6 @@ model User {
   @@schema("public")
 }
 
-model CachedBankData {
-  id              Int      @id @default(autoincrement())
-  obapiProviderId String   @unique
-  data            String
-  userId          Int
-  lastFetched     DateTime
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  user            User     @relation("UserCachedBankData", fields: [userId], references: [id], onDelete: Cascade)
-
-  @@schema("public")
-}
-
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -218,14 +205,29 @@ model ExpenseRecurrence {
   @@schema("public")
 }
 
-model CurrencyRateCache {
-  from       String
-  to         String
-  date       DateTime
-  rate       Float
-  insertedAt DateTime @default(now())
+model CachedCurrencyRate {
+  from        String
+  to          String
+  date        DateTime
+  rate        Float
+  lastFetched DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@id([from, to, date])
+  @@schema("public")
+}
+
+model CachedBankData {
+  id              Int      @id @default(autoincrement())
+  obapiProviderId String   @unique
+  data            String
+  userId          Int
+  lastFetched     DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation("UserCachedBankData", fields: [userId], references: [id], onDelete: Cascade)
+
   @@schema("public")
 }
 

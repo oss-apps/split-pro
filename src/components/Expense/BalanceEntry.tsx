@@ -46,12 +46,7 @@ export const BalanceEntry: React.FC<{
             {t('actors.you')} {t(`ui.expense.you.${isPositive ? 'lent' : 'owe'}`)}
           </div>
           <div className="text-right" onClick={handleClick}>
-            <ConvertibleBalance
-              balances={balances}
-              storageKey="balance-entry-currency"
-              entityId={id}
-              showMultiOption={false}
-            />
+            <ConvertibleBalance balances={balances} entityId={id} showMultiOption={false} />
           </div>
         </div>
       )}

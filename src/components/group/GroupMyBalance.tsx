@@ -3,7 +3,10 @@ import React, { useMemo } from 'react';
 
 import { BigMath } from '~/utils/numbers';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-import { ConvertibleBalance } from '../Expense/ConvertibleBalance';
+import { ConvertibleBalance, getConvertibleBalanceSessionKey } from '../Expense/ConvertibleBalance';
+import { cn } from '~/lib/utils';
+import { useSession } from '~/hooks/useSession';
+import { isCurrencyCode } from '~/lib/currency';
 
 interface GroupMyBalanceProps {
   userId: number;
@@ -19,85 +22,91 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
   groupId,
 }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
-  const userMap = users.reduce(
-    (acc, user) => {
-      acc[user.id] = user;
-      return acc;
-    },
-    {} as Record<number, User>,
+  const userMap = useMemo(
+    () =>
+      users.reduce(
+        (acc, user) => {
+          acc[user.id] = user;
+          return acc;
+        },
+        {} as Record<number, User>,
+      ),
+    [users],
   );
 
-  const friendBalances = groupBalances.reduce(
-    (acc, balance) => {
-      if (balance.userId === userId && 0 < BigMath.abs(balance.amount)) {
-        acc[balance.friendId] ??= {};
-        const friendBalance = acc[balance.friendId]!;
-        friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0n) + balance.amount;
-      }
-      return acc;
-    },
-    {} as Record<number, Record<string, bigint>>,
+  const friendBalances = useMemo(
+    () =>
+      groupBalances.reduce(
+        (acc, balance) => {
+          if (balance.userId === userId && 0 < BigMath.abs(balance.amount)) {
+            acc[balance.friendId] ??= {};
+            const friendBalance = acc[balance.friendId]!;
+            friendBalance[balance.currency] =
+              (friendBalance[balance.currency] ?? 0n) + balance.amount;
+          }
+          return acc;
+        },
+        {} as Record<number, Record<string, bigint>>,
+      ),
+    [groupBalances, userId],
   );
 
-  const cumulatedBalances = Object.values(friendBalances).reduce(
-    (acc, balances) => {
-      if (balances) {
-        Object.entries(balances).forEach(([currency, amount]) => {
-          acc[currency] = (acc[currency] ?? 0n) + amount;
-        });
-      }
-      return acc;
-    },
-    {} as Record<string, bigint>,
+  const cumulatedBalances = useMemo(
+    () =>
+      Object.entries(
+        Object.values(friendBalances).reduce(
+          (acc, balances) => {
+            if (balances) {
+              Object.entries(balances).forEach(([currency, amount]) => {
+                acc[currency] = (acc[currency] ?? 0n) + amount;
+              });
+            }
+            return acc;
+          },
+          {} as Record<string, bigint>,
+        ),
+      ).map(([currency, amount]) => ({ currency, amount })),
+    [friendBalances],
   );
 
   const youLentBalances = useMemo(
-    () =>
-      Object.entries(cumulatedBalances)
-        .filter(([_, amount]) => 0 < amount)
-        .map(([currency, amount]) => ({ currency, amount })),
+    () => cumulatedBalances.filter(({ amount }) => 0 < amount),
     [cumulatedBalances],
   );
 
   const youOweBalances = useMemo(
-    () =>
-      Object.entries(cumulatedBalances)
-        .filter(([_, amount]) => 0 > amount)
-        .map(([currency, amount]) => ({ currency, amount })),
+    () => cumulatedBalances.filter(({ amount }) => amount < 0n),
     [cumulatedBalances],
   );
 
-  const youLent = Object.entries(cumulatedBalances).filter(([_, amount]) => 0 < amount);
-  const youOwe = Object.entries(cumulatedBalances).filter(([_, amount]) => 0 > amount);
+  const sessionKey = getConvertibleBalanceSessionKey(groupId);
+  const [selectedCurrency] = useSession(sessionKey);
 
   return (
     <div className="flex gap-2">
       <div className="flex flex-col gap-2">
-        {0 < youLent.length ? (
-          <div className="flex flex-wrap gap-1 text-emerald-500">
-            {t('actors.you')} {t('ui.expense.you.lent')}{' '}
-            <ConvertibleBalance
-              balances={youLentBalances}
-              storageKey="group-balance-lent-currency"
-              entityId={groupId}
-              showMultiOption
+        {isCurrencyCode(selectedCurrency) ? (
+          <CumulatedBalanceDisplay
+            prefix={`${t('ui.total_balance')}: `}
+            groupId={groupId}
+            cumulatedBalances={cumulatedBalances}
+          />
+        ) : (
+          <>
+            <CumulatedBalanceDisplay
+              prefix={`${t('actors.you')} ${t('ui.expense.you.lent')}`}
+              groupId={groupId}
+              cumulatedBalances={youLentBalances}
             />
-          </div>
-        ) : null}
-
-        {0 < youOwe.length ? (
-          <div className="text-orange-6000 flex flex-wrap gap-1 text-orange-600">
-            {t('actors.you')} {t('ui.expense.you.owe')}{' '}
-            <ConvertibleBalance
-              balances={youOweBalances}
-              storageKey="group-balance-owe-currency"
-              entityId={groupId}
-              showMultiOption
+            <CumulatedBalanceDisplay
+              prefix={`${t('actors.you')} ${t('ui.expense.you.owe')}`}
+              groupId={groupId}
+              className="mt-1"
+              cumulatedBalances={youOweBalances}
             />
-          </div>
-        ) : null}
-
-        {0 === youLent.length && 0 === youOwe.length ? (
+          </>
+        )}
+        {0 === cumulatedBalances.length ? (
           <div className="text-gray-500">{t('ui.settled_up')}</div>
         ) : null}
 
@@ -130,4 +139,21 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
   );
 };
 
+const CumulatedBalanceDisplay: React.FC<{
+  prefix?: string;
+  groupId: number;
+  className?: string;
+  cumulatedBalances?: { currency: string; amount: bigint }[];
+}> = ({ prefix = '', groupId, className = '', cumulatedBalances }) => {
+  if (!cumulatedBalances || cumulatedBalances.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className={cn('flex flex-wrap gap-1', className)}>
+      {prefix}
+      <ConvertibleBalance balances={cumulatedBalances} entityId={groupId} showMultiOption />
+    </div>
+  );
+};
 export default GroupMyBalance;

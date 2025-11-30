@@ -82,12 +82,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 {0 < (youOwe?.length ?? 0) && (
                   <>
                     {t('actors.you')} {t('ui.expense.you.owe')}{' '}
-                    <ConvertibleBalance
-                      balances={youOwe!}
-                      storageKey="friend-balance-owe-currency"
-                      entityId={_friendId}
-                      showMultiOption
-                    />
+                    <ConvertibleBalance balances={youOwe!} entityId={_friendId} showMultiOption />
                   </>
                 )}
               </div>
@@ -96,12 +91,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 {0 < (youLent?.length ?? 0) && (
                   <>
                     {t('actors.you')} {t('ui.expense.you.lent')}{' '}
-                    <ConvertibleBalance
-                      balances={youLent!}
-                      storageKey="friend-balance-lent-currency"
-                      entityId={_friendId}
-                      showMultiOption
-                    />
+                    <ConvertibleBalance balances={youLent!} entityId={_friendId} showMultiOption />
                   </>
                 )}
               </div>

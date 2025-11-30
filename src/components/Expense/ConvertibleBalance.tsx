@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { useSession } from '~/hooks/useSession';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { api } from '~/utils/api';
-import { BigMath, currencyConversion } from '~/utils/numbers';
+import { currencyConversion } from '~/utils/numbers';
 
 import { Button } from '../ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
@@ -20,24 +20,25 @@ import { isCurrencyCode } from '~/lib/currency';
 interface ConvertibleBalanceProps {
   className?: string;
   balances: { currency: string; amount: bigint }[];
-  storageKey: string;
   showMultiOption?: boolean;
   entityId?: number;
 }
 
-const SHOW_ALL_VALUE = '__SHOW_ALL__';
+export const SHOW_ALL_VALUE = '__SHOW_ALL__';
+
+export const getConvertibleBalanceSessionKey = (entityId?: number) =>
+  `balance-currency-${entityId ?? 'global'}`;
 
 export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
   className = '',
   balances,
-  storageKey,
   showMultiOption = false,
   entityId,
 }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const [open, setOpen] = useState(false);
 
-  const sessionKey = entityId ? `${storageKey}-${entityId}` : storageKey;
+  const sessionKey = getConvertibleBalanceSessionKey(entityId);
   const [selectedCurrency, setSelectedCurrency] = useSession(sessionKey);
 
   // Available currencies from balances
@@ -56,10 +57,7 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
     },
     {
       enabled:
-        !showMultiOption &&
-        !!selectedCurrency &&
-        selectedCurrency !== SHOW_ALL_VALUE &&
-        0 < availableCurrencies.length,
+        !!selectedCurrency && selectedCurrency !== SHOW_ALL_VALUE && 0 < availableCurrencies.length,
     },
   );
 
@@ -140,7 +138,7 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
 
   return (
     <span
-      className="flex items-center gap-2"
+      className="flex items-center gap-1"
       onClick={(e) => {
         e.stopPropagation();
         e.preventDefault();
@@ -148,7 +146,16 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
     >
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-6 w-6" disabled={ratesQuery.isPending}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'h-6 w-6',
+              (totalConvertedAmount ?? 0n) > 0n && 'text-positive',
+              (totalConvertedAmount ?? 0n) < 0n && 'text-negative',
+            )}
+            disabled={ratesQuery.isLoading}
+          >
             <EqualApproximately className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
@@ -179,19 +186,17 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
           </div>
         </PopoverContent>
       </Popover>
-
       <div className={cn('flex gap-1', className)}>
         {shouldShowAll ? (
-          balances.map((balance, idx) => {
-            const sign = 0 < balance.amount;
-            const signStr = sign ? '+' : '-';
-            return (
-              <span key={balance.currency} className={sign ? 'text-positive' : 'text-negative'}>
-                {getCurrencyHelpersCached(balance.currency).toUIString(balance.amount)}{' '}
-                {idx < balances.length - 1 ? signStr : ''}
-              </span>
-            );
-          })
+          balances.map((balance, idx) => (
+            <span
+              key={balance.currency}
+              className={balance.amount > 0 ? 'text-positive' : 'text-negative'}
+            >
+              {getCurrencyHelpersCached(balance.currency).toUIString(balance.amount)}{' '}
+              {idx < balances.length - 1 ? '+' : ''}
+            </span>
+          ))
         ) : ratesQuery.isPending ? (
           <Skeleton className="h-5 w-20" />
         ) : totalConvertedAmount !== null ? (

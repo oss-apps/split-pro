@@ -8,17 +8,28 @@ import { BalanceEntry } from '~/components/Expense/BalanceEntry';
 import MainLayout from '~/components/Layout/MainLayout';
 import { NotificationModal } from '~/components/NotificationModal';
 import { Button } from '~/components/ui/button';
-import { ConvertibleBalance } from '~/components/Expense/ConvertibleBalance';
+import {
+  ConvertibleBalance,
+  getConvertibleBalanceSessionKey,
+} from '~/components/Expense/ConvertibleBalance';
 import { useIsPwa } from '~/hooks/useIsPwa';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
+import { cn } from '~/lib/utils';
+import { useSession } from '~/hooks/useSession';
+import { UI } from 'react-day-picker';
+import { isCurrencyCode } from '~/lib/currency';
 
 const BalancePage: NextPageWithUser = () => {
   const { t } = useTranslationWithUtils();
   const isPwa = useIsPwa();
   const balanceQuery = api.expense.getBalances.useQuery();
+
+  const [totalBalancePreference, setTotalBalancePreference] = useSession(
+    getConvertibleBalanceSessionKey(),
+  );
 
   const shareWithFriends = useCallback(() => {
     if (navigator.share) {
@@ -54,42 +65,27 @@ const BalancePage: NextPageWithUser = () => {
         <NotificationModal />
         <div className="">
           <div className="mx-4 flex items-stretch justify-between gap-4">
-            {balanceQuery.data?.youOwe.length ? (
-              <div className="w-1/2 rounded-2xl border px-2 py-2">
-                <div className="mt-2 px-1">
-                  <div className="flex items-center justify-center gap-2 text-center">
-                    <p className="text-sm">
-                      {t('actors.you')} {t('ui.expense.you.owe')}
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
-                  <ConvertibleBalance
-                    balances={balanceQuery.data.youOwe}
-                    storageKey="balance-page-you-owe-currency"
-                    showMultiOption
-                  />
-                </div>
-              </div>
-            ) : null}
-            {balanceQuery.data?.youGet.length ? (
-              <div className="w-1/2 rounded-2xl border px-2 py-2">
-                <div className="mt-2 flex flex-col justify-center px-1">
-                  <div className="flex items-center justify-center gap-2">
-                    <p className="text-sm">
-                      {t('actors.you')} {t('ui.expense.you.lent')}
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
-                  <ConvertibleBalance
-                    balances={balanceQuery.data.youGet}
-                    storageKey="balance-page-you-get-currency"
-                    showMultiOption
-                  />
-                </div>
-              </div>
-            ) : null}
+            {isCurrencyCode(totalBalancePreference) ? (
+              <CumulatedBalanceDisplay
+                prefix={`${t('ui.total_balance')}`}
+                cumulatedBalances={[
+                  balanceQuery.data?.youOwe ?? [],
+                  balanceQuery.data?.youGet ?? [],
+                ].flat()}
+                className="mx-auto"
+              />
+            ) : (
+              <>
+                <CumulatedBalanceDisplay
+                  prefix={`${t('actors.you')} ${t('ui.expense.you.owe')}`}
+                  cumulatedBalances={balanceQuery.data?.youOwe}
+                />
+                <CumulatedBalanceDisplay
+                  prefix={`${t('actors.you')} ${t('ui.expense.you.lent')}`}
+                  cumulatedBalances={balanceQuery.data?.youGet}
+                />
+              </>
+            )}
           </div>
         </div>
 
@@ -123,6 +119,29 @@ const BalancePage: NextPageWithUser = () => {
         </div>
       </MainLayout>
     </>
+  );
+};
+
+const CumulatedBalanceDisplay: React.FC<{
+  prefix?: string;
+  className?: string;
+  cumulatedBalances?: { currency: string; amount: bigint }[];
+}> = ({ prefix = '', className = '', cumulatedBalances }) => {
+  if (!cumulatedBalances || cumulatedBalances.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className={cn('w-1/2 rounded-2xl border px-2 py-2', className)}>
+      <div className="mt-2 px-1">
+        <div className="flex items-center justify-center gap-2 text-center">
+          <p className="text-sm">{prefix}</p>
+        </div>
+      </div>
+      <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
+        <ConvertibleBalance balances={cumulatedBalances} showMultiOption />
+      </div>
+    </div>
   );
 };
 

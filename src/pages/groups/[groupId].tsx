@@ -4,7 +4,6 @@ import {
   BarChartHorizontal,
   Check,
   ChevronLeft,
-  Construction,
   DoorOpen,
   Info,
   Merge,

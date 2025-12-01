@@ -1,9 +1,8 @@
 import { SplitType, type User } from '@prisma/client';
-import { format, isToday } from 'date-fns';
+import { isToday } from 'date-fns';
 import { type TFunction } from 'next-i18next';
 import { type CurrencyCode } from '~/lib/currency';
 import { type AddExpenseState, type Participant } from '~/store/addStore';
-import { getSupportedLanguages } from './i18n/client';
 
 export type ParametersExceptTranslation<F> = F extends (t: TFunction, ...rest: infer R) => any
   ? R
@@ -38,10 +37,12 @@ export const toUIDate = (
     }).format(date);
   }
 
-  return format(date, 'MMM dd', {
-    locale: getSupportedLanguages().find((lang) => lang.code === todayTranslation.usedLng)
-      ?.dateLocale,
-  });
+  const day = new Intl.DateTimeFormat(todayTranslation.usedLng, { day: '2-digit' }).format(date);
+  const monthName = new Intl.DateTimeFormat(todayTranslation.usedLng, { month: 'short' })
+    .format(date)
+    .replace('.', '');
+
+  return `${monthName} ${day}`;
 };
 
 export function generateSplitDescription(

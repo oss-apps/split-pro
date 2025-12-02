@@ -8,6 +8,16 @@
       "placeholder": "Seleccionar un idioma",
       "title": "Seleccionar un idioma"
     },
+    "debug_info": "Info de depuración",
+    "debug_info_details": {
+      "copy_failed": "Error al copiar información de depuración al portapapeles",
+      "description": "Pegá la info de abajo cuando crees un pedido de soporte:",
+      "git": "Git",
+      "new_version_available": "Hay una nueva versión disponible:",
+      "title": "Info de depuración",
+      "user_agent": "UserAgent",
+      "version": "Versión"
+    },
     "download_app": "Descargar aplicación",
     "download_app_details": {
       "download_as_pwa": "Podés descargar SplitPro como una PWA a tu pantalla de inicio.",
@@ -61,12 +71,16 @@
     "cancel": "Cancelar",
     "close": "Cerrar",
     "confirm": "Confirmar",
+    "connect": "Conectar",
+    "copy": "Copiar",
     "create": "Crear",
     "edit_expense": "Editar gasto",
     "export": "Exportar",
+    "fetch": "Obtener",
     "import": "Importar",
     "invite": "Invitar",
     "leave": "Salir",
+    "reconnect": "Reconectar",
     "save": "Guardar",
     "settle_up": "Liquidar",
     "submit": "Enviar"
@@ -92,6 +106,18 @@
     "setup_instructions": "instrucciones de configuración de Docker",
     "trouble_logging_in": "¿Problemas para iniciar sesión? Contactá a"
   },
+  "bank_transactions": {
+    "choose_bank_provider": "Elegí proveedor bancario",
+    "no_bank_providers_found": "No se encontraron proveedores bancarios",
+    "plaid": {
+      "bank_connected_successfully": "Banco conectado exitosamente",
+      "bank_connection_cancelled": "Conexión con Banco cancelada",
+      "bank_connection_failed": "Fallo al conectar al banco"
+    },
+    "search_bank": "Buscar banco",
+    "select_bank_provider": "Seleccioná proveedor bancario",
+    "to_bank": "al banco"
+  },
   "currency_conversion": {
     "amount_to_receive": "Monto a recibir",
     "description": "Convertir el monto a una moneda diferente.",
@@ -110,8 +136,10 @@
     "feedback_required": "Los comentarios son obligatorios",
     "group_name_update_failed": "Error al actualizar el nombre del grupo",
     "import_failed": "Error al importar el archivo",
+    "invalid_cron_expression": "Expresión cron inválida",
     "invalid_currency_code": "Código de moneda inválido",
     "language_change_failed": "Error al cambiar el idioma",
+    "less_than": "El archivo debe ser menor que",
     "name_required": "El nombre es requerido",
     "notification_not_supported": "Las notificaciones no son compatibles",
     "otp_invalid": "OTP inválido",
@@ -183,21 +211,31 @@
         "search_friends": "Buscar amigos, grupos o agregar correo electrónico"
       }
     },
+    "already_added": "Ya agregado",
     "balance_list": {
       "are_settled_up": "están liquidados",
       "is_settled_up": "está liquidado",
       "press_balance_info": "Presioná en el saldo individual para iniciar la liquidación"
     },
+    "bank_transactions": "Transacciones bancarias",
+    "clear": "Limpiar",
     "delete_expense_details": {
       "text": "Esta acción no se puede deshacer. Esto eliminará permanentemente tu gasto.",
       "title": "¿Estás absolutamente seguro?"
     },
+    "no_transactions_yet": "Sin transacciones aún",
+    "pending": "Pendiente",
+    "submit_all": "Enviar todo",
     "title": "Agregar gasto",
     "title_mobile": "Agregar"
   },
   "group_details": {
     "add_members": "Agregar miembros",
     "copied": "Copiado",
+    "create_group": {
+      "group_name_placeholder": "Nombre de Grupo",
+      "title": "Crear un grupo"
+    },
     "group_info": {
       "actions": "Acciones",
       "archive_group": "Archivar grupo",
@@ -281,7 +319,29 @@
     "add_expense": "Agregar Gasto",
     "app_name": "SplitPro",
     "balances": "Saldos",
-    "groups": "Grupos"
+    "groups": "Grupos",
+    "recurring": "Recurrente"
+  },
+  "recurrence": {
+    "cron_expression": "Expresión Cron",
+    "days_of_month": "Días del mes",
+    "days_of_week": "Días de la semana",
+    "description": "Configurá una recurrencia automática para este gasto.",
+    "empty": "Sin gastos recurrentes aún",
+    "expense_for_the_amount_of": "Gasto {{nombre}} por un monto de {{monto}} {{moneda}}",
+    "months": "Meses",
+    "never": "Sin agenda configurada",
+    "recurring": "Recurrente",
+    "schedule_type": {
+      "custom": "Personalizado",
+      "day": "Diariamente",
+      "month": "Mensualmente",
+      "never": "Nunca",
+      "week": "Semanalmente",
+      "year": "Anualmente"
+    },
+    "time_of_day": "Hora del día",
+    "title": "Recurrencia"
   },
   "ui": {
     "added_by": "Agregado por",
@@ -317,6 +377,7 @@
       }
     },
     "expense_details": "Detalles del gasto",
+    "in_group": "En grupo",
     "no_activity": "Aún no hay actividades",
     "not_involved": "No involucrado",
     "on": "el",

@@ -59,6 +59,7 @@ export interface AddExpenseState {
     setExpenseDate: (expenseDate: Date | undefined) => void;
     setTransactionId: (transactionId?: string) => void;
     setMultipleTransactions: (multipleTransactions: TransactionAddInputModel[]) => void;
+    setSingleTransaction: (singleTransaction: TransactionAddInputModel) => void;
     setIsTransactionLoading: (isTransactionLoading: boolean) => void;
     setCronExpression: (cronExpression: string) => void;
   };
@@ -233,6 +234,15 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     setExpenseDate: (expenseDate) => set({ expenseDate }),
     setTransactionId: (transactionId) => set({ transactionId }),
     setMultipleTransactions: (multipleTransactions) => set({ multipleTransactions }),
+    setSingleTransaction: (singleTransaction: TransactionAddInputModel) =>
+      set({
+        expenseDate: singleTransaction.date,
+        description: singleTransaction.description,
+        currency: singleTransaction.currency,
+        amount: singleTransaction.amount,
+        amountStr: singleTransaction.amountStr,
+        transactionId: singleTransaction.transactionId,
+      }),
     setIsTransactionLoading: (isTransactionLoading) => set({ isTransactionLoading }),
     setCronExpression: (cronExpression) => set({ cronExpression }),
   },

@@ -1,4 +1,4 @@
-import { type BalanceView, SplitType, type User } from '@prisma/client';
+import { SplitType, type User } from '@prisma/client';
 import { ArrowRightIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'sonner';

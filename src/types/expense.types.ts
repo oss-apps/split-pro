@@ -1,5 +1,13 @@
 import { type Expense, type ExpenseParticipant, SplitType } from '@prisma/client';
-import { z } from 'zod';
+import { type ZodTypeAny, z } from 'zod';
+
+/**
+ * Converts a schema to accept both a single value and an array of values.
+ * If a single value is provided, it will be wrapped in an array.
+ * If an array is provided, it will be validated as-is.
+ */
+export const arrayify = <T extends ZodTypeAny>(schema: T) =>
+  z.preprocess((val) => (Array.isArray(val) ? val : [val]), z.array(schema));
 
 export type CreateExpense = Omit<
   Expense,

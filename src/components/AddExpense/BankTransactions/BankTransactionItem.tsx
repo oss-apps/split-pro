@@ -5,13 +5,6 @@ import type { TransactionAddInputModel } from '~/types';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { cn } from '~/lib/utils';
 import type { TransactionWithPendingStatus } from './BankingTransactionList';
-import { AnimatePresence, motion } from 'motion/react';
-
-const checkboxAnimationInitial = { opacity: 0, x: -8 };
-const checkboxAnimationAnimate = { opacity: 1, x: 0 };
-const checkboxAnimationExit = { opacity: 0, x: -8 };
-const checkboxAnimationTransition = { duration: 0.2, ease: 'easeOut' as const };
-const contentLayoutTransition = { duration: 0.2, ease: 'easeOut' as const };
 
 export const BankTransactionItem: React.FC<{
   index: number;
@@ -69,63 +62,54 @@ export const BankTransactionItem: React.FC<{
         </div>
 
         <div className="hidden lg:block">
-          <AnimatePresence>
-            {shouldShowCheckbox && (
-              <motion.div
-                key="checkbox"
-                initial={checkboxAnimationInitial}
-                animate={checkboxAnimationAnimate}
-                exit={checkboxAnimationExit}
-                transition={checkboxAnimationTransition}
-              >
-                <Checkbox
-                  checked={isChecked}
-                  disabled={alreadyAdded}
-                  onCheckedChange={createCheckboxHandler(item)}
-                  className="h-6 w-6 md:h-4 md:w-4"
-                />
-              </motion.div>
+          <div
+            className={cn(
+              'transition-all duration-200 ease-out',
+              shouldShowCheckbox
+                ? 'translate-x-0 opacity-100'
+                : 'pointer-events-none hidden -translate-x-2',
             )}
-          </AnimatePresence>
+          >
+            <Checkbox
+              checked={isChecked}
+              disabled={alreadyAdded}
+              onCheckedChange={createCheckboxHandler(item)}
+              className="h-6 w-6 md:h-4 md:w-4"
+            />
+          </div>
         </div>
       </div>
 
-      <motion.div
-        className="flex grow items-center gap-4"
-        layout
-        transition={contentLayoutTransition}
+      <Button
+        className="flex grow items-center justify-start gap-4"
+        variant="ghost"
+        disabled={alreadyAdded}
+        onClick={hasMultiple ? createCheckboxHandler(item) : createClickHandler}
       >
-        <Button
-          className="flex items-center gap-4"
-          variant="ghost"
-          disabled={alreadyAdded}
-          onClick={hasMultiple ? createCheckboxHandler(item) : createClickHandler}
-        >
-          <div className="text-xs text-gray-500">
-            {toUIDate(new Date(item.bookingDate), { useToday: true })
-              .split(' ')
-              .map((d) => (
-                <div className="text-center" key={d}>
-                  {d}
-                </div>
-              ))}
-          </div>
-          <div>
-            <p
-              className={cn(
-                'line-clamp-2 text-left text-sm whitespace-break-spaces lg:text-base',
-                alreadyAdded && 'line-through',
-              )}
-            >
-              {item.description}
-            </p>
-            <p className="line-clamp-1 flex text-left text-xs whitespace-break-spaces text-gray-500">
-              {item.pending && t('expense_details.pending')}{' '}
-              {alreadyAdded && `(${t('expense_details.already_added')}${groupName})`}
-            </p>
-          </div>
-        </Button>
-      </motion.div>
+        <div className="text-xs text-gray-500">
+          {toUIDate(new Date(item.bookingDate), { useToday: true })
+            .split(' ')
+            .map((d) => (
+              <div className="text-center" key={d}>
+                {d}
+              </div>
+            ))}
+        </div>
+        <div>
+          <p
+            className={cn(
+              'line-clamp-2 text-left text-sm whitespace-break-spaces lg:text-base',
+              alreadyAdded && 'line-through',
+            )}
+          >
+            {item.description}
+          </p>
+          <p className="line-clamp-1 flex text-left text-xs whitespace-break-spaces text-gray-500">
+            {item.pending && t('expense_details.pending')}{' '}
+            {alreadyAdded && `(${t('expense_details.already_added')}${groupName})`}
+          </p>
+        </div>
+      </Button>
 
       <div className="min-w-10 shrink-0">
         <div

@@ -10,8 +10,7 @@ const AddBankTransactions: React.FC<{
   clearFields: () => void;
   bankConnectionEnabled: boolean;
   children: React.ReactNode;
-  addViaBankTransaction: (obj: TransactionAddInputModel) => void;
-}> = ({ bankConnectionEnabled, children, clearFields, addViaBankTransaction }) => {
+}> = ({ bankConnectionEnabled, children, clearFields }) => {
   const participants = useAddExpenseStore((s) => s.participants);
   const group = useAddExpenseStore((s) => s.group);
   const category = useAddExpenseStore((s) => s.category);
@@ -23,8 +22,13 @@ const AddBankTransactions: React.FC<{
   const multipleTransactions = useAddExpenseStore((s) => s.multipleTransactions);
   const isTransactionLoading = useAddExpenseStore((s) => s.isTransactionLoading);
 
-  const { resetState, setSplitScreenOpen, setMultipleTransactions, setIsTransactionLoading } =
-    useAddExpenseStore((s) => s.actions);
+  const {
+    resetState,
+    setSplitScreenOpen,
+    setMultipleTransactions,
+    setIsTransactionLoading,
+    setSingleTransaction,
+  } = useAddExpenseStore((s) => s.actions);
 
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
 
@@ -53,30 +57,38 @@ const AddBankTransactions: React.FC<{
         return true;
       })
       .map((tempItem) => {
-        const { participants: tempParticipants } = calculateParticipantSplit(
-          tempItem.amount,
-          participants,
-          splitType,
-          splitShares,
-          paidBy,
-        );
-
-        return {
+        const tempExpense: CreateExpense = {
           name: tempItem.description,
           currency: tempItem.currency,
           amount: tempItem.amount,
           groupId: group?.id ?? null,
           splitType,
-          participants: tempParticipants.map((p) => ({
+          paidBy: paidBy.id,
+          participants: participants.map((p) => ({
             userId: p.id,
             amount: p.amount ?? 0n,
           })),
-          paidBy: paidBy.id,
           category,
           fileKey,
           expenseDate: tempItem.date,
           expenseId: tempItem.expenseId,
           transactionId: tempItem.transactionId,
+          otherConversion: null,
+        };
+
+        const { participants: tempParticipants } = calculateParticipantSplit({
+          ...tempExpense,
+          splitShares,
+          amountStr: tempItem.amountStr,
+          isNegative: false,
+        });
+
+        return {
+          ...tempExpense,
+          participants: tempParticipants.map((p) => ({
+            userId: p.id,
+            amount: p.amount ?? 0n,
+          })),
         };
       }) as CreateExpense[];
 
@@ -114,9 +126,9 @@ const AddBankTransactions: React.FC<{
     const transactionToAdd = allTransactions.pop();
     if (transactionToAdd) {
       setMultipleTransactions(allTransactions);
-      addViaBankTransaction(transactionToAdd);
+      setSingleTransaction(transactionToAdd);
     }
-  }, [multipleTransactions, setMultipleTransactions, addViaBankTransaction]);
+  }, [multipleTransactions, setMultipleTransactions, setSingleTransaction]);
 
   const handleSetMultipleTransactions = useCallback(
     (a: TransactionAddInputModel[]) => {
@@ -127,7 +139,7 @@ const AddBankTransactions: React.FC<{
 
   return (
     <BankingTransactionList
-      add={addViaBankTransaction}
+      add={setSingleTransaction}
       addAllMultipleExpenses={addAllMultipleExpenses}
       addOneByOneMultipleExpenses={addOneByOneMultipleExpenses}
       multipleTransactions={multipleTransactions}

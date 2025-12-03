@@ -27,7 +27,6 @@ import { CurrencyInput } from '../ui/currency-input';
 import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { currencyConversion } from '~/utils/numbers';
 import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
-import type { TransactionAddInputModel } from '~/types';
 
 export const AddOrEditExpensePage: React.FC<{
   isStorageConfigured: boolean;
@@ -70,6 +69,7 @@ export const AddOrEditExpensePage: React.FC<{
     setTransactionId,
     setMultipleTransactions,
     setIsTransactionLoading,
+    setSingleTransaction,
   } = useAddExpenseStore((s) => s.actions);
 
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
@@ -98,18 +98,6 @@ export const AddOrEditExpensePage: React.FC<{
       previousCurrencyRef.current = null;
     },
     [setAmount, setAmountStr],
-  );
-
-  const addViaBankTransaction = useCallback(
-    (obj: TransactionAddInputModel) => {
-      setExpenseDate(obj.date);
-      setDescription(obj.description);
-      setCurrency(obj.currency);
-      setAmountStr(obj.amountStr);
-      setAmount(obj.amount);
-      setTransactionId(obj.transactionId);
-    },
-    [setExpenseDate, setDescription, setCurrency, setAmountStr, setAmount, setTransactionId],
   );
 
   const addExpense = useCallback(async () => {
@@ -157,7 +145,7 @@ export const AddOrEditExpensePage: React.FC<{
                 const transactionToAdd = allTransactions.pop();
                 if (transactionToAdd) {
                   setMultipleTransactions(allTransactions);
-                  addViaBankTransaction(transactionToAdd);
+                  setSingleTransaction(transactionToAdd);
                 }
                 return;
               } else {
@@ -218,7 +206,7 @@ export const AddOrEditExpensePage: React.FC<{
     setIsTransactionLoading,
     cronExpression,
     multipleTransactions,
-    addViaBankTransaction,
+    setSingleTransaction,
   ]);
 
   const handleDescriptionChange = useCallback(
@@ -413,7 +401,6 @@ export const AddOrEditExpensePage: React.FC<{
               <AddBankTransactions
                 clearFields={clearFields}
                 bankConnectionEnabled={bankConnectionEnabled}
-                addViaBankTransaction={addViaBankTransaction}
               >
                 <Button
                   variant="ghost"

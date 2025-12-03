@@ -7,10 +7,9 @@ import { api } from '~/utils/api';
 import { type CreateExpense } from '~/types/expense.types';
 
 const AddBankTransactions: React.FC<{
-  clearFields: () => void;
   bankConnectionEnabled: boolean;
   children: React.ReactNode;
-}> = ({ bankConnectionEnabled, children, clearFields }) => {
+}> = ({ bankConnectionEnabled, children }) => {
   const participants = useAddExpenseStore((s) => s.participants);
   const group = useAddExpenseStore((s) => s.group);
   const category = useAddExpenseStore((s) => s.category);
@@ -146,7 +145,7 @@ const AddBankTransactions: React.FC<{
       setMultipleTransactions={handleSetMultipleTransactions}
       isTransactionLoading={isTransactionLoading}
       bankConnectionEnabled={bankConnectionEnabled}
-      clearFields={clearFields}
+      clearFields={resetState}
     >
       {children}
     </BankingTransactionList>

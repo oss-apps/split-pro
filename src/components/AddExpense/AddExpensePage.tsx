@@ -66,7 +66,6 @@ export const AddOrEditExpensePage: React.FC<{
     resetState,
     setSplitScreenOpen,
     setExpenseDate,
-    setTransactionId,
     setMultipleTransactions,
     setIsTransactionLoading,
     setSingleTransaction,
@@ -216,18 +215,10 @@ export const AddOrEditExpensePage: React.FC<{
     [setDescription],
   );
 
-  const clearFields = useCallback(() => {
-    setAmount(0n);
-    setDescription('');
-    setAmountStr('');
-    setTransactionId();
-    setExpenseDate(new Date());
-  }, [setAmount, setDescription, setAmountStr, setTransactionId, setExpenseDate]);
-
   const clearTransaction = useCallback(() => {
-    clearFields();
+    resetState();
     setMultipleTransactions([]);
-  }, [clearFields, setMultipleTransactions]);
+  }, [resetState, setMultipleTransactions]);
 
   const previousCurrencyRef = React.useRef<CurrencyCode | null>(null);
 
@@ -398,10 +389,7 @@ export const AddOrEditExpensePage: React.FC<{
             </RecurrenceInput>
             <SponsorUs />
             <div className="flex gap-2">
-              <AddBankTransactions
-                clearFields={clearFields}
-                bankConnectionEnabled={bankConnectionEnabled}
-              >
+              <AddBankTransactions bankConnectionEnabled={bankConnectionEnabled}>
                 <Button
                   variant="ghost"
                   className="hover:text-foreground/80 items-center justify-between px-2"

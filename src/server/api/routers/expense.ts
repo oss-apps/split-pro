@@ -10,6 +10,7 @@ import { getDocumentUploadUrl } from '~/server/storage';
 import { BigMath, currencyConversion } from '~/utils/numbers';
 
 import {
+  arrayify,
   createCurrencyConversionSchema,
   createExpenseSchema,
   getBatchCurrencyRatesSchema,
@@ -92,30 +93,18 @@ export const expenseRouter = createTRPCRouter({
   }),
 
   addOrEditExpense: protectedProcedure
-    .input(z.array(createExpenseSchema))
+    .input(arrayify(createExpenseSchema))
     .mutation(async ({ input: expenses, ctx }) => {
       const results = [];
       for (const input of expenses) {
-      if (input.expenseId) {
-        await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
-      }
-      if (input.splitType === SplitType.CURRENCY_CONVERSION) {
-        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
-      }
-
-      if (input.groupId !== null) {
-        const group = await db.group.findUnique({
-          where: { id: input.groupId },
-          select: { archivedAt: true },
-        });
-        if (!group) {
-          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group not found' });
+        if (input.expenseId) {
+          await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
         }
         if (input.splitType === SplitType.CURRENCY_CONVERSION) {
           throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
         }
 
-        if (input.groupId) {
+        if (input.groupId !== null) {
           const group = await db.group.findUnique({
             where: { id: input.groupId },
             select: { archivedAt: true },
@@ -170,6 +159,7 @@ export const expenseRouter = createTRPCRouter({
           });
         }
       }
+
       return results;
     }),
 

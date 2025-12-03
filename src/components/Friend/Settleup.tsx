@@ -1,4 +1,4 @@
-import { type BalanceView, SplitType, type User } from '@prisma/client';
+import { SplitType, type User } from '@prisma/client';
 import { ArrowRightIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
@@ -67,27 +67,25 @@ export const SettleUp: React.FC<
     }
 
     addExpenseMutation.mutate(
-      [
-        {
-          name: t('ui.settle_up_name'),
-          currency: balanceToSettle.currency,
-          amount,
-          splitType: SplitType.SETTLEMENT,
-          participants: [
-            {
-              userId: currentUser.id,
-              amount: isCurrentUserPaying ? amount : -amount,
-            },
-            {
-              userId: friend.id,
-              amount: isCurrentUserPaying ? -amount : amount,
-            },
-          ],
-          paidBy: isCurrentUserPaying ? currentUser.id : friend.id,
-          category: DEFAULT_CATEGORY,
-          groupId: null,
-        },
-      ],
+      {
+        name: t('ui.settle_up_name'),
+        currency: balanceToSettle.currency,
+        amount,
+        splitType: SplitType.SETTLEMENT,
+        participants: [
+          {
+            userId: currentUser.id,
+            amount: isCurrentUserPaying ? amount : -amount,
+          },
+          {
+            userId: friend.id,
+            amount: isCurrentUserPaying ? -amount : amount,
+          },
+        ],
+        paidBy: isCurrentUserPaying ? currentUser.id : friend.id,
+        category: DEFAULT_CATEGORY,
+        groupId: null,
+      },
       {
         onSuccess: () => {
           utils.user.invalidate().catch(console.error);

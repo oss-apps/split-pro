@@ -49,27 +49,25 @@ export const GroupSettleUp: React.FC<{
     }
 
     addExpenseMutation.mutate(
-      [
-        {
-          name: t('ui.settle_up_name'),
-          currency: currency,
-          amount,
-          splitType: SplitType.SETTLEMENT,
-          groupId,
-          participants: [
-            {
-              userId: sender.id,
-              amount,
-            },
-            {
-              userId: receiver.id,
-              amount: -amount,
-            },
-          ],
-          paidBy: sender.id,
-          category: DEFAULT_CATEGORY,
-        },
-      ],
+      {
+        name: t('ui.settle_up_name'),
+        currency: currency,
+        amount,
+        splitType: SplitType.SETTLEMENT,
+        groupId,
+        participants: [
+          {
+            userId: sender.id,
+            amount,
+          },
+          {
+            userId: receiver.id,
+            amount: -amount,
+          },
+        ],
+        paidBy: sender.id,
+        category: DEFAULT_CATEGORY,
+      },
       {
         onSuccess: () => {
           utils.group.invalidate().catch(console.error);

@@ -17,6 +17,7 @@ import { CategoryIcon } from '../ui/categoryIcons';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
 import { cronFromBackend } from '~/lib/cron';
+import { toast } from 'sonner';
 
 type ExpenseDetailsOutput = NonNullable<inferRouterOutputs<ExpenseRouter>['getExpenseDetails']>;
 
@@ -152,6 +153,15 @@ export const EditCurrencyConversion: React.FC<{ expense: ExpenseDetailsOutput }>
   expense,
 }) => {
   const { setCurrency } = useAddExpenseStore((s) => s.actions);
+  const { t } = useTranslationWithUtils();
+
+  if (!expense.conversionTo) {
+    toast.error(t('errors.currency_conversion_malformed'));
+    console.error(
+      'Malformed currency conversion data: no conversionTo present, please report this issue.',
+    );
+    return null;
+  }
 
   const addOrEditCurrencyConversionMutation = api.expense.addOrEditCurrencyConversion.useMutation();
   const apiUtils = api.useUtils();

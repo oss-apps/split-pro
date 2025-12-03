@@ -1,10 +1,14 @@
-import { type Balance, type User } from '@prisma/client';
+import { type User } from '@prisma/client';
 import { clsx } from 'clsx';
 
-import { EntityAvatar } from '../ui/avatar';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import type { MinimalBalance } from '~/types/balance.types';
+import { EntityAvatar } from '../ui/avatar';
 
-export const FriendBalance: React.FC<{ user: User; balance: Balance }> = ({ user, balance }) => {
+export const FriendBalance: React.FC<{ user: User; balance: MinimalBalance }> = ({
+  user,
+  balance,
+}) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const { toUIString } = getCurrencyHelpersCached(balance.currency);
   const isPositive = 0 < balance.amount;

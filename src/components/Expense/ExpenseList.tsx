@@ -12,6 +12,9 @@ import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
+import { Separator } from '../ui/separator';
+import { cn } from '~/lib/utils';
+import { toast } from 'sonner';
 
 type ExpensesOutput =
   | inferRouterOutputs<ExpenseRouter>['getGroupExpenses']
@@ -35,25 +38,54 @@ export const ExpenseList: React.FC<{
     return <NoExpenses />;
   }
 
+  const { i18n } = useTranslationWithUtils();
+
+  let lastDate: Date | null = null;
+
   return (
-    <>
+    <div className="flex flex-col gap-3">
       {expenses.map((e) => {
+        const currentDate = e.expenseDate;
+        let isFirstOfMonth = false;
+
+        if (
+          lastDate === null ||
+          currentDate.getMonth() !== lastDate.getMonth() ||
+          currentDate.getFullYear() !== lastDate.getFullYear()
+        ) {
+          isFirstOfMonth = true;
+        }
+
+        lastDate = currentDate;
+
         const isSettlement = e.splitType === SplitType.SETTLEMENT;
         const isCurrencyConversion = e.splitType === SplitType.CURRENCY_CONVERSION;
 
         return (
-          <Link
-            href={`/${isGroup ? 'groups' : 'balances'}/${contactId}/expenses/${e.id}`}
-            key={e.id}
-            className="flex items-center justify-between py-2"
-          >
-            {isSettlement && <Settlement e={e} userId={userId} />}
-            {isCurrencyConversion && <CurrencyConversion e={e} userId={userId} />}
-            {!isSettlement && !isCurrencyConversion && <Expense e={e} userId={userId} />}
-          </Link>
+          <React.Fragment key={e.id}>
+            {isFirstOfMonth && (
+              <div className="flex flex-row items-center gap-4 pt-2">
+                <div className="text-xs font-medium text-gray-700 uppercase">
+                  {new Intl.DateTimeFormat(i18n.language, {
+                    month: 'long',
+                    year: 'numeric',
+                  }).format(currentDate)}
+                </div>
+                <Separator className="flex-1 bg-gray-800" />
+              </div>
+            )}
+            <Link
+              href={`/${isGroup ? 'groups' : 'balances'}/${contactId}/expenses/${e.id}`}
+              className={cn('flex items-center justify-between', isFirstOfMonth ? 'pb-2' : 'py-2')}
+            >
+              {isSettlement && <Settlement e={e} userId={userId} />}
+              {isCurrencyConversion && <CurrencyConversion e={e} userId={userId} />}
+              {!isSettlement && !isCurrencyConversion && <Expense e={e} userId={userId} />}
+            </Link>
+          </React.Fragment>
         );
       })}
-    </>
+    </div>
   );
 };
 
@@ -76,7 +108,7 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
   return (
     <>
       <div className="flex items-center gap-4">
-        <div className="inline-block max-w-min text-center text-xs text-gray-500">
+        <div className="inline-block w-6 text-center text-xs text-gray-500">
           {toUIDate(e.expenseDate)}
         </div>
         <CategoryIcon category={e.category} className="size-5 text-gray-400" />
@@ -120,7 +152,7 @@ const Settlement: ExpenseComponent = ({ e, userId }) => {
 
   return (
     <div className="flex items-center gap-4">
-      <div className="inline-block max-w-min text-center text-xs text-gray-500">
+      <div className="inline-block w-6 text-center text-xs text-gray-500">
         {toUIDate(e.expenseDate)}
       </div>
       <SETTLEUP_ICON className="size-5 text-gray-400" />
@@ -138,12 +170,20 @@ const Settlement: ExpenseComponent = ({ e, userId }) => {
 const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
   const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
 
+  if (!e.conversionTo) {
+    toast.error(t('errors.currency_conversion_malformed'));
+    console.error(
+      'Malformed currency conversion data: no conversionTo present, please report this issue.',
+    );
+    return null;
+  }
+
   const receiverId = e.expenseParticipants.find((p) => p.userId !== e.paidBy)?.userId;
   const userDetails = api.user.getUserDetails.useQuery({ userId: receiverId! });
 
   return (
     <div className="flex items-center gap-4">
-      <div className="inline-block max-w-min text-center text-xs text-gray-500">
+      <div className="inline-block w-6 text-center text-xs text-gray-500">
         {toUIDate(e.expenseDate)}
       </div>
       <CURRENCY_CONVERSION_ICON className="size-5 text-gray-400" />

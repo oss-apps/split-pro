@@ -5,8 +5,6 @@ import { z } from 'zod';
 import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 
-import { recalculateGroupBalances } from '../services/splitService';
-
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.object({ name: z.string().min(1), currency: z.string().optional() }))
@@ -65,6 +63,7 @@ export const groupRouter = createTRPCRouter({
               groupBalances: {
                 where: { userId: ctx.session.user.id },
               },
+              // We can sort by group balance view instead
               expenses: {
                 orderBy: {
                   createdAt: 'desc',
@@ -171,29 +170,6 @@ export const groupRouter = createTRPCRouter({
       return groupUsers;
     }),
 
-  recalculateBalances: groupProcedure
-    .input(z.object({ groupId: z.number() }))
-    .mutation(async ({ input, ctx }) => {
-      const group = await ctx.db.group.findUnique({
-        where: {
-          id: input.groupId,
-        },
-      });
-
-      if (!group) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
-      }
-
-      if (group.userId !== ctx.session.user.id) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'Only creator can recalculate balances',
-        });
-      }
-
-      return recalculateGroupBalances(input.groupId);
-    }),
-
   toggleSimplifyDebts: groupProcedure
     .input(z.object({ groupId: z.number() }))
     .mutation(async ({ input, ctx }) => {
@@ -256,10 +232,8 @@ export const groupRouter = createTRPCRouter({
         });
       }
 
-      const groupBalances = await ctx.db.groupBalance.findMany({
-        where: {
-          groupId: input.groupId,
-        },
+      const groupBalances = await ctx.db.balanceView.findMany({
+        where: { groupId: input.groupId },
       });
 
       const finalGroupBalances = group.simplifyDebts ? simplifyDebts(groupBalances) : groupBalances;

@@ -6,24 +6,14 @@ import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 const CurrencyInput: React.FC<
   Omit<InputProps, 'type' | 'inputMode'> & {
     currency: string;
-    bigIntValue: bigint;
     strValue: string;
     onValueChange: (v: { strValue?: string; bigIntValue?: bigint }) => void;
     allowNegative?: boolean;
     hideSymbol?: boolean;
   }
-> = ({
-  className,
-  currency,
-  bigIntValue,
-  allowNegative,
-  strValue,
-  onValueChange,
-  hideSymbol,
-  ...props
-}) => {
+> = ({ className, currency, allowNegative, strValue, onValueChange, hideSymbol, ...props }) => {
   const { getCurrencyHelpersCached } = useTranslationWithUtils(undefined);
-  const { format, parseToCleanString, toSafeBigInt, sanitizeInput, stripCurrencySymbol } =
+  const { format, parseToCleanString, toSafeBigInt, sanitizeInput } =
     getCurrencyHelpersCached(currency);
 
   return (
@@ -33,15 +23,14 @@ const CurrencyInput: React.FC<
       value={strValue}
       onFocus={() => onValueChange({ strValue: parseToCleanString(strValue) })}
       onBlur={() => {
-        const formattedValue = format(strValue, allowNegative);
-        return onValueChange({
-          strValue: hideSymbol ? stripCurrencySymbol(formattedValue) : formattedValue,
-        });
+        const formattedValue = format(strValue, { signed: allowNegative, hideSymbol });
+        return onValueChange({ strValue: formattedValue });
       }}
       onChange={(e) => {
         const rawValue = e.target.value;
-        const strValue = sanitizeInput(rawValue, allowNegative);
+        const strValue = sanitizeInput(rawValue, allowNegative, true);
         const bigIntValue = toSafeBigInt(strValue, allowNegative);
+        console.log({ strValue, bigIntValue });
         onValueChange({ strValue, bigIntValue });
       }}
       {...props}

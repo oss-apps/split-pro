@@ -9,15 +9,15 @@ import { SettleUp } from '~/components/Friend/Settleup';
 import MainLayout from '~/components/Layout/MainLayout';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
-import { Separator } from '~/components/ui/separator';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { type GetServerSideProps } from 'next';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { CumulatedBalances } from '~/components/Expense/CumulatedBalances';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
-  const { t, displayName, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { t, displayName } = useTranslationWithUtils();
   const router = useRouter();
   const { friendId } = router.query;
 
@@ -37,9 +37,6 @@ const FriendPage: NextPageWithUser = ({ user }) => {
     { enabled: !!_friendId },
   );
 
-  const youLent = balances.data?.filter((b) => 0 < b.amount);
-  const youOwe = balances.data?.filter((b) => 0 > b.amount);
-
   return (
     <>
       <Head>
@@ -56,12 +53,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
             <p className="text-lg font-normal">{displayName(friendQuery.data)}</p>
           </div>
         }
-        actions={
-          <DeleteFriend
-            friendId={_friendId}
-            disabled={!(0 === youLent?.length && 0 === youOwe?.length)}
-          />
-        }
+        actions={<DeleteFriend friendId={_friendId} disabled={!(0 === balances.data?.length)} />}
         header={
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center gap-2">
@@ -77,39 +69,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
       >
         {!friendQuery.data ? null : (
           <div className="mb-28 transition-discrete starting:opacity-0">
-            <div className="mx-4 flex flex-wrap gap-2">
-              <div className="text-orange-700">
-                {0 < (youOwe?.length ?? 0) && (
-                  <>
-                    {t('actors.you')} {t('ui.expense.you.owe')}{' '}
-                    {youOwe?.map((bal, index) => (
-                      <span key={bal.currency}>
-                        <span className="font-semibold tracking-wide">
-                          {getCurrencyHelpersCached(bal.currency).toUIString(bal.amount)}
-                        </span>
-                        {youOwe.length - 1 === index ? '' : ' + '}
-                      </span>
-                    ))}
-                  </>
-                )}
-              </div>
-              <div>{0 < (youOwe?.length ?? 0) && 0 < (youLent?.length ?? 0) ? '+' : null}</div>
-              <div className="text-emerald-600">
-                {0 < (youLent?.length ?? 0) && (
-                  <>
-                    {t('actors.you')} {t('ui.expense.you.lent')}{' '}
-                    {youLent?.map((bal, index) => (
-                      <span key={bal.currency}>
-                        <span className="font-semibold tracking-wide">
-                          {getCurrencyHelpersCached(bal.currency).toUIString(bal.amount)}
-                        </span>
-                        {youLent.length - 1 === index ? '' : ' + '}
-                      </span>
-                    ))}
-                  </>
-                )}
-              </div>
-            </div>
+            <CumulatedBalances entityId={friendQuery.data.id} balances={balances.data} />
             <div className="mt-6 mb-4 flex justify-center gap-2">
               <SettleUp balances={balances.data} friend={friendQuery.data}>
                 <Button
@@ -134,15 +94,12 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 disabled={!expenses.data || 0 === expenses.data.length}
               />
             </div>
-            <Separator />
-            <div className="mx-4 mt-4 flex flex-col gap-3">
-              <ExpenseList
-                expenses={expenses.data}
-                contactId={_friendId}
-                isLoading={expenses.isPending}
-                userId={user.id}
-              />
-            </div>
+            <ExpenseList
+              expenses={expenses.data}
+              contactId={_friendId}
+              isLoading={expenses.isPending}
+              userId={user.id}
+            />
           </div>
         )}
       </MainLayout>

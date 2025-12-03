@@ -1,7 +1,6 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { type GetServerSidePropsContext } from 'next';
-import type { User } from 'next-auth';
-import { type DefaultSession, type NextAuthOptions, getServerSession } from 'next-auth';
+import { type DefaultSession, type NextAuthOptions, type User, getServerSession } from 'next-auth';
 import { type Adapter, type AdapterAccount, type AdapterUser } from 'next-auth/adapters';
 import AuthentikProvider from 'next-auth/providers/authentik';
 import EmailProvider from 'next-auth/providers/email';
@@ -29,6 +28,7 @@ declare module 'next-auth' {
       obapiProviderId?: string;
       bankingId?: string;
       preferredLanguage: string;
+      hiddenFriendIds: number[];
       // ...other properties
       // role: UserRole;
     };
@@ -43,6 +43,7 @@ declare module 'next-auth' {
     obapiProviderId?: string;
     bankingId?: string;
     preferredLanguage: string;
+    hiddenFriendIds: number[];
   }
 }
 
@@ -114,6 +115,7 @@ export const authOptions: NextAuthOptions = {
         obapiProviderId: user.obapiProviderId,
         bankingId: user.bankingId,
         preferredLanguage: user.preferredLanguage,
+        hiddenFriendIds: user.hiddenFriendIds,
       },
     }),
     async signIn({ user, email }) {

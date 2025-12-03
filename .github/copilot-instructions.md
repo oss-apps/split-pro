@@ -13,10 +13,12 @@ SplitPro is a **Next.js PWA** expense-splitting app (Splitwise alternative). Cor
 
 ### 1. **BigInt for All Financial Values**
 - **All amounts are stored and computed as `BigInt`, never floats** to prevent rounding errors
-- When displaying: convert via `toUIString()` (divides by 100 for cents)
-- When receiving input: convert via `toSafeBigInt()` (multiplies by 100)
-- `BigMath` utility provides safe arithmetic operations
-- Read: `README.md` FAQ and `jest.config.ts` for BigInt JSON serialization
+- Use `getCurrencyHelpers({ currency, locale })` from `src/utils/numbers.ts` to get currency-aware helpers:
+  - `toUIString(value)` - Display BigInt as formatted currency (divides by 100 for cents)
+  - `toSafeBigInt(input)` - Parse user input to BigInt (multiplies by 100)
+  - Access these via `CurrencyHelpersContext` in React components
+- `BigMath` utility (`src/utils/numbers.ts`) provides safe arithmetic: `abs`, `sign`, `min`, `max`, `roundDiv`
+- **Jest setup**: `BigInt.prototype.toJSON` is defined in `jest.config.ts` for JSON serialization
 
 ### 2. **Double-Entry Balance Accounting**
 Every expense creates **two balance records** (bidirectional):
@@ -85,7 +87,22 @@ pnpm db:studio        # Open Prisma Studio GUI
 pnpm db:seed          # Seed database with dummy data
 ```
 
-**Pre-commit hooks** (Husky): prettier + oxlint auto-fixes. Override with `git commit --no-verify`.
+**Pre-commit hooks** (Husky):
+```bash
+pnpm lint-staged  # Runs prettier on staged files
+pnpm tsgo --noEmit  # TypeScript type checking without emit
+```
+Override with `git commit --no-verify` if needed.
+
+## Environment Setup
+
+Environment variables are validated via `@t3-oss/env-nextjs` in `src/env.ts`. Required variables:
+- **Database**: `DATABASE_URL` or separate `POSTGRES_*` vars
+- **Auth**: `NEXTAUTH_URL`, `NEXTAUTH_SECRET`, OAuth provider credentials (Google/Email SMTP)
+- **Storage**: R2/S3 credentials (`R2_*` or `AWS_S3_*` variables)
+- **Optional**: Bank integration (Plaid/GoCardless), currency rate API keys, push notification VAPID keys
+
+For local dev: run `pnpm d` to start PostgreSQL + MinIO in Docker. Access MinIO console at `http://localhost:9001` (user: `splitpro`, pass: `password`) to create access keys.
 
 ## Data Flow Specifics
 
@@ -113,6 +130,7 @@ GroupBalance(groupId, currency, userId, firendId)  // note: typo "firendId"
 - **Currency Rates**: Pluggable providers (Frankfurter, OXR, NBP) in `currencyRateService.ts`
 - **i18n**: next-i18next with Weblate; always add English keys first, let community translate
 - **Dates**: Use `date-fns` for formatting/parsing, store all dates in UTC
+- **PWA**: Serwist service worker (`worker/index.ts` → `public/sw.js`), disabled in dev mode
 
 
 ## Avoiding Common Pitfalls
@@ -240,3 +258,5 @@ The backend uses **tRPC** for type-safe API communication. Routers are in `src/s
 Always use context7 when I need code generation, setup or configuration steps, or
 library/API documentation. This means you should automatically use the Context7 MCP
 tools to resolve library id and get library docs without me having to explicitly ask.
+
+Do not generate documentation or tests if not explicitly requested.

@@ -4,7 +4,6 @@ import {
   BarChartHorizontal,
   Check,
   ChevronLeft,
-  Construction,
   DoorOpen,
   Info,
   Merge,
@@ -56,7 +55,6 @@ const BalancePage: NextPageWithUser<{
   const toggleArchiveMutation = api.group.toggleArchive.useMutation();
   const toggleSimplifyDebtsMutation = api.group.toggleSimplifyDebts.useMutation();
   const updateGroupDetailsMutation = api.group.updateGroupDetails.useMutation();
-  const recalculateGroupBalancesMutation = api.group.recalculateBalances.useMutation();
 
   const [isInviteCopied, setIsInviteCopied] = useState(false);
 
@@ -92,22 +90,6 @@ const BalancePage: NextPageWithUser<{
   const canLeave = !groupDetailQuery.data?.groupBalances.find(
     (bal) => 0n !== bal.amount && bal.userId === user.id,
   );
-
-  const onRecalculateBalances = useCallback(() => {
-    recalculateGroupBalancesMutation.mutate(
-      { groupId },
-      {
-        onSuccess: () => {
-          void groupDetailQuery.refetch();
-          toast.success(t('group_details.messages.balances_recalculated'));
-        },
-        onError: (e) => {
-          toast.error(t('errors.something_went_wrong'));
-          console.error(e);
-        },
-      },
-    );
-  }, [groupId, groupDetailQuery, recalculateGroupBalancesMutation, t]);
 
   const onGroupDelete = useCallback(() => {
     deleteGroupMutation.mutate(
@@ -310,23 +292,6 @@ const BalancePage: NextPageWithUser<{
                       }}
                     />
                   </Label>
-                  {isAdmin && (
-                    <SimpleConfirmationDialog
-                      title={t('group_details.group_info.recalculate_balances_details.title')}
-                      description={t(
-                        'group_details.group_info.recalculate_balances_details.description',
-                      )}
-                      hasPermission
-                      onConfirm={onRecalculateBalances}
-                      loading={recalculateGroupBalancesMutation.isPending}
-                      variant="default"
-                    >
-                      <Button variant="ghost" className="text-primary justify-start p-0 text-left">
-                        <Construction className="mr-2 h-5 w-5" />{' '}
-                        {t('group_details.group_info.recalculate_balances')}
-                      </Button>
-                    </SimpleConfirmationDialog>
-                  )}
                   <Label className="flex cursor-pointer items-center justify-between">
                     <p className="flex items-center">
                       <Archive className="mr-2 size-4" />{' '}
@@ -434,6 +399,7 @@ const BalancePage: NextPageWithUser<{
                 userId={user.id}
                 groupBalances={groupDetailQuery.data?.groupBalances}
                 users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user)}
+                groupId={groupId}
               />
             </div>
             <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b pb-4">

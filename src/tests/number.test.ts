@@ -1,5 +1,5 @@
 // filepath: /home/wiktor/kod/split-pro/src/utils/number.test.ts
-import { getCurrencyHelpers } from '../utils/numbers';
+import { currencyConversion, getCurrencyHelpers } from '../utils/numbers';
 
 describe('getCurrencyHelpers', () => {
   describe('toUIString', () => {
@@ -167,5 +167,30 @@ describe('getCurrencyHelpers', () => {
     ])('should sanitize %p to %p with signed flag', (input, expected) => {
       expect(sanitizeInput(input, true)).toBe(expected);
     });
+  });
+});
+
+describe('currencyConversion', () => {
+  it('handles increasing decimal digit conversions', () => {
+    const from = 'JPY'; // 0 decimal digits
+    const to = 'USD';
+    const amount = 12345n; // 12345 JPY
+    const rate = 0.0073; // 1 JPY = 0.0073 USD
+
+    const res = currencyConversion({ from, to, amount, rate });
+
+    // 12345 JPY * 0.0073 = 90.1185 USD -> rounded to 90.12 USD -> 9012 in bigint
+    expect(res).toBe(9012n);
+  });
+
+  it('handles decreasing decimal digit conversions', () => {
+    const from = 'USD'; // 2 decimal digits
+    const to = 'JPY';
+    const amount = 9012n;
+    const rate = 1 / 0.0073;
+
+    const res = currencyConversion({ from, to, amount, rate });
+
+    expect(res).toBe(12345n);
   });
 });

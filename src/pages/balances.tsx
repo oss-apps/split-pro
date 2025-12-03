@@ -8,16 +8,22 @@ import { BalanceEntry } from '~/components/Expense/BalanceEntry';
 import MainLayout from '~/components/Layout/MainLayout';
 import { NotificationModal } from '~/components/NotificationModal';
 import { Button } from '~/components/ui/button';
+import { ConvertibleBalance } from '~/components/Expense/ConvertibleBalance';
 import { useIsPwa } from '~/hooks/useIsPwa';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
+import { cn } from '~/lib/utils';
+import { isCurrencyCode } from '~/lib/currency';
+import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
 
 const BalancePage: NextPageWithUser = () => {
-  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { t } = useTranslationWithUtils();
   const isPwa = useIsPwa();
   const balanceQuery = api.expense.getBalances.useQuery();
+
+  const selectedCurrency = useCurrencyPreferenceStore((s) => s.getPreference());
 
   const shareWithFriends = useCallback(() => {
     if (navigator.share) {
@@ -53,50 +59,27 @@ const BalancePage: NextPageWithUser = () => {
         <NotificationModal />
         <div className="">
           <div className="mx-4 flex items-stretch justify-between gap-4">
-            {balanceQuery.data?.youOwe.length ? (
-              <div className="w-1/2 rounded-2xl border px-2 py-2">
-                <div className="mt-2 px-1">
-                  <div className="flex items-center justify-center gap-2 text-center">
-                    <p className="text-sm">
-                      {t('actors.you')} {t('ui.expense.you.owe')}
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
-                  {balanceQuery.data?.youOwe.map((balance, index) => (
-                    <span key={balance.currency} className="flex gap-1">
-                      <span className="text-orange-600">
-                        {getCurrencyHelpersCached(balance.currency).toUIString(balance.amount)}
-                      </span>
-                      {index !== balanceQuery.data.youOwe.length - 1 ? <span>+</span> : null}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-            {balanceQuery.data?.youGet.length ? (
-              <div className="w-1/2 rounded-2xl border px-2 py-2">
-                <div className="mt-2 flex flex-col justify-center px-1">
-                  <div className="flex items-center justify-center gap-2">
-                    <p className="text-sm">
-                      {t('actors.you')} {t('ui.expense.you.lent')}
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
-                  {balanceQuery.data?.youGet.map((balance, index) => (
-                    <span key={balance.currency} className="flex gap-1">
-                      <span className="text-emerald-500">
-                        {getCurrencyHelpersCached(balance.currency).toUIString(balance.amount)}
-                      </span>
-                      {index !== balanceQuery.data.youGet.length - 1 ? (
-                        <span className="text-gray-400">+</span>
-                      ) : null}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ) : null}
+            {isCurrencyCode(selectedCurrency) ? (
+              <CumulatedBalanceDisplay
+                prefix={`${t('ui.total_balance')}`}
+                cumulatedBalances={[
+                  balanceQuery.data?.youOwe ?? [],
+                  balanceQuery.data?.youGet ?? [],
+                ].flat()}
+                className="mx-auto"
+              />
+            ) : (
+              <>
+                <CumulatedBalanceDisplay
+                  prefix={`${t('actors.you')} ${t('ui.expense.you.owe')}`}
+                  cumulatedBalances={balanceQuery.data?.youOwe}
+                />
+                <CumulatedBalanceDisplay
+                  prefix={`${t('actors.you')} ${t('ui.expense.you.lent')}`}
+                  cumulatedBalances={balanceQuery.data?.youGet}
+                />
+              </>
+            )}
           </div>
         </div>
 
@@ -106,10 +89,7 @@ const BalancePage: NextPageWithUser = () => {
               key={balance.friend.id}
               id={balance.friend.id}
               entity={balance.friend}
-              amount={balance.amount}
-              isPositive={0n < balance.amount}
-              currency={balance.currency}
-              hasMore={balance.hasMore}
+              balances={balance.currencies}
             />
           ))}
 
@@ -133,6 +113,29 @@ const BalancePage: NextPageWithUser = () => {
         </div>
       </MainLayout>
     </>
+  );
+};
+
+const CumulatedBalanceDisplay: React.FC<{
+  prefix?: string;
+  className?: string;
+  cumulatedBalances?: { currency: string; amount: bigint }[];
+}> = ({ prefix = '', className = '', cumulatedBalances }) => {
+  if (!cumulatedBalances || cumulatedBalances.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className={cn('w-1/2 rounded-2xl border px-2 py-2', className)}>
+      <div className="mt-2 px-1">
+        <div className="flex items-center justify-center gap-2 text-center">
+          <p className="text-sm">{prefix}</p>
+        </div>
+      </div>
+      <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
+        <ConvertibleBalance balances={cumulatedBalances} showMultiOption />
+      </div>
+    </div>
   );
 };
 

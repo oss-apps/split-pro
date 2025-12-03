@@ -20,27 +20,13 @@ export const userRouter = createTRPCRouter({
   me: protectedProcedure.query(({ ctx }) => ctx.session.user),
 
   getFriends: protectedProcedure.query(async ({ ctx }) => {
-    const balanceWithFriends = await db.balance.findMany({
-      where: {
-        userId: ctx.session.user.id,
-      },
-      select: {
-        friendId: true,
-      },
+    const friends = await db.balanceView.findMany({
+      where: { userId: ctx.session.user.id, friendId: { notIn: ctx.session.user.hiddenFriendIds } },
+      include: { friend: true },
       distinct: ['friendId'],
     });
 
-    const friendsIds = balanceWithFriends.map((friend) => friend.friendId);
-
-    const friends = await db.user.findMany({
-      where: {
-        id: {
-          in: friendsIds,
-        },
-      },
-    });
-
-    return friends;
+    return friends.map((f) => f.friend);
   }),
 
   getOwnExpenses: protectedProcedure.query(async ({ ctx }) => {
@@ -92,17 +78,21 @@ export const userRouter = createTRPCRouter({
   getBalancesWithFriend: protectedProcedure
     .input(z.object({ friendId: z.number() }))
     .query(async ({ input, ctx }) => {
-      const balances = db.balance.findMany({
+      const balances = await db.balanceView.groupBy({
+        by: ['currency'],
+        _sum: { amount: true },
         where: {
           userId: ctx.session.user.id,
           friendId: input.friendId,
-          amount: {
-            not: 0,
-          },
+          amount: { not: 0 },
         },
       });
 
-      return balances;
+      return balances.map((b) => ({
+        friendId: input.friendId,
+        currency: b.currency,
+        amount: b._sum.amount ?? 0n,
+      }));
     }),
 
   updateUserDetail: protectedProcedure
@@ -127,18 +117,6 @@ export const userRouter = createTRPCRouter({
 
       return user;
     }),
-
-  // sendExpensePushNotification: protectedProcedure
-  //   .input(z.object({ expenseId: z.string() }))
-  //   .mutation(async ({ input }) => {
-  //     sendExpensePushNotification(input.expenseId).catch((err) => {
-  //       console.error('Error sending push notification', err);
-  //       throw new TRPCError({
-  //         code: 'INTERNAL_SERVER_ERROR',
-  //         message: 'Failed to send push notification',
-  //       });
-  //     });
-  //   }),
 
   getUserDetails: protectedProcedure
     .input(z.object({ userId: z.number() }))
@@ -195,12 +173,19 @@ export const userRouter = createTRPCRouter({
   deleteFriend: protectedProcedure
     .input(z.object({ friendId: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      const friendBalances = await db.balance.findMany({
+      const friendBalances = await db.balanceView.groupBy({
+        by: ['currency'],
+        _sum: { amount: true },
         where: {
           userId: ctx.session.user.id,
           friendId: input.friendId,
+          amount: { not: 0 },
+        },
+        having: {
           amount: {
-            not: 0,
+            _sum: {
+              not: 0,
+            },
           },
         },
       });
@@ -212,17 +197,14 @@ export const userRouter = createTRPCRouter({
         });
       }
 
-      await db.balance.deleteMany({
+      await db.user.update({
         where: {
-          userId: input.friendId,
-          friendId: ctx.session.user.id,
+          id: ctx.session.user.id,
         },
-      });
-
-      await db.balance.deleteMany({
-        where: {
-          friendId: input.friendId,
-          userId: ctx.session.user.id,
+        data: {
+          hiddenFriendIds: {
+            push: input.friendId,
+          },
         },
       });
     }),
@@ -250,5 +232,15 @@ export const userRouter = createTRPCRouter({
 
   getWebPushPublicKey: protectedProcedure.query(() => env.WEB_PUSH_PUBLIC_KEY ?? ''),
 });
+
+export const getUserMap = async (userIds: number[]) => {
+  const users = await db.user.findMany({
+    where: {
+      id: { in: userIds },
+    },
+  });
+
+  return Object.fromEntries(users.map((u) => [u.id, u]));
+};
 
 export type UserRouter = typeof userRouter;

@@ -108,7 +108,6 @@ export const GroupSettleUp: React.FC<{
         </div>
         <CurrencyInput
           currency={currency}
-          bigIntValue={amount}
           strValue={amountStr}
           className="mx-auto mt-4 w-[150px] text-center text-lg"
           onValueChange={onCurrencyInputValueChange}

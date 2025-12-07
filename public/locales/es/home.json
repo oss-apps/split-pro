@@ -1,1 +1,11 @@
-{}
+{
+  "features": {
+    "currency_conversion": {
+      "description": "Conversión rápida entre diferentes monedas utilizando tipos de cambio actuales o históricos",
+      "title": "Conversión de divisas"
+    },
+    "debt_simplification": {
+      "description": "Simplifica automáticamente las deudas grupales para reducir el número de transacciones necesarias entre amigos"
+    }
+  }
+}

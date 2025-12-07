@@ -1,1 +1,12 @@
-{}
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Juegos",
+        "movies": "Peliculas",
+        "music": "Música",
+        "other": "Entretenimiento"
+      }
+    }
+  }
+}

@@ -76,9 +76,12 @@ const AddBankTransactions: React.FC<{
         };
 
         const { participants: tempParticipants } = calculateParticipantSplit({
-          ...tempExpense,
+          amount: tempExpense.amount,
+          expenseDate: tempExpense.expenseDate as Date,
+          participants: participants,
+          splitType: tempExpense.splitType,
           splitShares,
-          amountStr: tempItem.amountStr,
+          paidBy,
           isNegative: false,
         });
 

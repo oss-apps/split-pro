@@ -248,7 +248,18 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   },
 }));
 
-export function calculateParticipantSplit(state: AddExpenseState) {
+export function calculateParticipantSplit(
+  state: Pick<
+    AddExpenseState,
+    | 'amount'
+    | 'participants'
+    | 'splitType'
+    | 'splitShares'
+    | 'paidBy'
+    | 'expenseDate'
+    | 'isNegative'
+  >,
+) {
   const { amount, participants, splitType, splitShares, paidBy, expenseDate } = state;
   let canSplitScreenClosed = true;
   if (0n === amount) {

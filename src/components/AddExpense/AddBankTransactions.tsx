@@ -27,6 +27,11 @@ const AddBankTransactions: React.FC<{
     setMultipleTransactions,
     setIsTransactionLoading,
     setSingleTransaction,
+    setDescription,
+    setAmount,
+    setAmountStr,
+    setExpenseDate,
+    setTransactionId,
   } = useAddExpenseStore((s) => s.actions);
 
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
@@ -138,6 +143,14 @@ const AddBankTransactions: React.FC<{
     [setMultipleTransactions],
   );
 
+  const clearFields = useCallback(() => {
+    setAmount(0n);
+    setDescription('');
+    setAmountStr('');
+    setTransactionId();
+    setExpenseDate(new Date());
+  }, [setAmount, setDescription, setAmountStr, setTransactionId, setExpenseDate]);
+
   return (
     <BankingTransactionList
       add={setSingleTransaction}
@@ -147,7 +160,7 @@ const AddBankTransactions: React.FC<{
       setMultipleTransactions={handleSetMultipleTransactions}
       isTransactionLoading={isTransactionLoading}
       bankConnectionEnabled={bankConnectionEnabled}
-      clearFields={resetState}
+      clearFields={clearFields}
     >
       {children}
     </BankingTransactionList>

@@ -17,12 +17,9 @@ export const BankTransactionItem: React.FC<{
   const { t, toUIDate } = useTranslationWithUtils();
   const [isHovered, setIsHovered] = useState(false);
 
-  const createCheckboxHandler = useCallback(
-    (item: TransactionWithPendingStatus) => () => {
-      onTransactionRowClick(item, true);
-    },
-    [onTransactionRowClick],
-  );
+  const createCheckboxHandler = useCallback(() => {
+    onTransactionRowClick(item, true);
+  }, [onTransactionRowClick, item]);
 
   const createClickHandler = useCallback(
     () => onTransactionRowClick(item, false),
@@ -56,7 +53,7 @@ export const BankTransactionItem: React.FC<{
           <Checkbox
             checked={isChecked}
             disabled={alreadyAdded}
-            onCheckedChange={createCheckboxHandler(item)}
+            onCheckedChange={createCheckboxHandler}
             className="h-6 w-6 md:h-4 md:w-4"
           />
         </div>
@@ -73,7 +70,7 @@ export const BankTransactionItem: React.FC<{
             <Checkbox
               checked={isChecked}
               disabled={alreadyAdded}
-              onCheckedChange={createCheckboxHandler(item)}
+              onCheckedChange={createCheckboxHandler}
               className="h-6 w-6 md:h-4 md:w-4"
             />
           </div>
@@ -84,7 +81,7 @@ export const BankTransactionItem: React.FC<{
         className="flex grow items-center justify-start gap-4"
         variant="ghost"
         disabled={alreadyAdded}
-        onClick={hasMultiple ? createCheckboxHandler(item) : createClickHandler}
+        onClick={hasMultiple ? createCheckboxHandler : createClickHandler}
       >
         <div className="text-xs text-gray-500">
           {toUIDate(new Date(item.bookingDate), { useToday: true })

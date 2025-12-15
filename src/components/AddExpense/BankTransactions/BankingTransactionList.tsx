@@ -6,6 +6,8 @@ import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { BankTransactionItem } from './BankTransactionItem';
 import type { TransactionOutputItem } from '~/types/bank.types';
 import { AppDrawer } from '~/components/ui/drawer';
+import { MultipleTransactionModal } from './MultipleTransactionModal';
+import { isCurrencyCode, parseCurrencyCode } from '~/lib/currency';
 
 export type TransactionWithPendingStatus = TransactionOutputItem & {
   pending: boolean;
@@ -13,26 +15,29 @@ export type TransactionWithPendingStatus = TransactionOutputItem & {
 
 export const BankingTransactionList: React.FC<{
   add: (obj: TransactionAddInputModel) => void;
-  // addMultipleExpenses: () => void;
-  // multipleTransactions: TransactionAddInputModel[];
-  // setMultipleTransactions: (a: TransactionAddInputModel[]) => void;
-  // isTransactionLoading: boolean;
+  addAllMultipleExpenses: () => void;
+  addOneByOneMultipleExpenses: () => void;
+  multipleTransactions: TransactionAddInputModel[];
+  setMultipleTransactions: (a: TransactionAddInputModel[]) => void;
+  isTransactionLoading: boolean;
   bankConnectionEnabled: boolean;
   children: React.ReactNode;
-  // clearFields: () => void;
+  clearFields: () => void;
 }> = ({
   add,
-  // addMultipleExpenses,
-  // multipleTransactions,
-  // setMultipleTransactions,
-  // isTransactionLoading,
+  addAllMultipleExpenses,
+  addOneByOneMultipleExpenses,
+  multipleTransactions,
+  setMultipleTransactions,
+  isTransactionLoading,
   bankConnectionEnabled,
   children,
-  // clearFields,
+  clearFields,
 }) => {
   const { t } = useTranslationWithUtils();
 
   const [open, setOpen] = React.useState(false);
+  const [showMultipleTransactionModal, setShowMultipleTransactionModal] = React.useState(false);
 
   const userQuery = api.user.me.useQuery();
   const transactions = api.bankTransactions.getTransactions.useQuery(
@@ -74,44 +79,74 @@ export const BankingTransactionList: React.FC<{
   const transactionsArray = returnTransactionsArray();
 
   const onTransactionRowClick = useCallback(
-    (item: TransactionWithPendingStatus) => {
-      const transactionData = {
+    (item: TransactionWithPendingStatus, multiple: boolean) => {
+      if (!isCurrencyCode(item.transactionAmount.currency)) {
+        console.warn(`Invalid currency code: ${item.transactionAmount.currency}`);
+        return;
+      }
+
+      const normalizedAmount = item.transactionAmount.amount.replaceAll('-', '').replace(',', '.');
+      const parsedAmount = Number(normalizedAmount);
+
+      if (isNaN(parsedAmount) || !isFinite(parsedAmount)) {
+        console.warn(`Invalid amount: ${item.transactionAmount.amount}`);
+        return;
+      }
+
+      const bigIntAmount = BigInt(Math.round(parsedAmount * 100));
+
+      const transactionData: TransactionAddInputModel = {
         date: new Date(item.bookingDate),
-        amount: item.transactionAmount.amount.replace('-', ''),
-        currency: item.transactionAmount.currency,
+        amountStr: item.transactionAmount.amount.replaceAll('-', ''),
+        amount: bigIntAmount,
+        currency: parseCurrencyCode(item.transactionAmount.currency),
         description: item.description,
         transactionId: item.transactionId,
       };
 
-      // if (multiple) {
-      //   clearFields();
-      //   const isInMultipleTransactions = multipleTransactions?.some(
-      //     (cItem) => cItem.transactionId === item.transactionId,
-      //   );
+      if (multiple) {
+        clearFields();
+        const isInMultipleTransactions = multipleTransactions?.some(
+          (cItem) => cItem.transactionId === item.transactionId,
+        );
 
-      //   setMultipleTransactions(
-      //     isInMultipleTransactions
-      //       ? multipleTransactions.filter((cItem) => cItem.transactionId !== item.transactionId)
-      //       : [...multipleTransactions, transactionData],
-      //   );
-      // } else {
-      if (alreadyAdded(item.transactionId)) {
-        return;
+        setMultipleTransactions(
+          isInMultipleTransactions
+            ? multipleTransactions.filter((cItem) => cItem.transactionId !== item.transactionId)
+            : [...multipleTransactions, transactionData as TransactionAddInputModel],
+        );
+      } else {
+        if (alreadyAdded(item.transactionId)) {
+          return;
+        }
+        add(transactionData);
+        setOpen(false);
+        document.getElementById('mainlayout')?.scrollTo({ top: 0, behavior: 'instant' });
       }
-      add(transactionData);
-      setOpen(false);
-      document.getElementById('mainlayout')?.scrollTo({ top: 0, behavior: 'instant' });
-      // }
     },
-    [add, alreadyAdded],
+    [add, alreadyAdded, multipleTransactions, setMultipleTransactions, clearFields],
   );
 
-  const setOpenClose = useCallback((open: boolean) => {
-    setOpen(open);
-    // if (!open) {
-    //   setMultipleTransactions([]);
-    // }
+  const setOpenClose = useCallback(
+    (open: boolean) => {
+      setOpen(open);
+      if (!open) {
+        setMultipleTransactions([]);
+      }
+    },
+    [setMultipleTransactions],
+  );
+
+  const handleAddMultipleExpenses = useCallback(() => {
+    setShowMultipleTransactionModal(true);
   }, []);
+
+  const hasMultipleTransactions = multipleTransactions.length > 0;
+
+  const handleAddOneByOneMultipleExpenses = useCallback(() => {
+    setOpen(false);
+    addOneByOneMultipleExpenses();
+  }, [addOneByOneMultipleExpenses]);
 
   if (!bankConnectionEnabled || !userQuery.data?.obapiProviderId) {
     return null;
@@ -124,13 +159,9 @@ export const BankingTransactionList: React.FC<{
       open={open}
       onOpenChange={setOpenClose}
       className="h-[80vh]"
-      // actionTitle={t('expense_details.submit_all')}
-      // actionOnClick={addMultipleExpenses}
-      // actionDisabled={
-      //   (multipleTransactions?.length || 0) === 0 ||
-      //   isTransactionLoading
-      // }
-      shouldCloseOnAction
+      actionTitle={hasMultipleTransactions ? t('expense_details.submit_all') : undefined}
+      actionOnClick={hasMultipleTransactions ? handleAddMultipleExpenses : undefined}
+      actionDisabled={(multipleTransactions?.length || 0) === 0 || isTransactionLoading}
     >
       <div className="flex flex-col gap-4">
         {transactions?.isLoading ? (
@@ -152,12 +183,18 @@ export const BankingTransactionList: React.FC<{
                 alreadyAdded={alreadyAdded(item.transactionId)}
                 onTransactionRowClick={onTransactionRowClick}
                 groupName={returnGroupName(item.transactionId)}
-                // multipleTransactions={multipleTransactions}
+                multipleTransactions={multipleTransactions}
               />
             ))}
           </>
         )}
       </div>
+      <MultipleTransactionModal
+        modalOpen={showMultipleTransactionModal}
+        setModalOpen={setShowMultipleTransactionModal}
+        onAddAll={addAllMultipleExpenses}
+        onAddOneByOne={handleAddOneByOneMultipleExpenses}
+      />
     </AppDrawer>
   );
 };

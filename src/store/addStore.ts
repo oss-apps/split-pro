@@ -59,6 +59,7 @@ export interface AddExpenseState {
     setExpenseDate: (expenseDate: Date | undefined) => void;
     setTransactionId: (transactionId?: string) => void;
     setMultipleTransactions: (multipleTransactions: TransactionAddInputModel[]) => void;
+    setSingleTransaction: (singleTransaction: TransactionAddInputModel) => void;
     setIsTransactionLoading: (isTransactionLoading: boolean) => void;
     setCronExpression: (cronExpression: string) => void;
   };
@@ -233,12 +234,32 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     setExpenseDate: (expenseDate) => set({ expenseDate }),
     setTransactionId: (transactionId) => set({ transactionId }),
     setMultipleTransactions: (multipleTransactions) => set({ multipleTransactions }),
+    setSingleTransaction: (singleTransaction: TransactionAddInputModel) =>
+      set({
+        expenseDate: singleTransaction.date,
+        description: singleTransaction.description,
+        currency: singleTransaction.currency,
+        amount: singleTransaction.amount,
+        amountStr: singleTransaction.amountStr,
+        transactionId: singleTransaction.transactionId,
+      }),
     setIsTransactionLoading: (isTransactionLoading) => set({ isTransactionLoading }),
     setCronExpression: (cronExpression) => set({ cronExpression }),
   },
 }));
 
-export function calculateParticipantSplit(state: AddExpenseState) {
+export function calculateParticipantSplit(
+  state: Pick<
+    AddExpenseState,
+    | 'amount'
+    | 'participants'
+    | 'splitType'
+    | 'splitShares'
+    | 'paidBy'
+    | 'expenseDate'
+    | 'isNegative'
+  >,
+) {
   const { amount, participants, splitType, splitShares, paidBy, expenseDate } = state;
   let canSplitScreenClosed = true;
   if (0n === amount) {

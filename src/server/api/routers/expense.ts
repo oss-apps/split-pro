@@ -10,6 +10,7 @@ import { getDocumentUploadUrl } from '~/server/storage';
 import { BigMath, currencyConversion } from '~/utils/numbers';
 
 import {
+  arrayify,
   createCurrencyConversionSchema,
   createExpenseSchema,
   getBatchCurrencyRatesSchema,
@@ -92,63 +93,74 @@ export const expenseRouter = createTRPCRouter({
   }),
 
   addOrEditExpense: protectedProcedure
-    .input(createExpenseSchema)
-    .mutation(async ({ input, ctx }) => {
-      if (input.expenseId) {
-        await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
-      }
-      if (input.splitType === SplitType.CURRENCY_CONVERSION) {
-        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
-      }
-
-      if (input.groupId !== null) {
-        const group = await db.group.findUnique({
-          where: { id: input.groupId },
-          select: { archivedAt: true },
-        });
-        if (!group) {
-          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group not found' });
+    .input(arrayify(createExpenseSchema))
+    .mutation(async ({ input: expenses, ctx }) => {
+      const results = [];
+      for (const input of expenses) {
+        if (input.expenseId) {
+          await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
         }
-        if (group.archivedAt) {
-          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
+        if (input.splitType === SplitType.CURRENCY_CONVERSION) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
         }
-      }
 
-      try {
-        const expense = input.expenseId
-          ? await editExpense(input, ctx.session.user.id)
-          : await createExpense(input, ctx.session.user.id);
+        if (input.groupId !== null) {
+          const group = await db.group.findUnique({
+            where: { id: input.groupId },
+            select: { archivedAt: true },
+          });
+          if (!group) {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group not found' });
+          }
+          if (group.archivedAt) {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
+          }
+        }
 
-        if (expense && input.cronExpression) {
-          const [{ schedule }] = await createRecurringExpenseJob(expense.id, input.cronExpression);
-          console.log('Created recurring expense job with jobid:', schedule);
+        try {
+          const expense = input.expenseId
+            ? await editExpense(input, ctx.session.user.id)
+            : await createExpense(input, ctx.session.user.id);
 
-          await db.expense.update({
-            where: { id: expense.id },
-            data: {
-              recurrence: {
-                upsert: {
-                  create: {
-                    job: {
-                      connect: { jobid: schedule },
+          if (expense && input.cronExpression) {
+            const [{ schedule }] = await createRecurringExpenseJob(
+              expense.id,
+              input.cronExpression,
+            );
+            console.log('Created recurring expense job with jobid:', schedule);
+
+            await db.expense.update({
+              where: { id: expense.id },
+              data: {
+                recurrence: {
+                  upsert: {
+                    create: {
+                      job: {
+                        connect: { jobid: schedule },
+                      },
                     },
-                  },
-                  update: {
-                    job: {
-                      connect: { jobid: schedule },
+                    update: {
+                      job: {
+                        connect: { jobid: schedule },
+                      },
                     },
                   },
                 },
               },
-            },
+            });
+          }
+
+          results.push(expense);
+        } catch (error) {
+          console.error(error);
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Failed to create expense',
           });
         }
-
-        return expense;
-      } catch (error) {
-        console.error(error);
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create expense' });
       }
+
+      return results;
     }),
 
   addOrEditCurrencyConversion: protectedProcedure

@@ -222,6 +222,12 @@
       "text": "This action cannot be undone. This will permanently delete your expense.",
       "title": "Are you absolutely sure?"
     },
+    "multiple_transactions": {
+      "title": "Add multiple transactions",
+      "description": "You have selected multiple transactions. Pick whether you want them added all together with the current split settings or adjust the settings one by one.",
+      "add_all": "Add all",
+      "add_one_by_one": "Add one by one"
+    },
     "title": "Add expense",
     "title_mobile": "Add",
     "clear": "Clear",

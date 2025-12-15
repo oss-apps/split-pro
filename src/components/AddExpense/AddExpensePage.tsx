@@ -53,6 +53,7 @@ export const AddOrEditExpensePage: React.FC<{
   const splitShares = useAddExpenseStore((s) => s.splitShares);
   const transactionId = useAddExpenseStore((s) => s.transactionId);
   const cronExpression = useAddExpenseStore((s) => s.cronExpression);
+  const multipleTransactions = useAddExpenseStore((s) => s.multipleTransactions);
 
   const { t, displayName, generateSplitDescription } = useTranslationWithUtils();
 
@@ -65,9 +66,9 @@ export const AddOrEditExpensePage: React.FC<{
     resetState,
     setSplitScreenOpen,
     setExpenseDate,
-    setTransactionId,
     setMultipleTransactions,
     setIsTransactionLoading,
+    setSingleTransaction,
   } = useAddExpenseStore((s) => s.actions);
 
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
@@ -115,48 +116,60 @@ export const AddOrEditExpensePage: React.FC<{
 
     try {
       await addExpenseMutation.mutateAsync(
-        {
-          name: description,
-          currency,
-          amount: amount * sign,
-          groupId: group?.id ?? null,
-          splitType,
-          participants: participants.map((p) => ({
-            userId: p.id,
-            amount: (p.amount ?? 0n) * sign,
-          })),
-          paidBy: paidBy.id,
-          category,
-          fileKey,
-          expenseDate,
-          expenseId,
-          transactionId,
-          cronExpression: cronExpression ? cronToBackend(cronExpression) : undefined,
-        },
+        [
+          {
+            name: description,
+            currency,
+            amount: amount * sign,
+            groupId: group?.id ?? null,
+            splitType,
+            participants: participants.map((p) => ({
+              userId: p.id,
+              amount: (p.amount ?? 0n) * sign,
+            })),
+            paidBy: paidBy.id,
+            category,
+            fileKey,
+            expenseDate,
+            expenseId,
+            transactionId,
+            cronExpression: cronExpression ? cronToBackend(cronExpression) : undefined,
+          },
+        ],
         {
           onSuccess: (d) => {
             if (d) {
-              const id = d?.id ?? expenseId;
-
-              let navPromise: () => Promise<any> = () => Promise.resolve(true);
-
-              const { friendId, groupId } = router.query;
-
-              if (friendId && !groupId) {
-                navPromise = () => router.push(`/balances/${friendId as string}/expenses/${id}`);
-              } else if (groupId) {
-                navPromise = () => router.push(`/groups/${groupId as string}/expenses/${id}`);
+              if (multipleTransactions.length > 0) {
+                const allTransactions = [...multipleTransactions];
+                const transactionToAdd = allTransactions.pop();
+                if (transactionToAdd) {
+                  setMultipleTransactions(allTransactions);
+                  setSingleTransaction(transactionToAdd);
+                }
+                return;
               } else {
-                navPromise = () => router.push(`/expenses/${id}?keepAdding=1`);
-              }
+                const id = d.length > 0 ? d[0]?.id : expenseId;
 
-              if (expenseId) {
-                navPromise = async () => router.back();
-              }
+                let navPromise: () => Promise<any> = () => Promise.resolve(true);
 
-              navPromise()
-                .then(() => resetState())
-                .catch(console.error);
+                const { friendId, groupId } = router.query;
+
+                if (friendId && !groupId) {
+                  navPromise = () => router.push(`/balances/${friendId as string}/expenses/${id}`);
+                } else if (groupId) {
+                  navPromise = () => router.push(`/groups/${groupId as string}/expenses/${id}`);
+                } else {
+                  navPromise = () => router.push(`/expenses/${id}?keepAdding=1`);
+                }
+
+                if (expenseId) {
+                  navPromise = async () => router.back();
+                }
+
+                navPromise()
+                  .then(() => resetState())
+                  .catch(console.error);
+              }
             }
           },
         },
@@ -191,6 +204,8 @@ export const AddOrEditExpensePage: React.FC<{
     transactionId,
     setIsTransactionLoading,
     cronExpression,
+    multipleTransactions,
+    setSingleTransaction,
   ]);
 
   const handleDescriptionChange = useCallback(
@@ -200,13 +215,10 @@ export const AddOrEditExpensePage: React.FC<{
     [setDescription],
   );
 
-  const clearFields = useCallback(() => {
-    setAmount(0n);
-    setDescription('');
-    setAmountStr('');
-    setTransactionId();
-    setExpenseDate(new Date());
-  }, [setAmount, setDescription, setAmountStr, setTransactionId, setExpenseDate]);
+  const clearTransaction = useCallback(() => {
+    resetState();
+    setMultipleTransactions([]);
+  }, [resetState, setMultipleTransactions]);
 
   const previousCurrencyRef = React.useRef<CurrencyCode | null>(null);
 
@@ -377,10 +389,7 @@ export const AddOrEditExpensePage: React.FC<{
             </RecurrenceInput>
             <SponsorUs />
             <div className="flex gap-2">
-              <AddBankTransactions
-                // clearFields={clearFields}
-                bankConnectionEnabled={bankConnectionEnabled}
-              >
+              <AddBankTransactions bankConnectionEnabled={bankConnectionEnabled}>
                 <Button
                   variant="ghost"
                   className="hover:text-foreground/80 items-center justify-between px-2"
@@ -394,7 +403,7 @@ export const AddOrEditExpensePage: React.FC<{
                 variant="ghost"
                 className={cn('px-2', transactionId ? 'text-red-500' : 'invisible')}
                 disabled={!transactionId}
-                onClick={clearFields}
+                onClick={clearTransaction}
               >
                 <X className="h-6 w-6" />
               </Button>

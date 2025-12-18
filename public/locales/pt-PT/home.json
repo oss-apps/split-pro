@@ -1,5 +1,13 @@
 {
   "features": {
+    "bank_connection": {
+      "description": "Adicione despesas mais depressa com integração com a API de transações bancárias da GoCardless ou da Plaid",
+      "title": "Ligação a Banco"
+    },
+    "currency_conversion": {
+      "description": "Converter rapidamente entre várias moedas com informação atualizada ou histórica de taxas de câmbio",
+      "title": "Conversão de Moedas"
+    },
     "debt_simplification": {
       "description": "Simplifica automaticamente as dívidas do grupo para reduzir o número de transações necessárias entre amigos",
       "title": "Simplificação de Dívidas"
@@ -47,12 +55,12 @@
   },
   "hero": {
     "add_expense_button": "Adicionar Despesa",
-    "star_github_button": "Star us on github",
+    "star_github_button": "Dá-nos uma estrela no GitHub",
     "subtitle_link": "código aberto",
     "subtitle_part1": "Um",
     "subtitle_part2": "alternativa ao SplitWise",
     "title_highlight": "gratuito",
-    "title_part1": "Split Expenses with your friends for"
+    "title_part1": "Divide Despesas com os teus amigos por"
   },
   "meta": {
     "description": "SplitPro: Divide as tuas despesas com os teus amigos gratuitamente",

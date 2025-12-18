@@ -1,0 +1,82 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "遊戲",
+        "movies": "電影",
+        "music": "音樂",
+        "other": "娛樂",
+        "sports": "體育"
+      },
+      "name": "娛樂"
+    },
+    "food": {
+      "items": {
+        "diningOut": "外出用膳",
+        "groceries": "日用品",
+        "liquor": "酒",
+        "other": "食物/飲品"
+      },
+      "name": "食物/飲品"
+    },
+    "general": {
+      "items": {
+        "general": "一般",
+        "other": "其他"
+      },
+      "name": "一般"
+    },
+    "home": {
+      "items": {
+        "electronics": "電器",
+        "furniture": "家具",
+        "maintenance": "維修/保養",
+        "mortgage": "按揭",
+        "other": "家品",
+        "pets": "寵物",
+        "rent": "租金",
+        "services": "服務"
+      },
+      "name": "家居"
+    },
+    "life": {
+      "items": {
+        "clothing": "服飾",
+        "education": "教育",
+        "gifts": "禮物",
+        "insurance": "保險",
+        "medical": "醫療",
+        "taxes": "稅金"
+      },
+      "name": "生活"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "單車",
+        "bus": "巴士",
+        "car": "汽車",
+        "fuel": "燃油",
+        "hotel": "酒店",
+        "other": "旅遊",
+        "parking": "停車場",
+        "plane": "飛行",
+        "taxi": "的士",
+        "train": "鐵路"
+      },
+      "name": "交通"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "清潔",
+        "electricity": "電力",
+        "gas": "燃氣",
+        "internet": "寬頻",
+        "other": "其他",
+        "phone": "電話",
+        "trash": "垃圾",
+        "water": "自來水"
+      }
+    }
+  },
+  "title": "分類"
+}

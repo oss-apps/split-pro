@@ -89,12 +89,10 @@ export class PlaidService extends AbstractBankProvider {
         });
       }
 
-      await db.cachedBankData.update({
-        where: { obapiProviderId: accessToken, userId },
-        data: { lastFetched: new Date() },
-      });
-
-      return JSON.parse(cachedData.data) as TransactionOutput;
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      if (cachedData.lastFetched > twentyFourHoursAgo) {
+        return JSON.parse(cachedData.data) as TransactionOutput;
+      }
     }
 
     const response = await this.client.transactionsGet({

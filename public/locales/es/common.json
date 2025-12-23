@@ -1,0 +1,12 @@
+{
+  "account": {
+    "change_language": "Modificar idioma",
+    "change_language_details": {
+      "messages": {
+        "language_changed": "Idioma modificado correctamente"
+      },
+      "placeholder": "Seleccionar idioma",
+      "title": "Seleccionar idioma"
+    }
+  }
+}

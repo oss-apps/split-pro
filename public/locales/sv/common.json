@@ -8,6 +8,12 @@
       "placeholder": "Välj ett språk",
       "title": "Välj ett språk"
     },
+    "debug_info": "Debug info",
+    "debug_info_details": {
+      "description": "Klistra in informationen nedan när du skapar en supportförfrågan:",
+      "new_version_available": "En ny version finns tillgänglig:",
+      "title": "Debug Information"
+    },
     "download_app": "Ladda ner app",
     "download_app_details": {
       "download_as_pwa": "Du kan ladda ner SplitPro som en PWA till din hemskärm.",
@@ -62,6 +68,7 @@
     "close": "Stäng",
     "confirm": "Bekräfta",
     "connect": "Anslut",
+    "copy": "Kopiera",
     "create": "Skapa",
     "edit_expense": "Redigera utgift",
     "export": "Exportera",
@@ -209,6 +216,12 @@
       "text": "Denna åtgärd går inte att ångra. Denna utgift kommer att raderas permanent.",
       "title": "Är du helt säker?"
     },
+    "multiple_transactions": {
+      "add_all": "Lägg till alla",
+      "add_one_by_one": "Lägg till en och en",
+      "description": "Du har valt flera transaktioner. Välj om du vill lägga till alla direkt med de nuvarande inställningar eller justera en och en.",
+      "title": "Lägg till flera transaktioner"
+    },
     "no_transactions_yet": "Inga transaktioner ännu",
     "pending": "Reserverad",
     "submit_all": "Skicka alla",
@@ -278,6 +291,7 @@
         "title": "Lägg till medlemmar",
         "warning": "Varning: Skicka inte en inbjudan om det är ogiltlig email. Använd istället lägg till i Split Pro. Ditt konto kommer att blockeras om denna funktion används felaktigt"
       },
+      "invite_link": "Inbjudningslänk",
       "no_members": "Inga medlemmar i gruppen ännu."
     },
     "tabs": {
@@ -302,7 +316,11 @@
     "add": "Lägg till",
     "add_expense": "Lägg till utgift",
     "balances": "Saldon",
-    "groups": "Grupper"
+    "groups": "Grupper",
+    "recurring": "Återkommande"
+  },
+  "recurrence": {
+    "title": "Återkommande"
   },
   "ui": {
     "added_by": "Tillagd av",

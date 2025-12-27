@@ -1,11 +1,74 @@
 {
   "features": {
+    "bank_connection": {
+      "description": "Añade tus gastos más rápido al integrar tu cuenta bancaria usando GoCardless o Plaid",
+      "title": "Conexión con Banco"
+    },
     "currency_conversion": {
       "description": "Conversión rápida entre diferentes monedas utilizando tipos de cambio actuales o históricos",
       "title": "Conversión de divisas"
     },
     "debt_simplification": {
-      "description": "Simplifica automáticamente las deudas grupales para reducir el número de transacciones necesarias entre amigos"
+      "description": "Simplifica automáticamente las deudas grupales para reducir el número de transacciones necesarias entre amigos",
+      "title": "Simplificación de Deudas"
+    },
+    "groups_and_friends": {
+      "description": "Puedes crear múltiples grupos o añadir saldos directamente. Todo se consolidará",
+      "title": "Grupos y Amigos"
+    },
+    "i18": {
+      "description": "Disponible en múltiples idiomas para hacer que la división de gastos sea accesible en todo el mundo",
+      "title": "Internazionalización"
+    },
+    "import_splitwise": {
+      "description": "No es necesario que migres los saldos manualmente. Puedes importar directamente los usuarios y grupos desde Splitwise",
+      "title": "Importar desde Splitwise"
+    },
+    "multiple_currencies": {
+      "description": "¿Necesitas añadir un gasto con una moneda diferente para el mismo usuario? ¡No hay problema!",
+      "title": "Múltiples monedas"
+    },
+    "open_source": {
+      "description": "Para una mejor transparencia para todos. Tus datos, tu control",
+      "title": "Código abierto"
+    },
+    "push_notifications": {
+      "description": "Nunca te pierdas notificaciones importantes. Recibe notificaciones cuando alguien añade un gasto o liquida una deuda",
+      "title": "Notificaciones push"
+    },
+    "pwa_support": {
+      "description": "¿Te encantan las aplicaciones móviles? Te tenemos cubierto. ¡Instálala como una PWA y ni siquiera lo notarás!",
+      "title": "Soporte PWA"
+    },
+    "title": "Características",
+    "unequal_split": {
+      "description": "Opciones avanzadas de división. Por cuotas, porcentaje o cantidades exactas.",
+      "title": "División Desigual"
+    },
+    "upload_receipts": {
+      "description": "Subir recibos junto con el gasto",
+      "title": "Subir Recibos"
     }
+  },
+  "footer": {
+    "built_by": "Creado por"
+  },
+  "hero": {
+    "add_expense_button": "Añadir Gasto",
+    "star_github_button": "Danos una estrella en GitHub",
+    "subtitle_link": "código abierto",
+    "subtitle_part1": "Una alternativa",
+    "subtitle_part2": "a Splitwise",
+    "title_highlight": "gratuita",
+    "title_part1": "Divide gastos con tus amigos"
+  },
+  "meta": {
+    "description": "SplitPro: Divide gastos con tus amigos gratis",
+    "title": "SplitPro: Divide gastos con tus amigos gratis"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "privacy": "Privacidad",
+    "terms": "Términos y condiciones"
   }
 }

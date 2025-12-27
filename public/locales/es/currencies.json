@@ -1,1 +1,52 @@
-{}
+{
+  "currency_list": {
+    "AED": {
+      "name_0": "Dirham de los Emiratos Árabes Unidos",
+      "name_1": "Dirhams de los EAU",
+      "name_2": ""
+    },
+    "AFN": {
+      "name_0": "Afgani Afgano",
+      "name_1": "Afganis afganos",
+      "name_2": ""
+    },
+    "ALL": {
+      "name_0": "Lek Albanés",
+      "name_1": "Lekë albaneses",
+      "name_2": ""
+    },
+    "AMD": {
+      "name_0": "Dram Armenio",
+      "name_1": "Drams armenios",
+      "name_2": "Drams armenios"
+    },
+    "ARS": {
+      "name_0": "Peso Argentino",
+      "name_1": "Pesos Argentinos",
+      "name_2": ""
+    },
+    "AUD": {
+      "name_0": "Dólar Australiano",
+      "name_1": "Dólares Australianos",
+      "name_2": ""
+    },
+    "AZN": {
+      "name_0": "Manat Azerbaiyano",
+      "name_1": "Manats azerbaiyanos",
+      "name_2": "Manats azerbaiyanos"
+    },
+    "BAM": {
+      "name_0": "Marco Convertible de Bosnia y Herzegovina",
+      "name_1": "Marcos Convertibles de Bosnia y Herzegovina",
+      "name_2": ""
+    },
+    "ZWL": {
+      "name_0": "Dólar Zimbabuense",
+      "name_1": "Dólares Zimbabuenses",
+      "name_2": ""
+    }
+  },
+  "no_currency_found": "Moenda no encontrada.",
+  "placeholder": "Seleccionar moneda",
+  "title": "Seleccionar moneda"
+}

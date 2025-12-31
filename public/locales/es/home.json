@@ -1,27 +1,27 @@
 {
   "features": {
     "bank_connection": {
-      "description": "Agrega tus gastos más rápido con una integración al API de transacciones bancarias de GoCardless o Plaid",
+      "description": "Añade tus gastos más rápido al integrar tu cuenta bancaria usando GoCardless o Plaid",
       "title": "Conexión con Banco"
     },
     "currency_conversion": {
-      "description": "Convierte rápidamente entre diferentes monedas usando tipos de cambio actuales o históricos",
-      "title": "Conversión de moneda"
+      "description": "Conversión rápida entre diferentes monedas utilizando tipos de cambio actuales o históricos",
+      "title": "Conversión de divisas"
     },
     "debt_simplification": {
-      "description": "Simplifica automáticamente las deudas del grupo para reducir el número de transacciones necesarias entre amigos",
+      "description": "Simplifica automáticamente las deudas grupales para reducir el número de transacciones necesarias entre amigos",
       "title": "Simplificación de Deudas"
     },
     "groups_and_friends": {
-      "description": "Puedes crear múltiples grupos o añadir saldo directamente. Todo se consolidará",
+      "description": "Puedes crear múltiples grupos o añadir saldos directamente. Todo se consolidará",
       "title": "Grupos y Amigos"
     },
     "i18": {
       "description": "Disponible en múltiples idiomas para hacer que la división de gastos sea accesible en todo el mundo",
-      "title": "Internacionalización"
+      "title": "Internazionalización"
     },
     "import_splitwise": {
-      "description": "No tienes que migrar saldos manualmente. Puedes importar usuarios y grupos desde Splitwise",
+      "description": "No es necesario que migres los saldos manualmente. Puedes importar directamente los usuarios y grupos desde Splitwise",
       "title": "Importar desde Splitwise"
     },
     "multiple_currencies": {
@@ -29,11 +29,11 @@
       "title": "Múltiples monedas"
     },
     "open_source": {
-      "description": "Lo que hace difícil que se vuelva malvado. Fácil de autoalojar",
+      "description": "Para una mejor transparencia para todos. Tus datos, tu control",
       "title": "Código abierto"
     },
     "push_notifications": {
-      "description": "Nunca te pierdas notificaciones importantes. Recibe notificaciones cuando alguien añade un gasto o liquida",
+      "description": "Nunca te pierdas notificaciones importantes. Recibe notificaciones cuando alguien añade un gasto o liquida una deuda",
       "title": "Notificaciones push"
     },
     "pwa_support": {
@@ -46,20 +46,20 @@
       "title": "División Desigual"
     },
     "upload_receipts": {
-      "description": "Sube recibos junto con el gasto",
+      "description": "Subir recibos junto con el gasto",
       "title": "Subir Recibos"
     }
   },
   "footer": {
-    "built_by": "Construido por"
+    "built_by": "Creado por"
   },
   "hero": {
     "add_expense_button": "Añadir Gasto",
     "star_github_button": "Danos una estrella en GitHub",
     "subtitle_link": "código abierto",
-    "subtitle_part1": "Una alternativa de",
-    "subtitle_part2": "a SplitWise",
-    "title_highlight": "gratis",
+    "subtitle_part1": "Una alternativa",
+    "subtitle_part2": "a Splitwise",
+    "title_highlight": "gratuita",
     "title_part1": "Divide gastos con tus amigos"
   },
   "meta": {
@@ -69,6 +69,6 @@
   "nav": {
     "app_name": "SplitPro",
     "privacy": "Privacidad",
-    "terms": "Términos"
+    "terms": "Términos y condiciones"
   }
 }

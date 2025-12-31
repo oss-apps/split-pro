@@ -2,19 +2,19 @@ import { SplitType } from '@prisma/client';
 import { type inferRouterOutputs } from '@trpc/server';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React from 'react';
+import { toast } from 'sonner';
 import {
   CURRENCY_CONVERSION_ICON,
   CategoryIcon,
   SETTLEUP_ICON,
 } from '~/components/ui/categoryIcons';
-import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-import { api } from '~/utils/api';
-import { useRouter } from 'next/router';
-import { Separator } from '../ui/separator';
 import { cn } from '~/lib/utils';
-import { toast } from 'sonner';
+import type { ExpenseRouter } from '~/server/api/routers/expense';
+import { api } from '~/utils/api';
+import { Separator } from '../ui/separator';
 
 type ExpensesOutput =
   | inferRouterOutputs<ExpenseRouter>['getGroupExpenses']
@@ -111,10 +111,10 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
         <div className="inline-block w-6 text-center text-xs text-gray-500">
           {toUIDate(e.expenseDate)}
         </div>
-        <CategoryIcon category={e.category} className="size-5 text-gray-400" />
+        <CategoryIcon category={e.category} className="size-5 shrink-0 text-gray-400" />
         <div>
           <p className="max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">{e.name}</p>
-          <p className="flex text-center text-xs text-gray-500">
+          <p className="xs:max-w-full flex max-w-32 truncate text-center text-xs text-gray-500">
             {displayName(e.paidByUser, userId)}{' '}
             {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`)} {toUIString(e.amount)}
           </p>
@@ -123,12 +123,12 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
       <div className="min-w-10 shrink-0">
         {youPaid || 0n !== yourExpenseAmount ? (
           <>
-            <div
-              className={`text-right text-xs ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}
-            >
+            <div className={`text-right text-xs ${youPaid ? 'text-positive' : 'text-negative'}`}>
               {t('actors.you')} {t(`ui.expense.you.${youPaid ? 'lent' : 'owe'}`)}
             </div>
-            <div className={`text-right ${youPaid ? 'text-emerald-500' : 'text-orange-600'}`}>
+            <div
+              className={`xs:max-w-full max-w-32 truncate text-right ${youPaid ? 'text-positive' : 'text-negative'}`}
+            >
               {toUIString(yourExpenseAmount)}
             </div>
           </>
@@ -155,7 +155,7 @@ const Settlement: ExpenseComponent = ({ e, userId }) => {
       <div className="inline-block w-6 text-center text-xs text-gray-500">
         {toUIDate(e.expenseDate)}
       </div>
-      <SETTLEUP_ICON className="size-5 text-gray-400" />
+      <SETTLEUP_ICON className="size-5 shrink-0 text-gray-400" />
       <div>
         <p className="flex text-center text-sm text-gray-400">
           {displayName(e.paidByUser, userId)}{' '}
@@ -186,7 +186,7 @@ const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
       <div className="inline-block w-6 text-center text-xs text-gray-500">
         {toUIDate(e.expenseDate)}
       </div>
-      <CURRENCY_CONVERSION_ICON className="size-5 text-gray-400" />
+      <CURRENCY_CONVERSION_ICON className="size-5 shrink-0 text-gray-400" />
       <div>
         <p className="max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">
           {getCurrencyHelpersCached(e.currency).toUIString(e.amount)} ➡️{' '}

@@ -22,6 +22,7 @@ const BalancePage: NextPageWithUser = () => {
   const { t } = useTranslationWithUtils();
   const isPwa = useIsPwa();
   const balanceQuery = api.expense.getBalances.useQuery();
+  const cumulatedQuery = api.expense.getCumulatedBalances.useQuery();
 
   const selectedCurrency = useCurrencyPreferenceStore((s) => s.getPreference());
 
@@ -54,7 +55,7 @@ const BalancePage: NextPageWithUser = () => {
             <div className="h-6 w-10" />
           )
         }
-        loading={balanceQuery.isPending}
+        loading={cumulatedQuery.isPending}
       >
         <NotificationModal />
         <div className="">
@@ -63,8 +64,8 @@ const BalancePage: NextPageWithUser = () => {
               <CumulatedBalanceDisplay
                 prefix={`${t('ui.total_balance')}`}
                 cumulatedBalances={[
-                  balanceQuery.data?.youOwe ?? [],
-                  balanceQuery.data?.youGet ?? [],
+                  cumulatedQuery.data?.youOwe ?? [],
+                  cumulatedQuery.data?.youGet ?? [],
                 ].flat()}
                 className="mx-auto"
               />
@@ -72,11 +73,11 @@ const BalancePage: NextPageWithUser = () => {
               <>
                 <CumulatedBalanceDisplay
                   prefix={`${t('actors.you')} ${t('ui.expense.you.owe')}`}
-                  cumulatedBalances={balanceQuery.data?.youOwe}
+                  cumulatedBalances={cumulatedQuery.data?.youOwe}
                 />
                 <CumulatedBalanceDisplay
                   prefix={`${t('actors.you')} ${t('ui.expense.you.lent')}`}
-                  cumulatedBalances={balanceQuery.data?.youGet}
+                  cumulatedBalances={cumulatedQuery.data?.youGet}
                 />
               </>
             )}

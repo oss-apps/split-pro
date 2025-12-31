@@ -2,6 +2,7 @@ import { ChevronLeftIcon, HandCoins, PlusIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useMemo } from 'react';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
 import { Export } from '~/components/Friend/Export';
@@ -37,6 +38,23 @@ const FriendPage: NextPageWithUser = ({ user }) => {
     { enabled: !!_friendId },
   );
 
+  // Aggregate balances by currency for CumulatedBalances display
+  const aggregatedBalances = useMemo(() => {
+    if (!balances.data) {
+      return undefined;
+    }
+
+    const currencyMap = new Map<string, bigint>();
+    for (const b of balances.data) {
+      const current = currencyMap.get(b.currency) ?? 0n;
+      currencyMap.set(b.currency, current + b.amount);
+    }
+
+    return Array.from(currencyMap.entries())
+      .filter(([, amount]) => 0n !== amount)
+      .map(([currency, amount]) => ({ currency, amount }));
+  }, [balances.data]);
+
   return (
     <>
       <Head>
@@ -69,7 +87,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
       >
         {!friendQuery.data ? null : (
           <div className="mb-28 transition-discrete starting:opacity-0">
-            <CumulatedBalances entityId={friendQuery.data.id} balances={balances.data} />
+            <CumulatedBalances entityId={friendQuery.data.id} balances={aggregatedBalances} />
             <div className="mt-6 mb-4 flex justify-center gap-2">
               <SettleUp balances={balances.data} friend={friendQuery.data}>
                 <Button

@@ -33,14 +33,7 @@ export const AddOrEditExpensePage: React.FC<{
   enableSendingInvites: boolean;
   expenseId?: string;
   bankConnectionEnabled: boolean;
-  isRecurrenceTemplate?: boolean | null;
-}> = ({
-  isStorageConfigured,
-  enableSendingInvites,
-  expenseId,
-  bankConnectionEnabled,
-  isRecurrenceTemplate,
-}) => {
+}> = ({ isStorageConfigured, enableSendingInvites, expenseId, bankConnectionEnabled }) => {
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
   const isNegative = useAddExpenseStore((s) => s.isNegative);
@@ -382,22 +375,20 @@ export const AddOrEditExpensePage: React.FC<{
             ) : null}
           </div>
           <div className="flex items-center justify-evenly px-4 lg:px-0">
-            <RecurrenceInput>
-              <Button
-                variant="ghost"
-                size="sm"
-                disabled={expenseId !== undefined && !isRecurrenceTemplate}
-              >
-                <RefreshCcwDot
-                  className={cn(
-                    cronExpression && 'text-primary',
-                    (!amtStr || !description) && 'invisible',
-                    'size-6',
-                  )}
-                />
-                <span className="sr-only">Toggle recurring expense options</span>
-              </Button>
-            </RecurrenceInput>
+            {!expenseId && (
+              <RecurrenceInput>
+                <Button variant="ghost" size="sm">
+                  <RefreshCcwDot
+                    className={cn(
+                      cronExpression && 'text-primary',
+                      (!amtStr || !description) && 'invisible',
+                      'size-6',
+                    )}
+                  />
+                  <span className="sr-only">Toggle recurring expense options</span>
+                </Button>
+              </RecurrenceInput>
+            )}
             <SponsorUs />
             <div className="flex gap-2">
               <AddBankTransactions bankConnectionEnabled={bankConnectionEnabled}>

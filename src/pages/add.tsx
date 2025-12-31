@@ -159,7 +159,6 @@ const AddPage: NextPageWithUser<{
             enableSendingInvites={enableSendingInvites}
             expenseId={_expenseId}
             bankConnectionEnabled={!!bankConnectionEnabled}
-            isRecurrenceTemplate={expenseQuery.data?.isRecurrenceTemplate}
           />
         )}
       </MainLayout>

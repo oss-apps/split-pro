@@ -20,7 +20,6 @@ import {
 import { createExpense, deleteExpense, editExpense } from '../services/splitService';
 import { currencyRateProvider } from '../services/currencyRateService';
 import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
-import { extractTemplateExpenseId } from '~/lib/cron';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { getUserMap } from './user';
@@ -419,12 +418,7 @@ export const expenseRouter = createTRPCRouter({
         expense.recurrence.job.schedule = expense.recurrence.job.schedule.replaceAll('$', 'L');
       }
 
-      // Compute isRecurrenceTemplate: true if this expense is the template, false if derived, null if no recurrence
-      const isRecurrenceTemplate = expense?.recurrence?.job?.command
-        ? extractTemplateExpenseId(expense.recurrence.job.command) === expense.id
-        : null;
-
-      return expense ? { ...expense, isRecurrenceTemplate } : null;
+      return expense;
     }),
 
   getAllExpenses: protectedProcedure.query(async ({ ctx }) => {

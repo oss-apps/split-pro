@@ -8,7 +8,10 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { DeleteExpense } from '~/components/Expense/DeleteExpense';
-import ExpenseDetails, { EditCurrencyConversion } from '~/components/Expense/ExpenseDetails';
+import ExpenseDetails, {
+  EditCurrencyConversion,
+  EditSettlement,
+} from '~/components/Expense/ExpenseDetails';
 import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
 import { type NextPageWithUser } from '~/types';
@@ -45,14 +48,16 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
             {!expenseQuery.data?.deletedBy ? (
               <div className="flex items-center gap-1">
                 <DeleteExpense expenseId={expenseId} />
-                {expenseQuery.data?.splitType !== SplitType.CURRENCY_CONVERSION ? (
+                {expenseQuery.data?.splitType === SplitType.CURRENCY_CONVERSION ? (
+                  <EditCurrencyConversion expense={expenseQuery.data} />
+                ) : expenseQuery.data?.splitType === SplitType.SETTLEMENT ? (
+                  <EditSettlement expense={expenseQuery.data} />
+                ) : (
                   <Link href={`/add?expenseId=${expenseId}`}>
                     <Button variant="ghost">
                       <PencilIcon className="mr-1 h-4 w-4" />
                     </Button>
                   </Link>
-                ) : (
-                  <EditCurrencyConversion expense={expenseQuery.data} />
                 )}
               </div>
             ) : null}

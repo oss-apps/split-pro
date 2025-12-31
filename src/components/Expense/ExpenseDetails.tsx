@@ -1,24 +1,29 @@
+import { SplitType } from '@prisma/client';
 import { isSameDay } from 'date-fns';
 import { type User as NextUser } from 'next-auth';
 
 import type { inferRouterOutputs } from '@trpc/server';
-import { Landmark, Merge, PencilIcon, Users } from 'lucide-react';
+import { ArrowRightIcon, Landmark, Merge, PencilIcon, Users } from 'lucide-react';
 import Link from 'next/link';
-import React, { type ComponentProps, useCallback } from 'react';
+import React, { type ComponentProps, useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
 import { useIntlCronParser } from '~/hooks/useIntlCronParser';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { cronFromBackend } from '~/lib/cron';
+import { DEFAULT_CATEGORY } from '~/lib/category';
 import { isCurrencyCode } from '~/lib/currency';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
+import { BigMath } from '~/utils/numbers';
 
 import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { EntityAvatar } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { CategoryIcon } from '../ui/categoryIcons';
+import { CurrencyInput } from '../ui/currency-input';
+import { AppDrawer } from '../ui/drawer';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
 
@@ -243,6 +248,114 @@ export const EditCurrencyConversion: React.FC<{ expense: ExpenseDetailsOutput }>
         <PencilIcon className="mr-1 h-4 w-4" />
       </Button>
     </CurrencyConversion>
+  );
+};
+
+export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ expense }) => {
+  const { displayName, t, getCurrencyHelpersCached } = useTranslationWithUtils();
+
+  const sender = expense.paidByUser;
+  const receiver = expense.expenseParticipants.find((p) => p.userId !== expense.paidBy)?.user;
+
+  const [amount, setAmount] = useState<bigint>(BigMath.abs(expense.amount));
+  const [amountStr, setAmountStr] = useState<string>(
+    getCurrencyHelpersCached(expense.currency).toUIString(BigMath.abs(expense.amount)),
+  );
+
+  const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
+  const apiUtils = api.useUtils();
+
+  const onCurrencyInputValueChange = useCallback(
+    ({ strValue, bigIntValue }: { strValue?: string; bigIntValue?: bigint }) => {
+      if (strValue !== undefined) {
+        setAmountStr(strValue);
+      }
+      if (bigIntValue !== undefined) {
+        setAmount(bigIntValue);
+      }
+    },
+    [],
+  );
+
+  const saveExpense = useCallback(() => {
+    if (!amount || !sender || !receiver) {
+      return;
+    }
+
+    addExpenseMutation.mutate(
+      {
+        expenseId: expense.id,
+        name: t('ui.settle_up_name'),
+        currency: expense.currency,
+        amount,
+        splitType: SplitType.SETTLEMENT,
+        participants: [
+          {
+            userId: sender.id,
+            amount,
+          },
+          {
+            userId: receiver.id,
+            amount: -amount,
+          },
+        ],
+        paidBy: sender.id,
+        category: DEFAULT_CATEGORY,
+        groupId: expense.groupId,
+      },
+      {
+        onSuccess: () => {
+          apiUtils.invalidate().catch(console.error);
+        },
+        onError: (error) => {
+          console.error('Error while saving expense:', error);
+          toast.error(t('errors.saving_expense'));
+        },
+      },
+    );
+  }, [amount, sender, receiver, expense, addExpenseMutation, apiUtils, t]);
+
+  if (!sender || !receiver) {
+    return null;
+  }
+
+  return (
+    <AppDrawer
+      trigger={
+        <Button variant="ghost">
+          <PencilIcon className="mr-1 h-4 w-4" />
+        </Button>
+      }
+      leftAction={t('actions.back')}
+      title={t('ui.settlement')}
+      actionTitle={t('actions.save')}
+      actionOnClick={saveExpense}
+      actionDisabled={!amount}
+      className="h-[70vh]"
+      shouldCloseOnAction
+    >
+      <div className="mt-10 flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center">
+          <div className="flex items-center gap-5">
+            <EntityAvatar entity={sender} />
+            <ArrowRightIcon className="h-6 w-6 text-gray-600" />
+            <EntityAvatar entity={receiver} />
+          </div>
+          <p className="mt-2 text-center text-sm text-gray-400">
+            {displayName(sender)} {t('ui.expense.user.pay')} {displayName(receiver)}
+          </p>
+          {expense.group ? (
+            <p className="mt-1 text-center text-xs text-gray-500">{expense.group.name}</p>
+          ) : null}
+        </div>
+        <CurrencyInput
+          currency={expense.currency}
+          strValue={amountStr}
+          className="mx-auto mt-4 w-[150px] text-center text-lg"
+          onValueChange={onCurrencyInputValueChange}
+        />
+      </div>
+    </AppDrawer>
   );
 };
 

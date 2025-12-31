@@ -79,6 +79,7 @@
     "import": "Import",
     "invite": "Invite",
     "leave": "Leave",
+    "next": "Next",
     "save": "Save",
     "settle_up": "Settle up",
     "submit": "Submit",
@@ -145,7 +146,9 @@
     "group_balances_malformed": "Group balances data is malformed, please report an issue or try recalculating.",
     "currency_conversion_malformed": "Currency conversion data is malformed",
     "invalid_cron_expression": "Invalid cron expression",
-    "currency_conversion_failed": "Failed to convert currencies"
+    "currency_conversion_failed": "Failed to convert currencies",
+    "recurrence_delete_failed": "Failed to delete recurrence",
+    "recurrence_update_failed": "Failed to update recurrence"
   },
   "bank_transactions": {
     "choose_bank_provider": "Choose bank provider",
@@ -336,10 +339,15 @@
     "days_of_week": "Days of Week",
     "days_of_month": "Days of Month",
     "months": "Months",
+    "last_day": "Last day",
     "never": "No schedule configured",
     "empty": "No recurring expenses yet",
     "recurring": "Recurring",
     "expense_for_the_amount_of": "Expense {{name}} for the amount of {{amount}} {{currency}}",
+    "delete_title": "Delete Recurrence",
+    "delete_description": "This will stop future expense creation. Existing expenses created by this recurrence will not be deleted.",
+    "edit_title": "Edit Recurrence",
+    "edit_description": "This will change the schedule for future expenses. Existing expenses will not be modified.",
     "schedule_type": {
       "never": "Never",
       "custom": "Custom",
@@ -347,7 +355,13 @@
       "month": "Monthly",
       "week": "Weekly",
       "year": "Yearly"
-    }
+    },
+    "edit_confirmation_title": "Edit Recurring Expense",
+    "template_edit_warning": "This is a recurring expense template. Changes will apply to all future recurring expenses.",
+    "derived_edit_warning": "This expense is part of a recurrence. Changes will only affect this expense.",
+    "template_delete_warning": "This is a recurring expense template. Deleting it will stop all future recurring expenses.",
+    "derived_delete_warning": "This expense is part of a recurrence. Only this expense will be deleted. Future recurring expenses will continue.",
+    "view_recurring_page": "View Recurring page"
   },
   "ui": {
     "added_by": "Added by",

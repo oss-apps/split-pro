@@ -375,18 +375,20 @@ export const AddOrEditExpensePage: React.FC<{
             ) : null}
           </div>
           <div className="flex items-center justify-evenly px-4 lg:px-0">
-            <RecurrenceInput>
-              <Button variant="ghost" size="sm">
-                <RefreshCcwDot
-                  className={cn(
-                    cronExpression && 'text-primary',
-                    (!amtStr || !description) && 'invisible',
-                    'size-6',
-                  )}
-                />
-                <span className="sr-only">Toggle recurring expense options</span>
-              </Button>
-            </RecurrenceInput>
+            {!expenseId && (
+              <RecurrenceInput>
+                <Button variant="ghost" size="sm">
+                  <RefreshCcwDot
+                    className={cn(
+                      cronExpression && 'text-primary',
+                      (!amtStr || !description) && 'invisible',
+                      'size-6',
+                    )}
+                  />
+                  <span className="sr-only">Toggle recurring expense options</span>
+                </Button>
+              </RecurrenceInput>
+            )}
             <SponsorUs />
             <div className="flex gap-2">
               <AddBankTransactions bankConnectionEnabled={bankConnectionEnabled}>

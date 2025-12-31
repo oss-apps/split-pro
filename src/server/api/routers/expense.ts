@@ -22,7 +22,6 @@ import { currencyRateProvider } from '../services/currencyRateService';
 import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
-import { createRecurringExpenseJob } from '../services/scheduleService';
 import { getUserMap } from './user';
 
 export const expenseRouter = createTRPCRouter({
@@ -156,34 +155,6 @@ export const expenseRouter = createTRPCRouter({
           const expense = input.expenseId
             ? await editExpense(input, ctx.session.user.id)
             : await createExpense(input, ctx.session.user.id);
-
-          if (expense && input.cronExpression) {
-            const [{ schedule }] = await createRecurringExpenseJob(
-              expense.id,
-              input.cronExpression,
-            );
-            console.log('Created recurring expense job with jobid:', schedule);
-
-            await db.expense.update({
-              where: { id: expense.id },
-              data: {
-                recurrence: {
-                  upsert: {
-                    create: {
-                      job: {
-                        connect: { jobid: schedule },
-                      },
-                    },
-                    update: {
-                      job: {
-                        connect: { jobid: schedule },
-                      },
-                    },
-                  },
-                },
-              },
-            });
-          }
 
           results.push(expense);
         } catch (error) {
@@ -398,6 +369,7 @@ export const expenseRouter = createTRPCRouter({
               job: {
                 select: {
                   schedule: true,
+                  command: true,
                 },
               },
             },
@@ -518,8 +490,63 @@ export const expenseRouter = createTRPCRouter({
 
     return recurrences
       .filter((r) => r.expense.length > 0)
-      .map((r) => ({ ...r, expense: r.expense[0]! }));
+      .map((r) => Object.assign(r, { expense: r.expense[0]! }));
   }),
+
+  deleteRecurrence: protectedProcedure
+    .input(z.object({ recurrenceId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const recurrence = await db.expenseRecurrence.findUnique({
+        where: { id: input.recurrenceId },
+        include: {
+          job: true,
+          expense: {
+            where: {
+              expenseParticipants: {
+                some: { userId: ctx.session.user.id },
+              },
+            },
+            take: 1,
+          },
+        },
+      });
+
+      if (!recurrence || 0 === recurrence.expense.length) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Recurrence not found' });
+      }
+
+      // Unschedule the cron job
+      await db.$executeRaw`SELECT cron.unschedule(${recurrence.job.jobname})`;
+
+      // Delete the recurrence (cascade nulls recurrenceId on expenses)
+      await db.expenseRecurrence.delete({ where: { id: input.recurrenceId } });
+    }),
+
+  updateRecurrence: protectedProcedure
+    .input(z.object({ recurrenceId: z.number(), cronExpression: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const recurrence = await db.expenseRecurrence.findUnique({
+        where: { id: input.recurrenceId },
+        include: {
+          job: true,
+          expense: {
+            where: {
+              expenseParticipants: {
+                some: { userId: ctx.session.user.id },
+              },
+            },
+            take: 1,
+          },
+        },
+      });
+
+      if (!recurrence || 0 === recurrence.expense.length) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Recurrence not found' });
+      }
+
+      // Use cron.alter_job to update the schedule
+      await db.$executeRaw`SELECT cron.alter_job(${recurrence.job.jobid}, schedule := ${input.cronExpression})`;
+    }),
 
   getUploadUrl: protectedProcedure
     .input(z.object({ fileName: z.string(), fileType: z.string(), fileSize: z.number() }))

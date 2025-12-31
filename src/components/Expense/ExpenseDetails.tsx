@@ -77,14 +77,14 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
               </p>
             )}
             {expense.recurrence ? (
-              <p className="text-primary text-sm">
+              <Link href="/recurring" className="text-primary text-sm hover:underline">
                 {t('recurrence.recurring')}
                 {i18nReady
                   ? `: 
                 
                 ${cronParser(cronFromBackend(expense.recurrence.job.schedule))}`
                   : ''}
-              </p>
+              </Link>
             ) : null}
             {expense.group ? (
               <Link href={`/groups/${expense.group.id}`}>

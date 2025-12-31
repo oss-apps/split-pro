@@ -1,6 +1,7 @@
 {
   "features": {
     "bank_connection": {
+      "description": "Füge Ausgaben schneller hinzu, dank einer Integration mit GoCardless oder der Plaid-API für Bankkontotransaktionen.",
       "title": "Bankverbindung"
     },
     "currency_conversion": {
@@ -50,11 +51,11 @@
     }
   },
   "footer": {
-    "built_by": "Built by"
+    "built_by": "Erstellt von"
   },
   "hero": {
     "add_expense_button": "Ausgabe hinzufügen",
-    "star_github_button": "Star us on github",
+    "star_github_button": "Gib uns einen Stern auf Github",
     "subtitle_link": "open source",
     "subtitle_part1": "Eine",
     "subtitle_part2": "Alternative zu SplitWise",

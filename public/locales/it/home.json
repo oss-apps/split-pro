@@ -1,5 +1,13 @@
 {
   "features": {
+    "bank_connection": {
+      "description": "Aggiungi spese più velocemente con un'integrazione alle API delle transazioni bancarie di GoCardless o Plaid",
+      "title": "Connessione bancaria"
+    },
+    "currency_conversion": {
+      "description": "Converti rapidamente tra diverse valute utilizzando tassi di cambio aggiornati o storici",
+      "title": "Conversione Valuta"
+    },
     "debt_simplification": {
       "description": "Semplifica automaticamente i debiti di gruppo per ridurre il numero di transazioni necessarie tra amici",
       "title": "Semplificazione Debiti"

@@ -327,6 +327,13 @@ export const expenseRouter = createTRPCRouter({
           },
           paidByUser: true,
           conversionTo: true,
+          group: {
+            select: {
+              id: true,
+              name: true,
+              simplifyDebts: true,
+            },
+          },
         },
       });
 

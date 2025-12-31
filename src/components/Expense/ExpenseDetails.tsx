@@ -2,22 +2,25 @@ import { isSameDay } from 'date-fns';
 import { type User as NextUser } from 'next-auth';
 
 import type { inferRouterOutputs } from '@trpc/server';
-import { Landmark, PencilIcon } from 'lucide-react';
+import { Landmark, Merge, PencilIcon, Users } from 'lucide-react';
+import Link from 'next/link';
 import React, { type ComponentProps, useCallback } from 'react';
+import { toast } from 'sonner';
+
 import { useIntlCronParser } from '~/hooks/useIntlCronParser';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { cronFromBackend } from '~/lib/cron';
 import { isCurrencyCode } from '~/lib/currency';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
+
 import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { EntityAvatar } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { CategoryIcon } from '../ui/categoryIcons';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
-import { cronFromBackend } from '~/lib/cron';
-import { toast } from 'sonner';
 
 type ExpenseDetailsOutput = NonNullable<inferRouterOutputs<ExpenseRouter>['getExpenseDetails']>;
 
@@ -43,7 +46,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
           <div className="flex flex-col gap-2">
             <div className="flex w-full items-center gap-2">
               <p>{expense.name}</p>
-              {expense.transactionId && <Landmark className="h-4 w-4 text-emerald-500" />}
+              {expense.transactionId && <Landmark className="text-positive h-4 w-4" />}
             </div>
             <p className="text-2xl font-semibold">{toUIString(expense.amount)}</p>
             {!isSameDay(expense.expenseDate, expense.createdAt) ? (
@@ -58,7 +61,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
               </p>
             ) : null}
             {expense.deletedByUser ? (
-              <p className="text-sm text-orange-600">
+              <p className="text-negative text-sm">
                 {t('ui.deleted_by')} {displayName(expense.deletedByUser, user.id, 'dativus')}{' '}
                 {t('ui.on')} {toUIDate(expense.deletedAt ?? expense.createdAt, { year: true })}
               </p>
@@ -78,6 +81,19 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
                   : ''}
               </p>
             ) : null}
+            {expense.group ? (
+              <Link href={`/groups/${expense.group.id}`}>
+                <Button variant="outline" size="sm" className="mt-2 gap-2">
+                  <div className="relative">
+                    <Users className="size-4" />
+                    {expense.group.simplifyDebts && (
+                      <Merge className="absolute -top-1 -right-1 size-2" />
+                    )}
+                  </div>
+                  {expense.group.name}
+                </Button>
+              </Link>
+            ) : null}
           </div>
         </div>
         <div>
@@ -87,15 +103,25 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
         </div>
       </div>
       <Separator />
-      <div className="mt-10 flex items-center gap-5">
-        <EntityAvatar entity={expense.paidByUser} size={35} />
-        <p>
-          {displayName(expense.paidByUser, user.id)}{' '}
+      <div className="mt-10 flex items-center gap-2">
+        <Link
+          href={
+            expense.paidByUser.id === user.id ? '/balances' : `/balances/${expense.paidByUser.id}`
+          }
+        >
+          <Button variant="outline" size="sm" className="gap-2 px-2">
+            <EntityAvatar entity={expense.paidByUser} size={25} />
+            <span>{displayName(expense.paidByUser, user.id)}</span>
+          </Button>
+        </Link>
+        <span className="text-gray-500">
           {t(
             `ui.expense.${expense.paidByUser.id === user.id ? 'you' : 'user'}.${expense.amount < 0 ? 'received' : 'paid'}`,
-          )}{' '}
+          )}
+        </span>
+        <span className={expense.amount < 0 ? 'text-negative' : 'text-positive'}>
           {toUIString(expense.amount)}
-        </p>
+        </span>
       </div>
       <div className="mt-4 ml-14 flex flex-col gap-4">
         {expense.expenseParticipants
@@ -135,16 +161,22 @@ const ExpenseParticipantEntry: React.FC<{
   const { displayName, t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const { toUIString } = getCurrencyHelpersCached(currency);
 
+  const isCurrentUser = userId === participant.userId;
+  const isPositive = participant.amount > 0n;
+  const amountColorClass = isPositive ? 'text-positive' : 'text-negative';
+
   return (
-    <div key={participant.userId} className="flex items-center gap-2 text-sm text-gray-500">
-      <EntityAvatar entity={participant.user} size={25} />
-      <p>
-        {displayName(participant.user, userId)}{' '}
-        {t(
-          `ui.expense.${userId === participant.userId ? 'you' : 'user'}.${participant.amount < 0 ? 'owe' : 'get'}`,
-        )}{' '}
-        {toUIString(participant.amount)}
-      </p>
+    <div key={participant.userId} className="flex items-center gap-2 text-sm">
+      <Link href={isCurrentUser ? '/balances' : `/balances/${participant.userId}`}>
+        <Button variant="outline" size="sm" className="gap-2 px-2">
+          <EntityAvatar entity={participant.user} size={25} />
+          <span>{displayName(participant.user, userId)}</span>
+        </Button>
+      </Link>
+      <span className="text-gray-500">
+        {t(`ui.expense.${isCurrentUser ? 'you' : 'user'}.${isPositive ? 'get' : 'owe'}`)}
+      </span>
+      <span className={amountColorClass}>{toUIString(participant.amount)}</span>
     </div>
   );
 };

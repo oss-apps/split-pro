@@ -9,6 +9,7 @@ import { sendExpensePushNotification } from './notificationService';
 import { getCurrencyHelpers } from '~/utils/numbers';
 import { isCurrencyCode } from '~/lib/currency';
 import { DEFAULT_CATEGORY } from '~/lib/category';
+import { extractTemplateExpenseId } from '~/lib/cron';
 
 export async function joinGroup(userId: number, publicGroupId: string) {
   const group = await db.group.findUnique({
@@ -127,17 +128,11 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
   );
 
   if (expense.recurrence?.job) {
-    // Only delete the cron job if there's no other linked expense
-    const linkedExpenses = await db.expense.count({
-      where: {
-        recurrenceId: expense.recurrenceId,
-        id: {
-          not: expense.id,
-        },
-      },
-    });
+    const templateId = extractTemplateExpenseId(expense.recurrence.job.command);
+    const isTemplate = templateId === expense.id;
 
-    if (linkedExpenses === 0) {
+    if (isTemplate) {
+      // Template deletion stops the recurrence
       operations.push(db.$executeRaw`SELECT cron.unschedule(${expense.recurrence.job.jobname})`);
       operations.push(
         db.expenseRecurrence.delete({
@@ -145,6 +140,7 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
         }),
       );
     }
+    // Derived expense deletion: just soft-delete, recurrence continues
   }
 
   await db.$transaction(operations);

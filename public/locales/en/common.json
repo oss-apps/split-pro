@@ -355,7 +355,13 @@
       "month": "Monthly",
       "week": "Weekly",
       "year": "Yearly"
-    }
+    },
+    "edit_confirmation_title": "Edit Recurring Expense",
+    "template_edit_warning": "This is a recurring expense template. Changes will apply to all future recurring expenses.",
+    "derived_edit_warning": "This expense is part of a recurrence. Changes will only affect this expense.",
+    "template_delete_warning": "This is a recurring expense template. Deleting it will stop all future recurring expenses.",
+    "derived_delete_warning": "This expense is part of a recurrence. Only this expense will be deleted. Future recurring expenses will continue.",
+    "view_recurring_page": "View Recurring page"
   },
   "ui": {
     "added_by": "Added by",

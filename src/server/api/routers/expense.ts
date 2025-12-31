@@ -398,6 +398,7 @@ export const expenseRouter = createTRPCRouter({
               job: {
                 select: {
                   schedule: true,
+                  command: true,
                 },
               },
             },

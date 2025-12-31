@@ -133,7 +133,7 @@ export const SettleUp: React.FC<
       leftAction={t('actions.back')}
       leftActionOnClick={onBackClick}
       shouldCloseOnLeftAction={false}
-      title={balanceToSettle ? t('ui.settle_up_name') : t('ui.select_currency')}
+      title={balanceToSettle ? t('ui.settle_up_name') : t('ui.select_balance')}
       className="h-[70vh]"
       actionTitle={t('actions.save')}
       actionDisabled={!balanceToSettle || !amount}

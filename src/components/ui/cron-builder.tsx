@@ -1,13 +1,14 @@
 // copied from: https://github.com/vpfaiz/cron-builder-ui/
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ToggleGroup, ToggleGroupItem } from './toggle-group';
-import { Label } from './label';
-import { Input } from './input';
-import { Button } from './button';
-import { cn } from '~/lib/utils';
 import { format } from 'date-fns';
-import { TFunction, useTranslation } from 'next-i18next';
+import { type TFunction, useTranslation } from 'next-i18next';
+import React, { useCallback, useEffect, useState } from 'react';
+
 import { useIntlCronParser } from '~/hooks/useIntlCronParser';
+
+import { Input } from './input';
+import { Label } from './label';
+import { NativeSelect, NativeSelectOption } from './native-select';
+import { ToggleGroup, ToggleGroupItem } from './toggle-group';
 
 export interface CronTextResult {
   status: boolean;
@@ -67,73 +68,36 @@ const DAYS_SHORT = (code: string) =>
     return new Intl.DateTimeFormat(code, { weekday: 'short' }).format(date);
   });
 
-// GridButton component for reusable grid buttons
-interface GridButtonProps {
-  value: number | string;
-  isSelected: boolean;
-  onClick: (value: number | string) => void;
-  children?: React.ReactNode;
-  minWidth?: string;
-  className?: string;
-  disabled?: boolean;
-}
-
-const GridButton = React.memo<GridButtonProps>(
-  ({
-    value,
-    isSelected,
-    onClick,
-    children,
-    minWidth = '36px',
-    className = '',
-    disabled = false,
-  }) => {
-    return (
-      <Button
-        className={cn(isSelected ? 'bg-primary text-primary-foreground' : '', className)}
-        onClick={() => onClick(value)}
-        variant="outline"
-        style={{ minWidth }}
-        disabled={disabled}
-      >
-        {children || (typeof value === 'number' ? value.toString().padStart(2, '0') : value)}
-      </Button>
-    );
-  },
-);
-
-GridButton.displayName = 'GridButton';
-
 // ScheduleFields component to handle layout complexity
 interface ScheduleFieldsProps {
   scheduleType: string;
-  renderDaysOfWeekList: () => React.ReactNode;
-  renderMonthsGrid: () => React.ReactNode;
-  renderDaysOfMonthGrid: () => React.ReactNode;
+  renderDaysOfWeekSelect: () => React.ReactNode;
+  renderMonthsSelect: () => React.ReactNode;
+  renderDaysOfMonthSelect: () => React.ReactNode;
   renderTimeInput: () => React.ReactNode;
 }
 
 const ScheduleFields = React.memo<ScheduleFieldsProps>(
   ({
     scheduleType,
-    renderDaysOfWeekList,
-    renderMonthsGrid,
-    renderDaysOfMonthGrid,
+    renderDaysOfWeekSelect,
+    renderMonthsSelect,
+    renderDaysOfMonthSelect,
     renderTimeInput,
   }) => {
     const outputs = [renderTimeInput];
 
-    if (scheduleType === 'never') {
+    if ('never' === scheduleType) {
       return null;
     }
 
-    if (scheduleType === 'week') {
-      outputs.push(renderDaysOfWeekList);
-    } else if (scheduleType === 'year') {
-      outputs.push(renderMonthsGrid);
-      outputs.push(renderDaysOfMonthGrid);
-    } else if (scheduleType === 'month') {
-      outputs.push(renderDaysOfMonthGrid);
+    if ('week' === scheduleType) {
+      outputs.push(renderDaysOfWeekSelect);
+    } else if ('year' === scheduleType) {
+      outputs.push(renderMonthsSelect);
+      outputs.push(renderDaysOfMonthSelect);
+    } else if ('month' === scheduleType) {
+      outputs.push(renderDaysOfMonthSelect);
     }
 
     return outputs.map((RenderFunc, index) => (
@@ -283,43 +247,19 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
     setMonths([monthNum]);
   }, []);
 
-  // Month button component with pressed state
-  interface MonthButtonProps {
-    month: string;
-    index: number;
-    isSelected: boolean;
-    onClick: (index: number) => void;
-  }
-
-  const MonthButton = React.memo<MonthButtonProps>(({ month, index, isSelected, onClick }) => {
-    return (
-      <Button
-        key={index}
-        onClick={() => onClick(index)}
-        variant="outline"
-        className={cn(isSelected ? 'bg-primary text-primary-foreground' : '', className)}
-      >
-        {month}
-      </Button>
-    );
-  });
-
-  MonthButton.displayName = 'MonthButton';
-
-  const renderMonthsGrid = () => (
-    <div className="flex w-fit flex-col gap-2">
+  const renderMonthsSelect = () => (
+    <div className="flex flex-col gap-2">
       <Label className="px-1 text-xs">{t('recurrence.months')}</Label>
-      <div className="grid w-fit grid-cols-3 gap-1">
+      <NativeSelect
+        value={String(months[0] ?? 1)}
+        onChange={(e) => handleMonthToggle(parseInt(e.target.value, 10) - 1)}
+      >
         {MONTHS_SHORT(i18n.language).map((month, index) => (
-          <MonthButton
-            key={index}
-            month={month}
-            index={index}
-            isSelected={months.includes(index + 1)}
-            onClick={handleMonthToggle}
-          />
+          <NativeSelectOption key={index} value={String(index + 1)}>
+            {month}
+          </NativeSelectOption>
         ))}
-      </div>
+      </NativeSelect>
     </div>
   );
 
@@ -329,88 +269,43 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
     setDaysOfWeek([dayNum]);
   }, []);
 
-  // Day of week button component with pressed state
-  interface DayOfWeekButtonProps {
-    day: string;
-    index: number;
-    isSelected: boolean;
-    isWeekend: boolean;
-    onClick: (index: number) => void;
-  }
-
-  const DayOfWeekButton = React.memo<DayOfWeekButtonProps>(
-    ({ day, index, isSelected, isWeekend, onClick }) => {
-      return (
-        <Button
-          key={index}
-          type="button"
-          onClick={() => onClick(index)}
-          style={{ minWidth: '50px' }}
-          variant="outline"
-          className={cn(
-            isSelected ? 'bg-primary text-primary-foreground' : '',
-            isWeekend ? 'text-red-500' : '',
-            className,
-          )}
-        >
-          {day}
-        </Button>
-      );
-    },
+  const renderDaysOfWeekSelect = () => (
+    <div className="flex flex-col gap-2">
+      <Label className="px-1 text-xs">{t('recurrence.days_of_week')}</Label>
+      <NativeSelect
+        value={String(daysOfWeek[0] ?? 0)}
+        onChange={(e) => handleDayOfWeekToggle(parseInt(e.target.value, 10))}
+      >
+        {DAYS_SHORT(i18n.language).map((day, index) => (
+          <NativeSelectOption key={index} value={String(index)}>
+            {day}
+          </NativeSelectOption>
+        ))}
+      </NativeSelect>
+    </div>
   );
-
-  DayOfWeekButton.displayName = 'DayOfWeekButton';
-
-  const renderDaysOfWeekList = () => {
-    const weekendDays = [0, 6];
-
-    return (
-      <div className="flex w-full flex-col gap-2">
-        <Label className="px-1 text-xs">{t('recurrence.days_of_week')}</Label>
-        <div className="flex w-full flex-row flex-wrap justify-start gap-1">
-          {DAYS_SHORT(i18n.language).map((day, index) => {
-            const isWeekend = weekendDays.includes(index);
-            const isSelected = daysOfWeek.includes(index);
-            return (
-              <DayOfWeekButton
-                key={index}
-                day={day}
-                index={index}
-                isSelected={isSelected}
-                isWeekend={isWeekend}
-                onClick={handleDayOfWeekToggle}
-              />
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
 
   const handleDayOfMonthToggle = useCallback((day: number | string) => {
     const dayNum = typeof day === 'number' || day === 'L' ? day : parseInt(day, 10);
     setDaysOfMonth([dayNum]);
   }, []);
 
-  const renderDaysOfMonthGrid = () => (
-    <div className="flex w-fit flex-col gap-2">
+  const renderDaysOfMonthSelect = () => (
+    <div className="flex flex-col gap-2">
       <Label className="px-1 text-xs">{t('recurrence.days_of_month')}</Label>
-      <div className="grid w-fit grid-cols-7 gap-1">
+      <NativeSelect
+        value={String(daysOfMonth[0] ?? 1)}
+        onChange={(e) =>
+          handleDayOfMonthToggle(e.target.value === 'L' ? 'L' : parseInt(e.target.value, 10))
+        }
+      >
         {DAYS_OF_MONTH.map((day) => (
-          <GridButton
-            key={day}
-            value={day}
-            isSelected={daysOfMonth.includes(day)}
-            onClick={handleDayOfMonthToggle}
-          />
+          <NativeSelectOption key={day} value={String(day)}>
+            {day.toString().padStart(2, '0')}
+          </NativeSelectOption>
         ))}
-        <GridButton
-          key="L"
-          value="L"
-          isSelected={daysOfMonth.includes('L')}
-          onClick={handleDayOfMonthToggle}
-        />
-      </div>
+        <NativeSelectOption value="L">{t('recurrence.last_day')}</NativeSelectOption>
+      </NativeSelect>
     </div>
   );
 
@@ -493,9 +388,9 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
             ) : (
               <ScheduleFields
                 scheduleType={scheduleType}
-                renderDaysOfWeekList={renderDaysOfWeekList}
-                renderMonthsGrid={renderMonthsGrid}
-                renderDaysOfMonthGrid={renderDaysOfMonthGrid}
+                renderDaysOfWeekSelect={renderDaysOfWeekSelect}
+                renderMonthsSelect={renderMonthsSelect}
+                renderDaysOfMonthSelect={renderDaysOfMonthSelect}
                 renderTimeInput={renderTimeInput}
               />
             )}

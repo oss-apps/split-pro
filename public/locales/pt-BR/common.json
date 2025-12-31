@@ -8,16 +8,6 @@
       "placeholder": "Selecione um idioma",
       "title": "Selecionar idioma"
     },
-    "debug_info": "Info. de depuração",
-    "debug_info_details": {
-      "copy_failed": "Falha ao copiar info. de depuração",
-      "description": "Cole a informação abaixo ao criar uma solicitação de suporte:",
-      "git": "Git",
-      "new_version_available": "Uma nova versão está disponível:",
-      "title": "Info. de Depuração",
-      "user_agent": "UserAgent",
-      "version": "Versão"
-    },
     "download_app": "Instalar app",
     "download_app_details": {
       "download_as_pwa": "Você pode instalar o SplitPro como um PWA na sua tela inicial.",
@@ -71,8 +61,6 @@
     "cancel": "Cancelar",
     "close": "Fechar",
     "confirm": "Confirmar",
-    "connect": "Conectar",
-    "copy": "Copiar",
     "create": "Criar",
     "edit_expense": "Editar despesa",
     "export": "Exportar",
@@ -80,7 +68,6 @@
     "import": "Importar",
     "invite": "Convidar",
     "leave": "Sair",
-    "reconnect": "Reconectar",
     "save": "Salvar",
     "settle_up": "Quitar despesas",
     "submit": "Enviar"
@@ -106,18 +93,6 @@
     "setup_instructions": "instruções de configuração do Docker",
     "trouble_logging_in": "Com dificuldades para fazer login? Entre em contato"
   },
-  "bank_transactions": {
-    "choose_bank_provider": "Escolha o provedor bancário",
-    "no_bank_providers_found": "Nenhum provedor bancário encontrado",
-    "plaid": {
-      "bank_connected_successfully": "Banco conectado com êxito",
-      "bank_connection_cancelled": "Conexão bancária cancelada",
-      "bank_connection_failed": "Falha ao conectar-se ao banco"
-    },
-    "search_bank": "Procurar banco",
-    "select_bank_provider": "Selecione o provedor bancário",
-    "to_bank": "para o banco"
-  },
   "currency_conversion": {
     "amount_to_receive": "Quantia a receber",
     "description": "Converta a quantia para uma moeda diferente.",
@@ -133,10 +108,8 @@
     "email_required": "O e-mail é obrigatório",
     "feedback_min_length": "O feedback deve conter pelo menos 10 caracteres",
     "feedback_required": "O campo feedback é obrigatório",
-    "group_balances_malformed": "Dados sobre saldos do grupo estão corrompidos, por favor relate o problema ou tente recalcular.",
     "group_name_update_failed": "Erro ao atualizar o nome do grupo",
     "import_failed": "Erro ao importar arquivo",
-    "invalid_cron_expression": "Expressão cron inválida",
     "invalid_currency_code": "Moeda inválida com código {{code}}",
     "language_change_failed": "Erro ao alterar idioma",
     "less_than": "Arquivo deve ter menos de",
@@ -210,21 +183,15 @@
         "search_friends": "Procure amigos, grupos ou insira um e-mail"
       }
     },
-    "already_added": "Já adicionado",
     "balance_list": {
       "are_settled_up": "está(ão) quite(s)",
       "is_settled_up": "está quite",
       "press_balance_info": "Pressione no saldo individual para quitar os valores"
     },
-    "bank_transactions": "Transações bancárias",
-    "clear": "Limpar",
     "delete_expense_details": {
       "text": "Esta ação não pode ser desfeita. Sua despesa será apagada permanentemente.",
       "title": "Tem certeza absoluta?"
     },
-    "no_transactions_yet": "Nenhuma transação ainda",
-    "pending": "Pendente",
-    "submit_all": "Submeter tudo",
     "title": "Adicionar despesa",
     "title_mobile": "Adicionar"
   },
@@ -315,29 +282,7 @@
     "add": "Adicionar",
     "add_expense": "Adicionar despesa",
     "balances": "Saldos",
-    "groups": "Grupos",
-    "recurring": "Recorrente"
-  },
-  "recurrence": {
-    "cron_expression": "Expressão Cron",
-    "days_of_month": "Dias do Mês",
-    "days_of_week": "Dias da Semana",
-    "description": "Configure recorrência automática para esta despesa.",
-    "empty": "Nenhuma despesa recorrente ainda",
-    "expense_for_the_amount_of": "Despesa {{name}} pelo valor de {{amount}} {{currency}}",
-    "months": "Meses",
-    "never": "Nenhum pagamento recorrente configurado",
-    "recurring": "Recorrente",
-    "schedule_type": {
-      "custom": "Personalizado",
-      "day": "Diário",
-      "month": "Mensal",
-      "never": "Nunca",
-      "week": "Semanal",
-      "year": "Anual"
-    },
-    "time_of_day": "Hora do dia",
-    "title": "Recorrência"
+    "groups": "Grupos"
   },
   "ui": {
     "added_by": "Adicionado por",
@@ -373,7 +318,6 @@
       }
     },
     "expense_details": "Detalhes da despesa",
-    "in_group": "Em grupo",
     "no_activity": "Nenhuma atividade ainda",
     "not_involved": "Não está envolvido(a)",
     "on": "em",

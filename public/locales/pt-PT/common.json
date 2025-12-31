@@ -8,19 +8,11 @@
       "placeholder": "Seleciona um idioma",
       "title": "Seleciona um idioma"
     },
-    "debug_info": "Info de Depuração",
-    "debug_info_details": {
-      "copy_failed": "Falha ao copiar informação de depuração para a área de transferência",
-      "description": "Inclua a informação abaixo ao criar um pedido de suporte:",
-      "new_version_available": "Nova versão disponível:",
-      "title": "Informação de Depuração",
-      "version": "Versão"
-    },
     "download_app": "Descarregar app",
     "download_app_details": {
-      "download_as_pwa": "Poderás descarregar o SplitPro como PWA.",
+      "download_as_pwa": "Poderás descarregar o SplitPro como PWA",
       "title": "Descarregar app",
-      "using_android": "Se estás a usar Android, vê isto",
+      "using_android": "Se estás a usar  Android, vê isto",
       "using_ios": "Se estás a usar iOS, vê isto",
       "video": "vídeo"
     },
@@ -69,16 +61,12 @@
     "cancel": "Cancelar",
     "close": "Fechar",
     "confirm": "Confirmar",
-    "connect": "Conectar",
-    "copy": "Copiar",
     "create": "Criar",
     "edit_expense": "Editar despesa",
     "export": "Exportar",
-    "fetch": "Transferir",
     "import": "Importar",
     "invite": "Convidar",
     "leave": "Sair",
-    "reconnect": "Reconectar",
     "save": "Salvar",
     "settle_up": "Acertar contas",
     "submit": "Submeter"
@@ -104,18 +92,6 @@
     "setup_instructions": "instruções de configuração do Docker",
     "trouble_logging_in": "Problemas com a autenticação? Contacta-nos"
   },
-  "bank_transactions": {
-    "choose_bank_provider": "Escolha o fornecedor de dados do seu banco",
-    "no_bank_providers_found": "Nenhum fornecedor de dados de bancos encontrado",
-    "plaid": {
-      "bank_connected_successfully": "Banco ligado com sucesso",
-      "bank_connection_cancelled": "Ligação ao banco cancelada",
-      "bank_connection_failed": "Falha ao ligar ao banco"
-    },
-    "search_bank": "Escolha o banco",
-    "select_bank_provider": "Escolha o fornecedor de dados do seu banco",
-    "to_bank": "para o banco"
-  },
   "currency_conversion": {
     "amount_to_receive": "Valor a receber",
     "description": "Converta o valor para uma moeda diferente.",
@@ -128,21 +104,15 @@
   "errors": {
     "amount_required": "",
     "currency_conversion_error": "Erro ao definir conversão de moeda",
-    "currency_conversion_failed": "Falha ao converter moedas",
-    "currency_conversion_malformed": "Dados de taxas de câmbio inválidos",
     "email_invalid": "Endereço de Email inválido, por favor tenta novamente.",
     "email_required": "Email é obrigatório",
     "feedback_min_length": "Feedback deve conter pelo menos 10 caracteres",
     "feedback_required": "Feedback é obrigatório",
-    "group_balances_malformed": "Dados de balanços do grupo inválidos, por favor reporte o problema ou tente recalcular.",
     "group_name_update_failed": "Erro ao atualizar o nome do grupo",
     "import_failed": "Error ao importar ficheiro",
-    "invalid_cron_expression": "Expressão \"cron\" inválida",
     "invalid_currency_code": "Código de moeda inválido",
     "language_change_failed": "Erro ao alterar idioma",
-    "less_than": "O ficheiro deverá ser mais pequeno que",
     "name_required": "O nome é obrigatório",
-    "no_providers": "Ocorreu um erro ao transferir os fornecedores de autenticação. Por favor consulte os logs do backend.",
     "notification_not_supported": "Notificação não suportada",
     "otp_invalid": "OTP inválido",
     "otp_required": "OTP é obrigatório",
@@ -213,21 +183,15 @@
         "search_friends": "Pesquisar amigos, grupos ou adicionar email"
       }
     },
-    "already_added": "Já adicionada",
     "balance_list": {
       "are_settled_up": "estão acertados",
       "is_settled_up": "está acertado",
       "press_balance_info": "Pressione o saldo individual para iniciar o acerto"
     },
-    "bank_transactions": "Transações do banco",
-    "clear": "Limpar",
     "delete_expense_details": {
       "text": "Esta ação não pode ser desfeita. Isto irá eliminar permanentemente a tua despesa.",
       "title": "Tens mesmo a certeza?"
     },
-    "no_transactions_yet": "Sem transações por enquanto",
-    "pending": "Pendente",
-    "submit_all": "Submeter todas",
     "title": "Adicionar despesa",
     "title_mobile": "Adicionar"
   },
@@ -321,14 +285,7 @@
     "add_expense": "Adicionar Despesa",
     "app_name": "SplitPro",
     "balances": "Balancetes",
-    "groups": "Grupos",
-    "recurring": "Recorrente"
-  },
-  "recurrence": {
-    "cron_expression": "Expressão \"Cron\"",
-    "description": "Configurar recorrência automática para esta despesa.",
-    "months": "Meses",
-    "title": "Recorrência"
+    "groups": "Grupos"
   },
   "ui": {
     "added_by": "Adicionado por",

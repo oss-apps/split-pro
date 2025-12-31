@@ -8,16 +8,6 @@
       "placeholder": "Sprache auswählen",
       "title": "Sprache auswählen"
     },
-    "debug_info": "Debug-Informationen",
-    "debug_info_details": {
-      "copy_failed": "Debug-Informationen konnten nicht in die Zwischenablage kopiert werden",
-      "description": "Fügen Sie nachfolgend die Informationen ein, wenn Sie eine Supportanfrage erstellen:",
-      "git": "Git",
-      "new_version_available": "Eine neue Version ist verfügbar:",
-      "title": "Fehlerbehebungsinformationen",
-      "user_agent": "Benutzeragent",
-      "version": "Version"
-    },
     "download_app": "App herunterladen",
     "download_app_details": {
       "download_as_pwa": "Du kannst SplitPro als App auf deinen Startbildschirm herunterladen.",
@@ -72,7 +62,6 @@
     "close": "Schließen",
     "confirm": "Bestätigen",
     "connect": "Verbinden",
-    "copy": "Kopieren",
     "create": "Erstellen",
     "edit_expense": "Ausgabe bearbeiten",
     "export": "Exportieren",
@@ -106,16 +95,6 @@
     "setup_instructions": "Docker-Setup-Anleitung",
     "trouble_logging_in": "Probleme beim anmelden? Kontakt"
   },
-  "bank_transactions": {
-    "choose_bank_provider": "Bankinstitut auswählen",
-    "no_bank_providers_found": "Keine Bankinstitute gefunden.",
-    "plaid": {
-      "bank_connected_successfully": "Bankinstitut erfolgreich verknüpft"
-    },
-    "search_bank": "Bank suchen",
-    "select_bank_provider": "Bankinstitut auswählen",
-    "to_bank": "Zum Bankinstitut"
-  },
   "currency_conversion": {
     "amount_to_receive": "Zu erhaltender Betrag",
     "description": "Den Betrag in eine andere Währung umrechnen.",
@@ -133,7 +112,6 @@
     "email_required": "Email wird benötigt",
     "feedback_min_length": "Feedback sollte mindestens 10 Zeichen lang sein",
     "feedback_required": "Feedback ist erforderlich",
-    "group_balances_malformed": "Die Daten der Gruppenbilanz sind fehlerhaft. Bitte melden Sie das Problem oder versuchen Sie eine Neuberechnung.",
     "group_name_update_failed": "Fehler beim Aktualisieren des Gruppennamens",
     "group_required": "Gruppe eingeben",
     "import_failed": "Fehler beim Importieren der Datei",

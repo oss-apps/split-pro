@@ -64,10 +64,8 @@ export class GoCardlessService extends AbstractBankProvider {
 
     const requisitionData = await this.client.requisition.getRequisitionById(requisitionId);
 
-    const accountId = requisitionData.accounts[0];
-
     const cachedData = await db.cachedBankData.findUnique({
-      where: { obapiProviderId: accountId, userId },
+      where: { obapiProviderId: requisitionId, userId },
     });
 
     if (cachedData) {
@@ -78,29 +76,44 @@ export class GoCardlessService extends AbstractBankProvider {
         });
       }
 
-      await db.cachedBankData.update({
-        where: { obapiProviderId: accountId, userId },
-        data: { lastFetched: new Date() },
-      });
-
-      return JSON.parse(cachedData.data) as TransactionOutput;
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      if (cachedData.lastFetched > twentyFourHoursAgo) {
+        return JSON.parse(cachedData.data) as TransactionOutput;
+      }
     }
 
-    const account = this.client.account(accountId ?? '');
+    const accounts = requisitionData.accounts;
 
-    const transactions = await account.getTransactions(this.returnTransactionFilters());
+    const allTransactions = [];
 
-    if (!transactions) {
+    for (const accountId of accounts) {
+      if (!accountId) {
+        continue;
+      }
+
+      const account = this.client.account(accountId ?? '');
+
+      const transactions = await account.getTransactions(this.returnTransactionFilters());
+
+      if (!transactions) {
+        console.log('INTERNAL_SERVER_ERROR', ERROR_MESSAGES.FAILED_FETCH_TRANSACTIONS);
+        continue;
+      }
+
+      allTransactions.push(this.formatTransactions(transactions));
+    }
+
+    if (allTransactions.length === 0) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: ERROR_MESSAGES.FAILED_FETCH_TRANSACTIONS,
       });
     }
 
-    const formattedTransactions: TransactionOutput = this.formatTransactions(transactions);
+    const formattedTransactions: TransactionOutput = this.mergeTransactions(allTransactions);
 
     const data = {
-      obapiProviderId: accountId ?? '',
+      obapiProviderId: requisitionId ?? '',
       data: JSON.stringify(formattedTransactions),
       lastFetched: new Date(),
       user: {
@@ -111,7 +124,7 @@ export class GoCardlessService extends AbstractBankProvider {
     };
 
     await db.cachedBankData.upsert({
-      where: { obapiProviderId: accountId ?? '', userId },
+      where: { obapiProviderId: requisitionId ?? '', userId },
       create: data,
       update: {
         lastFetched: new Date(),
@@ -190,6 +203,27 @@ export class GoCardlessService extends AbstractBankProvider {
       transactions: {
         booked: transactions.transactions.booked.map((t) => this.formatTransaction(t)),
         pending: transactions.transactions.pending.map((t) => this.formatTransaction(t)),
+      },
+    };
+  }
+
+  private mergeTransactions(
+    allTransactions: {
+      transactions: { booked: TransactionOutputItem[]; pending: TransactionOutputItem[] };
+    }[],
+  ): TransactionOutput {
+    const mergedBooked: TransactionOutputItem[] = [];
+    const mergedPending: TransactionOutputItem[] = [];
+
+    for (const item of allTransactions) {
+      mergedBooked.push(...item.transactions.booked);
+      mergedPending.push(...item.transactions.pending);
+    }
+
+    return {
+      transactions: {
+        booked: mergedBooked,
+        pending: mergedPending,
       },
     };
   }

@@ -106,7 +106,11 @@ const AddPage: NextPageWithUser<{
     setPaidBy(expenseQuery.data.paidByUser);
     setCurrency(parseCurrencyCode(expenseQuery.data.currency));
     setAmountStr(
-      getCurrencyHelpersCached(expenseQuery.data.currency).toUIString(expenseQuery.data.amount),
+      getCurrencyHelpersCached(expenseQuery.data.currency).toUIString(
+        expenseQuery.data.amount,
+        false,
+        true,
+      ),
     );
     setDescription(expenseQuery.data.name);
     setCategory(expenseQuery.data.category);

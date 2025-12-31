@@ -6,6 +6,7 @@ import { type SplitwiseGroup, type SplitwiseUser } from '~/types';
 
 import type { CreateExpense } from '~/types/expense.types';
 import { sendExpensePushNotification } from './notificationService';
+import { createRecurringExpenseJob } from './scheduleService';
 import { getCurrencyHelpers } from '~/utils/numbers';
 import { isCurrencyCode } from '~/lib/currency';
 import { DEFAULT_CATEGORY } from '~/lib/category';
@@ -45,7 +46,8 @@ export async function createExpense(
     expenseDate,
     fileKey,
     transactionId,
-  }: CreateExpense,
+    cronExpression,
+  }: CreateExpense & { cronExpression?: string },
   currentUserId: number,
   conversionFromParams?: CreateExpense,
 ) {
@@ -67,30 +69,78 @@ export async function createExpense(
     delete conversionFrom.create.participants;
   }
 
-  // Create expense operation
-  const result = await db.expense.create({
-    data: {
-      groupId,
-      paidBy,
-      name,
-      category,
-      amount,
-      splitType,
-      currency,
-      expenseParticipants: {
-        create: nonZeroParticipants,
-      },
-      fileKey,
-      addedBy: currentUserId,
-      expenseDate,
-      transactionId,
-      conversionFrom,
-    },
-  });
-  if (result) {
-    sendExpensePushNotification(result.id).catch(console.error);
+  // Pre-generate UUID and create cron job if recurring (before transaction)
+  let expenseId: string | undefined = undefined;
+  let jobId: bigint | undefined = undefined;
+
+  if (cronExpression) {
+    const [{ gen_random_uuid }] = await db.$queryRaw<[{ gen_random_uuid: string }]>`
+      SELECT gen_random_uuid()::text as gen_random_uuid
+    `;
+    expenseId = gen_random_uuid;
+
+    const [{ schedule }] = await createRecurringExpenseJob(expenseId, cronExpression);
+    jobId = schedule;
   }
-  return result;
+
+  const operations = [];
+
+  // Create expense operation
+  operations.push(
+    db.expense.create({
+      data: {
+        ...(expenseId && { id: expenseId }),
+        groupId,
+        paidBy,
+        name,
+        category,
+        amount,
+        splitType,
+        currency,
+        expenseParticipants: {
+          create: nonZeroParticipants,
+        },
+        fileKey,
+        addedBy: currentUserId,
+        expenseDate,
+        transactionId,
+        conversionFrom,
+      },
+    }),
+  );
+
+  // Link recurrence to expense if we created a cron job
+  if (expenseId && jobId) {
+    operations.push(
+      db.expenseRecurrence.create({
+        data: {
+          expense: {
+            connect: { id: expenseId },
+          },
+          job: {
+            connect: { jobid: jobId },
+          },
+        },
+      }),
+    );
+  }
+
+  try {
+    const results = await db.$transaction(operations);
+    const createdExpense = results[0] as Awaited<ReturnType<typeof db.expense.create>>;
+    if (!createdExpense) {
+      throw new Error('Expense creation failed');
+    }
+
+    sendExpensePushNotification(createdExpense.id).catch(console.error);
+    return createdExpense;
+  } catch (error) {
+    // If we created a cron job but transaction failed, clean up the cron job
+    if (expenseId) {
+      await db.$executeRaw`SELECT cron.unschedule(${`expense_recurring_${expenseId}`})`;
+    }
+    throw error;
+  }
 }
 
 export async function deleteExpense(expenseId: string, deletedBy: number) {
@@ -160,7 +210,8 @@ export async function editExpense(
     expenseDate,
     fileKey,
     transactionId,
-  }: CreateExpense,
+    cronExpression,
+  }: CreateExpense & { cronExpression?: string },
   currentUserId: number,
   conversionToParams?: CreateExpense,
 ) {
@@ -183,6 +234,12 @@ export async function editExpense(
   if (!expense) {
     throw new Error('Expense not found');
   }
+
+  // Determine if this is a template or derived expense
+  const templateId = expense.recurrence?.job?.command
+    ? extractTemplateExpenseId(expense.recurrence.job.command)
+    : null;
+  const isTemplate = templateId === expenseId;
 
   const operations = [];
 
@@ -236,9 +293,28 @@ export async function editExpense(
     );
   }
 
-  if (expense.recurrence?.job) {
-    operations.push(db.$executeRaw`SELECT cron.unschedule(${expense.recurrence.job.jobname})`);
+  // Handle recurrence changes only for template expenses
+  if (isTemplate && expense.recurrence?.job) {
+    const currentSchedule = expense.recurrence.job.schedule;
+
+    if (cronExpression && cronExpression !== currentSchedule) {
+      // Schedule changed - update the cron job
+      operations.push(
+        db.$executeRaw`SELECT cron.alter_job(${expense.recurrence.job.jobid}, schedule := ${cronExpression})`,
+      );
+    } else if (!cronExpression) {
+      // Recurrence removed - unschedule and delete recurrence record
+      operations.push(db.$executeRaw`SELECT cron.unschedule(${expense.recurrence.job.jobname})`);
+      operations.push(
+        db.expenseRecurrence.delete({
+          where: { id: expense.recurrence.id },
+        }),
+      );
+    }
+    // If cronExpression === currentSchedule, no action needed
   }
+  // For derived expenses, cronExpression is ignored entirely
+
   await db.$transaction(operations);
   sendExpensePushNotification(expenseId).catch(console.error);
   return { id: expenseId }; // Return the updated expense

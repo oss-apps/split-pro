@@ -162,7 +162,7 @@ model Expense {
   conversionTo        Expense?             @relation("CurrencyConversion", fields: [conversionToId], references: [id], onDelete: Cascade)
   conversionFrom      Expense?             @relation("CurrencyConversion")
   paidByUser          User                 @relation("PaidByUser", fields: [paidBy], references: [id], onDelete: Cascade)
-  recurrence          ExpenseRecurrence?   @relation(fields: [recurrenceId], references: [id], onDelete: Cascade)
+  recurrence          ExpenseRecurrence?   @relation(fields: [recurrenceId], references: [id], onDelete: SetNull)
   updatedByUser       User?                @relation("UpdatedByUser", fields: [updatedBy], references: [id])
   expenseNotes        ExpenseNote[]
   expenseParticipants ExpenseParticipant[]

@@ -20,9 +20,9 @@ import {
 import { createExpense, deleteExpense, editExpense } from '../services/splitService';
 import { currencyRateProvider } from '../services/currencyRateService';
 import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
+import { extractTemplateExpenseId } from '~/lib/cron';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
-import { createRecurringExpenseJob } from '../services/scheduleService';
 import { getUserMap } from './user';
 
 export const expenseRouter = createTRPCRouter({
@@ -156,34 +156,6 @@ export const expenseRouter = createTRPCRouter({
           const expense = input.expenseId
             ? await editExpense(input, ctx.session.user.id)
             : await createExpense(input, ctx.session.user.id);
-
-          if (expense && input.cronExpression) {
-            const [{ schedule }] = await createRecurringExpenseJob(
-              expense.id,
-              input.cronExpression,
-            );
-            console.log('Created recurring expense job with jobid:', schedule);
-
-            await db.expense.update({
-              where: { id: expense.id },
-              data: {
-                recurrence: {
-                  upsert: {
-                    create: {
-                      job: {
-                        connect: { jobid: schedule },
-                      },
-                    },
-                    update: {
-                      job: {
-                        connect: { jobid: schedule },
-                      },
-                    },
-                  },
-                },
-              },
-            });
-          }
 
           results.push(expense);
         } catch (error) {
@@ -447,7 +419,12 @@ export const expenseRouter = createTRPCRouter({
         expense.recurrence.job.schedule = expense.recurrence.job.schedule.replaceAll('$', 'L');
       }
 
-      return expense;
+      // Compute isRecurrenceTemplate: true if this expense is the template, false if derived, null if no recurrence
+      const isRecurrenceTemplate = expense?.recurrence?.job?.command
+        ? extractTemplateExpenseId(expense.recurrence.job.command) === expense.id
+        : null;
+
+      return expense ? { ...expense, isRecurrenceTemplate } : null;
     }),
 
   getAllExpenses: protectedProcedure.query(async ({ ctx }) => {

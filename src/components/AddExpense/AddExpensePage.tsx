@@ -33,7 +33,14 @@ export const AddOrEditExpensePage: React.FC<{
   enableSendingInvites: boolean;
   expenseId?: string;
   bankConnectionEnabled: boolean;
-}> = ({ isStorageConfigured, enableSendingInvites, expenseId, bankConnectionEnabled }) => {
+  isRecurrenceTemplate?: boolean | null;
+}> = ({
+  isStorageConfigured,
+  enableSendingInvites,
+  expenseId,
+  bankConnectionEnabled,
+  isRecurrenceTemplate,
+}) => {
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
   const isNegative = useAddExpenseStore((s) => s.isNegative);
@@ -376,7 +383,11 @@ export const AddOrEditExpensePage: React.FC<{
           </div>
           <div className="flex items-center justify-evenly px-4 lg:px-0">
             <RecurrenceInput>
-              <Button variant="ghost" size="sm">
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={expenseId !== undefined && !isRecurrenceTemplate}
+              >
                 <RefreshCcwDot
                   className={cn(
                     cronExpression && 'text-primary',

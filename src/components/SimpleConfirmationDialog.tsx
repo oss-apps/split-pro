@@ -17,7 +17,7 @@ import { Button, type buttonVariants } from './ui/button';
 export const SimpleConfirmationDialog: React.FC<
   {
     title: string;
-    description: string;
+    description: React.ReactNode;
     hasPermission: boolean;
     onConfirm: () => void | Promise<void>;
     loading: boolean;

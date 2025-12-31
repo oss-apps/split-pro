@@ -3,12 +3,13 @@ import { type User } from 'next-auth';
 import { z } from 'zod';
 
 import { env } from '~/env';
+import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
 import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
 
-// import { sendExpensePushNotification } from '../services/notificationService';
+// Import { sendExpensePushNotification } from '../services/notificationService';
 import {
   getCompleteFriendsDetails,
   getCompleteGroupDetails,
@@ -78,21 +79,60 @@ export const userRouter = createTRPCRouter({
   getBalancesWithFriend: protectedProcedure
     .input(z.object({ friendId: z.number() }))
     .query(async ({ input, ctx }) => {
-      const balances = await db.balanceView.groupBy({
-        by: ['currency'],
-        _sum: { amount: true },
+      const rawBalances = await db.balanceView.findMany({
         where: {
           userId: ctx.session.user.id,
           friendId: input.friendId,
           amount: { not: 0 },
         },
+        include: {
+          group: {
+            select: {
+              name: true,
+              simplifyDebts: true,
+            },
+          },
+        },
       });
 
-      return balances.map((b) => ({
-        friendId: input.friendId,
-        currency: b.currency,
-        amount: b._sum.amount ?? 0n,
-      }));
+      const processedBalances = await Promise.all(
+        rawBalances.map(async ({ groupId, currency, amount, group }) => {
+          // For non-simplifyDebts groups and non-group balances, use raw balance
+          if (!group?.simplifyDebts || null === groupId) {
+            return {
+              friendId: input.friendId,
+              currency,
+              amount,
+              groupId,
+              groupName: group?.name ?? null,
+            };
+          }
+
+          // For simplifyDebts groups, fetch all group balances and simplify
+          const allGroupBalances = await db.balanceView.findMany({
+            where: { groupId, currency },
+          });
+
+          const simplified = simplifyDebts(allGroupBalances);
+
+          const simplifiedBalance = simplified.find(
+            (b) =>
+              b.userId === ctx.session.user.id &&
+              b.friendId === input.friendId &&
+              b.currency === currency,
+          );
+
+          return {
+            friendId: input.friendId,
+            currency,
+            amount: simplifiedBalance?.amount ?? 0n,
+            groupId,
+            groupName: group.name,
+          };
+        }),
+      );
+
+      return processedBalances.filter((b) => 0n !== b.amount);
     }),
 
   updateUserDetail: protectedProcedure

@@ -4,6 +4,7 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { FILE_SIZE_LIMIT } from '~/lib/constants';
+import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { getDocumentUploadUrl } from '~/server/storage';
@@ -25,35 +26,89 @@ import { createRecurringExpenseJob } from '../services/scheduleService';
 import { getUserMap } from './user';
 
 export const expenseRouter = createTRPCRouter({
+  getCumulatedBalances: protectedProcedure.query(async ({ ctx }) => {
+    const cumulatedBalances = await db.balanceView.groupBy({
+      by: ['currency'],
+      _sum: { amount: true },
+      where: { userId: ctx.session.user.id, amount: { not: 0 } },
+      orderBy: { _sum: { amount: 'desc' } },
+    });
+
+    const youOwe = cumulatedBalances
+      .filter((b) => b._sum.amount && 0 > b._sum.amount)
+      .map((b) => ({ currency: b.currency, amount: b._sum.amount! }))
+      .reverse();
+
+    const youGet = cumulatedBalances
+      .filter((b) => b._sum.amount && 0 < b._sum.amount)
+      .map((b) => ({ currency: b.currency, amount: b._sum.amount! }));
+
+    return { youOwe, youGet };
+  }),
+
   getBalances: protectedProcedure.query(async ({ ctx }) => {
-    const [balancesRaw, cumulatedBalances] = await Promise.all([
-      db.balanceView.groupBy({
-        by: ['friendId', 'currency'],
-        _sum: { amount: true },
-        where: {
-          userId: ctx.session.user.id,
-          friendId: { notIn: ctx.session.user.hiddenFriendIds },
+    const rawBalances = await db.balanceView.findMany({
+      where: {
+        userId: ctx.session.user.id,
+        friendId: { notIn: ctx.session.user.hiddenFriendIds },
+      },
+      include: {
+        group: {
+          select: {
+            simplifyDebts: true,
+          },
         },
-      }),
-      db.balanceView.groupBy({
-        by: ['currency'],
-        _sum: { amount: true },
-        where: { userId: ctx.session.user.id, amount: { not: 0 } },
-        orderBy: { _sum: { amount: 'desc' } },
-      }),
-    ]);
+      },
+    });
 
-    const userMap = await getUserMap(balancesRaw.map((b) => b.friendId));
+    const processedBalances = await Promise.all(
+      rawBalances.map(async ({ friendId, currency, amount, groupId, group }) => {
+        if (!group?.simplifyDebts || null === groupId) {
+          return { friendId, currency, amount };
+        }
 
-    // Group balances by friendId to return all currencies per friend
-    const balancesByFriend = balancesRaw.reduce<
+        const allGroupBalances = await db.balanceView.findMany({
+          where: { groupId, currency },
+        });
+
+        const simplified = simplifyDebts(allGroupBalances);
+        const simplifiedBalance = simplified.find(
+          (b) =>
+            b.userId === ctx.session.user.id && b.friendId === friendId && b.currency === currency,
+        );
+
+        return { friendId, currency, amount: simplifiedBalance?.amount ?? 0n };
+      }),
+    );
+
+    // Aggregate by (friendId, currency) since same pair can appear in multiple groups
+    const aggregated = processedBalances
+      .filter((b) => 0n !== b.amount)
+      .reduce<Map<string, { friendId: number; currency: string; amount: bigint }>>(
+        (acc, { friendId, currency, amount }) => {
+          const key = `${friendId}-${currency}`;
+          const existing = acc.get(key);
+          if (existing) {
+            existing.amount += amount;
+          } else {
+            acc.set(key, { friendId, currency, amount });
+          }
+          return acc;
+        },
+        new Map(),
+      );
+
+    // Group by friendId and fetch user details
+    const friendIds = [...new Set([...aggregated.values()].map((b) => b.friendId))];
+    const userMap = await getUserMap(friendIds);
+
+    const balancesByFriend = [...aggregated.values()].reduce<
       Record<number, { currency: string; amount: bigint }[]>
-    >((acc, b) => {
-      const amount = b._sum.amount ?? 0n;
-      if (!acc[b.friendId]) {
-        acc[b.friendId] = [];
+    >((acc, { friendId, currency, amount }) => {
+      if (!acc[friendId]) {
+        acc[friendId] = [];
       }
-      acc[b.friendId]!.push({ currency: b.currency, amount });
+      acc[friendId]!.push({ currency, amount });
       return acc;
     }, {});
 
@@ -62,7 +117,6 @@ export const expenseRouter = createTRPCRouter({
         friendId: Number(friendId),
         currencies,
         friend: userMap[Number(friendId)]!,
-        // For sorting, use the largest absolute value across all currencies
         maxAmount: currencies.reduce(
           (max, curr) => (BigMath.abs(curr.amount) > BigMath.abs(max) ? curr.amount : max),
           0n,
@@ -70,26 +124,7 @@ export const expenseRouter = createTRPCRouter({
       }))
       .sort((a, b) => Number(BigMath.abs(b.maxAmount) - BigMath.abs(a.maxAmount)));
 
-    const youOwe: { currency: string; amount: bigint }[] = [];
-    const youGet: { currency: string; amount: bigint }[] = [];
-
-    for (const b of cumulatedBalances) {
-      const sumAmount = b._sum.amount;
-      if (sumAmount && 0 < sumAmount) {
-        youGet.push({ currency: b.currency, amount: sumAmount ?? 0 });
-      } else if (sumAmount && 0 > sumAmount) {
-        youOwe.push({ currency: b.currency, amount: sumAmount ?? 0 });
-      }
-    }
-
-    youOwe.reverse();
-
-    return {
-      balances,
-      cumulatedBalances,
-      youOwe,
-      youGet,
-    };
+    return { balances };
   }),
 
   addOrEditExpense: protectedProcedure

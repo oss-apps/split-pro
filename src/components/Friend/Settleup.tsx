@@ -84,11 +84,12 @@ export const SettleUp: React.FC<
         ],
         paidBy: isCurrentUserPaying ? currentUser.id : friend.id,
         category: DEFAULT_CATEGORY,
-        groupId: null,
+        groupId: balanceToSettle.groupId,
       },
       {
         onSuccess: () => {
           utils.user.invalidate().catch(console.error);
+          utils.expense.invalidate().catch(console.error);
         },
         onError: (error) => {
           console.error('Error while saving expense:', error);
@@ -143,11 +144,11 @@ export const SettleUp: React.FC<
         <div>
           {balances?.map((b) => (
             <div
-              key={`${b.friendId}-${b.currency}`}
+              key={`${b.friendId}-${b.currency}-${b.groupId ?? 'null'}`}
               onClick={() => onSelectBalance(b)}
               className="cursor-pointer px-4 py-2"
             >
-              <FriendBalance user={friend} balance={b} />
+              <FriendBalance user={friend} balance={b} groupName={b.groupName} />
             </div>
           ))}
         </div>
@@ -164,6 +165,9 @@ export const SettleUp: React.FC<
                 ? `${t('actors.you')} ${t('ui.expense.you.pay')} ${displayName(friend)}`
                 : `${displayName(friend)} ${t('ui.expense.user.pay')} ${t('actors.you')}`}
             </p>
+            {balanceToSettle.groupName ? (
+              <p className="mt-1 text-center text-xs text-gray-500">{balanceToSettle.groupName}</p>
+            ) : null}
           </div>
           <CurrencyInput
             currency={balanceToSettle.currency}

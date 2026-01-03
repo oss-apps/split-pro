@@ -97,7 +97,7 @@
     },
     "CAD": {
       "name": "Dolar Canadiano",
-      "name_plural": "Dolares Canadianos"
+      "namePlural": "Dolares Canadianos"
     },
     "CDF": {
       "name_0": "Franco congolês",
@@ -186,7 +186,7 @@
     },
     "EUR": {
       "name": "Euro",
-      "name_plural": "Euros"
+      "namePlural": "Euros"
     },
     "GBP": {
       "name_0": "Libra esterlina britânica",

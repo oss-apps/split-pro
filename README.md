@@ -25,9 +25,9 @@ It currently has most of the important features.
 - Import from splitwise
 - simplify group debts
 - community translations, feel free to add your language!
-- **UPCOMING** currency conversion, quickly convert expenses and group balances
-- **UPCOMING** recurrent transactions
-- **UPCOMING** bank account transaction integration
+- **BETA** currency conversion, quickly convert expenses and group balances
+- **BETA** recurrent transactions
+- **BETA** bank account transaction integration
 
 **More features coming every day**
 

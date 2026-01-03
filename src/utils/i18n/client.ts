@@ -5,13 +5,14 @@ export interface SupportedLanguage {
 
 export const getSupportedLanguages = (): SupportedLanguage[] => [
   { code: 'en', name: 'English' },
-  { code: 'de', name: 'Deutsch' },
   { code: 'fr', name: 'Français' },
+  { code: 'de', name: 'Deutsch' },
   { code: 'it', name: 'Italiano' },
   { code: 'pl', name: 'Polski' },
-  { code: 'pt-PT', name: 'Portuguese (Portugal)' },
-  { code: 'pt-BR', name: 'Portuguese (Brazil)' },
+  { code: 'pt-BR', name: 'Português (Brasil)' },
+  { code: 'pt-PT', name: 'Português (Portugal)' },
+  { code: 'es', name: 'Español' },
+  { code: 'es-MX', name: 'Español (Mexico)' },
+  { code: 'es-AR', name: 'Español (Argentina)' },
   { code: 'sv', name: 'Svenska' },
-  { code: 'es-MX', name: 'Spanish (Mexico)' },
-  { code: 'es-AR', name: 'Spanish (Argentina)' },
 ];

@@ -4,6 +4,10 @@
       "description": "Quickly convert between different currencies using up-to-date or historical exchange rates",
       "title": "Currency Conversion"
     },
+    "recurring_transactions": {
+      "description": "Set up automatic recurring expenses for rent, subscriptions, or any regular shared costs",
+      "title": "Recurring Transactions"
+    },
     "debt_simplification": {
       "description": "Automatically simplify group debts to reduce the number of transactions needed between friends",
       "title": "Debt Simplification"

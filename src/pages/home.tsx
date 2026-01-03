@@ -8,7 +8,9 @@ import {
   Globe,
   Import,
   Landmark,
+  type LucideIcon,
   Merge,
+  RefreshCw,
   Split,
   Users,
 } from 'lucide-react';
@@ -24,6 +26,28 @@ import { env } from '~/env';
 import { LanguageSelector } from '~/components/LanguageSelector';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { SiGithub } from '@icons-pack/react-simple-icons';
+
+const FeatureRow = ({ children }: { children: React.ReactNode }) => (
+  <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">{children}</div>
+);
+
+const FeatureCard = ({
+  icon: Icon,
+  title,
+  description,
+}: {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}) => (
+  <div className="flex flex-col gap-1 lg:w-1/2">
+    <div className="flex flex-row justify-center gap-1 lg:flex-col">
+      <Icon className="text-primary size-6" />
+      <p className="text-lg font-medium">{title}</p>
+    </div>
+    <p className="px-4 text-gray-400 lg:px-0">{description}</p>
+  </div>
+);
 
 export default function Home() {
   const { t } = useTranslation('home');
@@ -105,130 +129,91 @@ export default function Home() {
             <div className="flex flex-col gap-20 text-center lg:text-left">
               <p className="text-2xl">{t('features.title')}</p>
 
-              <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
-                <div className="flex flex-col gap-1 lg:w-1/2">
-                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Users className="text-primary size-6" />
-                    <p className="text-lg font-medium">{t('features.groups_and_friends.title')}</p>
-                  </div>
-                  <p className="px-4 text-gray-400 lg:px-0">
-                    {t('features.groups_and_friends.description')}
-                  </p>
-                </div>
+              <FeatureRow>
+                <FeatureCard
+                  icon={Users}
+                  title={t('features.groups_and_friends.title')}
+                  description={t('features.groups_and_friends.description')}
+                />
+                <FeatureCard
+                  icon={Banknote}
+                  title={t('features.multiple_currencies.title')}
+                  description={t('features.multiple_currencies.description')}
+                />
+              </FeatureRow>
 
-                <div className="flex flex-col gap-1 lg:w-1/2">
-                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Banknote className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">{t('features.multiple_currencies.title')}</p>
-                  </div>
-                  <p className="px-4 text-gray-400 lg:px-0">
-                    {t('features.multiple_currencies.description')}
-                  </p>
-                </div>
-              </div>
+              <FeatureRow>
+                <FeatureCard
+                  icon={Split}
+                  title={t('features.unequal_split.title')}
+                  description={t('features.unequal_split.description')}
+                />
+                <FeatureCard
+                  icon={Globe}
+                  title={t('features.pwa_support.title')}
+                  description={t('features.pwa_support.description')}
+                />
+              </FeatureRow>
 
-              <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
-                <div className="flex flex-col gap-1 lg:w-1/2">
-                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Split className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">{t('features.unequal_split.title')}</p>
-                  </div>
-                  <p className="px-4 text-gray-400 lg:px-0">
-                    {t('features.unequal_split.description')}
-                  </p>
-                </div>
+              <FeatureRow>
+                <FeatureCard
+                  icon={FileUp}
+                  title={t('features.upload_receipts.title')}
+                  description={t('features.upload_receipts.description')}
+                />
+                <FeatureCard
+                  icon={GitFork}
+                  title={t('features.open_source.title')}
+                  description={t('features.open_source.description')}
+                />
+              </FeatureRow>
 
-                <div className="flex flex-col gap-1 lg:w-1/2">
-                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Globe className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">{t('features.pwa_support.title')}</p>
-                  </div>
-                  <p className="px-4 text-gray-400 lg:px-0">
-                    {t('features.pwa_support.description')}
-                  </p>
-                </div>
-              </div>
+              <FeatureRow>
+                <FeatureCard
+                  icon={Import}
+                  title={t('features.import_splitwise.title')}
+                  description={t('features.import_splitwise.description')}
+                />
+                <FeatureCard
+                  icon={Bell}
+                  title={t('features.push_notifications.title')}
+                  description={t('features.push_notifications.description')}
+                />
+              </FeatureRow>
 
-              <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
-                <div className="flex flex-col gap-1 lg:w-1/2">
-                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <FileUp className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">{t('features.upload_receipts.title')}</p>
-                  </div>
-                  <p className="px-4 text-gray-400 lg:px-0">
-                    {t('features.upload_receipts.description')}
-                  </p>
-                </div>
+              <FeatureRow>
+                <FeatureCard
+                  icon={Merge}
+                  title={t('features.debt_simplification.title')}
+                  description={t('features.debt_simplification.description')}
+                />
+                <FeatureCard
+                  icon={Globe}
+                  title={t('features.i18.title')}
+                  description={t('features.i18.description')}
+                />
+              </FeatureRow>
 
-                <div className="flex flex-col gap-1 lg:w-1/2">
-                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <GitFork className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">{t('features.open_source.title')}</p>
-                  </div>
-                  <p className="px-4 text-gray-400 lg:px-0">
-                    {t('features.open_source.description')}
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
-                <div className="flex flex-col gap-1 lg:w-1/2">
-                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Import className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">{t('features.import_splitwise.title')}</p>
-                  </div>
-                  <p className="px-4 text-gray-400 lg:px-0">
-                    {t('features.import_splitwise.description')}
-                  </p>
-                </div>
-                <div className="flex flex-col gap-1 lg:w-1/2">
-                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Bell className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">{t('features.push_notifications.title')}</p>
-                  </div>
-                  <p className="px-4 text-gray-400 lg:px-0">
-                    {t('features.push_notifications.description')}
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
-                <div className="flex flex-col gap-1 lg:w-1/2">
-                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Merge className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">{t('features.debt_simplification.title')}</p>
-                  </div>
-                  <p className="px-4 text-gray-400 lg:px-0">
-                    {t('features.debt_simplification.description')}
-                  </p>
-                </div>
-                <div className="flex flex-col gap-1 lg:w-1/2">
-                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Globe className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">{t('features.i18.title')}</p>
-                  </div>
-                  <p className="px-4 text-gray-400 lg:px-0">{t('features.i18.description')}</p>
-                </div>
-              </div>
+              <FeatureRow>
+                <FeatureCard
+                  icon={DollarSign}
+                  title={t('features.currency_conversion.title')}
+                  description={t('features.currency_conversion.description')}
+                />
+                <FeatureCard
+                  icon={RefreshCw}
+                  title={t('features.recurring_transactions.title')}
+                  description={t('features.recurring_transactions.description')}
+                />
+              </FeatureRow>
 
-              <div className="flex flex-col gap-20 lg:flex-row lg:gap-8">
-                <div className="flex flex-col gap-1 lg:w-1/2">
-                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <DollarSign className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">{t('features.currency_conversion.title')}</p>
-                  </div>
-                  <p className="px-4 text-gray-400 lg:px-0">
-                    {t('features.currency_conversion.description')}
-                  </p>
-                </div>
-                <div className="flex flex-col gap-1 lg:w-1/2">
-                  <div className="flex flex-row justify-center gap-1 lg:flex-col">
-                    <Landmark className="text-primary h-6 w-6" />
-                    <p className="text-lg font-medium">{t('features.bank_connection.title')}</p>
-                  </div>
-                  <p className="px-4 text-gray-400 lg:px-0">
-                    {t('features.bank_connection.description')}
-                  </p>
-                </div>
-              </div>
+              <FeatureRow>
+                <FeatureCard
+                  icon={Landmark}
+                  title={t('features.bank_connection.title')}
+                  description={t('features.bank_connection.description')}
+                />
+              </FeatureRow>
             </div>
 
             <div className="mt-24 mb-20 flex flex-col gap-8 text-center lg:text-left">

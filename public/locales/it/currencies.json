@@ -73,8 +73,8 @@
       "name_plural": "Dollari del Belize"
     },
     "CAD": {
-      "name_0": "Dollaro Canadese",
-      "name_1": "Dollari Canadesi",
+      "name": "Dollaro Canadese",
+      "name_plural": "Dollari Canadesi",
       "name_2": ""
     },
     "CDF": {

@@ -73,8 +73,8 @@
       "name_plural": "Dólares beliceños"
     },
     "CAD": {
-      "name_0": "Dólar Canadiense",
-      "name_1": "Dólares Canadienses",
+      "name": "Dólar Canadiense",
+      "name_plural": "Dólares Canadienses",
       "name_2": ""
     },
     "CDF": {

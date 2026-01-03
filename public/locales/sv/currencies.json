@@ -2,555 +2,555 @@
   "currency_list": {
     "AED": {
       "name": "Dirham från Förenade Arabemiraten",
-      "name_plural": "Dirham från FAE"
+      "namePlural": "Dirham från FAE"
     },
     "AFN": {
       "name": "Afghansk afghani",
-      "name_plural": "Afghanska afghani"
+      "namePlural": "Afghanska afghani"
     },
     "ALL": {
       "name": "Albansk lek",
-      "name_plural": "Albanska lek"
+      "namePlural": "Albanska lek"
     },
     "AMD": {
       "name": "Armenisk dram",
-      "name_plural": "Armeniska dram"
+      "namePlural": "Armeniska dram"
     },
     "ARS": {
       "name": "Argentinsk peso",
-      "name_plural": "Argentinska peso"
+      "namePlural": "Argentinska peso"
     },
     "AUD": {
       "name": "Australisk dollar",
-      "name_plural": "Australiska dollar"
+      "namePlural": "Australiska dollar"
     },
     "AZN": {
       "name": "Azerbajdzjansk manat",
-      "name_plural": "Azerbajdzjanska manat"
+      "namePlural": "Azerbajdzjanska manat"
     },
     "BAM": {
       "name": "Bosnisk-hercegovinsk konvertibel mark",
-      "name_plural": "Bosnisk-hercegovinska konvertibla mark"
+      "namePlural": "Bosnisk-hercegovinska konvertibla mark"
     },
     "BDT": {
       "name": "Bangladeshisk taka",
-      "name_plural": "Bangladeshiska taka"
+      "namePlural": "Bangladeshiska taka"
     },
     "BGN": {
       "name": "Bulgarisk lev",
-      "name_plural": "Bulgariska lev"
+      "namePlural": "Bulgariska lev"
     },
     "BHD": {
       "name": "Bahrainsk dinar",
-      "name_plural": "Bahrainska dinar"
+      "namePlural": "Bahrainska dinar"
     },
     "BIF": {
       "name": "Burundisk franc",
-      "name_plural": "Burundiska franc"
+      "namePlural": "Burundiska franc"
     },
     "BND": {
       "name": "Bruneisk dollar",
-      "name_plural": "Bruneiska dollar"
+      "namePlural": "Bruneiska dollar"
     },
     "BOB": {
       "name": "Boliviansk boliviano",
-      "name_plural": "Bolivianska boliviano"
+      "namePlural": "Bolivianska boliviano"
     },
     "BRL": {
       "name": "Brasiliansk real",
-      "name_plural": "Brasilianska real"
+      "namePlural": "Brasilianska real"
     },
     "BWP": {
       "name": "Botswansk pula",
-      "name_plural": "Botswanska pula"
+      "namePlural": "Botswanska pula"
     },
     "BYN": {
       "name": "Vitrysk rubel",
-      "name_plural": "Vitryska rubel"
+      "namePlural": "Vitryska rubel"
     },
     "BZD": {
       "name": "Belizisk dollar",
-      "name_plural": "Beliziska dollar"
+      "namePlural": "Beliziska dollar"
     },
     "CAD": {
       "name": "Kanadensisk dollar",
-      "name_plural": "Kanadensiska dollar"
+      "namePlural": "Kanadensiska dollar"
     },
     "CDF": {
       "name": "Kongolesisk franc",
-      "name_plural": "Kongolesiska franc"
+      "namePlural": "Kongolesiska franc"
     },
     "CHF": {
       "name": "Schweizisk franc",
-      "name_plural": "Schweiziska franc"
+      "namePlural": "Schweiziska franc"
     },
     "CLP": {
       "name": "Chilensk peso",
-      "name_plural": "Chilenska peso"
+      "namePlural": "Chilenska peso"
     },
     "CNY": {
       "name": "Kinesisk yuan",
-      "name_plural": "Kinesiska yuan"
+      "namePlural": "Kinesiska yuan"
     },
     "COP": {
       "name": "Colombiansk peso",
-      "name_plural": "Colombianska peso"
+      "namePlural": "Colombianska peso"
     },
     "CRC": {
       "name": "Costa Ricansk colón",
-      "name_plural": "Costa Ricanska colón"
+      "namePlural": "Costa Ricanska colón"
     },
     "CVE": {
       "name": "Kapverdisk escudo",
-      "name_plural": "Kapverdiska escudo"
+      "namePlural": "Kapverdiska escudo"
     },
     "CZK": {
       "name": "Tjeckisk koruna",
-      "name_plural": "Tjeckiska koruna"
+      "namePlural": "Tjeckiska koruna"
     },
     "DJF": {
       "name": "Djiboutisk franc",
-      "name_plural": "Djiboutiska franc"
+      "namePlural": "Djiboutiska franc"
     },
     "DKK": {
       "name": "Dansk krona",
-      "name_plural": "Danska kronor"
+      "namePlural": "Danska kronor"
     },
     "DOP": {
       "name": "Dominikansk peso",
-      "name_plural": "Dominikanska peso"
+      "namePlural": "Dominikanska peso"
     },
     "DZD": {
       "name": "Algerisk dinar",
-      "name_plural": "Algeriska dinar"
+      "namePlural": "Algeriska dinar"
     },
     "EEK": {
       "name": "Estnisk kroon",
-      "name_plural": "Estniska kronor"
+      "namePlural": "Estniska kronor"
     },
     "EGP": {
       "name": "Egyptisk pund",
-      "name_plural": "Egyptiska pund"
+      "namePlural": "Egyptiska pund"
     },
     "ERN": {
       "name": "Eritreansk nakfa",
-      "name_plural": "Eritreanska nakfa"
+      "namePlural": "Eritreanska nakfa"
     },
     "ETB": {
       "name": "Etiopisk birr",
-      "name_plural": "Etiopiska birr"
+      "namePlural": "Etiopiska birr"
     },
     "EUR": {
       "name": "Euro",
-      "name_plural": "Euro"
+      "namePlural": "Euro"
     },
     "GBP": {
       "name": "Brittisk pund sterling",
-      "name_plural": "Brittiska pund sterling"
+      "namePlural": "Brittiska pund sterling"
     },
     "GEL": {
       "name": "Georgisk lari",
-      "name_plural": "Georgiska lari"
+      "namePlural": "Georgiska lari"
     },
     "GHS": {
       "name": "Ghanansk cedi",
-      "name_plural": "Ghananska cedi"
+      "namePlural": "Ghananska cedi"
     },
     "GNF": {
       "name": "Guineansk franc",
-      "name_plural": "Guineanska franc"
+      "namePlural": "Guineanska franc"
     },
     "GTQ": {
       "name": "Guatemalansk quetzal",
-      "name_plural": "Guatemalanska quetzal"
+      "namePlural": "Guatemalanska quetzal"
     },
     "HKD": {
       "name": "Hongkong-dollar",
-      "name_plural": "Hongkong-dollar"
+      "namePlural": "Hongkong-dollar"
     },
     "HNL": {
       "name": "Honduransk lempira",
-      "name_plural": "Honduranska lempira"
+      "namePlural": "Honduranska lempira"
     },
     "HRK": {
       "name": "Kroatisk kuna",
-      "name_plural": "Kroatiska kuna"
+      "namePlural": "Kroatiska kuna"
     },
     "HUF": {
       "name": "Ungersk forint",
-      "name_plural": "Ungerska forint"
+      "namePlural": "Ungerska forint"
     },
     "IDR": {
       "name": "Indonesisk rupiah",
-      "name_plural": "Indonesiska rupiah"
+      "namePlural": "Indonesiska rupiah"
     },
     "ILS": {
       "name": "Israelisk ny shekel",
-      "name_plural": "Israeliska nya shekel"
+      "namePlural": "Israeliska nya shekel"
     },
     "INR": {
       "name": "Indisk rupie",
-      "name_plural": "Indiska rupier"
+      "namePlural": "Indiska rupier"
     },
     "IQD": {
       "name": "Irakisk dinar",
-      "name_plural": "Irakiska dinar"
+      "namePlural": "Irakiska dinar"
     },
     "IRR": {
       "name": "Iransk rial",
-      "name_plural": "Iranska rial"
+      "namePlural": "Iranska rial"
     },
     "ISK": {
       "name": "Isländsk króna",
-      "name_plural": "Isländska krónur"
+      "namePlural": "Isländska krónur"
     },
     "JMD": {
       "name": "Jamaicansk dollar",
-      "name_plural": "Jamaicanska dollar"
+      "namePlural": "Jamaicanska dollar"
     },
     "JOD": {
       "name": "Jordansk dinar",
-      "name_plural": "Jordanska dinar"
+      "namePlural": "Jordanska dinar"
     },
     "JPY": {
       "name": "Japansk yen",
-      "name_plural": "Japanska yen"
+      "namePlural": "Japanska yen"
     },
     "KES": {
       "name": "Kenyansk shilling",
-      "name_plural": "Kenyanska shilling"
+      "namePlural": "Kenyanska shilling"
     },
     "KHR": {
       "name": "Kambodjansk riel",
-      "name_plural": "Kambodjanska riel"
+      "namePlural": "Kambodjanska riel"
     },
     "KMF": {
       "name": "Komorisk franc",
-      "name_plural": "Komoriska franc"
+      "namePlural": "Komoriska franc"
     },
     "KRW": {
       "name": "Sydkoreansk won",
-      "name_plural": "Sydkoreanska won"
+      "namePlural": "Sydkoreanska won"
     },
     "KWD": {
       "name": "Kuwaitisk dinar",
-      "name_plural": "Kuwaitiska dinar"
+      "namePlural": "Kuwaitiska dinar"
     },
     "KZT": {
       "name": "Kazakisk tenge",
-      "name_plural": "Kazakiska tenge"
+      "namePlural": "Kazakiska tenge"
     },
     "LAK": {
       "name": "Laotisk kip",
-      "name_plural": "Laotiska kip"
+      "namePlural": "Laotiska kip"
     },
     "LBP": {
       "name": "Libanesisk pund",
-      "name_plural": "Libanesiska pund"
+      "namePlural": "Libanesiska pund"
     },
     "LKR": {
       "name": "Sri Lankansk rupie",
-      "name_plural": "Sri Lankanska rupier"
+      "namePlural": "Sri Lankanska rupier"
     },
     "LRD": {
       "name": "Liberiansk dollar",
-      "name_plural": "Liberianska dollar"
+      "namePlural": "Liberianska dollar"
     },
     "LSL": {
       "name": "Lesothisk loti",
-      "name_plural": "Lesothiska loti"
+      "namePlural": "Lesothiska loti"
     },
     "LYD": {
       "name": "Libysk dinar",
-      "name_plural": "Libyska dinar"
+      "namePlural": "Libyska dinar"
     },
     "MAD": {
       "name": "Marockansk dirham",
-      "name_plural": "Marockanska dirham"
+      "namePlural": "Marockanska dirham"
     },
     "MDL": {
       "name": "Moldavisk leu",
-      "name_plural": "Moldaviska leu"
+      "namePlural": "Moldaviska leu"
     },
     "MGA": {
       "name": "Madagaskisk ariary",
-      "name_plural": "Madagaskiska ariary"
+      "namePlural": "Madagaskiska ariary"
     },
     "MKD": {
       "name": "Makedonsk denar",
-      "name_plural": "Makedonska denar"
+      "namePlural": "Makedonska denar"
     },
     "MMK": {
       "name": "Myanmarisk kyat",
-      "name_plural": "Myanmariska kyat"
+      "namePlural": "Myanmariska kyat"
     },
     "MNT": {
       "name": "Mongolisk tugrik",
-      "name_plural": "Mongoliska tugrik"
+      "namePlural": "Mongoliska tugrik"
     },
     "MOP": {
       "name": "Macaoisk pataca",
-      "name_plural": "Macaoiska pataca"
+      "namePlural": "Macaoiska pataca"
     },
     "MUR": {
       "name": "Mauritisk rupie",
-      "name_plural": "Mauritiska rupier"
+      "namePlural": "Mauritiska rupier"
     },
     "MVR": {
       "name": "Maldivisk rufiyaa",
-      "name_plural": "Maldiviska rufiyaa"
+      "namePlural": "Maldiviska rufiyaa"
     },
     "MWK": {
       "name": "Malawisk kwacha",
-      "name_plural": "Malawiska kwacha"
+      "namePlural": "Malawiska kwacha"
     },
     "MXN": {
       "name": "Mexikansk peso",
-      "name_plural": "Mexikanska peso"
+      "namePlural": "Mexikanska peso"
     },
     "MYR": {
       "name": "Malaysisk ringgit",
-      "name_plural": "Malaysiska ringgit"
+      "namePlural": "Malaysiska ringgit"
     },
     "MZN": {
       "name": "Moçambikisk metical",
-      "name_plural": "Moçambikiska metical"
+      "namePlural": "Moçambikiska metical"
     },
     "NAD": {
       "name": "Namibisk dollar",
-      "name_plural": "Namibiska dollar"
+      "namePlural": "Namibiska dollar"
     },
     "NGN": {
       "name": "Nigeriansk naira",
-      "name_plural": "Nigerianska naira"
+      "namePlural": "Nigerianska naira"
     },
     "NIO": {
       "name": "Nicaraguansk córdoba",
-      "name_plural": "Nicaraguanska córdoba"
+      "namePlural": "Nicaraguanska córdoba"
     },
     "NOK": {
       "name": "Norsk krona",
-      "name_plural": "Norska kronor"
+      "namePlural": "Norska kronor"
     },
     "NPR": {
       "name": "Nepalesisk rupie",
-      "name_plural": "Nepalesiska rupier"
+      "namePlural": "Nepalesiska rupier"
     },
     "NZD": {
       "name": "Nyzeeländsk dollar",
-      "name_plural": "Nyzeeländska dollar"
+      "namePlural": "Nyzeeländska dollar"
     },
     "OMR": {
       "name": "Omansk rial",
-      "name_plural": "Omanska rial"
+      "namePlural": "Omanska rial"
     },
     "PAB": {
       "name": "Panamansk balboa",
-      "name_plural": "Panamanska balboa"
+      "namePlural": "Panamanska balboa"
     },
     "PEN": {
       "name": "Peruansk sol",
-      "name_plural": "Peruanska sol"
+      "namePlural": "Peruanska sol"
     },
     "PGK": {
       "name": "Papua Nya Guineansk kina",
-      "name_plural": "Papua Nya Guineanska kina"
+      "namePlural": "Papua Nya Guineanska kina"
     },
     "PHP": {
       "name": "Filippinsk peso",
-      "name_plural": "Filippinska peso"
+      "namePlural": "Filippinska peso"
     },
     "PKR": {
       "name": "Pakistansk rupie",
-      "name_plural": "Pakistanska rupier"
+      "namePlural": "Pakistanska rupier"
     },
     "PLN": {
       "name": "Polsk zloty",
-      "name_plural": "Polska zloty"
+      "namePlural": "Polska zloty"
     },
     "PYG": {
       "name": "Paraguayansk guaraní",
-      "name_plural": "Paraguayanska guaraní"
+      "namePlural": "Paraguayanska guaraní"
     },
     "QAR": {
       "name": "Qatarisk rial",
-      "name_plural": "Qatariska rial"
+      "namePlural": "Qatariska rial"
     },
     "RON": {
       "name": "Rumänsk leu",
-      "name_plural": "Rumänska leu"
+      "namePlural": "Rumänska leu"
     },
     "RSD": {
       "name": "Serbisk dinar",
-      "name_plural": "Serbiska dinar"
+      "namePlural": "Serbiska dinar"
     },
     "RUB": {
       "name": "Rysk rubel",
-      "name_plural": "Ryska rubel"
+      "namePlural": "Ryska rubel"
     },
     "RWF": {
       "name": "Rwandisk franc",
-      "name_plural": "Rwandiska franc"
+      "namePlural": "Rwandiska franc"
     },
     "SAR": {
       "name": "Saudisk riyal",
-      "name_plural": "Saudiska riyal"
+      "namePlural": "Saudiska riyal"
     },
     "SBD": {
       "name": "Salomonöarnas dollar",
-      "name_plural": "Salomonöarnas dollar"
+      "namePlural": "Salomonöarnas dollar"
     },
     "SCR": {
       "name": "Seychellisk rupie",
-      "name_plural": "Seychelliska rupier"
+      "namePlural": "Seychelliska rupier"
     },
     "SDG": {
       "name": "Sudanesisk pund",
-      "name_plural": "Sudanesiska pund"
+      "namePlural": "Sudanesiska pund"
     },
     "SEK": {
       "name": "Svensk krona",
-      "name_plural": "Svenska kronor"
+      "namePlural": "Svenska kronor"
     },
     "SGD": {
       "name": "Singaporeansk dollar",
-      "name_plural": "Singaporeanska dollar"
+      "namePlural": "Singaporeanska dollar"
     },
     "SHP": {
       "name": "Sankt Helena-pund",
-      "name_plural": "Sankt Helena-pund"
+      "namePlural": "Sankt Helena-pund"
     },
     "SLL": {
       "name": "Sierra Leoneansk leone",
-      "name_plural": "Sierra Leoneanska leone"
+      "namePlural": "Sierra Leoneanska leone"
     },
     "SOS": {
       "name": "Somalisk shilling",
-      "name_plural": "Somaliska shilling"
+      "namePlural": "Somaliska shilling"
     },
     "SRD": {
       "name": "Surinamesisk dollar",
-      "name_plural": "Surinamesiska dollar"
+      "namePlural": "Surinamesiska dollar"
     },
     "SSP": {
       "name": "Sydsudanesisk pund",
-      "name_plural": "Sydsudanesiska pund"
+      "namePlural": "Sydsudanesiska pund"
     },
     "STD": {
       "name": "São Tomé och Príncipe dobra",
-      "name_plural": "São Tomé och Príncipe dobra"
+      "namePlural": "São Tomé och Príncipe dobra"
     },
     "SYP": {
       "name": "Syrisk pund",
-      "name_plural": "Syriska pund"
+      "namePlural": "Syriska pund"
     },
     "SZL": {
       "name": "Swaziländsk lilangeni",
-      "name_plural": "Swaziländska lilangeni"
+      "namePlural": "Swaziländska lilangeni"
     },
     "THB": {
       "name": "Thailändsk baht",
-      "name_plural": "Thailändska baht"
+      "namePlural": "Thailändska baht"
     },
     "TJS": {
       "name": "Tadzjikisk somoni",
-      "name_plural": "Tadzjikiska somoni"
+      "namePlural": "Tadzjikiska somoni"
     },
     "TMT": {
       "name": "Turkmenisk manat",
-      "name_plural": "Turkmeniska manat"
+      "namePlural": "Turkmeniska manat"
     },
     "TND": {
       "name": "Tunisisk dinar",
-      "name_plural": "Tunisiska dinar"
+      "namePlural": "Tunisiska dinar"
     },
     "TOP": {
       "name": "Tongansk paʻanga",
-      "name_plural": "Tonganska paʻanga"
+      "namePlural": "Tonganska paʻanga"
     },
     "TRY": {
       "name": "Turkisk lira",
-      "name_plural": "Turkiska lira"
+      "namePlural": "Turkiska lira"
     },
     "TTD": {
       "name": "Trinidad och Tobago-dollar",
-      "name_plural": "Trinidad och Tobago-dollar"
+      "namePlural": "Trinidad och Tobago-dollar"
     },
     "TWD": {
       "name": "Ny Taiwan-dollar",
-      "name_plural": "Nya Taiwan-dollar"
+      "namePlural": "Nya Taiwan-dollar"
     },
     "TZS": {
       "name": "Tanzanisk shilling",
-      "name_plural": "Tanzaniska shilling"
+      "namePlural": "Tanzaniska shilling"
     },
     "UAH": {
       "name": "Ukrainsk hryvnia",
-      "name_plural": "Ukrainska hryvnia"
+      "namePlural": "Ukrainska hryvnia"
     },
     "UGX": {
       "name": "Ugandisk shilling",
-      "name_plural": "Ugandiska shilling"
+      "namePlural": "Ugandiska shilling"
     },
     "USD": {
       "name": "Amerikansk dollar",
-      "name_plural": "Amerikanska dollar"
+      "namePlural": "Amerikanska dollar"
     },
     "UYU": {
       "name": "Uruguayansk peso",
-      "name_plural": "Uruguayanska peso"
+      "namePlural": "Uruguayanska peso"
     },
     "UZS": {
       "name": "Uzbekisk som",
-      "name_plural": "Uzbekiska som"
+      "namePlural": "Uzbekiska som"
     },
     "VEF": {
       "name": "Venezuelansk bolívar",
-      "name_plural": "Venezuelanska bolívar"
+      "namePlural": "Venezuelanska bolívar"
     },
     "VND": {
       "name": "Vietnamesisk dong",
-      "name_plural": "Vietnamesiska dong"
+      "namePlural": "Vietnamesiska dong"
     },
     "VUV": {
       "name": "Vanuatisk vatu",
-      "name_plural": "Vanuatiska vatu"
+      "namePlural": "Vanuatiska vatu"
     },
     "WST": {
       "name": "Samoansk tala",
-      "name_plural": "Samoanska tala"
+      "namePlural": "Samoanska tala"
     },
     "XAF": {
       "name": "CFA-franc BEAC",
-      "name_plural": "CFA-franc BEAC"
+      "namePlural": "CFA-franc BEAC"
     },
     "XCD": {
       "name": "Östkaribisk dollar",
-      "name_plural": "Östkaribiska dollar"
+      "namePlural": "Östkaribiska dollar"
     },
     "XOF": {
       "name": "CFA-franc BCEAO",
-      "name_plural": "CFA-franc BCEAO"
+      "namePlural": "CFA-franc BCEAO"
     },
     "XPF": {
       "name": "CFP-franc",
-      "name_plural": "CFP-franc"
+      "namePlural": "CFP-franc"
     },
     "YER": {
       "name": "Jemenitisk rial",
-      "name_plural": "Jemenitiska rial"
+      "namePlural": "Jemenitiska rial"
     },
     "ZAR": {
       "name": "Sydafrikansk rand",
-      "name_plural": "Sydafrikanska rand"
+      "namePlural": "Sydafrikanska rand"
     },
     "ZMW": {
       "name": "Zambisk kwacha",
-      "name_plural": "Zambiska kwacha"
+      "namePlural": "Zambiska kwacha"
     },
     "ZWL": {
       "name": "Zimbabweansk dollar",
-      "name_plural": "Zimbabweanska dollar"
+      "namePlural": "Zimbabweanska dollar"
     }
   },
   "no_currency_found": "Ingen valuta hittad.",

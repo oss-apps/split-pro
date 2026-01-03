@@ -73,7 +73,7 @@ export function generateSplitDescription(
 }
 
 export function getCurrencyName(t: TFunction, code: CurrencyCode, plural = false): string {
-  const translationKey = `currencies:currency_list.${code}.${plural ? 'name_plural' : 'name'}`;
+  const translationKey = `currencies:currency_list.${code}.${plural ? 'namePlural' : 'name'}`;
   const translatedName = t(translationKey);
 
   if (translatedName !== translationKey) {

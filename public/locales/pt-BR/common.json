@@ -80,6 +80,7 @@
     "import": "Importar",
     "invite": "Convidar",
     "leave": "Sair",
+    "next": "",
     "reconnect": "Reconectar",
     "save": "Salvar",
     "settle_up": "Quitar despesas",
@@ -129,6 +130,8 @@
   },
   "errors": {
     "currency_conversion_error": "Erro ao definir conversão monetária",
+    "currency_conversion_failed": "",
+    "currency_conversion_malformed": "",
     "email_invalid": "E-mail inválido, tente novamente.",
     "email_required": "O e-mail é obrigatório",
     "feedback_min_length": "O feedback deve conter pelo menos 10 caracteres",
@@ -141,9 +144,12 @@
     "language_change_failed": "Erro ao alterar idioma",
     "less_than": "Arquivo deve ter menos de",
     "name_required": "O nome é obrigatório",
+    "no_providers": "",
     "notification_not_supported": "Sem suporte a notificações",
     "otp_invalid": "Código OTP inválido",
     "otp_required": "Código OTP é obrigatório",
+    "recurrence_delete_failed": "",
+    "recurrence_update_failed": "",
     "request_error": "Erro ao solicitar notificação",
     "saving_expense": "Erro ao salvar despesa",
     "setting_update_failed": "Falha ao atualizar configuração",
@@ -222,6 +228,12 @@
       "text": "Esta ação não pode ser desfeita. Sua despesa será apagada permanentemente.",
       "title": "Tem certeza absoluta?"
     },
+    "multiple_transactions": {
+      "add_all": "",
+      "add_one_by_one": "",
+      "description": "",
+      "title": ""
+    },
     "no_transactions_yet": "Nenhuma transação ainda",
     "pending": "Pendente",
     "submit_all": "Submeter tudo",
@@ -291,6 +303,7 @@
         "title": "Adicionar membros",
         "warning": "Atenção: Não envie um convite para um e-mail inválido. Em vez disso, use \"adicionar ao Split Pro\". O uso indevido de convites resultará no bloqueio da sua conta"
       },
+      "invite_link": "",
       "no_members": "Ainda não há membros no grupo."
     },
     "tabs": {
@@ -322,9 +335,17 @@
     "cron_expression": "Expressão Cron",
     "days_of_month": "Dias do Mês",
     "days_of_week": "Dias da Semana",
+    "delete_description": "",
+    "delete_title": "",
+    "derived_delete_warning": "",
+    "derived_edit_warning": "",
     "description": "Configure recorrência automática para esta despesa.",
+    "edit_confirmation_title": "",
+    "edit_description": "",
+    "edit_title": "",
     "empty": "Nenhuma despesa recorrente ainda",
     "expense_for_the_amount_of": "Despesa {{name}} pelo valor de {{amount}} {{currency}}",
+    "last_day": "",
     "months": "Meses",
     "never": "Nenhum pagamento recorrente configurado",
     "recurring": "Recorrente",
@@ -336,8 +357,11 @@
       "week": "Semanal",
       "year": "Anual"
     },
+    "template_delete_warning": "",
+    "template_edit_warning": "",
     "time_of_day": "Hora do dia",
-    "title": "Recorrência"
+    "title": "Recorrência",
+    "view_recurring_page": ""
   },
   "ui": {
     "added_by": "Adicionado por",
@@ -379,11 +403,14 @@
     "on": "em",
     "or": "ou",
     "outstanding_balances": "Saldos pendentes",
+    "select_balance": "",
     "select_currency": "Selecionar moeda",
     "settle_up_name": "Quitar",
     "settled_up": "Quitado",
     "settlement": "Quitação",
     "share_text": "Confira o SplitPro. É uma alternativa grátis e de código aberto ao Splitwise",
-    "today": "Hoje"
+    "show_all_currencies": "",
+    "today": "Hoje",
+    "total_balance": ""
   }
 }

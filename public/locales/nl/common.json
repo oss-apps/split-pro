@@ -1,43 +1,100 @@
 {
-  "meta": {
-    "title": "SplitPro: Deel uitgaven gratis met je vrienden",
-    "description": "Deel uitgaven gratis met je vrienden",
-    "application_name": "SplitPro"
+  "account": {
+    "change_language": "",
+    "change_language_details": {
+      "messages": {
+        "language_changed": ""
+      },
+      "placeholder": "",
+      "title": ""
+    },
+    "debug_info": "",
+    "debug_info_details": {
+      "copy_failed": "",
+      "description": "",
+      "git": "",
+      "new_version_available": "",
+      "title": "",
+      "user_agent": "",
+      "version": ""
+    },
+    "download_app": "",
+    "download_app_details": {
+      "download_as_pwa": "",
+      "title": "",
+      "using_android": "",
+      "using_ios": "",
+      "video": ""
+    },
+    "download_splitpro_data": "",
+    "edit_name": {
+      "placeholder": "",
+      "title": ""
+    },
+    "follow_on_x": "",
+    "import_from_splitwise": "",
+    "import_from_splitwise_details": {
+      "choose_file": "",
+      "export_splitwise_data_button": "",
+      "follow_to_export_splitwise_data": "",
+      "messages": {
+        "import_success": ""
+      },
+      "no_file_chosen": "",
+      "note": ""
+    },
+    "logout": "",
+    "messages": {
+      "submit_error": "",
+      "submit_success": ""
+    },
+    "notifications": {
+      "disable_notification": "",
+      "enable_notification": "",
+      "messages": {
+        "notification_granted": ""
+      }
+    },
+    "star_on_github": "",
+    "submit_feedback": "",
+    "submit_feedback_details": {
+      "placeholder": "",
+      "title": ""
+    },
+    "support_us": "",
+    "title": "",
+    "write_review": ""
   },
-  "navigation": {
-    "balances": "Saldos",
-    "groups": "Groepen",
+  "actions": {
     "add_expense": "Voeg Uitgave Toe",
-    "add": "Voeg Toe",
-    "activity": "Activiteit",
-    "account": "Account"
+    "back": "Terug",
+    "cancel": "Annuleer",
+    "close": "Sluit",
+    "confirm": "Bevestig",
+    "connect": "",
+    "copy": "",
+    "create": "Creëer",
+    "edit_expense": "Pas Uitgave Aan",
+    "export": "Exporteer",
+    "fetch": "Haal Op",
+    "import": "Importeer",
+    "invite": "Nodig Uit",
+    "leave": "Verlaat",
+    "next": "",
+    "reconnect": "",
+    "save": "Sla Op",
+    "settle_up": "Regel het",
+    "submit": "Dien In"
   },
   "actors": {
-    "you": "Jij",
-    "you_dativus": "Jij",
-    "you_accusativus": "Jij",
+    "all": "Alle",
     "friends": "Vrienden",
     "groups": "Groepen",
     "members": "Leden",
     "owner": "Eigenaar",
-    "all": "Alle"
-  },
-  "actions": {
-    "cancel": "Annuleer",
-    "confirm": "Bevestig",
-    "submit": "Dien In",
-    "close": "Sluit",
-    "back": "Terug",
-    "create": "Creëer",
-    "save": "Sla Op",
-    "leave": "Verlaat",
-    "invite": "Nodig Uit",
-    "export": "Exporteer",
-    "import": "Importeer",
-    "fetch": "Haal Op",
-    "add_expense": "Voeg Uitgave Toe",
-    "edit_expense": "Pas Uitgave Aan",
-    "settle_up": "Regel het"
+    "you": "Jij",
+    "you_accusativus": "Jij",
+    "you_dativus": "Jij"
   },
   "auth": {
     "continue_with": "Doorgaan met {{provider}}",
@@ -50,53 +107,309 @@
     "setup_instructions": "Docker installatie-instructies",
     "trouble_logging_in": "Problemen met inloggen? Neem contact op"
   },
+  "bank_transactions": {
+    "choose_bank_provider": "",
+    "no_bank_providers_found": "",
+    "plaid": {
+      "bank_connected_successfully": "",
+      "bank_connection_cancelled": "",
+      "bank_connection_failed": ""
+    },
+    "search_bank": "",
+    "select_bank_provider": "",
+    "to_bank": ""
+  },
   "currency_conversion": {
-    "title": "Valuta conversie",
-    "description": "Converteer het bedrag naar een andere valuta.",
     "amount_to_receive": "Bedrag te ontvangen",
+    "description": "Converteer het bedrag naar een andere valuta.",
     "exchange_rate": "Wisselkoers",
     "fetching_rate": "Ophaalsnelheid...",
     "rate": "Verhouding",
-    "success_toast": "Valuta conversie geslaagd"
+    "success_toast": "Valuta conversie geslaagd",
+    "title": "Valuta conversie"
+  },
+  "errors": {
+    "currency_conversion_error": "",
+    "currency_conversion_failed": "",
+    "currency_conversion_malformed": "",
+    "email_invalid": "",
+    "email_required": "",
+    "feedback_min_length": "",
+    "feedback_required": "",
+    "group_balances_malformed": "",
+    "group_name_update_failed": "",
+    "import_failed": "",
+    "invalid_cron_expression": "",
+    "invalid_currency_code": "",
+    "language_change_failed": "",
+    "less_than": "",
+    "name_required": "",
+    "no_providers": "",
+    "notification_not_supported": "",
+    "otp_invalid": "",
+    "otp_required": "",
+    "recurrence_delete_failed": "",
+    "recurrence_update_failed": "",
+    "request_error": "",
+    "saving_expense": "",
+    "setting_update_failed": "",
+    "signin_error": "",
+    "signup_disabled": "",
+    "something_went_wrong": "",
+    "subscribe_error": "",
+    "unsubscribe_error": "",
+    "upload_failed": "",
+    "uploading_error": "",
+    "valid_email": ""
+  },
+  "expense_details": {
+    "add_expense": "",
+    "add_expense_details": {
+      "add_new_expense": "",
+      "amount_placeholder": "",
+      "description_placeholder": "",
+      "pick_a_date": "",
+      "select_user_or_group": {
+        "add_to_split_pro": "",
+        "note": "",
+        "only_one_group_time": "",
+        "send_invite": "",
+        "warning": ""
+      },
+      "split_type_section": {
+        "split_equally": "",
+        "split_unequally": "",
+        "types": {
+          "adjustment": {
+            "remaining_to_split_equally": "",
+            "title": ""
+          },
+          "equal": {
+            "per_person": "",
+            "title": ""
+          },
+          "exact": {
+            "remaining": "",
+            "title": ""
+          },
+          "percentage": {
+            "remaining": "",
+            "title": ""
+          },
+          "share": {
+            "shares": "",
+            "title": "",
+            "total_shares": ""
+          }
+        }
+      },
+      "sponsor_us": "",
+      "upload_file": {
+        "messages": {
+          "upload_success": ""
+        }
+      },
+      "user_input": {
+        "add_more_friends": "",
+        "cannot_change_group": "",
+        "remove_group": "",
+        "search_friends": ""
+      }
+    },
+    "already_added": "",
+    "balance_list": {
+      "are_settled_up": "",
+      "is_settled_up": "",
+      "press_balance_info": ""
+    },
+    "bank_transactions": "",
+    "clear": "",
+    "delete_expense_details": {
+      "text": "",
+      "title": ""
+    },
+    "multiple_transactions": {
+      "add_all": "",
+      "add_one_by_one": "",
+      "description": "",
+      "title": ""
+    },
+    "no_transactions_yet": "",
+    "pending": "",
+    "submit_all": "",
+    "title": "",
+    "title_mobile": ""
+  },
+  "group_details": {
+    "add_members": "",
+    "copied": "",
+    "create_group": {
+      "group_name_placeholder": "",
+      "title": ""
+    },
+    "group_info": {
+      "actions": "",
+      "archive_group": "",
+      "archive_group_details": {
+        "can_archive": "",
+        "cant_archive": "",
+        "title": ""
+      },
+      "archived": "",
+      "delete_group": "",
+      "delete_group_details": {
+        "can_delete": "",
+        "cant_delete": "",
+        "title": ""
+      },
+      "group_created": "",
+      "leave_group": "",
+      "leave_group_details": {
+        "can_leave": "",
+        "cant_leave": "",
+        "title": ""
+      },
+      "members": "",
+      "recalculate_balances": "",
+      "recalculate_balances_details": {
+        "description": "",
+        "title": ""
+      },
+      "remove_member_details": {
+        "can_remove": "",
+        "cant_remove": "",
+        "title": ""
+      },
+      "simplify_debts": "",
+      "title": ""
+    },
+    "group_statistics": {
+      "first_expense": "",
+      "title": "",
+      "total_expenses": ""
+    },
+    "messages": {
+      "balances_recalculated": "",
+      "group_archived": "",
+      "group_name_updated": ""
+    },
+    "no_members": {
+      "add_members": "",
+      "add_members_details": {
+        "add_to_split_pro": "",
+        "note": "",
+        "placeholder": "",
+        "send_invite": "",
+        "title": "",
+        "warning": ""
+      },
+      "invite_link": "",
+      "no_members": ""
+    },
+    "tabs": {
+      "balances": "Saldos",
+      "expenses": ""
+    },
+    "title": ""
+  },
+  "invite_message": {
+    "in_splitpro": "",
+    "join_to": "",
+    "text": ""
+  },
+  "meta": {
+    "application_name": "SplitPro",
+    "description": "Deel uitgaven gratis met je vrienden",
+    "title": "SplitPro: Deel uitgaven gratis met je vrienden"
+  },
+  "navigation": {
+    "account": "Account",
+    "activity": "Activiteit",
+    "add": "Voeg Toe",
+    "add_expense": "Voeg Uitgave Toe",
+    "balances": "Saldos",
+    "groups": "Groepen",
+    "recurring": ""
+  },
+  "recurrence": {
+    "cron_expression": "",
+    "days_of_month": "",
+    "days_of_week": "",
+    "delete_description": "",
+    "delete_title": "",
+    "derived_delete_warning": "",
+    "derived_edit_warning": "",
+    "description": "",
+    "edit_confirmation_title": "",
+    "edit_description": "",
+    "edit_title": "",
+    "empty": "",
+    "expense_for_the_amount_of": "",
+    "last_day": "",
+    "months": "",
+    "never": "",
+    "recurring": "",
+    "schedule_type": {
+      "custom": "",
+      "day": "",
+      "month": "",
+      "never": "",
+      "week": "",
+      "year": ""
+    },
+    "template_delete_warning": "",
+    "template_edit_warning": "",
+    "time_of_day": "",
+    "title": "",
+    "view_recurring_page": ""
   },
   "ui": {
+    "added_by": "",
+    "and": "en",
+    "balance": "saldo",
+    "balances": "saldos",
+    "delete": "Verwijder",
+    "deleted_by": "Verwijderd door",
+    "edited_by": "Aangepast door",
     "expense": {
-      "you": {
-        "lent": "uitgeleend",
-        "owe": "schuldig zijn",
-        "paid": "betaald",
-        "pay": "betaal",
-        "get": "krijgt",
-        "received": "kreeg",
-        "deleted": "verwijderde"
-      },
+      "for": "voor",
+      "from": "van",
+      "paid_by": "Betaald door",
+      "received_by": "Ontvangen door",
+      "to": "aan",
       "user": {
+        "deleted": "verwijderde",
+        "get": "krijgt",
         "lent": "uitgeleend",
         "owe": "is schuldig",
         "paid": "betaalde",
         "pay": "betaalt",
-        "get": "krijgt",
-        "received": "ontving",
-        "deleted": "verwijderde"
+        "received": "ontving"
       },
-      "for": "voor",
-      "paid_by": "Betaald door",
-      "received_by": "Ontvangen door",
-      "to": "aan",
-      "from": "van"
+      "you": {
+        "deleted": "verwijderde",
+        "get": "krijgt",
+        "lent": "uitgeleend",
+        "owe": "schuldig zijn",
+        "paid": "betaald",
+        "pay": "betaal",
+        "received": "kreeg"
+      }
     },
-    "balance": "saldo",
-    "balances": "saldos",
+    "expense_details": "",
+    "in_group": "",
+    "no_activity": "",
+    "not_involved": "",
+    "on": "",
     "or": "of",
-    "and": "en",
+    "outstanding_balances": "",
+    "select_balance": "",
+    "settle_up_name": "",
+    "settled_up": "",
+    "settlement": "",
+    "share_text": "",
+    "show_all_currencies": "",
     "today": "Vandaag",
-    "delete": "Verwijder",
-    "edited_by": "Aangepast door",
-    "deleted_by": "Verwijderd door"
-  },
-  "group_details": {
-    "tabs": {
-      "balances": "Saldos"
-    }
+    "total_balance": ""
   }
 }

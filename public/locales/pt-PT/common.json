@@ -12,8 +12,10 @@
     "debug_info_details": {
       "copy_failed": "Falha ao copiar informação de depuração para a área de transferência",
       "description": "Inclua a informação abaixo ao criar um pedido de suporte:",
+      "git": "",
       "new_version_available": "Nova versão disponível:",
       "title": "Informação de Depuração",
+      "user_agent": "",
       "version": "Versão"
     },
     "download_app": "Descarregar app",
@@ -78,6 +80,7 @@
     "import": "Importar",
     "invite": "Convidar",
     "leave": "Sair",
+    "next": "",
     "reconnect": "Reconectar",
     "save": "Salvar",
     "settle_up": "Acertar contas",
@@ -146,6 +149,8 @@
     "notification_not_supported": "Notificação não suportada",
     "otp_invalid": "OTP inválido",
     "otp_required": "OTP é obrigatório",
+    "recurrence_delete_failed": "",
+    "recurrence_update_failed": "",
     "request_error": "Erro requisitando notificação",
     "saving_expense": "Erro ao salvar despesa",
     "setting_update_failed": "Falha ao atualizar a configuração",
@@ -224,6 +229,12 @@
     "delete_expense_details": {
       "text": "Esta ação não pode ser desfeita. Isto irá eliminar permanentemente a tua despesa.",
       "title": "Tens mesmo a certeza?"
+    },
+    "multiple_transactions": {
+      "add_all": "",
+      "add_one_by_one": "",
+      "description": "",
+      "title": ""
     },
     "no_transactions_yet": "Sem transações por enquanto",
     "pending": "Pendente",
@@ -326,9 +337,35 @@
   },
   "recurrence": {
     "cron_expression": "Expressão \"Cron\"",
+    "days_of_month": "",
+    "days_of_week": "",
+    "delete_description": "",
+    "delete_title": "",
+    "derived_delete_warning": "",
+    "derived_edit_warning": "",
     "description": "Configurar recorrência automática para esta despesa.",
+    "edit_confirmation_title": "",
+    "edit_description": "",
+    "edit_title": "",
+    "empty": "",
+    "expense_for_the_amount_of": "",
+    "last_day": "",
     "months": "Meses",
-    "title": "Recorrência"
+    "never": "",
+    "recurring": "",
+    "schedule_type": {
+      "custom": "",
+      "day": "",
+      "month": "",
+      "never": "",
+      "week": "",
+      "year": ""
+    },
+    "template_delete_warning": "",
+    "template_edit_warning": "",
+    "time_of_day": "",
+    "title": "Recorrência",
+    "view_recurring_page": ""
   },
   "ui": {
     "added_by": "Adicionado por",
@@ -364,16 +401,20 @@
       }
     },
     "expense_details": "Detalhes da despesa",
+    "in_group": "",
     "no_activity": "Ainda sem atividade",
     "not_involved": "Não envolvido",
     "on": "em",
     "or": "ou",
     "outstanding_balances": "Saldos em aberto",
+    "select_balance": "",
     "select_currency": "Selecionar moeda",
     "settle_up_name": "Acertar contas",
     "settled_up": "Acertou contas",
     "settlement": "Acerto de contas",
     "share_text": "Testa o SplitPro. É uma alternativa gratuita ao Splitwise",
-    "today": "Hoje"
+    "show_all_currencies": "",
+    "today": "Hoje",
+    "total_balance": ""
   }
 }

@@ -1,1 +1,415 @@
-{}
+{
+  "account": {
+    "change_language": "",
+    "change_language_details": {
+      "messages": {
+        "language_changed": ""
+      },
+      "placeholder": "",
+      "title": ""
+    },
+    "debug_info": "",
+    "debug_info_details": {
+      "copy_failed": "",
+      "description": "",
+      "git": "",
+      "new_version_available": "",
+      "title": "",
+      "user_agent": "",
+      "version": ""
+    },
+    "download_app": "",
+    "download_app_details": {
+      "download_as_pwa": "",
+      "title": "",
+      "using_android": "",
+      "using_ios": "",
+      "video": ""
+    },
+    "download_splitpro_data": "",
+    "edit_name": {
+      "placeholder": "",
+      "title": ""
+    },
+    "follow_on_x": "",
+    "import_from_splitwise": "",
+    "import_from_splitwise_details": {
+      "choose_file": "",
+      "export_splitwise_data_button": "",
+      "follow_to_export_splitwise_data": "",
+      "messages": {
+        "import_success": ""
+      },
+      "no_file_chosen": "",
+      "note": ""
+    },
+    "logout": "",
+    "messages": {
+      "submit_error": "",
+      "submit_success": ""
+    },
+    "notifications": {
+      "disable_notification": "",
+      "enable_notification": "",
+      "messages": {
+        "notification_granted": ""
+      }
+    },
+    "star_on_github": "",
+    "submit_feedback": "",
+    "submit_feedback_details": {
+      "placeholder": "",
+      "title": ""
+    },
+    "support_us": "",
+    "title": "",
+    "write_review": ""
+  },
+  "actions": {
+    "add_expense": "",
+    "back": "",
+    "cancel": "",
+    "close": "",
+    "confirm": "",
+    "connect": "",
+    "copy": "",
+    "create": "",
+    "edit_expense": "",
+    "export": "",
+    "fetch": "",
+    "import": "",
+    "invite": "",
+    "leave": "",
+    "next": "",
+    "reconnect": "",
+    "save": "",
+    "settle_up": "",
+    "submit": ""
+  },
+  "actors": {
+    "all": "",
+    "friends": "",
+    "groups": "",
+    "members": "",
+    "owner": "",
+    "you": "",
+    "you_accusativus": "",
+    "you_dativus": ""
+  },
+  "auth": {
+    "continue_with": "",
+    "email_placeholder": "",
+    "no_providers_configured": "",
+    "no_providers_instructions": "",
+    "otp_sent": "",
+    "send_magic_link": "",
+    "sending": "",
+    "setup_instructions": "",
+    "trouble_logging_in": ""
+  },
+  "bank_transactions": {
+    "choose_bank_provider": "",
+    "no_bank_providers_found": "",
+    "plaid": {
+      "bank_connected_successfully": "",
+      "bank_connection_cancelled": "",
+      "bank_connection_failed": ""
+    },
+    "search_bank": "",
+    "select_bank_provider": "",
+    "to_bank": ""
+  },
+  "currency_conversion": {
+    "amount_to_receive": "",
+    "description": "",
+    "exchange_rate": "",
+    "fetching_rate": "",
+    "rate": "",
+    "success_toast": "",
+    "title": ""
+  },
+  "errors": {
+    "currency_conversion_error": "",
+    "currency_conversion_failed": "",
+    "currency_conversion_malformed": "",
+    "email_invalid": "",
+    "email_required": "",
+    "feedback_min_length": "",
+    "feedback_required": "",
+    "group_balances_malformed": "",
+    "group_name_update_failed": "",
+    "import_failed": "",
+    "invalid_cron_expression": "",
+    "invalid_currency_code": "",
+    "language_change_failed": "",
+    "less_than": "",
+    "name_required": "",
+    "no_providers": "",
+    "notification_not_supported": "",
+    "otp_invalid": "",
+    "otp_required": "",
+    "recurrence_delete_failed": "",
+    "recurrence_update_failed": "",
+    "request_error": "",
+    "saving_expense": "",
+    "setting_update_failed": "",
+    "signin_error": "",
+    "signup_disabled": "",
+    "something_went_wrong": "",
+    "subscribe_error": "",
+    "unsubscribe_error": "",
+    "upload_failed": "",
+    "uploading_error": "",
+    "valid_email": ""
+  },
+  "expense_details": {
+    "add_expense": "",
+    "add_expense_details": {
+      "add_new_expense": "",
+      "amount_placeholder": "",
+      "description_placeholder": "",
+      "pick_a_date": "",
+      "select_user_or_group": {
+        "add_to_split_pro": "",
+        "note": "",
+        "only_one_group_time": "",
+        "send_invite": "",
+        "warning": ""
+      },
+      "split_type_section": {
+        "split_equally": "",
+        "split_unequally": "",
+        "types": {
+          "adjustment": {
+            "remaining_to_split_equally": "",
+            "title": ""
+          },
+          "equal": {
+            "per_person": "",
+            "title": ""
+          },
+          "exact": {
+            "remaining": "",
+            "title": ""
+          },
+          "percentage": {
+            "remaining": "",
+            "title": ""
+          },
+          "share": {
+            "shares": "",
+            "title": "",
+            "total_shares": ""
+          }
+        }
+      },
+      "sponsor_us": "",
+      "upload_file": {
+        "messages": {
+          "upload_success": ""
+        }
+      },
+      "user_input": {
+        "add_more_friends": "",
+        "cannot_change_group": "",
+        "remove_group": "",
+        "search_friends": ""
+      }
+    },
+    "already_added": "",
+    "balance_list": {
+      "are_settled_up": "",
+      "is_settled_up": "",
+      "press_balance_info": ""
+    },
+    "bank_transactions": "",
+    "clear": "",
+    "delete_expense_details": {
+      "text": "",
+      "title": ""
+    },
+    "multiple_transactions": {
+      "add_all": "",
+      "add_one_by_one": "",
+      "description": "",
+      "title": ""
+    },
+    "no_transactions_yet": "",
+    "pending": "",
+    "submit_all": "",
+    "title": "",
+    "title_mobile": ""
+  },
+  "group_details": {
+    "add_members": "",
+    "copied": "",
+    "create_group": {
+      "group_name_placeholder": "",
+      "title": ""
+    },
+    "group_info": {
+      "actions": "",
+      "archive_group": "",
+      "archive_group_details": {
+        "can_archive": "",
+        "cant_archive": "",
+        "title": ""
+      },
+      "archived": "",
+      "delete_group": "",
+      "delete_group_details": {
+        "can_delete": "",
+        "cant_delete": "",
+        "title": ""
+      },
+      "group_created": "",
+      "leave_group": "",
+      "leave_group_details": {
+        "can_leave": "",
+        "cant_leave": "",
+        "title": ""
+      },
+      "members": "",
+      "recalculate_balances": "",
+      "recalculate_balances_details": {
+        "description": "",
+        "title": ""
+      },
+      "remove_member_details": {
+        "can_remove": "",
+        "cant_remove": "",
+        "title": ""
+      },
+      "simplify_debts": "",
+      "title": ""
+    },
+    "group_statistics": {
+      "first_expense": "",
+      "title": "",
+      "total_expenses": ""
+    },
+    "messages": {
+      "balances_recalculated": "",
+      "group_archived": "",
+      "group_name_updated": ""
+    },
+    "no_members": {
+      "add_members": "",
+      "add_members_details": {
+        "add_to_split_pro": "",
+        "note": "",
+        "placeholder": "",
+        "send_invite": "",
+        "title": "",
+        "warning": ""
+      },
+      "invite_link": "",
+      "no_members": ""
+    },
+    "tabs": {
+      "balances": "",
+      "expenses": ""
+    },
+    "title": ""
+  },
+  "invite_message": {
+    "in_splitpro": "",
+    "join_to": "",
+    "text": ""
+  },
+  "meta": {
+    "application_name": "",
+    "description": "",
+    "title": ""
+  },
+  "navigation": {
+    "account": "",
+    "activity": "",
+    "add": "",
+    "add_expense": "",
+    "balances": "",
+    "groups": "",
+    "recurring": ""
+  },
+  "recurrence": {
+    "cron_expression": "",
+    "days_of_month": "",
+    "days_of_week": "",
+    "delete_description": "",
+    "delete_title": "",
+    "derived_delete_warning": "",
+    "derived_edit_warning": "",
+    "description": "",
+    "edit_confirmation_title": "",
+    "edit_description": "",
+    "edit_title": "",
+    "empty": "",
+    "expense_for_the_amount_of": "",
+    "last_day": "",
+    "months": "",
+    "never": "",
+    "recurring": "",
+    "schedule_type": {
+      "custom": "",
+      "day": "",
+      "month": "",
+      "never": "",
+      "week": "",
+      "year": ""
+    },
+    "template_delete_warning": "",
+    "template_edit_warning": "",
+    "time_of_day": "",
+    "title": "",
+    "view_recurring_page": ""
+  },
+  "ui": {
+    "added_by": "",
+    "and": "",
+    "balance": "",
+    "balances": "",
+    "delete": "",
+    "deleted_by": "",
+    "edited_by": "",
+    "expense": {
+      "for": "",
+      "from": "",
+      "paid_by": "",
+      "received_by": "",
+      "to": "",
+      "user": {
+        "deleted": "",
+        "get": "",
+        "lent": "",
+        "owe": "",
+        "paid": "",
+        "pay": "",
+        "received": ""
+      },
+      "you": {
+        "deleted": "",
+        "get": "",
+        "lent": "",
+        "owe": "",
+        "paid": "",
+        "pay": "",
+        "received": ""
+      }
+    },
+    "expense_details": "",
+    "in_group": "",
+    "no_activity": "",
+    "not_involved": "",
+    "on": "",
+    "or": "",
+    "outstanding_balances": "",
+    "select_balance": "",
+    "settle_up_name": "",
+    "settled_up": "",
+    "settlement": "",
+    "share_text": "",
+    "show_all_currencies": "",
+    "today": "",
+    "total_balance": ""
+  }
+}

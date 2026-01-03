@@ -35,17 +35,20 @@
         "other": "家品",
         "pets": "寵物",
         "rent": "租金",
-        "services": "服務"
+        "services": "服務",
+        "supplies": ""
       },
       "name": "家居"
     },
     "life": {
       "items": {
+        "childcare": "",
         "clothing": "服飾",
         "education": "教育",
         "gifts": "禮物",
         "insurance": "保險",
         "medical": "醫療",
+        "other": "",
         "taxes": "稅金"
       },
       "name": "生活"
@@ -75,7 +78,8 @@
         "phone": "電話",
         "trash": "垃圾",
         "water": "自來水"
-      }
+      },
+      "name": ""
     }
   },
   "title": "分類"

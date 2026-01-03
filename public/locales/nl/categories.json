@@ -1,86 +1,86 @@
 {
-  "title": "Categorieën",
   "categories_list": {
     "entertainment": {
-      "name": "Entertainment",
       "items": {
+        "games": "Spellen",
         "movies": "Films",
         "music": "Muziek",
-        "sports": "Sport",
-        "games": "Spellen",
-        "other": "Entertainment"
-      }
+        "other": "Entertainment",
+        "sports": "Sport"
+      },
+      "name": "Entertainment"
     },
     "food": {
-      "name": "Eten & Drinken",
       "items": {
         "diningOut": "Uit Eten",
         "groceries": "Boodschappen",
         "liquor": "Drank",
         "other": "Eten & Drinken"
-      }
+      },
+      "name": "Eten & Drinken"
+    },
+    "general": {
+      "items": {
+        "general": "Algemeen",
+        "other": "Algemeen"
+      },
+      "name": "Algemeen"
     },
     "home": {
-      "name": "Huis",
       "items": {
         "electronics": "Elektronica",
         "furniture": "Meubels",
-        "supplies": "Voorraad",
         "maintenance": "Onderhoud",
         "mortgage": "Hypotheek",
+        "other": "Huis",
         "pets": "Huisdieren",
         "rent": "Huur",
         "services": "Diensten",
-        "other": "Huis"
-      }
+        "supplies": "Voorraad"
+      },
+      "name": "Huis"
     },
     "life": {
-      "name": "Leven",
       "items": {
         "childcare": "Kinderopvang",
         "clothing": "Kledij",
         "education": "Onderwijs",
         "gifts": "Geschenken",
+        "insurance": "Verzekering",
         "medical": "Medisch",
-        "taxes": "Belastingen",
         "other": "Leven",
-        "insurance": "Verzekering"
-      }
+        "taxes": "Belastingen"
+      },
+      "name": "Leven"
     },
     "travel": {
-      "name": "Reizen",
       "items": {
+        "bicycle": "Fiets",
         "bus": "Bus",
-        "train": "Trein",
         "car": "Wagen",
         "fuel": "Brandstof",
+        "hotel": "Hotel",
+        "other": "Reizen",
         "parking": "Parking",
         "plane": "Vliegtuig",
         "taxi": "Taxi",
-        "other": "Reizen",
-        "bicycle": "Fiets",
-        "hotel": "Hotel"
-      }
+        "train": "Trein"
+      },
+      "name": "Reizen"
     },
     "utilities": {
-      "name": "Nutsvoorzieningen",
       "items": {
         "cleaning": "Schoonmaak",
         "electricity": "Elektriciteit",
         "gas": "Gas",
         "internet": "Internet",
-        "trash": "Afval",
+        "other": "Nutsvoorzieningen",
         "phone": "Telefoon",
-        "water": "Water",
-        "other": "Nutsvoorzieningen"
-      }
-    },
-    "general": {
-      "name": "Algemeen",
-      "items": {
-        "general": "Algemeen",
-        "other": "Algemeen"
-      }
+        "trash": "Afval",
+        "water": "Water"
+      },
+      "name": "Nutsvoorzieningen"
     }
-  }
+  },
+  "title": "Categorieën"
 }

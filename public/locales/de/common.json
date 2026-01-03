@@ -80,6 +80,7 @@
     "import": "Importieren",
     "invite": "Einladen",
     "leave": "Verlassen",
+    "next": "Weiter",
     "reconnect": "Wieder verbinden",
     "save": "Speichern",
     "settle_up": "Ausgleichen",
@@ -110,7 +111,9 @@
     "choose_bank_provider": "Bankinstitut auswählen",
     "no_bank_providers_found": "Keine Bankinstitute gefunden.",
     "plaid": {
-      "bank_connected_successfully": "Bankinstitut erfolgreich verknüpft"
+      "bank_connected_successfully": "Bankinstitut erfolgreich verknüpft",
+      "bank_connection_cancelled": "",
+      "bank_connection_failed": ""
     },
     "search_bank": "Bank suchen",
     "select_bank_provider": "Bankinstitut auswählen",
@@ -128,6 +131,8 @@
   "errors": {
     "amount_required": "Betrag eingeben",
     "currency_conversion_error": "Fehler beim Einstellen der Währungsumrechnung",
+    "currency_conversion_failed": "",
+    "currency_conversion_malformed": "",
     "description_required": "Beschreibung eingeben",
     "email_invalid": "Ungüötige Mailadresse. Bitte starte den Anmeldevorgang neu",
     "email_required": "Email wird benötigt",
@@ -142,9 +147,12 @@
     "language_change_failed": "Fehler beim Ändern der Sprache",
     "less_than": "Datei sollte kleiner als",
     "name_required": "Name ist erforderlich",
+    "no_providers": "",
     "notification_not_supported": "Benachrichtigungen werden nicht unterstützt",
     "otp_invalid": "Ungültiges Einmalpassowrt",
     "otp_required": "Einmalpasswort wird benötigt",
+    "recurrence_delete_failed": "",
+    "recurrence_update_failed": "",
     "request_error": "Fehler bei der Anfrage der Benachrichtigung",
     "saving_expense": "Fehler beim Speichern der Ausgabe",
     "setting_update_failed": "Einstellung konnte nicht aktualisiert werden",
@@ -218,11 +226,20 @@
       "press_balance_info": "Drücke auf einen einzelnen Saldo, um die Abrechnung zu starten"
     },
     "bank_transactions": "Banktransaktionen",
+    "clear": "",
     "delete_expense_details": {
       "text": "Diese Aktion kann nicht rückgängig gemacht werden. Diese Ausgabe wird dauerhaft gelöscht.",
       "title": "Bist du dir absolut sicher?"
     },
+    "multiple_transactions": {
+      "add_all": "",
+      "add_one_by_one": "",
+      "description": "",
+      "title": ""
+    },
+    "no_transactions_yet": "",
     "pending": "Ausstehend",
+    "submit_all": "",
     "title": "Ausgabe hinzufügen",
     "title_mobile": "Hinzufügen"
   },
@@ -289,6 +306,7 @@
         "title": "Mitglied hinzufügen",
         "warning": "Warnung: Verwende 'Einladung senden' nicht bei ungültiger E-Mail. Nutze stattdessen 'Benutzer hinzufügen'. Dein Konto wird bei Missbrauch gesperrt."
       },
+      "invite_link": "",
       "no_members": "Diese Gruppe hat noch keine Mitglieder."
     },
     "tabs": {
@@ -318,18 +336,35 @@
   },
   "recurrence": {
     "cron_expression": "Cron-Ausdruck",
+    "days_of_month": "",
     "days_of_week": "Wochentage",
+    "delete_description": "",
+    "delete_title": "",
+    "derived_delete_warning": "",
+    "derived_edit_warning": "",
+    "description": "",
+    "edit_confirmation_title": "",
+    "edit_description": "",
+    "edit_title": "",
+    "empty": "",
     "expense_for_the_amount_of": "Ausgabe {{name}} in Höhe von {{amount}} {{currency}}",
+    "last_day": "",
     "months": "Monate",
     "never": "Kein Zeitplan festgelegt",
     "recurring": "Wiederkehrend",
     "schedule_type": {
+      "custom": "",
       "day": "Täglich",
       "month": "Monatlich",
+      "never": "",
       "week": "Wöchentlich",
       "year": "Jährlich"
     },
-    "time_of_day": "Tageszeit"
+    "template_delete_warning": "",
+    "template_edit_warning": "",
+    "time_of_day": "Tageszeit",
+    "title": "",
+    "view_recurring_page": ""
   },
   "ui": {
     "added_by": "Hinzugefügt von",
@@ -365,16 +400,20 @@
       }
     },
     "expense_details": "Ausgaben Details",
+    "in_group": "",
     "no_activity": "Noch keine Aktivitäten",
     "not_involved": "Nicht beteiligt",
     "on": "am",
     "or": "oder",
     "outstanding_balances": "Ausstehende Salden",
+    "select_balance": "",
     "select_currency": "Währung auswählen",
     "settle_up_name": "Ausgleichen",
     "settled_up": "Ausgeglichen",
     "settlement": "Ausgleich",
     "share_text": "Schau dir SplitPro an. Es ist eine kostenlose Open-Source-Alternative zu Splitwise.",
-    "today": "Heute"
+    "show_all_currencies": "",
+    "today": "Heute",
+    "total_balance": ""
   }
 }

@@ -80,6 +80,7 @@
     "import": "Importuj",
     "invite": "Zaproś",
     "leave": "Opuść",
+    "next": "",
     "reconnect": "Połącz ponownie",
     "save": "Zapisz",
     "settle_up": "Rozlicz",
@@ -130,6 +131,8 @@
   "errors": {
     "amount_required": "Kwota jest wymagana",
     "currency_conversion_error": "Błąd podczas ustawiania konwersji waluty",
+    "currency_conversion_failed": "",
+    "currency_conversion_malformed": "",
     "description_required": "Opis jest wymagany",
     "email_invalid": "Email jest nieprawidłowy, spróbuj ponownie proces logowania.",
     "email_required": "Email jest wymagany",
@@ -148,6 +151,8 @@
     "notification_not_supported": "Powiadomienia nie są obsługiwane",
     "otp_invalid": "Nieprawidłowy kod OTP",
     "otp_required": "Kod OTP jest wymagany",
+    "recurrence_delete_failed": "",
+    "recurrence_update_failed": "",
     "request_error": "Błąd podczas żądania powiadomienia",
     "saving_expense": "Błąd podczas zapisywania wydatku",
     "setting_update_failed": "Nie udało się zaktualizować ustawienia",
@@ -214,11 +219,13 @@
         "search_friends": "Szukaj znajomych, grup lub dodaj email"
       }
     },
+    "already_added": "",
     "balance_list": {
       "are_settled_up": "rozliczono",
       "is_settled_up": "rozliczono",
       "press_balance_info": "Naciśnij na poszczególne saldo aby rozpocząć rozliczenie"
     },
+    "bank_transactions": "",
     "clear": "Wyczyść",
     "delete_expense_details": {
       "text": "Ta akcja nie może być cofnięta. To trwale usunie twój wydatek.",
@@ -233,6 +240,15 @@
       "expense_details": "Szczegóły wydatku",
       "title": "Zaległe salda"
     },
+    "multiple_transactions": {
+      "add_all": "",
+      "add_one_by_one": "",
+      "description": "",
+      "title": ""
+    },
+    "no_transactions_yet": "",
+    "pending": "",
+    "submit_all": "",
     "title": "Dodaj wydatek",
     "title_mobile": "Dodaj"
   },
@@ -299,6 +315,7 @@
         "title": "Dodaj członków",
         "warning": "Ostrzeżenie: Nie używaj wysyłania zaproszenia, jeśli to nieprawidłowy email. Zamiast tego użyj dodaj do Split Pro. Twoje konto zostanie zablokowane, jeśli ta funkcja będzie nadużywana"
       },
+      "invite_link": "",
       "no_members": "Brak członków w grupie."
     },
     "tabs": {
@@ -323,7 +340,40 @@
     "add": "Dodaj",
     "add_expense": "Dodaj Wydatek",
     "balances": "Salda",
-    "groups": "Grupy"
+    "groups": "Grupy",
+    "recurring": ""
+  },
+  "recurrence": {
+    "cron_expression": "",
+    "days_of_month": "",
+    "days_of_week": "",
+    "delete_description": "",
+    "delete_title": "",
+    "derived_delete_warning": "",
+    "derived_edit_warning": "",
+    "description": "",
+    "edit_confirmation_title": "",
+    "edit_description": "",
+    "edit_title": "",
+    "empty": "",
+    "expense_for_the_amount_of": "",
+    "last_day": "",
+    "months": "",
+    "never": "",
+    "recurring": "",
+    "schedule_type": {
+      "custom": "",
+      "day": "",
+      "month": "",
+      "never": "",
+      "week": "",
+      "year": ""
+    },
+    "template_delete_warning": "",
+    "template_edit_warning": "",
+    "time_of_day": "",
+    "title": "",
+    "view_recurring_page": ""
   },
   "ui": {
     "added_by": "Dodane przez",
@@ -359,16 +409,20 @@
       }
     },
     "expense_details": "Szczegóły wydatku",
+    "in_group": "",
     "no_activity": "Brak aktywności",
     "not_involved": "Nie uczestniczy",
     "on": "dnia",
     "or": "lub",
     "outstanding_balances": "Zaległe salda",
+    "select_balance": "",
     "select_currency": "Wybierz walutę",
     "settle_up_name": "Rozlicz",
     "settled_up": "Rozliczone",
     "settlement": "Rozliczenie",
     "share_text": "Sprawdź SplitPro. To darmowa alternatywa open source dla Splitwise",
-    "today": "Dzisiaj"
+    "show_all_currencies": "",
+    "today": "Dzisiaj",
+    "total_balance": ""
   }
 }

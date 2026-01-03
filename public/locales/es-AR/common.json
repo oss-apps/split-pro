@@ -80,6 +80,7 @@
     "import": "Importar",
     "invite": "Invitar",
     "leave": "Salir",
+    "next": "",
     "reconnect": "Reconectar",
     "save": "Guardar",
     "settle_up": "Liquidar",
@@ -130,10 +131,13 @@
   "errors": {
     "amount_required": "La cantidad es requerida",
     "currency_conversion_error": "Error al configurar la conversión de moneda",
+    "currency_conversion_failed": "",
+    "currency_conversion_malformed": "",
     "email_invalid": "El correo electrónico no es válido, por favor, intentá el proceso de inicio de sesión de nuevo.",
     "email_required": "El correo electrónico es obligatorio",
     "feedback_min_length": "Los comentarios deben tener al menos 10 caracteres",
     "feedback_required": "Los comentarios son obligatorios",
+    "group_balances_malformed": "",
     "group_name_update_failed": "Error al actualizar el nombre del grupo",
     "import_failed": "Error al importar el archivo",
     "invalid_cron_expression": "Expresión cron inválida",
@@ -141,9 +145,12 @@
     "language_change_failed": "Error al cambiar el idioma",
     "less_than": "El archivo debe ser menor que",
     "name_required": "El nombre es requerido",
+    "no_providers": "",
     "notification_not_supported": "Las notificaciones no son compatibles",
     "otp_invalid": "OTP inválido",
     "otp_required": "El OTP es obligatorio",
+    "recurrence_delete_failed": "",
+    "recurrence_update_failed": "",
     "request_error": "Error al solicitar notificaciones",
     "saving_expense": "Error al guardar el gasto",
     "setting_update_failed": "Error al actualizar la configuración",
@@ -222,6 +229,12 @@
     "delete_expense_details": {
       "text": "Esta acción no se puede deshacer. Esto eliminará permanentemente tu gasto.",
       "title": "¿Estás absolutamente seguro?"
+    },
+    "multiple_transactions": {
+      "add_all": "",
+      "add_one_by_one": "",
+      "description": "",
+      "title": ""
     },
     "no_transactions_yet": "Sin transacciones aún",
     "pending": "Pendiente",
@@ -326,9 +339,17 @@
     "cron_expression": "Expresión Cron",
     "days_of_month": "Días del mes",
     "days_of_week": "Días de la semana",
+    "delete_description": "",
+    "delete_title": "",
+    "derived_delete_warning": "",
+    "derived_edit_warning": "",
     "description": "Configurá una recurrencia automática para este gasto.",
+    "edit_confirmation_title": "",
+    "edit_description": "",
+    "edit_title": "",
     "empty": "Sin gastos recurrentes aún",
     "expense_for_the_amount_of": "Gasto {{nombre}} por un monto de {{monto}} {{moneda}}",
+    "last_day": "",
     "months": "Meses",
     "never": "Sin agenda configurada",
     "recurring": "Recurrente",
@@ -340,8 +361,11 @@
       "week": "Semanalmente",
       "year": "Anualmente"
     },
+    "template_delete_warning": "",
+    "template_edit_warning": "",
     "time_of_day": "Hora del día",
-    "title": "Recurrencia"
+    "title": "Recurrencia",
+    "view_recurring_page": ""
   },
   "ui": {
     "added_by": "Agregado por",
@@ -383,11 +407,14 @@
     "on": "el",
     "or": "o",
     "outstanding_balances": "Saldos pendientes",
+    "select_balance": "",
     "select_currency": "Seleccionar moneda",
     "settle_up_name": "Liquidar",
     "settled_up": "Liquidado",
     "settlement": "Liquidación",
     "share_text": "Echale un vistazo a SplitPro. Es una alternativa gratuita de código abierto a Splitwise",
-    "today": "Hoy"
+    "show_all_currencies": "",
+    "today": "Hoy",
+    "total_balance": ""
   }
 }

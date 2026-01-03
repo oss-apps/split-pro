@@ -10,9 +10,13 @@
     },
     "debug_info": "Debug info",
     "debug_info_details": {
+      "copy_failed": "",
       "description": "Klistra in informationen nedan när du skapar en supportförfrågan:",
+      "git": "",
       "new_version_available": "En ny version finns tillgänglig:",
-      "title": "Debug Information"
+      "title": "Debug Information",
+      "user_agent": "",
+      "version": ""
     },
     "download_app": "Ladda ner app",
     "download_app_details": {
@@ -76,6 +80,7 @@
     "import": "Importera",
     "invite": "Bjud in",
     "leave": "Lämna",
+    "next": "",
     "reconnect": "Återanslut",
     "save": "Spara",
     "settle_up": "Gör kvitt",
@@ -125,19 +130,26 @@
   },
   "errors": {
     "currency_conversion_error": "Fel vid valutaomvandling",
+    "currency_conversion_failed": "",
+    "currency_conversion_malformed": "",
     "email_invalid": "Email är ogiltlig, försök igen.",
     "email_required": "Email krävs",
     "feedback_min_length": "Feedback måste vara minst 10 tecken",
     "feedback_required": "Feedback krävs",
+    "group_balances_malformed": "",
     "group_name_update_failed": "Fel vid uppdatering av gruppnamn",
     "import_failed": "Fel vid import",
+    "invalid_cron_expression": "",
     "invalid_currency_code": "Ogiltig valutakod {{code}}",
     "language_change_failed": "Fel vid ändring av språk",
     "less_than": "Filen ska vara mindre än",
     "name_required": "Namn krävs",
+    "no_providers": "",
     "notification_not_supported": "Notifikationer stöds inte",
     "otp_invalid": "Ogiltlig OTP",
     "otp_required": "OTP krävs",
+    "recurrence_delete_failed": "",
+    "recurrence_update_failed": "",
     "request_error": "Fel vid begäran om notifikationer",
     "saving_expense": "Fel vid sparande av utgift",
     "setting_update_failed": "Misslyckades med att uppdatera inställning",
@@ -320,7 +332,36 @@
     "recurring": "Återkommande"
   },
   "recurrence": {
-    "title": "Återkommande"
+    "cron_expression": "",
+    "days_of_month": "",
+    "days_of_week": "",
+    "delete_description": "",
+    "delete_title": "",
+    "derived_delete_warning": "",
+    "derived_edit_warning": "",
+    "description": "",
+    "edit_confirmation_title": "",
+    "edit_description": "",
+    "edit_title": "",
+    "empty": "",
+    "expense_for_the_amount_of": "",
+    "last_day": "",
+    "months": "",
+    "never": "",
+    "recurring": "",
+    "schedule_type": {
+      "custom": "",
+      "day": "",
+      "month": "",
+      "never": "",
+      "week": "",
+      "year": ""
+    },
+    "template_delete_warning": "",
+    "template_edit_warning": "",
+    "time_of_day": "",
+    "title": "Återkommande",
+    "view_recurring_page": ""
   },
   "ui": {
     "added_by": "Tillagd av",
@@ -356,16 +397,20 @@
       }
     },
     "expense_details": "Utgiftsdetaljer",
+    "in_group": "",
     "no_activity": "Inga aktiviteter än",
     "not_involved": "Inte involverad",
     "on": "på",
     "or": "eller",
     "outstanding_balances": "Saldon",
+    "select_balance": "",
     "select_currency": "Välj valuta",
     "settle_up_name": "Gör kvitt",
     "settled_up": "Kvitt",
     "settlement": "Kvittning",
     "share_text": "Kolla in SplitPro. Det är ett gratis open source-alternativ till Splitwise",
-    "today": "Idag"
+    "show_all_currencies": "",
+    "today": "Idag",
+    "total_balance": ""
   }
 }

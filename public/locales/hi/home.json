@@ -1,1 +1,74 @@
-{}
+{
+  "features": {
+    "bank_connection": {
+      "description": "",
+      "title": ""
+    },
+    "currency_conversion": {
+      "description": "",
+      "title": ""
+    },
+    "debt_simplification": {
+      "description": "",
+      "title": ""
+    },
+    "groups_and_friends": {
+      "description": "",
+      "title": ""
+    },
+    "i18": {
+      "description": "",
+      "title": ""
+    },
+    "import_splitwise": {
+      "description": "",
+      "title": ""
+    },
+    "multiple_currencies": {
+      "description": "",
+      "title": ""
+    },
+    "open_source": {
+      "description": "",
+      "title": ""
+    },
+    "push_notifications": {
+      "description": "",
+      "title": ""
+    },
+    "pwa_support": {
+      "description": "",
+      "title": ""
+    },
+    "title": "",
+    "unequal_split": {
+      "description": "",
+      "title": ""
+    },
+    "upload_receipts": {
+      "description": "",
+      "title": ""
+    }
+  },
+  "footer": {
+    "built_by": ""
+  },
+  "hero": {
+    "add_expense_button": "",
+    "star_github_button": "",
+    "subtitle_link": "",
+    "subtitle_part1": "",
+    "subtitle_part2": "",
+    "title_highlight": "",
+    "title_part1": ""
+  },
+  "meta": {
+    "description": "",
+    "title": ""
+  },
+  "nav": {
+    "app_name": "",
+    "privacy": "",
+    "terms": ""
+  }
+}

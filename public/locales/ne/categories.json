@@ -2,8 +2,85 @@
   "categories_list": {
     "entertainment": {
       "items": {
-        "games": "खेल"
-      }
+        "games": "खेल",
+        "movies": "",
+        "music": "",
+        "other": "",
+        "sports": ""
+      },
+      "name": ""
+    },
+    "food": {
+      "items": {
+        "diningOut": "",
+        "groceries": "",
+        "liquor": "",
+        "other": ""
+      },
+      "name": ""
+    },
+    "general": {
+      "items": {
+        "general": "",
+        "other": ""
+      },
+      "name": ""
+    },
+    "home": {
+      "items": {
+        "electronics": "",
+        "furniture": "",
+        "maintenance": "",
+        "mortgage": "",
+        "other": "",
+        "pets": "",
+        "rent": "",
+        "services": "",
+        "supplies": ""
+      },
+      "name": ""
+    },
+    "life": {
+      "items": {
+        "childcare": "",
+        "clothing": "",
+        "education": "",
+        "gifts": "",
+        "insurance": "",
+        "medical": "",
+        "other": "",
+        "taxes": ""
+      },
+      "name": ""
+    },
+    "travel": {
+      "items": {
+        "bicycle": "",
+        "bus": "",
+        "car": "",
+        "fuel": "",
+        "hotel": "",
+        "other": "",
+        "parking": "",
+        "plane": "",
+        "taxi": "",
+        "train": ""
+      },
+      "name": ""
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "",
+        "electricity": "",
+        "gas": "",
+        "internet": "",
+        "other": "",
+        "phone": "",
+        "trash": "",
+        "water": ""
+      },
+      "name": ""
     }
-  }
+  },
+  "title": ""
 }

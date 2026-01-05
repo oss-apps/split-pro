@@ -101,15 +101,18 @@ export const expenseRouter = createTRPCRouter({
     const friendIds = [...new Set([...aggregated.values()].map((b) => b.friendId))];
     const userMap = await getUserMap(friendIds);
 
-    const balancesByFriend = [...aggregated.values()].reduce<
-      Record<number, { currency: string; amount: bigint }[]>
-    >((acc, { friendId, currency, amount }) => {
-      if (!acc[friendId]) {
-        acc[friendId] = [];
-      }
-      acc[friendId]!.push({ currency, amount });
-      return acc;
-    }, {});
+    const balancesByFriend = [...aggregated.values()]
+      .filter((b) => b.amount !== 0n)
+      .reduce<Record<number, { currency: string; amount: bigint }[]>>(
+        (acc, { friendId, currency, amount }) => {
+          if (!acc[friendId]) {
+            acc[friendId] = [];
+          }
+          acc[friendId]!.push({ currency, amount });
+          return acc;
+        },
+        {},
+      );
 
     const balances = Object.entries(balancesByFriend)
       .map(([friendId, currencies]) => ({

@@ -17,6 +17,7 @@ import {
 import { Button } from '../ui/button';
 import { CronBuilder } from '../ui/cron-builder';
 import { AppDrawer } from '../ui/drawer';
+import { SimpleConfirmationDialog } from '../SimpleConfirmationDialog';
 
 interface EditRecurrenceDialogProps {
   recurrenceId: number;
@@ -89,25 +90,15 @@ export const EditRecurrenceDialog: React.FC<EditRecurrenceDialogProps> = ({
         <CronBuilder value={cronValue} onChange={setCronValue} />
       </AppDrawer>
 
-      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <AlertDialogContent className="max-w-xs rounded-lg">
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('recurrence.edit_title')}</AlertDialogTitle>
-            <AlertDialogDescription>{t('recurrence.edit_description')}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleCancel}>{t('actions.cancel')}</AlertDialogCancel>
-            <Button
-              size="sm"
-              disabled={updateMutation.isPending}
-              loading={updateMutation.isPending}
-              onClick={handleConfirm}
-            >
-              {t('actions.confirm')}
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <SimpleConfirmationDialog
+        open={confirmOpen}
+        title={t('recurrence.edit_title')}
+        description={t('recurrence.edit_description')}
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+        hasPermission
+        loading={updateMutation.isPending}
+      />
     </>
   );
 };

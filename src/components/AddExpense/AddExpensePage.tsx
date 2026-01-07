@@ -321,17 +321,13 @@ export const AddOrEditExpensePage: React.FC<{
             {amount && '' !== description ? (
               <>
                 <div className="flex flex-col items-center justify-center text-sm text-gray-400 sm:mt-4 sm:flex-row">
-                  <p>
-                    {t(`ui.expense.${isNegative ? 'received_by' : 'paid_by'}`, {
-                      ns: 'common',
-                    })}
-                  </p>
+                  <p>{t(`ui.expense.${isNegative ? 'received_by' : 'paid_by'}`)}</p>
                   <PayerSelectionForm>
                     <Button variant="ghost" className="text-primary h-8 px-1.5 py-0 text-base">
                       {displayName(paidBy, currentUser?.id, 'dativus')}
                     </Button>
                   </PayerSelectionForm>
-                  <p>{t('ui.and', { ns: 'common' })} </p>
+                  <p>{t('ui.and')} </p>
                   <SplitExpenseForm>
                     <Button variant="ghost" className="text-primary h-8 px-1.5 py-0 text-base">
                       {generateSplitDescription(

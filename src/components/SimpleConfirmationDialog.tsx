@@ -1,5 +1,5 @@
 import { type VariantProps } from 'class-variance-authority';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 
 import {
@@ -17,26 +17,43 @@ import { Button, type buttonVariants } from './ui/button';
 export const SimpleConfirmationDialog: React.FC<
   {
     title: string;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    onCancel?: () => void;
     description: React.ReactNode;
     hasPermission: boolean;
     onConfirm: () => void | Promise<void>;
     loading: boolean;
-    children: React.ReactNode;
+    children?: React.ReactNode;
   } & VariantProps<typeof buttonVariants>
-> = ({ title, description, hasPermission, onConfirm, loading, variant, children }) => {
+> = ({
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+  onCancel,
+  title,
+  description,
+  hasPermission,
+  onConfirm,
+  loading,
+  variant,
+  children,
+}) => {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = typeof controlledOpen === 'boolean';
+  const open = isControlled ? controlledOpen! : internalOpen;
+  const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      {children && <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>}
       <AlertDialogContent className="max-w-xs rounded-lg">
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>{t('actions.cancel')}</AlertDialogCancel>
+          <AlertDialogCancel onClick={onCancel}>{t('actions.cancel')}</AlertDialogCancel>
           {hasPermission && (
             <form
               onSubmit={async (e) => {

@@ -136,6 +136,18 @@ export {
   DrawerTrigger,
 };
 
+type AppDrawerMode = 'dialog' | 'drawer';
+const AppDrawerContext = React.createContext<AppDrawerMode | null>(null);
+
+export const AppDrawerClose: React.FC<React.ComponentProps<'button'>> = (props) => {
+  const mode = React.useContext(AppDrawerContext);
+
+  if ('dialog' === mode) {
+    return <DialogClose {...props} />;
+  }
+  return <DrawerClose {...props} />;
+};
+
 interface AppDrawerProps {
   children: React.ReactNode;
   trigger: React.ReactNode;
@@ -193,126 +205,130 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
 
   if (isDesktop) {
     return (
-      <Dialog open={open} onOpenChange={localOnOpenChange}>
-        <DialogTrigger
-          className="cursor-pointer focus:ring-0"
-          onClick={(e) => {
-            onTriggerClick?.(e);
-          }}
-          disabled={disableTrigger}
-          asChild
-        >
-          {trigger}
-        </DialogTrigger>
-        <DialogContent
-          onInteractOutside={(e) => {
-            if (false === dismissible) {
-              e.preventDefault();
-            }
-          }}
-        >
-          <DialogHeader className="mb-4">
-            <DialogTitle>{title}</DialogTitle>
-          </DialogHeader>
-          <div className="max-h-[60vh] overflow-auto px-1 py-1">{children}</div>
-          <DialogFooter className="mt-8 flex items-center gap-2">
-            {leftAction ? (
-              <Button
-                variant="secondary"
-                size="sm"
-                className="w-[100px]"
-                onClick={leftActionOnClick}
-                asChild={shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined}
-              >
-                {(shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined) ? (
-                  <DialogClose>{leftAction}</DialogClose>
-                ) : (
-                  leftAction
-                )}
-              </Button>
-            ) : null}
-            {actionTitle ? (
-              !shouldCloseOnAction ? (
+      <AppDrawerContext.Provider value="dialog">
+        <Dialog open={open} onOpenChange={localOnOpenChange}>
+          <DialogTrigger
+            className="cursor-pointer focus:ring-0"
+            onClick={(e) => {
+              onTriggerClick?.(e);
+            }}
+            disabled={disableTrigger}
+            asChild
+          >
+            {trigger}
+          </DialogTrigger>
+          <DialogContent
+            onInteractOutside={(e) => {
+              if (false === dismissible) {
+                e.preventDefault();
+              }
+            }}
+          >
+            <DialogHeader className="mb-4">
+              <DialogTitle>{title}</DialogTitle>
+            </DialogHeader>
+            <div className="max-h-[60vh] overflow-auto px-1 py-1">{children}</div>
+            <DialogFooter className="mt-8 flex items-center gap-2">
+              {leftAction ? (
                 <Button
-                  className="w-[100px]"
-                  onClick={actionOnClick}
-                  disabled={actionDisabled}
+                  variant="secondary"
                   size="sm"
+                  className="w-[100px]"
+                  onClick={leftActionOnClick}
+                  asChild={shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined}
                 >
-                  {actionTitle}
+                  {(shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined) ? (
+                    <DialogClose>{leftAction}</DialogClose>
+                  ) : (
+                    leftAction
+                  )}
                 </Button>
+              ) : null}
+              {actionTitle ? (
+                !shouldCloseOnAction ? (
+                  <Button
+                    className="w-[100px]"
+                    onClick={actionOnClick}
+                    disabled={actionDisabled}
+                    size="sm"
+                  >
+                    {actionTitle}
+                  </Button>
+                ) : (
+                  <DialogClose
+                    onClick={actionOnClick}
+                    className="bg-primary w-[100px] rounded-md py-2 text-sm text-black disabled:opacity-50"
+                    disabled={actionDisabled}
+                  >
+                    {actionTitle}
+                  </DialogClose>
+                )
               ) : (
-                <DialogClose
-                  onClick={actionOnClick}
-                  className="bg-primary w-[100px] rounded-md py-2 text-sm text-black disabled:opacity-50"
-                  disabled={actionDisabled}
-                >
-                  {actionTitle}
-                </DialogClose>
-              )
-            ) : (
-              <div className="w-10"> </div>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+                <div className="w-10"> </div>
+              )}
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </AppDrawerContext.Provider>
     );
   }
   return (
-    <Drawer open={open} onOpenChange={onOpenChange} dismissible={dismissible} onClose={onClose}>
-      <DrawerTrigger
-        className="flex items-center justify-center gap-2 text-center text-sm focus:ring-0 focus:outline-hidden"
-        onClick={onTriggerClick}
-        asChild
-      >
-        {trigger}
-      </DrawerTrigger>
-      <DrawerContent className={className}>
-        <div className="overflow-auto p-4 pt-2">
-          <div className="mb-4 flex items-center justify-between">
-            {leftAction ? (
-              <Button
-                variant="ghost"
-                className="text-primary px-0 text-left"
-                onClick={leftActionOnClick}
-                asChild={shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined}
-              >
-                {(shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined) ? (
-                  <DrawerClose>{leftAction}</DrawerClose>
-                ) : (
-                  leftAction
-                )}
-              </Button>
-            ) : (
-              <div className="w-10" />
-            )}
-            <p>{title}</p>
-            {actionTitle ? (
-              !shouldCloseOnAction ? (
+    <AppDrawerContext.Provider value="drawer">
+      <Drawer open={open} onOpenChange={onOpenChange} dismissible={dismissible} onClose={onClose}>
+        <DrawerTrigger
+          className="flex items-center justify-center gap-2 text-center text-sm focus:ring-0 focus:outline-hidden"
+          onClick={onTriggerClick}
+          asChild
+        >
+          {trigger}
+        </DrawerTrigger>
+        <DrawerContent className={className}>
+          <div className="overflow-auto p-4 pt-2">
+            <div className="mb-4 flex items-center justify-between">
+              {leftAction ? (
                 <Button
                   variant="ghost"
-                  className="text-primary px-0 py-2"
-                  onClick={actionOnClick}
-                  disabled={actionDisabled}
+                  className="text-primary px-0 text-left"
+                  onClick={leftActionOnClick}
+                  asChild={shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined}
                 >
-                  {actionTitle}
+                  {(shouldCloseOnLeftAction ?? shouldCloseOnLeftAction === undefined) ? (
+                    <DrawerClose>{leftAction}</DrawerClose>
+                  ) : (
+                    leftAction
+                  )}
                 </Button>
               ) : (
-                <DrawerClose
-                  onClick={actionOnClick}
-                  className="text-primary py-2 text-sm font-medium disabled:opacity-50"
-                  disabled={actionDisabled}
-                >
-                  {actionTitle}
-                </DrawerClose>
-              )
-            ) : (
-              <div className="w-10"> </div>
-            )}
+                <div className="w-10" />
+              )}
+              <p>{title}</p>
+              {actionTitle ? (
+                !shouldCloseOnAction ? (
+                  <Button
+                    variant="ghost"
+                    className="text-primary px-0 py-2"
+                    onClick={actionOnClick}
+                    disabled={actionDisabled}
+                  >
+                    {actionTitle}
+                  </Button>
+                ) : (
+                  <DrawerClose
+                    onClick={actionOnClick}
+                    className="text-primary py-2 text-sm font-medium disabled:opacity-50"
+                    disabled={actionDisabled}
+                  >
+                    {actionTitle}
+                  </DrawerClose>
+                )
+              ) : (
+                <div className="w-10"> </div>
+              )}
+            </div>
+            <div>{children}</div>
           </div>
-          <div>{children}</div>
-        </div>
-      </DrawerContent>
-    </Drawer>
+        </DrawerContent>
+      </Drawer>
+    </AppDrawerContext.Provider>
   );
 };

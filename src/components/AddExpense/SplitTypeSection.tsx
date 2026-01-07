@@ -21,7 +21,7 @@ import type { CurrencyCode } from '~/lib/currency';
 import { cn } from '~/lib/utils';
 import { EntityAvatar } from '../ui/avatar';
 import { CurrencyInput } from '../ui/currency-input';
-import { AppDrawer, DrawerClose } from '../ui/drawer';
+import { AppDrawer, AppDrawerClose } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Button } from '../ui/button';
@@ -56,13 +56,13 @@ const PayerRow = ({ p, isPaying }: { p: Participant; isPaying: boolean }) => {
   const onClick = useCallback(() => setPaidBy(p), [p, setPaidBy]);
 
   return (
-    <DrawerClose className="flex items-center justify-between px-2" onClick={onClick}>
+    <AppDrawerClose className="flex items-center justify-between px-2" onClick={onClick}>
       <div className="flex items-center gap-1">
         <EntityAvatar entity={p} size={30} />
         <p className="ml-4">{displayName(p, currentUser?.id)}</p>
       </div>
       {isPaying ? <Check className="h-6 w-6 text-cyan-500" /> : null}
-    </DrawerClose>
+    </AppDrawerClose>
   );
 };
 

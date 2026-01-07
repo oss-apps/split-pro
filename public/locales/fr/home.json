@@ -40,6 +40,10 @@
       "description": "Tu aimes avoir l'app sur mobile ? Pas de souci : tu peux mettre un raccourci et ça fonctionne pareil !",
       "title": "App PWA (Appli Web Progressive)"
     },
+    "recurring_transactions": {
+      "description": "Enregistre des dépenses récurrentes pour tes abonnements, ton loyer ou n'importe quelle dépense régulière à partager.",
+      "title": "Dépenses récurrentes"
+    },
     "title": "Fonctionnalités",
     "unequal_split": {
       "description": "Des options de répartition des dépenses avancée. Par parts, pourcentages, ou montants précis, avec possibilité d'ajustement manuel.",

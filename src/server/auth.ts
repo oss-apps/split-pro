@@ -34,27 +34,26 @@ declare module 'next-auth' {
 }
 
 const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapter => {
-  const prismaAdapter = PrismaAdapter(...args)
+  const prismaAdapter = PrismaAdapter(...args);
 
   return {
     ...prismaAdapter,
     createUser: async (user: Omit<AdapterUser, 'id'>): Promise<AdapterUser> => {
-      const prismaCreateUser = prismaAdapter.createUser
+      const prismaCreateUser = prismaAdapter.createUser;
 
       if (env.INVITE_ONLY) {
-        throw new Error("This instance is Invite Only")
+        throw new Error('This instance is Invite Only');
       }
 
       if (!prismaCreateUser) {
         // This should never happen but typing says it's possible.
-        throw new Error("Prisma Adapter lacks User Creation")
+        throw new Error('Prisma Adapter lacks User Creation');
       }
 
-      return prismaCreateUser(user)
+      return prismaCreateUser(user);
     },
-  }
-}
-
+  };
+};
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -157,6 +156,56 @@ function getProviders() {
           },
         },
         async sendVerificationRequest({ identifier: email, url, token }) {
+          // Check if user already exists - allow existing users to sign in
+          const existingUser = await db.user.findUnique({
+            where: { email: email.toLowerCase() },
+          });
+
+          // Only block certain email domains for NEW signups, not existing users
+          if (!existingUser) {
+            const emailDomain = email.split('@')[1]?.toLowerCase() ?? '';
+
+            const blockedEmailDomains = [
+              // Yahoo domains
+              'yahoo.com',
+              'yahoo.co.uk',
+              'yahoo.co.in',
+              'yahoo.ca',
+              'yahoo.com.au',
+              'yahoo.fr',
+              'yahoo.de',
+              'yahoo.es',
+              'yahoo.it',
+              'yahoo.co.jp',
+              'ymail.com',
+              'rocketmail.com',
+              'yahoo.in',
+              'yahoo.com.br',
+              'att.net',
+              'aol.com',
+              // Hotmail/Outlook domains
+              'hotmail.com',
+              'hotmail.co.uk',
+              'hotmail.fr',
+              'hotmail.de',
+              'hotmail.it',
+              'hotmail.es',
+              'hotmail.ca',
+              'outlook.com',
+              'outlook.in',
+              'live.com',
+              'live.co.uk',
+              'msn.com',
+              'windowslive.com',
+            ];
+
+            if (blockedEmailDomains.includes(emailDomain)) {
+              throw new Error(
+                'This email domain is not supported for signup. Please use Google login instead.',
+              );
+            }
+          }
+
           const result = await sendSignUpEmail(email, token, url);
           if (!result) {
             throw new Error('Failed to send email');
@@ -175,11 +224,11 @@ function getProviders() {
         clientId: env.AUTHENTIK_ID,
         clientSecret: env.AUTHENTIK_SECRET,
         issuer: env.AUTHENTIK_ISSUER,
-		allowDangerousEmailAccountLinking: true,
-      })
+        allowDangerousEmailAccountLinking: true,
+      }),
     );
   }
-  
+
   return providersList;
 }
 

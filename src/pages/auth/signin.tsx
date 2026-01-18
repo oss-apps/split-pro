@@ -59,13 +59,13 @@ const providerSvgs = {
     </svg>
   ),
   authentik: (
-    <svg 
-	  xmlns="http://www.w3.org/2000/svg"
-	  viewBox="0 0 25 25" 
-	  className="h-4 w-4  fill-primary-foreground"
-	>
-		<path d="M13.96 9.01h-0.84V7.492h-1.234v3.663H5.722c0.34 0.517 0.538 0.982 0.538 1.152 0 0.46 -1.445 3.059 -3.197 3.059C0.8 15.427 -0.745 12.8 0.372 10.855a3.062 3.062 0 0 1 2.691 -1.606c1.04 0 1.971 0.915 2.557 1.755V6.577a3.773 3.773 0 0 1 3.77 -3.769h10.84C22.31 2.808 24 4.5 24 6.577v10.845a3.773 3.773 0 0 1 -3.77 3.769h-1.6V17.5h-7.64v3.692h-1.6a3.773 3.773 0 0 1 -3.77 -3.769v-3.41h12.114v-6.52h-1.59v0.893h-0.84v-0.893H13.96v1.516Zm-9.956 1.845c-0.662 -0.703 -1.578 -0.544 -2.209 0 -2.105 2.054 1.338 5.553 3.302 1.447a5.395 5.395 0 0 0 -1.093 -1.447Z"/>
-	</svg>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 25 25"
+      className="h-4 w-4  fill-primary-foreground"
+    >
+      <path d="M13.96 9.01h-0.84V7.492h-1.234v3.663H5.722c0.34 0.517 0.538 0.982 0.538 1.152 0 0.46 -1.445 3.059 -3.197 3.059C0.8 15.427 -0.745 12.8 0.372 10.855a3.062 3.062 0 0 1 2.691 -1.606c1.04 0 1.971 0.915 2.557 1.755V6.577a3.773 3.773 0 0 1 3.77 -3.769h10.84C22.31 2.808 24 4.5 24 6.577v10.845a3.773 3.773 0 0 1 -3.77 3.769h-1.6V17.5h-7.64v3.692h-1.6a3.773 3.773 0 0 1 -3.77 -3.769v-3.41h12.114v-6.52h-1.59v0.893h-0.84v-0.893H13.96v1.516Zm-9.956 1.845c-0.662 -0.703 -1.578 -0.544 -2.209 0 -2.105 2.054 1.338 5.553 3.302 1.447a5.395 5.395 0 0 0 -1.093 -1.447Z" />
+    </svg>
   ),
 };
 
@@ -73,7 +73,8 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
   providers,
   feedbackEmail,
 }) => {
-  const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
+  const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [emailError, setEmailError] = useState<string>('');
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),
@@ -85,7 +86,18 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
 
   async function onEmailSubmit(values: z.infer<typeof emailSchema>) {
     setEmailStatus('sending');
-    await signIn('email', { email: values.email.toLowerCase(), redirect: false });
+    setEmailError('');
+
+    const email = values.email.toLowerCase();
+
+    const result = await signIn('email', { email, redirect: false });
+
+    if (result?.error) {
+      setEmailError(result.error);
+      setEmailStatus('error');
+      return;
+    }
+
     setEmailStatus('success');
   }
 
@@ -131,7 +143,20 @@ const Home: NextPage<{ feedbackEmail: string; providers: ClientSafeProvider[] }>
             </div>
           )}
           {providers.find((provider) => provider.id === 'email') ? (
-            emailStatus === 'success' ? (
+            emailStatus === 'error' ? (
+              <>
+                <p className="mt-6 w-[300px] text-center text-sm text-red-500">{emailError}</p>
+                <Button
+                  className="mt-4 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
+                  onClick={() => {
+                    setEmailStatus('idle');
+                    setEmailError('');
+                  }}
+                >
+                  Try again
+                </Button>
+              </>
+            ) : emailStatus === 'success' ? (
               <>
                 <p className="mt-6 w-[300px] text-center text-sm">
                   We have sent an email with the OTP. Please check your inbox

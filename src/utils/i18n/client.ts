@@ -15,4 +15,5 @@ export const getSupportedLanguages = (): SupportedLanguage[] => [
   { code: 'es-MX', name: 'Español (Mexico)' },
   { code: 'es-AR', name: 'Español (Argentina)' },
   { code: 'sv', name: 'Svenska' },
+  { code: 'hu', name: 'Magyar' },
 ];

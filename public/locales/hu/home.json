@@ -1,0 +1,78 @@
+{
+  "features": {
+    "bank_connection": {
+      "description": "Gyorsabban hozzáadhatsz költségeket a GoCardless vagy a Plaid bankszámla-tranzakciók API-jához való integrációval",
+      "title": "Banki kapcsolat"
+    },
+    "currency_conversion": {
+      "description": "Gyorsan válthatsz különböző pénznemek között naprakész vagy korábbi árfolyamok segítségével",
+      "title": "Pénznem átváltása"
+    },
+    "debt_simplification": {
+      "description": "Csoportos adósságok automatikus egyszerűsítése a barátok közötti tranzakciók számának csökkentése érdekében",
+      "title": "Adósság egyszerűsítése"
+    },
+    "groups_and_friends": {
+      "description": "Több csoportot is létrehozhatsz, vagy közvetlenül hozzáadhatod az egyenleget. Minden összevonásra kerül",
+      "title": "Csoportok és barátok"
+    },
+    "i18": {
+      "description": "Több nyelven is elérhető, így a költségmegosztás világszerte elérhető",
+      "title": "Nemzetközivé válás"
+    },
+    "import_splitwise": {
+      "description": "Nem kell manuálisan migrálni az egyenlegeket. Importálhatsz felhasználókat és csoportokat a Splitwise-ból",
+      "title": "Importálás a Splitwise-ból"
+    },
+    "multiple_currencies": {
+      "description": "Különböző pénznemben kell hozzáadni a költséget ugyanahhoz a felhasználóhoz? Nem probléma!",
+      "title": "Több pénznem"
+    },
+    "open_source": {
+      "description": "Ami megnehezíti a gonosszá válást. Könnyen telepíthető saját szerverre",
+      "title": "Nyílt forráskódú"
+    },
+    "push_notifications": {
+      "description": "Soha ne maradj le a fontos értesítésekről. Értesítést kapsz, ha valaki hozzáad egy költséget vagy kiegyenlíti a számládat",
+      "title": "Push értesítés"
+    },
+    "pwa_support": {
+      "description": "Imádod a mobilalkalmazásokat? Mi segítünk. Telepítsd PWA-ként, és észre sem veszed!",
+      "title": "PWA támogatás"
+    },
+    "recurring_transactions": {
+      "description": "Állíts be automatikus ismétlődő költségeket bérleti díjra, előfizetésekre vagy bármilyen rendszeres megosztott költségre",
+      "title": "Ismétlődő tranzakciók"
+    },
+    "title": "Jellemzők",
+    "unequal_split": {
+      "description": "Speciális megosztási lehetőségek. Részesedések, százalékos arány vagy pontos összegek szerint.",
+      "title": "Egyenlőtlen megosztás"
+    },
+    "upload_receipts": {
+      "description": "Töltsd fel a nyugtákat a költségekkel együtt",
+      "title": "Nyugták feltöltése"
+    }
+  },
+  "footer": {
+    "built_by": "Építette"
+  },
+  "hero": {
+    "add_expense_button": "Költség hozzáadása",
+    "star_github_button": "Adj csillagot a GitHubon",
+    "subtitle_link": "nyílt forráskódú",
+    "subtitle_part1": "Egy",
+    "subtitle_part2": "Splitwise alternatíva",
+    "title_highlight": "ingyenes",
+    "title_part1": "Oszd meg a költségeidet a barátaiddal"
+  },
+  "meta": {
+    "description": "SplitPro: Oszd meg a költségeidet a barátaiddal ingyen",
+    "title": "SplitPro: Oszd meg költségeidet a barátaiddal ingyen"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "privacy": "Adatvédelem",
+    "terms": "Feltételek"
+  }
+}

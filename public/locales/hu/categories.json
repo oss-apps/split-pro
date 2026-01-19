@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Játékok",
+        "movies": "Filmek",
+        "music": "Zene",
+        "other": "Szórakozás",
+        "sports": "Sport"
+      },
+      "name": "Szórakozás"
+    },
+    "food": {
+      "items": {
+        "diningOut": "Éttermi étkezés",
+        "groceries": "Élelmiszer",
+        "liquor": "Szeszes ital",
+        "other": "Ételek és italok"
+      },
+      "name": "Ételek és italok"
+    },
+    "general": {
+      "items": {
+        "general": "Általános",
+        "other": "Általános"
+      },
+      "name": "Általános"
+    },
+    "home": {
+      "items": {
+        "electronics": "Elektronika",
+        "furniture": "Bútor",
+        "maintenance": "Karbantartás",
+        "mortgage": "Jelzálog",
+        "other": "Otthon",
+        "pets": "Háziállatok",
+        "rent": "Lakbér",
+        "services": "Szolgáltatások",
+        "supplies": "Készletek"
+      },
+      "name": "Otthon"
+    },
+    "life": {
+      "items": {
+        "childcare": "Gyermekfelügyelet",
+        "clothing": "Ruházat",
+        "education": "Oktatás",
+        "gifts": "Ajándékok",
+        "insurance": "Biztosítás",
+        "medical": "Gyógyászat",
+        "other": "Élet",
+        "taxes": "Adók"
+      },
+      "name": "Élet"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "Kerékpár",
+        "bus": "Autóbusz",
+        "car": "Autó",
+        "fuel": "Üzemanyag",
+        "hotel": "Szálloda",
+        "other": "Utazás",
+        "parking": "Parkolás",
+        "plane": "Repülőgép",
+        "taxi": "Taxi",
+        "train": "Vonat"
+      },
+      "name": "Utazás"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "Takarítás",
+        "electricity": "Áram",
+        "gas": "Gáz",
+        "internet": "Internet",
+        "other": "Közművek",
+        "phone": "Telefon",
+        "trash": "Szemét",
+        "water": "Víz"
+      },
+      "name": "Közművek"
+    }
+  },
+  "title": "Kategóriák"
+}

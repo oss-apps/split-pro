@@ -1,0 +1,416 @@
+{
+  "account": {
+    "change_language": "Nyelv módosítása",
+    "change_language_details": {
+      "messages": {
+        "language_changed": "A nyelv sikeresen megváltoztatva"
+      },
+      "placeholder": "Válassz nyelvet",
+      "title": "Válassz nyelvet"
+    },
+    "debug_info": "Hibakeresési infó",
+    "debug_info_details": {
+      "copy_failed": "Nem sikerült a hibakeresési információkat a vágólapra másolni",
+      "description": "Illesszd be az alábbi információkat a támogatási kérelem létrehozásakor:",
+      "git": "Git",
+      "new_version_available": "Új verzió érhető el:",
+      "title": "Hibakeresési információ",
+      "user_agent": "Felhasználói ügynök",
+      "version": "Verzió"
+    },
+    "download_app": "Alkalmazás letöltése",
+    "download_app_details": {
+      "download_as_pwa": "A SplitPro-t PWA-ként letöltheted a kezdőképernyődre.",
+      "title": "Alkalmazás letöltése",
+      "using_android": "Ha Androidot használsz, nézd meg ezt",
+      "using_ios": "Ha iOS-t használsz, nézd meg ezt",
+      "video": "videó"
+    },
+    "download_splitpro_data": "SplitPro adatok letöltése",
+    "edit_name": {
+      "placeholder": "Írd be a neved",
+      "title": "Név szerkesztése"
+    },
+    "follow_on_x": "Kövess minket az X-en",
+    "import_from_splitwise": "Importálás a Splitwise-ból",
+    "import_from_splitwise_details": {
+      "choose_file": "Fájl kiválasztása",
+      "export_splitwise_data_button": "Splitwise adatok exportálása",
+      "follow_to_export_splitwise_data": "Kövesd ezt a linket a Splitwise adatok exportálásához",
+      "messages": {
+        "import_success": "Importálás sikeres"
+      },
+      "no_file_chosen": "Nincs kiválasztott fájl",
+      "note": "Megjegyzés: Jelenleg csak a barátok és csoportok importálását támogatja. Tranzakciókat nem fog importálni. Dolgozunk rajta."
+    },
+    "logout": "Kijelentkezés",
+    "messages": {
+      "submit_error": "Nem sikerült elküldeni a visszajelzést",
+      "submit_success": "Visszajelzés elküldve"
+    },
+    "notifications": {
+      "disable_notification": "Értesítések letiltása",
+      "enable_notification": "Értesítések engedélyezése",
+      "messages": {
+        "notification_granted": "Mostantól értesítéseket fogsz kapni"
+      }
+    },
+    "star_on_github": "Adj csillagot a GitHubon",
+    "submit_feedback": "Visszajelzés küldése",
+    "submit_feedback_details": {
+      "placeholder": "Írd be a visszajelzésed",
+      "title": "Visszajelzés küldése"
+    },
+    "support_us": "Támogass minket",
+    "title": "Fiók",
+    "write_review": "Írj véleményt"
+  },
+  "actions": {
+    "add_expense": "Költség hozzáadása",
+    "back": "Vissza",
+    "cancel": "Mégsem",
+    "close": "Bezárás",
+    "confirm": "Megerősítés",
+    "connect": "Csatlakozás",
+    "copy": "Másolás",
+    "create": "Létrehozás",
+    "edit_expense": "Költség szerkesztése",
+    "export": "Exportálás",
+    "fetch": "Lehívás",
+    "import": "Importálás",
+    "invite": "Meghívás",
+    "leave": "Kilépés",
+    "next": "Következő",
+    "reconnect": "Újracsatlakozás",
+    "save": "Mentés",
+    "settle_up": "Kiegyenlítés",
+    "submit": "Küldés"
+  },
+  "actors": {
+    "all": "Mind",
+    "friends": "Barátok",
+    "groups": "Csoportok",
+    "members": "Tagok",
+    "owner": "Tulajdonos",
+    "you": "Te",
+    "you_accusativus": "Te",
+    "you_dativus": "Te"
+  },
+  "auth": {
+    "continue_with": "Folytatás ezzel: {{provider}}",
+    "email_placeholder": "Add meg az e-mail címed",
+    "no_providers_configured": "Nincsenek konfigurált hitelesítési szolgáltatók",
+    "no_providers_instructions": "Kérjük, konfigurálj legalább egy hitelesítési szolgáltatót a bejelentkezéshez. Lásd a",
+    "otp_sent": "Elküldtünk egy e-mailt az OTP-vel. Kérjük, ellenőrizd a beérkező leveleidet, és kattints az e-mailben található linkre a bejelentkezéshez.",
+    "send_magic_link": "Magic Link küldése",
+    "sending": "Küldés...",
+    "setup_instructions": "Docker beállítási utasítások",
+    "trouble_logging_in": "Problémád van a bejelentkezéssel? Lépj kapcsolatba"
+  },
+  "bank_transactions": {
+    "choose_bank_provider": "Válassz banki szolgáltatót",
+    "no_bank_providers_found": "Nem található banki szolgáltató",
+    "plaid": {
+      "bank_connected_successfully": "Bank sikeresen összekapcsolva",
+      "bank_connection_cancelled": "Banki kapcsolat megszakítva",
+      "bank_connection_failed": "Nem sikerült csatlakozni a bankhoz"
+    },
+    "search_bank": "Bank keresése",
+    "select_bank_provider": "Banki szolgáltató kiválasztása",
+    "to_bank": "bankba"
+  },
+  "currency_conversion": {
+    "amount_to_receive": "Kapandó összeg",
+    "description": "Váltsd át az összeget egy másik pénznemre.",
+    "exchange_rate": "Árfolyam",
+    "fetching_rate": "Árfolyam lekérése...",
+    "rate": "Arány",
+    "success_toast": "A pénznemváltás sikeresen beállítva",
+    "title": "Pénznemváltás"
+  },
+  "errors": {
+    "currency_conversion_error": "Hiba a pénznemátváltás beállításakor",
+    "currency_conversion_failed": "Nem sikerült átváltani a pénznemet",
+    "currency_conversion_malformed": "A pénznemátváltási adatok hibásak",
+    "email_invalid": "Az e-mail cím érvénytelen, kérjük, próbáld újra a bejelentkezési folyamatot.",
+    "email_required": "E-mail cím megadása kötelező",
+    "feedback_min_length": "A visszajelzésnek legalább 10 karakterből kell állnia",
+    "feedback_required": "Visszajelzés szükséges",
+    "group_balances_malformed": "A csoportegyenlegek adatai hibásak, kérjük, jelentsd a problémát, vagy próbáld meg az újraszámolást.",
+    "group_name_update_failed": "Hiba a csoport nevének frissítésekor",
+    "import_failed": "Hiba a fájl importálása során",
+    "invalid_cron_expression": "Érvénytelen cron kifejezés",
+    "invalid_currency_code": "Érvénytelen pénznemkód {{code}}",
+    "language_change_failed": "Hiba a nyelv módosításakor",
+    "less_than": "A fájlnak kisebbnek kell lennie, mint",
+    "name_required": "Név megadása kötelező",
+    "no_providers": "Hiba történt a hitelesítési szolgáltatók lekérésekor. Kérjük, ellenőrizd a háttérnaplókat.",
+    "notification_not_supported": "Az értesítések nem támogatottak",
+    "otp_invalid": "Érvénytelen OTP",
+    "otp_required": "OTP megadása kötelező",
+    "recurrence_delete_failed": "Nem sikerült törölni az ismétlődést",
+    "recurrence_update_failed": "Nem sikerült frissíteni az ismétlődést",
+    "request_error": "Hiba az értesítés kérése során",
+    "saving_expense": "Hiba a költség mentése közben",
+    "setting_update_failed": "Nem sikerült frissíteni a beállítást",
+    "signin_error": "Hiba történt bejelentkezés közben: ",
+    "signup_disabled": "Új fiókok regisztrációja ebben az esetben le van tiltva",
+    "something_went_wrong": "Valami hiba történt",
+    "subscribe_error": "Nem lehet feliratkozni az értesítésekre",
+    "unsubscribe_error": "Hiba az értesítésekről történő leiratkozáskor",
+    "upload_failed": "Nem sikerült feltölteni a fájlt",
+    "uploading_error": "Nem sikerült feltölteni a fájlt",
+    "valid_email": "Adj meg érvényes e-mail címet"
+  },
+  "expense_details": {
+    "add_expense": "Költség hozzáadása",
+    "add_expense_details": {
+      "add_new_expense": "Új költség hozzáadása",
+      "amount_placeholder": "Add meg az összeget",
+      "description_placeholder": "Írd be a leírást",
+      "pick_a_date": "Válassz egy dátumot",
+      "select_user_or_group": {
+        "add_to_split_pro": "Hozzáadás a SplitPro-hoz",
+        "note": "Megjegyzés: a meghívó küldése jelenleg le van tiltva a spam miatt",
+        "only_one_group_time": "Egyszerre csak egy csoportod lehet",
+        "send_invite": "Meghívó küldése felhasználónak",
+        "warning": "Figyelmeztetés: Ne használd a „meghívó küldése” funkciót, ha érvénytelen az e-mail cím. Helyette használd a „hozzáadás a SplitPro-hoz” funkciót. Fiókod blokkolásra kerül, ha ezt a funkciót nem rendeltetésszerűen használod"
+      },
+      "split_type_section": {
+        "split_equally": "egyenlően elosztva",
+        "split_unequally": "egyenlőtlenül oszlik meg",
+        "types": {
+          "adjustment": {
+            "remaining_to_split_equally": "Hátralévő rész, amit egyenlően kell elosztani",
+            "title": "Beállítás"
+          },
+          "equal": {
+            "per_person": "személyenként",
+            "title": "Egyenlő"
+          },
+          "exact": {
+            "remaining": "Maradék",
+            "title": "Pontos"
+          },
+          "percentage": {
+            "remaining": "Maradék",
+            "title": "Százalék"
+          },
+          "share": {
+            "shares": "Megosztás(ok)",
+            "title": "Megosztás",
+            "total_shares": "Összes megosztás"
+          }
+        }
+      },
+      "sponsor_us": "Támogass minket",
+      "upload_file": {
+        "messages": {
+          "upload_success": "Fájl sikeresen feltöltve"
+        }
+      },
+      "user_input": {
+        "add_more_friends": "Barátok, csoportok keresése vagy e-mail cím hozzáadása",
+        "cannot_change_group": "Szerkesztés közben nem lehet csoportot váltani",
+        "remove_group": "A csoport eltávolításához nyomd meg a törlés gombot",
+        "search_friends": "Barátok, csoportok keresése vagy e-mail cím hozzáadása"
+      }
+    },
+    "already_added": "Már hozzáadva",
+    "balance_list": {
+      "are_settled_up": "kiegyenlítve",
+      "is_settled_up": "kiegyenlítve",
+      "press_balance_info": "Nyomd meg az egyéni egyenleget a kiegyenlítés megkezdéséhez"
+    },
+    "bank_transactions": "Banki tranzakciók",
+    "clear": "Tisztítás",
+    "delete_expense_details": {
+      "text": "Ez a művelet nem vonható vissza. Ezzel véglegesen törlöd a költséget.",
+      "title": "Teljesen biztos vagy benne?"
+    },
+    "multiple_transactions": {
+      "add_all": "Összes hozzáadása",
+      "add_one_by_one": "Hozzáadás egyenként",
+      "description": "Több tranzakciót választottál ki. Válaszd ki, hogy az aktuális felosztási beállításokkal együtt szeretnéd-e hozzáadni őket, vagy egyenként módosítsd a beállításokat.",
+      "title": "Több tranzakció hozzáadása"
+    },
+    "no_transactions_yet": "Még nincsenek tranzakciók",
+    "pending": "Függőben",
+    "submit_all": "Összes beküldése",
+    "title": "Költség hozzáadása",
+    "title_mobile": "Hozzáadás"
+  },
+  "group_details": {
+    "add_members": "Tagok hozzáadása",
+    "copied": "Másolva",
+    "create_group": {
+      "group_name_placeholder": "Csoport neve",
+      "title": "Csoport létrehozása"
+    },
+    "group_info": {
+      "actions": "Műveletek",
+      "archive_group": "Csoport archiválása",
+      "archive_group_details": {
+        "can_archive": "Ez a csoport archiválva lesz, és rejtve lesz a fő csoportok listájából. Szükség esetén később is hozzáférhetsz.",
+        "cant_archive": "Nem lehet archiválni a rendezetlen egyenlegekkel rendelkező csoportot. Minden egyenleget először rendezni kell.",
+        "title": "Biztosan archiválni szeretnéd ezt a csoportot?"
+      },
+      "archived": "Archiválva",
+      "delete_group": "Csoport törlése",
+      "delete_group_details": {
+        "can_delete": "Ez a művelet nem vonható vissza",
+        "cant_delete": "A csoportot nem lehet törölni, amíg mindenki nem rendezi a fennmaradó összeget.",
+        "title": "Teljesen biztos vagy benne?"
+      },
+      "group_created": "Csoport létrehozva",
+      "leave_group": "Kilépés a csoportból",
+      "leave_group_details": {
+        "can_leave": "Ez a művelet nem vonható vissza",
+        "cant_leave": "Nem hagyhatod el a csoportot, amíg a fennálló tartozást nem rendezted",
+        "title": "Teljesen biztos vagy benne?"
+      },
+      "members": "Tagok",
+      "recalculate_balances": "Egyenlegek újraszámítása",
+      "recalculate_balances_details": {
+        "description": "Ha az egyenlegek nem egyeznek meg a kiadásokkal, újraszámolhatod őket. Vedd figyelembe, hogy ez eltarthat egy ideig, ha a kiadások száma nagy. A csoporton kívüli egyenlegeket ez nem érinti.",
+        "title": "Biztos vagy benne?"
+      },
+      "remove_member_details": {
+        "can_remove": "Arra készülsz, hogy eltávolítsd ezt a tagot a csoportból",
+        "cant_remove": "Nem lehet eltávolítani a tagot, amíg a fennálló tartozását ki nem egyenlítette",
+        "title": "Teljesen biztos vagy benne?"
+      },
+      "simplify_debts": "Adósságok egyszerűsítése",
+      "title": "Csoportinformációk"
+    },
+    "group_statistics": {
+      "first_expense": "Első kiadás",
+      "title": "Csoportstatisztikák",
+      "total_expenses": "Összes költség"
+    },
+    "messages": {
+      "balances_recalculated": "Az egyenlegek újraszámítása sikeresen megtörtént",
+      "group_archived": "Csoport sikeresen archiválva",
+      "group_name_updated": "A csoport neve frissítve"
+    },
+    "no_members": {
+      "add_members": "Tagok hozzáadása",
+      "add_members_details": {
+        "add_to_split_pro": "Hozzáadás a SplitPro-hoz",
+        "note": "Megjegyzés: az e-mail meghívók küldése le van tiltva",
+        "placeholder": "Írd be a neved vagy az e-mail címed",
+        "send_invite": "Meghívó küldése felhasználónak",
+        "title": "Tagok hozzáadása",
+        "warning": "Figyelmeztetés: Ne használd a „meghívó küldése” funkciót, ha érvénytelen az e-mail cím. Helyette használd a „hozzáadás a SplitPro-hoz” funkciót. Fiókod blokkolásra kerül, ha ezt a funkciót nem rendeltetésszerűen használod"
+      },
+      "invite_link": "Meghívólink",
+      "no_members": "Még nincsenek tagok a csoportban."
+    },
+    "tabs": {
+      "balances": "Egyenlegek",
+      "expenses": "Költségek"
+    },
+    "title": "Csoportszintű kintlévőségek"
+  },
+  "invite_message": {
+    "in_splitpro": "a SplitPro-ban",
+    "join_to": "Csatlakozás",
+    "text": "Csatlakozz a csoporthoz, és hozzáadhatsz, kezelhetsz kiadásokat és nyomon követheted az egyenlegeidet"
+  },
+  "meta": {
+    "application_name": "SplitPro",
+    "description": "Oszd meg költségeidet a barátaiddal ingyen",
+    "title": "SplitPro: Oszd meg költségeidet a barátaiddal ingyen"
+  },
+  "navigation": {
+    "account": "Fiók",
+    "activity": "Tevékenység",
+    "add": "Hozzáadás",
+    "add_expense": "Költség hozzáadása",
+    "balances": "Egyenlegek",
+    "groups": "Csoportok",
+    "recurring": "Ismétlés"
+  },
+  "recurrence": {
+    "cron_expression": "Cron kifejezés",
+    "days_of_month": "A hónap napjai",
+    "days_of_week": "A hét napjai",
+    "delete_description": "Ez leállítja a jövőbeli költségek létrehozását. Az ismétlődés által létrehozott meglévő költségek nem törlődnek.",
+    "delete_title": "Ismétlődés törlése",
+    "derived_delete_warning": "Ez a kiadás egy ismétlődő költség része. Csak ez a kiadás kerül törlésre. A jövőbeni ismétlődő költségek továbbra is fennállnak.",
+    "derived_edit_warning": "Ez a kiadás egy ismétlődő költség része. A változtatások csak ezt a költséget érintik.",
+    "description": "Állíts be automatikus ismétlődést ehhez a költséghez.",
+    "edit_confirmation_title": "Ismétlődő költség szerkesztése",
+    "edit_description": "Ez megváltoztatja a jövőbeli kiadások ütemezését. A meglévő kiadások nem módosulnak.",
+    "edit_title": "Ismétlődés szerkesztése",
+    "empty": "Még nincsenek ismétlődő költségek",
+    "expense_for_the_amount_of": "{{name}} kiadás {{amount}} {{currency}} összegben",
+    "last_day": "Utolsó nap",
+    "months": "Hónapok",
+    "never": "Nincs konfigurálva ütemezés",
+    "recurring": "Ismétlés",
+    "schedule_type": {
+      "custom": "Egyedi",
+      "day": "Naponta",
+      "month": "Havonta",
+      "never": "Soha",
+      "week": "Hetente",
+      "year": "Évente"
+    },
+    "template_delete_warning": "Ez egy ismétlődő költségsablon. A törlése leállítja az összes jövőbeni ismétlődő költséget.",
+    "template_edit_warning": "Ez egy ismétlődő költségsablon. A változtatások minden jövőbeli ismétlődő költségre vonatkoznak.",
+    "time_of_day": "Napszak",
+    "title": "Ismétlődés",
+    "view_recurring_page": "Ismétlés oldal megtekintése"
+  },
+  "ui": {
+    "added_by": "Hozzáadta",
+    "and": "és",
+    "balance": "egyenleg",
+    "balances": "egyenlegek",
+    "delete": "Törlés",
+    "deleted_by": "Törölte",
+    "edited_by": "Szerkesztette",
+    "expense": {
+      "for": "neki",
+      "from": "tőle",
+      "paid_by": "Fizette",
+      "received_by": "Megkapta",
+      "to": "ide",
+      "user": {
+        "deleted": "törölt",
+        "get": "kap",
+        "lent": "adott",
+        "owe": "tartozik",
+        "paid": "fizetett",
+        "pay": "fizet",
+        "received": "kapott"
+      },
+      "you": {
+        "deleted": "törölt",
+        "get": "kap",
+        "lent": "adott",
+        "owe": "tartozik",
+        "paid": "fizetett",
+        "pay": "fizet",
+        "received": "kapott"
+      }
+    },
+    "expense_details": "Költségadatok",
+    "in_group": "Csoportban",
+    "no_activity": "Még nincsenek tevékenységek",
+    "not_involved": "Nem vesz részt",
+    "on": "ekkor",
+    "or": "vagy",
+    "outstanding_balances": "Kiegyenlítetlen egyenlegek",
+    "select_balance": "Válassz egyenleget",
+    "select_currency": "Válassz pénznemet",
+    "settle_up_name": "Kiegyenlítés",
+    "settled_up": "Kiegyenlítve",
+    "settlement": "Elszámolás",
+    "share_text": "Nézd meg a SplitPro-t. Ez egy nyílt forráskódú, ingyenes alternatívája a Splitwise-nak",
+    "show_all_currencies": "Összes pénznem megjelenítése",
+    "today": "Ma",
+    "total_balance": "Összes egyenleg"
+  }
+}

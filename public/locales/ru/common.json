@@ -1,0 +1,130 @@
+{
+  "account": {
+    "change_language": "Сменить язык",
+    "change_language_details": {
+      "messages": {
+        "language_changed": "Язык успешно сменен"
+      },
+      "placeholder": "Выберите язык",
+      "title": "Выберите язык"
+    },
+    "debug_info": "Дебаг инфо",
+    "debug_info_details": {
+      "copy_failed": "Ошибка при копировании дебаг информации",
+      "description": "При создании запроса в службу поддержки вставьте указанную ниже информацию:",
+      "git": "Git",
+      "new_version_available": "Новая версия доступна:",
+      "title": "Дебаг информация",
+      "user_agent": "UserAgent",
+      "version": "Версия"
+    },
+    "download_app": "Скачать приложение",
+    "download_app_details": {
+      "download_as_pwa": "Вы можете установить SplitPro как PWA на свой рабочий стол.",
+      "title": "Загрузить приложение",
+      "using_android": "Если вы используете Android, посмотрите это",
+      "using_ios": "Если вы используете iOS, посмотрите это",
+      "video": "видео"
+    },
+    "download_splitpro_data": "Скачать данные SplitPro",
+    "edit_name": {
+      "placeholder": "Введите имя",
+      "title": "Изменить имя"
+    },
+    "follow_on_x": "Следите за нами в X",
+    "import_from_splitwise": "Импортировать из Splitwise",
+    "import_from_splitwise_details": {
+      "choose_file": "Выберите файл",
+      "export_splitwise_data_button": "Экспорт данных Splitwise",
+      "follow_to_export_splitwise_data": "Пройдите по ссылке для экспорта данных Splitwise",
+      "messages": {
+        "import_success": "Успешно импортировано"
+      },
+      "no_file_chosen": "Файл не выбран",
+      "note": "Примечание: В настоящее время поддерживается только импорт друзей и групп. Импорт транзакций не работает. Мы работаем над этим."
+    },
+    "logout": "Выйти",
+    "messages": {
+      "submit_error": "Ошибка при отправке фидбэка",
+      "submit_success": "Фидбэк отправлен"
+    },
+    "notifications": {
+      "disable_notification": "Отключить уведомление",
+      "enable_notification": "Включить уведомление",
+      "messages": {
+        "notification_granted": "Теперь вы будете получать уведомления"
+      }
+    },
+    "star_on_github": "Оцените нас на GitHub",
+    "submit_feedback": "Отправить фидбэк",
+    "submit_feedback_details": {
+      "placeholder": "Введите свой фидбэк",
+      "title": "Отправить фидбэк"
+    },
+    "support_us": "Поддержите нас",
+    "title": "Аккаунт",
+    "write_review": "Оставить отзыв"
+  },
+  "actions": {
+    "add_expense": "Добавить трату",
+    "back": "Назад",
+    "cancel": "Отменить",
+    "close": "Закрыть",
+    "confirm": "Подтвердить",
+    "connect": "Подключить",
+    "copy": "Скопировать",
+    "create": "Создать",
+    "edit_expense": "Редактировать трату",
+    "export": "Экспорт",
+    "import": "Импорт",
+    "invite": "Пригласить",
+    "leave": "Покинуть",
+    "next": "Следующая",
+    "reconnect": "Переподключить",
+    "save": "Сохранить",
+    "settle_up": "Рассчитаться",
+    "submit": "Утвердить"
+  },
+  "actors": {
+    "all": "Все",
+    "friends": "Друзья",
+    "groups": "Группы",
+    "members": "Участники",
+    "owner": "Владелец",
+    "you": "Вы",
+    "you_accusativus": "Вы",
+    "you_dativus": "Вы"
+  },
+  "auth": {
+    "continue_with": "Продолжить с {{provider}}",
+    "email_placeholder": "Введите свой имейл",
+    "no_providers_configured": "Провайдеры аутентификации не настроены",
+    "no_providers_instructions": "Пожалуйста, настройте хотя бы одного провайдера аутентификации для входа в систему. Смотрите",
+    "otp_sent": "Мы отправили вам электронное письмо с одноразовым паролем (OTP). Пожалуйста, проверьте свою почту и перейдите по ссылке в письме, чтобы войти.",
+    "send_magic_link": "Отправить волшебную ссылку",
+    "sending": "Отправляем...",
+    "setup_instructions": "Инструкции по настройке Docker",
+    "trouble_logging_in": "Проблемы со входом? Свяжитесь"
+  },
+  "currency_conversion": {
+    "amount_to_receive": "Сумма к получению",
+    "description": "Конвертировать сумму в другую валюту.",
+    "exchange_rate": "Курс конвертации",
+    "fetching_rate": "Получение курса...",
+    "rate": "Курс",
+    "success_toast": "Конвертация валюты успешно выполнена",
+    "title": "Конвертация валюты"
+  },
+  "errors": {
+    "currency_conversion_error": "Ошибка во время настройка конвертации валюты",
+    "email_invalid": "Адрес электронной почты недействителен. Пожалуйста, попробуйте войти в систему еще раз.",
+    "email_required": "Требуется имейл",
+    "feedback_min_length": "Отзыв должен содержать не менее 10 символов",
+    "feedback_required": "Требуется отзыв",
+    "group_name_update_failed": "Ошибка при обновлении названия группы",
+    "import_failed": "Ошибка при импорте файла",
+    "invalid_currency_code": "Неправильный код валюты {{code}}",
+    "language_change_failed": "Ошибка смены языка",
+    "no_providers": "Ошибка при получении данных о провадерах аутентификации. Пожалуйста, проверьте логи бэкэнда."
+  }
+}

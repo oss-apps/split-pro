@@ -1,0 +1,559 @@
+{
+  "currency_list": {
+    "AED": {
+      "name": "emirátusi dirham",
+      "name_plural": "emirátusi dirham"
+    },
+    "AFN": {
+      "name": "afgán afgáni",
+      "name_plural": "afgán afgáni"
+    },
+    "ALL": {
+      "name": "albán lek",
+      "name_plural": "albán lek"
+    },
+    "AMD": {
+      "name": "örmény dram",
+      "name_plural": "örmény dram"
+    },
+    "ARS": {
+      "name": "argentin peso",
+      "name_plural": "argentin peso"
+    },
+    "AUD": {
+      "name": "ausztrál dollár",
+      "name_plural": "ausztrál dollár"
+    },
+    "AZN": {
+      "name": "azeri manat",
+      "name_plural": "azeri manat"
+    },
+    "BAM": {
+      "name": "bosnyák konvertibilis márka",
+      "name_plural": "bosnyák konvertibilis márka"
+    },
+    "BDT": {
+      "name": "bangladesi taka",
+      "name_plural": "bangladesi taka"
+    },
+    "BGN": {
+      "name": "bolgár leva",
+      "name_plural": "bolgár leva"
+    },
+    "BHD": {
+      "name": "bahreini dinár",
+      "name_plural": "bahreini dinár"
+    },
+    "BIF": {
+      "name": "burundi frank",
+      "name_plural": "burundi frank"
+    },
+    "BND": {
+      "name": "brunei dollár",
+      "name_plural": "brunei dollár"
+    },
+    "BOB": {
+      "name": "bolíviai boliviano",
+      "name_plural": "bolíviai boliviano"
+    },
+    "BRL": {
+      "name": "brazil real",
+      "name_plural": "brazil real"
+    },
+    "BWP": {
+      "name": "botswanai pula",
+      "name_plural": "botswanai pula"
+    },
+    "BYN": {
+      "name": "belarusz rubel",
+      "name_plural": "belarusz rubel"
+    },
+    "BZD": {
+      "name": "belize-i dollár",
+      "name_plural": "belize-i dollár"
+    },
+    "CAD": {
+      "name": "kanadai dollár",
+      "name_plural": "kanadai dollár"
+    },
+    "CDF": {
+      "name": "kongói frank",
+      "name_plural": "kongói frank"
+    },
+    "CHF": {
+      "name": "svájci frank",
+      "name_plural": "svájci frank"
+    },
+    "CLP": {
+      "name": "chilei peso",
+      "name_plural": "chilei peso"
+    },
+    "CNY": {
+      "name": "kínai jüan",
+      "name_plural": "kínai jüan"
+    },
+    "COP": {
+      "name": "kolumbiai peso",
+      "name_plural": "kolumbiai peso"
+    },
+    "CRC": {
+      "name": "Costa Rica-i colón",
+      "name_plural": "Costa Rica-i colón"
+    },
+    "CVE": {
+      "name": "zöld-foki escudo",
+      "name_plural": "zöld-foki escudo"
+    },
+    "CZK": {
+      "name": "cseh korona",
+      "name_plural": "cseh korona"
+    },
+    "DJF": {
+      "name": "dzsibuti frank",
+      "name_plural": "dzsibuti frank"
+    },
+    "DKK": {
+      "name": "dán korona",
+      "name_plural": "dán korona"
+    },
+    "DOP": {
+      "name": "dominikai peso",
+      "name_plural": "dominikai peso"
+    },
+    "DZD": {
+      "name": "algériai dinár",
+      "name_plural": "algériai dinár"
+    },
+    "EEK": {
+      "name": "észt korona",
+      "name_plural": "észt korona"
+    },
+    "EGP": {
+      "name": "egyiptomi font",
+      "name_plural": "egyiptomi font"
+    },
+    "ERN": {
+      "name": "eritreai nakfa",
+      "name_plural": "eritreai nakfa"
+    },
+    "ETB": {
+      "name": "etióp birr",
+      "name_plural": "etióp birr"
+    },
+    "EUR": {
+      "name": "euró",
+      "name_plural": "euró"
+    },
+    "GBP": {
+      "name": "brit font sterling",
+      "name_plural": "brit font sterling"
+    },
+    "GEL": {
+      "name": "grúz lari",
+      "name_plural": "grúz lari"
+    },
+    "GHS": {
+      "name": "ghánai cedi",
+      "name_plural": "ghánai cedi"
+    },
+    "GNF": {
+      "name": "guineai frank",
+      "name_plural": "guineai frank"
+    },
+    "GTQ": {
+      "name": "guatemalai quetzal",
+      "name_plural": "guatemalai quetzal"
+    },
+    "HKD": {
+      "name": "hongkongi dollár",
+      "name_plural": "hongkongi dollár"
+    },
+    "HNL": {
+      "name": "hondurasi lempira",
+      "name_plural": "hondurasi lempira"
+    },
+    "HRK": {
+      "name": "horvát kuna",
+      "name_plural": "horvát kuna"
+    },
+    "HUF": {
+      "name": "magyar forint",
+      "name_plural": "magyar forint"
+    },
+    "IDR": {
+      "name": "indonéz rúpia",
+      "name_plural": "indonéz rúpia"
+    },
+    "ILS": {
+      "name": "izraeli új sékel",
+      "name_plural": "izraeli új sékel"
+    },
+    "INR": {
+      "name": "indiai rúpia",
+      "name_plural": "indiai rúpia"
+    },
+    "IQD": {
+      "name": "iraki dinár",
+      "name_plural": "iraki dinár"
+    },
+    "IRR": {
+      "name": "iráni riál",
+      "name_plural": "iráni riál"
+    },
+    "ISK": {
+      "name": "izlandi korona",
+      "name_plural": "izlandi korona"
+    },
+    "JMD": {
+      "name": "jamaicai dollár",
+      "name_plural": "jamaicai dollár"
+    },
+    "JOD": {
+      "name": "jordán dinár",
+      "name_plural": "jordán dinár"
+    },
+    "JPY": {
+      "name": "japán jen",
+      "name_plural": "japán jen"
+    },
+    "KES": {
+      "name": "kenyai shilling",
+      "name_plural": "kenyai shilling"
+    },
+    "KHR": {
+      "name": "kambodzsai riel",
+      "name_plural": "kambodzsai riel"
+    },
+    "KMF": {
+      "name": "comore-i frank",
+      "name_plural": "comore-i frank"
+    },
+    "KRW": {
+      "name": "dél-koreai von",
+      "name_plural": "dél-koreai von"
+    },
+    "KWD": {
+      "name": "kuvaiti dinár",
+      "name_plural": "kuvaiti dinár"
+    },
+    "KZT": {
+      "name": "kazak tenge",
+      "name_plural": "kazak tenge"
+    },
+    "LAK": {
+      "name": "laoszi kip",
+      "name_plural": "laoszi kip"
+    },
+    "LBP": {
+      "name": "libanoni font",
+      "name_plural": "libanoni font"
+    },
+    "LKR": {
+      "name": "Srí Lanka-i rúpia",
+      "name_plural": "Srí Lanka-i rúpia"
+    },
+    "LRD": {
+      "name": "libériai dollár",
+      "name_plural": "libériai dollár"
+    },
+    "LSL": {
+      "name": "lesothói loti",
+      "name_plural": "lesothói loti"
+    },
+    "LYD": {
+      "name": "líbiai dinár",
+      "name_plural": "líbiai dinár"
+    },
+    "MAD": {
+      "name": "marokkói dirham",
+      "name_plural": "marokkói dirham"
+    },
+    "MDL": {
+      "name": "moldáv lej",
+      "name_plural": "moldáv lej"
+    },
+    "MGA": {
+      "name": "madagaszkári ariary",
+      "name_plural": "madagaszkári ariary"
+    },
+    "MKD": {
+      "name": "macedón dénár",
+      "name_plural": "macedón dénár"
+    },
+    "MMK": {
+      "name": "mianmari kjap",
+      "name_plural": "mianmari kjap"
+    },
+    "MNT": {
+      "name": "mongol tugrik",
+      "name_plural": "mongol tugrik"
+    },
+    "MOP": {
+      "name": "makaói pataca",
+      "name_plural": "makaói pataca"
+    },
+    "MUR": {
+      "name": "mauritiusi rúpia",
+      "name_plural": "mauritiusi rúpia"
+    },
+    "MVR": {
+      "name": "maldív-szigeteki rúfia",
+      "name_plural": "maldív-szigeteki rúfia"
+    },
+    "MWK": {
+      "name": "malawi kwacha",
+      "name_plural": "malawi kwacha"
+    },
+    "MXN": {
+      "name": "mexikói peso",
+      "name_plural": "mexikói peso"
+    },
+    "MYR": {
+      "name": "maláj ringgit",
+      "name_plural": "maláj ringgit"
+    },
+    "MZN": {
+      "name": "mozambiki metical",
+      "name_plural": "mozambiki metical"
+    },
+    "NAD": {
+      "name": "namíbiai dollár",
+      "name_plural": "namíbiai dollár"
+    },
+    "NGN": {
+      "name": "nigériai naira",
+      "name_plural": "nigériai naira"
+    },
+    "NIO": {
+      "name": "nicaraguai córdoba",
+      "name_plural": "nicaraguai córdoba"
+    },
+    "NOK": {
+      "name": "norvég korona",
+      "name_plural": "norvég korona"
+    },
+    "NPR": {
+      "name": "nepáli rúpia",
+      "name_plural": "nepáli rúpia"
+    },
+    "NZD": {
+      "name": "új-zélandi dollár",
+      "name_plural": "új-zélandi dollár"
+    },
+    "OMR": {
+      "name": "ománi riál",
+      "name_plural": "ománi riál"
+    },
+    "PAB": {
+      "name": "panamai balboa",
+      "name_plural": "panamai balboa"
+    },
+    "PEN": {
+      "name": "perui sol",
+      "name_plural": "perui sol"
+    },
+    "PGK": {
+      "name": "pápua új-guineai kina",
+      "name_plural": "pápua új-guineai kina"
+    },
+    "PHP": {
+      "name": "Fülöp-szigeteki peso",
+      "name_plural": "Fülöp-szigeteki peso"
+    },
+    "PKR": {
+      "name": "pakisztáni rúpia",
+      "name_plural": "pakisztáni rúpia"
+    },
+    "PLN": {
+      "name": "lengyel złoty",
+      "name_plural": "lengyel złoty"
+    },
+    "PYG": {
+      "name": "paraguayi guaraní",
+      "name_plural": "paraguayi guaraní"
+    },
+    "QAR": {
+      "name": "katari riál",
+      "name_plural": "katari riál"
+    },
+    "RON": {
+      "name": "román lej",
+      "name_plural": "román lej"
+    },
+    "RSD": {
+      "name": "szerb dinár",
+      "name_plural": "szerb dinár"
+    },
+    "RUB": {
+      "name": "orosz rubel",
+      "name_plural": "orosz rubel"
+    },
+    "RWF": {
+      "name": "ruandai frank",
+      "name_plural": "ruandai frank"
+    },
+    "SAR": {
+      "name": "szaúdi riál",
+      "name_plural": "szaúdi riál"
+    },
+    "SBD": {
+      "name": "Salamon-szigeteki dollár",
+      "name_plural": "Salamon-szigeteki dollár"
+    },
+    "SCR": {
+      "name": "seychelle-i rúpia",
+      "name_plural": "seychelle-i rúpia"
+    },
+    "SDG": {
+      "name": "szudáni font",
+      "name_plural": "szudáni font"
+    },
+    "SEK": {
+      "name": "svéd korona",
+      "name_plural": "svéd korona"
+    },
+    "SGD": {
+      "name": "szingapúri dollár",
+      "name_plural": "szingapúri dollár"
+    },
+    "SHP": {
+      "name": "Szent Ilona-i font",
+      "name_plural": "Szent Ilona-i font"
+    },
+    "SLL": {
+      "name": "Sierra Leone-i leone",
+      "name_plural": "Sierra Leone-i leone"
+    },
+    "SOS": {
+      "name": "szomáliai shilling",
+      "name_plural": "szomáliai shilling"
+    },
+    "SRD": {
+      "name": "suriname-i dollár",
+      "name_plural": "suriname-i dollár"
+    },
+    "SSP": {
+      "name": "Dél-szudáni font",
+      "name_plural": "Dél-szudáni font"
+    },
+    "STD": {
+      "name": "São Tomé és Príncipe-i dobra",
+      "name_plural": "São Tomé és Príncipe-i dobra"
+    },
+    "SYP": {
+      "name": "szír font",
+      "name_plural": "szír font"
+    },
+    "SZL": {
+      "name": "szváziföldi lilangeni",
+      "name_plural": "szváziföldi lilangeni"
+    },
+    "THB": {
+      "name": "thai bát",
+      "name_plural": "thai bát"
+    },
+    "TJS": {
+      "name": "tádzsik szomoni",
+      "name_plural": "tádzsik szomoni"
+    },
+    "TMT": {
+      "name": "türkmén manat",
+      "name_plural": "türkmén manat"
+    },
+    "TND": {
+      "name": "tunéziai dinár",
+      "name_plural": "tunéziai dinár"
+    },
+    "TOP": {
+      "name": "tongai paʻanga",
+      "name_plural": "tongai paʻanga"
+    },
+    "TRY": {
+      "name": "török líra",
+      "name_plural": "török líra"
+    },
+    "TTD": {
+      "name": "Trinidad és Tobagó-i dollár",
+      "name_plural": "Trinidad és Tobagó-i dollár"
+    },
+    "TWD": {
+      "name": "tajvani új dollár",
+      "name_plural": "tajvani új dollár"
+    },
+    "TZS": {
+      "name": "tanzániai shilling",
+      "name_plural": "tanzániai shilling"
+    },
+    "UAH": {
+      "name": "ukrán hrivnya",
+      "name_plural": "ukrán hrivnya"
+    },
+    "UGX": {
+      "name": "ugandai shilling",
+      "name_plural": "ugandai shilling"
+    },
+    "USD": {
+      "name": "amerikai dollár",
+      "name_plural": "amerikai dollár"
+    },
+    "UYU": {
+      "name": "uruguayi peso",
+      "name_plural": "uruguayi peso"
+    },
+    "UZS": {
+      "name": "üzbég szom",
+      "name_plural": "üzbég szom"
+    },
+    "VEF": {
+      "name": "venezuelai bolívar",
+      "name_plural": "venezuelai bolívar"
+    },
+    "VND": {
+      "name": "vietnámi đồng",
+      "name_plural": "vietnámi đồng"
+    },
+    "VUV": {
+      "name": "vanuatui vatu",
+      "name_plural": "vanuatui vatu"
+    },
+    "WST": {
+      "name": "szamoai tala",
+      "name_plural": "szamoai tala"
+    },
+    "XAF": {
+      "name": "közép-afrikai valutaközösségi frank",
+      "name_plural": "közép-afrikai valutaközösségi frank"
+    },
+    "XCD": {
+      "name": "kelet-karibi dollár",
+      "name_plural": "kelet-karibi dollár"
+    },
+    "XOF": {
+      "name": "nyugat-afrikai valutaközösségi frank",
+      "name_plural": "nyugat-afrikai valutaközösségi frank"
+    },
+    "XPF": {
+      "name": "csendes-óceáni valutaközösségi frank",
+      "name_plural": "csendes-óceáni valutaközösségi frank"
+    },
+    "YER": {
+      "name": "jemeni riál",
+      "name_plural": "jemeni riál"
+    },
+    "ZAR": {
+      "name": "dél-afrikai rand",
+      "name_plural": "dél-afrikai rand"
+    },
+    "ZMW": {
+      "name": "zambiai kwacha",
+      "name_plural": "zambiai kwacha"
+    },
+    "ZWL": {
+      "name": "zimbabwei dollár",
+      "name_plural": "zimbabwei dollár"
+    }
+  },
+  "no_currency_found": "Nem található pénznem.",
+  "placeholder": "Válassz pénznemet",
+  "title": "Válassz pénznemet"
+}

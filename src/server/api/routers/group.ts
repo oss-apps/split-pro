@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
+import { sendGroupSimplifyDebtsToggleNotification } from '~/server/api/services/notificationService';
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
@@ -183,6 +184,13 @@ export const groupRouter = createTRPCRouter({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
       }
 
+      if (group.archivedAt) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Cannot toggle simplify debts for archived groups',
+        });
+      }
+
       const isInGroup = await ctx.db.groupUser.findFirst({
         where: {
           groupId: input.groupId,
@@ -207,6 +215,13 @@ export const groupRouter = createTRPCRouter({
           simplifyDebts,
         },
       });
+
+      // Send notifications asynchronously
+      void sendGroupSimplifyDebtsToggleNotification(
+        input.groupId,
+        ctx.session.user.id,
+        simplifyDebts,
+      );
 
       return simplifyDebts;
     }),

@@ -145,6 +145,87 @@ export async function sendExpensePushNotification(expenseId: string) {
   await Promise.all(pushNotifications);
 }
 
+export async function sendGroupSimplifyDebtsToggleNotification(
+  groupId: number,
+  togglerUserId: number,
+  newState: boolean,
+) {
+  try {
+    const group = await db.group.findUnique({
+      where: {
+        id: groupId,
+      },
+      select: {
+        name: true,
+        groupUsers: {
+          select: {
+            userId: true,
+            user: {
+              select: {
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!group) {
+      return;
+    }
+
+    const togglerUser = await db.user.findUnique({
+      where: {
+        id: togglerUserId,
+      },
+      select: {
+        name: true,
+        email: true,
+      },
+    });
+
+    if (!togglerUser) {
+      return;
+    }
+
+    // Filter out the toggler from recipients
+    const recipients = group.groupUsers.filter((gu) => gu.userId !== togglerUserId);
+
+    if (recipients.length === 0) {
+      return;
+    }
+
+    const subscriptions = await db.pushNotification.findMany({
+      where: {
+        userId: {
+          in: recipients.map((r) => r.userId),
+        },
+      },
+    });
+
+    const getUserDisplayName = (user: { name: string | null; email: string | null } | null) =>
+      user?.name ?? user?.email ?? '';
+
+    const togglerName = getUserDisplayName(togglerUser);
+    const stateText = newState ? 'on' : 'off';
+
+    const pushData = {
+      title: togglerName,
+      message: `turned ${stateText} debt simplification for ${group.name}`,
+      data: {
+        url: `/groups/${groupId}`,
+      },
+    };
+
+    const pushNotifications = subscriptions.map((s) => pushNotification(s.subscription, pushData));
+
+    await Promise.all(pushNotifications);
+  } catch (error) {
+    console.error('Error sending group simplify debts toggle notifications', error);
+  }
+}
+
 export async function checkRecurrenceNotifications() {
   try {
     const recurrences = await db.expenseRecurrence.findMany({

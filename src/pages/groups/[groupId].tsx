@@ -276,6 +276,7 @@ const BalancePage: NextPageWithUser<{
                     </p>
                     <Switch
                       id="simplify-debts"
+                      disabled={isArchived}
                       checked={groupDetailQuery.data?.simplifyDebts ?? false}
                       onCheckedChange={() => {
                         toggleSimplifyDebtsMutation.mutate(

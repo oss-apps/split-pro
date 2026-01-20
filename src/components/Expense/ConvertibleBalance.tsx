@@ -119,16 +119,14 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
   }, [shouldShowAll, balances, ratesQuery, selectedCurrency, t, setSelectedCurrency]);
 
   if (0 === balances.length) {
-    return <span className={cn('text-gray-500', className)}>{t('ui.settled_up')}</span>;
+    return <AmountDisplay className={className} amount={0n} currency="USD" />;
   }
 
   // If only one currency, no conversion needed
   if (1 === balances.length && !forceShowButton) {
     const balance = balances[0]!;
     return (
-      <span className={0 < balance.amount ? 'text-emerald-500' : 'text-orange-600'}>
-        {getCurrencyHelpersCached(balance.currency).toUIString(balance.amount)}
-      </span>
+      <AmountDisplay className={className} amount={balance.amount} currency={balance.currency} />
     );
   }
 
@@ -179,26 +177,41 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
       <div className={cn('flex gap-1', className)}>
         {shouldShowAll ? (
           balances.map((balance, idx) => (
-            <span
-              key={balance.currency}
-              className={balance.amount > 0 ? 'text-positive' : 'text-negative'}
-            >
-              {getCurrencyHelpersCached(balance.currency).toUIString(balance.amount)}{' '}
-              {idx < balances.length - 1 ? '+' : ''}
-            </span>
+            <React.Fragment key={balance.currency}>
+              <AmountDisplay amount={balance.amount} currency={balance.currency} />
+              {idx < balances.length - 1 && (
+                <span className={balance.amount > 0 ? 'text-positive' : 'text-negative'}> + </span>
+              )}
+            </React.Fragment>
           ))
         ) : ratesQuery.isLoading ? (
           <Skeleton className="h-5 w-20" />
-        ) : totalConvertedAmount ? (
-          <span className={0 < totalConvertedAmount ? 'text-emerald-500' : 'text-orange-600'}>
-            {getCurrencyHelpersCached(selectedCurrency!).toUIString(totalConvertedAmount)}
-          </span>
         ) : (
-          <span className={0 < balances[0]!.amount ? 'text-emerald-500' : 'text-orange-600'}>
-            {getCurrencyHelpersCached(balances[0]!.currency).toUIString(balances[0]!.amount)}*
-          </span>
+          <AmountDisplay
+            className={className}
+            amount={totalConvertedAmount ? totalConvertedAmount : balances[0]!.amount}
+            currency={totalConvertedAmount ? selectedCurrency : balances[0]!.currency}
+          />
         )}
       </div>
+    </span>
+  );
+};
+
+const AmountDisplay: React.FC<{
+  className?: string;
+  amount: bigint;
+  currency: string;
+}> = ({ className = '', amount, currency }) => {
+  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
+
+  if (amount === 0n) {
+    <span className={cn('text-gray-500', className)}>{t('ui.settled_up')}</span>;
+  }
+
+  return (
+    <span className={cn(amount > 0n ? 'text-positive' : 'text-negative', className)}>
+      {getCurrencyHelpersCached(currency).toUIString(amount)}
     </span>
   );
 };

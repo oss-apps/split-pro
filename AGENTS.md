@@ -80,6 +80,12 @@ pnpm build         # Build for production
 3. Relative imports for nearby files
 4. Use `type` keyword for type-only imports
 
+### Environment Variables
+
+- Server-side vars: Use `env.VAR_NAME` (available only on server).
+- Client-side vars: Use `env.NEXT_PUBLIC_VAR_NAME` (exposed to browser, prefixed with `NEXT_PUBLIC_`).
+- Defaults: Hardcode in `src/env.ts` using Zod `.default()` for fallback values.
+
 ```typescript
 import { HeartHandshakeIcon, X } from 'lucide-react';
 import { useTranslation } from 'next-i18next';

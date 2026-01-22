@@ -2,31 +2,52 @@ import { ImagePlus, Image as ImageUploaded } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
+import imageCompression from 'browser-image-compression';
 
 import { env } from '~/env';
 import { useAddExpenseStore } from '~/store/addStore';
 
+import { Checkbox } from '../ui/checkbox';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
 export const UploadFile: React.FC = () => {
   const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
+  const [compressionEnabled, setCompressionEnabled] = useState(true);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
   const { setFileUploading, setFileKey } = useAddExpenseStore((s) => s.actions);
 
   const handleFileChange = React.useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       const { files } = event.target;
-      const file = files?.[0];
+
+      let file = files?.[0];
 
       if (!file) {
         return;
       }
 
-      const fileSizeLimit = env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB * 1024 * 1024;
+      // Compress if enabled and it's an image
+      if (compressionEnabled && file.type.startsWith('image/')) {
+        try {
+          const options = {
+            maxSizeMB: env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+            fileType: 'image/jpeg',
+          };
+          file = await imageCompression(file, options);
+        } catch (error) {
+          console.error('Compression failed:', error);
+          toast.error('Compression failed. Please try again or disable compression.');
+          return;
+        }
+      }
 
-      if (file.size > fileSizeLimit) {
+      // Check size after compression
+      const maxSize = env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB * 1024 * 1024;
+      if (file.size > maxSize) {
         toast.error(`${t('errors.less_than')} ${env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB}MB`);
         return;
       }
@@ -59,24 +80,36 @@ export const UploadFile: React.FC = () => {
         setFileUploading(false);
       }
     },
-    [setFileUploading, setFileKey, t],
+    [compressionEnabled, setFileUploading, setFileKey, t],
   );
 
   return (
-    <Label htmlFor="picture" className="cursor-pointer">
-      {file || fileKey ? (
-        <ImageUploaded className="text-primary h-6 w-6" />
-      ) : (
-        <ImagePlus className="h-6 w-6 text-gray-300" />
-      )}
-      <Input
-        onChange={handleFileChange}
-        id="picture"
-        type="file"
-        accept="image/*"
-        className="hidden"
-      />
-    </Label>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="compression"
+          checked={compressionEnabled}
+          onCheckedChange={(checked) => setCompressionEnabled(checked === true)}
+        />
+        <Label htmlFor="compression" className="text-sm">
+          Enable image compression
+        </Label>
+      </div>
+      <Label htmlFor="picture" className="cursor-pointer">
+        {file || fileKey ? (
+          <ImageUploaded className="text-primary h-6 w-6" />
+        ) : (
+          <ImagePlus className="h-6 w-6 text-gray-300" />
+        )}
+        <Input
+          onChange={handleFileChange}
+          id="picture"
+          type="file"
+          accept="image/*"
+          className="hidden"
+        />
+      </Label>
+    </div>
   );
 };
 

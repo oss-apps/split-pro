@@ -181,7 +181,7 @@
         "split_unequally": "egyenlőtlenül oszlik meg",
         "types": {
           "adjustment": {
-            "remaining_to_split_equally": "Hátralévő rész, amit egyenlően kell elosztani",
+            "remaining_to_split_equally": "Maradék, ami egyenlően oszlik meg",
             "title": "Beállítás"
           },
           "equal": {
@@ -378,7 +378,7 @@
       "received_by": "Megkapta",
       "to": "ide",
       "user": {
-        "deleted": "törölt",
+        "deleted": "törölte",
         "get": "kap",
         "lent": "adott",
         "owe": "tartozik",
@@ -387,13 +387,13 @@
         "received": "kapott"
       },
       "you": {
-        "deleted": "törölt",
-        "get": "kap",
-        "lent": "adott",
-        "owe": "tartozik",
-        "paid": "fizetett",
-        "pay": "fizet",
-        "received": "kapott"
+        "deleted": "törölted",
+        "get": "kapsz",
+        "lent": "adtál",
+        "owe": "tartozol",
+        "paid": "fizettél",
+        "pay": "fizetsz",
+        "received": "kaptál"
       }
     },
     "expense_details": "Költségadatok",

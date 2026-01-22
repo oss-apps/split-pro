@@ -3,7 +3,8 @@ import { randomUUID } from 'crypto';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-import { FILE_SIZE_LIMIT } from '~/lib/constants';
+import { env } from '~/env';
+
 import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
@@ -555,7 +556,7 @@ export const expenseRouter = createTRPCRouter({
       const extension = input.fileName.split('.').pop();
       const key = `${ctx.session.user.id}/${randomId}.${extension}`;
 
-      if (input.fileSize > FILE_SIZE_LIMIT) {
+      if (input.fileSize > env.RECEIPT_MAX_FILE_SIZE_MB * 1024 * 1024) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'File size limit exceeded' });
       }
 

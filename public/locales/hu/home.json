@@ -55,7 +55,7 @@
     }
   },
   "footer": {
-    "built_by": "Építette"
+    "built_by": "Készítette"
   },
   "hero": {
     "add_expense_button": "Költség hozzáadása",
@@ -67,7 +67,7 @@
     "title_part1": "Oszd meg a költségeidet a barátaiddal"
   },
   "meta": {
-    "description": "SplitPro: Oszd meg a költségeidet a barátaiddal ingyen",
+    "description": "SplitPro: Oszd meg költségeidet a barátaiddal ingyen",
     "title": "SplitPro: Oszd meg költségeidet a barátaiddal ingyen"
   },
   "nav": {

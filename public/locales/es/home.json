@@ -40,6 +40,10 @@
       "description": "¿Te encantan las aplicaciones móviles? Te tenemos cubierto. ¡Instálala como una PWA y ni siquiera lo notarás!",
       "title": "Soporte PWA"
     },
+    "recurring_transactions": {
+      "description": "Configura gastos recurrentes automáticos para renta, suscripciones, o cualquier costo común compartido",
+      "title": "Transacciones Recurrentes"
+    },
     "title": "Características",
     "unequal_split": {
       "description": "Opciones avanzadas de división. Por cuotas, porcentaje o cantidades exactas.",

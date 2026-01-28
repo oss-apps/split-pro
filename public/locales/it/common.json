@@ -11,7 +11,7 @@
     "debug_info": "Informazioni di debug",
     "debug_info_details": {
       "copy_failed": "Errore nel copiare le informazioni di debug",
-      "description": "Incolla le seguenti informazioni al creare una richiesta di supporto:",
+      "description": "Incolla le informazioni qui sotto quando crei una richiesta di assistenza:",
       "git": "Git",
       "new_version_available": "È disponibile una nuova versione:",
       "title": "Informazioni di Debug",
@@ -55,7 +55,7 @@
         "notification_granted": "Riceverai ora le notifiche"
       }
     },
-    "star_on_github": "Metti una stella su GitHub",
+    "star_on_github": "Dacci una stella su GitHub",
     "submit_feedback": "Invia feedback",
     "submit_feedback_details": {
       "placeholder": "Inserisci il tuo feedback",
@@ -76,11 +76,11 @@
     "create": "Crea",
     "edit_expense": "Modifica spesa",
     "export": "Esporta",
-    "fetch": "",
+    "fetch": "Recupera",
     "import": "Importa",
     "invite": "Invita",
     "leave": "Abbandona",
-    "next": "",
+    "next": "Avanti",
     "reconnect": "Riconnettiti",
     "save": "Salva",
     "settle_up": "Regola",
@@ -133,7 +133,7 @@
   "errors": {
     "currency_conversion_error": "Errore durante l'impostazione della conversione valuta",
     "currency_conversion_failed": "Impossibile convertire le valute",
-    "currency_conversion_malformed": "I dati relativi alla conversione valutaria sono errati.",
+    "currency_conversion_malformed": "I dati relativi alla conversione valutaria sono errati",
     "email_invalid": "L'e-mail non è valida, si prega di riprovare l'accesso.",
     "email_required": "Email richiesta",
     "feedback_min_length": "Il feedback deve contenere almeno 10 caratteri",
@@ -142,9 +142,9 @@
     "group_name_update_failed": "Errore nell'aggiornamento del nome del gruppo",
     "import_failed": "Errore durante l'importazione del file",
     "invalid_cron_expression": "Espressione cron non valida",
-    "invalid_currency_code": "Codice valuta non valido",
+    "invalid_currency_code": "Codice valuta {{code}} non valido",
     "language_change_failed": "Errore nel cambiare lingua",
-    "less_than": "",
+    "less_than": "Il file deve essere più piccolo di",
     "name_required": "Il nome è obbligatorio",
     "no_providers": "Errore durante lo scaricamento dei provider di autenticazione. Per favore controllare i log backend.",
     "notification_not_supported": "Le notifiche non sono supportate",
@@ -184,7 +184,7 @@
         "split_unequally": "diviso non equamente",
         "types": {
           "adjustment": {
-            "remaining_to_split_equally": "Rimanenti da dividere equamente",
+            "remaining_to_split_equally": "Rimanente da dividere equamente",
             "title": "Aggiustamento"
           },
           "equal": {
@@ -219,7 +219,7 @@
         "search_friends": "Cerca amici, gruppi o aggiungi email"
       }
     },
-    "already_added": "",
+    "already_added": "Già aggiunto",
     "balance_list": {
       "are_settled_up": "siete pari",
       "is_settled_up": "è pari",
@@ -228,7 +228,7 @@
     "bank_transactions": "Transazioni bancarie",
     "clear": "Pulisci",
     "delete_expense_details": {
-      "text": "L'azione eliminerà definitivamente la spesa e non sarà reversibile",
+      "text": "Questa azione non può essere annullata. La spesa verrà eliminata definitivamente.",
       "title": "Sei sicuro di voler eliminare questa spesa?"
     },
     "multiple_transactions": {
@@ -334,39 +334,39 @@
     "app_name": "SplitPro",
     "balances": "Saldi",
     "groups": "Gruppi",
-    "recurring": ""
+    "recurring": "Ricorrente"
   },
   "recurrence": {
-    "cron_expression": "",
-    "days_of_month": "",
-    "days_of_week": "",
-    "delete_description": "",
-    "delete_title": "",
-    "derived_delete_warning": "",
-    "derived_edit_warning": "",
-    "description": "",
-    "edit_confirmation_title": "",
-    "edit_description": "",
-    "edit_title": "",
-    "empty": "",
-    "expense_for_the_amount_of": "",
-    "last_day": "",
-    "months": "",
-    "never": "",
-    "recurring": "",
+    "cron_expression": "Espressione Cron",
+    "days_of_month": "Giorni del mese",
+    "days_of_week": "Giorni della settima",
+    "delete_description": "Questo interromperà la creazione di spese future. Le spese già create da questa ricorrenza non saranno eliminate.",
+    "delete_title": "Elimina ricorrenza",
+    "derived_delete_warning": "Questa spesa fa parte di una ricorrenza. Verrà eliminata solo questa spesa. Le future spese ricorrenti continueranno.",
+    "derived_edit_warning": "Questa spesa fa parte di una ricorrenza. Le modifiche influenzeranno solo questa spesa.",
+    "description": "Imposta una ricorrenza automatica per questa spesa.",
+    "edit_confirmation_title": "Modifica spesa ricorrente",
+    "edit_description": "Questo cambierà il programma delle spese future. Le spese già create non saranno modificate.",
+    "edit_title": "Modifica ricorrenza",
+    "empty": "Ancora nessuna spesa ricorrente",
+    "expense_for_the_amount_of": "Spesa {{name}} di {{amount}} {{currency}}",
+    "last_day": "Ultimo giorno",
+    "months": "Mesi",
+    "never": "Nessuna pianificazione configurata",
+    "recurring": "Ricorrente",
     "schedule_type": {
-      "custom": "",
-      "day": "",
-      "month": "",
-      "never": "",
-      "week": "",
-      "year": ""
+      "custom": "Personalizzata",
+      "day": "Giornaliera",
+      "month": "Mensile",
+      "never": "Mai",
+      "week": "Settimanale",
+      "year": "Annuale"
     },
-    "template_delete_warning": "",
-    "template_edit_warning": "",
-    "time_of_day": "",
-    "title": "",
-    "view_recurring_page": ""
+    "template_delete_warning": "Questa è una spesa ricorrente modello. Eliminandola si interromperanno tutte le future spese ricorrenti.",
+    "template_edit_warning": "Questa è una spesa ricorrente modello. Le modifiche si applicheranno a tutte le future spese ricorrenti.",
+    "time_of_day": "Ora del giorno",
+    "title": "Ricorrenza",
+    "view_recurring_page": "Visualizza pagina ricorrenze"
   },
   "ui": {
     "added_by": "Aggiunto da",
@@ -402,20 +402,20 @@
       }
     },
     "expense_details": "Dettagli spesa",
-    "in_group": "",
+    "in_group": "Nel gruppo",
     "no_activity": "Nessuna attività ancora",
     "not_involved": "Non coinvolto",
     "on": "il",
     "or": "o",
     "outstanding_balances": "Saldi in sospeso",
-    "select_balance": "",
+    "select_balance": "Seleziona saldo",
     "select_currency": "Seleziona valuta",
     "settle_up_name": "Regola",
     "settled_up": "Regolato",
     "settlement": "Regolamento",
     "share_text": "Dai un'occhiata a SplitPro. È un'alternativa gratuita e open source a Splitwise",
-    "show_all_currencies": "",
+    "show_all_currencies": "Mostra tutte le valute",
     "today": "Oggi",
-    "total_balance": ""
+    "total_balance": "Saldo totale"
   }
 }

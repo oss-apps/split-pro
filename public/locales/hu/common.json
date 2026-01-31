@@ -372,11 +372,11 @@
     "deleted_by": "Törölte",
     "edited_by": "Szerkesztette",
     "expense": {
-      "for": "neki",
+      "for": "itt",
       "from": "tőle",
       "paid_by": "Fizette",
       "received_by": "Megkapta",
-      "to": "ide",
+      "to": "neki",
       "user": {
         "deleted": "törölte",
         "get": "kap",

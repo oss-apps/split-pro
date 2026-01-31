@@ -40,6 +40,10 @@
       "description": "Ami le app mobile? Abbiamo pensato anche a te. Installala come PWA e non ti accorgerai della differenza!",
       "title": "Supporto PWA"
     },
+    "recurring_transactions": {
+      "description": "Configura spese ricorrenti automatiche per affitto, abbonamenti o altri costi condivisi ricorrenti",
+      "title": "Spese ricorrenti"
+    },
     "title": "Funzionalità",
     "unequal_split": {
       "description": "Opzioni di divisione avanzate. Per quote, percentuale o importi esatti.",
@@ -55,7 +59,7 @@
   },
   "hero": {
     "add_expense_button": "Aggiungi una spesa",
-    "star_github_button": "Metti una stella su GitHub",
+    "star_github_button": "Dacci una stella su github",
     "subtitle_link": "open source",
     "subtitle_part1": "Un'alternativa",
     "subtitle_part2": "a SplitWise",

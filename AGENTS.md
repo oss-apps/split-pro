@@ -241,6 +241,51 @@ describe('functionName', () => {
 - **Split types**: `EQUAL`, `PERCENTAGE`, `SHARE`, `EXACT`, `ADJUSTMENT`, `SETTLEMENT`, `CURRENCY_CONVERSION`
 - **Schema typo**: `firendId` (not `friendId`) in GroupBalance - maintain for consistency
 
+## Typescript Migrations
+
+Data migrations too complex for SQL queries run automatically during server startup via `src/instrumentation.ts`.
+
+### Architecture
+
+- **`src/migrations/index.ts`** - Migration runner that checks `AppMetadata.schema_version` and runs pending migrations
+- **`src/migrations/{name}.ts`** - Individual migration files exporting an async function
+
+### Adding New Migrations
+
+1. Create a new file `src/migrations/{description}.ts`:
+
+```typescript
+import { db } from '~/server/db';
+
+export async function myMigrationFunction(): Promise<void> {
+  // Migration logic using the shared db connection
+  const records = await db.someModel.findMany({ ... });
+
+  for (const record of records) {
+    await db.$transaction(async (tx) => {
+      // Atomic operations
+    });
+  }
+
+  console.log('Migration completed');
+}
+```
+
+1. Register the migration in `src/migrations/index.ts` by calling it in its respective case block.
+
+### Version Tracking
+
+- Schema version is stored in `AppMetadata` table with key `schema_version`
+- Versions are compared lexicographically (semver format: `"2.0.0"`, `"2.1.0"`, etc.)
+- Missing version (pre-2.0.0 databases) is treated as needing all migrations
+
+### Key Points
+
+- Migrations run on every server start but are idempotent (version check)
+- Use the shared `db` connection from `~/server/db`
+- Wrap related operations in `db.$transaction()` for atomicity
+- Log progress for visibility during deployment
+
 ## Localization
 
 - Only create English translation keys when adding features

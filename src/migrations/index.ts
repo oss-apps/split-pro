@@ -12,6 +12,8 @@ import { db } from '~/server/db';
 
 // Import migrations
 import { migrateSettlementsToGroups } from './settle_groups';
+import { runDbMigrations } from './programmatic-prisma';
+import { env } from '~/env';
 
 /**
  * Get the current schema version from the database.
@@ -45,6 +47,11 @@ async function setVersion(version: string): Promise<void> {
  * Migrations are run in order and each updates the schema version on success.
  */
 export async function runMigrations(): Promise<void> {
+  if (env.DOCKER_OUTPUT) {
+    console.log('=== Prisma DB Migrations ===\n');
+    await runDbMigrations();
+  }
+
   console.log('=== SplitPro Data Migrations ===\n');
 
   const currentVersion = await getCurrentVersion();

@@ -15,6 +15,7 @@ export const env = createEnv({
         'You forgot to change the default URL',
       ),
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+    DOCKER_OUTPUT: z.boolean().default(false),
     NEXTAUTH_SECRET: 'production' === process.env.NODE_ENV ? z.string() : z.string().optional(),
     NEXTAUTH_URL: z.preprocess(
       // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
@@ -96,6 +97,7 @@ export const env = createEnv({
       process.env.DATABASE_URL ??
       `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}`,
     NODE_ENV: process.env.NODE_ENV,
+    DOCKER_OUTPUT: !!process.env.DOCKER_OUTPUT,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     NEXTAUTH_URL_INTERNAL: process.env.NEXTAUTH_URL_INTERNAL ?? process.env.NEXTAUTH_URL,

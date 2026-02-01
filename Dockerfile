@@ -14,7 +14,7 @@ WORKDIR /app
 RUN npm i -g corepack@latest && corepack enable
 COPY package.json pnpm-lock.yaml prisma/ ./
 
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
@@ -25,34 +25,21 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS release
 ARG APP_VERSION
 
 ENV NODE_ENV=production
+ENV DOCKER_OUTPUT=1
+
 WORKDIR /app
 
 RUN apk update \
     && apk add --no-cache libc6-compat \
-    && rm -rf /var/lib/apt/lists/* \
-	&& rm -rf /var/cache/apk/*
+    && rm -rf /var/cache/apk/*
 
-COPY --from=base /app/next.config.js .
-COPY --from=base /app/package.json .
-COPY --from=base /app/pnpm-lock.yaml .
-
-COPY --from=base  /app/.next/standalone ./
-COPY --from=base  /app/.next/static ./.next/static
-COPY --from=base  /app/public ./public
-
-COPY --from=base  /app/prisma/schema.prisma ./prisma/schema.prisma
-COPY --from=base  /app/prisma/migrations ./prisma/migrations
-COPY --from=base  /app/node_modules/prisma ./node_modules/prisma
-COPY --from=base  /app/node_modules/@prisma ./node_modules/@prisma
-
-RUN npm i -g corepack@latest \
-    && corepack enable \
-    && mkdir node_modules/.bin \
-    && ln -s /app/node_modules/prisma/build/index.js ./node_modules/.bin/prisma
+COPY --from=base /app/.next/standalone ./
+COPY --from=base /app/.next/static ./.next/static
+COPY --from=base /app/public ./public
+COPY --from=base /app/prisma/migrations ./migrations
 
 # set this so it throws error where starting server
 ENV SKIP_ENV_VALIDATION="false"
-ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 ENV APP_VERSION=${APP_VERSION}
 
 COPY ./start.sh ./start.sh

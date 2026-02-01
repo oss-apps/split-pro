@@ -551,3 +551,26 @@ export async function importGroupFromSplitwise(
 
 const getNonZeroParticipants = (participants: { userId: number; amount: bigint }[]) =>
   participants.length > 1 ? participants.filter((p) => 0n !== p.amount) : participants;
+
+interface HistoricalBalance {
+  userId: number;
+  friendId: number;
+  groupId: number | null;
+  currency: string;
+  amount: bigint;
+}
+
+export const getHistoricalBalances = async (
+  userId: number,
+  friendId: number,
+  currency: string,
+  beforeDate: Date,
+) =>
+  db.$queryRaw<HistoricalBalance[]>`
+        SELECT "userId", "friendId", "groupId", currency, amount
+        FROM get_balance_at_date(${beforeDate})
+        WHERE "userId" = ${userId} 
+          AND "friendId" = ${friendId} 
+          AND currency = ${currency}
+          AND amount != 0
+      `;

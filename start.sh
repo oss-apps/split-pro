@@ -38,9 +38,6 @@ for file_var in $file_vars; do
     echo "Set $base_var from $file_var ($file_path)" >&2
 done
 
-echo "Deploying prisma migrations"
-
-pnpx prisma@6 migrate deploy --schema ./prisma/schema.prisma
 
 echo "Starting web server"
 

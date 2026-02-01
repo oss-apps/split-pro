@@ -32,7 +32,6 @@ BEGIN
     FROM "Expense"
     WHERE id = original_expense_id
     RETURNING id INTO new_expense_id;
-
     -- STEP 2: Insert the new expense participants
     INSERT INTO "ExpenseParticipant" (
         "expenseId", "userId", amount
@@ -41,12 +40,10 @@ BEGIN
         new_expense_id, "userId", amount
     FROM "ExpenseParticipant"
     WHERE "expenseId" = original_expense_id;
-
     -- STEP 3: Set notified to false in the ExpenseRecurrence table
     UPDATE "ExpenseRecurrence"
     SET notified = false
     WHERE id = (SELECT "recurrenceId" FROM "Expense" WHERE id = original_expense_id);
-
     -- STEP 4: Return the new expense ID
     RETURN new_expense_id;
 END;

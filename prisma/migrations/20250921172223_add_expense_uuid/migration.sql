@@ -42,5 +42,7 @@ ALTER TABLE "public"."ExpenseNote" ADD CONSTRAINT "ExpenseNote_expenseUuid_fkey"
 
 -- Migrate data
 UPDATE "public"."Expense" SET "uuidId" = gen_random_uuid() WHERE "uuidId" IS NULL;
+
 UPDATE "public"."ExpenseParticipant" SET "expenseUuid" = (SELECT "uuidId" FROM "public"."Expense" WHERE "id" = "expenseId") WHERE "expenseUuid" IS NULL;
+
 UPDATE "public"."ExpenseNote" SET "expenseUuid" = (SELECT "uuidId" FROM "public"."Expense" WHERE "id" = "expenseId") WHERE "expenseUuid" IS NULL;

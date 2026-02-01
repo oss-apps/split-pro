@@ -85,7 +85,6 @@ WITH "Differences" AS (
     FROM "InsertExpenses" ie
     
     UNION ALL
-
     -- Row 2: The Debtor -> Negative Amount
     SELECT
         ie."id",
@@ -110,20 +109,16 @@ DECLARE
     payer_id INT;
 BEGIN
     SELECT "paidBy" INTO payer_id FROM "Expense" WHERE id = NEW."expenseId";
-
     -- ONLY update if the array actually contains the ID.
     -- This prevents locking the row if the friend is already visible (which is 99% of cases).
-    
     UPDATE "User"
     SET "hiddenFriendIds" = array_remove("hiddenFriendIds", payer_id)
     WHERE id = NEW."userId" 
     AND "hiddenFriendIds" @> ARRAY[payer_id]; -- Only if array contains payer_id
-
     UPDATE "User"
     SET "hiddenFriendIds" = array_remove("hiddenFriendIds", NEW."userId")
     WHERE id = payer_id
     AND "hiddenFriendIds" @> ARRAY[NEW."userId"]; -- Only if array contains userId
-
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

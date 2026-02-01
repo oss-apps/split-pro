@@ -238,6 +238,15 @@ model PushNotification {
   @@schema("public")
 }
 
+model AppMetadata {
+  key       String   @id
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@schema("public")
+}
+
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model job {
   jobid      BigInt             @id @default(autoincrement())

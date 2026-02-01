@@ -8,6 +8,11 @@ import { env } from './env';
 export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     console.log('Registering instrumentation');
+
+    // Run data migrations
+    const { runMigrations } = await import('./migrations');
+    await runMigrations();
+
     const { validateAuthEnv } = await import('./server/auth');
     validateAuthEnv();
 

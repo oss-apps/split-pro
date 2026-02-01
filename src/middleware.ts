@@ -11,6 +11,12 @@ export function middleware(req: NextRequest) {
     return;
   }
 
+  if (req.nextUrl.pathname.startsWith('/pt')) {
+    return NextResponse.redirect(
+      new URL(req.nextUrl.pathname.replace('/pt', '/pt-PT') + req.nextUrl.search, req.url),
+    );
+  }
+
   if (req.nextUrl.locale === 'default') {
     const locale = req.cookies.get('NEXT_LOCALE')?.value ?? 'en';
 

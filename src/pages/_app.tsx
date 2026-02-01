@@ -140,6 +140,22 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
             }),
           )
           .catch(console.error);
+      } else if (data.user.preferredLanguage === 'pt') {
+        // Fix for 'pt' preferred language to 'pt-PT'
+        data.user.preferredLanguage = 'pt-PT';
+        updateUser
+          .mutateAsync({
+            preferredLanguage: 'pt-PT',
+          })
+          .then(() =>
+            update({
+              user: {
+                ...data.user,
+                preferredLanguage: 'pt-PT',
+              },
+            }),
+          )
+          .catch(console.error);
       } else if (data.user.preferredLanguage && data.user.preferredLanguage !== router.locale) {
         // Set user's preferred language by changing the locale
         router

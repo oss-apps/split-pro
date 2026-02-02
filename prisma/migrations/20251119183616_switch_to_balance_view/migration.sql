@@ -125,6 +125,7 @@ $$ LANGUAGE plpgsql;
 
 -- Trigger definition
 DROP TRIGGER IF EXISTS trigger_auto_unhide_friend ON "ExpenseParticipant";
+
 CREATE TRIGGER trigger_auto_unhide_friend
     AFTER INSERT ON "ExpenseParticipant"
     FOR EACH ROW

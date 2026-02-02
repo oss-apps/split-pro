@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { db } from '~/server/db';
 import { env } from '~/env';
 
-const migrationsPath = `${process.cwd()}/migrations`;
+const migrationsPath = `${process.cwd()}/prisma/migrations`;
 
 export async function runDbMigrations() {
   console.info(`Running DB migrations for "${env.NODE_ENV}"`);

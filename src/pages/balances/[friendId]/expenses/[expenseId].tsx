@@ -15,16 +15,12 @@ import ExpenseDetails, {
 import MainLayout from '~/components/Layout/MainLayout';
 import { SimpleConfirmationDialog } from '~/components/SimpleConfirmationDialog';
 import { Button } from '~/components/ui/button';
-import { env } from '~/env';
 import { extractTemplateExpenseId } from '~/lib/cron';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 
-const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
-  user,
-  storagePublicUrl,
-}) => {
+const ExpensesPage: NextPageWithUser = ({ user }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const expenseId = router.query.expenseId as string;
@@ -112,13 +108,7 @@ const ExpensesPage: NextPageWithUser<{ storagePublicUrl?: string }> = ({
           </div>
         }
       >
-        {expenseQuery.data ? (
-          <ExpenseDetails
-            user={user}
-            expense={expenseQuery.data}
-            storagePublicUrl={storagePublicUrl}
-          />
-        ) : null}
+        {expenseQuery.data ? <ExpenseDetails user={user} expense={expenseQuery.data} /> : null}
       </MainLayout>
     </>
   );
@@ -128,7 +118,6 @@ ExpensesPage.auth = true;
 
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
-    storagePublicUrl: env.R2_PUBLIC_URL,
     ...(await customServerSideTranslations(context.locale, ['common'])),
   },
 });

@@ -32,10 +32,9 @@ type ExpenseDetailsOutput = NonNullable<inferRouterOutputs<ExpenseRouter>['getEx
 interface ExpenseDetailsProps {
   user: NextUser;
   expense: ExpenseDetailsOutput;
-  storagePublicUrl?: string;
 }
 
-const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storagePublicUrl }) => {
+const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
   const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
 
   const { cronParser, i18nReady } = useIntlCronParser();
@@ -101,11 +100,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense, storageP
             ) : null}
           </div>
         </div>
-        <div>
-          {expense.fileKey ? (
-            <Receipt fileKey={expense.fileKey} url={storagePublicUrl ?? ''} />
-          ) : null}
-        </div>
+        <div>{expense.fileKey ? <Receipt fileKey={expense.fileKey} /> : null}</div>
       </div>
       <Separator />
       <div className="mt-10 flex items-center gap-2">

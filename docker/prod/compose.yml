@@ -39,6 +39,9 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    volumes:
+      - uploads:/app/uploads
 
 volumes:
   database:
+  uploads:

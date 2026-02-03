@@ -29,11 +29,10 @@ import { currencyConversion } from '~/utils/numbers';
 import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
 
 export const AddOrEditExpensePage: React.FC<{
-  isStorageConfigured: boolean;
   enableSendingInvites: boolean;
   expenseId?: string;
   bankConnectionEnabled: boolean;
-}> = ({ isStorageConfigured, enableSendingInvites, expenseId, bankConnectionEnabled }) => {
+}> = ({ enableSendingInvites, expenseId, bankConnectionEnabled }) => {
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
   const isNegative = useAddExpenseStore((s) => s.isNegative);
@@ -349,7 +348,7 @@ export const AddOrEditExpensePage: React.FC<{
                     onSelect={setExpenseDate}
                   />
                   <div className="flex items-center gap-4">
-                    {isStorageConfigured ? <UploadFile /> : null}
+                    <UploadFile />
                     <Button
                       className="min-w-[100px]"
                       size="sm"

@@ -1,13 +1,9 @@
-import { randomUUID } from 'crypto';
-
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
-import { getDocumentUploadUrl } from '~/server/storage';
 import { BigMath, currencyConversion } from '~/utils/numbers';
 
 import {
@@ -546,26 +542,6 @@ export const expenseRouter = createTRPCRouter({
 
       // Use cron.alter_job to update the schedule
       await db.$executeRaw`SELECT cron.alter_job(${recurrence.job.jobid}, schedule := ${input.cronExpression})`;
-    }),
-
-  getUploadUrl: protectedProcedure
-    .input(z.object({ fileName: z.string(), fileType: z.string(), fileSize: z.number() }))
-    .mutation(async ({ input, ctx }) => {
-      const randomId = randomUUID();
-      const extension = input.fileName.split('.').pop();
-      const key = `${ctx.session.user.id}/${randomId}.${extension}`;
-
-      if (input.fileSize > FILE_SIZE_LIMIT) {
-        throw new TRPCError({ code: 'BAD_REQUEST', message: 'File size limit exceeded' });
-      }
-
-      try {
-        const fileUrl = await getDocumentUploadUrl(key, input.fileType, input.fileSize);
-        return { fileUrl, key };
-      } catch (e) {
-        console.error('Error getting upload url:', e);
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Error getting upload url' });
-      }
     }),
 
   deleteExpense: protectedProcedure

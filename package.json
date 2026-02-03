@@ -48,6 +48,7 @@
     "cron-parser": "^4.9.0",
     "cronstrue": "^3.3.0",
     "date-fns": "^3.3.1",
+    "formidable": "^3.5.4",
     "i18next": "^25.2.1",
     "i18next-browser-languagedetector": "^8.2.0",
     "i18next-http-backend": "^3.0.2",
@@ -68,6 +69,7 @@
     "react-hook-form": "^7.50.1",
     "react-i18next": "^15.5.3",
     "react-plaid-link": "4.1.1",
+    "sharp": "^0.34.5",
     "sonner": "^1.4.0",
     "superjson": "^2.2.1",
     "vaul": "^1.1.2",
@@ -78,6 +80,7 @@
   "devDependencies": {
     "@faker-js/faker": "10.1.0",
     "@tailwindcss/postcss": "^4.1.10",
+    "@types/formidable": "^3.4.6",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.21",
     "@types/nodemailer": "^6.4.15",

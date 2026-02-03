@@ -11,6 +11,7 @@
 import { db } from '~/server/db';
 
 // Import migrations
+import { convertExistingFilesToWebP } from './convert-files-to-webp';
 import { migrateSettlementsToGroups } from './settle_groups';
 import { runDbMigrations } from './programmatic-prisma';
 import { env } from '~/env';
@@ -61,6 +62,8 @@ export async function runMigrations(): Promise<void> {
     case null:
       console.log('--- Migrating settlements to group-specific settlements ---\n');
       await migrateSettlementsToGroups();
+      console.log('--- Converting existing files to WebP format ---\n');
+      await convertExistingFilesToWebP();
       await setVersion('2.0.0');
   }
 

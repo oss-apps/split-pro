@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
-import { fileExists } from '~/lib/utils';
+import { fileExists } from '~/utils/file';
 
 import { db } from '~/server/db';
 
@@ -72,12 +72,12 @@ async function processFile(
 
 async function processUserDirectory(
   userDir: string,
-): Promise<Array<{ oldKey: string; newKey: string }>> {
+): Promise<{ oldKey: string; newKey: string }[]> {
   const userId = path.basename(userDir);
   console.log(`\nProcessing user directory: ${userId}`);
 
   const files = await fs.readdir(userDir);
-  const convertedFiles: Array<{ oldKey: string; newKey: string }> = [];
+  const convertedFiles: { oldKey: string; newKey: string }[] = [];
 
   for (const file of files) {
     const filePath = path.join(userDir, file);
@@ -95,14 +95,14 @@ async function processUserDirectory(
       }
     } catch (error) {
       console.error(`  ERROR processing file ${file}:`, error);
-      throw new Error(`Failed to convert file: ${filePath}. Migration aborted.`);
+      throw new Error(`Failed to convert file: ${filePath}. Migration aborted.`, { cause: error });
     }
   }
 
   return convertedFiles;
 }
 
-async function updateDatabaseFileKeys(convertedFiles: Array<{ oldKey: string; newKey: string }>) {
+async function updateDatabaseFileKeys(convertedFiles: { oldKey: string; newKey: string }[]) {
   console.log('\nUpdating database file keys...');
 
   for (const { oldKey, newKey } of convertedFiles) {
@@ -131,7 +131,9 @@ async function updateDatabaseFileKeys(convertedFiles: Array<{ oldKey: string; ne
       console.log(`  Updated ${expenses.length} expense(s): ${oldKey} -> ${newKey}`);
     } catch (error) {
       console.error(`  ERROR updating database for ${oldKey}:`, error);
-      throw new Error(`Failed to update database for fileKey: ${oldKey}. Migration aborted.`);
+      throw new Error(`Failed to update database for fileKey: ${oldKey}. Migration aborted.`, {
+        cause: error,
+      });
     }
   }
 }
@@ -163,7 +165,7 @@ export async function convertExistingFilesToWebP(): Promise<void> {
     `Found ${userDirs.length} user director${1 === userDirs.length ? 'y' : 'ies'} to process`,
   );
 
-  const allConvertedFiles: Array<{ oldKey: string; newKey: string }> = [];
+  const allConvertedFiles: { oldKey: string; newKey: string }[] = [];
 
   for (const userDirName of userDirs) {
     const userDir = path.join(UPLOAD_DIR, userDirName);

@@ -1,37 +1,20 @@
-import Image from 'next/image';
-import { useMemo } from 'react';
-
 import { AppDrawer } from '../ui/drawer';
 
-export const Receipt = ({ fileKey, url }: { fileKey: string; url: string }) => {
+export const Receipt = ({ fileKey }: { fileKey: string }) => {
   const thumbKey = fileKey.replace('.webp', '-thumb.webp');
   const thumbUrl = `/api/files/${thumbKey}`;
   const fullUrl = `/api/files/${fileKey}`;
 
-  const receiptThumbnail = useMemo(
-    () => (
-      <Image
-        src={thumbUrl}
-        alt="Expense receipt thumbnail"
-        width={56}
-        height={56}
-        data-loaded="false"
-        onLoad={setDataLoaded}
-        className="h-14 w-14 rounded-md object-cover object-center data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
-      />
-    ),
-    [thumbUrl],
-  );
-
   return (
     <AppDrawer
-      trigger={receiptThumbnail}
+      trigger={<ThumbnailTrigger thumbUrl={thumbUrl} />}
       leftAction="Close"
       title="Expense Receipt"
       className="h-[98vh]"
     >
       <div className="mb-8 overflow-scroll">
-        <Image
+        {/* oxlint-disable-next-line next/no-img-element */}
+        <img
           src={fullUrl}
           width={300}
           height={800}
@@ -44,6 +27,19 @@ export const Receipt = ({ fileKey, url }: { fileKey: string; url: string }) => {
     </AppDrawer>
   );
 };
+
+const ThumbnailTrigger = ({ thumbUrl }: { thumbUrl: string }) => (
+  // oxlint-disable-next-line next/no-img-element
+  <img
+    src={thumbUrl}
+    alt="Expense receipt thumbnail"
+    width={56}
+    height={56}
+    data-loaded="false"
+    onLoad={setDataLoaded}
+    className="h-14 w-14 rounded-md object-cover object-center data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
+  />
+);
 
 const setDataLoaded = (event: React.SyntheticEvent<HTMLImageElement>) => {
   event.currentTarget.setAttribute('data-loaded', 'true');

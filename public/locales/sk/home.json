@@ -1,1 +1,16 @@
-{}
+{
+  "features": {
+    "currency_conversion": {
+      "description": "Rýchlo konvertujte meny pomocou aktuálnych alebo historických kurzov",
+      "title": "Konverzia mien"
+    },
+    "debt_simplification": {
+      "description": "Automatické zjednodušenie skupinových dlhov, aby sa znížil počet transakcií potrebných medzi priateľmi",
+      "title": "Zjednodušenie dlhu"
+    },
+    "recurring_transactions": {
+      "description": "Nastav si automatické opakované výdavky za nájom, predplatné alebo iné opakujúce sa zdiaľané výdavky",
+      "title": "Opakujúce sa transakcie"
+    }
+  }
+}

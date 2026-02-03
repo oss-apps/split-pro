@@ -5,23 +5,9 @@ import { useTranslation } from 'next-i18next';
 
 import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { useAddExpenseStore } from '~/store/addStore';
-import { api } from '~/utils/api';
 
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-
-const getImgHeightAndWidth = (file: File) =>
-  new Promise<{ width: number; height: number }>((resolve, reject) => {
-    const img = new Image();
-    img.src = URL.createObjectURL(file);
-    img.onload = () => {
-      resolve({ width: img.width, height: img.height });
-      URL.revokeObjectURL(img.src);
-    };
-    img.onerror = (error) => {
-      reject(error);
-    };
-  });
 
 export const UploadFile: React.FC = () => {
   const { t } = useTranslation();
@@ -29,12 +15,9 @@ export const UploadFile: React.FC = () => {
   const fileKey = useAddExpenseStore((s) => s.fileKey);
   const { setFileUploading, setFileKey } = useAddExpenseStore((s) => s.actions);
 
-  const getUploadUrl = api.expense.getUploadUrl.useMutation();
-
   const handleFileChange = React.useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       const { files } = event.target;
-
       const file = files?.[0];
 
       if (!file) {
@@ -47,40 +30,34 @@ export const UploadFile: React.FC = () => {
       }
 
       setFile(file);
-
-      await getImgHeightAndWidth(file);
-
       setFileUploading(true);
-      try {
-        const { fileUrl, key } = await getUploadUrl.mutateAsync({
-          fileName: file.name,
-          fileType: file.type,
-          fileSize: file.size,
-        });
 
-        const response = await fetch(fileUrl, {
-          method: 'PUT',
-          body: file,
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
         });
 
         if (!response.ok) {
-          toast.error(t('errors.upload_failed'));
-          console.error('Failed to upload file:', response.statusText);
-          setFile(null);
-          return;
+          throw new Error(response.statusText);
         }
 
-        toast.success(t('expense_details.add_expense_details.upload_file.messages.upload_success'));
+        const data = await response.json();
 
-        setFileKey(key);
+        toast.success(t('expense_details.add_expense_details.upload_file.messages.upload_success'));
+        setFileKey(data.key);
       } catch (error) {
-        console.error('Error getting upload url:', error);
+        console.error('Upload error:', error);
         toast.error(t('errors.uploading_error'));
+        setFile(null);
       } finally {
         setFileUploading(false);
       }
     },
-    [getUploadUrl, setFileUploading, setFileKey, t],
+    [setFileUploading, setFileKey, t],
   );
 
   return (

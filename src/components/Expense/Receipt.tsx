@@ -1,13 +1,18 @@
 import Image from 'next/image';
-import { AppDrawer } from '../ui/drawer';
 import { useMemo } from 'react';
 
+import { AppDrawer } from '../ui/drawer';
+
 export const Receipt = ({ fileKey, url }: { fileKey: string; url: string }) => {
+  const thumbKey = fileKey.replace('.webp', '-thumb.webp');
+  const thumbUrl = `/api/files/${thumbKey}`;
+  const fullUrl = `/api/files/${fileKey}`;
+
   const receiptThumbnail = useMemo(
     () => (
       <Image
-        src={`${url}/${fileKey}`}
-        alt="Expense receipt"
+        src={thumbUrl}
+        alt="Expense receipt thumbnail"
         width={56}
         height={56}
         data-loaded="false"
@@ -15,7 +20,7 @@ export const Receipt = ({ fileKey, url }: { fileKey: string; url: string }) => {
         className="h-14 w-14 rounded-md object-cover object-center data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
       />
     ),
-    [fileKey, url],
+    [thumbUrl],
   );
 
   return (
@@ -27,7 +32,7 @@ export const Receipt = ({ fileKey, url }: { fileKey: string; url: string }) => {
     >
       <div className="mb-8 overflow-scroll">
         <Image
-          src={`${url}/${fileKey}`}
+          src={fullUrl}
           width={300}
           height={800}
           alt="Expense receipt"

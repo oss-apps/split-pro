@@ -8,7 +8,6 @@ import { env } from '~/env';
 import { cronFromBackend } from '~/lib/cron';
 import { parseCurrencyCode } from '~/lib/currency';
 import { isBankConnectionConfigured } from '~/server/bankTransactionHelper';
-import { isStorageConfigured } from '~/server/storage';
 import { useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
@@ -16,10 +15,9 @@ import { customServerSideTranslations } from '~/utils/i18n/server';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 const AddPage: NextPageWithUser<{
-  isStorageConfigured: boolean;
   enableSendingInvites: boolean;
   bankConnectionEnabled: boolean;
-}> = ({ user, isStorageConfigured, enableSendingInvites, bankConnectionEnabled }) => {
+}> = ({ user, enableSendingInvites, bankConnectionEnabled }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const {
     setCurrentUser,
@@ -155,7 +153,6 @@ const AddPage: NextPageWithUser<{
       <MainLayout hideAppBar>
         {currentUser && (!_expenseId || expenseQuery.data) && (
           <AddOrEditExpensePage
-            isStorageConfigured={isStorageConfigured}
             enableSendingInvites={enableSendingInvites}
             expenseId={_expenseId}
             bankConnectionEnabled={!!bankConnectionEnabled}
@@ -172,7 +169,6 @@ export default AddPage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
-    isStorageConfigured: !!isStorageConfigured(),
     enableSendingInvites: !!env.ENABLE_SENDING_INVITES,
     bankConnectionEnabled: !!isBankConnectionConfigured(),
     ...(await customServerSideTranslations(context.locale, ['common', 'categories', 'currencies'])),

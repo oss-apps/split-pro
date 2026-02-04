@@ -19,7 +19,7 @@ export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string |
   gitRevision,
 }) => {
   const { t } = useTranslation('common');
-  const [newVersion, setNewVersion] = React.useState<string | null>('v1.6.3');
+  const [newVersion, setNewVersion] = React.useState<string | null>(null);
 
   useEffect(() => {
     // Check github releases API for latest version
@@ -48,10 +48,8 @@ export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string |
     if (gitRevision) {
       debugInfo.push(`${t('account.debug_info_details.git')}: ${gitRevision}`);
     }
-    if (process.env.NEXT_PUBLIC_VERSION) {
-      debugInfo.push(
-        `${t('account.debug_info_details.version')} ${process.env.NEXT_PUBLIC_VERSION}`,
-      );
+    if (env.NEXT_PUBLIC_VERSION) {
+      debugInfo.push(`${t('account.debug_info_details.version')} ${env.NEXT_PUBLIC_VERSION}`);
     }
     try {
       void navigator.clipboard.writeText(debugInfo.join('\n'));
@@ -80,7 +78,7 @@ export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string |
                 {gitRevision}
               </pre>
             )}
-            {process.env.NEXT_PUBLIC_VERSION && (
+            {env.NEXT_PUBLIC_VERSION && (
               <pre className="text-wrap">
                 {t('account.debug_info_details.version')}:<br />
                 {env.NEXT_PUBLIC_VERSION}

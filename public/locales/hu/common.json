@@ -83,7 +83,7 @@
     "next": "Következő",
     "reconnect": "Újracsatlakozás",
     "save": "Mentés",
-    "settle_up": "Kiegyenlítés",
+    "settle_up": "Kifizetés",
     "submit": "Küldés"
   },
   "actors": {
@@ -120,11 +120,11 @@
     "to_bank": "bankba"
   },
   "currency_conversion": {
-    "amount_to_receive": "Kapandó összeg",
+    "amount_to_receive": "Esedékes összeg",
     "description": "Váltsd át az összeget egy másik pénznemre.",
-    "exchange_rate": "Árfolyam",
+    "exchange_rate": "Átváltási árfolyam",
     "fetching_rate": "Árfolyam lekérése...",
-    "rate": "Arány",
+    "rate": "Valutaárfolyam",
     "success_toast": "A pénznemváltás sikeresen beállítva",
     "title": "Pénznemváltás"
   },
@@ -218,9 +218,9 @@
     },
     "already_added": "Már hozzáadva",
     "balance_list": {
-      "are_settled_up": "kiegyenlítve",
-      "is_settled_up": "kiegyenlítve",
-      "press_balance_info": "Nyomd meg az egyéni egyenleget a kiegyenlítés megkezdéséhez"
+      "are_settled_up": "fizettek",
+      "is_settled_up": "rendezve",
+      "press_balance_info": "Nyomj az egyéni egyenlegre az elszámolás indításához"
     },
     "bank_transactions": "Banki tranzakciók",
     "clear": "Kiürítés",
@@ -405,8 +405,8 @@
     "outstanding_balances": "Kiegyenlítetlen egyenlegek",
     "select_balance": "Válassz egyenleget",
     "select_currency": "Válassz pénznemet",
-    "settle_up_name": "Kiegyenlítés",
-    "settled_up": "Kiegyenlítve",
+    "settle_up_name": "Kifizetés",
+    "settled_up": "Kifizetve",
     "settlement": "Elszámolás",
     "share_text": "Nézd meg a SplitPro-t. Ez egy nyílt forráskódú, ingyenes alternatívája a Splitwise-nak",
     "show_all_currencies": "Összes pénznem megjelenítése",

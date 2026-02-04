@@ -37,7 +37,7 @@ async function processFile(
   const userId = path.basename(userDir);
   const oldKey = `${userId}/${fileName}`;
 
-  if (ext === '.webp') {
+  if (ext === '.webp' && !fileName.endsWith('-thumb.webp')) {
     const thumbName = `${baseName}-thumb.webp`;
     const thumbPath = path.join(userDir, thumbName);
 

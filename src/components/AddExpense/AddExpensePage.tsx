@@ -54,7 +54,7 @@ export const AddOrEditExpensePage: React.FC<{
   const cronExpression = useAddExpenseStore((s) => s.cronExpression);
   const multipleTransactions = useAddExpenseStore((s) => s.multipleTransactions);
 
-  const { t, displayName, generateSplitDescription } = useTranslationWithUtils();
+  const { t, displayName, generateSplitDescription, getCurrencyHelpersCached } = useTranslationWithUtils();
 
   const {
     setCurrency,
@@ -236,9 +236,10 @@ export const AddOrEditExpensePage: React.FC<{
           to: currency,
         });
       setAmount(targetAmount);
+      setAmountStr(getCurrencyHelpersCached(currency).toUIString(targetAmount, false, true));
       previousCurrencyRef.current = null;
     },
-    [setAmount, currency],
+    [setAmount, setAmountStr, currency, getCurrencyHelpersCached],
   );
 
   const currencyConversionComponent = React.useMemo(() => {

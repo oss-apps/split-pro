@@ -83,7 +83,7 @@
     "next": "Következő",
     "reconnect": "Újracsatlakozás",
     "save": "Mentés",
-    "settle_up": "Kifizetés",
+    "settle_up": "Kiegyenlítés",
     "submit": "Küldés"
   },
   "actors": {
@@ -94,7 +94,7 @@
     "owner": "Tulajdonos",
     "you": "Te",
     "you_accusativus": "Téged",
-    "you_dativus": "Neked"
+    "you_dativus": "Te"
   },
   "auth": {
     "continue_with": "Folytatás ezzel: {{provider}}",
@@ -405,8 +405,8 @@
     "outstanding_balances": "Kiegyenlítetlen egyenlegek",
     "select_balance": "Válassz egyenleget",
     "select_currency": "Válassz pénznemet",
-    "settle_up_name": "Kifizetés",
-    "settled_up": "Kifizetve",
+    "settle_up_name": "Kiegyenlítés",
+    "settled_up": "Kiegyenlítve",
     "settlement": "Elszámolás",
     "share_text": "Nézd meg a SplitPro-t. Ez egy nyílt forráskódú, ingyenes alternatívája a Splitwise-nak",
     "show_all_currencies": "Összes pénznem megjelenítése",

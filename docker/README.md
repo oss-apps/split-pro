@@ -1,25 +1,25 @@
 # Docker Setup for Splitpro
 
-The following guide will walk you through setting up Splitpro using Docker. You can choose between a production setup using Docker Compose or a standalone container.
+This guide covers Docker setup for Splitpro. You can choose between a production Docker Compose setup or a standalone container.
 
 ## Prerequisites
 
 Before you begin, ensure that you have the following installed:
 
 - Docker
-- Docker Compose (if using the Docker Compose setup)
+- Docker Compose
 
-## Option 1: Production Docker Compose Setup
+## Production Docker Compose Setup
 
 This setup includes PostgreSQL and the Splitpro application.
 
 1. Download the Docker Compose file from the Splitpro repository: [compose.yml](https://github.com/oss-apps/split-pro/blob/main/docker/prod/compose.yml)
 2. Navigate to the directory containing the `compose.yml` file.
-3. Create a `.env` file in the same directory. Copy the contents of `.env.example`
-4. Adjust the variables to your deployment
+3. Create a `.env` file in the same directory. Copy the contents of `.env.example`.
+4. Adjust the variables to your deployment (see [docs/CONFIGURATION.md](../docs/CONFIGURATION.md)).
 5. Run the following command to start the containers:
 
-```
+```bash
 docker-compose up -d
 ```
 
@@ -27,39 +27,33 @@ This will start the PostgreSQL database and the Splitpro application containers.
 
 6. Access the Splitpro application by visiting `http://localhost:3000` in your web browser.
 
-## Option 2: Standalone Docker Container
+### Minimal .env example
 
-If you prefer to host the Splitpro application on your container provider of choice, you can use the pre-built Docker image from DockerHub or GitHub's Package Registry.
-
-1. Pull the Splitpro Docker image:
-
-```
-docker pull ossapps/splitpro
-```
-
-Or, if using GitHub's Package Registry:
-
-```
-docker pull ghcr.io/oss-apps/splitpro
+```bash
+POSTGRES_USER="postgres"
+POSTGRES_PASSWORD="strong-password"
+POSTGRES_DB="splitpro"
+DATABASE_URL="postgresql://postgres:strong-password@postgres:5432/splitpro"
+NEXTAUTH_SECRET="<generated>" # you can use `openssl rand -base64 32` to generate a strong secret
+NEXTAUTH_URL="http://localhost:3000"
+# See https://developers.google.com/identity/protocols/oauth2
+GOOGLE_CLIENT_ID="<client-id>"
+GOOGLE_CLIENT_SECRET="<client-secret>"
 ```
 
-2. Run the Docker container, providing the necessary environment variables for your database and SMTP host:
+## Other options
 
-```
-docker run -d \
-  -p ${PORT:-3000}:${PORT:-3000} \
-  -e PORT=${PORT:-3000} \
-  -e DATABASE_URL=${DATABASE_URL:?err} \
-  -e NEXTAUTH_URL=${NEXTAUTH_URL:?err} \
-  -e NEXTAUTH_SECRET=${NEXTAUTH_SECRET:?err} \
-  -e GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:?err} \
-  -e GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:?err}
-  ossapps/splitpro
-```
+There are of course other ways to run Splitpro with Docker. The above is the recommended production setup, but you can run it in other ways provided you know what you are doing.
 
-Replace the placeholders with your actual database and aws details.
+If you prefer a more minimal setup, you can run the Splitpro application in a standalone container and connect it to an external PostgreSQL database. In this case, you can pass the environment variables directly when running the container.
 
-1. Access the Splitpro application by visiting the URL you provided in the `NEXTAUTH_URL` environment variable in your web browser.
+Just make sure you install `pg_cron` if you want to use recurring transactions and currency/bank cache cleaning.
+
+### Kubernetes
+
+Some community members have successfully deployed Splitpro on Kubernetes. You can check out their deployments:
+
+- https://github.com/gravelfreeman/talos/blob/main/clusters/main/kubernetes/apps/splitpro/app/helm-release.yaml
 
 ## Success
 
@@ -67,7 +61,9 @@ You have now successfully set up Splitpro using Docker. If you encounter any iss
 
 ## Migrating instance
 
-To migrate your instance it is sufficient to copy the `.env` file as well as to migrate your database.
+To migrate your instance it is sufficient to copy the `.env` file, your uploads volume directory, as well as to migrate your database.
+
+For v1 to v2 upgrades, see [docs/MIGRATING_FROM_V1.md](../docs/MIGRATING_FROM_V1.md).
 
 #### DB backup
 
@@ -81,6 +77,20 @@ docker exec -t <postgres container name> pg_dumpall -c -U postgres > splitpro_ba
 cat splitpro_backup.sql | docker exec -i <postgres container name> psql -U postgres
 ```
 
+Make sure to adjust the database name and user if you are not using the default `postgres` user or database. Also, the above restore command should be run on a clean database.
+
 ## Authentication
 
-We use NextAuth for authentication providers, offering email, Google and Authentik providers out of the box. Other providers can be customized as OIDC providers, but remember that an OIDC callback is needed. Set up yout `NEXTAUTH_URL` and then a callback address of `https://${NEXTAUTH_URL}/api/auth/callback/oidc`.
+Splitpro uses NextAuth with email, OAuth, and OIDC providers. Configure at least one provider and ensure `NEXTAUTH_URL` matches the URL you will access in the browser.
+
+See [docs/AUTHENTICATION.md](../docs/AUTHENTICATION.md) for details.
+
+## Recurring transactions (pg_cron)
+
+Recurring expenses require PostgreSQL with `pg_cron`. The example compose file already enables it. If you use another database image, you must enable the extension yourself.
+
+See [docs/RECURRING_TRANSACTIONS.md](../docs/RECURRING_TRANSACTIONS.md).
+
+## Receipt storage
+
+Receipts are stored locally. Make sure the `uploads` volume is mounted so files persist across restarts (see `docker/prod/compose.yml`).

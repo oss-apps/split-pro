@@ -8,48 +8,110 @@
 
 ## About
 
-SplitPro aims to provide an open-source way to share expenses with your friends.
+SplitPro is a self-hosted, open source way to share expenses with friends. It is designed as a replacement for Splitwise.
 
-It's meant to be a complete replacement for Splitwise.
+## Quick start
 
-It currently has most of the important features.
+1. Use Docker Compose from [docker/prod/compose.yml](docker/prod/compose.yml).
+2. Copy `.env.example` to `.env` and configure auth, database, and uploads.
+3. Start the stack and log in to create your first account.
 
-- Add expenses with an individual or groups
-- Overall balances across the groups
-- Multiple currency support
-- Upload expense bills
-- PWA support
-- Split expense unequally (share, percentage, exact amounts, adjustments)
-- Push notification
-- Download your data
-- Import from splitwise
-- simplify group debts
-- community translations, feel free to add your language!
-- **BETA** currency conversion, quickly convert expenses and group balances
-- **BETA** recurrent transactions
-- **BETA** bank account transaction integration
+See [docker/README.md](docker/README.md) and [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for the full setup steps.
 
-**More features coming every day**
+## Core features
+
+- Add expenses with a friend or a group.
+- Split methods: equal, percentage, share, exact, adjustments, and settlements.
+- Categories, currencies, dates, and receipt attachments (stored locally).
+- Negative expenses are supported for refunds and corrections.
+- PWA support with push notifications.
+- Activity feed with edits and deletions.
+- Detailed balances per person and per group.
+
+## UI preview
+
+![SplitPro banner](public/og_banner.png)
+
+![Desktop balances view](public/Desktop.webp)
+
+![Mobile balances view](public/hero.webp)
+
+## Usage overview
+
+### 1) Expenses, balances, and activity
+
+Create expenses with categories, currencies, dates, and receipt attachments. SplitPro supports negative expenses for refunds and corrections. View per-person balances, detailed group balances, and an activity feed that includes edits and deletions.
+
+### 2) Application info
+
+SplitPro is a PWA and that is the recommended way to use the app. It supports push notifications for new expenses and updates.
+
+### 3) Groups
+
+Groups are the primary way to use SplitPro. You can invite friends by email, or add them directly if they are already in your friends list. Group debt simplification is optional, and the group balance view provides a detailed breakdown.
+
+### 4) Data utilities
+
+Splitwise import supports friends and groups (partial import). Expenses themselves are not imported yet. You can export data from the balances view and account settings.
+
+### 5) Translations
+
+Translations are managed in Weblate. When a language reaches 100%, it is enabled in the next update.
+
+### 6) Authentication
+
+SplitPro uses NextAuth. At least one provider must be configured.
+
+- Email sign-in (magic link)
+- OAuth (Google)
+- OIDC (Authentik, Keycloak, or custom OIDC)
+
+Username/password login is not supported. You can lock down an instance by disabling signups and invites. See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) and [docs/AUTHENTICATION.md](docs/AUTHENTICATION.md) for details.
+
+### 7) Currency conversions
+
+SplitPro can display balances in a single currency, convert expense amounts, and convert group balances. Provider availability and rate limits depend on the configured rate provider. See [docs/CURRENCY_CONVERSIONS.md](docs/CURRENCY_CONVERSIONS.md).
+
+### 8) Recurring transactions
+
+Recurring expenses require a PostgreSQL database with the `pg_cron` extension. We publish a prebuilt Postgres image with `pg_cron`; example usage is in [docker/prod/compose.yml](docker/prod/compose.yml). If you use another database, you must enable the extension and adjust configuration. See [docs/RECURRING_TRANSACTIONS.md](docs/RECURRING_TRANSACTIONS.md).
+
+### 9) Bank transaction integration
+
+Bank integration allows you to load transactions from providers like Plaid and convert them into expenses. This feature was provided by @alexanderwassbjer, who is currently maintaining related issues. See [docs/BANK_TRANSACTIONS.md](docs/BANK_TRANSACTIONS.md).
+
+## Limitations and notes
+
+- SplitPro computes balances from expenses on the fly using database views. Expenses are the source of truth, which keeps balances consistent and trustworthy. For self hosted deployments the efficiency of database aggregations is entirely sufficient, but please do report any performance issues.
+- Recurring transactions require `pg_cron`, which does not support cron ranges or lists.
+- Currency conversion accuracy and coverage depend on the selected provider.
+- Receipts are stored on local disk; make sure your uploads volume is persistent.
+
+## Supporting docs
+
+- [docs/CONFIGURATION.md](docs/CONFIGURATION.md)
+- [docs/AUTHENTICATION.md](docs/AUTHENTICATION.md)
+- [docs/MIGRATING_FROM_V1.md](docs/MIGRATING_FROM_V1.md)
+- [docs/CURRENCY_CONVERSIONS.md](docs/CURRENCY_CONVERSIONS.md)
+- [docs/RECURRING_TRANSACTIONS.md](docs/RECURRING_TRANSACTIONS.md)
+- [docs/BANK_TRANSACTIONS.md](docs/BANK_TRANSACTIONS.md)
+- [docker/README.md](docker/README.md)
 
 ## Versions
 
-Split Pro is for self hosting. To get the most recent features you can build an image from source. Stabilized changes which you can see in GitHub releases are available as Docker images on DockerHub and ghcr. In the past we used to have a community hosted instance at https://splitpro.app, but it is no longer maintained and stuck at version `1.3.4`
-
----
+SplitPro is for self hosting. To get the most recent features, build an image from source. Stabilized changes (GitHub releases) are available as Docker images on DockerHub and GHCR. The old community instance at https://splitpro.app is no longer maintained and is stuck at version `1.3.4`.
 
 ## Why
 
 Splitwise is one of the best apps to add expenses and bills.
 
-I understand that every app needs to make money, After all, lots of effort has been put into Splitwise. My main problem is how they implemented this.
+We understand that every app needs to make money, after all, lots of effort has been put into Splitwise. The main problem is how they implemented this.
 
 Monetising on pro features or ads is fine, but asking money for adding expenses (core feature) is frustrating.
 
-I was searching for other open-source alternatives (Let's be honest, any closed-source product might do the same and I don't have any reason to believe otherwise).
+We were searching for other open-source alternatives (Let's be honest, any closed-source product might do the same and we don't have any reason to believe otherwise).
 
-I managed to find a good app [spliit.app](https://spliit.app/) by [Sebastien Castiel](https://scastiel.dev/) but it's not a complete replacement and didn't suit my workflow sadly. Check it out to see if it fits you.
-
-_That's when I decided to work on this_
+We managed to find a good app [spliit.app](https://spliit.app/) by [Sebastien Castiel](https://scastiel.dev/) but it's not a complete replacement and didn't suit my workflow sadly. Check it out to see if it fits you.
 
 ## Translations
 
@@ -66,76 +128,30 @@ Here is the current state of translation:
 
 #### How numerically stable is the internal logic?
 
-All numbers are stored in the DB as `BigInt` data, with no floats what so ever, safeguarding your expences from rounding errors or lack of precision. This holds true for currencies with large nominal values that might outgrow the safe range of JS number type.
+All numbers are stored in the DB as `BigInt` data, with no floats what so ever, safeguarding your expenses from rounding errors or lack of precision. This holds true for currencies with large nominal values that might outgrow the safe range of JS number type.
 
 #### How are leftover pennies handled?
 
-In case of an expense that cannot be split evenly, the leftover amounts are distributed randomly across participants. The assignment is as equal as possible, in the context of a single expense (similar to Splitwise).
+In case of an expense that cannot be split evenly, leftover amounts are distributed deterministically across participants, based on amount and date.
 
 #### Currency rate providers
 
-Currency rate APIs are usually paywalled or rate limited, except for banking institutions. We provide 3 providers, with a developer friendly interface for adding new ones, if you are in need of more capabilities. To save your rate limits, we cache each API call in the DB and try to get as much rates as possible in a single request.
+See [docs/CURRENCY_CONVERSIONS.md](docs/CURRENCY_CONVERSIONS.md) for provider details and limits.
 
-- [frankfurter](https://frankfurter.dev/) - completely free, but has a limited set of currencies. Check by fetching https://api.frankfurter.dev/v1/currencies
-- [Open Exchange Rates](https://openexchangerates.org/) - very capable with a generous 1000 requests/day. Requires an account and an API key. While the free version only allows USD as the base currency, we simply join the rates together. Fetching ALL rates for a single day means one API call, so unless you want to do hundreds of searches in the past, you should be fine.
-- [NBP](https://api.nbp.pl/en.html) - the central bank of Poland. Similiar case as OXR, but uses PLN as base currency and does not require an account/API key. The downside is that while table A has the most relevant (for Poland) currencies and is updated daily, table B with all the remaining ones is only published on Wednesdays. So if you need these currencies, the rates might be out of date. They also state that there is an API rate limit, but without a number, so it is to be reported.
+## Getting started
 
-## Tech stack
+### Deployment with Docker
 
-- [NextJS](https://nextjs.org/)
-- [Tailwind](https://tailwindcss.com/)
-- [tRPC](https://trpc.io/)
-- [ShadcnUI](https://ui.shadcn.com/)
-- [Prisma](https://www.prisma.io/)
-- [Postgres](https://www.postgresql.org/)
-- [NextAuth](https://next-auth.js.org/)
+We provide Docker images on DockerHub and GHCR.
 
-## Getting started.
+- https://hub.docker.com/r/ossapps/splitpro
+- https://ghcr.io/oss-apps/splitpro
 
-### Prerequisites
+For setup instructions, see [docker/README.md](docker/README.md). For environment variables, see [docs/CONFIGURATION.md](docs/CONFIGURATION.md).
 
-- Node.js (Version: >=22.x)
-- PostgreSQL
-- pnpm (recommended)
+### Development and contributing
 
-## Docker
-
-We provide a Docker container for Splitpro, which is published on both DockerHub and GitHub Container Registry.
-
-DockerHub: [https://hub.docker.com/r/ossapps/splitpro](https://hub.docker.com/r/ossapps/splitpro)
-
-GitHub Container Registry: [https://ghcr.io/oss-apps/splitpro](https://ghcr.io/oss-apps/splitpro)
-
-You can pull the Docker image from either of these registries and run it with your preferred container hosting provider.
-
-Please note that you will need to provide environment variables for connecting to the database, redis, aws and so forth.
-
-For detailed instructions on how to configure and run the Docker container, please refer to the Docker [Docker README](./docker/README.md) in the docker directory.
-
-## Developer Setup
-
-### Install Dependencies
-
-```bash
-corepack enable
-```
-
-```bash
-pnpm i
-```
-
-### Setting up the environment
-
-- Copy the env.example file into .env
-- Setup google oauth required for auth https://next-auth.js.org/providers/google or Email provider by setting SMTP details
-- Login to minio console using `splitpro` user and password `password` and [create access keys](http://localhost:9001/access-keys/new-account) and the R2 related env variables
-- If you want to use bank integration please create a free account on [GoCardless](https://gocardless.com/bank-account-data/) or [Plaid](https://plaid.com) and then enter the the related env variables, read more in the README_BANKTRANSACTIONS.md` file.
-
-### Run the app
-
-```bash
-pnpm d
-```
+See the [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) document.
 
 ## Sponsors
 

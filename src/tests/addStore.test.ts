@@ -580,7 +580,7 @@ describe('calculateSplitShareBasedOnAmount', () => {
         user1,
       );
 
-      // user1 is payer: paid 10000n but their amount is 8000n, so they owe 2000n (20%)
+      // User1 is payer: paid 10000n but their amount is 8000n, so they owe 2000n (20%)
       expect(splitShares[user1.id]![SplitType.PERCENTAGE]).toBe(2000n); // 20%
       expect(splitShares[user2.id]![SplitType.PERCENTAGE]).toBe(3000n); // 30%
       expect(splitShares[user3.id]![SplitType.PERCENTAGE]).toBe(5000n); // 50%
@@ -627,7 +627,7 @@ describe('calculateSplitShareBasedOnAmount', () => {
 
       calculateSplitShareBasedOnAmount(12000n, participants, SplitType.SHARE, splitShares, user1);
 
-      // user1 is payer: paid 12000n but their amount is 6000n, so they owe 6000n
+      // User1 is payer: paid 12000n but their amount is 6000n, so they owe 6000n
       // Shares: 6000:3000:3000 = 2:1:1
       expect(splitShares[user1.id]![SplitType.SHARE]).toBe(200n);
       expect(splitShares[user2.id]![SplitType.SHARE]).toBe(100n);
@@ -673,7 +673,7 @@ describe('calculateSplitShareBasedOnAmount', () => {
 
       calculateSplitShareBasedOnAmount(10000n, participants, SplitType.EXACT, splitShares, user1);
 
-      // user1 is payer: paid 10000n but their amount is 6000n, so they owe 4000n
+      // User1 is payer: paid 10000n but their amount is 6000n, so they owe 4000n
       expect(splitShares[user1.id]![SplitType.EXACT]).toBe(4000n);
       expect(splitShares[user2.id]![SplitType.EXACT]).toBe(3000n);
       expect(splitShares[user3.id]![SplitType.EXACT]).toBe(3000n);
@@ -725,7 +725,7 @@ describe('calculateSplitShareBasedOnAmount', () => {
       calculateSplitShareBasedOnAmount(5000n, participants, SplitType.ADJUSTMENT, splitShares);
 
       // Only user2 has non-zero amount, so equal share = 5000n / 1 = 5000n
-      // user2 owes 5000n vs 5000n = 0n adjustment
+      // User2 owes 5000n vs 5000n = 0n adjustment
       expect(splitShares[user1.id]![SplitType.ADJUSTMENT]).toBe(-5000n); // 0 - 5000n
       expect(splitShares[user2.id]![SplitType.ADJUSTMENT]).toBe(0n); // 5000n - 5000n
       expect(splitShares[user3.id]![SplitType.ADJUSTMENT]).toBe(-5000n); // 0 - 5000n

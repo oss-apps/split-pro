@@ -85,7 +85,7 @@ export const getCurrencyHelpers = ({
     let hasNegativeSign = false;
 
     `${input}`.split('').forEach((letter) => {
-      //allowing only one separator
+      // Allowing only one separator
       if (letter === decimalSeparator && !hasDecimalSeparator) {
         cleaned += letter;
         hasDecimalSeparator = true;
@@ -101,7 +101,7 @@ export const getCurrencyHelpers = ({
         hasDecimalSeparator = true;
         return;
       }
-      // when a user presses '-' sign, switch the sign of the number
+      // When a user presses '-' sign, switch the sign of the number
       if (letter === '-' && !hasNegativeSign) {
         hasNegativeSign = true;
       }
@@ -249,21 +249,36 @@ export function currencyConversion({
   to,
   amount,
   rate,
+  ratePrecision,
 }: {
   from: CurrencyCode;
   to: CurrencyCode;
   amount: bigint;
   rate: number;
+  ratePrecision: number;
 }) {
   const fromDecimalDigits = CURRENCIES[from].decimalDigits;
   const toDecimalDigits = CURRENCIES[to].decimalDigits;
   const preMultiplier = BigInt(10 ** Math.max(toDecimalDigits - fromDecimalDigits, 0));
   const postMultiplier = BigInt(10 ** Math.max(fromDecimalDigits - toDecimalDigits, 0));
+  const ratePrecisionFactor = 10 ** ratePrecision;
   return BigMath.roundDiv(
-    amount * preMultiplier * BigInt(Math.round(rate * 10000)),
-    postMultiplier * 10000n,
+    amount * preMultiplier * BigInt(Math.round(rate * ratePrecisionFactor)),
+    postMultiplier * BigInt(ratePrecisionFactor),
   );
 }
+
+export const getRatePrecision = (value: string) => {
+  const normalized = value.trim();
+  if ('' === normalized) {
+    return 0;
+  }
+  const decimalIndex = normalized.indexOf('.');
+  if (-1 === decimalIndex) {
+    return 0;
+  }
+  return Math.max(normalized.length - decimalIndex - 1, 0);
+};
 
 export const BigMath = {
   abs(x: bigint) {
@@ -304,6 +319,12 @@ export const BigMath = {
       return value;
     }
   },
+  gcd(a: bigint, b: bigint): bigint {
+    if (b === 0n) {
+      return BigMath.abs(a);
+    }
+    return BigMath.gcd(b, a % b);
+  },
   roundDiv(x: bigint, y: bigint) {
     if (0n === y) {
       throw new Error('Division by zero');
@@ -324,5 +345,3 @@ export const BigMath = {
 
 export const bigIntReplacer = (key: string, value: any): any =>
   typeof value === 'bigint' ? value.toString() : value;
-
-export const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));

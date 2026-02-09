@@ -113,7 +113,8 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
           from: balance.currency,
           to: selectedCurrency,
           amount: balance.amount,
-          rate,
+          rate: rate.rate,
+          ratePrecision: rate.precision,
         });
         total += convertedValue;
       }

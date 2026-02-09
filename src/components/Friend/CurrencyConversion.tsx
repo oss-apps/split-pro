@@ -1,7 +1,7 @@
 import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { api } from '~/utils/api';
-import { currencyConversion } from '~/utils/numbers';
+import { currencyConversion, getRatePrecision } from '~/utils/numbers';
 
 import { toast } from 'sonner';
 import { env } from '~/env';
@@ -26,6 +26,7 @@ export const CurrencyConversion: React.FC<{
     to: CurrencyCode;
     amount: bigint;
     rate: number;
+    ratePrecision: number;
   }) => Promise<void> | void;
 }> = ({ amount, editingRate, editingTargetCurrency, currency, children, onSubmit }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
@@ -34,6 +35,7 @@ export const CurrencyConversion: React.FC<{
 
   const [amountStr, setAmountStr] = useState('');
   const [rate, setRate] = useState('');
+  const [ratePrecision, setRatePrecision] = useState(0);
   const [targetAmountStr, setTargetAmountStr] = useState('');
   const preferredCurrency = useAddExpenseStore((state) => state.currency);
   const { setCurrency } = useAddExpenseStore((state) => state.actions);
@@ -49,13 +51,21 @@ export const CurrencyConversion: React.FC<{
   useEffect(() => {
     if (getCurrencyRate.isPending) {
       setRate('');
+      setRatePrecision(0);
       setTargetAmountStr('');
     }
   }, [getCurrencyRate.isPending]);
 
   useEffect(() => {
     setAmountStr(toUIString(amount, false, true));
-    setRate(editingRate ? editingRate.toFixed(4) : '');
+    if (editingRate) {
+      const precision = Number.isFinite(editingRate) ? getRatePrecision(editingRate.toString()) : 0;
+      setRate(editingRate.toFixed(precision));
+      setRatePrecision(precision);
+    } else {
+      setRate('');
+      setRatePrecision(0);
+    }
     if (editingTargetCurrency && isCurrencyCode(editingTargetCurrency)) {
       setTargetCurrency(editingTargetCurrency);
     }
@@ -63,7 +73,8 @@ export const CurrencyConversion: React.FC<{
 
   useEffect(() => {
     if (getCurrencyRate.data?.rate) {
-      setRate(getCurrencyRate.data.rate.toFixed(4));
+      setRate(getCurrencyRate.data.rate.toFixed(getCurrencyRate.data.precision));
+      setRatePrecision(getCurrencyRate.data.precision);
     }
   }, [getCurrencyRate.data]);
 
@@ -79,9 +90,10 @@ export const CurrencyConversion: React.FC<{
       to: targetCurrency,
       amount: toSafeBigInt(amountStr),
       rate: Number(rate),
+      ratePrecision,
     });
     setTargetAmountStr(toUITargetString(targetAmount, false, true));
-  }, [amountStr, rate, toSafeBigInt, toUITargetString, currency, targetCurrency]);
+  }, [amountStr, rate, ratePrecision, toSafeBigInt, toUITargetString, currency, targetCurrency]);
 
   const onUpdateAmount = useCallback(
     ({ strValue }: { strValue?: string; bigIntValue?: bigint }) => {
@@ -97,6 +109,7 @@ export const CurrencyConversion: React.FC<{
     // Allow empty while typing
     if (raw === '') {
       setRate('');
+      setRatePrecision(0);
       return;
     }
     // Only digits and optional dot
@@ -104,14 +117,16 @@ export const CurrencyConversion: React.FC<{
       return;
     }
     const [int = '', dec = ''] = raw.split('.');
-    const trimmedDec = dec.slice(0, 4);
-    const normalized = raw.includes('.') ? `${int}.${trimmedDec}` : int;
+    const precision = raw.includes('.') ? dec.length : 0;
+    const normalized = raw.includes('.') ? `${int}.${dec}` : int;
     setRate(normalized);
+    setRatePrecision(precision);
   }, []);
 
   const onChangeTargetCurrency = useCallback(
     (currency: CurrencyCode) => {
       setRate('');
+      setRatePrecision(0);
       setTargetCurrency(currency);
       setCurrency(currency);
     },
@@ -124,13 +139,14 @@ export const CurrencyConversion: React.FC<{
         const amount = currencyConversion({
           amount: bigIntValue ?? 0n,
           rate: 1 / Number(rate),
+          ratePrecision,
           from: targetCurrency,
           to: currency,
         });
         setAmountStr(toUIString(amount, false, true));
       }
     },
-    [rate, toUIString, targetCurrency, currency],
+    [rate, ratePrecision, toUIString, targetCurrency, currency],
   );
 
   const onSave = useCallback(async () => {
@@ -143,6 +159,7 @@ export const CurrencyConversion: React.FC<{
       await onSubmit({
         amount: getCurrencyHelpersCached(currency).toSafeBigInt(amountStr),
         rate: Number(rate),
+        ratePrecision,
         from: currency,
         to: targetCurrency,
       });
@@ -151,7 +168,16 @@ export const CurrencyConversion: React.FC<{
       console.error(error);
       toast.error(t('errors.currency_conversion_error'));
     }
-  }, [onSubmit, targetCurrency, amountStr, rate, currency, getCurrencyHelpersCached, t]);
+  }, [
+    onSubmit,
+    targetCurrency,
+    amountStr,
+    rate,
+    ratePrecision,
+    currency,
+    getCurrencyHelpersCached,
+    t,
+  ]);
 
   return (
     <AppDrawer
@@ -226,7 +252,7 @@ export const CurrencyConversion: React.FC<{
                   <Input
                     aria-label="Rate"
                     type="number"
-                    step="0.0001"
+                    step={0 === ratePrecision ? '1' : `0.${'0'.repeat(ratePrecision - 1)}1`}
                     min={0}
                     value={rate}
                     inputMode="numeric"
@@ -238,13 +264,13 @@ export const CurrencyConversion: React.FC<{
                       {t('currency_conversion.fetching_rate')}
                     </span>
                   )}
-                  {!!rate && (
+                  {Boolean(rate) && (
                     <>
                       <span className="pointer-events-none text-xs text-gray-500">
-                        1 {currency} = {Number(rate).toFixed(4)} {targetCurrency}
+                        1 {currency} = {Number(rate).toFixed(ratePrecision)} {targetCurrency}
                       </span>
                       <span className="pointer-events-none text-xs text-gray-500">
-                        1 {targetCurrency} = {(1 / Number(rate)).toFixed(4)} {currency}
+                        1 {targetCurrency} = {(1 / Number(rate)).toFixed(ratePrecision)} {currency}
                       </span>
                     </>
                   )}

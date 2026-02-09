@@ -6,7 +6,7 @@ import { DEFAULT_CATEGORY } from '~/lib/category';
 import { type CurrencyCode } from '~/lib/currency';
 import type { TransactionAddInputModel } from '~/types';
 import { shuffleArray } from '~/utils/array';
-import { BigMath, gcd } from '~/utils/numbers';
+import { BigMath } from '~/utils/numbers';
 import { cyrb128, splitmix32 } from '~/utils/random';
 
 export type Participant = User & { amount?: bigint };

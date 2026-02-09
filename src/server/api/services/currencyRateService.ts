@@ -5,12 +5,17 @@ import { db } from '~/server/db';
 
 export interface RateResponse {
   base: string;
-  rates: { [key: string]: number };
+  rates: { [key: string]: string };
+}
+
+export interface ParsedRate {
+  rate: number;
+  precision: number;
 }
 
 class ProviderMissingError extends Error {}
 
-abstract class CurrencyRateProvider {
+export abstract class CurrencyRateProvider {
   intermediateBase: CurrencyCode | null = null;
   abstract providerName: string;
 
@@ -20,9 +25,9 @@ abstract class CurrencyRateProvider {
     from: CurrencyCode,
     to: CurrencyCode,
     date: Date = new Date(),
-  ): Promise<number> {
+  ): Promise<ParsedRate> {
     if (from === to) {
-      return 1;
+      return { rate: 1, precision: 0 };
     }
 
     const cachedRate = await this.checkCache(from, to, date);
@@ -34,7 +39,12 @@ abstract class CurrencyRateProvider {
 
     await Promise.all(
       Object.entries(data.rates).map(([to, rate]) =>
-        this.upsertCache(data.base as CurrencyCode, to as CurrencyCode, date, rate),
+        this.upsertCache(
+          data.base as CurrencyCode,
+          to as CurrencyCode,
+          date,
+          this.toParsedRate(rate),
+        ),
       ),
     );
 
@@ -50,36 +60,41 @@ abstract class CurrencyRateProvider {
     from: CurrencyCode,
     to: CurrencyCode,
     date: Date = new Date(),
-  ): Promise<number | undefined> {
+  ): Promise<ParsedRate | undefined> {
     const cachedRate = await this.getCache(from, to, date);
 
     if (cachedRate) {
-      return cachedRate.rate;
+      return { rate: cachedRate.rate, precision: cachedRate.precision };
     }
 
     const reverseCachedRate = await this.getCache(to, from, date);
 
     if (reverseCachedRate) {
-      void this.upsertCache(from, to, date, 1 / reverseCachedRate.rate);
-      return 1 / reverseCachedRate.rate;
+      const invertedRate = this.roundRate(1 / reverseCachedRate.rate, reverseCachedRate.precision);
+      void this.upsertCache(from, to, date, {
+        rate: invertedRate,
+        precision: reverseCachedRate.precision,
+      });
+      return { rate: invertedRate, precision: reverseCachedRate.precision };
     }
 
     if ([null, from, to].includes(this.intermediateBase)) {
       return undefined;
     }
 
-    // try with intermediate base currency
+    // Try with intermediate base currency
     const rateFromIntermediate = await this.checkCache(this.intermediateBase!, from, date);
     const rateToIntermediate = await this.checkCache(this.intermediateBase!, to, date);
 
     if (rateFromIntermediate && rateToIntermediate) {
-      const rate = rateToIntermediate / rateFromIntermediate;
-      void this.upsertCache(from, to, date, rate);
-      return rate;
+      const precision = Math.max(rateFromIntermediate.precision, rateToIntermediate.precision);
+      const rate = this.roundRate(rateToIntermediate.rate / rateFromIntermediate.rate, precision);
+      void this.upsertCache(from, to, date, { rate, precision });
+      return { rate, precision };
     }
   }
 
-  private upsertCache(from: CurrencyCode, to: CurrencyCode, date: Date, rate: number) {
+  private upsertCache(from: CurrencyCode, to: CurrencyCode, date: Date, parsedRate: ParsedRate) {
     return db.cachedCurrencyRate.upsert({
       where: {
         from_to_date: { from, to, date },
@@ -88,11 +103,13 @@ abstract class CurrencyRateProvider {
         from,
         to,
         date,
-        rate,
+        rate: parsedRate.rate,
+        precision: parsedRate.precision,
         lastFetched: new Date(),
       },
       update: {
-        rate,
+        rate: parsedRate.rate,
+        precision: parsedRate.precision,
         lastFetched: new Date(),
       },
     });
@@ -115,6 +132,31 @@ abstract class CurrencyRateProvider {
       });
     }
     return result;
+  }
+
+  protected getPrecision(rate: string): number {
+    const match = rate.match(/\.(\d+)/);
+    if (!match) {
+      return 0;
+    }
+    return match[1]?.length ?? 0;
+  }
+
+  protected roundRate(rate: number, precision: number): number {
+    if (0 === precision) {
+      return Math.round(rate);
+    }
+    const factor = 10 ** precision;
+    return Math.round(rate * factor) / factor;
+  }
+
+  protected formatRate(rate: number, precision: number): string {
+    return rate.toFixed(precision);
+  }
+
+  protected toParsedRate(rate: string): ParsedRate {
+    const precision = this.getPrecision(rate);
+    return { rate: Number(rate), precision };
   }
 }
 
@@ -147,7 +189,7 @@ class OpenExchangeRatesProvider extends CurrencyRateProvider {
     }
     const key = !date || isToday(date) ? 'latest' : `historical/${format(date, 'yyyy-MM-dd')}`;
 
-    // sadly the free tier supports only USD as base currency
+    // Sadly the free tier supports only USD as base currency
     const response = await fetch(
       `https://openexchangerates.org/api/${key}.json?app_id=${process.env.OPEN_EXCHANGE_RATES_APP_ID}`,
     );
@@ -172,7 +214,13 @@ class NbpProvider extends CurrencyRateProvider {
 
     return {
       base: 'PLN',
-      rates: Object.fromEntries(response.rates.map((rate) => [rate.code, 1 / rate.mid])),
+      rates: Object.fromEntries(
+        response.rates.map((rate) => {
+          const precision = this.getPrecision(rate.mid);
+          const invertedRate = this.roundRate(1 / Number(rate.mid), precision);
+          return [rate.code, this.formatRate(invertedRate, precision)];
+        }),
+      ),
     };
   }
 
@@ -196,7 +244,7 @@ class NbpProvider extends CurrencyRateProvider {
       table: string;
       no: string;
       effectiveDate: string;
-      rates: { currency: string; code: string; mid: number }[];
+      rates: { currency: string; code: string; mid: string }[];
     }[]
   > {
     const response = await fetch(
@@ -206,7 +254,7 @@ class NbpProvider extends CurrencyRateProvider {
       if (table === 'A') {
         throw new Error(response.statusText || 'Failed to fetch exchange rates');
       } else {
-        // table B is published weekly on Wednesdays
+        // Table B is published weekly on Wednesdays
         const currentIsoDay = getISODay(date);
         const previousWednesday = subDays(
           date,
@@ -216,7 +264,9 @@ class NbpProvider extends CurrencyRateProvider {
       }
     }
 
-    return response.json();
+    const raw = await response.text();
+    const wrapped = raw.replaceAll(/("mid"\s*:\s*)(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g, '$1"$2"');
+    return JSON.parse(wrapped);
   }
 }
 

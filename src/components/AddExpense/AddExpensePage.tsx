@@ -223,7 +223,7 @@ export const AddOrEditExpensePage: React.FC<{
   const previousCurrencyRef = React.useRef<CurrencyCode | null>(null);
 
   const onConvertAmount: React.ComponentProps<typeof CurrencyConversion>['onSubmit'] = useCallback(
-    ({ amount: absAmount, rate }) => {
+    ({ amount: absAmount, rate, ratePrecision }) => {
       if (!previousCurrencyRef.current) {
         return;
       }
@@ -233,6 +233,7 @@ export const AddOrEditExpensePage: React.FC<{
         currencyConversion({
           amount: absAmount,
           rate,
+          ratePrecision,
           from: previousCurrencyRef.current,
           to: currency,
         });

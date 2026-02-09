@@ -210,6 +210,7 @@ model CachedCurrencyRate {
   to          String
   date        DateTime
   rate        Float
+  precision   Int
   lastFetched DateTime
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

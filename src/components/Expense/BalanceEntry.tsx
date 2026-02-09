@@ -1,4 +1,3 @@
-import { clsx } from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
@@ -6,19 +5,17 @@ import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { EntityAvatar } from '../ui/avatar';
 import { ConvertibleBalance } from './ConvertibleBalance';
 
+const emptyBalances: { currency: string; amount: bigint }[] = [];
+
 export const BalanceEntry: React.FC<{
   entity: { name?: string | null; image?: string | null; email?: string | null };
-  balances: { currency: string; amount: bigint }[];
+  balances?: { currency: string; amount: bigint }[];
   id: number;
-}> = ({ entity, balances, id }) => {
-  const { t, displayName } = useTranslationWithUtils();
+}> = ({ entity, balances = emptyBalances, id }) => {
+  const { displayName } = useTranslationWithUtils();
   const router = useRouter();
 
   const currentRoute = router.pathname;
-
-  // Calculate if overall balance is positive or zero
-  const totalAmount = balances.reduce((sum, b) => sum + b.amount, 0n);
-  const isPositive = 0n < totalAmount;
 
   const stopPropagation = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -31,25 +28,9 @@ export const BalanceEntry: React.FC<{
         <EntityAvatar entity={entity} size={35} />
         <div className="text-foreground">{displayName(entity)}</div>
       </div>
-      {0n === totalAmount ? (
-        <div>
-          <p className="text-xs">{t('ui.settled_up')}</p>
-        </div>
-      ) : (
-        <div>
-          <div
-            className={clsx(
-              'text-right text-xs',
-              isPositive ? 'text-emerald-500' : 'text-orange-600',
-            )}
-          >
-            {t('actors.you')} {t(`ui.expense.you.${isPositive ? 'lent' : 'owe'}`)}
-          </div>
-          <div className="text-right" onClick={stopPropagation}>
-            <ConvertibleBalance balances={balances} entityId={id} showMultiOption={false} />
-          </div>
-        </div>
-      )}
+      <div className="text-right" onClick={stopPropagation}>
+        <ConvertibleBalance withText balances={balances} entityId={id} showMultiOption={false} />
+      </div>
     </Link>
   );
 };

@@ -22,6 +22,7 @@ interface ConvertibleBalanceProps {
   balances: { currency: string; amount: bigint }[];
   showMultiOption?: boolean;
   forceShowButton?: boolean;
+  withText?: boolean;
   entityId?: number;
 }
 
@@ -30,9 +31,10 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
   balances,
   showMultiOption = false,
   forceShowButton = false,
+  withText = false,
   entityId,
 }) => {
-  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { t } = useTranslationWithUtils();
   const [open, setOpen] = useState(false);
 
   const selectedCurrency = useCurrencyPreferenceStore((s) => s.getPreference(entityId));
@@ -56,7 +58,9 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
     },
     {
       enabled:
-        !!selectedCurrency && selectedCurrency !== SHOW_ALL_VALUE && 0 < availableCurrencies.length,
+        Boolean(selectedCurrency) &&
+        selectedCurrency !== SHOW_ALL_VALUE &&
+        0 < availableCurrencies.length,
     },
   );
 
@@ -95,7 +99,7 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
           return null;
         }
 
-        if (!isCurrencyCode(selectedCurrency!) || !isCurrencyCode(balance.currency)) {
+        if (!isCurrencyCode(selectedCurrency) || !isCurrencyCode(balance.currency)) {
           toast.error(t('errors.currency_conversion_failed'));
           console.error(
             `Invalid selected currency codes: ${selectedCurrency} or ${balance.currency}`,
@@ -107,7 +111,7 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
         // Convert amount using the rate
         const convertedValue = currencyConversion({
           from: balance.currency,
-          to: selectedCurrency!,
+          to: selectedCurrency,
           amount: balance.amount,
           rate,
         });
@@ -126,7 +130,12 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
   if (1 === balances.length && !forceShowButton) {
     const balance = balances[0]!;
     return (
-      <AmountDisplay className={className} amount={balance.amount} currency={balance.currency} />
+      <AmountDisplay
+        withText={withText}
+        className={className}
+        amount={balance.amount}
+        currency={balance.currency}
+      />
     );
   }
 
@@ -178,7 +187,11 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
         {shouldShowAll ? (
           balances.map((balance, idx) => (
             <React.Fragment key={balance.currency}>
-              <AmountDisplay amount={balance.amount} currency={balance.currency} />
+              <AmountDisplay
+                withText={withText}
+                amount={balance.amount}
+                currency={balance.currency}
+              />
               {idx < balances.length - 1 && (
                 <span className={balance.amount > 0 ? 'text-positive' : 'text-negative'}> + </span>
               )}
@@ -188,6 +201,7 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
           <Skeleton className="h-5 w-20" />
         ) : (
           <AmountDisplay
+            withText={withText}
             className={className}
             amount={totalConvertedAmount ? totalConvertedAmount : balances[0]!.amount}
             currency={totalConvertedAmount ? selectedCurrency : balances[0]!.currency}
@@ -202,16 +216,31 @@ const AmountDisplay: React.FC<{
   className?: string;
   amount: bigint;
   currency: string;
-}> = ({ className = '', amount, currency }) => {
+  withText?: boolean;
+}> = ({ className = '', amount, currency, withText = false }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
 
   if (amount === 0n) {
-    <span className={cn('text-gray-500', className)}>{t('ui.settled_up')}</span>;
+    return <span className={cn('text-gray-500', className)}>{t('ui.settled_up')}</span>;
   }
 
+  const isPositive = amount > 0n;
   return (
-    <span className={cn(amount > 0n ? 'text-positive' : 'text-negative', className)}>
-      {getCurrencyHelpersCached(currency).toUIString(amount)}
-    </span>
+    <div>
+      {withText && (
+        <div
+          className={cn(
+            'text-right text-xs',
+            isPositive ? 'text-positive' : 'text-negative',
+            className,
+          )}
+        >
+          {t('actors.you')} {t(`ui.expense.you.${isPositive ? 'lent' : 'owe'}`)}
+        </div>
+      )}
+      <span className={cn(isPositive ? 'text-positive' : 'text-negative', className)}>
+        {getCurrencyHelpersCached(currency).toUIString(amount)}
+      </span>
+    </div>
   );
 };

@@ -28,8 +28,6 @@ const BalancePage: NextPageWithUser = () => {
   const groupQuery = api.group.getAllGroupsWithBalances.useQuery();
   const archivedGroupQuery = api.group.getAllGroupsWithBalances.useQuery({ getArchived: true });
 
-  const emptyBalances = useMemo<{ currency: string; amount: bigint }[]>(() => [], []);
-
   const actions = useMemo(
     () => (
       <CreateGroup>
@@ -77,7 +75,7 @@ const BalancePage: NextPageWithUser = () => {
                     <AccordionContent>
                       <div className="mt-7 flex flex-col gap-8">
                         {archivedGroupQuery.data.map((g) => (
-                          <BalanceEntry key={g.id} id={g.id} entity={g} balances={emptyBalances} />
+                          <BalanceEntry key={g.id} id={g.id} entity={g} />
                         ))}
                       </div>
                     </AccordionContent>

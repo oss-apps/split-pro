@@ -324,3 +324,5 @@ export const BigMath = {
 
 export const bigIntReplacer = (key: string, value: any): any =>
   typeof value === 'bigint' ? value.toString() : value;
+
+export const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));

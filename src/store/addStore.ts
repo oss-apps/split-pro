@@ -6,7 +6,7 @@ import { DEFAULT_CATEGORY } from '~/lib/category';
 import { type CurrencyCode } from '~/lib/currency';
 import type { TransactionAddInputModel } from '~/types';
 import { shuffleArray } from '~/utils/array';
-import { BigMath } from '~/utils/numbers';
+import { BigMath, gcd } from '~/utils/numbers';
 import { cyrb128, splitmix32 } from '~/utils/random';
 
 export type Participant = User & { amount?: bigint };
@@ -281,7 +281,9 @@ export function calculateParticipantSplit(
         ...p,
         amount: 0n === getSplitShare(p) ? 0n : amount / BigInt(totalParticipants),
       }));
-      canSplitScreenClosed = !!Object.values(splitShares).find((p) => 0n !== p[SplitType.EQUAL]);
+      canSplitScreenClosed = Boolean(
+        Object.values(splitShares).find((p) => 0n !== p[SplitType.EQUAL]),
+      );
       break;
     case SplitType.PERCENTAGE:
       updatedParticipants = participants.map((p) => ({
@@ -390,28 +392,22 @@ export function calculateSplitShareBasedOnAmount(
       break;
 
     case SplitType.SHARE:
-      const amountNum = Number(amount);
-      const shares = participants.map((p) =>
-        p.id === paidBy?.id
-          ? Math.abs(amountNum - Number(p.amount)) / amountNum
-          : Math.abs(Number(p.amount)) / amountNum,
-      );
+      const amounts = participants
+        .filter(({ amount }) => Boolean(amount))
+        .map((p) =>
+          p.id === paidBy?.id ? BigMath.abs(amount - p.amount!) : BigMath.abs(p.amount!),
+        )
+        .filter((s) => s !== 0n);
 
-      const minShare = Math.min(...shares);
-
-      const multiplier = 0 !== minShare ? 1 / minShare : 1;
+      const gcdValue = amounts.length > 1 ? amounts.reduce((a, b) => BigMath.gcd(a, b)) : 1n;
 
       participants.forEach((p) => {
         splitShares[p.id]![splitType] =
           0n === amount
             ? 0n
-            : BigInt(
-                Math.round(
-                  (Math.abs(paidBy?.id !== p.id ? Number(p.amount) : amountNum - Number(p.amount)) /
-                    amountNum) *
-                    multiplier,
-                ),
-              ) * 100n;
+            : ((p.id === paidBy?.id ? BigMath.abs(amount - p.amount!) : BigMath.abs(p.amount!)) *
+                100n) /
+              gcdValue;
       });
 
       break;

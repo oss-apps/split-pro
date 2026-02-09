@@ -610,11 +610,7 @@ export const expenseRouter = createTRPCRouter({
         // Fetch rates for remaining currencies and return as map
         await Promise.all(
           from.slice(1).map(async (currency) => {
-            const r = await currencyRateProvider.getCurrencyRate(
-              currency,
-              to,
-              date,
-            );
+            const r = await currencyRateProvider.getCurrencyRate(currency, to, date);
             rates.set(currency, r);
           }),
         );

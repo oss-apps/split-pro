@@ -9,7 +9,7 @@
       "title": "Pénznem átváltása"
     },
     "debt_simplification": {
-      "description": "Csoportos adósságok automatikus egyszerűsítése a barátok közötti tranzakciók számának csökkentése érdekében",
+      "description": "Csoport adósságainak automatikus egyszerűsítése a barátok közötti tranzakciók számának csökkentése érdekében",
       "title": "Adósság egyszerűsítése"
     },
     "groups_and_friends": {
@@ -64,7 +64,7 @@
     "subtitle_part1": "Egy",
     "subtitle_part2": "Splitwise alternatíva",
     "title_highlight": "ingyenes",
-    "title_part1": "Oszd meg a költségeidet a barátaiddal"
+    "title_part1": "Oszd meg költségeidet a barátaiddal"
   },
   "meta": {
     "description": "SplitPro: Oszd meg költségeidet a barátaiddal ingyen",

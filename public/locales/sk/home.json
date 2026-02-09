@@ -1,5 +1,9 @@
 {
   "features": {
+    "bank_connection": {
+      "description": "Pridávajte výdavky rýchlejšie vďaka integrácii s API pre transakcie bankových účtov GoCardless alebo Plaid",
+      "title": "Bankové prepojenie"
+    },
     "currency_conversion": {
       "description": "Rýchlo konvertujte meny pomocou aktuálnych alebo historických kurzov",
       "title": "Konverzia mien"
@@ -8,9 +12,66 @@
       "description": "Automatické zjednodušenie skupinových dlhov, aby sa znížil počet transakcií potrebných medzi priateľmi",
       "title": "Zjednodušenie dlhu"
     },
+    "groups_and_friends": {
+      "description": "Môžete vytvoriť viacero skupín alebo priamo pridať zostatok. Všetko bude zlúčené",
+      "title": "Skupiny a priatelia"
+    },
+    "i18": {
+      "description": "K dispozícii vo viacerých jazykoch, aby bolo rozdelenie výdavkov dostupné na celom svete",
+      "title": "Internacionalizácia"
+    },
+    "import_splitwise": {
+      "description": "Nemusíte manuálne migrovať zostatky. Môžete importovať používateľov a skupiny zo služby SplitWise",
+      "title": "Importovať zo SplitWise"
+    },
+    "multiple_currencies": {
+      "description": "Potrebujete pridať výdavky s inou menou pre toho istého používateľa? Žiadny problém!",
+      "title": "Viaceré meny"
+    },
+    "open_source": {
+      "description": "Čo sťažuje stať sa zlým. Ľahko viete bežat svoju inštanciu",
+      "title": "Otvorený zdroj"
+    },
+    "push_notifications": {
+      "description": "Nikdy nezmeškajte dôležité upozornenia. Dostávajte upozornenia, keď niekto pridá výdavok alebo vyrovná zostatok",
+      "title": "Push notifikácie"
+    },
+    "pwa_support": {
+      "description": "Milujete mobilné aplikácie? Máme pre vás riešenie. Nainštalujte si ju ako PWA a ani si to nevšimnete!",
+      "title": "Podpora PWA"
+    },
     "recurring_transactions": {
       "description": "Nastav si automatické opakované výdavky za nájom, predplatné alebo iné opakujúce sa zdiaľané výdavky",
       "title": "Opakujúce sa transakcie"
+    },
+    "title": "Funkcie",
+    "unequal_split": {
+      "description": "Rozšírené možnosti rozdelenia. Podľa podielov, percent alebo presných súm.",
+      "title": "Nerovné rozdelenie"
+    },
+    "upload_receipts": {
+      "description": "Nahrajte bločky spolu s výdavkami",
+      "title": "Nahrať bloček"
     }
+  },
+  "footer": {
+    "built_by": "Vytvorené"
+  },
+  "hero": {
+    "add_expense_button": "Pridať výdavok",
+    "star_github_button": "Dajte nám hviezdu na github",
+    "subtitle_link": "otvorený zdroj",
+    "subtitle_part2": "alternatíva k SplitWise",
+    "title_highlight": "zadarmo",
+    "title_part1": "Rozdeľte si výdavky s priateľmi za"
+  },
+  "meta": {
+    "description": "SplitPro: Rozdeľte si výdavky s priateľmi zadarmo",
+    "title": "SplitPro: Rozdeľte si výdavky s priateľmi zadarmo"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "privacy": "Súkromie",
+    "terms": "Podmienky"
   }
 }

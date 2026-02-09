@@ -40,7 +40,8 @@
     "typescript/no-misused-spread": "warn",
     "func-names": "off",
     "prefer-destructuring": "off",
-    "max-statements": "off"
+    "max-statements": "off",
+    "jsx-max-depth": "off"
   },
   "overrides": [
     {

@@ -37,11 +37,14 @@ async function processFile(
   const userId = path.basename(userDir);
   const oldKey = `${userId}/${fileName}`;
 
-  if (ext === '.webp' && !fileName.endsWith('-thumb.webp')) {
+  if (ext === '.webp') {
     const thumbName = `${baseName}-thumb.webp`;
     const thumbPath = path.join(userDir, thumbName);
 
-    if (await fileExists(thumbPath)) {
+    if (baseName.endsWith('-thumb')) {
+      console.log(`  Skipping thumbnail file: ${fileName}`);
+      return null;
+    } else if (await fileExists(thumbPath)) {
       console.log(`  WebP file already has thumbnail: ${fileName}`);
       return null;
     }

@@ -235,13 +235,17 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     setTransactionId: (transactionId) => set({ transactionId }),
     setMultipleTransactions: (multipleTransactions) => set({ multipleTransactions }),
     setSingleTransaction: (singleTransaction: TransactionAddInputModel) =>
-      set({
-        expenseDate: singleTransaction.date,
-        description: singleTransaction.description,
-        currency: singleTransaction.currency,
-        amount: singleTransaction.amount,
-        amountStr: singleTransaction.amountStr,
-        transactionId: singleTransaction.transactionId,
+      set((s) => {
+        const isNegative = singleTransaction.amount < 0n;
+        const amount = BigMath.abs(singleTransaction.amount);
+        return {
+          ...calculateParticipantSplit({ ...s, amount, isNegative }),
+          expenseDate: singleTransaction.date,
+          description: singleTransaction.description,
+          currency: singleTransaction.currency,
+          amountStr: singleTransaction.amountStr,
+          transactionId: singleTransaction.transactionId,
+        };
       }),
     setIsTransactionLoading: (isTransactionLoading) => set({ isTransactionLoading }),
     setCronExpression: (cronExpression) => set({ cronExpression }),

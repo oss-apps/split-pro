@@ -54,7 +54,8 @@ export const AddOrEditExpensePage: React.FC<{
   const cronExpression = useAddExpenseStore((s) => s.cronExpression);
   const multipleTransactions = useAddExpenseStore((s) => s.multipleTransactions);
 
-  const { t, displayName, generateSplitDescription, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { t, displayName, generateSplitDescription, getCurrencyHelpersCached } =
+    useTranslationWithUtils();
 
   const {
     setCurrency,
@@ -290,7 +291,7 @@ export const AddOrEditExpensePage: React.FC<{
           {t('actions.save')}
         </Button>{' '}
       </div>
-      <UserInput isEditing={!!expenseId} />
+      <UserInput isEditing={Boolean(expenseId)} />
       {showFriends || (1 === participants.length && !group) ? (
         <SelectUserOrGroup enableSendingInvites={enableSendingInvites} />
       ) : (

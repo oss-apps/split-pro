@@ -139,7 +139,9 @@ export {
 type AppDrawerMode = 'dialog' | 'drawer';
 const AppDrawerContext = React.createContext<AppDrawerMode | null>(null);
 
-export const AppDrawerClose: React.FC<React.ComponentProps<'button'>> = (props) => {
+export const AppDrawerClose: React.FC<React.ComponentProps<'button'> & { asChild?: boolean }> = (
+  props,
+) => {
   const mode = React.useContext(AppDrawerContext);
 
   if ('dialog' === mode) {

@@ -5,25 +5,17 @@ import { toast } from 'sonner';
 import { cronToBackend } from '~/lib/cron';
 import { api } from '~/utils/api';
 
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '../ui/alert-dialog';
-import { Button } from '../ui/button';
+import { SimpleConfirmationDialog } from '../SimpleConfirmationDialog';
 import { CronBuilder } from '../ui/cron-builder';
 import { AppDrawer } from '../ui/drawer';
-import { SimpleConfirmationDialog } from '../SimpleConfirmationDialog';
 
 interface EditRecurrenceDialogProps {
   recurrenceId: number;
-  currentSchedule: string;
+  currentSchedule: string | null;
   children: React.ReactNode;
 }
+
+const FALLBACK_CRON = '0 0 1 * *'; // Default to monthly on the 1st if no current schedule is provided due to error
 
 export const EditRecurrenceDialog: React.FC<EditRecurrenceDialogProps> = ({
   recurrenceId,
@@ -31,7 +23,7 @@ export const EditRecurrenceDialog: React.FC<EditRecurrenceDialogProps> = ({
   children,
 }) => {
   const { t } = useTranslation();
-  const [cronValue, setCronValue] = useState(currentSchedule);
+  const [cronValue, setCronValue] = useState(currentSchedule ?? FALLBACK_CRON);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -61,7 +53,7 @@ export const EditRecurrenceDialog: React.FC<EditRecurrenceDialogProps> = ({
   const handleCancel = useCallback(() => {
     setConfirmOpen(false);
     // Reset cron value to original
-    setCronValue(currentSchedule);
+    setCronValue(currentSchedule ?? FALLBACK_CRON);
   }, [currentSchedule]);
 
   const handleOpenChange = useCallback(
@@ -69,7 +61,7 @@ export const EditRecurrenceDialog: React.FC<EditRecurrenceDialogProps> = ({
       setDrawerOpen(open);
       if (open) {
         // Reset to current schedule when opening
-        setCronValue(currentSchedule);
+        setCronValue(currentSchedule ?? FALLBACK_CRON);
       }
     },
     [currentSchedule],

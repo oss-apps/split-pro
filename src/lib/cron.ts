@@ -4,7 +4,7 @@ export const cronToBackend = (expression: string) =>
   convertCronTz(expression, new Date().getTimezoneOffset()).replaceAll('L', '$');
 
 export const cronFromBackend = (expression: string) =>
-  convertCronTz(expression, -new Date().getTimezoneOffset()).replaceAll('$', 'L');
+  convertCronTz(expression.replaceAll('$', 'L'), -new Date().getTimezoneOffset());
 
 const convertCronTz = (cronExpression: string, timeZoneOffset: number): string => {
   const interval = cronParser.parseExpression(cronExpression);

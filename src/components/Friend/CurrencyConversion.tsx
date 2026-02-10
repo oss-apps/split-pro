@@ -1,7 +1,7 @@
 import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { api } from '~/utils/api';
-import { currencyConversion, getRatePrecision } from '~/utils/numbers';
+import { MAX_RATE_PRECISION, currencyConversion, getRatePrecision } from '~/utils/numbers';
 
 import { toast } from 'sonner';
 import { env } from '~/env';
@@ -239,7 +239,7 @@ export const CurrencyConversion: React.FC<{
                   <Input
                     aria-label="Rate"
                     type="number"
-                    step={0 === ratePrecision ? '1' : `0.${'0'.repeat(ratePrecision - 1)}1`}
+                    step={`0.${'0'.repeat(MAX_RATE_PRECISION - 1)}1`}
                     min={0}
                     value={rate}
                     inputMode="numeric"

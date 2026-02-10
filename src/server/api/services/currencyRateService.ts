@@ -27,6 +27,7 @@ abstract class CurrencyRateProvider {
 
     const cachedRate = await this.checkCache(from, to, date);
     if (cachedRate) {
+      console.log(cachedRate);
       return cachedRate;
     }
 

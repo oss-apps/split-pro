@@ -259,11 +259,27 @@ export function currencyConversion({
   const toDecimalDigits = CURRENCIES[to].decimalDigits;
   const preMultiplier = BigInt(10 ** Math.max(toDecimalDigits - fromDecimalDigits, 0));
   const postMultiplier = BigInt(10 ** Math.max(fromDecimalDigits - toDecimalDigits, 0));
+  const precision = getRatePrecision(rate);
+  const ratePrecisionFactor = 10 ** precision;
   return BigMath.roundDiv(
-    amount * preMultiplier * BigInt(Math.round(rate * 10000)),
-    postMultiplier * 10000n,
+    amount * preMultiplier * BigInt(Math.round(rate * ratePrecisionFactor)),
+    postMultiplier * BigInt(ratePrecisionFactor),
   );
 }
+
+export const MAX_RATE_PRECISION = 10;
+
+export const getRatePrecision = (value: number, maxPrecision = MAX_RATE_PRECISION) => {
+  const normalized = value.toString().trim();
+  if ('' === normalized) {
+    return 0;
+  }
+  const decimalIndex = normalized.indexOf('.');
+  if (-1 === decimalIndex) {
+    return 0;
+  }
+  return Math.min(Math.max(normalized.length - decimalIndex - 1, 0), maxPrecision);
+};
 
 export const BigMath = {
   abs(x: bigint) {

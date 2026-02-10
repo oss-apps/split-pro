@@ -1,7 +1,7 @@
 import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { api } from '~/utils/api';
-import { currencyConversion } from '~/utils/numbers';
+import { MAX_RATE_PRECISION, currencyConversion, getRatePrecision } from '~/utils/numbers';
 
 import { toast } from 'sonner';
 import { env } from '~/env';
@@ -55,7 +55,12 @@ export const CurrencyConversion: React.FC<{
 
   useEffect(() => {
     setAmountStr(toUIString(amount, false, true));
-    setRate(editingRate ? editingRate.toFixed(4) : '');
+    if (editingRate) {
+      const precision = getRatePrecision(editingRate);
+      setRate(editingRate.toFixed(precision));
+    } else {
+      setRate('');
+    }
     if (editingTargetCurrency && isCurrencyCode(editingTargetCurrency)) {
       setTargetCurrency(editingTargetCurrency);
     }
@@ -63,7 +68,8 @@ export const CurrencyConversion: React.FC<{
 
   useEffect(() => {
     if (getCurrencyRate.data?.rate) {
-      setRate(getCurrencyRate.data.rate.toFixed(4));
+      const precision = getRatePrecision(getCurrencyRate.data.rate);
+      setRate(getCurrencyRate.data.rate.toFixed(precision));
     }
   }, [getCurrencyRate.data]);
 
@@ -104,7 +110,7 @@ export const CurrencyConversion: React.FC<{
       return;
     }
     const [int = '', dec = ''] = raw.split('.');
-    const trimmedDec = dec.slice(0, 4);
+    const trimmedDec = dec.slice(0, 10);
     const normalized = raw.includes('.') ? `${int}.${trimmedDec}` : int;
     setRate(normalized);
   }, []);
@@ -153,6 +159,13 @@ export const CurrencyConversion: React.FC<{
     }
   }, [onSubmit, targetCurrency, amountStr, rate, currency, getCurrencyHelpersCached, t]);
 
+  const ratePrecision = useMemo(() => {
+    if (!rate) {
+      return 0;
+    }
+    return getRatePrecision(Number(rate));
+  }, [rate]);
+
   return (
     <AppDrawer
       trigger={children}
@@ -175,7 +188,7 @@ export const CurrencyConversion: React.FC<{
         <div className="w-full">
           <div className="mx-auto grid w-full max-w-3xl grid-cols-1 place-items-center gap-x-4 gap-y-4 sm:grid-cols-3 sm:gap-y-16">
             {/* From amount */}
-            <div className="flex w-full max-w-[240px] items-end gap-2 sm:col-span-2">
+            <div className="flex w-full max-w-60 items-end gap-2 sm:col-span-2">
               <div className="flex flex-col gap-2">
                 <Label className="capitalize">{t('ui.expense.from')}</Label>
                 <Button variant="outline" className="text-base" disabled>
@@ -191,7 +204,7 @@ export const CurrencyConversion: React.FC<{
               />
             </div>
 
-            <div className="flex w-full max-w-[240px] items-end gap-2 sm:col-span-2">
+            <div className="flex w-full max-w-60 items-end gap-2 sm:col-span-2">
               <div className="flex flex-col gap-2">
                 <Label className="capitalize">{t('ui.expense.to')}</Label>
                 {editingTargetCurrency ? (
@@ -219,14 +232,14 @@ export const CurrencyConversion: React.FC<{
             </div>
 
             {/* Rate */}
-            <div className="flex w-full max-w-[240px] items-start sm:col-start-3 sm:row-span-2 sm:row-start-1 sm:h-full sm:flex-col sm:justify-between">
+            <div className="flex w-full max-w-60 items-start sm:col-start-3 sm:row-span-2 sm:row-start-1 sm:h-full sm:flex-col sm:justify-between">
               <div className="flex w-1/2 flex-col gap-2 sm:w-full">
                 <Label className="capitalize">{t('currency_conversion.rate')}</Label>
                 <div className="flex flex-col">
                   <Input
                     aria-label="Rate"
                     type="number"
-                    step="0.0001"
+                    step={`0.${'0'.repeat(MAX_RATE_PRECISION - 1)}1`}
                     min={0}
                     value={rate}
                     inputMode="numeric"
@@ -241,10 +254,10 @@ export const CurrencyConversion: React.FC<{
                   {Boolean(rate) && (
                     <>
                       <span className="pointer-events-none text-xs text-gray-500">
-                        1 {currency} = {Number(rate).toFixed(4)} {targetCurrency}
+                        1 {currency} = {Number(rate).toFixed(ratePrecision)} {targetCurrency}
                       </span>
                       <span className="pointer-events-none text-xs text-gray-500">
-                        1 {targetCurrency} = {(1 / Number(rate)).toFixed(4)} {currency}
+                        1 {targetCurrency} = {(1 / Number(rate)).toFixed(ratePrecision)} {currency}
                       </span>
                     </>
                   )}

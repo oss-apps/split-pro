@@ -25,7 +25,7 @@ import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
 import { CurrencyInput } from '../ui/currency-input';
 import { CurrencyConversion } from '../Friend/CurrencyConversion';
-import { currencyConversion } from '~/utils/numbers';
+import { currencyConversion, getRatePrecision } from '~/utils/numbers';
 import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
 
 export const AddOrEditExpensePage: React.FC<{

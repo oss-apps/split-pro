@@ -1,7 +1,7 @@
 import { ChevronLeftIcon, PencilIcon, Trash2Icon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 
 import { EditRecurrenceDialog } from '~/components/Expense/EditRecurrenceDialog';
@@ -38,7 +38,16 @@ const RecurringExpenseItem: React.FC<RecurringExpenseItemProps> = ({
   i18nReady,
 }) => {
   const { t } = useTranslationWithUtils();
-  const schedule = cronFromBackend(item.job.schedule);
+
+  const schedule = useMemo(() => {
+    try {
+      return cronFromBackend(item.job.schedule);
+    } catch {
+      toast.error(t('errors.invalid_cron_expression'));
+      console.error(`Failed to parse cron expression for expense: ${item.job.schedule}`);
+      return null;
+    }
+  }, [t, item.job.schedule]);
 
   const handleDelete = useCallback(() => onDelete(item.id), [onDelete, item.id]);
 
@@ -58,7 +67,7 @@ const RecurringExpenseItem: React.FC<RecurringExpenseItemProps> = ({
           </p>
           <p className="text-primary text-sm">
             {t('recurrence.recurring')}
-            {i18nReady ? `: ${cronParser(schedule)}` : ''}
+            {i18nReady && schedule ? `: ${cronParser(schedule)}` : ''}
           </p>
           <p className="text-xs text-gray-500">{toUIDate(item.expense.expenseDate)}</p>
         </div>

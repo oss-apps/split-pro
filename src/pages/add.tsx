@@ -13,6 +13,7 @@ import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { toast } from 'sonner';
 
 const AddPage: NextPageWithUser<{
   enableSendingInvites: boolean;
@@ -58,17 +59,17 @@ const AddPage: NextPageWithUser<{
   const _expenseId = expenseId as string;
   const groupQuery = api.group.getGroupDetails.useQuery(
     { groupId: _groupId },
-    { enabled: !!_groupId && !_expenseId },
+    { enabled: Boolean(_groupId) && !_expenseId },
   );
 
   const friendQuery = api.user.getFriend.useQuery(
     { friendId: _friendId },
-    { enabled: !!_friendId && !_expenseId },
+    { enabled: Boolean(_friendId) && !_expenseId },
   );
 
   const expenseQuery = api.expense.getExpenseDetails.useQuery(
     { expenseId: _expenseId },
-    { enabled: !!_expenseId },
+    { enabled: Boolean(_expenseId) },
   );
 
   useEffect(() => {
@@ -123,7 +124,15 @@ const AddPage: NextPageWithUser<{
     useAddExpenseStore.setState({ showFriends: false });
     setExpenseDate(expenseQuery.data.expenseDate);
     if (expenseQuery.data.recurrence) {
-      setCronExpression(cronFromBackend(expenseQuery.data.recurrence.job.schedule));
+      try {
+        const cronExpression = cronFromBackend(expenseQuery.data.recurrence.job.schedule);
+        setCronExpression(cronExpression);
+      } catch {
+        toast.error(t('errors.invalid_cron_expression'));
+        console.error(
+          `Failed to parse cron expression for expense: ${expenseQuery.data.recurrence.job.schedule}`,
+        );
+      }
     }
     if (expenseQuery.data.fileKey) {
       setFileKey(expenseQuery.data.fileKey);
@@ -143,6 +152,7 @@ const AddPage: NextPageWithUser<{
     setCronExpression,
     setFileKey,
     getCurrencyHelpersCached,
+    t,
   ]);
 
   return (
@@ -155,7 +165,7 @@ const AddPage: NextPageWithUser<{
           <AddOrEditExpensePage
             enableSendingInvites={enableSendingInvites}
             expenseId={_expenseId}
-            bankConnectionEnabled={!!bankConnectionEnabled}
+            bankConnectionEnabled={Boolean(bankConnectionEnabled)}
           />
         )}
       </MainLayout>
@@ -169,8 +179,8 @@ export default AddPage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
-    enableSendingInvites: !!env.ENABLE_SENDING_INVITES,
-    bankConnectionEnabled: !!isBankConnectionConfigured(),
+    enableSendingInvites: Boolean(env.ENABLE_SENDING_INVITES),
+    bankConnectionEnabled: isBankConnectionConfigured(),
     ...(await customServerSideTranslations(context.locale, ['common', 'categories', 'currencies'])),
   },
 });

@@ -5,7 +5,7 @@ import { type User as NextUser } from 'next-auth';
 import type { inferRouterOutputs } from '@trpc/server';
 import { ArrowRightIcon, Landmark, Merge, PencilIcon, Users } from 'lucide-react';
 import Link from 'next/link';
-import React, { type ComponentProps, useCallback, useState } from 'react';
+import React, { type ComponentProps, useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { useIntlCronParser } from '~/hooks/useIntlCronParser';
@@ -38,6 +38,22 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
   const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
 
   const { cronParser, i18nReady } = useIntlCronParser();
+
+  const cronString = useMemo(() => {
+    if (!expense.recurrence) {
+      return null;
+    }
+    try {
+      return cronParser(cronFromBackend(expense.recurrence.job.schedule));
+    } catch {
+      toast.error(t('errors.invalid_cron_expression'));
+      console.error(
+        `Failed to parse cron expression for expense: ${expense.recurrence.job.schedule}`,
+      );
+      return null;
+    }
+  }, [t, expense.recurrence, cronParser]);
+
   const { toUIString } = getCurrencyHelpersCached(expense.currency);
 
   return (
@@ -78,11 +94,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
             {expense.recurrence ? (
               <Link href="/recurring" className="text-primary text-sm hover:underline">
                 {t('recurrence.recurring')}
-                {i18nReady
-                  ? `: 
-                
-                ${cronParser(cronFromBackend(expense.recurrence.job.schedule))}`
-                  : ''}
+                {i18nReady ? `: ${cronString}` : ''}
               </Link>
             ) : null}
             {expense.group ? (
@@ -346,7 +358,7 @@ export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ ex
         <CurrencyInput
           currency={expense.currency}
           strValue={amountStr}
-          className="mx-auto mt-4 w-[150px] text-center text-lg"
+          className="mx-auto mt-4 w-37.5 text-center text-lg"
           onValueChange={onCurrencyInputValueChange}
         />
       </div>

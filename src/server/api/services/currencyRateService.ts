@@ -5,7 +5,7 @@ import { db } from '~/server/db';
 
 export interface RateResponse {
   base: string;
-  rates: { [key: string]: string };
+  rates: { [key: string]: string | number };
 }
 
 export interface ParsedRate {
@@ -154,8 +154,8 @@ export abstract class CurrencyRateProvider {
     return rate.toFixed(precision);
   }
 
-  protected toParsedRate(rate: string): ParsedRate {
-    const precision = this.getPrecision(rate);
+  protected toParsedRate(rate: string | number): ParsedRate {
+    const precision = this.getPrecision(String(rate));
     return { rate: Number(rate), precision };
   }
 }
@@ -184,14 +184,14 @@ class OpenExchangeRatesProvider extends CurrencyRateProvider {
   intermediateBase: CurrencyCode = 'USD';
 
   async fetchRates(from: CurrencyCode, to: CurrencyCode, date?: Date): Promise<RateResponse> {
-    if (!process.env.OPEN_EXCHANGE_RATES_APP_ID) {
+    if (!env.OPEN_EXCHANGE_RATES_APP_ID) {
       throw new ProviderMissingError('Open Exchange Rates API key not provided');
     }
     const key = !date || isToday(date) ? 'latest' : `historical/${format(date, 'yyyy-MM-dd')}`;
 
     // Sadly the free tier supports only USD as base currency
     const response = await fetch(
-      `https://openexchangerates.org/api/${key}.json?app_id=${process.env.OPEN_EXCHANGE_RATES_APP_ID}`,
+      `https://openexchangerates.org/api/${key}.json?app_id=${env.OPEN_EXCHANGE_RATES_APP_ID}`,
     );
     const data: RateResponse = await response.json();
 

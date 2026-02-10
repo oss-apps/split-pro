@@ -5,17 +5,12 @@ import { db } from '~/server/db';
 
 export interface RateResponse {
   base: string;
-  rates: { [key: string]: string | number };
-}
-
-export interface ParsedRate {
-  rate: number;
-  precision: number;
+  rates: { [key: string]: number };
 }
 
 class ProviderMissingError extends Error {}
 
-export abstract class CurrencyRateProvider {
+abstract class CurrencyRateProvider {
   intermediateBase: CurrencyCode | null = null;
   abstract providerName: string;
 
@@ -25,9 +20,9 @@ export abstract class CurrencyRateProvider {
     from: CurrencyCode,
     to: CurrencyCode,
     date: Date = new Date(),
-  ): Promise<ParsedRate> {
+  ): Promise<number> {
     if (from === to) {
-      return { rate: 1, precision: 0 };
+      return 1;
     }
 
     const cachedRate = await this.checkCache(from, to, date);
@@ -39,12 +34,7 @@ export abstract class CurrencyRateProvider {
 
     await Promise.all(
       Object.entries(data.rates).map(([to, rate]) =>
-        this.upsertCache(
-          data.base as CurrencyCode,
-          to as CurrencyCode,
-          date,
-          this.toParsedRate(rate),
-        ),
+        this.upsertCache(data.base as CurrencyCode, to as CurrencyCode, date, rate),
       ),
     );
 
@@ -60,22 +50,18 @@ export abstract class CurrencyRateProvider {
     from: CurrencyCode,
     to: CurrencyCode,
     date: Date = new Date(),
-  ): Promise<ParsedRate | undefined> {
+  ): Promise<number | undefined> {
     const cachedRate = await this.getCache(from, to, date);
 
     if (cachedRate) {
-      return { rate: cachedRate.rate, precision: cachedRate.precision };
+      return cachedRate.rate;
     }
 
     const reverseCachedRate = await this.getCache(to, from, date);
 
     if (reverseCachedRate) {
-      const invertedRate = this.roundRate(1 / reverseCachedRate.rate, reverseCachedRate.precision);
-      void this.upsertCache(from, to, date, {
-        rate: invertedRate,
-        precision: reverseCachedRate.precision,
-      });
-      return { rate: invertedRate, precision: reverseCachedRate.precision };
+      void this.upsertCache(from, to, date, 1 / reverseCachedRate.rate);
+      return 1 / reverseCachedRate.rate;
     }
 
     if ([null, from, to].includes(this.intermediateBase)) {
@@ -87,14 +73,13 @@ export abstract class CurrencyRateProvider {
     const rateToIntermediate = await this.checkCache(this.intermediateBase!, to, date);
 
     if (rateFromIntermediate && rateToIntermediate) {
-      const precision = Math.max(rateFromIntermediate.precision, rateToIntermediate.precision);
-      const rate = this.roundRate(rateToIntermediate.rate / rateFromIntermediate.rate, precision);
-      void this.upsertCache(from, to, date, { rate, precision });
-      return { rate, precision };
+      const rate = rateToIntermediate / rateFromIntermediate;
+      void this.upsertCache(from, to, date, rate);
+      return rate;
     }
   }
 
-  private upsertCache(from: CurrencyCode, to: CurrencyCode, date: Date, parsedRate: ParsedRate) {
+  private upsertCache(from: CurrencyCode, to: CurrencyCode, date: Date, rate: number) {
     return db.cachedCurrencyRate.upsert({
       where: {
         from_to_date: { from, to, date },
@@ -103,13 +88,11 @@ export abstract class CurrencyRateProvider {
         from,
         to,
         date,
-        rate: parsedRate.rate,
-        precision: parsedRate.precision,
+        rate,
         lastFetched: new Date(),
       },
       update: {
-        rate: parsedRate.rate,
-        precision: parsedRate.precision,
+        rate,
         lastFetched: new Date(),
       },
     });
@@ -132,31 +115,6 @@ export abstract class CurrencyRateProvider {
       });
     }
     return result;
-  }
-
-  protected getPrecision(rate: string): number {
-    const match = rate.match(/\.(\d+)/);
-    if (!match) {
-      return 0;
-    }
-    return match[1]?.length ?? 0;
-  }
-
-  protected roundRate(rate: number, precision: number): number {
-    if (0 === precision) {
-      return Math.round(rate);
-    }
-    const factor = 10 ** precision;
-    return Math.round(rate * factor) / factor;
-  }
-
-  protected formatRate(rate: number, precision: number): string {
-    return rate.toFixed(precision);
-  }
-
-  protected toParsedRate(rate: string | number): ParsedRate {
-    const precision = this.getPrecision(String(rate));
-    return { rate: Number(rate), precision };
   }
 }
 
@@ -214,13 +172,7 @@ class NbpProvider extends CurrencyRateProvider {
 
     return {
       base: 'PLN',
-      rates: Object.fromEntries(
-        response.rates.map((rate) => {
-          const precision = this.getPrecision(rate.mid);
-          const invertedRate = this.roundRate(1 / Number(rate.mid), precision);
-          return [rate.code, this.formatRate(invertedRate, precision)];
-        }),
-      ),
+      rates: Object.fromEntries(response.rates.map((rate) => [rate.code, 1 / rate.mid])),
     };
   }
 
@@ -244,7 +196,7 @@ class NbpProvider extends CurrencyRateProvider {
       table: string;
       no: string;
       effectiveDate: string;
-      rates: { currency: string; code: string; mid: string }[];
+      rates: { currency: string; code: string; mid: number }[];
     }[]
   > {
     const response = await fetch(
@@ -264,9 +216,7 @@ class NbpProvider extends CurrencyRateProvider {
       }
     }
 
-    const raw = await response.text();
-    const wrapped = raw.replaceAll(/("mid"\s*:\s*)(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g, '$1"$2"');
-    return JSON.parse(wrapped);
+    return response.json();
   }
 }
 

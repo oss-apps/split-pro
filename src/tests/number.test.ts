@@ -1,4 +1,4 @@
-// filepath: /home/wiktor/kod/split-pro/src/utils/number.test.ts
+// Filepath: /home/wiktor/kod/split-pro/src/utils/number.test.ts
 import { currencyConversion, getCurrencyHelpers } from '../utils/numbers';
 
 describe('getCurrencyHelpers', () => {
@@ -177,7 +177,7 @@ describe('currencyConversion', () => {
     const amount = 12345n; // 12345 JPY
     const rate = 0.0073; // 1 JPY = 0.0073 USD
 
-    const res = currencyConversion({ from, to, amount, rate, ratePrecision: 4 });
+    const res = currencyConversion({ from, to, amount, rate });
 
     // 12345 JPY * 0.0073 = 90.1185 USD -> rounded to 90.12 USD -> 9012 in bigint
     expect(res).toBe(9012n);
@@ -189,7 +189,7 @@ describe('currencyConversion', () => {
     const amount = 9012n;
     const rate = 1 / 0.0073;
 
-    const res = currencyConversion({ from, to, amount, rate, ratePrecision: 4 });
+    const res = currencyConversion({ from, to, amount, rate });
 
     expect(res).toBe(12345n);
   });

@@ -14,7 +14,7 @@ import {
   getCurrencyRateSchema,
 } from '~/types/expense.types';
 import { createExpense, deleteExpense, editExpense } from '../services/splitService';
-import { type ParsedRate, currencyRateProvider } from '../services/currencyRateService';
+import { currencyRateProvider } from '../services/currencyRateService';
 import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
@@ -168,14 +168,13 @@ export const expenseRouter = createTRPCRouter({
   addOrEditCurrencyConversion: protectedProcedure
     .input(createCurrencyConversionSchema)
     .mutation(async ({ input, ctx }) => {
-      const { amount, rate, ratePrecision, from, to, senderId, receiverId, groupId, expenseId } =
-        input;
+      const { amount, rate, from, to, senderId, receiverId, groupId, expenseId } = input;
 
       if (!isCurrencyCode(from) || !isCurrencyCode(to)) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid currency code' });
       }
 
-      const amountTo = currencyConversion({ from, to, amount, rate, ratePrecision });
+      const amountTo = currencyConversion({ from, to, amount, rate });
       const name = `${from} → ${to} @ ${rate}`;
 
       const conversionFrom = {
@@ -584,7 +583,7 @@ export const expenseRouter = createTRPCRouter({
 
     const rate = await currencyRateProvider.getCurrencyRate(from, to, date);
 
-    return rate;
+    return { rate };
   }),
 
   getBatchCurrencyRates: protectedProcedure
@@ -600,7 +599,7 @@ export const expenseRouter = createTRPCRouter({
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid currency code' });
       }
 
-      const rates = new Map<string, ParsedRate>();
+      const rates = new Map<string, number>();
 
       // Get the first rate to precache rates for the target currency
       const rate = await currencyRateProvider.getCurrencyRate(from[0] as CurrencyCode, to, date);

@@ -14,7 +14,6 @@ SplitPro can convert expenses and balances between currencies using cached excha
 - Rates are fetched from the configured provider and cached in the database.
 - Conversions can be created for an expense and later edited if needed.
 - Group balances can be converted on demand without changing the original expense currency.
-- Currency rate precisions are set to the number of digits obtained from the provider.
 
 ## Providers and limitations
 
@@ -23,24 +22,22 @@ Exchange rate APIs are typically rate limited or paywalled. SplitPro supports th
 - Frankfurter (https://frankfurter.dev/)
   - Free, but limited currency set.
   - Check availability at https://api.frankfurter.dev/v1/currencies.
-  - Responses truncate trailing zeros in rate values, which may limit the precision input.
 - Open Exchange Rates (https://openexchangerates.org/)
   - Free tier includes 1000 requests/day and wide currency coverage.
   - Free tier uses USD as the base currency; SplitPro joins rates internally.
   - Requires an API key.
-  - Responses truncate trailing zeros in rate values, which may limit the precision input.
 - NBP (https://api.nbp.pl/en.html)
   - Polish National Bank.
   - No API key required, base currency PLN.
-  - Table A updates daily, table B (currencies less common for Poland) updates weekly.
+  - Table A updates daily, table B (less common currencies) updates weekly.
 
 ## Provider comparison
 
-| Provider            | Base currency | Coverage | API key | Trailing zeros | Notes                      |
-| ------------------- | ------------- | -------- | ------- | -------------- | -------------------------- |
-| Frankfurter         | EUR           | Limited  | No      | Truncated      | Free, limited currency set |
-| Open Exchange Rates | USD           | Broad    | Yes     | Truncated      | Free tier 1000 req/day     |
-| NBP                 | PLN           | Medium   | No      | Preserved      | Table B updates weekly     |
+| Provider            | Base currency | Coverage | API key | Notes                      |
+| ------------------- | ------------- | -------- | ------- | -------------------------- |
+| Frankfurter         | EUR           | Limited  | No      | Free, limited currency set |
+| Open Exchange Rates | USD           | Broad    | Yes     | Free tier 1000 req/day     |
+| NBP                 | PLN           | Medium   | No      | Table B updates weekly     |
 
 ## Configuration
 
@@ -50,7 +47,6 @@ Set your provider in `CURRENCY_RATE_PROVIDER` and supply `OPEN_EXCHANGE_RATES_AP
 
 - Rates are cached in the database to minimize calls and stay within provider limits.
 - Provider coverage and rate freshness depend on the selected provider.
-- Frankfurter and Open Exchange Rates truncate trailing zeros in rate values, which limits the reported precision for those responses.
 
 ## Common use cases
 

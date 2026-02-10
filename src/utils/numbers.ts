@@ -85,7 +85,7 @@ export const getCurrencyHelpers = ({
     let hasNegativeSign = false;
 
     `${input}`.split('').forEach((letter) => {
-      // Allowing only one separator
+      //Allowing only one separator
       if (letter === decimalSeparator && !hasDecimalSeparator) {
         cleaned += letter;
         hasDecimalSeparator = true;
@@ -249,36 +249,21 @@ export function currencyConversion({
   to,
   amount,
   rate,
-  ratePrecision,
 }: {
   from: CurrencyCode;
   to: CurrencyCode;
   amount: bigint;
   rate: number;
-  ratePrecision: number;
 }) {
   const fromDecimalDigits = CURRENCIES[from].decimalDigits;
   const toDecimalDigits = CURRENCIES[to].decimalDigits;
   const preMultiplier = BigInt(10 ** Math.max(toDecimalDigits - fromDecimalDigits, 0));
   const postMultiplier = BigInt(10 ** Math.max(fromDecimalDigits - toDecimalDigits, 0));
-  const ratePrecisionFactor = 10 ** ratePrecision;
   return BigMath.roundDiv(
-    amount * preMultiplier * BigInt(Math.round(rate * ratePrecisionFactor)),
-    postMultiplier * BigInt(ratePrecisionFactor),
+    amount * preMultiplier * BigInt(Math.round(rate * 10000)),
+    postMultiplier * 10000n,
   );
 }
-
-export const getRatePrecision = (value: string) => {
-  const normalized = value.trim();
-  if ('' === normalized) {
-    return 0;
-  }
-  const decimalIndex = normalized.indexOf('.');
-  if (-1 === decimalIndex) {
-    return 0;
-  }
-  return Math.max(normalized.length - decimalIndex - 1, 0);
-};
 
 export const BigMath = {
   abs(x: bigint) {

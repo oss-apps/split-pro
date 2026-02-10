@@ -76,17 +76,20 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
         throw new Error('Adapter is missing the linkAccount method.');
       }
 
+      // Keycloak and Gitlab provide some non-standard fields that do not exist in the prisma schema.
+      // We strip them out before passing them on to the original adapter.
       if (account.provider === 'keycloak') {
-        // Keycloak provides some non-standard fields that do not exist in the prisma schema.
-        // We strip them out before passing them on to the original adapter.
         const {
-          ['not-before-policy']: _notBeforePolicy,
+          'not-before-policy': _notBeforePolicy,
           refresh_expires_in: _refresh_expires_in,
-          // keep the rest
           ...standardAccountData
-        } = account as unknown as Record<string, unknown>;
+        } = account as AdapterAccount & Record<string, unknown>;
 
-        // oxlint-disable-next-line typescript/no-unsafe-return
+        return originalLinkAccount(standardAccountData as AdapterAccount);
+      } else if (account.provider === 'gitlab') {
+        const { created_at: _createdAt, ...standardAccountData } = account as AdapterAccount &
+          Record<string, unknown>;
+
         return originalLinkAccount(standardAccountData as AdapterAccount);
       }
 

@@ -4,6 +4,7 @@ import {
   SiAuthelia,
   SiAuthentik,
   SiGithub,
+  SiGitlab,
   SiGoogle,
   SiKeycloak,
 } from '@icons-pack/react-simple-icons';
@@ -38,6 +39,7 @@ const providerSvgs = {
   authelia: <SiAuthelia />,
   auth0: <SiAuth0 />,
   keycloak: <SiKeycloak />,
+  gitlab: <SiGitlab />,
 };
 
 const providerTypeGuard = (providerId: string): providerId is keyof typeof providerSvgs =>

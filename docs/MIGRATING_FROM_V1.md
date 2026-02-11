@@ -65,9 +65,29 @@ cat migration.sql | docker exec -i splitpro-db psql -U postgres -d splitpro
 
 Adjust container name, database user, and database name as needed.
 
-## 5) Run the upgrade
+## 5) New balance calculation logic
 
-Start the updated containers and let the app run migrations automatically.
+In version 1, balances were a table in the database, updated by logic that used to have bugs in it (and potentially still had). What is more, groups were basically second class entities or an afterthough, when I picked up maintenance of the repo and some odd design decisions I could not work around anymore. The balances are now database views, so they are ALWAYS calculated based on existing expenses, so you can rest easy that if the expenses are correct, the balances are correct.
+
+There might be some hiccups along the way, for example as explained in https://github.com/oss-apps/split-pro/issues/541, the group balances were all pooled together into the individual balances and upon initiating a settle up, the logic was as follows:
+
+- **user A** settles balance with **user B**, derived from individual AND group expenses
+- the `Balance` table row for these user is adjusted by the settlement amount
+- now here is the shitty part. There was a backend check that if the `Balance` row was now **zero**, additiional updates were performed, setting each `GroupBalance` table rows between these users to **zero**
+- this has introduced numerous nasty bugs, especially hard to debug given the decentralized nature of SplitPro usage and me not having access to user data
+- a decision was reached to both:
+  - get rid of the error prone `*Balance` tables and dynamically calculate balances based on existing expenses
+  - treat groups like first class citizens, not as some sort of underclass, so individual expenses are now treated as a `null` group
+- this allowed for proper operation of simplify, tracable total balances and much greater confidence in the calculated amounts. While having a view is maybe less performant, I believe that when it comes to handling people's money, correctness comes first
+- however, there are some paper cuts, like in the linked issue, where settleups cleared out both Total Balances AND Group Balances.
+
+With the new version, the total balances are okay, because they include ALL the expenses, settleups included. The group balances, especially with simplify mightnot be, because the settleups were outside of groups.
+
+I have added an automatic migration step that tries to remedy some of it, so please check the migration log!
+
+## 6) Run the upgrade
+
+Start the updated containers and let the app run migrations automatically. Read the logs and inspect if everything went okay (if the receipt images were converted to webp and if settleups look okayish).
 
 If you were running alpha or a custom main build, you may need manual help due to squashed migrations. If you encounter any issues, please reach out in the related v2 discussions or open a new issue.
 

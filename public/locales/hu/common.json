@@ -218,8 +218,8 @@
     },
     "already_added": "Már hozzáadva",
     "balance_list": {
-      "are_settled_up": "fizettek",
-      "is_settled_up": "rendezve",
+      "are_settled_up": "kiegyenlítve",
+      "is_settled_up": "kiegyenlítve",
       "press_balance_info": "Nyomj az egyéni egyenlegre az elszámolás indításához"
     },
     "bank_transactions": "Banki tranzakciók",
@@ -252,21 +252,21 @@
       "archive_group": "Csoport archiválása",
       "archive_group_details": {
         "can_archive": "Ez a csoport archiválva lesz, és rejtve lesz a fő csoportok listájából. Szükség esetén később is hozzáférhetsz.",
-        "cant_archive": "Nem lehet archiválni a rendezetlen egyenlegekkel rendelkező csoportot. Minden egyenleget először rendezni kell.",
+        "cant_archive": "Nem lehet archiválni a kiegyenlítetlen tartozással rendelkező csoportot. Előbb minden egyenleget rendezni kell.",
         "title": "Biztosan archiválni szeretnéd ezt a csoportot?"
       },
       "archived": "Archiválva",
       "delete_group": "Csoport törlése",
       "delete_group_details": {
         "can_delete": "Ez a művelet nem vonható vissza",
-        "cant_delete": "A csoportot nem lehet törölni, amíg mindenki nem rendezi a fennmaradó összeget.",
+        "cant_delete": "A csoportot nem lehet törölni, amíg van kiegyenlítetlen tartozás",
         "title": "Teljesen biztos vagy benne?"
       },
       "group_created": "Csoport létrehozva",
       "leave_group": "Kilépés a csoportból",
       "leave_group_details": {
         "can_leave": "Ez a művelet nem vonható vissza",
-        "cant_leave": "Nem hagyhatod el a csoportot, amíg a fennálló tartozást nem rendezted",
+        "cant_leave": "Nem hagyhatod el a csoportot, amíg a fennálló tartozást ki nem egyenlítetted",
         "title": "Teljesen biztos vagy benne?"
       },
       "members": "Tagok",

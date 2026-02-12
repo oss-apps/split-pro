@@ -45,7 +45,7 @@ const BalancePage: NextPageWithUser = () => {
       <MainLayout title={t('navigation.groups')} actions={actions} loading={groupQuery.isPending}>
         <div className="mt-7 flex flex-col gap-8 pb-36">
           {0 === groupQuery.data?.length ? (
-            <div className="mt-[30vh] flex flex-col items-center justify-center gap-20">
+            <div className="mt-[30vh] mb-16 flex flex-col items-center justify-center gap-20">
               <CreateGroup>
                 <Button>
                   <PlusIcon className="mr-2 h-4 w-4" />
@@ -64,25 +64,24 @@ const BalancePage: NextPageWithUser = () => {
                   balances={transformBalances(g.balances)}
                 />
               ))}
-
-              {/* Archived Groups Accordion */}
-              {archivedGroupQuery.data && archivedGroupQuery.data.length > 0 && (
-                <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="archived-groups">
-                    <AccordionTrigger className="text-left text-sm text-gray-400">
-                      {t('group_details.group_info.archived')} ({archivedGroupQuery.data.length})
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <div className="mt-7 flex flex-col gap-8">
-                        {archivedGroupQuery.data.map((g) => (
-                          <BalanceEntry key={g.id} id={g.id} entity={g} />
-                        ))}
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              )}
             </>
+          )}
+          {/* Archived Groups Accordion */}
+          {archivedGroupQuery.data && archivedGroupQuery.data.length > 0 && (
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="archived-groups">
+                <AccordionTrigger className="text-left text-sm text-gray-400">
+                  {t('group_details.group_info.archived')} ({archivedGroupQuery.data.length})
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="mt-7 flex flex-col gap-8">
+                    {archivedGroupQuery.data.map((g) => (
+                      <BalanceEntry key={g.id} id={g.id} entity={g} />
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           )}
         </div>
       </MainLayout>

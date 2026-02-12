@@ -80,6 +80,8 @@
   "devDependencies": {
     "@faker-js/faker": "10.1.0",
     "@tailwindcss/postcss": "^4.1.10",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/formidable": "^3.4.6",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.21",

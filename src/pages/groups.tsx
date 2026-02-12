@@ -23,6 +23,9 @@ function transformBalances(balances: Record<string, bigint>) {
     .map(([currency, amount]) => ({ currency, amount }));
 }
 
+export const hasGroups = (groups: { data?: unknown[] | undefined }[]): boolean =>
+  groups.some((x) => 0 !== (x.data?.length ?? 0));
+
 const BalancePage: NextPageWithUser = () => {
   const { t } = useTranslation();
   const groupQuery = api.group.getAllGroupsWithBalances.useQuery();
@@ -44,7 +47,7 @@ const BalancePage: NextPageWithUser = () => {
       </Head>
       <MainLayout title={t('navigation.groups')} actions={actions} loading={groupQuery.isPending}>
         <div className="mt-7 flex flex-col gap-8 pb-36">
-          {0 === groupQuery.data?.length ? (
+          {!hasGroups([groupQuery, archivedGroupQuery]) ? (
             <div className="mt-[30vh] flex flex-col items-center justify-center gap-20">
               <CreateGroup>
                 <Button>

@@ -94,7 +94,7 @@
     "owner": "Tulajdonos",
     "you": "Te",
     "you_accusativus": "Téged",
-    "you_dativus": "Te"
+    "you_dativus": "Neked"
   },
   "auth": {
     "continue_with": "Folytatás ezzel: {{provider}}",

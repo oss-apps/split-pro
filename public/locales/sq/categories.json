@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Lojra",
+        "movies": "Filma",
+        "music": "Muzik",
+        "other": "Zbavitje",
+        "sports": "Sporte"
+      },
+      "name": "Zbavitje"
+    },
+    "food": {
+      "items": {
+        "diningOut": "Darka",
+        "groceries": "Ushqime",
+        "liquor": "Alkolike",
+        "other": "Pije & Ngrënje"
+      },
+      "name": "Pije & Ngrënje"
+    },
+    "general": {
+      "items": {
+        "general": "Te Përgjithshme",
+        "other": "Të Përgjithshme"
+      },
+      "name": "Të Përgjithshme"
+    },
+    "home": {
+      "items": {
+        "electronics": "Elektronike",
+        "furniture": "Mobilje",
+        "maintenance": "Mirëmbajtje",
+        "mortgage": "Kredi Shtëpie",
+        "other": "Shtëpia",
+        "pets": "Kafshë Shtëpiake",
+        "rent": "Qira",
+        "services": "Shërbime",
+        "supplies": "Furnizime"
+      },
+      "name": "Shtëpi"
+    },
+    "life": {
+      "items": {
+        "childcare": "Kopështi/ Çerdhja",
+        "clothing": "Veshje",
+        "education": "Edukim",
+        "gifts": "Dhurata",
+        "insurance": "Sigurime",
+        "medical": "Mjekësore",
+        "other": "Jeta",
+        "taxes": "Taksa"
+      },
+      "name": "Jeta"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "Biçikleta",
+        "bus": "Urbani",
+        "car": "Makina",
+        "fuel": "Karburanti",
+        "hotel": "Hotel",
+        "other": "Udhëtime",
+        "parking": "Parkimi",
+        "plane": "Fluturimi",
+        "taxi": "Taxi",
+        "train": "Treni"
+      },
+      "name": "Udhëtim"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "Pastrimi",
+        "electricity": "Energjia Elektrike",
+        "gas": "Gazi",
+        "internet": "Internet",
+        "other": "Utilitetet",
+        "phone": "Telefoni",
+        "trash": "Plera",
+        "water": "Ujë"
+      },
+      "name": "Utilitetet"
+    }
+  },
+  "title": "Kategoritë"
+}

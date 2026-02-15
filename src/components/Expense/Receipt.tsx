@@ -7,7 +7,18 @@ export const Receipt = ({ fileKey }: { fileKey: string }) => {
 
   return (
     <AppDrawer
-      trigger={<ThumbnailTrigger thumbUrl={thumbUrl} />}
+      trigger={
+        // oxlint-disable-next-line next/no-img-element
+        <img
+          src={thumbUrl}
+          alt="Expense receipt thumbnail"
+          width={56}
+          height={56}
+          data-loaded="false"
+          onLoad={setDataLoaded}
+          className="h-14 w-14 rounded-md object-cover object-center data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
+        />
+      }
       leftAction="Close"
       title="Expense Receipt"
       className="h-[98vh]"
@@ -27,19 +38,6 @@ export const Receipt = ({ fileKey }: { fileKey: string }) => {
     </AppDrawer>
   );
 };
-
-const ThumbnailTrigger = ({ thumbUrl }: { thumbUrl: string }) => (
-  // oxlint-disable-next-line next/no-img-element
-  <img
-    src={thumbUrl}
-    alt="Expense receipt thumbnail"
-    width={56}
-    height={56}
-    data-loaded="false"
-    onLoad={setDataLoaded}
-    className="h-14 w-14 rounded-md object-cover object-center data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
-  />
-);
 
 const setDataLoaded = (event: React.SyntheticEvent<HTMLImageElement>) => {
   event.currentTarget.setAttribute('data-loaded', 'true');

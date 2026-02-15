@@ -30,7 +30,6 @@ async function processFile(
   const baseName = path.basename(fileName, ext);
 
   if (!IMAGE_EXTENSIONS.includes(ext)) {
-    console.log(`  Skipping non-image file: ${fileName}`);
     return null;
   }
 
@@ -42,10 +41,8 @@ async function processFile(
     const thumbPath = path.join(userDir, thumbName);
 
     if (baseName.endsWith('-thumb')) {
-      console.log(`  Skipping thumbnail file: ${fileName}`);
       return null;
     } else if (await fileExists(thumbPath)) {
-      console.log(`  WebP file already has thumbnail: ${fileName}`);
       return null;
     }
 

@@ -83,7 +83,9 @@ There might be some hiccups along the way, for example as explained in https://g
 
 With the new version, the total balances are okay, because they include ALL the expenses, settleups included. The group balances, especially with simplify mightnot be, because the settleups were outside of groups.
 
-I have added an automatic migration step that tries to remedy some of it, so please check the migration log!
+As such, you may find that some balances are inflated after the migration! To remedy this, settleups that were made outside of groups need to be adjusted. **Your safest bet is to settle all balances before the migration.**
+
+Another option would be to add post migration settlements or if you want a perfect history, you need to go over all the settleups and replace them with group assigned ones.
 
 ## 6) Run the upgrade
 

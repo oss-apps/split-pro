@@ -24,7 +24,7 @@ services:
     #   - "5432:5432"
     env_file: .env
     volumes:
-      - database:/var/lib/postgresql
+      - database:/var/lib/postgresql/data
 
   splitpro:
     image: ossapps/splitpro:latest

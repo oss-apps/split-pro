@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { sendGroupSimplifyDebtsToggleNotification } from '~/server/api/services/notificationService';
+import { SplitType } from '@prisma/client';
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
@@ -152,6 +153,9 @@ export const groupRouter = createTRPCRouter({
       where: {
         groupId: input.groupId,
         deletedAt: null,
+        splitType: {
+          not: SplitType.SETTLEMENT,
+        },
       },
     });
 

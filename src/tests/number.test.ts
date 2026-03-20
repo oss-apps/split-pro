@@ -31,6 +31,11 @@ describe('getCurrencyHelpers', () => {
           expect(toUIString(value)).toBe('$1,234');
         });
 
+        it('Should correctly format single digit cent amounts', () => {
+          const value = 7n;
+          expect(toUIString(value)).toBe('$0.07');
+        });
+
         it.each([
           [12345n, '$123.45'],
           [-12345n, '-$123.45'],

@@ -6,7 +6,7 @@
         "language_changed": ""
       },
       "placeholder": "",
-      "title": ""
+      "title": "選擇語言"
     },
     "debug_info": "",
     "debug_info_details": {
@@ -34,7 +34,7 @@
     "follow_on_x": "",
     "import_from_splitwise": "",
     "import_from_splitwise_details": {
-      "choose_file": "",
+      "choose_file": "選擇檔案",
       "export_splitwise_data_button": "",
       "follow_to_export_splitwise_data": "",
       "messages": {

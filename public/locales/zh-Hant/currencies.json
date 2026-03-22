@@ -1,1 +1,28 @@
-{}
+{
+  "currency_list": {
+    "CAD": {
+      "name": "加幣",
+      "name_plural": "加幣"
+    },
+    "CNY": {
+      "name": "人民幣",
+      "name_plural": "人民幣"
+    },
+    "EUR": {
+      "name": "歐元",
+      "name_plural": "歐元"
+    },
+    "GBP": {
+      "name": "英鎊",
+      "name_plural": "英鎊"
+    },
+    "HKD": {
+      "name": "港幣",
+      "name_plural": "港幣"
+    },
+    "USD": {
+      "name": "美元",
+      "name_plural": "美元"
+    }
+  }
+}

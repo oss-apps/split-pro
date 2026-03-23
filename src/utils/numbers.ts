@@ -147,7 +147,7 @@ export const getCurrencyHelpers = ({
     if (typeof value === 'bigint') {
       const sign = value < 0n && signed ? '-' : '';
       const integer = `${value / decimalMultiplierN}`;
-      const fraction = `${value}`.slice(-decimalDigits);
+      const fraction = `${value}`.slice(-decimalDigits).padStart(decimalDigits, '0');
       return (
         sign +
         normalizeToMaxLength(

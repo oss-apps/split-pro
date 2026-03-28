@@ -39,11 +39,6 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
   const { t } = useTranslationWithUtils();
   const [open, setOpen] = useState(false);
 
-  const selectedCurrency = useCurrencyPreferenceStore((s) => s.getPreference(entityId));
-  const setSelectedCurrency = useCurrencyPreferenceStore(
-    (s) => (preference?: string) => s.setPreference(entityId, preference),
-  );
-
   const balances = useMemo(() => rawBalances.filter((b) => b.amount !== 0n), [rawBalances]);
 
   // Available currencies from balances
@@ -52,6 +47,19 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
       overrideCurrencies ??
       balances.map((b) => b.currency).filter((c, i, arr) => arr.indexOf(c) === i),
     [overrideCurrencies, balances],
+  );
+
+  const selectedCurrency = useCurrencyPreferenceStore((s) => {
+    const preference = s.getPreference(entityId);
+    if (availableCurrencies.includes(preference ?? '')) {
+      return preference;
+    } else {
+      s.setPreference(entityId, SHOW_ALL_VALUE);
+      return SHOW_ALL_VALUE;
+    }
+  });
+  const setSelectedCurrency = useCurrencyPreferenceStore(
+    (s) => (preference?: string) => s.setPreference(entityId, preference),
   );
 
   const currentDate = useMemo(() => new Date(), []);

@@ -20,6 +20,7 @@ import { Skeleton } from '../ui/skeleton';
 interface ConvertibleBalanceProps {
   className?: string;
   balances: { currency: string; amount: bigint }[];
+  overrideCurrencies?: string[] | null;
   showMultiOption?: boolean;
   forceShowButton?: boolean;
   withText?: boolean;
@@ -28,7 +29,8 @@ interface ConvertibleBalanceProps {
 
 export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
   className = '',
-  balances,
+  balances: rawBalances,
+  overrideCurrencies = null,
   showMultiOption = false,
   forceShowButton = false,
   withText = false,
@@ -37,15 +39,27 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
   const { t } = useTranslationWithUtils();
   const [open, setOpen] = useState(false);
 
-  const selectedCurrency = useCurrencyPreferenceStore((s) => s.getPreference(entityId));
-  const setSelectedCurrency = useCurrencyPreferenceStore(
-    (s) => (preference?: string) => s.setPreference(entityId, preference),
-  );
+  const balances = useMemo(() => rawBalances.filter((b) => b.amount !== 0n), [rawBalances]);
 
   // Available currencies from balances
   const availableCurrencies = useMemo(
-    () => balances.map((b) => b.currency).filter((c, i, arr) => arr.indexOf(c) === i),
-    [balances],
+    () =>
+      overrideCurrencies ??
+      balances.map((b) => b.currency).filter((c, i, arr) => arr.indexOf(c) === i),
+    [overrideCurrencies, balances],
+  );
+
+  const selectedCurrency = useCurrencyPreferenceStore((s) => {
+    const preference = s.getPreference(entityId);
+    if (preference === SHOW_ALL_VALUE || availableCurrencies.includes(preference ?? '')) {
+      return preference;
+    } else {
+      s.setPreference(entityId, SHOW_ALL_VALUE);
+      return SHOW_ALL_VALUE;
+    }
+  });
+  const setSelectedCurrency = useCurrencyPreferenceStore(
+    (s) => (preference?: string) => s.setPreference(entityId, preference),
   );
 
   const currentDate = useMemo(() => new Date(), []);
@@ -205,6 +219,7 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
             className={className}
             amount={totalConvertedAmount ? totalConvertedAmount : balances[0]!.amount}
             currency={totalConvertedAmount ? selectedCurrency : balances[0]!.currency}
+            hasMore={balances.length > 1}
           />
         )}
       </div>
@@ -217,7 +232,8 @@ const AmountDisplay: React.FC<{
   amount: bigint;
   currency: string;
   withText?: boolean;
-}> = ({ className = '', amount, currency, withText = false }) => {
+  hasMore?: boolean;
+}> = ({ className = '', amount, currency, withText = false, hasMore = false }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
 
   if (amount === 0n) {
@@ -240,6 +256,7 @@ const AmountDisplay: React.FC<{
       )}
       <span className={cn(isPositive ? 'text-positive' : 'text-negative', className)}>
         {getCurrencyHelpersCached(currency).toUIString(amount)}
+        {hasMore ? `+` : currency}
       </span>
     </div>
   );

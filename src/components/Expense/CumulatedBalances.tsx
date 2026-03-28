@@ -13,10 +13,14 @@ export const CumulatedBalances: React.FC<{
 
   const selectedCurrency = useCurrencyPreferenceStore((s) => s.getPreference(entityId));
 
+  const allNonZeroCurrencies = useMemo(() => {
+    const nonZeroBalances = balances?.filter((b) => b.amount !== 0n);
+    return nonZeroBalances ? [...new Set(nonZeroBalances.map((b) => b.currency))] : [];
+  }, [balances]);
+
   const youLent = useMemo(() => balances?.filter((b) => 0 < b.amount) ?? [], [balances]);
   const youOwe = useMemo(() => balances?.filter((b) => 0 > b.amount) ?? [], [balances]);
-  const forceShowButton =
-    youLent.length === 1 && youOwe.length === 1 && youLent[0]!.currency !== youOwe[0]!.currency;
+
   if (!balances) {
     return null;
   }
@@ -28,6 +32,7 @@ export const CumulatedBalances: React.FC<{
           prefix={`${t('ui.total_balance')}: `}
           entityId={entityId}
           cumulatedBalances={balances}
+          currencies={allNonZeroCurrencies}
         />
       ) : (
         <>
@@ -36,14 +41,16 @@ export const CumulatedBalances: React.FC<{
             entityId={entityId}
             cumulatedBalances={youLent}
             className="text-positive"
-            forceShowButton={forceShowButton}
+            forceShowButton={allNonZeroCurrencies.length > 1}
+            currencies={allNonZeroCurrencies}
           />
           <CumulatedBalanceDisplay
             prefix={`${t('actors.you')} ${t('ui.expense.you.owe')}`}
             entityId={entityId}
             className="text-negative"
             cumulatedBalances={youOwe}
-            forceShowButton={forceShowButton}
+            forceShowButton={allNonZeroCurrencies.length > 1}
+            currencies={allNonZeroCurrencies}
           />
         </>
       )}
@@ -57,7 +64,15 @@ const CumulatedBalanceDisplay: React.FC<{
   className?: string;
   cumulatedBalances?: { currency: string; amount: bigint }[];
   forceShowButton?: boolean;
-}> = ({ prefix = '', entityId, className = '', cumulatedBalances, forceShowButton = false }) => {
+  currencies: string[];
+}> = ({
+  prefix = '',
+  entityId,
+  className = '',
+  cumulatedBalances,
+  forceShowButton = false,
+  currencies,
+}) => {
   if (!cumulatedBalances || cumulatedBalances.length === 0) {
     return null;
   }
@@ -70,6 +85,7 @@ const CumulatedBalanceDisplay: React.FC<{
         entityId={entityId}
         forceShowButton={forceShowButton}
         showMultiOption
+        overrideCurrencies={currencies}
       />
     </div>
   );

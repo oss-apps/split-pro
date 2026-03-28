@@ -2,7 +2,7 @@ import { ArrowUpOnSquareIcon } from '@heroicons/react/24/outline';
 import { Download, PlusIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { DownloadAppDrawer } from '~/components/Account/DownloadAppDrawer';
 import { BalanceEntry } from '~/components/Expense/BalanceEntry';
 import MainLayout from '~/components/Layout/MainLayout';
@@ -26,6 +26,13 @@ const BalancePage: NextPageWithUser = () => {
 
   const selectedCurrency = useCurrencyPreferenceStore((s) => s.getPreference());
 
+  const allNonZeroCurrencies = useMemo(() => {
+    const nonZeroBalances = balanceQuery.data?.balances.flatMap((b) =>
+      b.currencies.filter((c) => c.amount !== 0n),
+    );
+    return nonZeroBalances ? [...new Set(nonZeroBalances.map((c) => c.currency))] : [];
+  }, [balanceQuery.data?.balances]);
+
   const shareWithFriends = useCallback(() => {
     if (navigator.share) {
       navigator
@@ -47,7 +54,7 @@ const BalancePage: NextPageWithUser = () => {
       <MainLayout
         title={t('navigation.balances')}
         actions={
-          'undefined' !== typeof window && !!window.navigator?.share ? (
+          'undefined' !== typeof window && 'share' in window.navigator ? (
             <Button variant="ghost" onClick={shareWithFriends}>
               <ArrowUpOnSquareIcon className="h-6 w-6" />
             </Button>
@@ -58,30 +65,31 @@ const BalancePage: NextPageWithUser = () => {
         loading={cumulatedQuery.isPending}
       >
         <NotificationModal />
-        <div className="">
-          <div className="mx-4 flex items-stretch justify-between gap-4">
-            {isCurrencyCode(selectedCurrency) ? (
+        <div className="mx-4 flex items-stretch justify-between gap-4">
+          {isCurrencyCode(selectedCurrency) ? (
+            <CumulatedBalanceDisplay
+              prefix={`${t('ui.total_balance')}`}
+              cumulatedBalances={[
+                cumulatedQuery.data?.youOwe ?? [],
+                cumulatedQuery.data?.youGet ?? [],
+              ].flat()}
+              currencies={allNonZeroCurrencies}
+              className="mx-auto"
+            />
+          ) : (
+            <>
               <CumulatedBalanceDisplay
-                prefix={`${t('ui.total_balance')}`}
-                cumulatedBalances={[
-                  cumulatedQuery.data?.youOwe ?? [],
-                  cumulatedQuery.data?.youGet ?? [],
-                ].flat()}
-                className="mx-auto"
+                prefix={`${t('actors.you')} ${t('ui.expense.you.owe')}`}
+                cumulatedBalances={cumulatedQuery.data?.youOwe}
+                currencies={allNonZeroCurrencies}
               />
-            ) : (
-              <>
-                <CumulatedBalanceDisplay
-                  prefix={`${t('actors.you')} ${t('ui.expense.you.owe')}`}
-                  cumulatedBalances={cumulatedQuery.data?.youOwe}
-                />
-                <CumulatedBalanceDisplay
-                  prefix={`${t('actors.you')} ${t('ui.expense.you.lent')}`}
-                  cumulatedBalances={cumulatedQuery.data?.youGet}
-                />
-              </>
-            )}
-          </div>
+              <CumulatedBalanceDisplay
+                prefix={`${t('actors.you')} ${t('ui.expense.you.lent')}`}
+                cumulatedBalances={cumulatedQuery.data?.youGet}
+                currencies={allNonZeroCurrencies}
+              />
+            </>
+          )}
         </div>
 
         <div className="mt-5 flex flex-col gap-8 pb-36">
@@ -97,14 +105,14 @@ const BalancePage: NextPageWithUser = () => {
           {!balanceQuery.isPending && !balanceQuery.data?.balances.length ? (
             <div className="mt-[40vh] flex -translate-y-[130%] flex-col items-center justify-center gap-6">
               <DownloadAppDrawer>
-                <Button className="w-[250px]">
+                <Button className="w-62.5">
                   <Download className="mr-2 h-5 w-5 text-black" />
                   {t('account.download_app')}
                 </Button>
               </DownloadAppDrawer>
               {!isPwa && <p>{t('ui.or')}</p>}
               <Link href="/add">
-                <Button className="w-[250px]">
+                <Button className="w-62.5">
                   <PlusIcon className="mr-2 h-5 w-5 text-black" />
                   {t('actions.add_expense')}
                 </Button>
@@ -121,20 +129,27 @@ const CumulatedBalanceDisplay: React.FC<{
   prefix?: string;
   className?: string;
   cumulatedBalances?: { currency: string; amount: bigint }[];
-}> = ({ prefix = '', className = '', cumulatedBalances }) => {
+  currencies: string[];
+}> = ({ prefix = '', className = '', cumulatedBalances, currencies }) => {
   if (!cumulatedBalances || cumulatedBalances.length === 0) {
     return null;
   }
 
   return (
-    <div className={cn('w-1/2 rounded-2xl border px-2 py-2', className)}>
+    <div className={cn('w-1/2 rounded-2xl border px-4 py-2', className)}>
       <div className="mt-2 px-1">
         <div className="flex items-center justify-center gap-2 text-center">
           <p className="text-sm">{prefix}</p>
         </div>
       </div>
       <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
-        <ConvertibleBalance balances={cumulatedBalances} showMultiOption />
+        <ConvertibleBalance
+          balances={cumulatedBalances}
+          showMultiOption
+          className="flex-wrap"
+          overrideCurrencies={currencies}
+          forceShowButton={currencies.length > 1}
+        />
       </div>
     </div>
   );

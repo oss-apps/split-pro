@@ -148,6 +148,7 @@ const CumulatedBalanceDisplay: React.FC<{
           showMultiOption
           className="flex-wrap"
           overrideCurrencies={currencies}
+          forceShowButton={currencies.length > 1}
         />
       </div>
     </div>

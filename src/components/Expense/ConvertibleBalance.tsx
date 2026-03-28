@@ -219,6 +219,7 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
             className={className}
             amount={totalConvertedAmount ? totalConvertedAmount : balances[0]!.amount}
             currency={totalConvertedAmount ? selectedCurrency : balances[0]!.currency}
+            hasMore={balances.length > 1}
           />
         )}
       </div>
@@ -231,7 +232,8 @@ const AmountDisplay: React.FC<{
   amount: bigint;
   currency: string;
   withText?: boolean;
-}> = ({ className = '', amount, currency, withText = false }) => {
+  hasMore?: boolean;
+}> = ({ className = '', amount, currency, withText = false, hasMore = false }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
 
   if (amount === 0n) {
@@ -254,6 +256,7 @@ const AmountDisplay: React.FC<{
       )}
       <span className={cn(isPositive ? 'text-positive' : 'text-negative', className)}>
         {getCurrencyHelpersCached(currency).toUIString(amount)}
+        {hasMore ? `+` : currency}
       </span>
     </div>
   );

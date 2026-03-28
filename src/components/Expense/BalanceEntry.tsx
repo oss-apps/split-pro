@@ -29,7 +29,7 @@ export const BalanceEntry: React.FC<{
         <div className="text-foreground">{displayName(entity)}</div>
       </div>
       <div className="text-right" onClick={stopPropagation}>
-        <ConvertibleBalance withText balances={balances} entityId={id} showMultiOption={false} />
+        <ConvertibleBalance withText balances={balances} entityId={id} />
       </div>
     </Link>
   );

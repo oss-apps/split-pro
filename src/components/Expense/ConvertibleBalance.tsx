@@ -20,6 +20,7 @@ import { Skeleton } from '../ui/skeleton';
 interface ConvertibleBalanceProps {
   className?: string;
   balances: { currency: string; amount: bigint }[];
+  overrideCurrencies?: string[] | null;
   showMultiOption?: boolean;
   forceShowButton?: boolean;
   withText?: boolean;
@@ -28,7 +29,8 @@ interface ConvertibleBalanceProps {
 
 export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
   className = '',
-  balances,
+  balances: rawBalances,
+  overrideCurrencies = null,
   showMultiOption = false,
   forceShowButton = false,
   withText = false,
@@ -42,10 +44,14 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
     (s) => (preference?: string) => s.setPreference(entityId, preference),
   );
 
+  const balances = useMemo(() => rawBalances.filter((b) => b.amount !== 0n), [rawBalances]);
+
   // Available currencies from balances
   const availableCurrencies = useMemo(
-    () => balances.map((b) => b.currency).filter((c, i, arr) => arr.indexOf(c) === i),
-    [balances],
+    () =>
+      overrideCurrencies ??
+      balances.map((b) => b.currency).filter((c, i, arr) => arr.indexOf(c) === i),
+    [overrideCurrencies, balances],
   );
 
   const currentDate = useMemo(() => new Date(), []);

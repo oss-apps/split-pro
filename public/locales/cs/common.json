@@ -1,0 +1,416 @@
+{
+  "account": {
+    "change_language": "Změnit jazyk",
+    "change_language_details": {
+      "messages": {
+        "language_changed": "Změna jazyka byla úspěšná"
+      },
+      "placeholder": "Vyberte jazyk",
+      "title": "Vyberte jazyk"
+    },
+    "debug_info": "Informace pro ladění",
+    "debug_info_details": {
+      "copy_failed": "Nepodařilo se zkopírovat informace o ladění do schránky",
+      "description": "Při vytváření požadavku na podporu zkopírujte následující informace:",
+      "git": "Git",
+      "new_version_available": "Je k dispozici nová verze:",
+      "title": "Informace pro ladění",
+      "user_agent": "UserAgent",
+      "version": "Verze"
+    },
+    "download_app": "Stáhnout aplikaci",
+    "download_app_details": {
+      "download_as_pwa": "SplitPro si můžete stáhnout na domovskou obrazovku jako PWA.",
+      "title": "Stáhnout aplikaci",
+      "using_android": "Používáte-li Android, podívejte se zde",
+      "using_ios": "Používáte-li iOS, podívejte se zde",
+      "video": "video"
+    },
+    "download_splitpro_data": "Stáhnout data SplitPro",
+    "edit_name": {
+      "placeholder": "Zadejte jméno",
+      "title": "Upravit jméno"
+    },
+    "follow_on_x": "Sledujte nás na X",
+    "import_from_splitwise": "Import ze Splitwise",
+    "import_from_splitwise_details": {
+      "choose_file": "Vyberte soubor",
+      "export_splitwise_data_button": "Exportovat data ze Splitwise",
+      "follow_to_export_splitwise_data": "Klikněte na tento odkaz pro export dat ze splitwise",
+      "messages": {
+        "import_success": "Import byl úspěšný"
+      },
+      "no_file_chosen": "Není vybrán žádný soubor",
+      "note": "Poznámka: V současnosti je podporován pouze import přátel a skupin. Transakce importovány nebudou. Pracujeme na tom."
+    },
+    "logout": "Odhlásit se",
+    "messages": {
+      "submit_error": "Nepodařilo se odeslat zpětnou vazbu",
+      "submit_success": "Zpětná vazba odeslána"
+    },
+    "notifications": {
+      "disable_notification": "Vypnout notifikace",
+      "enable_notification": "Zapnout notifikace",
+      "messages": {
+        "notification_granted": "Nyní budete dostávat notifikace"
+      }
+    },
+    "star_on_github": "Ohodnoťte nás na GitHubu",
+    "submit_feedback": "Odeslat zpětnou vazbu",
+    "submit_feedback_details": {
+      "placeholder": "Zadejte vaši zpětnou vazbu",
+      "title": "Odeslat zpětnou vazbu"
+    },
+    "support_us": "Podpořte nás",
+    "title": "Účet",
+    "write_review": "Napište recenzi"
+  },
+  "actions": {
+    "add_expense": "Přidat výdaj",
+    "back": "Zpět",
+    "cancel": "Zrušit",
+    "close": "Zavřít",
+    "confirm": "Potvrdit",
+    "connect": "Připojit se",
+    "copy": "Kopírovat",
+    "create": "Vytvořit",
+    "edit_expense": "Upravit výdaj",
+    "export": "Exportovat",
+    "fetch": "Načíst",
+    "import": "Importovat",
+    "invite": "Pozvat",
+    "leave": "Opustit",
+    "next": "Další",
+    "reconnect": "Znovu připojit",
+    "save": "Uložit",
+    "settle_up": "Vyrovnat se",
+    "submit": "Odeslat"
+  },
+  "actors": {
+    "all": "Vše",
+    "friends": "Přátelé",
+    "groups": "Skupiny",
+    "members": "Členové",
+    "owner": "Vlastník",
+    "you": "Vy",
+    "you_accusativus": "Vás",
+    "you_dativus": "Vám"
+  },
+  "auth": {
+    "continue_with": "Pokračovat s {{provider}}",
+    "email_placeholder": "Zadejte váš email",
+    "no_providers_configured": "Není nastaven žádný poskytovatel přihlášení",
+    "no_providers_instructions": "Abyste se mohli přihlásit, nastavte prosím alespoň jednoho poskytovatele přihlášení. Pro více informací se podívejte na",
+    "otp_sent": "Poslali jsme vám email s jednorázovým heslem. Prosím zkontrolujte si přijatou poštu a klikněte na odkaz v emailu pro přihlášení.",
+    "send_magic_link": "Poslat magický odkaz",
+    "sending": "Odesílání...",
+    "setup_instructions": "Instrukce pro Docker",
+    "trouble_logging_in": "Potíže s přihlášením? Kontaktujte"
+  },
+  "bank_transactions": {
+    "choose_bank_provider": "Vyberte poskytovatele bankovních služeb",
+    "no_bank_providers_found": "Nebyli nalezeni žádní poskytovatelé bankovních služeb",
+    "plaid": {
+      "bank_connected_successfully": "Banka úspěšně připojena",
+      "bank_connection_cancelled": "Spojení s bankou bylo zrušeno",
+      "bank_connection_failed": "S bankou se nepodařilo spojit"
+    },
+    "search_bank": "Vyhledat banku",
+    "select_bank_provider": "Zvolte poskytovatele bankovních služeb",
+    "to_bank": "do banky"
+  },
+  "currency_conversion": {
+    "amount_to_receive": "Částka k přijetí",
+    "description": "Převede částku do jiné měny.",
+    "exchange_rate": "Směnný kurz",
+    "fetching_rate": "Načítání kurzu...",
+    "rate": "Kurz",
+    "success_toast": "Převod měny úspěšně nastaven",
+    "title": "Převod měny"
+  },
+  "errors": {
+    "currency_conversion_error": "Chyba při nastavování převodu měny",
+    "currency_conversion_failed": "Měny se nepodařilo převést",
+    "currency_conversion_malformed": "Data o převodu měny jsou poškozena",
+    "email_invalid": "Email není platný, prosím zkuste přihlášení zopakovat.",
+    "email_required": "Email je povinný",
+    "feedback_min_length": "Zpětná vazba musí mít alespoň 10 znaků",
+    "feedback_required": "Musí být vyplněna zpětná vazba",
+    "group_balances_malformed": "Data o zůstatcích skupiny jsou poškozena. Nahlašte prosím problém, nebo zkuste provést nový výpočet.",
+    "group_name_update_failed": "Chyba při aktualizaci jména skupiny",
+    "import_failed": "Chyba při importování souboru",
+    "invalid_cron_expression": "Neplatný cron výraz",
+    "invalid_currency_code": "Neplatný kód měny {{code}}",
+    "language_change_failed": "Chyba při změně jazyka",
+    "less_than": "Soubor by měl být menší než",
+    "name_required": "Musí být zadáno jméno",
+    "no_providers": "Chyba při načítání poskytovatelů ověření. Zkontrolujte prosím záznamy v backendu.",
+    "notification_not_supported": "Notifikace nejsou podporovány",
+    "otp_invalid": "Neplatný jednorázový kód",
+    "otp_required": "Je nutný jednorázový kód",
+    "recurrence_delete_failed": "Opakování se nepodařilo smazat",
+    "recurrence_update_failed": "Opakování se nepodařilo aktualizovat",
+    "request_error": "Chyba při požadavku na notifikace",
+    "saving_expense": "Chyba při ukládání výdaje",
+    "setting_update_failed": "Nastavení se nepodařilo aktualizovat",
+    "signin_error": "Při přihlašování došlo k chybě: ",
+    "signup_disabled": "Registrace nových účtů je v této instanci zakázána",
+    "something_went_wrong": "Něco se pokazilo",
+    "subscribe_error": "Nelze se přihlásit k odběru oznámení",
+    "unsubscribe_error": "Chyba při odhlášení odběru oznámení",
+    "upload_failed": "Soubor se nepodařilo nahrát",
+    "uploading_error": "Chyba při nahrávání souboru",
+    "valid_email": "Zadejte platný email"
+  },
+  "expense_details": {
+    "add_expense": "Přidat výdaj",
+    "add_expense_details": {
+      "add_new_expense": "Přidat nový výdaj",
+      "amount_placeholder": "Zadejte částku",
+      "description_placeholder": "Zadejte popis",
+      "pick_a_date": "Vyberte datum",
+      "select_user_or_group": {
+        "add_to_split_pro": "Přidat do Split Pro",
+        "note": "Poznámka: odesílání pozvánek je prozatím vypnuto kvůli spamu",
+        "only_one_group_time": "Můžete mít jen jednu skupinu najednou",
+        "send_invite": "Odeslat uživateli pozvánku",
+        "warning": "Varování: Pokud email není platný, nepoužívejte odeslat pozvánku. Místo toho použijte přidat do Split Pro. Při zneužití této funkce bude váš účet zablokován"
+      },
+      "split_type_section": {
+        "split_equally": "rozdělit rovnoměrně",
+        "split_unequally": "rozdělit nerovnoměrně",
+        "types": {
+          "adjustment": {
+            "remaining_to_split_equally": "Zbývá rozdělit rovnoměrně",
+            "title": "Úprava"
+          },
+          "equal": {
+            "per_person": "na osobu",
+            "title": "Rovnoměrně"
+          },
+          "exact": {
+            "remaining": "Zbývá",
+            "title": "Přesně"
+          },
+          "percentage": {
+            "remaining": "Zbývá",
+            "title": "Procentuálně"
+          },
+          "share": {
+            "shares": "Podíl(y)",
+            "title": "Podle podílu",
+            "total_shares": "Celkový podíl"
+          }
+        }
+      },
+      "sponsor_us": "Podpořte nás",
+      "upload_file": {
+        "messages": {
+          "upload_success": "Soubor byl úspěšně nahrán"
+        }
+      },
+      "user_input": {
+        "add_more_friends": "Vyhledat přátele, skupiny nebo přidat email",
+        "cannot_change_group": "Při upravování nelze změnit skupinu",
+        "remove_group": "Pro smazání skupiny stiskněte delete",
+        "search_friends": "Vyhledat přátele, skupiny nebo přidat email"
+      }
+    },
+    "already_added": "Již přidáno",
+    "balance_list": {
+      "are_settled_up": "jsou vyrovnány",
+      "is_settled_up": "je vyrovnán",
+      "press_balance_info": "Stiskněte konkrétní zůstatek pro zahájení vypořádání"
+    },
+    "bank_transactions": "Bankovní transakce",
+    "clear": "Smazat",
+    "delete_expense_details": {
+      "text": "Tato akce nemůže být vrácena. Výš výdaj bude nenávratně smazán.",
+      "title": "Jste si naprosto jistí?"
+    },
+    "multiple_transactions": {
+      "add_all": "Přidat vše",
+      "add_one_by_one": "Přidat po jedné",
+      "description": "Vybrali jste více transakcí. Vyberte, zda-li chcete všechny přidat se současným nastavením rozdělení, nebo chcete nastavení upravit pro každou zvlášť.",
+      "title": "Přidat více transakcí"
+    },
+    "no_transactions_yet": "Zatím žádné transakce",
+    "pending": "Čekající",
+    "submit_all": "Odeslat vše",
+    "title": "Přidat výdaj",
+    "title_mobile": "Přidat"
+  },
+  "group_details": {
+    "add_members": "Přidat členy",
+    "copied": "Zkopírováno",
+    "create_group": {
+      "group_name_placeholder": "Název skupiny",
+      "title": "Vytvořit skupinu"
+    },
+    "group_info": {
+      "actions": "Akce",
+      "archive_group": "Archivovat skupinu",
+      "archive_group_details": {
+        "can_archive": "Tato skupina bude archivována a skryta z hlavního seznamu vašich skupin. V budoucnu do skupiny stále budete mít přístup, bude-li to nutné.",
+        "cant_archive": "Není možné archivovat skupina která má nesplacené zůstatky. Všechny dluhy musí být nejdříve vyrovnány.",
+        "title": "Určitě chcete tuto skupinu archivovat?"
+      },
+      "archived": "Archivováno",
+      "delete_group": "Smazat skupinu",
+      "delete_group_details": {
+        "can_delete": "Tuto akci nelze vzít zpět",
+        "cant_delete": "Skupina nemůže být smazána dokud všichni nevyrovnají dluh",
+        "title": "Jste si naprosto jisti?"
+      },
+      "group_created": "Skupina vytvořena",
+      "leave_group": "Opustit skupinu",
+      "leave_group_details": {
+        "can_leave": "Tuto akci nelze vzít zpět",
+        "cant_leave": "Nemůžete opustit skupinu dokud nevyrovnáte svůj dluh",
+        "title": "Jste si zcela jisti?"
+      },
+      "members": "Členové",
+      "recalculate_balances": "Přepočítat zůstatky",
+      "recalculate_balances_details": {
+        "description": "Pokud se zůstatky neshodují s výdaji, můžete je přepočítat. Pokud je počet výdajů vysoký, může to chvíli trvat. Zůstatky mimo skupinu nebudou ovlivněny.",
+        "title": "Jste si jisti?"
+      },
+      "remove_member_details": {
+        "can_remove": "Chystáte se tohoto člena odstranit ze skupiny",
+        "cant_remove": "Člena nelze odstranit dokud nevyrovná své dluhy",
+        "title": "Jste si zcela jisti?"
+      },
+      "simplify_debts": "Zjednodušte dluhy",
+      "title": "Informace o skupině"
+    },
+    "group_statistics": {
+      "first_expense": "První výdaj",
+      "title": "Statistiky skupiny",
+      "total_expenses": "Celkové výdaje"
+    },
+    "messages": {
+      "balances_recalculated": "Zůstatky byly úspěšně přepočítány",
+      "group_archived": "Skupina byla úspěšně archivována",
+      "group_name_updated": "Název skupiny byl aktualizován"
+    },
+    "no_members": {
+      "add_members": "Přidat členy",
+      "add_members_details": {
+        "add_to_split_pro": "Přidat do Split Pro",
+        "note": "Poznámka: odesílání pozvánek emailem je vypnuto",
+        "placeholder": "Zadejte jméno nebo email",
+        "send_invite": "Odeslat uživateli pozvánku",
+        "title": "Přidat členy",
+        "warning": "Varování: Pokud email není platný, nepoužívejte odeslat pozvánku. Místo toho použijte přidat do Split Pro. Při zneužití této funkce bude váš účet zablokován"
+      },
+      "invite_link": "Pozvánka",
+      "no_members": "Ve skupině zatím nejsou žádní členové."
+    },
+    "tabs": {
+      "balances": "Dluhy",
+      "expenses": "Výdaje"
+    },
+    "title": "Dluhy skupiny"
+  },
+  "invite_message": {
+    "in_splitpro": "ve Splitpro",
+    "join_to": "Připojte se k",
+    "text": "Připojte se ke skupině a můžete přidávat a spravovat výdaje a sledovat své zůstatky"
+  },
+  "meta": {
+    "application_name": "SplitPro",
+    "description": "Rozdělte si zdarma výdaje se svými přáteli",
+    "title": "SplitPro: Rozdělte si zdarma výdaje se svými přáteli"
+  },
+  "navigation": {
+    "account": "Účet",
+    "activity": "Aktivita",
+    "add": "Přidat",
+    "add_expense": "Přidat výdaj",
+    "balances": "Zůstatky",
+    "groups": "Skupiny",
+    "recurring": "Opakované"
+  },
+  "recurrence": {
+    "cron_expression": "Cronový výraz",
+    "days_of_month": "Dny v měsící",
+    "days_of_week": "Dny v týdnu",
+    "delete_description": "Toto zastaví vytváření dalších výdajů v budoucnu. Existující výdaje vytvořené tímto opakováním smazány nebudou.",
+    "delete_title": "Smazat opakování",
+    "derived_delete_warning": "Tento výdaj je součástí opakování. Smazán bude pouze tento konkrétní výdaj. Budoucí opakované výdaje budou pokračovat.",
+    "derived_edit_warning": "Tento výdaj je součastí opakování. Změny se projeví pouze v tomto záznamu, nikoliv ve všech opakovaných výdajích.",
+    "description": "Nastavte pro tento výdaj automatické opakování.",
+    "edit_confirmation_title": "Upravit opakovaný výdaj",
+    "edit_description": "Toto změní rozvrh pro budoucí výdaje. Existující výdaje upraveny nebudou.",
+    "edit_title": "Upravit opakování",
+    "empty": "Žádné výdaje zatím nejsou opakované",
+    "expense_for_the_amount_of": "Výdaj {{name}} za {{amount}} {{currency}}",
+    "last_day": "Poslední den",
+    "months": "Měsíce",
+    "never": "Není nastaven žádný plán",
+    "recurring": "Opakované",
+    "schedule_type": {
+      "custom": "Vlastní",
+      "day": "Denně",
+      "month": "Měsíčně",
+      "never": "Nikdy",
+      "week": "Týdně",
+      "year": "Ročně"
+    },
+    "template_delete_warning": "Toto je šablona pro opakované výdaje. Jejím smazáním dojde k zastavení všech budoucích opakovaných výdajů.",
+    "template_edit_warning": "Toto je šablona pro opakované výdaje. Změny se projeví ve všech budoucích opakovaných výdajích.",
+    "time_of_day": "Čas dne",
+    "title": "Opakování",
+    "view_recurring_page": "Zobrazit stránku opakování"
+  },
+  "ui": {
+    "added_by": "Přidáno",
+    "and": "a",
+    "balance": "zůstatek",
+    "balances": "zůstatky",
+    "delete": "Smazat",
+    "deleted_by": "Smazáno",
+    "edited_by": "Upraveno",
+    "expense": {
+      "for": "pro",
+      "from": "od",
+      "paid_by": "Zaplaceno",
+      "received_by": "Obdrženo",
+      "to": "komu",
+      "user": {
+        "deleted": "smazán/a",
+        "get": "dostane",
+        "lent": "půjčil/a",
+        "owe": "dluží",
+        "paid": "zaplatil/a",
+        "pay": "platí",
+        "received": "dostal/a"
+      },
+      "you": {
+        "deleted": "smazal/a",
+        "get": "dostanete",
+        "lent": "půjčil/a jste",
+        "owe": "dlužíte",
+        "paid": "zaplatil/a jste",
+        "pay": "zaplatíte",
+        "received": "dostal/a jste"
+      }
+    },
+    "expense_details": "Detaily výdaje",
+    "in_group": "Ve skupině",
+    "no_activity": "Zatím žádná aktivita",
+    "not_involved": "Nezúčastněn",
+    "on": "zapnuto",
+    "or": "nebo",
+    "outstanding_balances": "Zbývající dluhy",
+    "select_balance": "Vyberte zůstatek",
+    "select_currency": "Vyberte měnu",
+    "settle_up_name": "Vyrovnat se",
+    "settled_up": "Vyrovnáno",
+    "settlement": "Vyrovnání",
+    "share_text": "Mrkni na SplitPro. Je to otevřená alternative ke Splitwise",
+    "show_all_currencies": "Zobrazit všechny měny",
+    "today": "Dnes",
+    "total_balance": "Celkový zůstatek"
+  }
+}

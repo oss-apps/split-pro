@@ -80,7 +80,7 @@
     "import": "Importar",
     "invite": "Convidar",
     "leave": "Sair",
-    "next": "",
+    "next": "Próxima",
     "reconnect": "Reconectar",
     "save": "Salvar",
     "settle_up": "Quitar despesas",
@@ -130,8 +130,8 @@
   },
   "errors": {
     "currency_conversion_error": "Erro ao definir conversão monetária",
-    "currency_conversion_failed": "",
-    "currency_conversion_malformed": "",
+    "currency_conversion_failed": "Falha ao converter moedas",
+    "currency_conversion_malformed": "Os dados de conversão de moeda estão em formato inválido",
     "email_invalid": "E-mail inválido, tente novamente.",
     "email_required": "O e-mail é obrigatório",
     "feedback_min_length": "O feedback deve conter pelo menos 10 caracteres",
@@ -144,12 +144,12 @@
     "language_change_failed": "Erro ao alterar idioma",
     "less_than": "Arquivo deve ter menos de",
     "name_required": "O nome é obrigatório",
-    "no_providers": "",
+    "no_providers": "Erro ao buscar provedores de autenticação. Verifique os logs do backend.",
     "notification_not_supported": "Sem suporte a notificações",
     "otp_invalid": "Código OTP inválido",
     "otp_required": "Código OTP é obrigatório",
-    "recurrence_delete_failed": "",
-    "recurrence_update_failed": "",
+    "recurrence_delete_failed": "Falha ao excluir recorrência",
+    "recurrence_update_failed": "Falha ao atualizar recorrência",
     "request_error": "Erro ao solicitar notificação",
     "saving_expense": "Erro ao salvar despesa",
     "setting_update_failed": "Falha ao atualizar configuração",
@@ -229,10 +229,10 @@
       "title": "Tem certeza absoluta?"
     },
     "multiple_transactions": {
-      "add_all": "",
-      "add_one_by_one": "",
-      "description": "",
-      "title": ""
+      "add_all": "Adicionar todas",
+      "add_one_by_one": "Adicionar uma a uma",
+      "description": "Você selecionou várias transações. Escolha se deseja adicioná-las todas juntas com as configurações de divisão atuais ou ajustar as configurações uma a uma.",
+      "title": "Adicionar várias transações"
     },
     "no_transactions_yet": "Nenhuma transação ainda",
     "pending": "Pendente",
@@ -303,7 +303,7 @@
         "title": "Adicionar membros",
         "warning": "Atenção: Não envie um convite para um e-mail inválido. Em vez disso, use \"adicionar ao Split Pro\". O uso indevido de convites resultará no bloqueio da sua conta"
       },
-      "invite_link": "",
+      "invite_link": "Link de convite",
       "no_members": "Ainda não há membros no grupo."
     },
     "tabs": {
@@ -335,17 +335,17 @@
     "cron_expression": "Expressão Cron",
     "days_of_month": "Dias do Mês",
     "days_of_week": "Dias da Semana",
-    "delete_description": "",
-    "delete_title": "",
-    "derived_delete_warning": "",
-    "derived_edit_warning": "",
+    "delete_description": "Isso interromperá a criação de despesas futuras. As despesas já criadas por essa recorrência não serão excluídas.",
+    "delete_title": "Deletar Recorrência",
+    "derived_delete_warning": "Esta despesa faz parte de uma recorrência. Apenas esta despesa será excluída. As despesas recorrentes futuras permanecem.",
+    "derived_edit_warning": "Esta despesa faz parte de uma recorrência. As alterações afetarão apenas esta despesa.",
     "description": "Configure recorrência automática para esta despesa.",
-    "edit_confirmation_title": "",
-    "edit_description": "",
-    "edit_title": "",
+    "edit_confirmation_title": "Editar Despesa Recorrente",
+    "edit_description": "Isso vai mudar a programação das despesas futuras. As despesas existentes não serão modificadas.",
+    "edit_title": "Editar Recorrência",
     "empty": "Nenhuma despesa recorrente ainda",
     "expense_for_the_amount_of": "Despesa {{name}} pelo valor de {{amount}} {{currency}}",
-    "last_day": "",
+    "last_day": "Último dia",
     "months": "Meses",
     "never": "Nenhum pagamento recorrente configurado",
     "recurring": "Recorrente",
@@ -357,11 +357,11 @@
       "week": "Semanal",
       "year": "Anual"
     },
-    "template_delete_warning": "",
-    "template_edit_warning": "",
+    "template_delete_warning": "Este é um modelo de despesa recorrente. Excluí-lo interromperá todas as despesas recorrentes futuras.",
+    "template_edit_warning": "Este é um modelo de despesa recorrente. As alterações serão aplicadas a todas as despesas recorrentes futuras.",
     "time_of_day": "Hora do dia",
     "title": "Recorrência",
-    "view_recurring_page": ""
+    "view_recurring_page": "Ver Página de Recorrências"
   },
   "ui": {
     "added_by": "Adicionado por",
@@ -403,14 +403,14 @@
     "on": "em",
     "or": "ou",
     "outstanding_balances": "Saldos pendentes",
-    "select_balance": "",
+    "select_balance": "Selecionar saldo",
     "select_currency": "Selecionar moeda",
     "settle_up_name": "Quitar",
     "settled_up": "Quitado",
     "settlement": "Quitação",
     "share_text": "Confira o SplitPro. É uma alternativa grátis e de código aberto ao Splitwise",
-    "show_all_currencies": "",
+    "show_all_currencies": "Mostrar todas as moedas",
     "today": "Hoje",
-    "total_balance": ""
+    "total_balance": "Saldo total"
   }
 }

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
 
-import { FILE_SIZE_LIMIT } from '~/lib/constants';
+import { env } from '~/env';
 import { useAddExpenseStore } from '~/store/addStore';
 
 import { Input } from '../ui/input';
@@ -24,8 +24,10 @@ export const UploadFile: React.FC = () => {
         return;
       }
 
-      if (file.size > FILE_SIZE_LIMIT) {
-        toast.error(`${t('errors.less_than')} ${FILE_SIZE_LIMIT / 1024 / 1024}MB`);
+      const fileSizeLimit = env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB * 1024 * 1024;
+
+      if (file.size > fileSizeLimit) {
+        toast.error(`${t('errors.less_than')} ${env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB}MB`);
         return;
       }
 

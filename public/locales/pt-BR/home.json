@@ -40,6 +40,10 @@
       "description": "Gosta de apps? Deixa com a gente. Instale como um PWA: é só adicionar nosso site à sua tela inicial e ele funciona como um aplicativo. Você nem vai notar a diferença!",
       "title": "Suporte a PWA"
     },
+    "recurring_transactions": {
+      "description": "Configure despesas recorrentes automáticas para aluguel, assinaturas ou outros custos compartilhados recorrentes",
+      "title": "Transações Recorrentes"
+    },
     "title": "Funcionalidades",
     "unequal_split": {
       "description": "Opções de divisão avançadas. Por partes, porcentagem ou quantias exatas.",

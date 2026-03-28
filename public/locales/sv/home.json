@@ -1,7 +1,7 @@
 {
   "features": {
     "bank_connection": {
-      "description": "Lägg till utgifter snabbare med en integration till GoCardless eller Plaid banktransaktions-API",
+      "description": "Lägg till utgifter snabbare med en integration till GoCardless eller Plaid bank-API",
       "title": "Bankanslutning"
     },
     "currency_conversion": {
@@ -39,6 +39,10 @@
     "pwa_support": {
       "description": "Älskar du mobila appar? Inga problem. Installera det som en PWA och du kommer inte ens att märka!",
       "title": "PWA support"
+    },
+    "recurring_transactions": {
+      "description": "Skapa automatiska återkommande utgifter för hyra, prenumerationer eller andra regelbundna gemensamma kostnader",
+      "title": "Återkommande utgifter"
     },
     "title": "Funktioner",
     "unequal_split": {

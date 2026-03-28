@@ -13,7 +13,7 @@
       "title": ""
     },
     "groups_and_friends": {
-      "description": "Kan meerdere groepen creëren of meteen een saldo toevoegen. Alles wordt geconsolideerd",
+      "description": "Kan meerdere groepen creëren of meteen een saldo toevoegen. Alles wordt samengevoegd",
       "title": "Groepen en Vrienden"
     },
     "i18": {
@@ -21,11 +21,11 @@
       "title": ""
     },
     "import_splitwise": {
-      "description": "Geen nood om manueel saldos to migreren. Je kan gebruikers en groepen importeren van Splitwise",
-      "title": "Import van Splitwise"
+      "description": "Saldos hoeven niet handmatig gemigreerd te worden. Je kan gebruikers en groepen importeren van Splitwise",
+      "title": "Importeren van Splitwise"
     },
     "multiple_currencies": {
-      "description": "Nood aan meerdere valuta voor dezelfde gebruiker? Geen probleem!",
+      "description": "Meerdere valuta aan dezelfde gebruiker toevoegen? Geen probleem!",
       "title": "Meerdere valuta"
     },
     "open_source": {
@@ -33,8 +33,8 @@
       "title": "Open source"
     },
     "push_notifications": {
-      "description": "Miss nooit belangrijke notificaties. Wordt geüpdatet zodra iemand een uitgave toevoegt of zijn schuld vereffend",
-      "title": "Push notificaties"
+      "description": "Mis nooit belangrijke notificaties. Krijg bericht zodra iemand een uitgave toevoegt of zijn schuld aflost",
+      "title": "Pushbericht"
     },
     "pwa_support": {
       "description": "Hou je van mobiele apps? We steunen je hierin. Installeer het als een PWA en je merkt geen verschil!",

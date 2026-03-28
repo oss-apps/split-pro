@@ -58,30 +58,28 @@ const BalancePage: NextPageWithUser = () => {
         loading={cumulatedQuery.isPending}
       >
         <NotificationModal />
-        <div className="">
-          <div className="mx-4 flex items-stretch justify-between gap-4">
-            {isCurrencyCode(selectedCurrency) ? (
+        <div className="mx-4 flex items-stretch justify-between gap-4">
+          {isCurrencyCode(selectedCurrency) ? (
+            <CumulatedBalanceDisplay
+              prefix={`${t('ui.total_balance')}`}
+              cumulatedBalances={[
+                cumulatedQuery.data?.youOwe ?? [],
+                cumulatedQuery.data?.youGet ?? [],
+              ].flat()}
+              className="mx-auto"
+            />
+          ) : (
+            <>
               <CumulatedBalanceDisplay
-                prefix={`${t('ui.total_balance')}`}
-                cumulatedBalances={[
-                  cumulatedQuery.data?.youOwe ?? [],
-                  cumulatedQuery.data?.youGet ?? [],
-                ].flat()}
-                className="mx-auto"
+                prefix={`${t('actors.you')} ${t('ui.expense.you.owe')}`}
+                cumulatedBalances={cumulatedQuery.data?.youOwe}
               />
-            ) : (
-              <>
-                <CumulatedBalanceDisplay
-                  prefix={`${t('actors.you')} ${t('ui.expense.you.owe')}`}
-                  cumulatedBalances={cumulatedQuery.data?.youOwe}
-                />
-                <CumulatedBalanceDisplay
-                  prefix={`${t('actors.you')} ${t('ui.expense.you.lent')}`}
-                  cumulatedBalances={cumulatedQuery.data?.youGet}
-                />
-              </>
-            )}
-          </div>
+              <CumulatedBalanceDisplay
+                prefix={`${t('actors.you')} ${t('ui.expense.you.lent')}`}
+                cumulatedBalances={cumulatedQuery.data?.youGet}
+              />
+            </>
+          )}
         </div>
 
         <div className="mt-5 flex flex-col gap-8 pb-36">
@@ -97,14 +95,14 @@ const BalancePage: NextPageWithUser = () => {
           {!balanceQuery.isPending && !balanceQuery.data?.balances.length ? (
             <div className="mt-[40vh] flex -translate-y-[130%] flex-col items-center justify-center gap-6">
               <DownloadAppDrawer>
-                <Button className="w-[250px]">
+                <Button className="w-62.5">
                   <Download className="mr-2 h-5 w-5 text-black" />
                   {t('account.download_app')}
                 </Button>
               </DownloadAppDrawer>
               {!isPwa && <p>{t('ui.or')}</p>}
               <Link href="/add">
-                <Button className="w-[250px]">
+                <Button className="w-62.5">
                   <PlusIcon className="mr-2 h-5 w-5 text-black" />
                   {t('actions.add_expense')}
                 </Button>
@@ -127,14 +125,14 @@ const CumulatedBalanceDisplay: React.FC<{
   }
 
   return (
-    <div className={cn('w-1/2 rounded-2xl border px-2 py-2', className)}>
+    <div className={cn('w-1/2 rounded-2xl border px-4 py-2', className)}>
       <div className="mt-2 px-1">
         <div className="flex items-center justify-center gap-2 text-center">
           <p className="text-sm">{prefix}</p>
         </div>
       </div>
       <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
-        <ConvertibleBalance balances={cumulatedBalances} showMultiOption />
+        <ConvertibleBalance balances={cumulatedBalances} showMultiOption className="flex-wrap" />
       </div>
     </div>
   );

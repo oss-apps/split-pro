@@ -1,13 +1,14 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
-import path from 'path';
+import path from 'node:path';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
 import sharp from 'sharp';
 
 import { authOptions } from '~/server/auth';
+import { env } from '~/env';
 
-import formidable from 'formidable';
+import { type File, formidable } from 'formidable';
 import { fileExists } from '~/utils/file';
 
 export const config = {
@@ -34,10 +35,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const form = formidable({
     keepExtensions: true,
-    maxFileSize: 10 * 1024 * 1024,
+    maxFileSize: env.UPLOAD_MAX_FILE_SIZE_MB * 1024 * 1024,
   });
 
-  let uploadedFile: formidable.File | undefined;
+  let uploadedFile: File | undefined;
 
   try {
     const [, files] = await form.parse(req);

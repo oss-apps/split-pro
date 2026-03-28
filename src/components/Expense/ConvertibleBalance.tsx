@@ -51,7 +51,7 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
 
   const selectedCurrency = useCurrencyPreferenceStore((s) => {
     const preference = s.getPreference(entityId);
-    if (availableCurrencies.includes(preference ?? '')) {
+    if (preference === SHOW_ALL_VALUE || availableCurrencies.includes(preference ?? '')) {
       return preference;
     } else {
       s.setPreference(entityId, SHOW_ALL_VALUE);

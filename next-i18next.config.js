@@ -8,6 +8,7 @@ const config = {
       'de',
       'fr',
       'it',
+      'cs',
       'pl',
       'pt-PT',
       'pt-BR',

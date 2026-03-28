@@ -12,6 +12,7 @@ const config = {
       'pt-PT',
       'pt-BR',
       'sv',
+      'es',
       'es-MX',
       'es-AR',
       'hu',

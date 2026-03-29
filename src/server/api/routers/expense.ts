@@ -19,6 +19,7 @@ import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { getUserMap } from './user';
+import { FriendBalance } from '~/components/Friend/FriendBalance';
 
 export const expenseRouter = createTRPCRouter({
   getCumulatedBalances: protectedProcedure.query(async ({ ctx }) => {
@@ -76,6 +77,10 @@ export const expenseRouter = createTRPCRouter({
       }),
     );
 
+    // Group by friendId and fetch user details
+    const friendIds = [...new Set([...processedBalances].map((b) => b.friendId))];
+    const userMap = await getUserMap(friendIds);
+
     // Aggregate by (friendId, currency) since same pair can appear in multiple groups
     const aggregated = processedBalances
       .filter((b) => 0n !== b.amount)
@@ -93,10 +98,6 @@ export const expenseRouter = createTRPCRouter({
         new Map(),
       );
 
-    // Group by friendId and fetch user details
-    const friendIds = [...new Set([...aggregated.values()].map((b) => b.friendId))];
-    const userMap = await getUserMap(friendIds);
-
     const balancesByFriend = [...aggregated.values()].reduce<
       Record<number, { currency: string; amount: bigint }[]>
     >((acc, { friendId, currency, amount }) => {
@@ -106,6 +107,12 @@ export const expenseRouter = createTRPCRouter({
       acc[friendId].push({ currency, amount });
       return acc;
     }, {});
+
+    friendIds.forEach((friendId) => {
+      if (!balancesByFriend[friendId]) {
+        balancesByFriend[friendId] = [];
+      }
+    });
 
     const balances = Object.entries(balancesByFriend)
       .map(([friendId, currencies]) => ({

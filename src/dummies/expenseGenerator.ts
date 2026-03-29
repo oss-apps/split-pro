@@ -316,6 +316,14 @@ export const generateAllExpenses = (users: DummyUserInfo[], groups: DummyGroupIn
 
 export type DummyExpenseInfo = ReturnType<typeof generateAllExpenses>[number];
 
+export interface SettleupCandidate {
+  kind: 'group' | 'direct';
+  userId: number;
+  friendId: number;
+  groupId: number | null;
+  currency: string;
+}
+
 export const selectEditType = () => {
   const weightedTypes = Object.entries(EXPENSE_EDIT_WEIGHTS).map(([editType, weight]) => ({
     value: editType,
@@ -395,7 +403,7 @@ export const generatePairsToSettle = (
   expenses: DummyExpenseInfo[],
   expensesToDelete: DummyExpenseInfo[],
 ) => {
-  const connections = new Map<string, readonly [number, number, number, string]>();
+  const connections = new Map<string, SettleupCandidate>();
 
   expenses
     .filter(
@@ -409,14 +417,25 @@ export const generatePairsToSettle = (
       const payerId = expense.paidBy.id;
       return expense.participants
         .filter((p) => p.id !== payerId)
-        .map(
-          (participant) =>
-            [payerId, participant.id, expense.groupId!, expense.currency as string] as const,
-        );
+        .map((participant) => ({
+          kind: null === expense.groupId ? ('direct' as const) : ('group' as const),
+          userId: Math.min(payerId, participant.id),
+          friendId: Math.max(payerId, participant.id),
+          groupId: expense.groupId,
+          currency: expense.currency as string,
+        }));
     })
     .filter(() => faker.datatype.boolean({ probability: 0.1 }))
-    .forEach((tuple) => {
-      connections.set(tuple.join('-'), tuple);
+    .forEach((candidate) => {
+      const key = [
+        candidate.kind,
+        candidate.userId,
+        candidate.friendId,
+        candidate.groupId ?? 'null',
+        candidate.currency,
+      ].join('-');
+
+      connections.set(key, candidate);
     });
 
   return Array.from(connections.values());

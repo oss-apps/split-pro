@@ -4,8 +4,7 @@ import { createExpense, deleteExpense, editExpense } from '~/server/api/services
 import { dummyData } from '~/dummies';
 import { calculateParticipantSplit } from '~/store/addStore';
 import assert from 'node:assert';
-import { BigMath } from '~/utils/numbers';
-import { DEFAULT_CATEGORY } from '~/lib/category';
+import { settleBalances } from './seedSettlement';
 
 const prisma = new PrismaClient();
 
@@ -57,6 +56,15 @@ async function createExpenses() {
         expense.addedBy,
       );
 
+      await prisma.expense.update({
+        where: {
+          id: res!.id,
+        },
+        data: {
+          createdAt: expense.createdAt,
+        },
+      });
+
       idLookup.set(idx, res!.id);
     }),
   );
@@ -103,52 +111,6 @@ async function deleteExpenses() {
   return prisma.expense.findMany({ include: { expenseParticipants: true } });
 }
 
-async function settleBalances() {
-  const groupBalances = await prisma.balanceView.findMany();
-  const groupBalanceMap = Object.fromEntries(
-    groupBalances.map((gb) => [`${gb.userId}-${gb.friendId}-${gb.groupId}-${gb.currency}`, gb]),
-  );
-
-  await Promise.all(
-    dummyData.balancesToSettle.map(async ([userId, friendId, groupId, currency]) => {
-      const groupBalance = groupBalanceMap[`${userId}-${friendId}-${groupId}-${currency}`];
-
-      if (!groupBalance || groupBalance.amount === 0n) {
-        console.warn(`No balance to settle for ${userId}, ${friendId}, ${groupId}, ${currency}`);
-        return;
-      }
-
-      const sender = 0n > groupBalance.amount ? friendId : userId;
-      const receiver = 0n > groupBalance.amount ? userId : friendId;
-
-      await createExpense(
-        {
-          name: 'Settle up',
-          amount: BigMath.abs(groupBalance.amount),
-          currency,
-          splitType: SplitType.SETTLEMENT,
-          groupId,
-          participants: [
-            {
-              userId: sender,
-              amount: groupBalance.amount,
-            },
-            {
-              userId: receiver,
-              amount: -groupBalance.amount,
-            },
-          ],
-          paidBy: sender,
-          category: DEFAULT_CATEGORY,
-        },
-        sender,
-      );
-    }),
-  );
-
-  console.log('Finished settling balances');
-}
-
 async function main() {
   // await prisma.user.deleteMany();
   // await prisma.expense.deleteMany();
@@ -161,7 +123,7 @@ async function main() {
   await createExpenses();
   await editExpenses();
   await deleteExpenses();
-  await settleBalances();
+  await settleBalances(prisma, dummyData.balancesToSettle);
 }
 
 main()

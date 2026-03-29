@@ -15,7 +15,16 @@ pnpm dx:down       # Stop Docker containers
 ### Worktrees
 
 - when using git worktrees, store them in the .worktrees directory in the root of the project folder
-- remember to copy the .env file and change the dev server port number to a random one
+- when creating a worktree, copy `.env` from the root project into the worktree
+- update worktree-local app urls/port to avoid conflicts with the main workspace:
+  - set `NEXTAUTH_URL` and `NEXTAUTH_URL_INTERNAL` to a unique localhost port
+  - run dev server with that same port (for example `pnpm dev --port 3174`)
+- use a separate postgres instance per worktree (different host port + db name)
+  - set unique values in the worktree `.env`: `POSTGRES_PORT`, `POSTGRES_DB`, `POSTGRES_CONTAINER_NAME`, `DATABASE_URL`
+  - start dedicated db container, for example:
+    - `docker run -d --name <unique-container-name> -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=strong-password -e POSTGRES_DB=<worktree-db> -p <worktree-port>:5432 ossapps/postgres:17.7-trixie postgres -c shared_preload_libraries=pg_cron -c cron.database_name=<worktree-db> -c cron.timezone=UTC`
+  - enable pg_cron extension once: `psql "postgresql://postgres:strong-password@localhost:<worktree-port>/<worktree-db>" -c "CREATE EXTENSION IF NOT EXISTS pg_cron;"`
+  - initialize schema and data: `pnpm exec prisma migrate reset --force --skip-seed && pnpm db:seed`
 
 ### Database
 

@@ -219,7 +219,9 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
             className={className}
             amount={totalConvertedAmount ? totalConvertedAmount : balances[0]!.amount}
             currency={totalConvertedAmount ? selectedCurrency : balances[0]!.currency}
-            hasMore={balances.length > 1}
+            hasMore={
+              balances.length > 1 && (selectedCurrency === SHOW_ALL_VALUE || !selectedCurrency)
+            }
           />
         )}
       </div>

@@ -57,3 +57,7 @@ certificates
 .vscode
 
 SEED_STATISTICS.md
+
+# Agents
+.worktrees/
+docs/superpowers/

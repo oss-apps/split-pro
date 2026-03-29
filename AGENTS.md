@@ -12,6 +12,11 @@ pnpm dx:up         # Start Docker containers
 pnpm dx:down       # Stop Docker containers
 ```
 
+### Worktrees
+
+- when using git worktrees, store them in the .worktrees directory in the root of the project folder
+- remember to copy the .env file and change the dev server port number to a random one
+
 ### Database
 
 ```bash

@@ -26,6 +26,7 @@ import { CurrencyInput } from '../ui/currency-input';
 import { AppDrawer } from '../ui/drawer';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
+import { DateSelector } from '../AddExpense/DateSelector';
 
 type ExpenseDetailsOutput = NonNullable<inferRouterOutputs<ExpenseRouter>['getExpenseDetails']>;
 
@@ -265,6 +266,7 @@ export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ ex
   const receiver = expense.expenseParticipants.find((p) => p.userId !== expense.paidBy)?.user;
 
   const [amount, setAmount] = useState<bigint>(BigMath.abs(expense.amount));
+  const [expenseDate, setExpenseDate] = useState<Date>(expense.expenseDate);
   const [amountStr, setAmountStr] = useState<string>(
     getCurrencyHelpersCached(expense.currency).toUIString(BigMath.abs(expense.amount)),
   );
@@ -309,6 +311,7 @@ export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ ex
         paidBy: sender.id,
         category: DEFAULT_CATEGORY,
         groupId: expense.groupId,
+        expenseDate,
       },
       {
         onSuccess: () => {
@@ -320,7 +323,7 @@ export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ ex
         },
       },
     );
-  }, [amount, sender, receiver, expense, addExpenseMutation, apiUtils, t]);
+  }, [amount, sender, receiver, expense, addExpenseMutation, expenseDate, apiUtils, t]);
 
   if (!sender || !receiver) {
     return null;
@@ -361,6 +364,7 @@ export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ ex
           className="mx-auto mt-4 w-37.5 text-center text-lg"
           onValueChange={onCurrencyInputValueChange}
         />
+        <DateSelector mode="single" required selected={expenseDate} onSelect={setExpenseDate} />
       </div>
     </AppDrawer>
   );

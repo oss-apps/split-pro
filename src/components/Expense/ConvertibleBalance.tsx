@@ -256,7 +256,7 @@ const AmountDisplay: React.FC<{
       )}
       <span className={cn(isPositive ? 'text-positive' : 'text-negative', className)}>
         {getCurrencyHelpersCached(currency).toUIString(amount)}
-        {hasMore ? `+` : currency}
+        {hasMore && `+`}
       </span>
     </div>
   );

@@ -26,7 +26,7 @@ import { UserInput } from './UserInput';
 import { CurrencyInput } from '../ui/currency-input';
 import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { currencyConversion } from '~/utils/numbers';
-import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
+import { CurrencyConversionIcon } from '../ui/categoryIcons';
 import { useSession } from 'next-auth/react';
 
 export const AddOrEditExpensePage: React.FC<{
@@ -273,7 +273,7 @@ export const AddOrEditExpensePage: React.FC<{
         editingTargetCurrency={currency}
       >
         <Button size="icon" variant="secondary" className="size-8">
-          <CURRENCY_CONVERSION_ICON className="size-4" />
+          <CurrencyConversionIcon className="size-4" />
         </Button>
       </CurrencyConversion>
     );

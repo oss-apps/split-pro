@@ -25,8 +25,9 @@ import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
 import { CurrencyInput } from '../ui/currency-input';
 import { CurrencyConversion } from '../Friend/CurrencyConversion';
-import { currencyConversion, getRatePrecision } from '~/utils/numbers';
+import { currencyConversion } from '~/utils/numbers';
 import { CURRENCY_CONVERSION_ICON } from '../ui/categoryIcons';
+import { useSession } from 'next-auth/react';
 
 export const AddOrEditExpensePage: React.FC<{
   enableSendingInvites: boolean;
@@ -73,6 +74,7 @@ export const AddOrEditExpensePage: React.FC<{
 
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
   const updateProfile = api.user.updateUserDetail.useMutation();
+  const { update } = useSession();
 
   const onCurrencyPick = useCallback(
     (newCurrency: CurrencyCode) => {
@@ -168,6 +170,15 @@ export const AddOrEditExpensePage: React.FC<{
 
                 navPromise()
                   .then(() => resetState())
+                  .then(() =>
+                    update((session: any) => ({
+                      ...session,
+                      user: {
+                        ...(session?.user ?? {}),
+                        currency,
+                      },
+                    })),
+                  )
                   .catch(console.error);
               }
             }
@@ -206,6 +217,7 @@ export const AddOrEditExpensePage: React.FC<{
     cronExpression,
     multipleTransactions,
     setSingleTransaction,
+    update,
   ]);
 
   const handleDescriptionChange = useCallback(

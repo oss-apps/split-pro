@@ -8,7 +8,11 @@ const DEFAULT_KEY = 'global';
 
 export type CurrencyPreference = CurrencyCode | typeof SHOW_ALL_VALUE;
 
+const MAX_RECENT_CURRENCIES = 5;
+
 interface CurrencyPreferenceState {
+  recentCurrencies: CurrencyCode[];
+  addToRecentCurrencies: (currency: CurrencyCode) => void;
   preferences: Record<string, CurrencyPreference>;
   setPreference: (key?: number | string, currency?: string) => void;
   getPreference: (key?: number | string) => CurrencyPreference;
@@ -18,7 +22,13 @@ interface CurrencyPreferenceState {
 export const useCurrencyPreferenceStore = create<CurrencyPreferenceState>()(
   persist(
     (set, get) => ({
+      recentCurrencies: [],
       preferences: {},
+      addToRecentCurrencies: (currency) =>
+        set((state) => {
+          const updatedRecent = [currency, ...state.recentCurrencies.filter((c) => c !== currency)];
+          return { recentCurrencies: updatedRecent.slice(0, MAX_RECENT_CURRENCIES) };
+        }),
       setPreference: (key = DEFAULT_KEY, currency = SHOW_ALL_VALUE) =>
         set((state) => ({
           preferences: {
@@ -34,7 +44,7 @@ export const useCurrencyPreferenceStore = create<CurrencyPreferenceState>()(
         }),
     }),
     {
-      name: 'currency-preferences', // sessionStorage key
+      name: 'currency-preferences', // SessionStorage key
       storage: createJSONStorage(() => sessionStorage),
     },
   ),

@@ -83,7 +83,6 @@ export const env = createEnv({
     NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT: z.boolean().default(false),
     NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB: z.coerce.number().int().positive().default(10),
     NEXT_PUBLIC_VERSION: z.string().optional(),
-    NEXT_PUBLIC_RECEIPT_MAX_FILE_SIZE_MB: z.number().default(5),
   },
 
   /**
@@ -148,7 +147,6 @@ export const env = createEnv({
       ? Number(process.env.UPLOAD_MAX_FILE_SIZE_MB)
       : 10,
     NEXT_PUBLIC_VERSION: process.env.APP_VERSION,
-    NEXT_PUBLIC_RECEIPT_MAX_FILE_SIZE_MB: process.env.NEXT_PUBLIC_RECEIPT_MAX_FILE_SIZE_MB,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

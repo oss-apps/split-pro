@@ -295,10 +295,6 @@ export const groupRouter = createTRPCRouter({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
       }
 
-      if (group.userId !== ctx.session.user.id) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Only creator can update the group' });
-      }
-
       const updatedGroup = await ctx.db.group.update({
         where: {
           id: input.groupId,

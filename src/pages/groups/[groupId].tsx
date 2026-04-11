@@ -83,7 +83,7 @@ const BalancePage: NextPageWithUser<{
   }, [groupDetailQuery.data, t]);
 
   const isAdmin = groupDetailQuery.data?.userId === user.id;
-  const isArchived = !!groupDetailQuery.data?.archivedAt;
+  const isArchived = Boolean(groupDetailQuery.data?.archivedAt);
   const canDeleteOrArchive =
     groupDetailQuery.data?.userId === user.id &&
     !groupDetailQuery.data?.groupBalances.find((bal) => 0n !== bal.amount);
@@ -191,25 +191,27 @@ const BalancePage: NextPageWithUser<{
                   <div className="text-primary text-xl font-semibold">
                     {groupDetailQuery.data?.name ?? ''}
                   </div>
-                  {isAdmin && (
-                    <UpdateName
-                      className="mr-2 size-5"
-                      defaultName={groupDetailQuery.data?.name ?? ''}
-                      onNameSubmit={async (values) => {
-                        try {
-                          await updateGroupDetailsMutation.mutateAsync({
-                            groupId,
-                            name: values.name,
-                          });
-                          toast.success(t('ui.messages.group_name_updated'), { duration: 1500 });
-                          await groupDetailQuery.refetch();
-                        } catch (error) {
-                          toast.error(t('errors.group_name_update_failed'));
-                          console.error(error);
-                        }
-                      }}
-                    />
-                  )}
+                  <UpdateName
+                    className="mr-2 size-5"
+                    defaultName={groupDetailQuery.data?.name ?? ''}
+                    defaultImage={groupDetailQuery.data?.image ?? null}
+                    onNameSubmit={async (values) => {
+                      try {
+                        await updateGroupDetailsMutation.mutateAsync({
+                          groupId,
+                          name: values.name,
+                          image: values.image,
+                        });
+                        toast.success(t('group_details.messages.group_name_updated'), {
+                          duration: 1500,
+                        });
+                        await groupDetailQuery.refetch();
+                      } catch (error) {
+                        toast.error(t('errors.group_name_update_failed'));
+                        console.error(error);
+                      }
+                    }}
+                  />
                 </div>
 
                 <p className="mt-5 font-semibold">{t('group_details.group_info.members')}</p>

@@ -44,7 +44,7 @@ const AccountPage: NextPageWithUser<{
   bankConnectionEnabled: boolean;
   bankConnection: string;
   gitRevision: string | null;
-}> = ({ user, feedBackPossible, bankConnectionEnabled, bankConnection, gitRevision }) => {
+}> = ({ feedBackPossible, bankConnectionEnabled, bankConnection, gitRevision }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const userQuery = api.user.me.useQuery();
@@ -69,9 +69,9 @@ const AccountPage: NextPageWithUser<{
   const utils = api.useUtils();
 
   const onNameUpdate = useCallback(
-    async (values: { name: string }) => {
+    async (values: { name: string; image?: string | null }) => {
       try {
-        await updateDetailsMutation.mutateAsync({ name: values.name });
+        await updateDetailsMutation.mutateAsync({ name: values.name, image: values.image });
         toast.success(t('account.messages.submit_success'), { duration: 1500 });
         utils.user.me.refetch().catch(console.error);
       } catch (error) {
@@ -100,16 +100,17 @@ const AccountPage: NextPageWithUser<{
       <MainLayout title={t('account.title')} header={header}>
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <EntityAvatar entity={user} size={50} />
+            <EntityAvatar entity={userQuery.data} size={50} />
             <div>
               <div className="text-xl font-semibold">{userQuery.data?.name}</div>
-              <div className="text-sm text-gray-500">{user.email}</div>
+              <div className="text-sm text-gray-500">{userQuery.data?.email}</div>
             </div>
           </div>
           {!userQuery.isPending && (
             <UpdateName
               className="size-5"
               defaultName={userQuery.data?.name ?? ''}
+              defaultImage={userQuery.data?.image}
               onNameSubmit={onNameUpdate}
             />
           )}
@@ -208,8 +209,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      feedbackPossible: !!env.FEEDBACK_EMAIL,
-      bankConnectionEnabled: !!isBankConnectionConfigured(),
+      feedbackPossible: Boolean(env.FEEDBACK_EMAIL),
+      bankConnectionEnabled: Boolean(isBankConnectionConfigured()),
       bankConnection: whichBankConnectionConfigured(),
       gitRevision,
       ...(await customServerSideTranslations(context.locale, ['common'])),

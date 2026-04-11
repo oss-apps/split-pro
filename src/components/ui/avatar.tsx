@@ -3,6 +3,7 @@ import { Avatar as AvatarPrimitive } from 'radix-ui';
 import * as React from 'react';
 
 import { cn } from '~/lib/utils';
+import { toImageSrc } from '~/utils/imageUpload';
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -59,7 +60,10 @@ const EntityAvatar: React.FC<{
 
   return (
     <Avatar style={avatarSize}>
-      <AvatarImage src={entity?.image ?? undefined} alt={entity?.name ?? entity?.email ?? ''} />
+      <AvatarImage
+        src={entity?.image ? toImageSrc(entity.image) : undefined}
+        alt={entity?.name ?? entity?.email ?? ''}
+      />
       <AvatarFallback>
         <BoringAvatar
           size={size}

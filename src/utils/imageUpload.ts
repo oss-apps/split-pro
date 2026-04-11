@@ -38,3 +38,15 @@ export const uploadImage = async (file: File): Promise<string> => {
   const data = (await response.json()) as { key: string };
   return data.key;
 };
+
+export const toImageSrc = (value?: string | null) => {
+  if (!value) {
+    return undefined;
+  }
+
+  if (value.startsWith('http://') || value.startsWith('https://') || value.startsWith('/')) {
+    return value;
+  }
+
+  return `/api/files/${value}`;
+};

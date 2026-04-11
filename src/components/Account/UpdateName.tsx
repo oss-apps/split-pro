@@ -16,6 +16,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form'
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Slider } from '../ui/slider';
+import { Button } from '../ui/button';
 
 const createImage = async (url: string) => {
   const image = new Image();
@@ -205,6 +206,18 @@ export const UpdateName: React.FC<{
     [imageSrc],
   );
 
+  const handleClearImage = useCallback(() => {
+    if (imageSrc?.startsWith('blob:')) {
+      URL.revokeObjectURL(imageSrc);
+    }
+
+    detailForm.setValue('image', null, { shouldDirty: true });
+    setImageSrc(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setCroppedAreaPixels(null);
+  }, [detailForm, imageSrc]);
+
   const field = useCallback(
     ({ field }: any) => (
       <FormItem className="w-full">
@@ -240,16 +253,27 @@ export const UpdateName: React.FC<{
                 }}
                 size={80}
               />
-              <Label htmlFor="profile-image-input" className="cursor-pointer">
-                <Camera className="size-5" />
-                <Input
-                  onChange={handleFileChange}
-                  id="profile-image-input"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                />
-              </Label>
+              <div className="flex items-center gap-4">
+                <Label htmlFor="profile-image-input" className="cursor-pointer">
+                  <Camera className="size-5" />
+                  <Input
+                    onChange={handleFileChange}
+                    id="profile-image-input"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                  />
+                </Label>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  disabled={detailForm.watch('image') === null}
+                  onClick={handleClearImage}
+                >
+                  <X className="size-5" />
+                </Button>
+              </div>
             </div>
           ) : (
             <div className="space-y-3">

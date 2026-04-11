@@ -120,8 +120,6 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
 
   useEffect(() => {
     if ('authenticated' === status && data.user) {
-      setCurrency(parseCurrencyCode(data.user.currency));
-
       if (!data.user.preferredLanguage) {
         // If user has no preferred language, set it to the current locale
         const currentLocale = router.locale ?? 'en';

@@ -10,6 +10,7 @@ import {
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { GeneralPicker } from '../GeneralPicker';
 import { Button } from '../ui/button';
+import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
 
 const FRANKFURTER_FILTERED_CURRENCIES = Object.fromEntries(
   Object.entries(CURRENCIES).filter(([code]) => FRANKFURTER_CURRENCIES.includes(code)),
@@ -27,12 +28,14 @@ function CurrencyPickerInner({
   showOnlyFrankfurter?: boolean;
 }) {
   const { t, getCurrencyName } = useTranslationWithUtils(['currencies']);
+  const { recentCurrencies, addToRecentCurrencies } = useCurrencyPreferenceStore();
 
   const onSelect = useCallback(
     (currentValue: string) => {
       onCurrencyPick(parseCurrencyCode(currentValue));
+      addToRecentCurrencies(parseCurrencyCode(currentValue));
     },
-    [onCurrencyPick],
+    [onCurrencyPick, addToRecentCurrencies],
   );
 
   const trigger = useMemo(
@@ -62,6 +65,20 @@ function CurrencyPickerInner({
     },
     [getCurrencyName],
   );
+  const recentCurrencyObjects = useMemo(
+    () => recentCurrencies.map((code) => CURRENCIES[code]),
+    [recentCurrencies],
+  );
+  const items = useMemo(() => {
+    const baseItems = showOnlyFrankfurter
+      ? Object.values(FRANKFURTER_FILTERED_CURRENCIES)
+      : Object.values(CURRENCIES);
+    const uniqueItems = [
+      ...recentCurrencyObjects,
+      ...baseItems.filter((c) => !recentCurrencies.includes(c.code as CurrencyCode)),
+    ];
+    return uniqueItems;
+  }, [showOnlyFrankfurter, recentCurrencyObjects, recentCurrencies]);
 
   return (
     <GeneralPicker
@@ -71,7 +88,7 @@ function CurrencyPickerInner({
       placeholderText={t('placeholder')}
       noOptionsText={t('no_currency_found')}
       onSelect={onSelect}
-      items={Object.values(showOnlyFrankfurter ? FRANKFURTER_FILTERED_CURRENCIES : CURRENCIES)}
+      items={items}
       extractValue={extractValue}
       extractKey={extractKey}
       selected={selected}

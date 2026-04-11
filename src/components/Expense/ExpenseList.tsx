@@ -5,11 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { toast } from 'sonner';
-import {
-  CURRENCY_CONVERSION_ICON,
-  CategoryIcon,
-  SETTLEUP_ICON,
-} from '~/components/ui/categoryIcons';
+import { CategoryIcon, CurrencyConversionIcon, SettleupIcon } from '~/components/ui/categoryIcons';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { cn } from '~/lib/utils';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
@@ -155,7 +151,7 @@ const Settlement: ExpenseComponent = ({ e, userId }) => {
       <div className="inline-block w-6 text-center text-xs text-gray-500">
         {toUIDate(e.expenseDate)}
       </div>
-      <SETTLEUP_ICON className="size-5 shrink-0 text-gray-400" />
+      <SettleupIcon className="size-5 shrink-0 text-gray-400" />
       <div>
         <p className="flex text-center text-sm text-gray-400">
           {displayName(e.paidByUser, userId)}{' '}
@@ -186,7 +182,7 @@ const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
       <div className="inline-block w-6 text-center text-xs text-gray-500">
         {toUIDate(e.expenseDate)}
       </div>
-      <CURRENCY_CONVERSION_ICON className="size-5 shrink-0 text-gray-400" />
+      <CurrencyConversionIcon className="size-5 shrink-0 text-gray-400" />
       <div>
         <p className="max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">
           {getCurrencyHelpersCached(e.currency).toUIString(e.amount)} ➡️{' '}

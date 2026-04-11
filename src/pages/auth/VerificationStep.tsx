@@ -88,6 +88,7 @@ const OTPInput = ({ field }) => (
         maxLength={5}
         pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
         inputMode="text"
+        autoFocus
         {...field}
       >
         <InputOTPGroup>

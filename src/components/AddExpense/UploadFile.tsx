@@ -2,6 +2,7 @@ import { ImagePlus, Image as ImageUploaded } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
+import imageCompression from 'browser-image-compression';
 
 import { env } from '~/env';
 import { useAddExpenseStore } from '~/store/addStore';
@@ -18,26 +19,43 @@ export const UploadFile: React.FC = () => {
   const handleFileChange = React.useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       const { files } = event.target;
-      const file = files?.[0];
+
+      let file = files?.[0];
 
       if (!file) {
         return;
       }
 
-      const fileSizeLimit = env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB * 1024 * 1024;
-
-      if (file.size > fileSizeLimit) {
-        toast.error(`${t('errors.less_than')} ${env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB}MB`);
-        return;
-      }
-
-      setFile(file);
-      setFileUploading(true);
-
-      const formData = new FormData();
-      formData.append('file', file);
-
       try {
+        // Compress if enabled and it's an image
+        if (file.type.startsWith('image/')) {
+          try {
+            const options = {
+              maxSizeMB: env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB,
+              maxWidthOrHeight: 1920,
+              useWebWorker: true,
+              fileType: 'image/jpeg',
+            };
+            file = await imageCompression(file, options);
+          } catch (error) {
+            console.error('Compression failed:', error);
+            toast.error(t('errors.image_compression_failed'));
+          }
+        }
+
+        // Check size after compression
+        const maxSize = env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB * 1024 * 1024;
+        if (file.size > maxSize) {
+          toast.error(t('errors.less_than', { size: env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB }));
+          return;
+        }
+
+        setFile(file);
+        setFileUploading(true);
+
+        const formData = new FormData();
+        formData.append('file', file);
+
         const response = await fetch('/api/upload', {
           method: 'POST',
           body: formData,

@@ -277,7 +277,13 @@ export const groupRouter = createTRPCRouter({
     }),
 
   updateGroupDetails: groupProcedure
-    .input(z.object({ name: z.string().min(1), groupId: z.number() }))
+    .input(
+      z.object({
+        name: z.string().min(1),
+        image: z.string().nullable().optional(),
+        groupId: z.number(),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       const group = await ctx.db.group.findUnique({
         where: {
@@ -299,6 +305,7 @@ export const groupRouter = createTRPCRouter({
         },
         data: {
           name: input.name,
+          image: input.image,
         },
       });
 

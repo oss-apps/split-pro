@@ -7,14 +7,12 @@ import imageCompression from 'browser-image-compression';
 import { env } from '~/env';
 import { useAddExpenseStore } from '~/store/addStore';
 
-import { Checkbox } from '../ui/checkbox';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
 export const UploadFile: React.FC = () => {
   const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
-  const [compressionEnabled, setCompressionEnabled] = useState(true);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
   const { setFileUploading, setFileKey } = useAddExpenseStore((s) => s.actions);
 
@@ -28,37 +26,36 @@ export const UploadFile: React.FC = () => {
         return;
       }
 
-      // Compress if enabled and it's an image
-      if (compressionEnabled && file.type.startsWith('image/')) {
-        try {
-          const options = {
-            maxSizeMB: env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB,
-            maxWidthOrHeight: 1920,
-            useWebWorker: true,
-            fileType: 'image/jpeg',
-          };
-          file = await imageCompression(file, options);
-        } catch (error) {
-          console.error('Compression failed:', error);
-          toast.error('Compression failed. Please try again or disable compression.');
+      try {
+        // Compress if enabled and it's an image
+        if (file.type.startsWith('image/')) {
+          try {
+            const options = {
+              maxSizeMB: env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB,
+              maxWidthOrHeight: 1920,
+              useWebWorker: true,
+              fileType: 'image/jpeg',
+            };
+            file = await imageCompression(file, options);
+          } catch (error) {
+            console.error('Compression failed:', error);
+            toast.error(t('errors.image_compression_failed'));
+          }
+        }
+
+        // Check size after compression
+        const maxSize = env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB * 1024 * 1024;
+        if (file.size > maxSize) {
+          toast.error(t('errors.less_than', { size: env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB }));
           return;
         }
-      }
 
-      // Check size after compression
-      const maxSize = env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB * 1024 * 1024;
-      if (file.size > maxSize) {
-        toast.error(`${t('errors.less_than')} ${env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB}MB`);
-        return;
-      }
+        setFile(file);
+        setFileUploading(true);
 
-      setFile(file);
-      setFileUploading(true);
+        const formData = new FormData();
+        formData.append('file', file);
 
-      const formData = new FormData();
-      formData.append('file', file);
-
-      try {
         const response = await fetch('/api/upload', {
           method: 'POST',
           body: formData,
@@ -80,36 +77,24 @@ export const UploadFile: React.FC = () => {
         setFileUploading(false);
       }
     },
-    [compressionEnabled, setFileUploading, setFileKey, t],
+    [setFileUploading, setFileKey, t],
   );
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center space-x-2">
-        <Checkbox
-          id="compression"
-          checked={compressionEnabled}
-          onCheckedChange={(checked) => setCompressionEnabled(checked === true)}
-        />
-        <Label htmlFor="compression" className="text-sm">
-          Enable image compression
-        </Label>
-      </div>
-      <Label htmlFor="picture" className="cursor-pointer">
-        {file || fileKey ? (
-          <ImageUploaded className="text-primary h-6 w-6" />
-        ) : (
-          <ImagePlus className="h-6 w-6 text-gray-300" />
-        )}
-        <Input
-          onChange={handleFileChange}
-          id="picture"
-          type="file"
-          accept="image/*"
-          className="hidden"
-        />
-      </Label>
-    </div>
+    <Label htmlFor="picture" className="cursor-pointer">
+      {file || fileKey ? (
+        <ImageUploaded className="text-primary h-6 w-6" />
+      ) : (
+        <ImagePlus className="h-6 w-6 text-gray-300" />
+      )}
+      <Input
+        onChange={handleFileChange}
+        id="picture"
+        type="file"
+        accept="image/*"
+        className="hidden"
+      />
+    </Label>
   );
 };
 

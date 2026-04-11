@@ -95,6 +95,7 @@ model Group {
   id               Int           @id @default(autoincrement())
   publicId         String        @unique
   name             String
+  image            String?
   userId           Int
   defaultCurrency  String        @default("USD")
   createdAt        DateTime      @default(now())

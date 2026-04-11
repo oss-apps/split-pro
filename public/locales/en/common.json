@@ -18,8 +18,14 @@
     },
     "download_splitpro_data": "Download SplitPro data",
     "edit_name": {
+      "apply_avatar": "Apply avatar",
+      "avatar_label": "Profile picture",
+      "avatar_preview": "Avatar preview",
       "placeholder": "Enter name",
-      "title": "Edit name"
+      "remove_avatar": "Remove avatar",
+      "select_avatar": "Select picture",
+      "zoom": "Zoom",
+      "title": "Edit details"
     },
     "follow_on_x": "Follow us on X",
     "import_from_splitwise": "Import from Splitwise",
@@ -35,8 +41,8 @@
     },
     "logout": "Logout",
     "messages": {
-      "submit_error": "Failed to submit feedback",
-      "submit_success": "Feedback submitted"
+      "submit_error": "Failed to update details",
+      "submit_success": "Details updated"
     },
     "notifications": {
       "disable_notification": "Disable notification",
@@ -251,6 +257,7 @@
     "group_info": {
       "actions": "Actions",
       "archive_group": "Archive group",
+      "edit_group": "Edit group",
       "archive_group_details": {
         "can_archive": "This group will be archived and hidden from your main groups list. You can still access it later if needed.",
         "cant_archive": "Cannot archive group with outstanding balances. All balances must be settled first.",
@@ -292,7 +299,7 @@
     "messages": {
       "balances_recalculated": "Balances recalculated successfully",
       "group_archived": "Group archived successfully",
-      "group_name_updated": "Updated group name"
+      "group_name_updated": "Updated group details"
     },
     "no_members": {
       "add_members": "Add members",

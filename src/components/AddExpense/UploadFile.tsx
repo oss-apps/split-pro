@@ -2,10 +2,10 @@ import { ImagePlus, Image as ImageUploaded } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
-import imageCompression from 'browser-image-compression';
 
 import { env } from '~/env';
 import { useAddExpenseStore } from '~/store/addStore';
+import { prepareImageForUpload, uploadImage, validateUploadSize } from '~/utils/imageUpload';
 
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -27,25 +27,14 @@ export const UploadFile: React.FC = () => {
       }
 
       try {
-        // Compress if enabled and it's an image
-        if (file.type.startsWith('image/')) {
-          try {
-            const options = {
-              maxSizeMB: env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB,
-              maxWidthOrHeight: 1920,
-              useWebWorker: true,
-              fileType: 'image/jpeg',
-            };
-            file = await imageCompression(file, options);
-          } catch (error) {
-            console.error('Compression failed:', error);
-            toast.error(t('errors.image_compression_failed'));
-          }
+        try {
+          file = await prepareImageForUpload(file);
+        } catch (error) {
+          console.error('Compression failed:', error);
+          toast.error(t('errors.image_compression_failed'));
         }
 
-        // Check size after compression
-        const maxSize = env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB * 1024 * 1024;
-        if (file.size > maxSize) {
+        if (!validateUploadSize(file)) {
           toast.error(t('errors.less_than', { size: env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB }));
           return;
         }
@@ -53,22 +42,10 @@ export const UploadFile: React.FC = () => {
         setFile(file);
         setFileUploading(true);
 
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-
-        const data = await response.json();
+        const key = await uploadImage(file);
 
         toast.success(t('expense_details.add_expense_details.upload_file.messages.upload_success'));
-        setFileKey(data.key);
+        setFileKey(key);
       } catch (error) {
         console.error('Upload error:', error);
         toast.error(t('errors.uploading_error'));

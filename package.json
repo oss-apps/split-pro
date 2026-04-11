@@ -65,6 +65,7 @@
     "react": "19.2.1",
     "react-day-picker": "^9.7.0",
     "react-dom": "19.2.1",
+    "react-easy-crop": "^5.5.7",
     "react-hook-form": "^7.50.1",
     "react-i18next": "^15.5.3",
     "react-plaid-link": "4.1.1",

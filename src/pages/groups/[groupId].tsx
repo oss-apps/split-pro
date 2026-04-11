@@ -32,7 +32,7 @@ import { Label } from '~/components/ui/label';
 import { SimpleConfirmationDialog } from '~/components/SimpleConfirmationDialog';
 import { Switch } from '~/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
-import { UpdateName } from '~/components/Account/UpdateName';
+import { UpdateName } from '~/components/Account/UpdateDetails';
 import { env } from '~/env';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { db } from '~/server/db';

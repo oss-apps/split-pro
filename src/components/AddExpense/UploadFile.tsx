@@ -3,16 +3,17 @@ import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
 
-import { env } from '~/env';
 import { useAddExpenseStore } from '~/store/addStore';
 import { prepareImageForUpload, uploadImage, validateUploadSize } from '~/utils/imageUpload';
 
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
+import { useAppStore } from '~/store/appStore';
 
 export const UploadFile: React.FC = () => {
   const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
+  const maxUploadFileSizeMB = useAppStore((s) => s.maxUploadFileSizeMB);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
   const { setFileUploading, setFileKey } = useAddExpenseStore((s) => s.actions);
 
@@ -28,14 +29,14 @@ export const UploadFile: React.FC = () => {
 
       try {
         try {
-          file = await prepareImageForUpload(file);
+          file = await prepareImageForUpload(file, maxUploadFileSizeMB);
         } catch (error) {
           console.error('Compression failed:', error);
           toast.error(t('errors.image_compression_failed'));
         }
 
-        if (!validateUploadSize(file)) {
-          toast.error(t('errors.less_than', { size: env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB }));
+        if (!validateUploadSize(file, maxUploadFileSizeMB)) {
+          toast.error(t('errors.less_than', { size: maxUploadFileSizeMB }));
           return;
         }
 
@@ -54,7 +55,7 @@ export const UploadFile: React.FC = () => {
         setFileUploading(false);
       }
     },
-    [setFileUploading, setFileKey, t],
+    [setFileUploading, setFileKey, maxUploadFileSizeMB, t],
   );
 
   return (

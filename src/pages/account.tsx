@@ -87,8 +87,6 @@ const AccountPage: NextPageWithUser<{
     void router.push('/auth/signin', '/auth/signin', { locale: 'default' });
   }, [router]);
 
-  const isCloud = env.NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT;
-
   return (
     <>
       <Head>
@@ -130,13 +128,6 @@ const AccountPage: NextPageWithUser<{
               {t('bank_transactions.to_bank')}
             </AccountButton>
           </BankConnection>
-
-          {isCloud && (
-            <AccountButton href="https://twitter.com/KM_Koushik_">
-              <SiX className="size-5" />
-              {t('account.follow_on_x')}
-            </AccountButton>
-          )}
 
           <AccountButton href="https://github.com/oss-apps/split-pro">
             <SiGithub className="size-5" />

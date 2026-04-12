@@ -840,38 +840,3 @@ export const isCurrencyCode = (value: string): value is CurrencyCode => value in
 
 export const parseCurrencyCode = (code: string): CurrencyCode =>
   isCurrencyCode(code) ? code : 'USD';
-
-// Check with https://api.frankfurter.dev/v1/currencies
-export const FRANKFURTER_CURRENCIES = [
-  'AUD',
-  'BGN',
-  'BRL',
-  'CAD',
-  'CHF',
-  'CNY',
-  'CZK',
-  'DKK',
-  'EUR',
-  'GBP',
-  'HKD',
-  'HUF',
-  'IDR',
-  'ILS',
-  'INR',
-  'ISK',
-  'JPY',
-  'KRW',
-  'MXN',
-  'MYR',
-  'NOK',
-  'NZD',
-  'PHP',
-  'PLN',
-  'RON',
-  'SEK',
-  'SGD',
-  'THB',
-  'TRY',
-  'USD',
-  'ZAR',
-];

@@ -79,6 +79,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
         }
         actions={
           <div className="flex items-center gap-2">
+            <DeleteFriend friendId={_friendId} disabled={!(0 === balances.data?.length)} />
             <AppDrawer
               title={t('balances.user_preferences.title')}
               trigger={
@@ -155,7 +156,6 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 </div>
               )}
             </AppDrawer>
-            <DeleteFriend friendId={_friendId} disabled={!(0 === balances.data?.length)} />
           </div>
         }
         header={

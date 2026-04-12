@@ -30,7 +30,7 @@ declare module 'next-auth' {
       preferredLanguage: string;
       hiddenFriendIds: number[];
       // ...other properties
-      // role: UserRole;
+      // Role: UserRole;
     };
   }
 
@@ -124,7 +124,7 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, email }) {
       if (email?.verificationRequest && env.DISABLE_EMAIL_SIGNUP) {
         const existingUser = await db.user.findUnique({
-          where: { email: user.email! },
+          where: { email: user.email },
         });
 
         if (!existingUser) {
@@ -212,6 +212,9 @@ function getProviders() {
             user: env.EMAIL_SERVER_USER,
             pass: env.EMAIL_SERVER_PASSWORD,
           },
+          tls: {
+            rejectUnauthorized: env.EMAIL_TLS_REJECT_UNAUTHORIZED,
+          },
         },
         async sendVerificationRequest({ identifier: email, url, token }) {
           const result = await sendSignUpEmail(email, url, token);
@@ -261,8 +264,8 @@ function getProviders() {
       idToken: true,
       profile(profile) {
         // This function expects a "standard" next-auth user but we override
-        // what a next-auth user is above.  The expected next-auth user must be
-        // a record that has an id, a name, an email, and an image.
+        // What a next-auth user is above.  The expected next-auth user must be
+        // A record that has an id, a name, an email, and an image.
         //
         // To work around this, we case to unknown and then `User`.
         return {

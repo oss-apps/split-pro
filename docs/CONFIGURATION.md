@@ -46,6 +46,7 @@ Used for magic-link login and invites.
 - `EMAIL_SERVER_PORT`: SMTP port.
 - `EMAIL_SERVER_USER`: SMTP user.
 - `EMAIL_SERVER_PASSWORD`: SMTP password.
+- `EMAIL_TLS_REJECT_UNAUTHORIZED`: Validates TLS certificates by default. Set it to 0 if you have a relay that needs it (Proton Bridge, Postfix, etc.)
 
 ### Bank integrations
 

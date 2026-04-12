@@ -38,6 +38,7 @@ export const env = createEnv({
     EMAIL_SERVER_PORT: z.string().optional(),
     EMAIL_SERVER_USER: z.string().optional(),
     EMAIL_SERVER_PASSWORD: z.string().optional(),
+    EMAIL_TLS_REJECT_UNAUTHORIZED: z.boolean().default(true),
     GOCARDLESS_COUNTRY: z.string().optional(),
     GOCARDLESS_SECRET_ID: z.string().optional(),
     GOCARDLESS_SECRET_KEY: z.string().optional(),
@@ -108,6 +109,9 @@ export const env = createEnv({
     EMAIL_SERVER_PORT: process.env.EMAIL_SERVER_PORT,
     EMAIL_SERVER_USER: process.env.EMAIL_SERVER_USER,
     EMAIL_SERVER_PASSWORD: process.env.EMAIL_SERVER_PASSWORD,
+    EMAIL_TLS_REJECT_UNAUTHORIZED: process.env.EMAIL_TLS_REJECT_UNAUTHORIZED
+      ? Boolean(process.env.EMAIL_TLS_REJECT_UNAUTHORIZED)
+      : true,
     GOCARDLESS_COUNTRY: process.env.GOCARDLESS_COUNTRY,
     GOCARDLESS_SECRET_ID: process.env.GOCARDLESS_SECRET_ID,
     GOCARDLESS_SECRET_KEY: process.env.GOCARDLESS_SECRET_KEY,

@@ -172,6 +172,7 @@ We are grateful for the support of our sponsors.
 <a href="https://github.com/felixdz"><img src="https://avatars.githubusercontent.com/u/11851415?v=4" width="60px" alt="User avatar: FelixDz" /></a>
 <a href="https://github.com/pchampio"><img src="https://avatars.githubusercontent.com/u/7476655?v=4" width="60px" alt="User avatar: pchampio" /></a>
 <a href="https://github.com/j4nsen"><img src="https://avatars.githubusercontent.com/u/3029093?v=4" width="60px" alt="User avatar: J4nsen" /></a>
+<a href="https://github.com/nachogrxdev"><img src="https://avatars.githubusercontent.com/u/36232789?v=4" width="60px" alt="User avatar: nachogrxdev" /></a>
 
 ## Star History
 

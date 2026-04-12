@@ -23,6 +23,7 @@ RUN pnpm build
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS release
 
 ARG APP_VERSION
+ARG GIT_SHA
 
 ENV NODE_ENV=production
 ENV DOCKER_OUTPUT=1
@@ -41,6 +42,7 @@ COPY --from=base /app/prisma/migrations ./prisma/migrations
 # set this so it throws error where starting server
 ENV SKIP_ENV_VALIDATION="false"
 ENV APP_VERSION=${APP_VERSION}
+ENV GIT_SHA=${GIT_SHA}
 
 COPY ./start.sh ./start.sh
 

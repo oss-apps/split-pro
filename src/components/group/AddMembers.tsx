@@ -12,7 +12,6 @@ import { api } from '~/utils/api';
 
 import { EntityAvatar } from '../ui/avatar';
 import { Input } from '../ui/input';
-import { env } from '~/env';
 
 const AddMembers: React.FC<{
   enableSendingInvites: boolean;
@@ -34,13 +33,10 @@ const AddMembers: React.FC<{
     return null;
   }
 
-  const groupUserMap = group.groupUsers.reduce(
-    (acc, gu) => {
-      acc[gu.userId] = true;
-      return acc;
-    },
-    {} as Record<string, boolean>,
-  );
+  const groupUserMap = group.groupUsers.reduce<Record<string, boolean>>((acc, gu) => {
+    acc[gu.userId] = true;
+    return acc;
+  }, {});
 
   const filteredUsers = friendsQuery.data?.filter(
     (friend) =>
@@ -126,7 +122,7 @@ const AddMembers: React.FC<{
         onChange={(e) => setInputValue(e.target.value)}
       />
       <div>
-        {enableSendingInvites && !env.NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT ? (
+        {enableSendingInvites ? (
           <div className="mt-1 text-orange-600">
             {t('group_details.no_members.add_members_details.warning')}
           </div>

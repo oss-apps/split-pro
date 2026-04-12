@@ -2,25 +2,26 @@ import imageCompression from 'browser-image-compression';
 
 import { env } from '~/env';
 
-const compressImage = async (file: File) => {
+const compressImage = async (file: File, maxSizeMB: number) => {
   if (!file.type.startsWith('image/')) {
     return file;
   }
 
   return imageCompression(file, {
-    maxSizeMB: env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB,
+    maxSizeMB,
     maxWidthOrHeight: 1920,
     useWebWorker: true,
     fileType: 'image/jpeg',
   });
 };
 
-export const validateUploadSize = (file: File) => {
-  const maxSize = env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB * 1024 * 1024;
+export const validateUploadSize = (file: File, maxSizeMB: number) => {
+  const maxSize = maxSizeMB * 1024 * 1024;
   return file.size <= maxSize;
 };
 
-export const prepareImageForUpload = async (file: File) => compressImage(file);
+export const prepareImageForUpload = async (file: File, maxSizeMB: number) =>
+  compressImage(file, maxSizeMB);
 
 export const uploadImage = async (file: File): Promise<string> => {
   const formData = new FormData();

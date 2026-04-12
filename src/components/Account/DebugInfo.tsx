@@ -35,7 +35,7 @@ export const DebugInfo: React.FC<React.PropsWithChildren> = ({ children }) => {
       }
     };
 
-    if (env.NEXT_PUBLIC_VERSION) {
+    if (env.NEXT_PUBLIC_APP_VERSION) {
       void fetchLatestVersion();
     }
   }, []);
@@ -46,8 +46,8 @@ export const DebugInfo: React.FC<React.PropsWithChildren> = ({ children }) => {
     if (env.NEXT_PUBLIC_GIT_SHA) {
       debugInfo.push(`${t('account.debug_info_details.git')}: ${env.NEXT_PUBLIC_GIT_SHA}`);
     }
-    if (env.NEXT_PUBLIC_VERSION) {
-      debugInfo.push(`${t('account.debug_info_details.version')} ${env.NEXT_PUBLIC_VERSION}`);
+    if (env.NEXT_PUBLIC_APP_VERSION) {
+      debugInfo.push(`${t('account.debug_info_details.version')} ${env.NEXT_PUBLIC_APP_VERSION}`);
     }
     try {
       void navigator.clipboard.writeText(debugInfo.join('\n'));
@@ -78,10 +78,12 @@ export const DebugInfo: React.FC<React.PropsWithChildren> = ({ children }) => {
             />
             <DebugInfoRow
               label={t('account.debug_info_details.version')}
-              value={env.NEXT_PUBLIC_VERSION}
+              value={env.NEXT_PUBLIC_APP_VERSION}
               className="mt-4"
             />
-            {newVersion && env.NEXT_PUBLIC_VERSION && newVersion !== env.NEXT_PUBLIC_VERSION ? (
+            {newVersion &&
+            env.NEXT_PUBLIC_APP_VERSION &&
+            newVersion !== env.NEXT_PUBLIC_APP_VERSION ? (
               <p className="mt-4 text-sm text-yellow-600">
                 {t('account.debug_info_details.new_version_available')}: {newVersion}
               </p>

@@ -24,11 +24,13 @@ import '~/styles/globals.css';
 const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });
 const toastOptions = { duration: 1500 };
 
-const MyApp: AppType<{ session: Session | null; baseUrl: string }> = ({
+const MyApp: AppType<{ session: Session | null; baseUrl: string; maxUploadFileSizeMB: number }> = ({
   Component,
-  pageProps: { session, baseUrl, ...pageProps },
+  pageProps: { session, baseUrl, maxUploadFileSizeMB, ...pageProps },
 }) => {
   const { t, ready } = useTranslation();
+  const { setMaxUploadFileSizeMB } = useAppStore((s) => s.actions);
+  setMaxUploadFileSizeMB(maxUploadFileSizeMB);
 
   if (!ready) {
     return (
@@ -181,6 +183,7 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
 export const getServerSideProps = () => ({
   props: {
     baseUrl: env.NEXTAUTH_URL,
+    maxUploadFileSizeMB: env.UPLOAD_MAX_FILE_SIZE_MB,
   },
 });
 

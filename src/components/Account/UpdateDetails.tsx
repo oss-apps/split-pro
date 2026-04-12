@@ -1,13 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Camera, Pencil, X } from 'lucide-react';
 import Cropper, { type Area } from 'react-easy-crop';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { type TFunction, useTranslation } from 'next-i18next';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { env } from '~/env';
 import { prepareImageForUpload, uploadImage, validateUploadSize } from '~/utils/imageUpload';
 
 import { AppDrawer } from '../ui/drawer';
@@ -17,6 +16,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Slider } from '../ui/slider';
 import { Button } from '../ui/button';
+import { useAppStore } from '~/store/appStore';
 
 const createImage = async (url: string) => {
   const image = new Image();
@@ -91,6 +91,7 @@ export const UpdateName: React.FC<{
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+  const maxUploadFileSizeMB = useAppStore((s) => s.maxUploadFileSizeMB);
 
   const { t } = useTranslation();
 
@@ -151,14 +152,14 @@ export const UpdateName: React.FC<{
           let croppedFile = new File([croppedBlob], 'avatar.jpg', { type: 'image/jpeg' });
 
           try {
-            croppedFile = await prepareImageForUpload(croppedFile);
+            croppedFile = await prepareImageForUpload(croppedFile, maxUploadFileSizeMB);
           } catch (error) {
             console.error('Compression failed:', error);
             toast.error(t('errors.image_compression_failed'));
           }
 
-          if (!validateUploadSize(croppedFile)) {
-            toast.error(t('errors.less_than', { size: env.NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB }));
+          if (!validateUploadSize(croppedFile, maxUploadFileSizeMB)) {
+            toast.error(t('errors.less_than', { size: maxUploadFileSizeMB }));
             return;
           }
 
@@ -183,7 +184,7 @@ export const UpdateName: React.FC<{
       setZoom(1);
       setCroppedAreaPixels(null);
     })();
-  }, [croppedAreaPixels, detailForm, imageSrc, onNameSubmit, t]);
+  }, [croppedAreaPixels, detailForm, imageSrc, maxUploadFileSizeMB, onNameSubmit, t]);
 
   const handleFileChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {

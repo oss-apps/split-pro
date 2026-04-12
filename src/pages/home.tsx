@@ -21,7 +21,6 @@ import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
 import { BackgroundGradient } from '~/components/ui/background-gradient';
 import { Button } from '~/components/ui/button';
-import { env } from '~/env';
 
 import { LanguageSelector } from '~/components/LanguageSelector';
 import { customServerSideTranslations } from '~/utils/i18n/server';
@@ -52,26 +51,8 @@ const FeatureCard = ({
 export default function Home() {
   const { t } = useTranslation('home');
 
-  const isCloud = env.NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT;
-
   return (
     <>
-      {isCloud && (
-        <Head>
-          {'production' === process.env.NODE_ENV && (
-            <>
-              <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js" />
-              <noscript>
-                <Image
-                  src="https://queue.simpleanalyticscdn.com/noscript.gif"
-                  alt=""
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </noscript>
-            </>
-          )}
-        </Head>
-      )}
       <main className="min-h-screen">
         <nav className="sticky z-40 mx-auto flex max-w-5xl items-center justify-between px-4 py-4 lg:px-0 lg:py-5">
           <div className="flex items-center gap-2">
@@ -254,16 +235,6 @@ export default function Home() {
                 </p> */}
               </div>
               <div className="flex justify-center gap-4 lg:justify-start">
-                {isCloud && (
-                  <a
-                    className="text-primary"
-                    href="https://twitter.com/KM_Koushik_"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Twitter
-                  </a>
-                )}
                 <a
                   className="text-primary"
                   href="https://github.com/oss-apps/split-pro"

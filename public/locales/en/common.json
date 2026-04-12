@@ -68,7 +68,10 @@
       "git": "Git",
       "version": "Version",
       "new_version_available": "A new version is available:",
-      "copy_failed": "Failed to copy debug info to clipboard"
+      "copy_failed": "Failed to copy debug info to clipboard",
+      "send_test_notification": "Send test notification",
+      "test_notification_sent": "Test notification sent",
+      "test_notification_failed": "Could not send test notification"
     }
   },
   "actions": {

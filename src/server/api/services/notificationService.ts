@@ -1,9 +1,72 @@
 import { SplitType } from '@prisma/client';
 import { isCurrencyCode } from '~/lib/currency';
+import { type PushMessage } from '~/types';
 
 import { db } from '~/server/db';
 import { pushNotification } from '~/server/notification';
 import { getCurrencyHelpers } from '~/utils/numbers';
+
+export const getSubscriptionEndpoint = (subscription: string) => {
+  try {
+    const parsed = JSON.parse(subscription) as { endpoint?: string };
+    if ('string' === typeof parsed.endpoint && '' !== parsed.endpoint) {
+      return parsed.endpoint;
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+};
+
+const removeStalePushSubscriptions = async (
+  subscriptions: { userId: number; endpoint: string }[],
+) => {
+  if (0 === subscriptions.length) {
+    return;
+  }
+
+  await db.pushNotification.deleteMany({
+    where: {
+      OR: subscriptions.map((subscription) => ({
+        userId: subscription.userId,
+        endpoint: subscription.endpoint,
+      })),
+    },
+  });
+};
+
+const isPermanentPushFailure = (statusCode: number | undefined) =>
+  404 === statusCode || 410 === statusCode;
+
+export const sendPushNotificationToUsers = async (userIds: number[], pushData: PushMessage) => {
+  if (0 === userIds.length) {
+    return { sentCount: 0 };
+  }
+
+  const subscriptions = await db.pushNotification.findMany({
+    where: {
+      userId: {
+        in: userIds,
+      },
+    },
+  });
+
+  const pushResults = await Promise.all(
+    subscriptions.map(async (s) => {
+      const result = await pushNotification(s.subscription, pushData);
+      return { ...result, userId: s.userId, endpoint: s.endpoint };
+    }),
+  );
+
+  await removeStalePushSubscriptions(
+    pushResults
+      .filter((result) => !result.ok && isPermanentPushFailure(result.statusCode))
+      .map((result) => ({ userId: result.userId, endpoint: result.endpoint })),
+  );
+
+  return { sentCount: pushResults.filter((result) => result.ok).length };
+};
 
 export async function sendExpensePushNotification(expenseId: string) {
   const expense = await db.expense.findUnique({
@@ -69,14 +132,6 @@ export async function sendExpensePushNotification(expenseId: string) {
         ({ userId, amount }) => userId !== expense.addedBy && 0n !== amount,
       );
 
-  const subscriptions = await db.pushNotification.findMany({
-    where: {
-      userId: {
-        in: participants.map((p) => p.userId),
-      },
-    },
-  });
-
   // A way to localize it and reuse our utils would be ideal
   const getUserDisplayName = (user: { name: string | null; email: string | null } | null) =>
     user?.name ?? user?.email ?? '';
@@ -140,9 +195,10 @@ export async function sendExpensePushNotification(expenseId: string) {
     },
   };
 
-  const pushNotifications = subscriptions.map((s) => pushNotification(s.subscription, pushData));
-
-  await Promise.all(pushNotifications);
+  await sendPushNotificationToUsers(
+    participants.map((p) => p.userId),
+    pushData,
+  );
 }
 
 export async function sendGroupSimplifyDebtsToggleNotification(
@@ -196,14 +252,6 @@ export async function sendGroupSimplifyDebtsToggleNotification(
       return;
     }
 
-    const subscriptions = await db.pushNotification.findMany({
-      where: {
-        userId: {
-          in: recipients.map((r) => r.userId),
-        },
-      },
-    });
-
     const getUserDisplayName = (user: { name: string | null; email: string | null } | null) =>
       user?.name ?? user?.email ?? '';
 
@@ -218,9 +266,10 @@ export async function sendGroupSimplifyDebtsToggleNotification(
       },
     };
 
-    const pushNotifications = subscriptions.map((s) => pushNotification(s.subscription, pushData));
-
-    await Promise.all(pushNotifications);
+    await sendPushNotificationToUsers(
+      recipients.map((r) => r.userId),
+      pushData,
+    );
   } catch (error) {
     console.error('Error sending group simplify debts toggle notifications', error);
   }

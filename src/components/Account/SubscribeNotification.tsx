@@ -24,12 +24,13 @@ const base64ToUint8Array = (base64: string) => {
 export const SubscribeNotification: React.FC = () => {
   const { t } = useTranslation();
   const updatePushSubscription = api.user.updatePushNotification.useMutation();
+  const deletePushSubscription = api.user.deletePushNotification.useMutation();
   const [isSubscribed, setIsSubscribed] = useState(false);
   const webPushPublicKey = useAppStore((s) => s.webPushPublicKey);
 
   useEffect(() => {
     if ('undefined' !== typeof window && 'serviceWorker' in navigator) {
-      // run only in browser
+      // Run only in browser
       navigator.serviceWorker.ready
         .then((reg) => {
           reg.pushManager
@@ -81,6 +82,7 @@ export const SubscribeNotification: React.FC = () => {
       const reg = await navigator.serviceWorker.ready;
       const sub = await reg.pushManager.getSubscription();
       if (sub) {
+        await deletePushSubscription.mutateAsync({ subscription: JSON.stringify(sub) });
         await sub.unsubscribe();
         setIsSubscribed(false);
       }

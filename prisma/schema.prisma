@@ -261,9 +261,11 @@ model CachedBankData {
 }
 
 model PushNotification {
-  userId       Int    @id
+  userId       Int
+  endpoint     String
   subscription String
 
+  @@id([userId, endpoint])
   @@schema("public")
 }
 

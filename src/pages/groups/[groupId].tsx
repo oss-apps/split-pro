@@ -30,11 +30,13 @@ import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { Label } from '~/components/ui/label';
 import { SimpleConfirmationDialog } from '~/components/SimpleConfirmationDialog';
+import { DefaultSplitSettings } from '~/components/DefaultSplit/DefaultSplitSettings';
 import { Switch } from '~/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { UpdateName } from '~/components/Account/UpdateDetails';
 import { env } from '~/env';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { deserializeDefaultSplit } from '~/lib/defaultSplit';
 import { db } from '~/server/db';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
@@ -55,6 +57,8 @@ const BalancePage: NextPageWithUser<{
   const toggleArchiveMutation = api.group.toggleArchive.useMutation();
   const toggleSimplifyDebtsMutation = api.group.toggleSimplifyDebts.useMutation();
   const updateGroupDetailsMutation = api.group.updateGroupDetails.useMutation();
+  const upsertDefaultSplitMutation = api.group.upsertDefaultSplit.useMutation();
+  const clearDefaultSplitMutation = api.group.clearDefaultSplit.useMutation();
 
   const [isInviteCopied, setIsInviteCopied] = useState(false);
 
@@ -261,6 +265,59 @@ const BalancePage: NextPageWithUser<{
                     </div>
                   ))}
                 </div>
+
+                <div className="mt-6">
+                  <p className="font-semibold">{t('group_details.group_info.default_split')}</p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <DefaultSplitSettings
+                      participants={
+                        groupDetailQuery.data?.groupUsers.map((groupUser) => groupUser.user) ?? []
+                      }
+                      defaultSplit={groupDetailQuery.data?.defaultSplit}
+                      triggerLabel={t('group_details.group_info.configure_default_split')}
+                      disabled={isArchived || !groupDetailQuery.data}
+                      onSave={(defaultSplit) => {
+                        upsertDefaultSplitMutation.mutate(
+                          { groupId, defaultSplit },
+                          {
+                            onSuccess: () => {
+                              toast.success(t('group_details.messages.default_split_updated'));
+                              void groupDetailQuery.refetch();
+                            },
+                            onError: () => {
+                              toast.error(t('errors.setting_update_failed'));
+                            },
+                          },
+                        );
+                      }}
+                    />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={
+                        isArchived ||
+                        !deserializeDefaultSplit(groupDetailQuery.data?.defaultSplit) ||
+                        clearDefaultSplitMutation.isPending
+                      }
+                      onClick={() => {
+                        clearDefaultSplitMutation.mutate(
+                          { groupId },
+                          {
+                            onSuccess: () => {
+                              toast.success(t('group_details.messages.default_split_cleared'));
+                              void groupDetailQuery.refetch();
+                            },
+                            onError: () => {
+                              toast.error(t('errors.setting_update_failed'));
+                            },
+                          },
+                        );
+                      }}
+                    >
+                      {t('expense_details.clear')}
+                    </Button>
+                  </div>
+                </div>
               </>
               {groupDetailQuery.data?.createdAt && (
                 <div className="mt-8">
@@ -270,7 +327,7 @@ const BalancePage: NextPageWithUser<{
               )}
               <div className="mt-8">
                 <p className="font-semibold">{t('group_details.group_info.actions')}</p>
-                <div className="child:h-7 mt-2 flex flex-col">
+                <div className="child:h-7 mt-2 flex flex-col gap-4">
                   <Label className="flex cursor-pointer items-center justify-between">
                     <p className="flex items-center">
                       <Merge className="mr-2 size-4" />{' '}

@@ -14,6 +14,7 @@ import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { toast } from 'sonner';
+import { deserializeDefaultSplit } from '~/lib/defaultSplit';
 
 const AddPage: NextPageWithUser<{
   enableSendingInvites: boolean;
@@ -34,6 +35,7 @@ const AddPage: NextPageWithUser<{
     resetState,
     setCronExpression,
     setFileKey,
+    applySplitPreset,
   } = useAddExpenseStore((s) => s.actions);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
 
@@ -83,16 +85,39 @@ const AddPage: NextPageWithUser<{
           .map((gu) => gu.user)
           .filter((user) => user.id !== currentUser.id),
       ]);
+      const parsedDefaultSplit = deserializeDefaultSplit(groupQuery.data.defaultSplit);
+      if (parsedDefaultSplit) {
+        applySplitPreset(parsedDefaultSplit.splitType, parsedDefaultSplit.shares);
+      }
       useAddExpenseStore.setState({ showFriends: false });
     }
-  }, [groupId, groupQuery.isPending, groupQuery.data, currentUser, setGroup, setParticipants]);
+  }, [
+    groupId,
+    groupQuery.isPending,
+    groupQuery.data,
+    currentUser,
+    setGroup,
+    setParticipants,
+    applySplitPreset,
+  ]);
 
   useEffect(() => {
     if (friendId && currentUser && friendQuery.data) {
       setParticipants([currentUser, friendQuery.data]);
+      const parsedDefaultSplit = deserializeDefaultSplit(friendQuery.data.defaultSplit);
+      if (parsedDefaultSplit) {
+        applySplitPreset(parsedDefaultSplit.splitType, parsedDefaultSplit.shares);
+      }
       useAddExpenseStore.setState({ showFriends: false });
     }
-  }, [friendId, friendQuery.isPending, friendQuery.data, currentUser, setParticipants]);
+  }, [
+    friendId,
+    friendQuery.isPending,
+    friendQuery.data,
+    currentUser,
+    setParticipants,
+    applySplitPreset,
+  ]);
 
   useEffect(() => {
     if (!_expenseId || !expenseQuery.data) {

@@ -1,5 +1,5 @@
 #!/bin/sh
-set -x
+set +x
 
 file_vars=$(env | grep -E '^[^=]+_FILE=' | cut -d'=' -f1)
 

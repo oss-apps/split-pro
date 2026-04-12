@@ -15,10 +15,7 @@ import { toast } from 'sonner';
 import { env } from '~/env';
 import { cn } from '~/lib/utils';
 
-export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string | null }>> = ({
-  children,
-  gitRevision,
-}) => {
+export const DebugInfo: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation('common');
   const [newVersion, setNewVersion] = React.useState<string | null>(null);
 
@@ -46,8 +43,8 @@ export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string |
   const copyToClipboard = useCallback(() => {
     // Copy to clipboard
     const debugInfo = [`UserAgent: ${navigator.userAgent}`];
-    if (gitRevision) {
-      debugInfo.push(`${t('account.debug_info_details.git')}: ${gitRevision}`);
+    if (env.NEXT_PUBLIC_GIT_SHA) {
+      debugInfo.push(`${t('account.debug_info_details.git')}: ${env.NEXT_PUBLIC_GIT_SHA}`);
     }
     if (env.NEXT_PUBLIC_VERSION) {
       debugInfo.push(`${t('account.debug_info_details.version')} ${env.NEXT_PUBLIC_VERSION}`);
@@ -58,7 +55,7 @@ export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string |
       toast.error(t('account.debug_info_details.copy_failed'));
       console.error('Failed to copy debug info:', error);
     }
-  }, [gitRevision, t]);
+  }, [t]);
 
   return (
     <AlertDialog>
@@ -76,7 +73,7 @@ export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string |
 
             <DebugInfoRow
               label={t('account.debug_info_details.git')}
-              value={gitRevision}
+              value={env.NEXT_PUBLIC_GIT_SHA}
               className="mt-4"
             />
             <DebugInfoRow

@@ -1,4 +1,5 @@
 import { createEnv } from '@t3-oss/env-nextjs';
+import { execSync } from 'node:child_process';
 import { z } from 'zod';
 
 export const env = createEnv({
@@ -84,6 +85,7 @@ export const env = createEnv({
     NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT: z.boolean().default(false),
     NEXT_PUBLIC_UPLOAD_MAX_FILE_SIZE_MB: z.coerce.number().int().positive().default(10),
     NEXT_PUBLIC_VERSION: z.string().optional(),
+    NEXT_PUBLIC_GIT_SHA: z.string().optional(),
   },
 
   /**
@@ -151,6 +153,8 @@ export const env = createEnv({
       ? Number(process.env.UPLOAD_MAX_FILE_SIZE_MB)
       : 10,
     NEXT_PUBLIC_VERSION: process.env.APP_VERSION,
+    NEXT_PUBLIC_GIT_SHA:
+      process.env.GIT_SHA ?? execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim(),
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

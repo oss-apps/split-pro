@@ -1,7 +1,6 @@
 import { SiGithub, SiX } from '@icons-pack/react-simple-icons';
 import {
   BadgeInfo,
-  BugOff,
   CreditCard,
   Download,
   DownloadCloud,
@@ -37,14 +36,12 @@ import {
 import { api } from '~/utils/api';
 import type { NextPageWithUser } from '~/types';
 import { DebugInfo } from '~/components/Account/DebugInfo';
-import { execSync } from 'node:child_process';
 
 const AccountPage: NextPageWithUser<{
   feedBackPossible: boolean;
   bankConnectionEnabled: boolean;
   bankConnection: string;
-  gitRevision: string | null;
-}> = ({ feedBackPossible, bankConnectionEnabled, bankConnection, gitRevision }) => {
+}> = ({ feedBackPossible, bankConnectionEnabled, bankConnection }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const userQuery = api.user.me.useQuery();
@@ -177,7 +174,7 @@ const AccountPage: NextPageWithUser<{
             {t('account.import_from_splitwise')}
           </AccountButton>
 
-          <DebugInfo gitRevision={gitRevision}>
+          <DebugInfo>
             <AccountButton>
               <BadgeInfo className="size-5 text-red-700" />
               {t('account.debug_info')}
@@ -201,21 +198,13 @@ const AccountPage: NextPageWithUser<{
 
 AccountPage.auth = true;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  let gitRevision = null;
-  try {
-    gitRevision = execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim();
-  } catch {}
-
-  return {
-    props: {
-      feedbackPossible: Boolean(env.FEEDBACK_EMAIL),
-      bankConnectionEnabled: Boolean(isBankConnectionConfigured()),
-      bankConnection: whichBankConnectionConfigured(),
-      gitRevision,
-      ...(await customServerSideTranslations(context.locale, ['common'])),
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async (context) => ({
+  props: {
+    feedbackPossible: Boolean(env.FEEDBACK_EMAIL),
+    bankConnectionEnabled: Boolean(isBankConnectionConfigured()),
+    bankConnection: whichBankConnectionConfigured(),
+    ...(await customServerSideTranslations(context.locale, ['common'])),
+  },
+});
 
 export default AccountPage;

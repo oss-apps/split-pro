@@ -10,7 +10,13 @@ import {
   Plus,
   X,
 } from 'lucide-react';
-import React, { type ChangeEvent, type PropsWithChildren, useCallback, useMemo } from 'react';
+import React, {
+  type ChangeEvent,
+  type PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+} from 'react';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 
 import { type Participant, useAddExpenseStore } from '~/store/addStore';
@@ -66,7 +72,14 @@ const PayerRow = ({ p, isPaying }: { p: Participant; isPaying: boolean }) => {
   );
 };
 
-export const SplitExpenseForm: React.FC<PropsWithChildren> = ({ children }) => {
+export const SplitExpenseForm: React.FC<
+  PropsWithChildren<{
+    allowedSplitTypes?: readonly SplitType[];
+    onSave?: () => void;
+    onOpenChange?: (open: boolean) => void;
+    onTriggerClick?: () => void;
+  }>
+> = ({ children, allowedSplitTypes, onSave, onOpenChange, onTriggerClick }) => {
   const { t } = useTranslation();
   const splitType = useAddExpenseStore((s) => s.splitType);
   const { setSplitType } = useAddExpenseStore((s) => s.actions);
@@ -75,6 +88,14 @@ export const SplitExpenseForm: React.FC<PropsWithChildren> = ({ children }) => {
 
   const { setSplitScreenOpen } = useAddExpenseStore((s) => s.actions);
 
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      setSplitScreenOpen(open);
+      onOpenChange?.(open);
+    },
+    [onOpenChange, setSplitScreenOpen],
+  );
+
   const onTabChange = useCallback(
     (value: string) => {
       setSplitType(value as SplitType);
@@ -82,23 +103,42 @@ export const SplitExpenseForm: React.FC<PropsWithChildren> = ({ children }) => {
     [setSplitType],
   );
 
-  const splitProps = useMemo(() => getSplitProps(t), [t]);
+  const splitProps = useMemo(() => {
+    const allSplitProps = getSplitProps(t);
+    if (!allowedSplitTypes || 0 === allowedSplitTypes.length) {
+      return allSplitProps;
+    }
+
+    return allSplitProps.filter((props) => allowedSplitTypes.includes(props.splitType));
+  }, [allowedSplitTypes, t]);
+
+  const activeSplitType = splitProps.some((props) => props.splitType === splitType)
+    ? splitType
+    : (splitProps[0]?.splitType ?? SplitType.EQUAL);
+
+  useEffect(() => {
+    if (activeSplitType !== splitType) {
+      setSplitType(activeSplitType);
+    }
+  }, [activeSplitType, setSplitType, splitType]);
 
   return (
     <AppDrawer
       trigger={children}
+      onTriggerClick={onTriggerClick}
       title={t(
-        `expense_details.add_expense_details.split_type_section.types.${splitType.toLowerCase()}.title`,
+        `expense_details.add_expense_details.split_type_section.types.${activeSplitType.toLowerCase()}.title`,
       )}
       className="h-[85vh] lg:h-[70vh]"
       shouldCloseOnAction
       dismissible={canSplitScreenClosed}
       actionTitle={t('actions.save')}
+      actionOnClick={onSave}
       actionDisabled={!canSplitScreenClosed}
       open={splitScreenOpen}
-      onOpenChange={setSplitScreenOpen}
+      onOpenChange={handleOpenChange}
     >
-      <Tabs value={splitType} className="mx-auto mt-5 w-full" onValueChange={onTabChange}>
+      <Tabs value={activeSplitType} className="mx-auto mt-5 w-full" onValueChange={onTabChange}>
         <TabsList className="w-full justify-between">
           {splitProps.map(({ splitType, iconComponent: Icon }) => (
             <TabsTrigger key={splitType} value={splitType} className="text-xs">

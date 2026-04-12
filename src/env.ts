@@ -80,7 +80,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`. Note that these are only evaluated at build time!
    */
   client: {
-    NEXT_PUBLIC_VERSION: z.string().optional(),
+    NEXT_PUBLIC_APP_VERSION: z.string().optional(),
     NEXT_PUBLIC_GIT_SHA: z.string().optional(),
   },
 
@@ -143,8 +143,8 @@ export const env = createEnv({
     UPLOAD_MAX_FILE_SIZE_MB: process.env.UPLOAD_MAX_FILE_SIZE_MB
       ? Number(process.env.UPLOAD_MAX_FILE_SIZE_MB)
       : 10,
-    NEXT_PUBLIC_VERSION: process.env.APP_VERSION,
-    NEXT_PUBLIC_GIT_SHA: process.env.GIT_SHA,
+    NEXT_PUBLIC_APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION,
+    NEXT_PUBLIC_GIT_SHA: process.env.NEXT_PUBLIC_GIT_SHA,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

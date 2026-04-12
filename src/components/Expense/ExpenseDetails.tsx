@@ -364,7 +364,13 @@ export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ ex
           className="mx-auto mt-4 w-37.5 text-center text-lg"
           onValueChange={onCurrencyInputValueChange}
         />
-        <DateSelector mode="single" required selected={expenseDate} onSelect={setExpenseDate} />
+        <DateSelector
+          mode="single"
+          required
+          selected={expenseDate}
+          onSelect={setExpenseDate}
+          popoverPortalled={false}
+        />
       </div>
     </AppDrawer>
   );

@@ -274,6 +274,7 @@ export const CurrencyConversion: React.FC<{
                     disabled={dateDisabled}
                     selected={rateDate}
                     onSelect={setRateDate}
+                    popoverPortalled={false}
                   />
                 </div>
               </div>

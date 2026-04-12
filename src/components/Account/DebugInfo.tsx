@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
+import { api } from '~/utils/api';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,10 +15,12 @@ import {
 import { toast } from 'sonner';
 import { env } from '~/env';
 import { cn } from '~/lib/utils';
+import { Button } from '../ui/button';
 
 export const DebugInfo: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation('common');
   const [newVersion, setNewVersion] = React.useState<string | null>(null);
+  const sendTestPushNotification = api.user.sendTestPushNotification.useMutation();
 
   useEffect(() => {
     // Check github releases API for latest version
@@ -57,6 +60,21 @@ export const DebugInfo: React.FC<React.PropsWithChildren> = ({ children }) => {
     }
   }, [t]);
 
+  const onSendTestNotification = useCallback(async () => {
+    try {
+      const result = await sendTestPushNotification.mutateAsync();
+      if (0 === result.sentCount) {
+        toast.error(t('account.debug_info_details.test_notification_failed'));
+        return;
+      }
+
+      toast.success(t('account.debug_info_details.test_notification_sent'));
+    } catch (error) {
+      toast.error(t('account.debug_info_details.test_notification_failed'));
+      console.error('Failed to send test push notification:', error);
+    }
+  }, [sendTestPushNotification, t]);
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
@@ -91,6 +109,15 @@ export const DebugInfo: React.FC<React.PropsWithChildren> = ({ children }) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              void onSendTestNotification();
+            }}
+            loading={sendTestPushNotification.isPending}
+          >
+            {t('account.debug_info_details.send_test_notification')}
+          </Button>
           <AlertDialogCancel>{t('actions.close')}</AlertDialogCancel>
           <AlertDialogAction onClick={copyToClipboard}>{t('actions.copy')}</AlertDialogAction>
         </AlertDialogFooter>

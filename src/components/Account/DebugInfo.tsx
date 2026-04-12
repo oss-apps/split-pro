@@ -13,6 +13,7 @@ import {
 } from '../ui/alert-dialog';
 import { toast } from 'sonner';
 import { env } from '~/env';
+import { cn } from '~/lib/utils';
 
 export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string | null }>> = ({
   children,
@@ -37,7 +38,7 @@ export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string |
       }
     };
 
-    if (process.env.NEXT_PUBLIC_VERSION) {
+    if (env.NEXT_PUBLIC_VERSION) {
       void fetchLatestVersion();
     }
   }, []);
@@ -61,29 +62,28 @@ export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string |
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger>{children}</AlertDialogTrigger>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{t('account.debug_info_details.title')}</AlertDialogTitle>
           <AlertDialogDescription>
-            <p>{t('account.debug_info_details.description')}</p>
-            <pre className="mt-4 text-wrap">
-              {t('account.debug_info_details.user_agent')}:
-              <br />
-              {navigator.userAgent}
-            </pre>
-            {gitRevision && (
-              <pre className="text-wrap">
-                {t('account.debug_info_details.git')}:<br />
-                {gitRevision}
-              </pre>
-            )}
-            {env.NEXT_PUBLIC_VERSION && (
-              <pre className="text-wrap">
-                {t('account.debug_info_details.version')}:<br />
-                {env.NEXT_PUBLIC_VERSION}
-              </pre>
-            )}
+            {t('account.debug_info_details.description')}
+            <DebugInfoRow
+              label={t('account.debug_info_details.user_agent')}
+              value={navigator.userAgent}
+              className="mt-4"
+            />
+
+            <DebugInfoRow
+              label={t('account.debug_info_details.git')}
+              value={gitRevision}
+              className="mt-4"
+            />
+            <DebugInfoRow
+              label={t('account.debug_info_details.version')}
+              value={env.NEXT_PUBLIC_VERSION}
+              className="mt-4"
+            />
             {newVersion && env.NEXT_PUBLIC_VERSION && newVersion !== env.NEXT_PUBLIC_VERSION ? (
               <p className="mt-4 text-sm text-yellow-600">
                 {t('account.debug_info_details.new_version_available')}: {newVersion}
@@ -99,3 +99,23 @@ export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string |
     </AlertDialog>
   );
 };
+
+const Label: React.FC<React.PropsWithChildren<{ className?: string }>> = ({
+  children,
+  className,
+}) => <span className={cn('text-sm text-white', className)}>{children}</span>;
+
+const Value: React.FC<React.PropsWithChildren<{ className?: string }>> = ({
+  children,
+  className,
+}) => <span className={cn('text-primary text-sm', className)}>{children}</span>;
+
+export const DebugInfoRow: React.FC<
+  React.PropsWithChildren<{ label: string; value?: string | null; className?: string }>
+> = ({ label, value, className }) =>
+  value ? (
+    <span className={cn('flex flex-col', className)}>
+      <Label>{label}</Label>
+      <Value>{value}</Value>
+    </span>
+  ) : null;

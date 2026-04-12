@@ -3,6 +3,11 @@ import { type User } from 'next-auth';
 import { z } from 'zod';
 
 import { env } from '~/env';
+import {
+  deserializeDefaultSplit,
+  serializeDefaultSplit,
+  toSortedFriendPair,
+} from '~/lib/defaultSplit';
 import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
@@ -191,7 +196,100 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      return friend;
+      if (!friend) {
+        return friend;
+      }
+
+      const [userAId, userBId] = toSortedFriendPair(ctx.session.user.id, input.friendId);
+
+      const friendDefaultSplit = await db.friendDefaultSplit.findUnique({
+        where: {
+          userAId_userBId: {
+            userAId,
+            userBId,
+          },
+        },
+      });
+
+      const defaultSplit =
+        friendDefaultSplit &&
+        (() => {
+          const parsedShares = z
+            .record(z.string(), z.string())
+            .safeParse(friendDefaultSplit.shares);
+          if (!parsedShares.success) {
+            return null;
+          }
+
+          return deserializeDefaultSplit({
+            splitType: friendDefaultSplit.splitType,
+            shares: parsedShares.data,
+          });
+        })();
+
+      return {
+        ...friend,
+        defaultSplit: defaultSplit ? serializeDefaultSplit(defaultSplit) : null,
+      };
+    }),
+
+  upsertFriendDefaultSplit: protectedProcedure
+    .input(
+      z.object({
+        friendId: z.number(),
+        defaultSplit: z.object({
+          splitType: z.enum(['EQUAL', 'PERCENTAGE', 'SHARE']),
+          shares: z.record(z.string(), z.string()),
+        }),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const friend = await db.user.findUnique({
+        where: {
+          id: input.friendId,
+          userBalances: {
+            some: {
+              friendId: ctx.session.user.id,
+            },
+          },
+        },
+      });
+
+      if (!friend) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Friend not found' });
+      }
+
+      const parsed = deserializeDefaultSplit(input.defaultSplit);
+      if (!parsed) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Malformed default split' });
+      }
+
+      const [userAId, userBId] = toSortedFriendPair(ctx.session.user.id, input.friendId);
+      const serialized = serializeDefaultSplit(parsed);
+
+      await db.friendDefaultSplit.upsert({
+        where: { userAId_userBId: { userAId, userBId } },
+        create: {
+          userAId,
+          userBId,
+          splitType: serialized.splitType,
+          shares: serialized.shares,
+        },
+        update: {
+          splitType: serialized.splitType,
+          shares: serialized.shares,
+        },
+      });
+
+      return serialized;
+    }),
+
+  clearFriendDefaultSplit: protectedProcedure
+    .input(z.object({ friendId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const [userAId, userBId] = toSortedFriendPair(ctx.session.user.id, input.friendId);
+      await db.friendDefaultSplit.deleteMany({ where: { userAId, userBId } });
+      return true;
     }),
 
   updatePushNotification: protectedProcedure

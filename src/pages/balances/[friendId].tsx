@@ -1,8 +1,10 @@
-import { ChevronLeftIcon, HandCoins, PlusIcon } from 'lucide-react';
+import { ChevronLeftIcon, HandCoins, Pencil, PlusIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
+import { toast } from 'sonner';
+import { DefaultSplitSettings } from '~/components/DefaultSplit/DefaultSplitSettings';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
 import { Export } from '~/components/Friend/Export';
@@ -10,12 +12,14 @@ import { SettleUp } from '~/components/Friend/Settleup';
 import MainLayout from '~/components/Layout/MainLayout';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
+import { AppDrawer } from '~/components/ui/drawer';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { type GetServerSideProps } from 'next';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { CumulatedBalances } from '~/components/Expense/CumulatedBalances';
+import { deserializeDefaultSplit } from '~/lib/defaultSplit';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
   const { t, displayName } = useTranslationWithUtils();
@@ -26,17 +30,19 @@ const FriendPage: NextPageWithUser = ({ user }) => {
 
   const friendQuery = api.user.getFriend.useQuery(
     { friendId: _friendId },
-    { enabled: !!_friendId },
+    { enabled: Boolean(_friendId) },
   );
 
   const expenses = api.expense.getExpensesWithFriend.useQuery(
     { friendId: _friendId },
-    { enabled: !!_friendId },
+    { enabled: Boolean(_friendId) },
   );
   const balances = api.user.getBalancesWithFriend.useQuery(
     { friendId: _friendId },
-    { enabled: !!_friendId },
+    { enabled: Boolean(_friendId) },
   );
+  const upsertFriendDefaultSplitMutation = api.user.upsertFriendDefaultSplit.useMutation();
+  const clearFriendDefaultSplitMutation = api.user.clearFriendDefaultSplit.useMutation();
 
   // Aggregate balances by currency for CumulatedBalances display
   const aggregatedBalances = useMemo(() => {
@@ -71,7 +77,87 @@ const FriendPage: NextPageWithUser = ({ user }) => {
             <p className="text-lg font-normal">{displayName(friendQuery.data)}</p>
           </div>
         }
-        actions={<DeleteFriend friendId={_friendId} disabled={!(0 === balances.data?.length)} />}
+        actions={
+          <div className="flex items-center gap-2">
+            <DeleteFriend friendId={_friendId} disabled={!(0 === balances.data?.length)} />
+            <AppDrawer
+              title={t('balances.user_preferences.title')}
+              trigger={
+                <Button variant="ghost" size="icon" disabled={!friendQuery.data}>
+                  <Pencil className="size-4" />
+                </Button>
+              }
+            >
+              {!friendQuery.data ? null : (
+                <div>
+                  <p className="font-semibold">{t('group_details.group_info.default_split')}</p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <DefaultSplitSettings
+                      participants={[
+                        {
+                          ...user,
+                          emailVerified: null,
+                          name: user.name ?? null,
+                          email: user.email ?? null,
+                          image: user.image ?? null,
+                          obapiProviderId: user.obapiProviderId ?? null,
+                          bankingId: user.bankingId ?? null,
+                          preferredLanguage: user.preferredLanguage ?? '',
+                          hiddenFriendIds: user.hiddenFriendIds ?? [],
+                          currency: user.currency ?? 'USD',
+                        },
+                        friendQuery.data,
+                      ]}
+                      defaultSplit={friendQuery.data.defaultSplit}
+                      triggerLabel={t('group_details.group_info.configure_default_split')}
+                      onSave={(defaultSplit) => {
+                        upsertFriendDefaultSplitMutation.mutate(
+                          {
+                            friendId: friendQuery.data!.id,
+                            defaultSplit,
+                          },
+                          {
+                            onSuccess: () => {
+                              toast.success(t('balances.default_split.updated'));
+                              void friendQuery.refetch();
+                            },
+                            onError: () => {
+                              toast.error(t('errors.setting_update_failed'));
+                            },
+                          },
+                        );
+                      }}
+                    />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={
+                        !deserializeDefaultSplit(friendQuery.data.defaultSplit) ||
+                        clearFriendDefaultSplitMutation.isPending
+                      }
+                      onClick={() => {
+                        clearFriendDefaultSplitMutation.mutate(
+                          { friendId: friendQuery.data!.id },
+                          {
+                            onSuccess: () => {
+                              toast.success(t('balances.default_split.cleared'));
+                              void friendQuery.refetch();
+                            },
+                            onError: () => {
+                              toast.error(t('errors.setting_update_failed'));
+                            },
+                          },
+                        );
+                      }}
+                    >
+                      {t('expense_details.clear')}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </AppDrawer>
+          </div>
+        }
         header={
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center gap-2">

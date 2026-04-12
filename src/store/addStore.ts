@@ -43,6 +43,7 @@ export interface AddExpenseState {
     setGroup: (group: Group | undefined) => void;
     addOrUpdateParticipant: (user: Participant) => void;
     setSplitShare: (splitType: SplitType, userId: number, share: bigint) => void;
+    applySplitPreset: (splitType: SplitType, shares: Record<number, bigint>) => void;
     setParticipants: (participants: Participant[], splitType?: SplitType) => void;
     removeParticipant: (userId: number) => void;
     removeLastParticipant: () => void;
@@ -112,6 +113,20 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         } as SplitShares;
 
         return calculateParticipantSplit({ ...state, splitShares });
+      }),
+    applySplitPreset: (splitType, shares) =>
+      set((state) => {
+        const splitShares = state.participants.reduce<SplitShares>((acc, participant) => {
+          const existingShares = state.splitShares[participant.id] ?? initSplitShares();
+          const defaultShare = splitType === SplitType.EQUAL ? 1n : 0n;
+          acc[participant.id] = {
+            ...existingShares,
+            [splitType]: shares[participant.id] ?? defaultShare,
+          };
+          return acc;
+        }, {});
+
+        return calculateParticipantSplit({ ...state, splitType, splitShares });
       }),
     setGroup: (group) => {
       set({ group });
@@ -325,33 +340,35 @@ export function calculateParticipantSplit(
       break;
   }
 
-  updatedParticipants = updatedParticipants.map((p) => {
-    if (p.id === paidBy?.id) {
-      return { ...p, amount: -(p.amount ?? 0n) + amount };
-    }
-    return { ...p, amount: -(p.amount ?? 0n) };
-  });
+  if (paidBy) {
+    updatedParticipants = updatedParticipants.map((p) => {
+      if (p.id === paidBy.id) {
+        return { ...p, amount: -(p.amount ?? 0n) + amount };
+      }
+      return { ...p, amount: -(p.amount ?? 0n) };
+    });
 
-  if (canSplitScreenClosed) {
-    let penniesLeft = updatedParticipants.reduce((acc, p) => acc + (p.amount ?? 0n), 0n);
-    const participantsToPick = updatedParticipants.filter((p) => p.amount);
-    const seed =
-      cyrb128(
-        `${participantsToPick
-          .map((p) => p.amount)
-          .toSorted((a, b) => Number((a ?? 0n) - (b ?? 0n)))
-          .join('-')}-${new Intl.DateTimeFormat('en').format(expenseDate)}`,
-      )[0] ?? 0;
-    const random = splitmix32(seed);
+    if (canSplitScreenClosed) {
+      let penniesLeft = updatedParticipants.reduce((acc, p) => acc + (p.amount ?? 0n), 0n);
+      const participantsToPick = updatedParticipants.filter((p) => p.amount);
+      const seed =
+        cyrb128(
+          `${participantsToPick
+            .map((p) => p.amount)
+            .toSorted((a, b) => Number((a ?? 0n) - (b ?? 0n)))
+            .join('-')}-${new Intl.DateTimeFormat('en').format(expenseDate)}`,
+        )[0] ?? 0;
+      const random = splitmix32(seed);
 
-    if (0 < participantsToPick.length) {
-      shuffleArray(participantsToPick, random);
-      let i = 0;
-      while (0n !== penniesLeft) {
-        const p = participantsToPick[i % participantsToPick.length]!;
-        p.amount! -= BigMath.sign(penniesLeft);
-        penniesLeft -= BigMath.sign(penniesLeft);
-        i++;
+      if (0 < participantsToPick.length) {
+        shuffleArray(participantsToPick, random);
+        let i = 0;
+        while (0n !== penniesLeft) {
+          const p = participantsToPick[i % participantsToPick.length]!;
+          p.amount! -= BigMath.sign(penniesLeft);
+          penniesLeft -= BigMath.sign(penniesLeft);
+          i++;
+        }
       }
     }
   }

@@ -39,29 +39,31 @@ model Session {
 }
 
 model User {
-  id                  Int                  @id @default(autoincrement())
-  name                String?
-  email               String?              @unique
-  emailVerified       DateTime?
-  image               String?
-  currency            String               @default("USD")
-  preferredLanguage   String               @default("")
-  bankingId           String?
-  obapiProviderId     String?
-  accounts            Account[]
-  friendBalances      BalanceView[]        @relation("FriendBalanceView")
-  userBalances        BalanceView[]        @relation("UserBalanceView")
-  cachedBankData      CachedBankData[]     @relation("UserCachedBankData")
-  addedExpenses       Expense[]            @relation("AddedByUser")
-  deletedExpenses     Expense[]            @relation("DeletedByUser")
-  paidExpenses        Expense[]            @relation("PaidByUser")
-  updatedExpenses     Expense[]            @relation("UpdatedByUser")
-  expenseNotes        ExpenseNote[]
-  expenseParticipants ExpenseParticipant[]
-  groups              Group[]
-  associatedGroups    GroupUser[]
-  sessions            Session[]
-  hiddenFriendIds     Int[]                @default([])
+  id                   Int                  @id @default(autoincrement())
+  name                 String?
+  email                String?              @unique
+  emailVerified        DateTime?
+  image                String?
+  currency             String               @default("USD")
+  preferredLanguage    String               @default("")
+  bankingId            String?
+  obapiProviderId      String?
+  accounts             Account[]
+  friendBalances       BalanceView[]        @relation("FriendBalanceView")
+  userBalances         BalanceView[]        @relation("UserBalanceView")
+  cachedBankData       CachedBankData[]     @relation("UserCachedBankData")
+  addedExpenses        Expense[]            @relation("AddedByUser")
+  deletedExpenses      Expense[]            @relation("DeletedByUser")
+  paidExpenses         Expense[]            @relation("PaidByUser")
+  updatedExpenses      Expense[]            @relation("UpdatedByUser")
+  expenseNotes         ExpenseNote[]
+  expenseParticipants  ExpenseParticipant[]
+  groups               Group[]
+  associatedGroups     GroupUser[]
+  friendDefaultSplitsA FriendDefaultSplit[] @relation("FriendDefaultSplitUserA")
+  friendDefaultSplitsB FriendDefaultSplit[] @relation("FriendDefaultSplitUserB")
+  sessions             Session[]
+  hiddenFriendIds      Int[]                @default([])
 
   @@schema("public")
 }
@@ -92,22 +94,48 @@ model Balance {
 }
 
 model Group {
-  id               Int           @id @default(autoincrement())
-  publicId         String        @unique
-  name             String
-  image            String?
-  userId           Int
-  defaultCurrency  String        @default("USD")
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-  splitwiseGroupId String?       @unique
-  simplifyDebts    Boolean       @default(false)
-  archivedAt       DateTime?
-  expenses         Expense[]
-  createdBy        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  groupUsers       GroupUser[]
-  groupBalances    BalanceView[]
+  id                Int                @id @default(autoincrement())
+  publicId          String             @unique
+  name              String
+  image             String?
+  userId            Int
+  defaultCurrency   String             @default("USD")
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  splitwiseGroupId  String?            @unique
+  simplifyDebts     Boolean            @default(false)
+  archivedAt        DateTime?
+  expenses          Expense[]
+  createdBy         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  groupUsers        GroupUser[]
+  groupBalances     BalanceView[]
+  groupDefaultSplit GroupDefaultSplit?
 
+  @@schema("public")
+}
+
+model GroupDefaultSplit {
+  groupId   Int       @id
+  splitType SplitType
+  shares    Json
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  group     Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@schema("public")
+}
+
+model FriendDefaultSplit {
+  userAId   Int
+  userBId   Int
+  splitType SplitType
+  shares    Json
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userA     User      @relation("FriendDefaultSplitUserA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB     User      @relation("FriendDefaultSplitUserB", fields: [userBId], references: [id], onDelete: Cascade)
+
+  @@id([userAId, userBId])
   @@schema("public")
 }
 

@@ -1,415 +1,441 @@
 {
   "account": {
-    "change_language": "",
+    "change_language": "भाषा परिवर्तन गर्नुहोस्",
     "change_language_details": {
       "messages": {
-        "language_changed": ""
+        "language_changed": "भाषा सफलतापूर्वक परिवर्तन भयो"
       },
-      "placeholder": "",
-      "title": ""
+      "placeholder": "भाषा छान्नुहोस्",
+      "title": "भाषा छान्नुहोस्"
     },
-    "debug_info": "",
+    "debug_info": "डिबग जानकारी",
     "debug_info_details": {
-      "copy_failed": "",
-      "description": "",
-      "git": "",
-      "new_version_available": "",
-      "title": "",
-      "user_agent": "",
-      "version": ""
+      "copy_failed": "प्रतिलिपि गर्न असफल भयो",
+      "description": "समस्या निवारणको लागि यो जानकारी प्रयोग गर्नुहोस्:",
+      "git": "Git कमिट",
+      "new_version_available": "नयाँ संस्करण उपलब्ध छ:",
+      "send_test_notification": "परीक्षण सूचना पठाउनुहोस्",
+      "test_notification_failed": "परीक्षण सूचना पठाउन सकिएन",
+      "test_notification_sent": "परीक्षण सूचना पठाइयो",
+      "title": "डिबग विवरण",
+      "user_agent": "प्रयोगकर्ता एजेन्ट",
+      "version": "संस्करण"
     },
-    "download_app": "",
+    "download_app": "एप डाउनलोड गर्नुहोस्",
     "download_app_details": {
-      "download_as_pwa": "",
-      "title": "",
-      "using_android": "",
-      "using_ios": "",
-      "video": ""
+      "download_as_pwa": "PWA को रूपमा डाउनलोड गर्नुहोस्।",
+      "title": "एप प्राप्त गर्नुहोस्",
+      "using_android": "एन्ड्रोइड प्रयोग गर्दै",
+      "using_ios": "आईओएस प्रयोग गर्दै",
+      "video": "भिडियो ट्यूटोरियल"
     },
-    "download_splitpro_data": "",
+    "download_splitpro_data": "SplitPro डाटा डाउनलोड गर्नुहोस्",
     "edit_name": {
-      "placeholder": "",
-      "title": ""
+      "apply_avatar": "अभतार लागू गर्नुहोस्",
+      "avatar_label": "प्रोफाइल तस्वीर",
+      "avatar_preview": "अभतार पूर्वावलोकन",
+      "placeholder": "आफ्नो नाम प्रविष्ट गर्नुहोस्",
+      "remove_avatar": "अभतार हटाउनुहोस्",
+      "select_avatar": "अभतार छान्नुहोस्",
+      "title": "नाम सम्पादन गर्नुहोस्",
+      "zoom": "जुम"
     },
-    "follow_on_x": "",
-    "import_from_splitwise": "",
+    "follow_on_x": "X मा फलो गर्नुहोस्",
+    "import_from_splitwise": "Splitwise बाट आयात गर्नुहोस्",
     "import_from_splitwise_details": {
-      "choose_file": "",
-      "export_splitwise_data_button": "",
-      "follow_to_export_splitwise_data": "",
+      "choose_file": "फाइल छान्नुहोस्",
+      "export_splitwise_data_button": "Splitwise डाटा निर्यात गर्नुहोस्",
+      "follow_to_export_splitwise_data": "डाटा निर्यात गर्न निर्देशनहरू पालना गर्नुहोस्",
       "messages": {
-        "import_success": ""
+        "import_success": "आयात सफलतापूर्वक सम्पन्न भयो"
       },
-      "no_file_chosen": "",
-      "note": ""
+      "no_file_chosen": "कुनै फाइल छानिएको छैन",
+      "note": "द्रष्टव्य: हाल यसले साथीहरू र समूहहरू आयात गर्न मात्र समर्थन गर्दछ। यसले लेनदेनहरू (transactions) आयात गर्ने छैन। हामी यसमा काम गरिरहेका छौं।"
     },
-    "logout": "",
+    "logout": "लगआउट",
     "messages": {
-      "submit_error": "",
-      "submit_success": ""
+      "submit_error": "पेश गर्दा त्रुटि भयो",
+      "submit_success": "सफलतापूर्वक पेश भयो"
     },
     "notifications": {
-      "disable_notification": "",
-      "enable_notification": "",
+      "disable_notification": "सूचनाहरू असक्षम गर्नुहोस्",
+      "enable_notification": "सूचनाहरू सक्षम गर्नुहोस्",
       "messages": {
-        "notification_granted": ""
+        "notification_granted": "सूचनाको अनुमति प्राप्त भयो"
       }
     },
-    "star_on_github": "",
-    "submit_feedback": "",
+    "star_on_github": "GitHub मा स्टार दिनुहोस्",
+    "submit_feedback": "प्रतिक्रिया पठाउनुहोस्",
     "submit_feedback_details": {
-      "placeholder": "",
-      "title": ""
+      "placeholder": "यहाँ आफ्नो प्रतिक्रिया लेख्नुहोस्",
+      "title": "प्रतिक्रिया"
     },
-    "support_us": "",
-    "title": "",
-    "write_review": ""
+    "support_us": "हामीलाई सहयोग गर्नुहोस्",
+    "title": "खाता",
+    "write_review": "समीक्षा लेख्नुहोस्"
   },
   "actions": {
-    "add_expense": "",
-    "back": "",
-    "cancel": "",
-    "close": "",
-    "confirm": "",
-    "connect": "",
-    "copy": "",
-    "create": "",
-    "edit_expense": "",
-    "export": "",
-    "fetch": "",
-    "import": "",
-    "invite": "",
-    "leave": "",
-    "next": "",
-    "reconnect": "",
-    "save": "",
-    "settle_up": "",
-    "submit": ""
+    "add_expense": "खर्च थप्नुहोस्",
+    "back": "फिर्ता",
+    "cancel": "रद्द गर्नुहोस्",
+    "close": "बन्द गर्नुहोस्",
+    "confirm": "पुष्टि गर्नुहोस्",
+    "connect": "जडान गर्नुहोस्",
+    "copy": "प्रतिलिपि गर्नुहोस्",
+    "create": "सिर्जना गर्नुहोस्",
+    "edit_expense": "खर्च सम्पादन गर्नुहोस्",
+    "export": "निर्यात गर्नुहोस्",
+    "fetch": "प्राप्त गर्नुहोस्",
+    "import": "आयात गर्नुहोस्",
+    "invite": "निमन्त्रणा गर्नुहोस्",
+    "leave": "छोड्नुहोस्",
+    "next": "अर्को",
+    "reconnect": "पुन: जडान गर्नुहोस्",
+    "save": "बचत गर्नुहोस्",
+    "settle_up": "हिसाब मिलान गर्नुहोस्",
+    "submit": "पेश गर्नुहोस्"
   },
   "actors": {
-    "all": "",
-    "friends": "",
-    "groups": "",
-    "members": "",
-    "owner": "",
-    "you": "",
-    "you_accusativus": "",
-    "you_dativus": ""
+    "all": "सबै",
+    "friends": "साथीहरू",
+    "groups": "समूहहरू",
+    "members": "सदस्यहरू",
+    "owner": "मालिक",
+    "you": "तपाईं",
+    "you_accusativus": "तपाईंलाई",
+    "you_dativus": "तपाईंका लागि"
   },
   "auth": {
-    "continue_with": "",
-    "email_placeholder": "",
-    "no_providers_configured": "",
-    "no_providers_instructions": "",
-    "otp_sent": "",
-    "send_magic_link": "",
-    "sending": "",
-    "setup_instructions": "",
-    "trouble_logging_in": ""
+    "continue_with": "{{provider}} बाट अगाडि बढ्नुहोस्",
+    "email_placeholder": "इमेल ठेगाना",
+    "no_providers_configured": "कुनै प्रदायक कन्फिगर गरिएको छैन",
+    "no_providers_instructions": "कृपया लगइन प्रदायकहरू सेट अप गर्नुहोस्",
+    "otp_sent": "हामीले OTP सहितको इमेल पठाएका छौं। कृपया आफ्नो इनबक्स जाँच गर्नुहोस् र साइन इन गर्न इमेलमा रहेको लिङ्क थिच्नुहोस्।",
+    "send_magic_link": "म्याजिक लिङ्क पठाउनुहोस्",
+    "sending": "पठाउँदै...",
+    "setup_instructions": "सेटअप निर्देशनहरू",
+    "trouble_logging_in": "लगइन गर्न समस्या भयो? सम्पर्क गर्नुहोस्"
+  },
+  "balances": {
+    "default_split": {
+      "cleared": "पूर्वनिर्धारित बाँडफाँड हटाइयो",
+      "configure": "पूर्वनिर्धारित बाँडफाँड",
+      "updated": "पूर्वनिर्धारित बाँडफाँड अद्यावधिक भयो"
+    },
+    "user_preferences": {
+      "title": "प्राथमिकताहरू"
+    }
   },
   "bank_transactions": {
-    "choose_bank_provider": "",
-    "no_bank_providers_found": "",
+    "choose_bank_provider": "बैंक प्रदायक छान्नुहोस्",
+    "no_bank_providers_found": "कुनै बैंक प्रदायक फेला परेन",
     "plaid": {
-      "bank_connected_successfully": "",
-      "bank_connection_cancelled": "",
-      "bank_connection_failed": ""
+      "bank_connected_successfully": "बैंक सफलतापूर्वक जडान भयो",
+      "bank_connection_cancelled": "बैंक जडान रद्द गरियो",
+      "bank_connection_failed": "बैंक जडान असफल भयो"
     },
-    "search_bank": "",
-    "select_bank_provider": "",
-    "to_bank": ""
+    "search_bank": "बैंक खोज्नुहोस्",
+    "select_bank_provider": "बैंक प्रदायक चयन गर्नुहोस्",
+    "to_bank": "बैंकमा"
   },
   "currency_conversion": {
-    "amount_to_receive": "",
-    "description": "",
-    "exchange_rate": "",
-    "fetching_rate": "",
-    "rate": "",
-    "success_toast": "",
-    "title": ""
+    "amount_to_receive": "प्राप्त हुने रकम",
+    "description": "मुद्रा परिवर्तन गर्नुहोस्।",
+    "exchange_rate": "विनिमय दर",
+    "fetching_rate": "दर प्राप्त गर्दै...",
+    "rate": "दर",
+    "success_toast": "मुद्रा सफलतापूर्वक परिवर्तन भयो",
+    "title": "मुद्रा परिवर्तन"
   },
   "errors": {
-    "currency_conversion_error": "",
-    "currency_conversion_failed": "",
-    "currency_conversion_malformed": "",
-    "email_invalid": "",
-    "email_required": "",
-    "feedback_min_length": "",
-    "feedback_required": "",
-    "group_balances_malformed": "",
-    "group_name_update_failed": "",
-    "import_failed": "",
-    "invalid_cron_expression": "",
-    "invalid_currency_code": "",
-    "language_change_failed": "",
-    "less_than": "",
-    "name_required": "",
-    "no_providers": "",
-    "notification_not_supported": "",
-    "otp_invalid": "",
-    "otp_required": "",
-    "recurrence_delete_failed": "",
-    "recurrence_update_failed": "",
-    "request_error": "",
-    "saving_expense": "",
-    "setting_update_failed": "",
-    "signin_error": "",
-    "signup_disabled": "",
-    "something_went_wrong": "",
-    "subscribe_error": "",
-    "unsubscribe_error": "",
-    "upload_failed": "",
-    "uploading_error": "",
-    "valid_email": ""
+    "currency_conversion_error": "मुद्रा परिवर्तनमा त्रुटि",
+    "currency_conversion_failed": "मुद्रा परिवर्तन असफल भयो",
+    "currency_conversion_malformed": "अमान्य मुद्रा डाटा",
+    "email_invalid": "इमेल अमान्य छ, कृपया साइन-इन प्रक्रिया फेरि प्रयास गर्नुहोस्।",
+    "email_required": "इमेल आवश्यक छ",
+    "feedback_min_length": "प्रतिक्रिया धेरै छोटो भयो",
+    "feedback_required": "प्रतिक्रिया आवश्यक छ",
+    "group_balances_malformed": "समूहको बाँकी हिसाब विवरण अमान्य छ, कृपया यसबारे जानकारी दिनुहोस् वा हिसाब पुन: गणना गर्ने प्रयास गर्नुहोस्।",
+    "group_name_update_failed": "समूहको नाम अपडेट गर्न असफल",
+    "image_compression_failed": "छवि कम्प्रेसन असफल भयो",
+    "import_failed": "आयात असफल भयो",
+    "invalid_cron_expression": "अमान्य क्रोन अभिव्यक्ति",
+    "invalid_currency_code": "अमान्य मुद्रा कोड {{code}}",
+    "language_change_failed": "भाषा परिवर्तन गर्न असफल",
+    "less_than": "File {{size}}MB भन्दा कम",
+    "name_required": "नाम आवश्यक छ",
+    "no_providers": "प्रमाणीकरण प्रदायकहरू (authentication providers) प्राप्त गर्दा त्रुटि भयो। कृपया ब्याकइन्ड लगहरू जाँच गर्नुहोस्।",
+    "notification_not_supported": "यो ब्राउजरमा सूचना समर्थन गर्दैन",
+    "otp_invalid": "अमान्य OTP",
+    "otp_required": "OTP आवश्यक छ",
+    "recurrence_delete_failed": "आवर्ती खर्च हटाउन असफल",
+    "recurrence_update_failed": "आवर्ती खर्च अपडेट गर्न असफल",
+    "request_error": "अनुरोधमा त्रुटि",
+    "saving_expense": "खर्च बचत गर्दा त्रुटि",
+    "setting_update_failed": "सेटिङ अपडेट गर्न असफल",
+    "signin_error": "साइन इन गर्दा त्रुटि ",
+    "signup_disabled": "साइन अप असक्षम गरिएको छ",
+    "something_went_wrong": "केही गलत भयो",
+    "subscribe_error": "सबस्क्राइब गर्दा त्रुटि",
+    "unsubscribe_error": "अनसबस्क्राइब गर्दा त्रुटि",
+    "upload_failed": "अपलोड असफल भयो",
+    "uploading_error": "अपलोड गर्दा त्रुटि",
+    "valid_email": "कृपया मान्य इमेल राख्नुहोस्"
   },
   "expense_details": {
-    "add_expense": "",
+    "add_expense": "खर्च थप्नुहोस्",
     "add_expense_details": {
-      "add_new_expense": "",
-      "amount_placeholder": "",
-      "description_placeholder": "",
-      "pick_a_date": "",
+      "add_new_expense": "नयाँ खर्च थप्नुहोस्",
+      "amount_placeholder": "रकम",
+      "description_placeholder": "विवरण (उदा: खाजा, भाडा)",
+      "pick_a_date": "मिति छान्नुहोस्",
       "select_user_or_group": {
-        "add_to_split_pro": "",
-        "note": "",
-        "only_one_group_time": "",
-        "send_invite": "",
-        "warning": ""
+        "add_to_split_pro": "Split Pro मा थप्नुहोस्",
+        "note": "नोट",
+        "only_one_group_time": "एक पटकमा एउटा मात्र समूह",
+        "send_invite": "निमन्त्रणा पठाउनुहोस्",
+        "warning": "चेतावनी"
       },
       "split_type_section": {
-        "split_equally": "",
-        "split_unequally": "",
+        "split_equally": "बराबर बाँड्नुहोस्",
+        "split_unequally": "असमान रूपमा बाँड्नुहोस्",
         "types": {
           "adjustment": {
-            "remaining_to_split_equally": "",
-            "title": ""
+            "remaining_to_split_equally": "बराबर बाँड्न बाँकी",
+            "title": "समायोजन"
           },
           "equal": {
-            "per_person": "",
-            "title": ""
+            "per_person": "प्रति व्यक्ति",
+            "title": "बराबर"
           },
           "exact": {
-            "remaining": "",
-            "title": ""
+            "remaining": "बाँकी",
+            "title": "निश्चित रकम"
           },
           "percentage": {
-            "remaining": "",
-            "title": ""
+            "remaining": "बाँकी प्रतिशत",
+            "title": "प्रतिशत"
           },
           "share": {
-            "shares": "",
-            "title": "",
-            "total_shares": ""
+            "shares": "हिस्सा",
+            "title": "हिस्सा",
+            "total_shares": "कुल हिस्सा"
           }
         }
       },
-      "sponsor_us": "",
+      "sponsor_us": "हामीलाई प्रायोजन गर्नुहोस्",
       "upload_file": {
         "messages": {
-          "upload_success": ""
+          "upload_success": "फाइल सफलतापूर्वक अपलोड भयो"
         }
       },
       "user_input": {
-        "add_more_friends": "",
-        "cannot_change_group": "",
-        "remove_group": "",
-        "search_friends": ""
+        "add_more_friends": "थप साथीहरू थप्नुहोस्",
+        "cannot_change_group": "समूह परिवर्तन गर्न सकिँदैन",
+        "remove_group": "समूह हटाउनुहोस्",
+        "search_friends": "साथीहरू खोज्नुहोस्"
       }
     },
-    "already_added": "",
+    "already_added": "पहिले नै थपिएको छ",
     "balance_list": {
-      "are_settled_up": "",
-      "is_settled_up": "",
-      "press_balance_info": ""
+      "are_settled_up": "सबैको हिसाब मिलान भएको छ",
+      "is_settled_up": "हिसाब मिलान भएको छ",
+      "press_balance_info": "थप जानकारीको लागि ब्यालेन्समा थिच्नुहोस्"
     },
-    "bank_transactions": "",
-    "clear": "",
+    "bank_transactions": "बैंक लेनदेन",
+    "clear": "हटाउनुहोस्",
     "delete_expense_details": {
-      "text": "",
-      "title": ""
+      "text": "यो कार्य फिर्ता गर्न सकिँदैन। यसले तपाईंको खर्च स्थायी रूपमा हटाउनेछ।",
+      "title": "के तपाईं पूर्ण रूपमा निश्चित हुनुहुन्छ?"
     },
     "multiple_transactions": {
-      "add_all": "",
-      "add_one_by_one": "",
-      "description": "",
-      "title": ""
+      "add_all": "सबै थप्नुहोस्",
+      "add_one_by_one": "पालैपालो थप्नुहोस्",
+      "description": "तपाईंले धेरै लेनदेनहरू छान्नुभएको छ। तिनीहरूलाई हालकै सेटिङ अनुसार एकैसाथ थप्ने वा एक-एक गरी सेटिङ मिलाएर थप्ने, छान्नुहोस्।",
+      "title": "बहु लेनदेनहरू"
     },
-    "no_transactions_yet": "",
-    "pending": "",
-    "submit_all": "",
-    "title": "",
-    "title_mobile": ""
+    "no_transactions_yet": "अहिलेसम्म कुनै लेनदेन छैन",
+    "pending": "बाँकी",
+    "submit_all": "सबै पेश गर्नुहोस्",
+    "title": "खर्च विवरण",
+    "title_mobile": "विवरण"
   },
   "group_details": {
-    "add_members": "",
-    "copied": "",
+    "add_members": "सदस्यहरू थप्नुहोस्",
+    "copied": "प्रतिलिपि गरियो",
     "create_group": {
-      "group_name_placeholder": "",
-      "title": ""
+      "group_name_placeholder": "समूहको नाम",
+      "title": "नयाँ समूह सिर्जना गर्नुहोस्"
     },
     "group_info": {
-      "actions": "",
-      "archive_group": "",
+      "actions": "कार्यहरू",
+      "archive_group": "समूह अर्काइभ गर्नुहोस्",
       "archive_group_details": {
-        "can_archive": "",
-        "cant_archive": "",
-        "title": ""
+        "can_archive": "यो समूहलाई अर्काइभ गरिनेछ र तपाईंको मुख्य समूहहरूको सूचीबाट लुकाइनेछ। आवश्यक परेमा तपाईंले यसलाई पछि फेरि हेर्न सक्नुहुन्छ।",
+        "cant_archive": "बाँकी हिसाब भएको समूहलाई अर्काइभ गर्न सकिँदैन। पहिले सबै हिसाब मिलान हुनुपर्छ।",
+        "title": "के तपाईं पक्का यो समूहलाई अर्काइभ गर्न चाहनुहुन्छ?"
       },
-      "archived": "",
-      "delete_group": "",
+      "archived": "अर्काइभ गरिएको",
+      "configure_default_split": "पूर्वनिर्धारित बाँडफाँड मिलाउनुहोस्",
+      "default_split": "पूर्वनिर्धारित बाँडफाँड",
+      "delete_group": "समूह हटाउनुहोस्",
       "delete_group_details": {
-        "can_delete": "",
-        "cant_delete": "",
-        "title": ""
+        "can_delete": "तपाईं यो समूह हटाउन सक्नुहुन्छ",
+        "cant_delete": "हिसाब बाँकी भएकोले यो समूह हटाउन सकिँदैन",
+        "title": "के तपाईं पूर्ण रूपमा निश्चित हुनुहुन्छ?"
       },
-      "group_created": "",
-      "leave_group": "",
+      "edit_group": "समूह सम्पादन गर्नुहोस्",
+      "group_created": "समूह सिर्जना गरियो",
+      "leave_group": "समूह छोड्नुहोस्",
       "leave_group_details": {
-        "can_leave": "",
-        "cant_leave": "",
-        "title": ""
+        "can_leave": "तपाईं यो समूह छोड्न सक्नुहुन्छ",
+        "cant_leave": "हिसाब बाँकी भएकोले समूह छोड्न मिल्दैन",
+        "title": "के तपाईं पूर्ण रूपमा निश्चित हुनुहुन्छ?"
       },
-      "members": "",
-      "recalculate_balances": "",
+      "members": "सदस्यहरू",
+      "recalculate_balances": "बाँकी हिसाब पुन: गणना गर्नुहोस्",
       "recalculate_balances_details": {
-        "description": "",
-        "title": ""
+        "description": "यदि बाँकी हिसाब र खर्चको विवरण मिलेको छैन भने, तपाईंले त्यसलाई पुन: गणना (recalculate) गर्न सक्नुहुन्छ। ध्यान दिनुहोस् कि यदि खर्चहरूको संख्या धेरै छ भने यसले केही समय लिन सक्छ। समूह बाहिरका हिसाबहरूमा यसले कुनै असर गर्ने छैन।",
+        "title": "के तपाईं निश्चित हुनुहुन्छ?"
       },
       "remove_member_details": {
-        "can_remove": "",
-        "cant_remove": "",
-        "title": ""
+        "can_remove": "सदस्य हटाउनुहोस्",
+        "cant_remove": "बाँकी हिसाब भएको सदस्यलाई हटाउन मिल्दैन",
+        "title": "के तपाईं पूर्ण रूपमा निश्चित हुनुहुन्छ?"
       },
-      "simplify_debts": "",
-      "title": ""
+      "simplify_debts": "ऋण सरल बनाउनुहोस्",
+      "title": "समूह जानकारी"
     },
     "group_statistics": {
-      "first_expense": "",
-      "title": "",
-      "total_expenses": ""
+      "first_expense": "पहिलो खर्च",
+      "title": "तथ्याङ्क",
+      "total_expenses": "कुल खर्च"
     },
     "messages": {
-      "balances_recalculated": "",
-      "group_archived": "",
-      "group_name_updated": ""
+      "balances_recalculated": "हिसाब पुन: गणना गरियो",
+      "default_split_cleared": "पूर्वनिर्धारित बाँडफाँड हटाइयो",
+      "default_split_updated": "पूर्वनिर्धारित बाँडफाँड अद्यावधिक भयो",
+      "group_archived": "समूह अर्काइभ गरियो",
+      "group_name_updated": "समूहको नाम अपडेट भयो"
     },
     "no_members": {
-      "add_members": "",
+      "add_members": "सदस्य थप्नुहोस्",
       "add_members_details": {
-        "add_to_split_pro": "",
-        "note": "",
-        "placeholder": "",
-        "send_invite": "",
-        "title": "",
-        "warning": ""
+        "add_to_split_pro": "Split Pro मा थप्नुहोस्",
+        "note": "नोट",
+        "placeholder": "नाम वा इमेल",
+        "send_invite": "निमन्त्रणा पठाउनुहोस्",
+        "title": "सदस्य थप्नुहोस्",
+        "warning": "चेतावनी"
       },
-      "invite_link": "",
-      "no_members": ""
+      "invite_link": "निमन्त्रणा लिङ्क",
+      "no_members": "समूहमा अहिलेसम्म कुनै सदस्यहरू छैनन्।"
     },
     "tabs": {
-      "balances": "",
-      "expenses": ""
+      "balances": "बाँकी हिसाब",
+      "expenses": "खर्चहरू"
     },
-    "title": ""
+    "title": "समूह विवरण"
   },
   "invite_message": {
-    "in_splitpro": "",
-    "join_to": "",
-    "text": ""
+    "in_splitpro": "SplitPro मा",
+    "join_to": "सामेल हुनुहोस्",
+    "text": "समूहमा सामेल हुनुहोस् र तपाईंले खर्चहरू थप्न, व्यवस्थापन गर्न र आफ्नो बाँकी हिसाब ट्र्याक गर्न सक्नुहुन्छ"
   },
   "meta": {
-    "application_name": "",
-    "description": "",
-    "title": ""
+    "application_name": "SplitPro",
+    "description": "आफ्ना साथीहरूसँग नि:शुल्क खर्च बाँड्नुहोस्",
+    "title": "SplitPro - आफ्ना साथीहरूसँग नि:शुल्क खर्च बाँड्नुहोस्"
   },
   "navigation": {
-    "account": "",
-    "activity": "",
-    "add": "",
-    "add_expense": "",
-    "balances": "",
-    "groups": "",
-    "recurring": ""
+    "account": "खाता",
+    "activity": "गतिविधि",
+    "add": "थप्नुहोस्",
+    "add_expense": "खर्च थप्नुहोस्",
+    "balances": "बाँकी हिसाब",
+    "groups": "समूहहरू",
+    "recurring": "आवर्ती"
   },
   "recurrence": {
-    "cron_expression": "",
-    "days_of_month": "",
-    "days_of_week": "",
-    "delete_description": "",
-    "delete_title": "",
-    "derived_delete_warning": "",
-    "derived_edit_warning": "",
-    "description": "",
-    "edit_confirmation_title": "",
-    "edit_description": "",
-    "edit_title": "",
-    "empty": "",
-    "expense_for_the_amount_of": "",
-    "last_day": "",
-    "months": "",
-    "never": "",
-    "recurring": "",
+    "cron_expression": "क्रोन अभिव्यक्ति",
+    "days_of_month": "महिनाका दिनहरू",
+    "days_of_week": "हप्ताका दिनहरू",
+    "delete_description": "यसले भविष्यमा हुने खर्चहरूको सिर्जनालाई रोक्नेछ। यो आवर्ती (recurrence) बाट पहिले नै सिर्जना भइसकेका खर्चहरू भने मेटिने छैनन्।",
+    "delete_title": "आवर्ती खर्च हटाउनुहोस्",
+    "derived_delete_warning": "यो खर्च एउटा आवर्ती (recurrence) प्रक्रियाको हिस्सा हो। केवल यही खर्च मात्र मेटिनेछ। भविष्यका आवर्ती खर्चहरू यथावत रहनेछन्।",
+    "derived_edit_warning": "यो खर्च एउटा आवर्ती (recurrence) प्रक्रियाको हिस्सा हो। परिवर्तनहरूले केवल यसै खर्चलाई मात्र असर गर्नेछन्।",
+    "description": "यो खर्चको लागि स्वचालित आवर्ती (automatic recurrence) सेट अप गर्नुहोस्।",
+    "edit_confirmation_title": "परिवर्तन पुष्टि गर्नुहोस्",
+    "edit_description": "यसले भविष्यका खर्चहरूको तालिका (schedule) परिवर्तन गर्नेछ। हाल भइरहेका खर्चहरूमा कुनै परिमार्जन हुने छैन।",
+    "edit_title": "आवर्ती खर्च सम्पादन गर्नुहोस्",
+    "empty": "कुनै आवर्ती खर्च छैन",
+    "expense_for_the_amount_of": "खर्च {{name}}, {{amount}} {{currency}} को रकमको लागि",
+    "last_day": "अन्तिम दिन",
+    "months": "महिनाहरू",
+    "never": "कहिल्यै पनि",
+    "recurring": "आवर्ती",
     "schedule_type": {
-      "custom": "",
-      "day": "",
-      "month": "",
-      "never": "",
-      "week": "",
-      "year": ""
+      "custom": "अनुकूल",
+      "day": "दैनिक",
+      "month": "मासिक",
+      "never": "कहिल्यै होइन",
+      "week": "साप्ताहिक",
+      "year": "वार्षिक"
     },
-    "template_delete_warning": "",
-    "template_edit_warning": "",
-    "time_of_day": "",
-    "title": "",
-    "view_recurring_page": ""
+    "template_delete_warning": "यो एक आवर्ती खर्च (recurring expense) टेम्पलेट हो। यसलाई हटाउनाले भविष्यका सबै आवर्ती खर्चहरू रोकिनेछन्।",
+    "template_edit_warning": "यो एक आवर्ती खर्च (recurring expense) टेम्पलेट हो। परिवर्तनहरू भविष्यका सबै आवर्ती खर्चहरूमा लागू हुनेछन्।",
+    "time_of_day": "दिनको समय",
+    "title": "आवर्ती खर्चहरू",
+    "view_recurring_page": "आवर्ती पृष्ठ हेर्नुहोस्"
   },
   "ui": {
-    "added_by": "",
-    "and": "",
-    "balance": "",
-    "balances": "",
-    "delete": "",
-    "deleted_by": "",
-    "edited_by": "",
+    "added_by": "थप्ने व्यक्ति",
+    "and": "र",
+    "balance": "बाँकी",
+    "balances": "बाँकी हिसाबहरू",
+    "delete": "हटाउनुहोस्",
+    "deleted_by": "हटाउने व्यक्ति",
+    "edited_by": "सम्पादन गर्ने व्यक्ति",
     "expense": {
-      "for": "",
-      "from": "",
-      "paid_by": "",
-      "received_by": "",
-      "to": "",
+      "for": "को लागि",
+      "from": "बाट",
+      "paid_by": "तिर्ने व्यक्ति",
+      "received_by": "प्राप्त गर्ने व्यक्ति",
+      "to": "लाई",
       "user": {
-        "deleted": "",
-        "get": "",
-        "lent": "",
-        "owe": "",
-        "paid": "",
-        "pay": "",
-        "received": ""
+        "deleted": "हटाए",
+        "get": "पाउनु पर्ने",
+        "lent": "सापटी दिए",
+        "owe": "तिर्नु पर्ने",
+        "paid": "तिरे",
+        "pay": "तिर्नुहोस्",
+        "received": "प्राप्त गरे"
       },
       "you": {
-        "deleted": "",
-        "get": "",
-        "lent": "",
-        "owe": "",
-        "paid": "",
-        "pay": "",
-        "received": ""
+        "deleted": "तपाईंले हटाउनुभयो",
+        "get": "तपाईंले पाउनु पर्ने",
+        "lent": "तपाईंले सापटी दिनुभयो",
+        "owe": "तपाईंले तिर्नु पर्ने",
+        "paid": "तपाईंले तिर्नुभयो",
+        "pay": "तपाईंले तिर्नुहोस्",
+        "received": "तपाईंले प्राप्त गर्नुभयो"
       }
     },
-    "expense_details": "",
-    "in_group": "",
-    "no_activity": "",
-    "not_involved": "",
-    "on": "",
-    "or": "",
-    "outstanding_balances": "",
-    "select_balance": "",
-    "settle_up_name": "",
-    "settled_up": "",
-    "settlement": "",
-    "share_text": "",
-    "show_all_currencies": "",
-    "today": "",
-    "total_balance": ""
+    "expense_details": "खर्च विवरण",
+    "in_group": "समूहमा",
+    "no_activity": "कुनै गतिविधि छैन",
+    "not_involved": "संलग्न नभएको",
+    "on": "मा",
+    "or": "वा",
+    "outstanding_balances": "बाँकी रहेका हिसाबहरू",
+    "select_balance": "बाँकी हिसाब छान्नुहोस्",
+    "select_currency": "मुद्रा चयन गर्नुहोस्",
+    "settle_up_name": "हिसाब मिलान",
+    "settled_up": "हिसाब मिलान भयो",
+    "settlement": "हिसाब मिलान",
+    "share_text": "बाँड्नुहोस्",
+    "show_all_currencies": "सबै मुद्राहरू देखाउनुहोस्",
+    "today": "आज",
+    "total_balance": "कुल बाँकी हिसाब"
   }
 }

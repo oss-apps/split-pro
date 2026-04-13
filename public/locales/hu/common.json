@@ -14,6 +14,9 @@
       "description": "Illesszd be az alábbi információkat a támogatási kérelem létrehozásakor:",
       "git": "Git",
       "new_version_available": "Új verzió érhető el:",
+      "send_test_notification": "Tesztértesítés küldése",
+      "test_notification_failed": "Nem sikerült elküldeni a tesztértesítést",
+      "test_notification_sent": "Tesztértesítés elküldve",
       "title": "Hibakeresési információ",
       "user_agent": "Felhasználói ügynök",
       "version": "Verzió"
@@ -28,8 +31,14 @@
     },
     "download_splitpro_data": "SplitPro adatok letöltése",
     "edit_name": {
+      "apply_avatar": "Avatar alkalmazása",
+      "avatar_label": "Profilkép",
+      "avatar_preview": "Avatar előnézete",
       "placeholder": "Írd be a neved",
-      "title": "Név szerkesztése"
+      "remove_avatar": "Avatar eltávolítása",
+      "select_avatar": "Kép kiválasztása",
+      "title": "Részletek szerkesztése",
+      "zoom": "Közelítés"
     },
     "follow_on_x": "Kövess minket az X-en",
     "import_from_splitwise": "Importálás a Splitwise-ból",
@@ -45,8 +54,8 @@
     },
     "logout": "Kijelentkezés",
     "messages": {
-      "submit_error": "Nem sikerült elküldeni a visszajelzést",
-      "submit_success": "Visszajelzés elküldve"
+      "submit_error": "Nem sikerült frissíteni a részleteket",
+      "submit_success": "Részletek frissítve"
     },
     "notifications": {
       "disable_notification": "Értesítések letiltása",
@@ -107,6 +116,16 @@
     "setup_instructions": "Docker beállítási utasítások",
     "trouble_logging_in": "Problémád van a bejelentkezéssel? Lépj kapcsolatba"
   },
+  "balances": {
+    "default_split": {
+      "cleared": "Alapértelmezett felosztás törölve",
+      "configure": "Alapértelmezett felosztás",
+      "updated": "Alapértelmezett felosztás frissítve"
+    },
+    "user_preferences": {
+      "title": "Beállítások"
+    }
+  },
   "bank_transactions": {
     "choose_bank_provider": "Válassz banki szolgáltatót",
     "no_bank_providers_found": "Nem található banki szolgáltató",
@@ -138,11 +157,12 @@
     "feedback_required": "Visszajelzés szükséges",
     "group_balances_malformed": "A csoportegyenlegek adatai hibásak, kérjük, jelentsd a problémát, vagy próbáld meg az újraszámolást.",
     "group_name_update_failed": "Hiba a csoport nevének frissítésekor",
+    "image_compression_failed": "A képtömörítés sikertelen, eredeti fájl feltöltése",
     "import_failed": "Hiba a fájl importálása során",
     "invalid_cron_expression": "Érvénytelen cron kifejezés",
     "invalid_currency_code": "Érvénytelen pénznemkód {{code}}",
     "language_change_failed": "Hiba a nyelv módosításakor",
-    "less_than": "A fájlnak kisebbnek kell lennie, mint",
+    "less_than": "A fájl mérete nem haladhatja meg a {{size}} MB-ot",
     "name_required": "Név megadása kötelező",
     "no_providers": "Hiba történt a hitelesítési szolgáltatók lekérésekor. Kérjük, ellenőrizd a háttérnaplókat.",
     "notification_not_supported": "Az értesítések nem támogatottak",
@@ -256,12 +276,15 @@
         "title": "Biztosan archiválni szeretnéd ezt a csoportot?"
       },
       "archived": "Archiválva",
+      "configure_default_split": "Alapértelmezett felosztás konfigurálása",
+      "default_split": "Alapértelmezett felosztás",
       "delete_group": "Csoport törlése",
       "delete_group_details": {
         "can_delete": "Ez a művelet nem vonható vissza",
         "cant_delete": "A csoportot nem lehet törölni, amíg van kiegyenlítetlen tartozás",
         "title": "Teljesen biztos vagy benne?"
       },
+      "edit_group": "Csoport szerkesztése",
       "group_created": "Csoport létrehozva",
       "leave_group": "Kilépés a csoportból",
       "leave_group_details": {
@@ -290,8 +313,10 @@
     },
     "messages": {
       "balances_recalculated": "Az egyenlegek újraszámítása sikeresen megtörtént",
+      "default_split_cleared": "Alapértelmezett felosztás törölve",
+      "default_split_updated": "Alapértelmezett felosztás frissítve",
       "group_archived": "Csoport sikeresen archiválva",
-      "group_name_updated": "A csoport neve frissítve"
+      "group_name_updated": "Csoport adatok frissítve"
     },
     "no_members": {
       "add_members": "Tagok hozzáadása",

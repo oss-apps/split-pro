@@ -14,6 +14,9 @@
       "description": "Collez les informations suivantes lorsque que vous faites une demande au support :",
       "git": "Git",
       "new_version_available": "Une nouvelle version est disponible :",
+      "send_test_notification": "Envoyer une notification de test",
+      "test_notification_failed": "Impossible d'envoyer une notification de test",
+      "test_notification_sent": "Notification de test envoyée",
       "title": "Informations de débogage",
       "user_agent": "UserAgent",
       "version": "Version"
@@ -28,8 +31,14 @@
     },
     "download_splitpro_data": "Télécharger les données de SplitPro",
     "edit_name": {
+      "apply_avatar": "Enregistrer l'avatar",
+      "avatar_label": "Image de profil",
+      "avatar_preview": "Aperçu de l'avatar",
       "placeholder": "Choisis ton pseudo",
-      "title": "Changer de pseudo"
+      "remove_avatar": "Supprimer l'avatar",
+      "select_avatar": "Choisir une image",
+      "title": "Modifier ton profil",
+      "zoom": "Zoom"
     },
     "follow_on_x": "Nous suivre sur X",
     "import_from_splitwise": "Importer depuis Splitwise",
@@ -45,8 +54,8 @@
     },
     "logout": "Déconnexion",
     "messages": {
-      "submit_error": "Une erreur est survenue lors de l'enregistrement",
-      "submit_success": "Modifications enregistrées"
+      "submit_error": "Une erreur est survenue lors de la mise à jour de tes infos de profil",
+      "submit_success": "Profil enregistré"
     },
     "notifications": {
       "disable_notification": "Désactiver les notifications",
@@ -107,6 +116,16 @@
     "setup_instructions": "instructions de configuration Docker",
     "trouble_logging_in": "Un problème pour te connecter ? Contact"
   },
+  "balances": {
+    "default_split": {
+      "cleared": "Méthode de répartition par défaut réinitialisée",
+      "configure": "Méthode de répartition par défaut",
+      "updated": "Méthode de partage par défaut mise à jour"
+    },
+    "user_preferences": {
+      "title": "Préférences"
+    }
+  },
   "bank_transactions": {
     "choose_bank_provider": "Choix de la banque",
     "no_bank_providers_found": "Aucune banque trouvée",
@@ -138,11 +157,12 @@
     "feedback_required": "Fournis des informations",
     "group_balances_malformed": "Les données des soldes de groupe sont erronées, merci d'essayer de relancer leur calcul ou de reporter une erreur sinon.",
     "group_name_update_failed": "Une erreur est survenue lors de la mise à jour du nom du groupe",
+    "image_compression_failed": "Échec de compression de l'image, tentative d'envoi de l'image originale",
     "import_failed": "Une erreur est survenue lors de l'import du fichier",
     "invalid_cron_expression": "Expression cron invalide",
     "invalid_currency_code": "Le code de devise {{code}} est invalide",
     "language_change_failed": "Le changement de langage a échoué",
-    "less_than": "Le poids du fichier doit être inférieur à",
+    "less_than": "Le poids du fichier doit être inférieur à {{size}}Mo",
     "name_required": "Un nom est requis",
     "no_providers": "Une erreur est survenue lors du chargement des fournisseurs d'authentification. Vérifiez les logs du backend sur le serveur.",
     "notification_not_supported": "Notification non supportée",
@@ -256,12 +276,15 @@
         "title": "Es-tu sûr⋅e de vouloir archiver ce groupe ?"
       },
       "archived": "Archivé",
+      "configure_default_split": "Choisir la méthode de répartition par défaut",
+      "default_split": "Méthode de répartition par défaut",
       "delete_group": "Supprimer le groupe",
       "delete_group_details": {
         "can_delete": "Cette action est irréversible",
         "cant_delete": "Impossible de supprimer le groupe tant que tous les soldes ne sont pas réglés",
         "title": "Confirmer la suppression définitive du groupe ?"
       },
+      "edit_group": "Éditer le groupe",
       "group_created": "Création du groupe :",
       "leave_group": "Quitter ce groupe",
       "leave_group_details": {
@@ -290,8 +313,10 @@
     },
     "messages": {
       "balances_recalculated": "Soldes recalculés avec succès",
+      "default_split_cleared": "Méthode de répartition par défaut réinitialisée",
+      "default_split_updated": "Méthode de répartition par défaut mise à jour",
       "group_archived": "Groupe archivé avec succès",
-      "group_name_updated": "Nom du groupe mis à jour"
+      "group_name_updated": "Paramètres de groupe mis à jour"
     },
     "no_members": {
       "add_members": "Ajouter des membres",

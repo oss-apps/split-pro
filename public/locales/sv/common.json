@@ -14,6 +14,9 @@
       "description": "Klistra in informationen nedan när du skapar en supportförfrågan:",
       "git": "Git",
       "new_version_available": "En ny version finns tillgänglig:",
+      "send_test_notification": "Skicka test notifikation",
+      "test_notification_failed": "Kunde inte skicka test notifikation",
+      "test_notification_sent": "Test notifikation skickat",
       "title": "Debug Information",
       "user_agent": "Användaragent",
       "version": "Version"
@@ -28,8 +31,14 @@
     },
     "download_splitpro_data": "Ladda ner SplitPro data",
     "edit_name": {
+      "apply_avatar": "Använd avatar",
+      "avatar_label": "Profil bild",
+      "avatar_preview": "Avatar förhandsvisning",
       "placeholder": "Ange namn",
-      "title": "Redigera namn"
+      "remove_avatar": "Ta bort avatar",
+      "select_avatar": "Välj bild",
+      "title": "Redigera detaljer",
+      "zoom": "Zooma"
     },
     "follow_on_x": "Följ oss på X",
     "import_from_splitwise": "Importera från Splitwise",
@@ -45,8 +54,8 @@
     },
     "logout": "Logga ut",
     "messages": {
-      "submit_error": "Kunde inte skicka feedback",
-      "submit_success": "Feedback skickat"
+      "submit_error": "Kunde inte uppdatera detaljer",
+      "submit_success": "Detaljer uppdaterad"
     },
     "notifications": {
       "disable_notification": "Inaktivera notifikationer",
@@ -107,6 +116,16 @@
     "setup_instructions": "Docker-installationsinstruktioner",
     "trouble_logging_in": "Problem med att logga in? Kontakta"
   },
+  "balances": {
+    "default_split": {
+      "cleared": "Standard delning rensad",
+      "configure": "Standard delning",
+      "updated": "Standard delning uppdaterad"
+    },
+    "user_preferences": {
+      "title": "Egenskaper"
+    }
+  },
   "bank_transactions": {
     "choose_bank_provider": "Välj bank",
     "no_bank_providers_found": "Ingen bank hittades",
@@ -138,11 +157,12 @@
     "feedback_required": "Feedback krävs",
     "group_balances_malformed": "Gruppens saldon är felaktiga. Vänligen rapportera ett problem eller försök räkna om.",
     "group_name_update_failed": "Fel vid uppdatering av gruppnamn",
+    "image_compression_failed": "Bildkomprimering misslyckades, försöker ladda upp originalfilen",
     "import_failed": "Fel vid import",
     "invalid_cron_expression": "Ogiltigt cron‑uttryck",
     "invalid_currency_code": "Ogiltig valutakod {{code}}",
     "language_change_failed": "Fel vid ändring av språk",
-    "less_than": "Filen ska vara mindre än",
+    "less_than": "Filen ska vara mindre än {{size}}MB",
     "name_required": "Namn krävs",
     "no_providers": "Fel vid hämtning av autentiseringsleverantörer. Kontrollera serverloggarna.",
     "notification_not_supported": "Notifikationer stöds inte",
@@ -256,12 +276,15 @@
         "title": "Är du säker på att du vill arkivera denna grupp?"
       },
       "archived": "Arkiverad",
+      "configure_default_split": "Konfigurera standard delning",
+      "default_split": "Standard delning",
       "delete_group": "Radera grupp",
       "delete_group_details": {
         "can_delete": "Denna åtgärd kan inte ångras",
         "cant_delete": "Kan inte radera gruppen förrän alla har kvittat sina saldon",
         "title": "Är du helt säker?"
       },
+      "edit_group": "Redigera grupp",
       "group_created": "Grupp skapad",
       "leave_group": "Lämna grupp",
       "leave_group_details": {
@@ -290,8 +313,10 @@
     },
     "messages": {
       "balances_recalculated": "Saldon omräknade",
+      "default_split_cleared": "Standard delning rensad",
+      "default_split_updated": "Standard delning uppdaterad",
       "group_archived": "Grupp arkiverad framgångsrikt",
-      "group_name_updated": "Gruppnamn uppdaterat"
+      "group_name_updated": "Uppdaterad gruppinformation"
     },
     "no_members": {
       "add_members": "Lägg till medlemmar",

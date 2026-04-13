@@ -1,12 +1,12 @@
 {
   "account": {
-    "change_language": "",
+    "change_language": "Taal wijzigen",
     "change_language_details": {
       "messages": {
-        "language_changed": ""
+        "language_changed": "Taal succesvol gewijzigd"
       },
-      "placeholder": "",
-      "title": ""
+      "placeholder": "Selecteer een taal",
+      "title": "Selecteer een taal"
     },
     "debug_info": "",
     "debug_info_details": {
@@ -18,7 +18,7 @@
       "user_agent": "",
       "version": ""
     },
-    "download_app": "",
+    "download_app": "App downloaden",
     "download_app_details": {
       "download_as_pwa": "",
       "title": "",

@@ -3,84 +3,84 @@
     "entertainment": {
       "items": {
         "games": "खेल",
-        "movies": "",
-        "music": "",
-        "other": "",
-        "sports": ""
+        "movies": "चलचित्र",
+        "music": "संगीत",
+        "other": "अन्य",
+        "sports": "खेलकुद"
       },
-      "name": ""
+      "name": "मनोरञ्जन"
     },
     "food": {
       "items": {
-        "diningOut": "",
-        "groceries": "",
-        "liquor": "",
-        "other": ""
+        "diningOut": "बाहिर खाना खाने",
+        "groceries": "किराना सामान",
+        "liquor": "मदिरा",
+        "other": "अन्य"
       },
-      "name": ""
+      "name": "खाना"
     },
     "general": {
       "items": {
-        "general": "",
-        "other": ""
+        "general": "सामान्य",
+        "other": "अन्य"
       },
-      "name": ""
+      "name": "साधारण"
     },
     "home": {
       "items": {
-        "electronics": "",
-        "furniture": "",
-        "maintenance": "",
-        "mortgage": "",
-        "other": "",
-        "pets": "",
-        "rent": "",
-        "services": "",
-        "supplies": ""
+        "electronics": "इलेक्ट्रोनिक्स",
+        "furniture": "फर्निचर",
+        "maintenance": "मर्मत सम्भार",
+        "mortgage": "बन्धकी/ऋण",
+        "other": "अन्य",
+        "pets": "घरपालुवा जनावर",
+        "rent": "भाडा",
+        "services": "सेवाहरू",
+        "supplies": "सामग्रीहरू"
       },
-      "name": ""
+      "name": "घर"
     },
     "life": {
       "items": {
-        "childcare": "",
-        "clothing": "",
-        "education": "",
-        "gifts": "",
-        "insurance": "",
-        "medical": "",
-        "other": "",
-        "taxes": ""
+        "childcare": "बाल हेरचाह",
+        "clothing": "लुगाफाटा",
+        "education": "शिक्षा",
+        "gifts": "उपहार",
+        "insurance": "बीमा",
+        "medical": "चिकित्सा",
+        "other": "अन्य",
+        "taxes": "कर"
       },
-      "name": ""
+      "name": "जीवनशैली"
     },
     "travel": {
       "items": {
-        "bicycle": "",
-        "bus": "",
-        "car": "",
-        "fuel": "",
-        "hotel": "",
-        "other": "",
-        "parking": "",
-        "plane": "",
-        "taxi": "",
-        "train": ""
+        "bicycle": "साइकल",
+        "bus": "बस",
+        "car": "कार",
+        "fuel": "इन्धन",
+        "hotel": "होटल",
+        "other": "अन्य",
+        "parking": "पार्किङ",
+        "plane": "हवाई जहाज",
+        "taxi": "ट्याक्सी",
+        "train": "रेल"
       },
-      "name": ""
+      "name": "यात्रा"
     },
     "utilities": {
       "items": {
-        "cleaning": "",
-        "electricity": "",
-        "gas": "",
-        "internet": "",
-        "other": "",
-        "phone": "",
-        "trash": "",
-        "water": ""
+        "cleaning": "सरसफाइ",
+        "electricity": "विद्युत",
+        "gas": "ग्यास",
+        "internet": "इन्टरनेट",
+        "other": "अन्य",
+        "phone": "फोन",
+        "trash": "फोहोर मैला",
+        "water": "पानी"
       },
-      "name": ""
+      "name": "उपयोगिताहरू"
     }
   },
-  "title": ""
+  "title": "श्रेणीहरू"
 }

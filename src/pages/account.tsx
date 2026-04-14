@@ -36,17 +36,23 @@ import {
 import { api } from '~/utils/api';
 import type { NextPageWithUser } from '~/types';
 import { DebugInfo } from '~/components/Account/DebugInfo';
+import { useAppStore } from '~/store/appStore';
 
 const AccountPage: NextPageWithUser<{
   feedBackPossible: boolean;
   bankConnectionEnabled: boolean;
   bankConnection: string;
-}> = ({ feedBackPossible, bankConnectionEnabled, bankConnection }) => {
+  maxUploadFileSizeMB: number;
+}> = ({ feedBackPossible, bankConnectionEnabled, bankConnection, maxUploadFileSizeMB }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const userQuery = api.user.me.useQuery();
   const downloadQuery = api.user.downloadData.useMutation();
   const updateDetailsMutation = api.user.updateUserDetail.useMutation();
+
+  // TODO: Set this globally from env var with app router later
+  const { setMaxUploadFileSizeMB } = useAppStore((s) => s.actions);
+  setMaxUploadFileSizeMB(maxUploadFileSizeMB);
 
   const [downloading, setDownloading] = useState(false);
 
@@ -195,6 +201,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => ({
     bankConnectionEnabled: Boolean(isBankConnectionConfigured()),
     bankConnection: whichBankConnectionConfigured(),
     ...(await customServerSideTranslations(context.locale, ['common'])),
+    maxUploadFileSizeMB: env.UPLOAD_MAX_FILE_SIZE_MB,
   },
 });
 

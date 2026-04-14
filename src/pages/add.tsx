@@ -15,11 +15,13 @@ import { customServerSideTranslations } from '~/utils/i18n/server';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { toast } from 'sonner';
 import { deserializeDefaultSplit } from '~/lib/defaultSplit';
+import { useAppStore } from '~/store/appStore';
 
 const AddPage: NextPageWithUser<{
   enableSendingInvites: boolean;
   bankConnectionEnabled: boolean;
-}> = ({ user, enableSendingInvites, bankConnectionEnabled }) => {
+  maxUploadFileSizeMB: number;
+}> = ({ user, enableSendingInvites, bankConnectionEnabled, maxUploadFileSizeMB }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const {
     setCurrentUser,
@@ -40,6 +42,10 @@ const AddPage: NextPageWithUser<{
   const currentUser = useAddExpenseStore((s) => s.currentUser);
 
   useEffect(() => () => resetState(), [resetState]);
+
+  // TODO: Set this globally from env var with app router later
+  const { setMaxUploadFileSizeMB } = useAppStore((s) => s.actions);
+  setMaxUploadFileSizeMB(maxUploadFileSizeMB);
 
   useEffect(() => {
     setCurrentUser({
@@ -206,6 +212,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
     enableSendingInvites: Boolean(env.ENABLE_SENDING_INVITES),
     bankConnectionEnabled: isBankConnectionConfigured(),
+    maxUploadFileSizeMB: env.UPLOAD_MAX_FILE_SIZE_MB,
     ...(await customServerSideTranslations(context.locale, ['common', 'categories', 'currencies'])),
   },
 });

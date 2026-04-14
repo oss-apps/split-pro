@@ -12,7 +12,6 @@ import { Toaster } from 'sonner';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { ThemeProvider } from '~/components/ui/theme-provider';
 import { CurrencyHelpersProvider } from '~/contexts/CurrencyHelpersContext';
-import { env } from '~/env';
 import { useAddExpenseStore } from '~/store/addStore';
 import { useAppStore } from '~/store/appStore';
 import { type NextPageWithUser } from '~/types';
@@ -24,13 +23,11 @@ import '~/styles/globals.css';
 const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });
 const toastOptions = { duration: 1500 };
 
-const MyApp: AppType<{ session: Session | null; baseUrl: string; maxUploadFileSizeMB: number }> = ({
+const MyApp: AppType<{ session: Session | null }> = ({
   Component,
-  pageProps: { session, baseUrl, maxUploadFileSizeMB, ...pageProps },
+  pageProps: { session, ...pageProps },
 }) => {
   const { t, ready } = useTranslation();
-  const { setMaxUploadFileSizeMB } = useAppStore((s) => s.actions);
-  setMaxUploadFileSizeMB(maxUploadFileSizeMB);
 
   if (!ready) {
     return (
@@ -39,6 +36,9 @@ const MyApp: AppType<{ session: Session | null; baseUrl: string; maxUploadFileSi
       </div>
     );
   }
+
+  // TODO: Migrate to APP router and get it from env var
+  const baseUrl = global?.window?.location?.origin;
 
   return (
     <main className={clsx(poppins.className, 'h-full')}>
@@ -179,12 +179,5 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
 
   return <Page user={data.user} {...pageProps} />;
 };
-
-export const getServerSideProps = () => ({
-  props: {
-    baseUrl: env.NEXTAUTH_URL,
-    maxUploadFileSizeMB: env.UPLOAD_MAX_FILE_SIZE_MB,
-  },
-});
 
 export default api.withTRPC(appWithTranslation(MyApp, i18nConfig));

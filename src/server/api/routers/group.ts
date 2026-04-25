@@ -15,7 +15,7 @@ import {
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(z.object({ name: z.string().min(1), currency: z.string().optional() }))
+    .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       const group = await ctx.db.group.create({
         data: {

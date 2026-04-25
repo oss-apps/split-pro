@@ -113,10 +113,15 @@ export const getCurrencyHelpers = ({
     if (
       signed &&
       hasNegativeSign &&
+      cleaned !== '' &&
       parseFloat(cleaned) !== 0 &&
       !Number.isNaN(parseFloat(cleaned))
     ) {
       cleaned = `-${cleaned}`;
+    }
+    // Allow lone minus sign to persist while user is typing
+    if (signed && hasNegativeSign && cleaned === '') {
+      cleaned = '-';
     }
 
     if (hasDecimalSeparator) {

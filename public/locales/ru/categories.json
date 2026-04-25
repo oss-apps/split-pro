@@ -1,1 +1,14 @@
-{}
+{
+  "categories_list": {
+    "entertainment": {
+      "name": "Развлечения"
+    },
+    "food": {
+      "items": {
+        "diningOut": "Питание вне дома",
+        "groceries": "Продукты",
+        "liquor": "Алкоголь"
+      }
+    }
+  }
+}

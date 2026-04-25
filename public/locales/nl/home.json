@@ -5,8 +5,8 @@
       "title": ""
     },
     "currency_conversion": {
-      "description": "",
-      "title": ""
+      "description": "Converteer snel tussen verschillende valuta's met behulp van actuele of historische wisselkoersen.",
+      "title": "Valutaomrekening"
     },
     "debt_simplification": {
       "description": "",
@@ -39,6 +39,10 @@
     "pwa_support": {
       "description": "Hou je van mobiele apps? We steunen je hierin. Installeer het als een PWA en je merkt geen verschil!",
       "title": "PWA support"
+    },
+    "recurring_transactions": {
+      "description": "Stel automatisch terugkerende kosten in voor huur, abonnementen, of andere regelmatig gedeelde kosten",
+      "title": "Terugkerende transacties"
     },
     "title": "Functies",
     "unequal_split": {

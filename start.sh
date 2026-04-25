@@ -38,6 +38,9 @@ for file_var in $file_vars; do
     echo "Set $base_var from $file_var ($file_path)" >&2
 done
 
+if [ -z "$DATABASE_URL" ]; then
+    DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_CONTAINER_NAME}:${POSTGRES_PORT}/${POSTGRES_DB}
+fi
 
 echo "Starting web server"
 

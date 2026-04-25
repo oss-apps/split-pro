@@ -169,6 +169,8 @@ describe('getCurrencyHelpers', () => {
       ['-$1,234.56', '-1234.56'],
       ['abc-123.45xyz', '-123.45'],
       ['--123.45', '-123.45'],
+      ['-', '-'],
+      ['-0', '-0'],
     ])('should sanitize %p to %p with signed flag', (input, expected) => {
       expect(sanitizeInput(input, true)).toBe(expected);
     });

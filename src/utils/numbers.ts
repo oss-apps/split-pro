@@ -110,12 +110,7 @@ export const getCurrencyHelpers = ({
         cleaned += letter;
       }
     });
-    if (
-      signed &&
-      hasNegativeSign &&
-      parseFloat(cleaned) !== 0 &&
-      !Number.isNaN(parseFloat(cleaned))
-    ) {
+    if (signed && hasNegativeSign) {
       cleaned = `-${cleaned}`;
     }
 

@@ -12,8 +12,12 @@ const MAX_RECENT_CURRENCIES = 5;
 
 interface CurrencyPreferenceState {
   recentCurrencies: CurrencyCode[];
-  addToRecentCurrencies: (currency: CurrencyCode) => void;
+  userDefaultCurrency: CurrencyCode | null;
+  groupDefaultCurrencies: Record<number, CurrencyCode | null>;
   preferences: Record<string, CurrencyPreference>;
+  addToRecentCurrencies: (currency: CurrencyCode) => void;
+  setUserDefaultCurrency: (currency: CurrencyCode | null) => void;
+  setGroupDefaultCurrency: (groupId: number, currency: CurrencyCode | null) => void;
   setPreference: (key?: number | string, currency?: string) => void;
   getPreference: (key?: number | string) => CurrencyPreference;
   clearPreference: (key?: number | string) => void;
@@ -23,12 +27,22 @@ export const useCurrencyPreferenceStore = create<CurrencyPreferenceState>()(
   persist(
     (set, get) => ({
       recentCurrencies: [],
+      userDefaultCurrency: null,
+      groupDefaultCurrencies: {},
       preferences: {},
       addToRecentCurrencies: (currency) =>
         set((state) => {
           const updatedRecent = [currency, ...state.recentCurrencies.filter((c) => c !== currency)];
           return { recentCurrencies: updatedRecent.slice(0, MAX_RECENT_CURRENCIES) };
         }),
+      setUserDefaultCurrency: (currency) => set((_state) => ({ userDefaultCurrency: currency })),
+      setGroupDefaultCurrency: (groupId, currency) =>
+        set((state) => ({
+          groupDefaultCurrencies: {
+            ...state.groupDefaultCurrencies,
+            [groupId]: currency,
+          },
+        })),
       setPreference: (key = DEFAULT_KEY, currency = SHOW_ALL_VALUE) =>
         set((state) => ({
           preferences: {
@@ -36,7 +50,11 @@ export const useCurrencyPreferenceStore = create<CurrencyPreferenceState>()(
             [key]: isCurrencyCode(currency) ? currency : SHOW_ALL_VALUE,
           },
         })),
-      getPreference: (key = DEFAULT_KEY) => get().preferences[key] || SHOW_ALL_VALUE,
+      getPreference: (key = DEFAULT_KEY) =>
+        get().preferences[key] ||
+        (typeof key === 'number' && get().groupDefaultCurrencies[key]) ||
+        get().userDefaultCurrency ||
+        SHOW_ALL_VALUE,
       clearPreference: (key = DEFAULT_KEY) =>
         set((state) => {
           const { [key]: _, ...rest } = state.preferences;

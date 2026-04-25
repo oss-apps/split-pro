@@ -1,7 +1,7 @@
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { BalanceEntry } from '~/components/Expense/BalanceEntry';
 import { CreateGroup } from '~/components/group/CreateGroup';
 import MainLayout from '~/components/Layout/MainLayout';
@@ -15,6 +15,8 @@ import {
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
+import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
+import { isCurrencyCode } from '~/lib/currency';
 
 // Helper to transform balances object to array format
 function transformBalances(balances: Record<string, bigint>) {
@@ -27,6 +29,15 @@ const BalancePage: NextPageWithUser = () => {
   const { t } = useTranslation();
   const groupQuery = api.group.getAllGroupsWithBalances.useQuery();
   const archivedGroupQuery = api.group.getAllGroupsWithBalances.useQuery({ getArchived: true });
+  const setGroupDefaultCurrency = useCurrencyPreferenceStore((s) => s.setGroupDefaultCurrency);
+
+  useEffect(() => {
+    groupQuery.data?.forEach(({ id, defaultCurrency }) => {
+      if (isCurrencyCode(defaultCurrency)) {
+        setGroupDefaultCurrency(id, defaultCurrency);
+      }
+    });
+  }, [groupQuery.data, setGroupDefaultCurrency]);
 
   const actions = useMemo(
     () => (

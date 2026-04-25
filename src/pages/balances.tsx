@@ -2,7 +2,7 @@ import { ArrowUpOnSquareIcon } from '@heroicons/react/24/outline';
 import { Download, PlusIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { DownloadAppDrawer } from '~/components/Account/DownloadAppDrawer';
 import { BalanceEntry } from '~/components/Expense/BalanceEntry';
 import MainLayout from '~/components/Layout/MainLayout';
@@ -18,13 +18,20 @@ import { cn } from '~/lib/utils';
 import { isCurrencyCode } from '~/lib/currency';
 import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
 
-const BalancePage: NextPageWithUser = () => {
+const BalancePage: NextPageWithUser = ({ user }) => {
   const { t } = useTranslationWithUtils();
   const isPwa = useIsPwa();
   const balanceQuery = api.expense.getBalances.useQuery();
   const cumulatedQuery = api.expense.getCumulatedBalances.useQuery();
 
   const selectedCurrency = useCurrencyPreferenceStore((s) => s.getPreference());
+  const setUserDefaultCurrency = useCurrencyPreferenceStore((s) => s.setUserDefaultCurrency);
+
+  useEffect(() => {
+    if (isCurrencyCode(user.defaultCurrency)) {
+      setUserDefaultCurrency(user.defaultCurrency);
+    }
+  }, [user, setUserDefaultCurrency]);
 
   const allNonZeroCurrencies = useMemo(() => {
     const nonZeroBalances = balanceQuery.data?.balances.flatMap((b) =>

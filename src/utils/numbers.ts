@@ -66,7 +66,7 @@ export const getCurrencyHelpers = ({
     const [integerPart = '0', decimalPart = ''] = cleanStr.split('.');
 
     return (
-      BigInt(integerPart) * decimalMultiplierN +
+      BigInt(integerPart === '-') * decimalMultiplierN +
       BigInt(Math.round(parseFloat(`0.${decimalPart || '0'}`) * decimalMultiplier)) *
         (integerPart.startsWith('-') ? -1n : 1n)
     );
@@ -113,10 +113,14 @@ export const getCurrencyHelpers = ({
     if (
       signed &&
       hasNegativeSign &&
+      cleaned !== '' &&
       parseFloat(cleaned) !== 0 &&
       !Number.isNaN(parseFloat(cleaned))
     ) {
       cleaned = `-${cleaned}`;
+    }
+    if (signed && hasNegativeSign && cleaned === '') {
+      cleaned = '-';
     }
 
     if (hasDecimalSeparator) {

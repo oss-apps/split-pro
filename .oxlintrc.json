@@ -42,7 +42,8 @@
     "prefer-destructuring": "off",
     "max-statements": "off",
     "jsx-max-depth": "off",
-    "no-nodejs-modules": "off"
+    "no-nodejs-modules": "off",
+    "no-implicit-coercion": "off"
   },
   "overrides": [
     {

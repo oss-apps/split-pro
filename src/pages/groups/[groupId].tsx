@@ -17,7 +17,7 @@ import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Fragment, useCallback, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { BalanceList } from '~/components/Expense/BalanceList';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
@@ -34,13 +34,16 @@ import { DefaultSplitSettings } from '~/components/DefaultSplit/DefaultSplitSett
 import { Switch } from '~/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { UpdateName } from '~/components/Account/UpdateDetails';
+import { CurrencyPicker } from '~/components/AddExpense/CurrencyPicker';
 import { env } from '~/env';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { deserializeDefaultSplit } from '~/lib/defaultSplit';
+import { isCurrencyCode, parseCurrencyCode } from '~/lib/currency';
 import { db } from '~/server/db';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
+import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
@@ -48,6 +51,8 @@ const BalancePage: NextPageWithUser<{
   const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const router = useRouter();
   const groupId = parseInt(router.query.groupId as string);
+
+  const setGroupDefaultCurrency = useCurrencyPreferenceStore((s) => s.setGroupDefaultCurrency);
 
   const groupDetailQuery = api.group.getGroupDetails.useQuery({ groupId });
   const groupTotalQuery = api.group.getGroupTotals.useQuery({ groupId });
@@ -131,6 +136,12 @@ const BalancePage: NextPageWithUser<{
     },
     [groupId, leaveGroupMutation, groupDetailQuery, router, t],
   );
+
+  useEffect(() => {
+    if (isCurrencyCode(groupDetailQuery.data?.defaultCurrency)) {
+      setGroupDefaultCurrency(groupId, groupDetailQuery.data.defaultCurrency);
+    }
+  }, [groupDetailQuery.data?.defaultCurrency, setGroupDefaultCurrency, groupId]);
 
   return (
     <>
@@ -264,6 +275,48 @@ const BalancePage: NextPageWithUser<{
                       )}
                     </div>
                   ))}
+                </div>
+
+                <div className="mt-6">
+                  <p className="font-semibold">
+                    {t('group_details.group_info.default_balance_currency')}
+                  </p>
+                  <CurrencyPicker
+                    className="mt-2"
+                    currentCurrency={
+                      groupDetailQuery.data?.defaultCurrency &&
+                      isCurrencyCode(groupDetailQuery.data.defaultCurrency)
+                        ? parseCurrencyCode(groupDetailQuery.data.defaultCurrency)
+                        : null
+                    }
+                    allowClear
+                    onCurrencyPick={(currency) => {
+                      if (!groupDetailQuery.data) {
+                        return;
+                      }
+
+                      updateGroupDetailsMutation.mutate(
+                        {
+                          groupId,
+                          name: groupDetailQuery.data.name,
+                          image: groupDetailQuery.data.image,
+                          defaultCurrency: currency,
+                        },
+                        {
+                          onSuccess: () => {
+                            toast.success(
+                              t('group_details.messages.default_balance_currency_updated'),
+                            );
+                            setGroupDefaultCurrency(groupId, currency);
+                            void groupDetailQuery.refetch();
+                          },
+                          onError: () => {
+                            toast.error(t('errors.setting_update_failed'));
+                          },
+                        },
+                      );
+                    }}
+                  />
                 </div>
 
                 <div className="mt-6">

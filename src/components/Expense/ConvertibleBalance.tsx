@@ -1,7 +1,7 @@
 'use client';
 
 import { EqualApproximately } from 'lucide-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
@@ -41,26 +41,50 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
 
   const balances = useMemo(() => rawBalances.filter((b) => b.amount !== 0n), [rawBalances]);
 
-  // Available currencies from balances
-  const availableCurrencies = useMemo(
-    () =>
-      overrideCurrencies ??
-      balances.map((b) => b.currency).filter((c, i, arr) => arr.indexOf(c) === i),
-    [overrideCurrencies, balances],
+  const userDefaultCurrency = useCurrencyPreferenceStore((s) => s.userDefaultCurrency);
+  const groupDefaultCurrency = useCurrencyPreferenceStore((s) =>
+    entityId ? s.groupDefaultCurrencies[entityId] : null,
   );
+
+  // Available currencies from balances
+  const availableCurrencies = useMemo(() => {
+    const res =
+      overrideCurrencies ??
+      balances.map((b) => b.currency).filter((c, i, arr) => arr.indexOf(c) === i);
+    if (isCurrencyCode(groupDefaultCurrency) && !res.includes(groupDefaultCurrency)) {
+      res.push(groupDefaultCurrency);
+    }
+    if (isCurrencyCode(userDefaultCurrency) && !res.includes(userDefaultCurrency)) {
+      res.push(userDefaultCurrency);
+    }
+    return res;
+  }, [userDefaultCurrency, groupDefaultCurrency, overrideCurrencies, balances]);
+
+  const sessionPreference = useCurrencyPreferenceStore((s) => s.getPreference(entityId));
+  const setSelectedCurrency = useCurrencyPreferenceStore(
+    (s) => (preference?: string) => s.setPreference(entityId, preference),
+  );
+  const clearPreference = useCurrencyPreferenceStore((s) => s.clearPreference);
 
   const selectedCurrency = useCurrencyPreferenceStore((s) => {
     const preference = s.getPreference(entityId);
     if (preference === SHOW_ALL_VALUE || availableCurrencies.includes(preference ?? '')) {
       return preference;
     } else {
-      s.setPreference(entityId, SHOW_ALL_VALUE);
       return SHOW_ALL_VALUE;
     }
   });
-  const setSelectedCurrency = useCurrencyPreferenceStore(
-    (s) => (preference?: string) => s.setPreference(entityId, preference),
-  );
+
+  // Clear invalid preference
+  useEffect(() => {
+    if (
+      sessionPreference &&
+      sessionPreference !== SHOW_ALL_VALUE &&
+      !isCurrencyCode(sessionPreference)
+    ) {
+      clearPreference(entityId);
+    }
+  }, [clearPreference, entityId, sessionPreference]);
 
   const currentDate = useMemo(() => new Date(), []);
 
@@ -136,12 +160,14 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
     return total;
   }, [shouldShowAll, balances, ratesQuery, selectedCurrency, t, setSelectedCurrency]);
 
+  console.log(selectedCurrency, groupDefaultCurrency);
+
   if (0 === balances.length) {
     return <AmountDisplay className={className} amount={0n} currency="USD" />;
   }
 
-  // If only one currency, no conversion needed
-  if (1 === balances.length && !forceShowButton) {
+  // If only one currency, no conversion needed, unless different preference exists
+  if (1 === availableCurrencies.length && !forceShowButton) {
     const balance = balances[0]!;
     return (
       <AmountDisplay

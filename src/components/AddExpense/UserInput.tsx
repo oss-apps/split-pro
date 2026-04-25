@@ -62,6 +62,7 @@ export const UserInput: React.FC<{
         emailVerified: new Date(),
         image: null,
         currency: 'USD',
+        defaultCurrency: null,
         obapiProviderId: null,
         bankingId: null,
         preferredLanguage: '',
@@ -94,7 +95,7 @@ export const UserInput: React.FC<{
       <input
         type="email"
         placeholder={
-          isEditing && !!group
+          isEditing && Boolean(group)
             ? t('expense_details.add_expense_details.user_input.cannot_change_group')
             : group
               ? t('expense_details.add_expense_details.user_input.remove_group')
@@ -107,7 +108,7 @@ export const UserInput: React.FC<{
         onKeyDown={handleKeyDown}
         className="min-w-[100px] grow bg-transparent outline-hidden placeholder:text-sm focus:ring-0"
         autoFocus
-        disabled={isEditing && !!group}
+        disabled={isEditing && Boolean(group)}
       />
     </div>
   );

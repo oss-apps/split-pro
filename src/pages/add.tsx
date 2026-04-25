@@ -50,6 +50,7 @@ const AddPage: NextPageWithUser<{
   useEffect(() => {
     setCurrentUser({
       ...user,
+      defaultCurrency: user.defaultCurrency ?? null,
       emailVerified: null,
       name: user.name ?? null,
       email: user.email ?? null,

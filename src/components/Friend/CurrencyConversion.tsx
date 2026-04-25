@@ -115,7 +115,11 @@ export const CurrencyConversion: React.FC<{
   }, []);
 
   const onChangeTargetCurrency = useCallback(
-    (currency: CurrencyCode) => {
+    (currency: CurrencyCode | null) => {
+      if (!currency) {
+        return;
+      }
+
       setRate('');
       setTargetCurrency(currency);
       setCurrency(currency);

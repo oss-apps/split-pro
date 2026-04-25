@@ -149,6 +149,7 @@ export const userRouter = createTRPCRouter({
         name: z.string().optional(),
         image: z.string().nullable().optional(),
         currency: z.string().optional(),
+        defaultCurrency: z.string().nullable().optional(),
         obapiProviderId: z.string().optional(),
         bankingId: z.string().optional(),
         preferredLanguage: z.string().optional(),

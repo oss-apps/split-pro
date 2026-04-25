@@ -72,9 +72,9 @@ const AccountPage: NextPageWithUser<{
   const utils = api.useUtils();
 
   const onNameUpdate = useCallback(
-    async (values: { name: string; image?: string | null }) => {
+    async (values: { name: string; image?: string | null; defaultCurrency?: string | null }) => {
       try {
-        await updateDetailsMutation.mutateAsync({ name: values.name, image: values.image });
+        await updateDetailsMutation.mutateAsync(values);
         toast.success(t('account.messages.submit_success'), { duration: 1500 });
         utils.user.me.refetch().catch(console.error);
       } catch (error) {
@@ -112,6 +112,7 @@ const AccountPage: NextPageWithUser<{
               className="size-5"
               defaultName={userQuery.data?.name ?? ''}
               defaultImage={userQuery.data?.image}
+              defaultCurrency={userQuery.data?.defaultCurrency}
               onNameSubmit={onNameUpdate}
             />
           )}
@@ -200,7 +201,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => ({
     feedbackPossible: Boolean(env.FEEDBACK_EMAIL),
     bankConnectionEnabled: Boolean(isBankConnectionConfigured()),
     bankConnection: whichBankConnectionConfigured(),
-    ...(await customServerSideTranslations(context.locale, ['common'])),
+    ...(await customServerSideTranslations(context.locale, ['common', 'currencies'])),
     maxUploadFileSizeMB: env.UPLOAD_MAX_FILE_SIZE_MB,
   },
 });

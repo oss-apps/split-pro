@@ -17,6 +17,8 @@ import { Label } from '../ui/label';
 import { Slider } from '../ui/slider';
 import { Button } from '../ui/button';
 import { useAppStore } from '~/store/appStore';
+import { CurrencyPicker } from '../AddExpense/CurrencyPicker';
+import { isCurrencyCode, parseCurrencyCode } from '~/lib/currency';
 
 const createImage = async (url: string) => {
   const image = new Image();
@@ -76,6 +78,7 @@ const detailsSchema = (t: TFunction) =>
       .string({ required_error: t('errors.name_required') })
       .min(1, { message: t('errors.name_required') }),
     image: z.string().nullable().optional(),
+    defaultCurrency: z.string().nullable().optional(),
   });
 
 type UpdateDetailsFormValues = z.infer<ReturnType<typeof detailsSchema>>;
@@ -84,8 +87,13 @@ export const UpdateName: React.FC<{
   className?: string;
   defaultName: string;
   defaultImage?: string | null;
-  onNameSubmit: (values: { name: string; image?: string | null }) => void | Promise<void>;
-}> = ({ className, defaultName, defaultImage, onNameSubmit }) => {
+  defaultCurrency?: string | null;
+  onNameSubmit: (values: {
+    name: string;
+    image?: string | null;
+    defaultCurrency?: string | null;
+  }) => void | Promise<void>;
+}> = ({ className, defaultName, defaultImage, defaultCurrency, onNameSubmit }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -100,6 +108,7 @@ export const UpdateName: React.FC<{
     defaultValues: {
       name: defaultName,
       image: defaultImage,
+      defaultCurrency,
     },
   });
 
@@ -107,8 +116,9 @@ export const UpdateName: React.FC<{
     detailForm.reset({
       name: defaultName,
       image: defaultImage,
+      defaultCurrency,
     });
-  }, [defaultImage, defaultName, detailForm]);
+  }, [defaultCurrency, defaultImage, defaultName, detailForm]);
 
   React.useEffect(
     () => () => {
@@ -174,7 +184,11 @@ export const UpdateName: React.FC<{
         }
       }
 
-      await onNameSubmit({ ...values, image: nextImage });
+      await onNameSubmit({
+        ...values,
+        image: nextImage,
+        defaultCurrency: values.defaultCurrency,
+      });
       setDrawerOpen(false);
       if (imageSrc?.startsWith('blob:')) {
         URL.revokeObjectURL(imageSrc);
@@ -244,7 +258,7 @@ export const UpdateName: React.FC<{
       actionOnClick={handleOnActionClick}
     >
       <Form {...detailForm}>
-        <form className="mt-4 flex w-full flex-col gap-4" onSubmit={handleOnActionClick}>
+        <form className="mt-4 flex w-full flex-col gap-8" onSubmit={handleOnActionClick}>
           {!imageSrc ? (
             <div className="flex w-full items-center justify-around px-16">
               <EntityAvatar
@@ -307,6 +321,26 @@ export const UpdateName: React.FC<{
             </div>
           )}
           <FormField control={detailForm.control} name="name" render={field} />
+          <div className="flex justify-between space-y-2">
+            <Label className="text-md">{t('account.default_balance_currency')}</Label>
+            {(() => {
+              const defaultCurrency = detailForm.watch('defaultCurrency');
+
+              return (
+                <CurrencyPicker
+                  currentCurrency={
+                    defaultCurrency && isCurrencyCode(defaultCurrency)
+                      ? parseCurrencyCode(defaultCurrency)
+                      : null
+                  }
+                  allowClear
+                  onCurrencyPick={(currency) => {
+                    detailForm.setValue('defaultCurrency', currency, { shouldDirty: true });
+                  }}
+                />
+              );
+            })()}
+          </div>
         </form>
       </Form>
     </AppDrawer>

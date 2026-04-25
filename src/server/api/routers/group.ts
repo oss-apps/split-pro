@@ -15,14 +15,13 @@ import {
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(z.object({ name: z.string().min(1), currency: z.string().optional() }))
+    .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       const group = await ctx.db.group.create({
         data: {
           name: input.name,
           publicId: nanoid(),
           userId: ctx.session.user.id,
-          defaultCurrency: input.currency ?? 'USD',
           groupUsers: {
             create: {
               userId: ctx.session.user.id,
@@ -349,6 +348,7 @@ export const groupRouter = createTRPCRouter({
       z.object({
         name: z.string().min(1),
         image: z.string().nullable().optional(),
+        defaultCurrency: z.string().nullable().optional(),
         groupId: z.number(),
       }),
     )
@@ -370,6 +370,7 @@ export const groupRouter = createTRPCRouter({
         data: {
           name: input.name,
           image: input.image,
+          defaultCurrency: input.defaultCurrency,
         },
       });
 

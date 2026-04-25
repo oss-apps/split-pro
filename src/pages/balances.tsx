@@ -66,7 +66,7 @@ const BalancePage: NextPageWithUser = () => {
       >
         <NotificationModal />
         <div className="mx-4 flex items-stretch justify-between gap-4">
-          {isCurrencyCode(selectedCurrency) ? (
+          {selectedCurrency && isCurrencyCode(selectedCurrency) ? (
             <CumulatedBalanceDisplay
               prefix={`${t('ui.total_balance')}`}
               cumulatedBalances={[

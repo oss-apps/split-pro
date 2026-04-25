@@ -105,6 +105,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                           preferredLanguage: user.preferredLanguage ?? '',
                           hiddenFriendIds: user.hiddenFriendIds ?? [],
                           currency: user.currency ?? 'USD',
+                          defaultCurrency: user.defaultCurrency ?? null,
                         },
                         friendQuery.data,
                       ]}

@@ -17,6 +17,7 @@
       "video": "video"
     },
     "download_splitpro_data": "Download SplitPro data",
+    "default_balance_currency": "Default balance currency",
     "edit_name": {
       "apply_avatar": "Apply avatar",
       "avatar_label": "Profile picture",
@@ -262,6 +263,7 @@
       "archive_group": "Archive group",
       "configure_default_split": "Configure default split",
       "default_split": "Default split",
+      "default_balance_currency": "Default balance currency",
       "edit_group": "Edit group",
       "archive_group_details": {
         "can_archive": "This group will be archived and hidden from your main groups list. You can still access it later if needed.",
@@ -304,6 +306,8 @@
     "messages": {
       "default_split_cleared": "Default split cleared",
       "default_split_updated": "Default split updated",
+      "default_balance_currency_cleared": "Default balance currency cleared",
+      "default_balance_currency_updated": "Default balance currency updated",
       "balances_recalculated": "Balances recalculated successfully",
       "group_archived": "Group archived successfully",
       "group_name_updated": "Updated group details"

@@ -9,12 +9,14 @@ import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
 
 function CurrencyPickerInner({
   className,
-  currentCurrency = 'USD',
+  currentCurrency,
   onCurrencyPick,
+  allowClear = false,
 }: {
   className?: string;
-  currentCurrency: CurrencyCode;
-  onCurrencyPick: (currency: CurrencyCode) => void;
+  currentCurrency?: CurrencyCode | null;
+  onCurrencyPick: (currency: CurrencyCode | null) => void;
+  allowClear?: boolean;
 }) {
   const { t, getCurrencyName } = useTranslationWithUtils(['currencies']);
   const { recentCurrencies, addToRecentCurrencies } = useCurrencyPreferenceStore();
@@ -27,33 +29,19 @@ function CurrencyPickerInner({
     [onCurrencyPick, addToRecentCurrencies],
   );
 
+  const onClear = useCallback(() => {
+    onCurrencyPick(null);
+  }, [onCurrencyPick]);
+
   const trigger = useMemo(
     () => (
       <Button variant="outline" className="w-[70px] rounded-lg py-2 text-base">
-        {currentCurrency}
+        {currentCurrency ?? ''}
       </Button>
     ),
     [currentCurrency],
   );
 
-  const extractValue = useCallback((currency: { code: CurrencyCode }) => currency.code, []);
-  const extractKey = useCallback((currency: { code: CurrencyCode }) => currency.code, []);
-  const selected = useCallback(
-    (currency: { code: CurrencyCode }) => currency.code === currentCurrency,
-    [currentCurrency],
-  );
-  const renderCurrency = useCallback(
-    (currency: { code: CurrencyCode }) => {
-      const translatedName = getCurrencyName(currency.code);
-      return (
-        <>
-          <p>{translatedName}</p>
-          <p className="text-muted-foreground">{currency.code}</p>
-        </>
-      );
-    },
-    [getCurrencyName],
-  );
   const recentCurrencyObjects = useMemo(
     () => recentCurrencies.map((code) => CURRENCIES[code]),
     [recentCurrencies],
@@ -67,6 +55,50 @@ function CurrencyPickerInner({
     return uniqueItems;
   }, [recentCurrencyObjects, recentCurrencies]);
 
+  const renderedItems = useMemo(
+    () =>
+      allowClear
+        ? [
+            {
+              code: '__CLEAR__' as const,
+              label:
+                t('ui.not_set', { ns: 'common' }) ?? t('expense_details.clear', { ns: 'common' }),
+              isClear: true,
+            },
+            ...items,
+          ]
+        : items,
+    [allowClear, items, t],
+  );
+
+  const extractValue = useCallback(
+    (currency: { code: CurrencyCode } | { code: '__CLEAR__' }) => currency.code,
+    [],
+  );
+  const extractKey = extractValue;
+  const selectedOption = useCallback(
+    (currency: { code: CurrencyCode } | { code: '__CLEAR__' }) =>
+      '__CLEAR__' === currency.code ? currentCurrency === null : currency.code === currentCurrency,
+    [currentCurrency],
+  );
+
+  const renderCurrencyItem = useCallback(
+    (currency: { code: CurrencyCode } | { code: '__CLEAR__'; label: string; isClear: true }) => {
+      if ('__CLEAR__' === currency.code) {
+        return <p>{currency.label}</p>;
+      }
+
+      const translatedName = getCurrencyName(currency.code);
+      return (
+        <>
+          <p>{translatedName}</p>
+          <p className="text-muted-foreground">{currency.code}</p>
+        </>
+      );
+    },
+    [getCurrencyName],
+  );
+
   return (
     <GeneralPicker
       className={className}
@@ -74,12 +106,12 @@ function CurrencyPickerInner({
       title={t('title')}
       placeholderText={t('placeholder')}
       noOptionsText={t('no_currency_found')}
-      onSelect={onSelect}
-      items={items}
+      onSelect={(value) => ('__CLEAR__' === value ? onClear() : onSelect(value))}
+      items={renderedItems}
       extractValue={extractValue}
       extractKey={extractKey}
-      selected={selected}
-      render={renderCurrency}
+      selected={selectedOption}
+      render={renderCurrencyItem}
     />
   );
 }

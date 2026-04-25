@@ -77,7 +77,11 @@ export const AddOrEditExpensePage: React.FC<{
   const { update } = useSession();
 
   const onCurrencyPick = useCallback(
-    (newCurrency: CurrencyCode) => {
+    (newCurrency: CurrencyCode | null) => {
+      if (!newCurrency) {
+        return;
+      }
+
       updateProfile.mutate({ currency: newCurrency });
 
       previousCurrencyRef.current = currency;

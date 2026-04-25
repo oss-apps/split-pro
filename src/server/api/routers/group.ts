@@ -22,7 +22,6 @@ export const groupRouter = createTRPCRouter({
           name: input.name,
           publicId: nanoid(),
           userId: ctx.session.user.id,
-          defaultCurrency: input.currency ?? 'USD',
           groupUsers: {
             create: {
               userId: ctx.session.user.id,
@@ -349,6 +348,7 @@ export const groupRouter = createTRPCRouter({
       z.object({
         name: z.string().min(1),
         image: z.string().nullable().optional(),
+        defaultCurrency: z.string().nullable().optional(),
         groupId: z.number(),
       }),
     )
@@ -370,6 +370,7 @@ export const groupRouter = createTRPCRouter({
         data: {
           name: input.name,
           image: input.image,
+          defaultCurrency: input.defaultCurrency,
         },
       });
 

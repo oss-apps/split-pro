@@ -25,6 +25,7 @@ declare module 'next-auth' {
     user: DefaultSession['user'] & {
       id: number;
       currency: string;
+      defaultCurrency?: string | null;
       obapiProviderId?: string;
       bankingId?: string;
       preferredLanguage: string;
@@ -40,6 +41,7 @@ declare module 'next-auth' {
     email: string;
     image: string;
     currency: string;
+    defaultCurrency?: string | null;
     obapiProviderId?: string;
     bankingId?: string;
     preferredLanguage: string;
@@ -115,6 +117,7 @@ export const authOptions: NextAuthOptions = {
         ...session.user,
         id: user.id,
         currency: user.currency,
+        defaultCurrency: user.defaultCurrency,
         obapiProviderId: user.obapiProviderId,
         bankingId: user.bankingId,
         preferredLanguage: user.preferredLanguage,

@@ -45,6 +45,7 @@ model User {
   emailVerified        DateTime?
   image                String?
   currency             String               @default("USD")
+  defaultCurrency      String?
   preferredLanguage    String               @default("")
   bankingId            String?
   obapiProviderId      String?
@@ -99,7 +100,7 @@ model Group {
   name              String
   image             String?
   userId            Int
-  defaultCurrency   String             @default("USD")
+  defaultCurrency   String?
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   splitwiseGroupId  String?            @unique

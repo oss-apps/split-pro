@@ -1,7 +1,7 @@
 import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { AddOrEditExpensePage } from '~/components/AddExpense/AddExpensePage';
 import MainLayout from '~/components/Layout/MainLayout';
 import { env } from '~/env';
@@ -40,6 +40,9 @@ const AddPage: NextPageWithUser<{
     applySplitPreset,
   } = useAddExpenseStore((s) => s.actions);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
+  const initializedGroupIdRef = useRef<number | null>(null);
+  const initializedFriendIdRef = useRef<number | null>(null);
+  const initializedExpenseIdRef = useRef<string | null>(null);
 
   useEffect(() => () => resetState(), [resetState]);
 
@@ -68,29 +71,51 @@ const AddPage: NextPageWithUser<{
   const _expenseId = expenseId as string;
   const groupQuery = api.group.getGroupDetails.useQuery(
     { groupId: _groupId },
-    { enabled: Boolean(_groupId) && !_expenseId },
+    {
+      enabled: Boolean(_groupId) && !_expenseId,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    },
   );
 
   const friendQuery = api.user.getFriend.useQuery(
     { friendId: _friendId },
-    { enabled: Boolean(_friendId) && !_expenseId },
+    {
+      enabled: Boolean(_friendId) && !_expenseId,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    },
   );
 
   const expenseQuery = api.expense.getExpenseDetails.useQuery(
     { expenseId: _expenseId },
-    { enabled: Boolean(_expenseId) },
+    {
+      enabled: Boolean(_expenseId),
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    },
   );
 
   useEffect(() => {
+    if (!groupId || !_groupId) {
+      initializedGroupIdRef.current = null;
+      return;
+    }
+
+    if (initializedGroupIdRef.current === _groupId) {
+      return;
+    }
+
     // Set group
     if (groupId && !groupQuery.isPending && groupQuery.data && currentUser) {
+      initializedGroupIdRef.current = _groupId;
       setGroup(groupQuery.data);
 
       setParticipants([
         currentUser,
         ...groupQuery.data.groupUsers
           .map((gu) => gu.user)
-          .filter((user) => user.id !== currentUser.id),
+          .filter((groupUser) => groupUser.id !== currentUser.id),
       ]);
       const parsedDefaultSplit = deserializeDefaultSplit(groupQuery.data.defaultSplit);
       if (parsedDefaultSplit) {
@@ -99,6 +124,7 @@ const AddPage: NextPageWithUser<{
       useAddExpenseStore.setState({ showFriends: false });
     }
   }, [
+    _groupId,
     groupId,
     groupQuery.isPending,
     groupQuery.data,
@@ -109,7 +135,17 @@ const AddPage: NextPageWithUser<{
   ]);
 
   useEffect(() => {
+    if (!friendId || !_friendId) {
+      initializedFriendIdRef.current = null;
+      return;
+    }
+
+    if (initializedFriendIdRef.current === _friendId) {
+      return;
+    }
+
     if (friendId && currentUser && friendQuery.data) {
+      initializedFriendIdRef.current = _friendId;
       setParticipants([currentUser, friendQuery.data]);
       const parsedDefaultSplit = deserializeDefaultSplit(friendQuery.data.defaultSplit);
       if (parsedDefaultSplit) {
@@ -118,6 +154,7 @@ const AddPage: NextPageWithUser<{
       useAddExpenseStore.setState({ showFriends: false });
     }
   }, [
+    _friendId,
     friendId,
     friendQuery.isPending,
     friendQuery.data,
@@ -128,8 +165,15 @@ const AddPage: NextPageWithUser<{
 
   useEffect(() => {
     if (!_expenseId || !expenseQuery.data) {
+      initializedExpenseIdRef.current = null;
       return;
     }
+
+    if (initializedExpenseIdRef.current === _expenseId) {
+      return;
+    }
+
+    initializedExpenseIdRef.current = _expenseId;
 
     if (expenseQuery.data.group) {
       setGroup(expenseQuery.data.group);
@@ -171,7 +215,16 @@ const AddPage: NextPageWithUser<{
     }
   }, [
     _expenseId,
+    _friendId,
+    _groupId,
+    friendId,
     expenseQuery.data,
+    groupId,
+    friendQuery.data,
+    friendQuery.isPending,
+    groupQuery.data,
+    groupQuery.isPending,
+    currentUser,
     setAmount,
     setAmountStr,
     setCategory,

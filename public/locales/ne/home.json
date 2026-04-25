@@ -1,74 +1,78 @@
 {
   "features": {
     "bank_connection": {
-      "description": "",
-      "title": ""
+      "description": "सुरक्षित रूपमा आफ्नो बैंक खाता जडान गर्नुहोस् र कारोबारहरू स्वचालित रूपमा आयात गर्नुहोस्",
+      "title": "बैंक जडान"
     },
     "currency_conversion": {
-      "description": "",
-      "title": ""
+      "description": "विदेशी मुद्राहरूलाई तुरुन्तै आफ्नो स्थानीय मुद्रामा रूपान्तरण गर्नुहोस्",
+      "title": "मुद्रा रूपान्तरण"
     },
     "debt_simplification": {
-      "description": "",
-      "title": ""
+      "description": "जटिल ऋणहरूलाई कम भन्दा कम लेनदेनमा सरल बनाउनुहोस्",
+      "title": "ऋण सरलीकरण"
     },
     "groups_and_friends": {
-      "description": "",
-      "title": ""
+      "description": "साथीहरू थप्नुहोस् र विभिन्न यात्रा वा कार्यक्रमहरूको लागि समूहहरू बनाउनुहोस्",
+      "title": "समूह र साथीहरू"
     },
     "i18": {
-      "description": "",
-      "title": ""
+      "description": "आफ्नो मनपर्ने भाषामा एप प्रयोग गर्नुहोस्",
+      "title": "बहुभाषी समर्थन"
     },
     "import_splitwise": {
-      "description": "",
-      "title": ""
+      "description": "आफ्नो पुरानो Splitwise डाटा सजिलै यहाँ सार्नुहोस्",
+      "title": "Splitwise बाट आयात"
     },
     "multiple_currencies": {
-      "description": "",
-      "title": ""
+      "description": "एउटै प्रयोगकर्ताको लागि फरक मुद्रामा खर्च थप्नु पर्ने छ? कुनै समस्या छैन!",
+      "title": "विभिन्न मुद्राहरू"
     },
     "open_source": {
-      "description": "",
-      "title": ""
+      "description": "जसले गर्दा यसलाई गलत नियन्त्रणमा जान गाह्रो बनाउँछ। आफैं होस्ट गर्न एकदमै सजिलो",
+      "title": "ओपन सोर्स"
     },
     "push_notifications": {
-      "description": "",
-      "title": ""
+      "description": "महत्त्वपूर्ण सूचनाहरू कहिल्यै नछुटाउनुहोस्। कसैले खर्च थप्दा वा हिसाब मिलान गर्दा तुरुन्तै सूचना पाउनुहोस्",
+      "title": "पुश सूचनाहरू"
     },
     "pwa_support": {
-      "description": "",
-      "title": ""
+      "description": "मोबाइल एपहरू मन पर्छ? हामी छौँ नि! यसलाई PWA को रूपमा इन्स्टल गर्नुहोस् र तपाईंले फरक नै थाहा पाउनुहुने छैन!",
+      "title": "PWA समर्थन"
     },
-    "title": "",
+    "recurring_transactions": {
+      "description": "मासिक भाडा वा सदस्यता जस्ता दोहोरिने खर्चहरू स्वचालित बनाउनुहोस्",
+      "title": "आवर्ती कारोबार"
+    },
+    "title": "मुख्य विशेषताहरू",
     "unequal_split": {
-      "description": "",
-      "title": ""
+      "description": "हिसावलाई प्रतिशत, हिस्सा वा निश्चित रकम अनुसार असमान रूपमा बाँड्नुहोस्।",
+      "title": "असमान विभाजन"
     },
     "upload_receipts": {
-      "description": "",
-      "title": ""
+      "description": "प्रमाणको लागि बिल वा रसिदका फोटोहरू अपलोड गर्नुहोस्",
+      "title": "रसिद अपलोड"
     }
   },
   "footer": {
-    "built_by": ""
+    "built_by": "द्वारा निर्मित"
   },
   "hero": {
-    "add_expense_button": "",
-    "star_github_button": "",
-    "subtitle_link": "",
-    "subtitle_part1": "",
-    "subtitle_part2": "",
-    "title_highlight": "",
-    "title_part1": ""
+    "add_expense_button": "खर्च थप्नुहोस्",
+    "star_github_button": "GitHub मा स्टार दिनुहोस्",
+    "subtitle_link": "ओपन सोर्स",
+    "subtitle_part1": "एक शक्तिशाली र",
+    "subtitle_part2": "SplitWise को विकल्प",
+    "title_highlight": "सजिलो",
+    "title_part1": "साथीहरूसँग खर्च बाँड्न अब एकदमै"
   },
   "meta": {
-    "description": "",
-    "title": ""
+    "description": "SplitPro - आफ्ना साथीहरूसँग नि:शुल्क खर्च बाँड्नुहोस्",
+    "title": "SplitPro - आफ्ना साथीहरूसँग नि:शुल्क खर्च बाँड्नुहोस्"
   },
   "nav": {
-    "app_name": "",
-    "privacy": "",
-    "terms": ""
+    "app_name": "SplitPro",
+    "privacy": "गोपनीयता नीति",
+    "terms": "शर्तहरू"
   }
 }

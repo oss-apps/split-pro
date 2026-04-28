@@ -21,6 +21,7 @@
       "user_agent": "UserAgent",
       "version": "Version"
     },
+    "default_balance_currency": "Monnaie par défaut des soldes",
     "download_app": "Télécharger l'app",
     "download_app_details": {
       "download_as_pwa": "Tu peux télécharger SplitPro en tant que PWA (Aplication Web Progressive) sur ton écran d'accueil.",
@@ -277,6 +278,7 @@
       },
       "archived": "Archivé",
       "configure_default_split": "Choisir la méthode de répartition par défaut",
+      "default_balance_currency": "Monnaie par défaut des soldes",
       "default_split": "Méthode de répartition par défaut",
       "delete_group": "Supprimer le groupe",
       "delete_group_details": {
@@ -313,6 +315,8 @@
     },
     "messages": {
       "balances_recalculated": "Soldes recalculés avec succès",
+      "default_balance_currency_cleared": "Monnaie par défaut des soldes effacée",
+      "default_balance_currency_updated": "Monnaie par défaut des soldes mise à jour",
       "default_split_cleared": "Méthode de répartition par défaut réinitialisée",
       "default_split_updated": "Méthode de répartition par défaut mise à jour",
       "group_archived": "Groupe archivé avec succès",

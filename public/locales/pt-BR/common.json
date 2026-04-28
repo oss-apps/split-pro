@@ -14,10 +14,14 @@
       "description": "Cole a informação abaixo ao criar uma solicitação de suporte:",
       "git": "Git",
       "new_version_available": "Uma nova versão está disponível:",
+      "send_test_notification": "Enviar notificação de teste",
+      "test_notification_failed": "Não foi possível enviar a notificação de teste",
+      "test_notification_sent": "Notificação de teste enviada",
       "title": "Info. de Depuração",
       "user_agent": "UserAgent",
       "version": "Versão"
     },
+    "default_balance_currency": "Moeda de saldo padrão",
     "download_app": "Instalar app",
     "download_app_details": {
       "download_as_pwa": "Você pode instalar o SplitPro como um PWA na sua tela inicial.",
@@ -28,8 +32,14 @@
     },
     "download_splitpro_data": "Baixar dados do SplitPro",
     "edit_name": {
+      "apply_avatar": "Aplicar avatar",
+      "avatar_label": "Foto de perfil",
+      "avatar_preview": "Prévia do avatar",
       "placeholder": "Insira o nome",
-      "title": "Editar nome"
+      "remove_avatar": "Remover avatar",
+      "select_avatar": "Selecione a imagem",
+      "title": "Editar detalhes",
+      "zoom": "Zoom"
     },
     "follow_on_x": "Siga-nos no X",
     "import_from_splitwise": "Importar do Splitwise",
@@ -45,8 +55,8 @@
     },
     "logout": "Fazer logout",
     "messages": {
-      "submit_error": "Erro ao enviar feedback",
-      "submit_success": "Feedback enviado"
+      "submit_error": "Não foi possível atualizar os detalhes",
+      "submit_success": "Detalhe atualizado"
     },
     "notifications": {
       "disable_notification": "Desativar notificações",
@@ -107,6 +117,16 @@
     "setup_instructions": "instruções de configuração do Docker",
     "trouble_logging_in": "Com dificuldades para fazer login? Entre em contato"
   },
+  "balances": {
+    "default_split": {
+      "cleared": "Divisão padrão desfeita",
+      "configure": "Divisão padrão",
+      "updated": "Divisão padrão atualizada"
+    },
+    "user_preferences": {
+      "title": "Preferências"
+    }
+  },
   "bank_transactions": {
     "choose_bank_provider": "Escolha o provedor bancário",
     "no_bank_providers_found": "Nenhum provedor bancário encontrado",
@@ -138,11 +158,12 @@
     "feedback_required": "O campo feedback é obrigatório",
     "group_balances_malformed": "Dados sobre saldos do grupo estão corrompidos, por favor relate o problema ou tente recalcular.",
     "group_name_update_failed": "Erro ao atualizar o nome do grupo",
+    "image_compression_failed": "A compressão da imagem falhou. Tentando enviar o arquivo original",
     "import_failed": "Erro ao importar arquivo",
     "invalid_cron_expression": "Expressão cron inválida",
     "invalid_currency_code": "Moeda inválida com código {{code}}",
     "language_change_failed": "Erro ao alterar idioma",
-    "less_than": "Arquivo deve ter menos de",
+    "less_than": "O arquivo deve ter menos de {{size}}MB",
     "name_required": "O nome é obrigatório",
     "no_providers": "Erro ao buscar provedores de autenticação. Verifique os logs do backend.",
     "notification_not_supported": "Sem suporte a notificações",
@@ -256,12 +277,16 @@
         "title": "Tem certeza de que deseja arquivar este grupo?"
       },
       "archived": "Arquivado",
+      "configure_default_split": "Configurar divisão padrão",
+      "default_balance_currency": "Moeda de saldo padrão",
+      "default_split": "Divisão padrão",
       "delete_group": "Apagar grupo",
       "delete_group_details": {
         "can_delete": "Esta ação não pode ser revertida",
         "cant_delete": "Não é possível remover um grupo até que todos quitem o saldo",
         "title": "Tem certeza absoluta?"
       },
+      "edit_group": "Editar grupo",
       "group_created": "Grupo criado",
       "leave_group": "Sair do grupo",
       "leave_group_details": {
@@ -290,8 +315,12 @@
     },
     "messages": {
       "balances_recalculated": "Saldos recalculados com sucesso",
+      "default_balance_currency_cleared": "Moeda de saldo padrão zerada",
+      "default_balance_currency_updated": "Moeda de saldo padrão atualizada",
+      "default_split_cleared": "Divisão padrão desfeita",
+      "default_split_updated": "Divisão padrão atualizada",
       "group_archived": "Grupo arquivado",
-      "group_name_updated": "Nome do grupo atualizado"
+      "group_name_updated": "Detalhes do grupo atualizados"
     },
     "no_members": {
       "add_members": "Adicionar membros",

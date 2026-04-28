@@ -21,6 +21,7 @@
       "user_agent": "Felhasználói ügynök",
       "version": "Verzió"
     },
+    "default_balance_currency": "Egyenleg alapértelmezett pénzneme",
     "download_app": "Alkalmazás letöltése",
     "download_app_details": {
       "download_as_pwa": "A SplitPro-t PWA-ként letöltheted a kezdőképernyődre.",
@@ -277,6 +278,7 @@
       },
       "archived": "Archiválva",
       "configure_default_split": "Alapértelmezett felosztás konfigurálása",
+      "default_balance_currency": "Egyenleg alapértelmezett pénzneme",
       "default_split": "Alapértelmezett felosztás",
       "delete_group": "Csoport törlése",
       "delete_group_details": {
@@ -313,6 +315,8 @@
     },
     "messages": {
       "balances_recalculated": "Az egyenlegek újraszámítása sikeresen megtörtént",
+      "default_balance_currency_cleared": "Egyenleg alapértelmezett pénzneme törölve",
+      "default_balance_currency_updated": "Egyenleg alapértelmezett pénzneme frissítve",
       "default_split_cleared": "Alapértelmezett felosztás törölve",
       "default_split_updated": "Alapértelmezett felosztás frissítve",
       "group_archived": "Csoport sikeresen archiválva",

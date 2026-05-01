@@ -21,6 +21,7 @@
       "user_agent": "Användaragent",
       "version": "Version"
     },
+    "default_balance_currency": "Standardsaldovaluta",
     "download_app": "Ladda ner app",
     "download_app_details": {
       "download_as_pwa": "Du kan ladda ner SplitPro som en PWA till din hemskärm.",
@@ -277,6 +278,7 @@
       },
       "archived": "Arkiverad",
       "configure_default_split": "Konfigurera standard delning",
+      "default_balance_currency": "Standardsaldovaluta",
       "default_split": "Standard delning",
       "delete_group": "Radera grupp",
       "delete_group_details": {
@@ -313,6 +315,8 @@
     },
     "messages": {
       "balances_recalculated": "Saldon omräknade",
+      "default_balance_currency_cleared": "Standardsaldovaluta rensad",
+      "default_balance_currency_updated": "Standardsaldovaluta uppdaterad",
       "default_split_cleared": "Standard delning rensad",
       "default_split_updated": "Standard delning uppdaterad",
       "group_archived": "Grupp arkiverad framgångsrikt",

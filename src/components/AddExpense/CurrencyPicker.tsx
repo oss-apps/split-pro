@@ -76,6 +76,17 @@ function CurrencyPickerInner({
     [],
   );
   const extractKey = extractValue;
+  const extractKeywords = useCallback(
+    (currency: { code: CurrencyCode } | { code: '__CLEAR__' }) => {
+      if ('__CLEAR__' === currency.code) {
+        return [];
+      }
+
+      const translatedName = getCurrencyName(currency.code);
+      return [translatedName];
+    },
+    [getCurrencyName],
+  );
   const selectedOption = useCallback(
     (currency: { code: CurrencyCode } | { code: '__CLEAR__' }) =>
       '__CLEAR__' === currency.code ? currentCurrency === null : currency.code === currentCurrency,
@@ -110,6 +121,7 @@ function CurrencyPickerInner({
       items={renderedItems}
       extractValue={extractValue}
       extractKey={extractKey}
+      extractKeywords={extractKeywords}
       selected={selectedOption}
       render={renderCurrencyItem}
     />

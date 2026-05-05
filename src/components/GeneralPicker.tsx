@@ -11,6 +11,7 @@ export const GeneralPicker: React.FC<{
   items: any[];
   extractValue: (item: any) => string;
   extractKey: (item: any) => string;
+  extractKeywords?: (item: any) => string[];
   selected: (item: any) => boolean;
   render: (item: any) => React.ReactNode;
   placeholderText: string;
@@ -23,6 +24,7 @@ export const GeneralPicker: React.FC<{
   items,
   extractValue,
   extractKey,
+  extractKeywords,
   render,
   placeholderText,
   noOptionsText,
@@ -56,6 +58,7 @@ export const GeneralPicker: React.FC<{
             <CommandItem
               key={extractKey(item)}
               value={extractValue(item)}
+              keywords={extractKeywords ? extractKeywords(item) : []}
               onSelect={onSelectAndClose}
               className="flex cursor-pointer items-center"
             >

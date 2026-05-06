@@ -6,12 +6,54 @@ import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { sendGroupSimplifyDebtsToggleNotification } from '~/server/api/services/notificationService';
 import { SplitType } from '@prisma/client';
+import { db } from '~/server/db';
+import { env } from '~/env';
 import {
   defaultSplitInputSchema,
   deserializeDefaultSplit,
   parseSerializedDefaultSplit,
   serializeDefaultSplit,
 } from '~/lib/defaultSplit';
+
+const PER_EXPENSE_EXCLUDED_SPLIT_TYPES = [SplitType.SETTLEMENT, SplitType.CURRENCY_CONVERSION];
+
+/**
+ * In per_expense mode, checks whether any non-payer participants remain
+ * unsettled in the given group (or for a specific userId within that group).
+ * Mirrors the BalanceView implicit exclusion of payer rows (userId != paidBy).
+ */
+async function hasUnsettledParticipants(groupId: number, userId?: number): Promise<boolean> {
+  if (userId !== undefined) {
+    const rows = await db.$queryRaw<[{ exists: boolean }]>`
+      SELECT EXISTS (
+        SELECT 1
+        FROM "ExpenseParticipant" ep
+        JOIN "Expense" e ON ep."expenseId" = e.id
+        WHERE e."groupId" = ${groupId}
+          AND e."deletedAt" IS NULL
+          AND e."splitType" NOT IN ('SETTLEMENT', 'CURRENCY_CONVERSION')
+          AND ep."settledAt" IS NULL
+          AND ep."userId" != e."paidBy"
+          AND ep."userId" = ${userId}
+      )
+    `;
+    return rows[0]?.exists ?? false;
+  }
+
+  const rows = await db.$queryRaw<[{ exists: boolean }]>`
+    SELECT EXISTS (
+      SELECT 1
+      FROM "ExpenseParticipant" ep
+      JOIN "Expense" e ON ep."expenseId" = e.id
+      WHERE e."groupId" = ${groupId}
+        AND e."deletedAt" IS NULL
+        AND e."splitType" NOT IN ('SETTLEMENT', 'CURRENCY_CONVERSION')
+        AND ep."settledAt" IS NULL
+        AND ep."userId" != e."paidBy"
+    )
+  `;
+  return rows[0]?.exists ?? false;
+}
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
@@ -89,10 +131,13 @@ export const groupRouter = createTRPCRouter({
       });
 
       const groupsWithBalances = sortedGroupsByLatestExpense.map((g) => {
+        // In per_expense mode, cross-expense netting is disabled; return empty balances
         const balances: Record<string, bigint> = {};
 
-        for (const balance of g.group.groupBalances) {
-          balances[balance.currency] = (balances[balance.currency] ?? 0n) + balance.amount;
+        if (env.SETTLEMENT_MODE !== 'per_expense') {
+          for (const balance of g.group.groupBalances) {
+            balances[balance.currency] = (balances[balance.currency] ?? 0n) + balance.amount;
+          }
         }
 
         return {
@@ -275,13 +320,21 @@ export const groupRouter = createTRPCRouter({
         });
       }
 
-      const groupBalances = await ctx.db.balanceView.findMany({
-        where: { groupId: input.groupId },
-      });
+      let hasOutstandingBalance: boolean;
 
-      const finalGroupBalances = group.simplifyDebts ? simplifyDebts(groupBalances) : groupBalances;
+      if (env.SETTLEMENT_MODE === 'per_expense') {
+        hasOutstandingBalance = await hasUnsettledParticipants(input.groupId, userId);
+      } else {
+        const groupBalances = await ctx.db.balanceView.findMany({
+          where: { groupId: input.groupId },
+        });
+        const finalGroupBalances = group.simplifyDebts
+          ? simplifyDebts(groupBalances)
+          : groupBalances;
+        hasOutstandingBalance = finalGroupBalances.some((b) => b.userId === userId && 0n !== b.amount);
+      }
 
-      if (finalGroupBalances.some((b) => b.userId === userId && 0n !== b.amount)) {
+      if (hasOutstandingBalance) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'User has a non-zero balance in this group',
@@ -412,13 +465,18 @@ export const groupRouter = createTRPCRouter({
 
       // Only check balances when archiving (not when unarchiving)
       if (isArchiving) {
-        if (group?.simplifyDebts) {
-          group.groupBalances = simplifyDebts(group.groupBalances);
+        let hasOutstanding: boolean;
+
+        if (env.SETTLEMENT_MODE === 'per_expense') {
+          hasOutstanding = await hasUnsettledParticipants(input.groupId);
+        } else {
+          if (group?.simplifyDebts) {
+            group.groupBalances = simplifyDebts(group.groupBalances);
+          }
+          hasOutstanding = group.groupBalances.some((b) => 0n !== b.amount);
         }
 
-        const balanceWithNonZero = group.groupBalances.find((b) => 0n !== b.amount);
-
-        if (balanceWithNonZero) {
+        if (hasOutstanding) {
           throw new TRPCError({
             code: 'BAD_REQUEST',
             message:
@@ -455,13 +513,18 @@ export const groupRouter = createTRPCRouter({
         throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Only creator can delete the group' });
       }
 
-      if (group?.simplifyDebts) {
-        group.groupBalances = simplifyDebts(group.groupBalances);
+      let hasOutstanding: boolean;
+
+      if (env.SETTLEMENT_MODE === 'per_expense') {
+        hasOutstanding = await hasUnsettledParticipants(input.groupId);
+      } else {
+        if (group?.simplifyDebts) {
+          group.groupBalances = simplifyDebts(group.groupBalances);
+        }
+        hasOutstanding = group?.groupBalances.some((b) => 0n !== b.amount) ?? false;
       }
 
-      const balanceWithNonZero = group?.groupBalances.find((b) => 0n !== b.amount);
-
-      if (balanceWithNonZero) {
+      if (hasOutstanding) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'You have a non-zero balance in this group',

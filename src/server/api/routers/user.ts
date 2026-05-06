@@ -87,6 +87,9 @@ export const userRouter = createTRPCRouter({
   getBalancesWithFriend: protectedProcedure
     .input(z.object({ friendId: z.number() }))
     .query(async ({ input, ctx }) => {
+      if (env.SETTLEMENT_MODE === 'per_expense') {
+        return [];
+      }
       const rawBalances = await db.balanceView.findMany({
         where: {
           userId: ctx.session.user.id,

@@ -20,9 +20,19 @@ import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { getUserMap } from './user';
 import { FriendBalance } from '~/components/Friend/FriendBalance';
+import { env } from '~/env';
+
+const PER_EXPENSE_EXCLUDED_SPLIT_TYPES = [SplitType.SETTLEMENT, SplitType.CURRENCY_CONVERSION];
 
 export const expenseRouter = createTRPCRouter({
+  getSettlementMode: protectedProcedure.query(() => {
+    return { mode: env.SETTLEMENT_MODE };
+  }),
+
   getCumulatedBalances: protectedProcedure.query(async ({ ctx }) => {
+    if (env.SETTLEMENT_MODE === 'per_expense') {
+      return { youOwe: [], youGet: [] };
+    }
     const cumulatedBalances = await db.balanceView.groupBy({
       by: ['currency'],
       _sum: { amount: true },
@@ -43,6 +53,9 @@ export const expenseRouter = createTRPCRouter({
   }),
 
   getBalances: protectedProcedure.query(async ({ ctx }) => {
+    if (env.SETTLEMENT_MODE === 'per_expense') {
+      return { balances: [] };
+    }
     const rawBalances = await db.balanceView.findMany({
       where: {
         userId: ctx.session.user.id,
@@ -623,6 +636,82 @@ export const expenseRouter = createTRPCRouter({
       }
 
       return { rates };
+    }),
+
+  // --- per_expense mode procedures ---
+
+  getUnsettledExpenses: protectedProcedure
+    .input(z.object({ groupId: z.number().optional() }).optional())
+    .query(async ({ input, ctx }) => {
+      const userId = ctx.session.user.id;
+      const groupId = input?.groupId;
+
+      const expenses = await db.expense.findMany({
+        where: {
+          deletedAt: null,
+          splitType: { notIn: PER_EXPENSE_EXCLUDED_SPLIT_TYPES },
+          ...(groupId !== undefined ? { groupId } : {}),
+          expenseParticipants: { some: { userId } },
+        },
+        include: {
+          paidByUser: { select: { id: true, name: true, email: true, image: true } },
+          expenseParticipants: {
+            include: { user: { select: { id: true, name: true, email: true, image: true } } },
+          },
+        },
+        orderBy: { expenseDate: 'desc' },
+      });
+
+      // Keep only expenses where the current user has an unsettled interest:
+      // - As payer: at least one non-payer participant is unsettled (settledAt null, amount < 0)
+      // - As debtor: their own participant row is unsettled
+      return expenses.filter((expense) => {
+        if (expense.paidBy === userId) {
+          return expense.expenseParticipants.some(
+            (p) => p.userId !== userId && 0n > p.amount && null === p.settledAt,
+          );
+        }
+        const me = expense.expenseParticipants.find((p) => p.userId === userId);
+        return me !== undefined && 0n > me.amount && null === me.settledAt;
+      });
+    }),
+
+  settleExpenseForUser: protectedProcedure
+    .input(z.object({ expenseId: z.string(), userId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const expense = await db.expense.findUnique({
+        where: { id: input.expenseId },
+        select: { paidBy: true, deletedAt: true, splitType: true },
+      });
+
+      if (!expense || expense.deletedAt) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Expense not found' });
+      }
+
+      if (PER_EXPENSE_EXCLUDED_SPLIT_TYPES.includes(expense.splitType)) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Cannot settle this expense type' });
+      }
+
+      // Caller must be the target user (self-settle) or the payer (admin settle)
+      if (ctx.session.user.id !== input.userId && ctx.session.user.id !== expense.paidBy) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Not authorized to settle this expense for this user',
+        });
+      }
+
+      // Payer's own row represents their share, not a debt — cannot be settled
+      if (input.userId === expense.paidBy) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: "Cannot settle the payer's own share",
+        });
+      }
+
+      await db.expenseParticipant.update({
+        where: { expenseId_userId: { expenseId: input.expenseId, userId: input.userId } },
+        data: { settledAt: new Date() },
+      });
     }),
 });
 

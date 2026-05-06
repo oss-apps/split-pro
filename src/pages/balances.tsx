@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useMemo } from 'react';
 import { DownloadAppDrawer } from '~/components/Account/DownloadAppDrawer';
 import { BalanceEntry } from '~/components/Expense/BalanceEntry';
+import { UnsettledExpenseList } from '~/components/Expense/UnsettledExpenseList';
 import MainLayout from '~/components/Layout/MainLayout';
 import { NotificationModal } from '~/components/NotificationModal';
 import { Button } from '~/components/ui/button';
@@ -21,6 +22,8 @@ import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
 const BalancePage: NextPageWithUser = ({ user }) => {
   const { t } = useTranslationWithUtils();
   const isPwa = useIsPwa();
+  const settlementModeQuery = api.expense.getSettlementMode.useQuery();
+  const isPerExpense = settlementModeQuery.data?.mode === 'per_expense';
   const balanceQuery = api.expense.getBalances.useQuery();
   const cumulatedQuery = api.expense.getCumulatedBalances.useQuery();
 
@@ -69,64 +72,73 @@ const BalancePage: NextPageWithUser = ({ user }) => {
             <div className="h-6 w-10" />
           )
         }
-        loading={cumulatedQuery.isPending}
+        loading={settlementModeQuery.isPending || cumulatedQuery.isPending}
       >
         <NotificationModal />
-        <div className="mx-4 flex items-stretch justify-between gap-4">
-          {selectedCurrency && isCurrencyCode(selectedCurrency) ? (
-            <CumulatedBalanceDisplay
-              prefix={`${t('ui.total_balance')}`}
-              cumulatedBalances={[
-                cumulatedQuery.data?.youOwe ?? [],
-                cumulatedQuery.data?.youGet ?? [],
-              ].flat()}
-              currencies={allNonZeroCurrencies}
-              className="mx-auto"
-            />
-          ) : (
-            <>
-              <CumulatedBalanceDisplay
-                prefix={`${t('actors.you')} ${t('ui.expense.you.owe')}`}
-                cumulatedBalances={cumulatedQuery.data?.youOwe}
-                currencies={allNonZeroCurrencies}
-              />
-              <CumulatedBalanceDisplay
-                prefix={`${t('actors.you')} ${t('ui.expense.you.lent')}`}
-                cumulatedBalances={cumulatedQuery.data?.youGet}
-                currencies={allNonZeroCurrencies}
-              />
-            </>
-          )}
-        </div>
 
-        <div className="mt-5 flex flex-col gap-8 pb-36">
-          {balanceQuery.data?.balances.map((balance) => (
-            <BalanceEntry
-              key={balance.friend.id}
-              id={balance.friend.id}
-              entity={balance.friend}
-              balances={balance.currencies}
-            />
-          ))}
-
-          {!balanceQuery.isPending && !balanceQuery.data?.balances.length ? (
-            <div className="mt-[40vh] flex -translate-y-[130%] flex-col items-center justify-center gap-6">
-              <DownloadAppDrawer>
-                <Button className="w-62.5">
-                  <Download className="mr-2 h-5 w-5 text-black" />
-                  {t('account.download_app')}
-                </Button>
-              </DownloadAppDrawer>
-              {!isPwa && <p>{t('ui.or')}</p>}
-              <Link href="/add">
-                <Button className="w-62.5">
-                  <PlusIcon className="mr-2 h-5 w-5 text-black" />
-                  {t('actions.add_expense')}
-                </Button>
-              </Link>
+        {isPerExpense ? (
+          <div className="mx-4 mt-5 pb-36">
+            <UnsettledExpenseList currentUserId={user.id} />
+          </div>
+        ) : (
+          <>
+            <div className="mx-4 flex items-stretch justify-between gap-4">
+              {selectedCurrency && isCurrencyCode(selectedCurrency) ? (
+                <CumulatedBalanceDisplay
+                  prefix={`${t('ui.total_balance')}`}
+                  cumulatedBalances={[
+                    cumulatedQuery.data?.youOwe ?? [],
+                    cumulatedQuery.data?.youGet ?? [],
+                  ].flat()}
+                  currencies={allNonZeroCurrencies}
+                  className="mx-auto"
+                />
+              ) : (
+                <>
+                  <CumulatedBalanceDisplay
+                    prefix={`${t('actors.you')} ${t('ui.expense.you.owe')}`}
+                    cumulatedBalances={cumulatedQuery.data?.youOwe}
+                    currencies={allNonZeroCurrencies}
+                  />
+                  <CumulatedBalanceDisplay
+                    prefix={`${t('actors.you')} ${t('ui.expense.you.lent')}`}
+                    cumulatedBalances={cumulatedQuery.data?.youGet}
+                    currencies={allNonZeroCurrencies}
+                  />
+                </>
+              )}
             </div>
-          ) : null}
-        </div>
+
+            <div className="mt-5 flex flex-col gap-8 pb-36">
+              {balanceQuery.data?.balances.map((balance) => (
+                <BalanceEntry
+                  key={balance.friend.id}
+                  id={balance.friend.id}
+                  entity={balance.friend}
+                  balances={balance.currencies}
+                />
+              ))}
+
+              {!balanceQuery.isPending && !balanceQuery.data?.balances.length ? (
+                <div className="mt-[40vh] flex -translate-y-[130%] flex-col items-center justify-center gap-6">
+                  <DownloadAppDrawer>
+                    <Button className="w-62.5">
+                      <Download className="mr-2 h-5 w-5 text-black" />
+                      {t('account.download_app')}
+                    </Button>
+                  </DownloadAppDrawer>
+                  {!isPwa && <p>{t('ui.or')}</p>}
+                  <Link href="/add">
+                    <Button className="w-62.5">
+                      <PlusIcon className="mr-2 h-5 w-5 text-black" />
+                      {t('actions.add_expense')}
+                    </Button>
+                  </Link>
+                </div>
+              ) : null}
+            </div>
+          </>
+        )}
       </MainLayout>
     </>
   );

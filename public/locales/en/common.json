@@ -94,7 +94,9 @@
     "settle_up": "Settle up",
     "submit": "Submit",
     "reconnect": "Reconnect",
-    "connect": "Connect"
+    "connect": "Connect",
+    "settle_for_me": "Settle for me",
+    "mark_settled": "Mark settled"
   },
   "actors": {
     "all": "All",
@@ -427,6 +429,7 @@
     },
     "expense_details": "Expense details",
     "no_activity": "No activities yet",
+    "no_unsettled_expenses": "No unsettled expenses",
     "not_involved": "Not involved",
     "on": "on",
     "or": "or",

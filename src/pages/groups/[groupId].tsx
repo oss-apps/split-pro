@@ -21,6 +21,7 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { BalanceList } from '~/components/Expense/BalanceList';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
+import { UnsettledExpenseList } from '~/components/Expense/UnsettledExpenseList';
 import AddMembers from '~/components/group/AddMembers';
 import GroupMyBalance from '~/components/group/GroupMyBalance';
 import NoMembers from '~/components/group/NoMembers';
@@ -54,6 +55,8 @@ const BalancePage: NextPageWithUser<{
 
   const setGroupDefaultCurrency = useCurrencyPreferenceStore((s) => s.setGroupDefaultCurrency);
 
+  const settlementModeQuery = api.expense.getSettlementMode.useQuery();
+  const isPerExpense = settlementModeQuery.data?.mode === 'per_expense';
   const groupDetailQuery = api.group.getGroupDetails.useQuery({ groupId });
   const groupTotalQuery = api.group.getGroupTotals.useQuery({ groupId });
   const expensesQuery = api.expense.getGroupExpenses.useQuery({ groupId });
@@ -381,30 +384,32 @@ const BalancePage: NextPageWithUser<{
               <div className="mt-8">
                 <p className="font-semibold">{t('group_details.group_info.actions')}</p>
                 <div className="child:h-7 mt-2 flex flex-col gap-4">
-                  <Label className="flex cursor-pointer items-center justify-between">
-                    <p className="flex items-center">
-                      <Merge className="mr-2 size-4" />{' '}
-                      {t('group_details.group_info.simplify_debts')}
-                    </p>
-                    <Switch
-                      id="simplify-debts"
-                      disabled={isArchived}
-                      checked={groupDetailQuery.data?.simplifyDebts ?? false}
-                      onCheckedChange={() => {
-                        toggleSimplifyDebtsMutation.mutate(
-                          { groupId },
-                          {
-                            onSuccess: () => {
-                              void groupDetailQuery.refetch();
+                  {!isPerExpense && (
+                    <Label className="flex cursor-pointer items-center justify-between">
+                      <p className="flex items-center">
+                        <Merge className="mr-2 size-4" />{' '}
+                        {t('group_details.group_info.simplify_debts')}
+                      </p>
+                      <Switch
+                        id="simplify-debts"
+                        disabled={isArchived}
+                        checked={groupDetailQuery.data?.simplifyDebts ?? false}
+                        onCheckedChange={() => {
+                          toggleSimplifyDebtsMutation.mutate(
+                            { groupId },
+                            {
+                              onSuccess: () => {
+                                void groupDetailQuery.refetch();
+                              },
+                              onError: () => {
+                                toast.error(t('errors.setting_update_failed'));
+                              },
                             },
-                            onError: () => {
-                              toast.error(t('errors.setting_update_failed'));
-                            },
-                          },
-                        );
-                      }}
-                    />
-                  </Label>
+                          );
+                        }}
+                      />
+                    </Label>
+                  )}
                   <Label className="flex cursor-pointer items-center justify-between">
                     <p className="flex items-center">
                       <Archive className="mr-2 size-4" />{' '}
@@ -508,12 +513,14 @@ const BalancePage: NextPageWithUser<{
                   </p>
                 </div>
               )}
-              <GroupMyBalance
-                userId={user.id}
-                groupBalances={groupDetailQuery.data?.groupBalances}
-                users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user)}
-                groupId={groupId}
-              />
+              {!isPerExpense && (
+                <GroupMyBalance
+                  userId={user.id}
+                  groupBalances={groupDetailQuery.data?.groupBalances}
+                  users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user)}
+                  groupId={groupId}
+                />
+              )}
             </div>
             <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b pb-4">
               <Link href={`/add?groupId=${groupId}`}>
@@ -561,10 +568,14 @@ const BalancePage: NextPageWithUser<{
                 />
               </TabsContent>
               <TabsContent value="balances">
-                <BalanceList
-                  groupBalances={groupDetailQuery.data?.groupBalances}
-                  users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user)}
-                />
+                {isPerExpense ? (
+                  <UnsettledExpenseList currentUserId={user.id} groupId={groupId} />
+                ) : (
+                  <BalanceList
+                    groupBalances={groupDetailQuery.data?.groupBalances}
+                    users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user)}
+                  />
+                )}
               </TabsContent>
             </Tabs>
           </div>

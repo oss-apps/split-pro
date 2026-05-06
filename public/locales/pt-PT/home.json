@@ -40,6 +40,10 @@
       "description": "Adoras apps móveis? Nós tratámos disso. Instala como PWA e tu nem vais notar a diferença!",
       "title": "Suporte a PWA"
     },
+    "recurring_transactions": {
+      "description": "Configura despesas recurrentes para renda, subscrições ou outros custos recurrentes partilhados",
+      "title": "Transações Recorrentes"
+    },
     "title": "Funcionalidades",
     "unequal_split": {
       "description": "Opções de divisão avançadas. Por quotas, percentagem ou montantes exatos.",

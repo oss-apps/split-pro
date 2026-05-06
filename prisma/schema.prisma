@@ -205,9 +205,10 @@ model Expense {
 model ExpenseParticipant {
   userId    Int
   amount    BigInt
-  expenseId String  @db.Uuid
-  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expenseId String    @db.Uuid
+  settledAt DateTime?
+  expense   Expense   @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([expenseId, userId])
   @@schema("public")

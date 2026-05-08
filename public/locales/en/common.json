@@ -5,6 +5,7 @@
       "messages": {
         "language_changed": "Language changed successfully"
       },
+      "no_language_found": "No language found.",
       "placeholder": "Select a language",
       "title": "Select a language"
     },

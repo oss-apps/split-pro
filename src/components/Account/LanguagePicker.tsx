@@ -45,7 +45,7 @@ export const LanguagePicker: React.FC<PropsWithChildren> = ({ children }) => {
       trigger={children}
       title={t('account.change_language_details.title')}
       placeholderText={t('account.change_language_details.placeholder')}
-      noOptionsText={t('account.change_language_details.no_currency_found')}
+      noOptionsText={t('account.change_language_details.no_language_found')}
       onSelect={onSelect}
       items={supportedLanguages}
       extractValue={extractKey}

@@ -5,6 +5,7 @@
       "messages": {
         "language_changed": "A nyelv sikeresen megváltoztatva"
       },
+      "no_language_found": "Nem található nyelv.",
       "placeholder": "Válassz nyelvet",
       "title": "Válassz nyelvet"
     },

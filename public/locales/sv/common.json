@@ -5,6 +5,7 @@
       "messages": {
         "language_changed": "Språk ändrat"
       },
+      "no_language_found": "Inget språk hittades.",
       "placeholder": "Välj ett språk",
       "title": "Välj ett språk"
     },

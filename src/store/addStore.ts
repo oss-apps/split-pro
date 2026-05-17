@@ -3,7 +3,7 @@ import Router from 'next/router';
 import { create } from 'zustand';
 
 import { DEFAULT_CATEGORY } from '~/lib/category';
-import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
+import { type CurrencyCode } from '~/lib/currency';
 import type { TransactionAddInputModel } from '~/types';
 import { shuffleArray } from '~/utils/array';
 import { BigMath } from '~/utils/numbers';
@@ -243,10 +243,6 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         cronExpression: '',
         isFileUploading: false,
         paidBy: s.currentUser,
-        currency:
-          s.currentUser?.defaultCurrency && isCurrencyCode(s.currentUser.defaultCurrency)
-            ? s.currentUser.defaultCurrency
-            : s.currency,
       }));
     },
     setSplitScreenOpen: (splitScreenOpen) => set({ splitScreenOpen }),

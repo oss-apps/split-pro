@@ -64,8 +64,11 @@ const AddPage: NextPageWithUser<{
       obapiProviderId: user.obapiProviderId ?? null,
       bankingId: user.bankingId ?? null,
     });
-    if (router.isReady && !groupId && user.defaultCurrency) {
-      setCurrency(parseCurrencyCode(user.defaultCurrency));
+    if (router.isReady && !groupId) {
+      const preferredCurrency = user.currency ?? user.defaultCurrency;
+      if (preferredCurrency) {
+        setCurrency(parseCurrencyCode(preferredCurrency));
+      }
     }
   }, [setCurrentUser, setCurrency, groupId, router.isReady, user]);
 
@@ -120,9 +123,10 @@ const AddPage: NextPageWithUser<{
           .map((gu) => gu.user)
           .filter((groupUser) => groupUser.id !== currentUser.id),
       ]);
-      const groupCurrency = groupQuery.data.defaultCurrency ?? currentUser.defaultCurrency;
-      if (groupCurrency) {
-        setCurrency(parseCurrencyCode(groupCurrency));
+      const preferredCurrency =
+        currentUser.currency ?? groupQuery.data.defaultCurrency ?? currentUser.defaultCurrency;
+      if (preferredCurrency) {
+        setCurrency(parseCurrencyCode(preferredCurrency));
       }
       const parsedDefaultSplit = deserializeDefaultSplit(groupQuery.data.defaultSplit);
       if (parsedDefaultSplit) {

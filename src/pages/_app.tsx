@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
 import { LoadingSpinner } from '~/components/ui/spinner';
-import { ThemeProvider } from '~/components/ui/theme-provider';
+import { ThemeProvider } from 'next-themes';
 import { CurrencyHelpersProvider } from '~/contexts/CurrencyHelpersContext';
 import { useAddExpenseStore } from '~/store/addStore';
 import { useAppStore } from '~/store/appStore';

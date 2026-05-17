@@ -61,7 +61,6 @@ export const AddOrEditExpensePage: React.FC<{
   const {
     setCurrency,
     setCategory,
-    setCurrentUser,
     setDescription,
     setAmount,
     setAmountStr,
@@ -87,11 +86,8 @@ export const AddOrEditExpensePage: React.FC<{
 
       previousCurrencyRef.current = currency;
       setCurrency(newCurrency);
-      if (currentUser) {
-        setCurrentUser({ ...currentUser, currency: newCurrency });
-      }
     },
-    [currency, currentUser, setCurrency, setCurrentUser, updateProfile],
+    [currency, setCurrency, updateProfile],
   );
 
   const router = useRouter();
@@ -176,17 +172,15 @@ export const AddOrEditExpensePage: React.FC<{
                   navPromise = async () => router.back();
                 }
 
-                navPromise()
+                update((session: any) => ({
+                  ...session,
+                  user: {
+                    ...(session?.user ?? {}),
+                    currency,
+                  },
+                }))
+                  .then(() => navPromise())
                   .then(() => resetState())
-                  .then(() =>
-                    update((session: any) => ({
-                      ...session,
-                      user: {
-                        ...(session?.user ?? {}),
-                        currency,
-                      },
-                    })),
-                  )
                   .catch(console.error);
               }
             }

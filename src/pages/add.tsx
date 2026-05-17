@@ -50,6 +50,9 @@ const AddPage: NextPageWithUser<{
   const { setMaxUploadFileSizeMB } = useAppStore((s) => s.actions);
   setMaxUploadFileSizeMB(maxUploadFileSizeMB);
 
+  const router = useRouter();
+  const { friendId, groupId, expenseId } = router.query;
+
   useEffect(() => {
     setCurrentUser({
       ...user,
@@ -61,10 +64,10 @@ const AddPage: NextPageWithUser<{
       obapiProviderId: user.obapiProviderId ?? null,
       bankingId: user.bankingId ?? null,
     });
-  }, [setCurrentUser, user]);
-
-  const router = useRouter();
-  const { friendId, groupId, expenseId } = router.query;
+    if (router.isReady && !groupId && user.defaultCurrency) {
+      setCurrency(parseCurrencyCode(user.defaultCurrency));
+    }
+  }, [setCurrentUser, setCurrency, groupId, router.isReady, user]);
 
   const _groupId = parseInt(groupId as string);
   const _friendId = parseInt(friendId as string);
@@ -117,6 +120,10 @@ const AddPage: NextPageWithUser<{
           .map((gu) => gu.user)
           .filter((groupUser) => groupUser.id !== currentUser.id),
       ]);
+      const groupCurrency = groupQuery.data.defaultCurrency ?? currentUser.defaultCurrency;
+      if (groupCurrency) {
+        setCurrency(parseCurrencyCode(groupCurrency));
+      }
       const parsedDefaultSplit = deserializeDefaultSplit(groupQuery.data.defaultSplit);
       if (parsedDefaultSplit) {
         applySplitPreset(parsedDefaultSplit.splitType, parsedDefaultSplit.shares);
@@ -131,6 +138,7 @@ const AddPage: NextPageWithUser<{
     currentUser,
     setGroup,
     setParticipants,
+    setCurrency,
     applySplitPreset,
   ]);
 

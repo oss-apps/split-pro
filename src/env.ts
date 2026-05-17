@@ -93,7 +93,7 @@ export const env = createEnv({
       process.env.DATABASE_URL ??
       `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}`,
     NODE_ENV: process.env.NODE_ENV,
-    DOCKER_OUTPUT: Boolean(process.env.DOCKER_OUTPUT),
+    DOCKER_OUTPUT: Boolean(JSON.parse(process.env.DOCKER_OUTPUT || 'false')),
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     NEXTAUTH_URL_INTERNAL: process.env.NEXTAUTH_URL_INTERNAL ?? process.env.NEXTAUTH_URL,
@@ -107,9 +107,9 @@ export const env = createEnv({
     EMAIL_SERVER_PORT: process.env.EMAIL_SERVER_PORT,
     EMAIL_SERVER_USER: process.env.EMAIL_SERVER_USER,
     EMAIL_SERVER_PASSWORD: process.env.EMAIL_SERVER_PASSWORD,
-    EMAIL_TLS_REJECT_UNAUTHORIZED: process.env.EMAIL_TLS_REJECT_UNAUTHORIZED
-      ? Boolean(process.env.EMAIL_TLS_REJECT_UNAUTHORIZED)
-      : true,
+    EMAIL_TLS_REJECT_UNAUTHORIZED: Boolean(
+      JSON.parse(process.env.EMAIL_TLS_REJECT_UNAUTHORIZED || 'true'),
+    ),
     GOCARDLESS_COUNTRY: process.env.GOCARDLESS_COUNTRY,
     GOCARDLESS_SECRET_ID: process.env.GOCARDLESS_SECRET_ID,
     GOCARDLESS_SECRET_KEY: process.env.GOCARDLESS_SECRET_KEY,
@@ -150,7 +150,7 @@ export const env = createEnv({
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
    * useful for Docker builds.
    */
-  skipValidation: Boolean(process.env.SKIP_ENV_VALIDATION),
+  skipValidation: Boolean(JSON.parse(process.env.SKIP_ENV_VALIDATION || 'false')),
   /**
    * Makes it so that empty strings are treated as undefined. `SOME_VAR: z.string()` and
    * `SOME_VAR=''` will throw an error.

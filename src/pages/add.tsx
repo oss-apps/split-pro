@@ -54,8 +54,12 @@ const AddPage: NextPageWithUser<{
   const { friendId, groupId, expenseId } = router.query;
 
   useEffect(() => {
+    const stored = useAddExpenseStore.getState().currentUser;
+    const preservedCurrency =
+      stored?.id === user.id ? (stored.currency ?? user.currency) : user.currency;
     setCurrentUser({
       ...user,
+      currency: preservedCurrency,
       defaultCurrency: user.defaultCurrency ?? null,
       emailVerified: null,
       name: user.name ?? null,
@@ -65,7 +69,7 @@ const AddPage: NextPageWithUser<{
       bankingId: user.bankingId ?? null,
     });
     if (router.isReady && !groupId) {
-      const preferredCurrency = user.currency ?? user.defaultCurrency;
+      const preferredCurrency = preservedCurrency ?? user.defaultCurrency;
       if (preferredCurrency) {
         setCurrency(parseCurrencyCode(preferredCurrency));
       }

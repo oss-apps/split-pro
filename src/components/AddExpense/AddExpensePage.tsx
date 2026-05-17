@@ -61,6 +61,7 @@ export const AddOrEditExpensePage: React.FC<{
   const {
     setCurrency,
     setCategory,
+    setCurrentUser,
     setDescription,
     setAmount,
     setAmountStr,
@@ -86,8 +87,11 @@ export const AddOrEditExpensePage: React.FC<{
 
       previousCurrencyRef.current = currency;
       setCurrency(newCurrency);
+      if (currentUser) {
+        setCurrentUser({ ...currentUser, currency: newCurrency });
+      }
     },
-    [currency, setCurrency, updateProfile],
+    [currency, currentUser, setCurrency, setCurrentUser, updateProfile],
   );
 
   const router = useRouter();

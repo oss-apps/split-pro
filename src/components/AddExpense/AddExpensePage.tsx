@@ -172,17 +172,15 @@ export const AddOrEditExpensePage: React.FC<{
                   navPromise = async () => router.back();
                 }
 
-                navPromise()
+                update((session: any) => ({
+                  ...session,
+                  user: {
+                    ...(session?.user ?? {}),
+                    currency,
+                  },
+                }))
+                  .then(() => navPromise())
                   .then(() => resetState())
-                  .then(() =>
-                    update((session: any) => ({
-                      ...session,
-                      user: {
-                        ...(session?.user ?? {}),
-                        currency,
-                      },
-                    })),
-                  )
                   .catch(console.error);
               }
             }

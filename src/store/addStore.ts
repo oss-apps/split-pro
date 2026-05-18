@@ -7,6 +7,7 @@ import { type CurrencyCode } from '~/lib/currency';
 import type { TransactionAddInputModel } from '~/types';
 import { shuffleArray } from '~/utils/array';
 import { BigMath } from '~/utils/numbers';
+import { cyrb128, splitmix32 } from '~/utils/random';
 
 export type Participant = User & { amount?: bigint };
 export type SplitShares = Record<number, Record<SplitType, bigint | undefined>>;
@@ -42,6 +43,7 @@ export interface AddExpenseState {
     setGroup: (group: Group | undefined) => void;
     addOrUpdateParticipant: (user: Participant) => void;
     setSplitShare: (splitType: SplitType, userId: number, share: bigint) => void;
+    applySplitPreset: (splitType: SplitType, shares: Record<number, bigint>) => void;
     setParticipants: (participants: Participant[], splitType?: SplitType) => void;
     removeParticipant: (userId: number) => void;
     removeLastParticipant: () => void;
@@ -58,6 +60,7 @@ export interface AddExpenseState {
     setExpenseDate: (expenseDate: Date | undefined) => void;
     setTransactionId: (transactionId?: string) => void;
     setMultipleTransactions: (multipleTransactions: TransactionAddInputModel[]) => void;
+    setSingleTransaction: (singleTransaction: TransactionAddInputModel) => void;
     setIsTransactionLoading: (isTransactionLoading: boolean) => void;
     setCronExpression: (cronExpression: string) => void;
   };
@@ -95,30 +98,10 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
       set((s) => {
         const isNegative = realAmount < 0n;
         const amount = BigMath.abs(realAmount);
-        return {
-          amount,
-          isNegative,
-          ...calculateParticipantSplit(
-            amount,
-            s.participants,
-            s.splitType,
-            s.splitShares,
-            s.paidBy,
-          ),
-        };
+        return calculateParticipantSplit({ ...s, isNegative, amount });
       }),
     setAmountStr: (amountStr) => set({ amountStr }),
-    setSplitType: (splitType) =>
-      set((state) => ({
-        splitType,
-        ...calculateParticipantSplit(
-          state.amount,
-          state.participants,
-          splitType,
-          state.splitShares,
-          state.paidBy,
-        ),
-      })),
+    setSplitType: (splitType) => set((state) => calculateParticipantSplit({ ...state, splitType })),
     setSplitShare: (splitType, userId, share) =>
       set((state) => {
         const splitShares: SplitShares = {
@@ -129,16 +112,21 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
           },
         } as SplitShares;
 
-        return {
-          ...calculateParticipantSplit(
-            state.amount,
-            state.participants,
-            state.splitType,
-            splitShares,
-            state.paidBy,
-          ),
-          splitShares,
-        };
+        return calculateParticipantSplit({ ...state, splitShares });
+      }),
+    applySplitPreset: (splitType, shares) =>
+      set((state) => {
+        const splitShares = state.participants.reduce<SplitShares>((acc, participant) => {
+          const existingShares = state.splitShares[participant.id] ?? initSplitShares();
+          const defaultShare = splitType === SplitType.EQUAL ? 1n : 0n;
+          acc[participant.id] = {
+            ...existingShares,
+            [splitType]: shares[participant.id] ?? defaultShare,
+          };
+          return acc;
+        }, {});
+
+        return calculateParticipantSplit({ ...state, splitType, splitShares });
       }),
     setGroup: (group) => {
       set({ group });
@@ -154,16 +142,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
           participants.push({ ...user });
           splitShares[user.id] = initSplitShares();
         }
-        return {
-          splitShares,
-          ...calculateParticipantSplit(
-            state.amount,
-            participants,
-            state.splitType,
-            splitShares,
-            state.paidBy,
-          ),
-        };
+        return calculateParticipantSplit({ ...state, participants, splitShares });
       }),
     setParticipants: (participants, splitType) =>
       set((state) => {
@@ -182,17 +161,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         } else {
           splitType = SplitType.EQUAL;
         }
-        return {
-          splitType,
-          splitShares,
-          ...calculateParticipantSplit(
-            state.amount,
-            participants,
-            splitType,
-            splitShares,
-            state.paidBy,
-          ),
-        };
+        return calculateParticipantSplit({ ...state, participants, splitType, splitShares });
       }),
     removeLastParticipant: () => {
       set((state) => {
@@ -208,16 +177,11 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         const newParticipants = [...state.participants];
         const { id } = newParticipants.pop()!;
         const { [id]: _, ...rest } = state.splitShares;
-        return {
-          ...calculateParticipantSplit(
-            state.amount,
-            newParticipants,
-            state.splitType,
-            rest,
-            state.paidBy,
-          ),
+        return calculateParticipantSplit({
+          ...state,
+          participants: newParticipants,
           splitShares: rest,
-        };
+        });
       });
     },
     removeParticipant: (userId) => {
@@ -230,26 +194,17 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
 
         const newParticipants = state.participants.filter((p) => p.id !== userId);
         const { [userId]: _, ...rest } = state.splitShares;
-        return {
-          ...calculateParticipantSplit(
-            state.amount,
-            newParticipants,
-            state.splitType,
-            rest,
-            state.paidBy,
-          ),
+        return calculateParticipantSplit({
+          ...state,
+          participants: newParticipants,
           splitShares: rest,
-        };
+        });
       });
     },
     setCurrency: (currency) => set({ currency }),
     setCategory: (category) => set({ category }),
     setNameOrEmail: (nameOrEmail) => set({ nameOrEmail, showFriends: 0 < nameOrEmail.length }),
-    setPaidBy: (paidBy) =>
-      set((s) => ({
-        paidBy,
-        ...calculateParticipantSplit(s.amount, s.participants, s.splitType, s.splitShares, paidBy),
-      })),
+    setPaidBy: (paidBy) => set((state) => calculateParticipantSplit({ ...state, paidBy })),
     setCurrentUser: (currentUser) =>
       set((s) => {
         const cUser = s.participants.find((p) => p.id === currentUser.id);
@@ -294,21 +249,40 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     setExpenseDate: (expenseDate) => set({ expenseDate }),
     setTransactionId: (transactionId) => set({ transactionId }),
     setMultipleTransactions: (multipleTransactions) => set({ multipleTransactions }),
+    setSingleTransaction: (singleTransaction: TransactionAddInputModel) =>
+      set((s) => {
+        const isNegative = singleTransaction.amount < 0n;
+        const amount = BigMath.abs(singleTransaction.amount);
+        return {
+          ...calculateParticipantSplit({ ...s, amount, isNegative }),
+          expenseDate: singleTransaction.date,
+          description: singleTransaction.description,
+          currency: singleTransaction.currency,
+          amountStr: singleTransaction.amountStr,
+          transactionId: singleTransaction.transactionId,
+        };
+      }),
     setIsTransactionLoading: (isTransactionLoading) => set({ isTransactionLoading }),
     setCronExpression: (cronExpression) => set({ cronExpression }),
   },
 }));
 
 export function calculateParticipantSplit(
-  amount: bigint,
-  participants: Participant[],
-  splitType: SplitType,
-  splitShares: SplitShares,
-  paidBy?: Participant,
+  state: Pick<
+    AddExpenseState,
+    | 'amount'
+    | 'participants'
+    | 'splitType'
+    | 'splitShares'
+    | 'paidBy'
+    | 'expenseDate'
+    | 'isNegative'
+  >,
 ) {
+  const { amount, participants, splitType, splitShares, paidBy, expenseDate } = state;
   let canSplitScreenClosed = true;
   if (0n === amount) {
-    return { participants, canSplitScreenClosed };
+    return { ...state, canSplitScreenClosed };
   }
 
   let updatedParticipants = participants;
@@ -322,7 +296,9 @@ export function calculateParticipantSplit(
         ...p,
         amount: 0n === getSplitShare(p) ? 0n : amount / BigInt(totalParticipants),
       }));
-      canSplitScreenClosed = !!Object.values(splitShares).find((p) => 0n !== p[SplitType.EQUAL]);
+      canSplitScreenClosed = Boolean(
+        Object.values(splitShares).find((p) => 0n !== p[SplitType.EQUAL]),
+      );
       break;
     case SplitType.PERCENTAGE:
       updatedParticipants = participants.map((p) => ({
@@ -364,30 +340,40 @@ export function calculateParticipantSplit(
       break;
   }
 
-  updatedParticipants = updatedParticipants.map((p) => {
-    if (p.id === paidBy?.id) {
-      return { ...p, amount: -(p.amount ?? 0n) + amount };
-    }
-    return { ...p, amount: -(p.amount ?? 0n) };
-  });
+  if (paidBy) {
+    updatedParticipants = updatedParticipants.map((p) => {
+      if (p.id === paidBy.id) {
+        return { ...p, amount: -(p.amount ?? 0n) + amount };
+      }
+      return { ...p, amount: -(p.amount ?? 0n) };
+    });
 
-  if (canSplitScreenClosed) {
-    let penniesLeft = updatedParticipants.reduce((acc, p) => acc + (p.amount ?? 0n), 0n);
-    const participantsToPick = updatedParticipants.filter((p) => p.amount);
+    if (canSplitScreenClosed) {
+      let penniesLeft = updatedParticipants.reduce((acc, p) => acc + (p.amount ?? 0n), 0n);
+      const participantsToPick = updatedParticipants.filter((p) => p.amount);
+      const seed =
+        cyrb128(
+          `${participantsToPick
+            .map((p) => p.amount)
+            .toSorted((a, b) => Number((a ?? 0n) - (b ?? 0n)))
+            .join('-')}-${new Intl.DateTimeFormat('en').format(expenseDate)}`,
+        )[0] ?? 0;
+      const random = splitmix32(seed);
 
-    if (0 < participantsToPick.length) {
-      shuffleArray(participantsToPick);
-      let i = 0;
-      while (0n !== penniesLeft) {
-        const p = participantsToPick[i % participantsToPick.length]!;
-        p.amount! -= BigMath.sign(penniesLeft);
-        penniesLeft -= BigMath.sign(penniesLeft);
-        i++;
+      if (0 < participantsToPick.length) {
+        shuffleArray(participantsToPick, random);
+        let i = 0;
+        while (0n !== penniesLeft) {
+          const p = participantsToPick[i % participantsToPick.length]!;
+          p.amount! -= BigMath.sign(penniesLeft);
+          penniesLeft -= BigMath.sign(penniesLeft);
+          i++;
+        }
       }
     }
   }
 
-  return { participants: updatedParticipants, canSplitScreenClosed };
+  return { ...state, participants: updatedParticipants, canSplitScreenClosed };
 }
 
 export const initSplitShares = (): Record<SplitType, undefined> =>
@@ -423,28 +409,22 @@ export function calculateSplitShareBasedOnAmount(
       break;
 
     case SplitType.SHARE:
-      const amountNum = Number(amount);
-      const shares = participants.map((p) =>
-        p.id === paidBy?.id
-          ? Math.abs(amountNum - Number(p.amount)) / amountNum
-          : Math.abs(Number(p.amount)) / amountNum,
-      );
+      const amounts = participants
+        .filter(({ amount }) => Boolean(amount))
+        .map((p) =>
+          p.id === paidBy?.id ? BigMath.abs(amount - p.amount!) : BigMath.abs(p.amount!),
+        )
+        .filter((s) => s !== 0n);
 
-      const minShare = Math.min(...shares);
-
-      const multiplier = 0 !== minShare ? 1 / minShare : 1;
+      const gcdValue = amounts.length > 1 ? amounts.reduce((a, b) => BigMath.gcd(a, b)) : 1n;
 
       participants.forEach((p) => {
         splitShares[p.id]![splitType] =
           0n === amount
             ? 0n
-            : BigInt(
-                Math.round(
-                  (Math.abs(paidBy?.id !== p.id ? Number(p.amount) : amountNum - Number(p.amount)) /
-                    amountNum) *
-                    multiplier,
-                ),
-              ) * 100n;
+            : ((p.id === paidBy?.id ? BigMath.abs(amount - p.amount!) : BigMath.abs(p.amount!)) *
+                100n) /
+              gcdValue;
       });
 
       break;

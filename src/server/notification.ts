@@ -17,7 +17,17 @@ export async function pushNotification(subscription: string, message: PushMessag
     const _subscription = JSON.parse(subscription) as webpush.PushSubscription;
     const response = await webpush.sendNotification(_subscription, JSON.stringify(message));
     console.log('Push notification response', response);
+    return { ok: true } as const;
   } catch (error) {
     console.error('Error sending push notification', error);
+    const statusCode =
+      'object' === typeof error &&
+      null !== error &&
+      'statusCode' in error &&
+      'number' === typeof error.statusCode
+        ? error.statusCode
+        : undefined;
+
+    return { ok: false, statusCode } as const;
   }
 }

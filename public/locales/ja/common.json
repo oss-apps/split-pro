@@ -1,0 +1,17 @@
+{
+  "account": {
+    "change_language": "言語を変更",
+    "change_language_details": {
+      "messages": {
+        "language_changed": "言語を変更しました"
+      },
+      "placeholder": "言語を選択",
+      "title": "言語を選択"
+    },
+    "download_app": "アプリをダウンロード",
+    "download_app_details": {
+      "download_as_pwa": "SplitProをPWAとしてホーム画面に追加できます.",
+      "title": "アプリをダウンロード"
+    }
+  }
+}

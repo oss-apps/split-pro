@@ -28,8 +28,8 @@ export const bankTransactionsRouter = createTRPCRouter({
       if (provider === 'GOCARDLESS') {
         // Deprecated
         const res = await bankTransactionService
-          .getProvider()
-          .connectToBank(institutionId, ctx.session.user.preferredLanguage);
+          ?.getProvider()
+          ?.connectToBank(institutionId, ctx.session.user.preferredLanguage);
 
         if (!res) {
           throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to link to bank' });
@@ -68,7 +68,7 @@ export const bankTransactionsRouter = createTRPCRouter({
     )
     .mutation(async ({ input: publicToken, ctx }) => {
       if (whichBankConnectionConfigured() === 'PLAID') {
-        const res = await bankTransactionService.getProvider().exchangePublicToken?.(publicToken);
+        const res = await bankTransactionService?.getProvider()?.exchangePublicToken?.(publicToken);
 
         if (!res) {
           throw new TRPCError({

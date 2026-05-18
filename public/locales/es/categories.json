@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Juegos",
+        "movies": "Peliculas",
+        "music": "Música",
+        "other": "Entretenimiento",
+        "sports": "Deportes"
+      },
+      "name": "Entretenimiento"
+    },
+    "food": {
+      "items": {
+        "diningOut": "Restaurantes",
+        "groceries": "Supermercado",
+        "liquor": "Bebidas Alcohólicas",
+        "other": "Comida y Bebidas"
+      },
+      "name": "Comida y Bebidas"
+    },
+    "general": {
+      "items": {
+        "general": "General",
+        "other": "General"
+      },
+      "name": "General"
+    },
+    "home": {
+      "items": {
+        "electronics": "Electrónica",
+        "furniture": "Muebles",
+        "maintenance": "Mantenimiento",
+        "mortgage": "Hipoteca",
+        "other": "Hogar",
+        "pets": "Mascotas",
+        "rent": "Alquiler",
+        "services": "Servicios",
+        "supplies": "Suministros"
+      },
+      "name": "Hogar"
+    },
+    "life": {
+      "items": {
+        "childcare": "Cuidado de niños",
+        "clothing": "Ropa",
+        "education": "Educación",
+        "gifts": "Regalos",
+        "insurance": "Seguro",
+        "medical": "Salud",
+        "other": "Vida",
+        "taxes": "Impuestos"
+      },
+      "name": "Vida"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "Bicicleta",
+        "bus": "Autobús",
+        "car": "Coche",
+        "fuel": "Combustible",
+        "hotel": "Hotel",
+        "other": "Viajes",
+        "parking": "Aparcamiento",
+        "plane": "Avión",
+        "taxi": "Taxi",
+        "train": "Tren"
+      },
+      "name": "Viajes"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "Limpieza",
+        "electricity": "Electricidad",
+        "gas": "Gas",
+        "internet": "Internet",
+        "other": "Servicios",
+        "phone": "Teléfono",
+        "trash": "Basuras",
+        "water": "Agua"
+      },
+      "name": "Servicios Públicos"
+    }
+  },
+  "title": "Categorías"
+}

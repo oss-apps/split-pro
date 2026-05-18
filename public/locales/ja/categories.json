@@ -1,0 +1,10 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "ゲーム",
+        "movies": "映画"
+      }
+    }
+  }
+}

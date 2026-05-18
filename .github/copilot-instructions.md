@@ -99,7 +99,6 @@ Override with `git commit --no-verify` if needed.
 Environment variables are validated via `@t3-oss/env-nextjs` in `src/env.ts`. Required variables:
 - **Database**: `DATABASE_URL` or separate `POSTGRES_*` vars
 - **Auth**: `NEXTAUTH_URL`, `NEXTAUTH_SECRET`, OAuth provider credentials (Google/Email SMTP)
-- **Storage**: R2/S3 credentials (`R2_*` or `AWS_S3_*` variables)
 - **Optional**: Bank integration (Plaid/GoCardless), currency rate API keys, push notification VAPID keys
 
 For local dev: run `pnpm d` to start PostgreSQL + MinIO in Docker. Access MinIO console at `http://localhost:9001` (user: `splitpro`, pass: `password`) to create access keys.
@@ -124,7 +123,6 @@ GroupBalance(groupId, currency, userId, firendId)  // note: typo "firendId"
 ## Integration Points
 
 - **Authentication**: NextAuth + custom session enrichment (adds `user.currency`, `preferredLanguage`)
-- **Storage**: S3/R2 for expense bills (`getDocumentUploadUrl` in `storage.ts`)
 - **Bank Integration**: Plaid + GoCardless via `bankTransactionHelper.ts`
 - **Notifications**: Push via `service-notification.ts`, additionally poll the database for missed notifications
 - **Currency Rates**: Pluggable providers (Frankfurter, OXR, NBP) in `currencyRateService.ts`
@@ -210,7 +208,7 @@ The backend uses **tRPC** for type-safe API communication. Routers are in `src/s
 - `SelectUserOrGroup.tsx` - User/group picker with participant management
 - `CategoryPicker.tsx`, `CurrencyPicker.tsx`, `DateSelector.tsx` - Reusable pickers
 - `RecurrenceInput.tsx` - Cron expression builder
-- `UploadFile.tsx` - Receipt/bill upload to S3/R2
+- `UploadFile.tsx` - Receipt/bill upload
 - `UserInput.tsx` - Individual user participant with amount input
 
 **Friend/Balance components** (`src/components/Friend/`):

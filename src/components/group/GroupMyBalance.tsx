@@ -1,89 +1,76 @@
-import { type GroupBalance, type User } from '@prisma/client';
-import React from 'react';
+import { type BalanceView, type User } from '@prisma/client';
+import React, { useMemo } from 'react';
 
-import { BigMath } from '~/utils/numbers';
+import { CumulatedBalances } from '~/components/Expense/CumulatedBalances';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { BigMath } from '~/utils/numbers';
 
 interface GroupMyBalanceProps {
   userId: number;
-  groupBalances?: GroupBalance[];
+  groupBalances?: BalanceView[];
   users?: User[];
+  groupId: number;
 }
 
 const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
   userId,
   groupBalances = [],
   users = [],
+  groupId,
 }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
-  const userMap = users.reduce(
-    (acc, user) => {
-      acc[user.id] = user;
-      return acc;
-    },
-    {} as Record<number, User>,
+
+  const userMap = useMemo(
+    () =>
+      users.reduce< Record<number, User>>(
+        (acc, user) => {
+          acc[user.id] = user;
+          return acc;
+        },
+        {},
+      ),
+    [users],
   );
 
-  const friendBalances = groupBalances.reduce(
-    (acc, balance) => {
-      if (balance.userId === userId && 0 < BigMath.abs(balance.amount)) {
-        acc[balance.firendId] ??= {};
-        const friendBalance = acc[balance.firendId]!;
-        friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0n) + balance.amount;
-      }
-      return acc;
-    },
-    {} as Record<number, Record<string, bigint>>,
+  const friendBalances = useMemo(
+    () =>
+      groupBalances.reduce< Record<number, Record<string, bigint>>>(
+        (acc, balance) => {
+          if (balance.userId === userId && 0 < BigMath.abs(balance.amount)) {
+            acc[balance.friendId] ??= {};
+            const friendBalance = acc[balance.friendId]!;
+            friendBalance[balance.currency] =
+              (friendBalance[balance.currency] ?? 0n) + balance.amount;
+          }
+          return acc;
+        },
+        {},
+      ),
+    [groupBalances, userId],
   );
 
-  const cumulatedBalances = Object.values(friendBalances).reduce(
-    (acc, balances) => {
-      Object.entries(balances).forEach(([currency, amount]) => {
-        acc[currency] = (acc[currency] ?? 0n) + amount;
-      });
-      return acc;
-    },
-    {} as Record<string, bigint>,
+  const cumulatedBalances = useMemo(
+    () =>
+      Object.entries(
+        Object.values(friendBalances).reduce< Record<string, bigint>>(
+          (acc, balances) => {
+            if (balances) {
+              Object.entries(balances).forEach(([currency, amount]) => {
+                acc[currency] = (acc[currency] ?? 0n) + amount;
+              });
+            }
+            return acc;
+          },
+          {},
+        ),
+      ).map(([currency, amount]) => ({ currency, amount })),
+    [friendBalances],
   );
-
-  const youLent = Object.entries(cumulatedBalances).filter(([_, amount]) => 0 < amount);
-  const youOwe = Object.entries(cumulatedBalances).filter(([_, amount]) => 0 > amount);
-  const youDative = t('actors.you_dativus').toLowerCase();
 
   return (
     <div className="flex gap-2">
       <div className="flex flex-col gap-2">
-        {0 < youLent.length ? (
-          <div className="flex flex-wrap gap-1 text-emerald-500">
-            {t('ui.expense.statements.you_lent')}
-            {youLent.map(([currency, amount], index, arr) => (
-              <React.Fragment key={currency}>
-                <div className="flex gap-1 font-semibold">
-                  {getCurrencyHelpersCached(currency).toUIString(amount)}
-                </div>
-                {index < arr.length - 1 ? <span>+</span> : null}
-              </React.Fragment>
-            ))}
-          </div>
-        ) : null}
-
-        {0 < youOwe.length ? (
-          <div className="text-orange-6000 flex flex-wrap gap-1 text-orange-600">
-            {t('ui.expense.statements.you_owe')}
-            {youOwe.map(([currency, amount], index, arr) => (
-              <React.Fragment key={currency}>
-                <div className="flex gap-1 font-semibold">
-                  {getCurrencyHelpersCached(currency).toUIString(amount)}
-                </div>
-                {index < arr.length - 1 ? <span>+</span> : null}
-              </React.Fragment>
-            ))}
-          </div>
-        ) : null}
-
-        {0 === youLent.length && 0 === youOwe.length ? (
-          <div className="text-gray-500">{t('ui.settled_up')}</div>
-        ) : null}
+        <CumulatedBalances entityId={groupId} balances={cumulatedBalances} />
 
         {Object.entries(friendBalances)
           .slice(0, 2)
@@ -94,13 +81,8 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
                 {Object.entries(balances).map(([currency, amount]) => (
                   <div key={currency}>
                     {0 < amount
-                      ? t('ui.expense.statements.friend_owes_you', {
-                          friend: friend?.name ?? '',
-                          youDative,
-                        })
-                      : t('ui.expense.statements.you_owe_friend', {
-                          friend: friend?.name ?? '',
-                        })}{' '}
+                      ? `${friend?.name} ${t('ui.expense.user.owe')} ${t('actors.you_dativus').toLowerCase()}`
+                      : `${t('actors.you')} ${t('ui.expense.you.owe')} ${friend?.name}`}{' '}
                     {getCurrencyHelpersCached(currency).toUIString(amount)}
                   </div>
                 ))}
@@ -108,11 +90,10 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
             );
           })}
 
-        {Object.keys(friendBalances).length > 2 ? (
+        {2 < Object.keys(friendBalances).length ? (
           <div className="text-sm text-gray-500">
-            {t('ui.remaining_balances', {
-              count: Object.keys(friendBalances).length - 2,
-            })}
+            +{Object.keys(friendBalances).length - 2}{' '}
+            {Object.keys(friendBalances).length === 3 ? t('ui.balance') : t('ui.balances')}...
           </div>
         ) : null}
       </div>

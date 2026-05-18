@@ -1,0 +1,7 @@
+{
+  "features": {
+    "currency_conversion": {
+      "description": "最新・過去のレートで通貨を換算"
+    }
+  }
+}

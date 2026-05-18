@@ -23,6 +23,7 @@ export const getCurrencyHelpers = ({
     formatter.formatToParts(11111111).find(({ type }) => type === 'group')?.value ?? '';
   const decimalSeparator =
     formatter.formatToParts(1.1).find(({ type }) => type === 'decimal')?.value ?? '.';
+  const alternativeDecimalSeparator = decimalSeparator === '.' ? ',' : '.';
   const literalSeparator =
     formatter.formatToParts(1.1).find(({ type }) => type === 'literal')?.value ?? '';
   const decimalMultiplier = parseInt(`1${'0'.repeat(decimalDigits)}`, 10);
@@ -65,7 +66,7 @@ export const getCurrencyHelpers = ({
     const [integerPart = '0', decimalPart = ''] = cleanStr.split('.');
 
     return (
-      BigInt(integerPart) * decimalMultiplierN +
+      BigInt(integerPart === '-' ? '0' : integerPart) * decimalMultiplierN +
       BigInt(Math.round(parseFloat(`0.${decimalPart || '0'}`) * decimalMultiplier)) *
         (integerPart.startsWith('-') ? -1n : 1n)
     );
@@ -78,19 +79,29 @@ export const getCurrencyHelpers = ({
   };
 
   /* Sanitize input by allowing only digits, negative sign, and one decimal separator */
-  const sanitizeInput = (input: string, signed = false) => {
+  const sanitizeInput = (input: string, signed = false, alternativeDecimal = false) => {
     let cleaned = '';
     let hasDecimalSeparator = false;
     let hasNegativeSign = false;
 
     `${input}`.split('').forEach((letter) => {
-      //allowing only one separator
+      //Allowing only one separator
       if (letter === decimalSeparator && !hasDecimalSeparator) {
         cleaned += letter;
         hasDecimalSeparator = true;
         return;
       }
-      // when a user presses '-' sign, switch the sign of the number
+      if (
+        alternativeDecimal &&
+        letter === alternativeDecimalSeparator &&
+        !hasDecimalSeparator &&
+        !input.includes(decimalSeparator)
+      ) {
+        cleaned += decimalSeparator;
+        hasDecimalSeparator = true;
+        return;
+      }
+      // When a user presses '-' sign, switch the sign of the number
       if (letter === '-' && !hasNegativeSign) {
         hasNegativeSign = true;
       }
@@ -102,10 +113,14 @@ export const getCurrencyHelpers = ({
     if (
       signed &&
       hasNegativeSign &&
+      cleaned !== '' &&
       parseFloat(cleaned) !== 0 &&
       !Number.isNaN(parseFloat(cleaned))
     ) {
       cleaned = `-${cleaned}`;
+    }
+    if (signed && hasNegativeSign && cleaned === '') {
+      cleaned = '-';
     }
 
     if (hasDecimalSeparator) {
@@ -136,7 +151,7 @@ export const getCurrencyHelpers = ({
     if (typeof value === 'bigint') {
       const sign = value < 0n && signed ? '-' : '';
       const integer = `${value / decimalMultiplierN}`;
-      const fraction = `${value}`.slice(-decimalDigits);
+      const fraction = `${value}`.slice(-decimalDigits).padStart(decimalDigits, '0');
       return (
         sign +
         normalizeToMaxLength(
@@ -165,7 +180,10 @@ export const getCurrencyHelpers = ({
   };
 
   /* Format a string number to localized, beautified currency string */
-  const format = (value: string, signed = false) => {
+  const format = (
+    value: string,
+    { signed = false, hideSymbol = false }: { signed?: boolean; hideSymbol?: boolean },
+  ) => {
     if (value === '') {
       return formatter.format(0);
     }
@@ -198,22 +216,24 @@ export const getCurrencyHelpers = ({
       }
     }
 
-    return sign + parts.map(({ value }) => value).join('');
+    return (
+      sign +
+      parts
+        .filter(({ type }) => !hideSymbol || type !== 'currency')
+        .map(({ value }) => value)
+        .join('')
+    );
   };
 
-  const toUIString = (value: unknown, signed = false) => {
+  const toUIString = (value: unknown, signed = false, hideSymbol = false) => {
     const cleanString = parseToCleanString(value, signed);
-    return format(cleanString, signed);
+    return format(cleanString, { signed, hideSymbol });
   };
-
-  const stripCurrencySymbol = (value: string) =>
-    value.replace(new RegExp(`\\${currencySymbol}`, 'g'), '').trim();
 
   return {
     parseToCleanString,
     toUIString,
     toUIStringSigned: (value: unknown) => toUIString(value, true),
-    stripCurrencySymbol,
     format,
     formatter,
     sanitizeInput,
@@ -228,9 +248,42 @@ export function removeTrailingZeros(num: string) {
   return num;
 }
 
-export function currencyConversion(amount: bigint, rate: number) {
-  return BigMath.roundDiv(amount * BigInt(Math.round(rate * 10000)), 10000n);
+export function currencyConversion({
+  from,
+  to,
+  amount,
+  rate,
+}: {
+  from: CurrencyCode;
+  to: CurrencyCode;
+  amount: bigint;
+  rate: number;
+}) {
+  const fromDecimalDigits = CURRENCIES[from].decimalDigits;
+  const toDecimalDigits = CURRENCIES[to].decimalDigits;
+  const preMultiplier = BigInt(10 ** Math.max(toDecimalDigits - fromDecimalDigits, 0));
+  const postMultiplier = BigInt(10 ** Math.max(fromDecimalDigits - toDecimalDigits, 0));
+  const precision = getRatePrecision(rate);
+  const ratePrecisionFactor = 10 ** precision;
+  return BigMath.roundDiv(
+    amount * preMultiplier * BigInt(Math.round(rate * ratePrecisionFactor)),
+    postMultiplier * BigInt(ratePrecisionFactor),
+  );
 }
+
+export const MAX_RATE_PRECISION = 10;
+
+export const getRatePrecision = (value: number, maxPrecision = MAX_RATE_PRECISION) => {
+  const normalized = value.toString().trim();
+  if ('' === normalized) {
+    return 0;
+  }
+  const decimalIndex = normalized.indexOf('.');
+  if (-1 === decimalIndex) {
+    return 0;
+  }
+  return Math.min(Math.max(normalized.length - decimalIndex - 1, 0), maxPrecision);
+};
 
 export const BigMath = {
   abs(x: bigint) {
@@ -270,6 +323,12 @@ export const BigMath = {
       }
       return value;
     }
+  },
+  gcd(a: bigint, b: bigint): bigint {
+    if (b === 0n) {
+      return BigMath.abs(a);
+    }
+    return BigMath.gcd(b, a % b);
   },
   roundDiv(x: bigint, y: bigint) {
     if (0n === y) {

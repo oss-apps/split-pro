@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "खेल",
+        "movies": "चलचित्र",
+        "music": "संगीत",
+        "other": "अन्य",
+        "sports": "खेलकुद"
+      },
+      "name": "मनोरञ्जन"
+    },
+    "food": {
+      "items": {
+        "diningOut": "बाहिर खाना खाने",
+        "groceries": "किराना सामान",
+        "liquor": "मदिरा",
+        "other": "अन्य"
+      },
+      "name": "खाना"
+    },
+    "general": {
+      "items": {
+        "general": "सामान्य",
+        "other": "अन्य"
+      },
+      "name": "साधारण"
+    },
+    "home": {
+      "items": {
+        "electronics": "इलेक्ट्रोनिक्स",
+        "furniture": "फर्निचर",
+        "maintenance": "मर्मत सम्भार",
+        "mortgage": "बन्धकी/ऋण",
+        "other": "अन्य",
+        "pets": "घरपालुवा जनावर",
+        "rent": "भाडा",
+        "services": "सेवाहरू",
+        "supplies": "सामग्रीहरू"
+      },
+      "name": "घर"
+    },
+    "life": {
+      "items": {
+        "childcare": "बाल हेरचाह",
+        "clothing": "लुगाफाटा",
+        "education": "शिक्षा",
+        "gifts": "उपहार",
+        "insurance": "बीमा",
+        "medical": "चिकित्सा",
+        "other": "अन्य",
+        "taxes": "कर"
+      },
+      "name": "जीवनशैली"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "साइकल",
+        "bus": "बस",
+        "car": "कार",
+        "fuel": "इन्धन",
+        "hotel": "होटल",
+        "other": "अन्य",
+        "parking": "पार्किङ",
+        "plane": "हवाई जहाज",
+        "taxi": "ट्याक्सी",
+        "train": "रेल"
+      },
+      "name": "यात्रा"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "सरसफाइ",
+        "electricity": "विद्युत",
+        "gas": "ग्यास",
+        "internet": "इन्टरनेट",
+        "other": "अन्य",
+        "phone": "फोन",
+        "trash": "फोहोर मैला",
+        "water": "पानी"
+      },
+      "name": "उपयोगिताहरू"
+    }
+  },
+  "title": "श्रेणीहरू"
+}

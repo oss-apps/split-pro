@@ -3,84 +3,59 @@ import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
 
-import { FILE_SIZE_LIMIT } from '~/lib/constants';
 import { useAddExpenseStore } from '~/store/addStore';
-import { api } from '~/utils/api';
+import { prepareImageForUpload, uploadImage, validateUploadSize } from '~/utils/imageUpload';
 
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-
-const getImgHeightAndWidth = (file: File) =>
-  new Promise<{ width: number; height: number }>((resolve, reject) => {
-    const img = new Image();
-    img.src = URL.createObjectURL(file);
-    img.onload = () => {
-      resolve({ width: img.width, height: img.height });
-      URL.revokeObjectURL(img.src);
-    };
-    img.onerror = (error) => {
-      reject(error);
-    };
-  });
+import { useAppStore } from '~/store/appStore';
 
 export const UploadFile: React.FC = () => {
   const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
+  const maxUploadFileSizeMB = useAppStore((s) => s.maxUploadFileSizeMB);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
   const { setFileUploading, setFileKey } = useAddExpenseStore((s) => s.actions);
-
-  const getUploadUrl = api.expense.getUploadUrl.useMutation();
 
   const handleFileChange = React.useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       const { files } = event.target;
 
-      const file = files?.[0];
+      let file = files?.[0];
 
       if (!file) {
         return;
       }
 
-      if (file.size > FILE_SIZE_LIMIT) {
-        toast.error(`${t('errors.less_than')} ${FILE_SIZE_LIMIT / 1024 / 1024}MB`);
-        return;
-      }
-
-      setFile(file);
-
-      await getImgHeightAndWidth(file);
-
-      setFileUploading(true);
       try {
-        const { fileUrl, key } = await getUploadUrl.mutateAsync({
-          fileName: file.name,
-          fileType: file.type,
-          fileSize: file.size,
-        });
+        try {
+          file = await prepareImageForUpload(file, maxUploadFileSizeMB);
+        } catch (error) {
+          console.error('Compression failed:', error);
+          toast.error(t('errors.image_compression_failed'));
+        }
 
-        const response = await fetch(fileUrl, {
-          method: 'PUT',
-          body: file,
-        });
-
-        if (!response.ok) {
-          toast.error(t('errors.upload_failed'));
-          console.error('Failed to upload file:', response.statusText);
-          setFile(null);
+        if (!validateUploadSize(file, maxUploadFileSizeMB)) {
+          toast.error(t('errors.less_than', { size: maxUploadFileSizeMB }));
           return;
         }
 
-        toast.success(t('expense_details.add_expense_details.upload_file.messages.upload_success'));
+        setFile(file);
+        setFileUploading(true);
 
+        const key = await uploadImage(file);
+
+        toast.success(t('expense_details.add_expense_details.upload_file.messages.upload_success'));
         setFileKey(key);
       } catch (error) {
-        console.error('Error getting upload url:', error);
+        console.error('Upload error:', error);
         toast.error(t('errors.uploading_error'));
+        setFile(null);
       } finally {
         setFileUploading(false);
       }
     },
-    [getUploadUrl, setFileUploading, setFileKey, t],
+    [setFileUploading, setFileKey, maxUploadFileSizeMB, t],
   );
 
   return (

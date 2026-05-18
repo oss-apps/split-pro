@@ -101,17 +101,17 @@ export const CategoryIcons: Record<CategoryItem, LucideIcon> = {
   hotel: Hotel,
 };
 
-export const CURRENCY_CONVERSION_ICON = DollarSign;
+export const CurrencyConversionIcon = DollarSign;
 
-export const SETTLEUP_ICON = HandCoins;
+export const SettleupIcon = HandCoins;
 
-export const DEFAULT_CATEGORY_ICON = CategoryIcons[DEFAULT_CATEGORY];
+export const DefaultCategoryIcon = CategoryIcons[DEFAULT_CATEGORY];
 
 export const CategoryIcon: React.FC<{ category?: string; splitType?: SplitType } & LucideProps> = ({
   category = DEFAULT_CATEGORY,
   ...props
 }) => {
-  const Icon = CategoryIcons[category as CategoryItem] ?? DEFAULT_CATEGORY_ICON;
+  const Icon = CategoryIcons[category as CategoryItem] ?? DefaultCategoryIcon;
 
   return <Icon {...props} />;
 };

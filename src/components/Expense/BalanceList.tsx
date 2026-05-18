@@ -1,4 +1,4 @@
-import type { GroupBalance, User } from '@prisma/client';
+import type { BalanceView, User } from '@prisma/client';
 import { clsx } from 'clsx';
 import { type ComponentProps, Fragment, useCallback, useMemo } from 'react';
 import { EntityAvatar } from '~/components/ui/avatar';
@@ -10,7 +10,7 @@ import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { GroupSettleUp } from '../Friend/GroupSettleup';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { Button } from '../ui/button';
-import { CURRENCY_CONVERSION_ICON, SETTLEUP_ICON } from '../ui/categoryIcons';
+import { CurrencyConversionIcon, SettleupIcon } from '../ui/categoryIcons';
 import { toast } from 'sonner';
 
 interface UserWithBalance {
@@ -20,7 +20,7 @@ interface UserWithBalance {
 }
 
 export const BalanceList: React.FC<{
-  groupBalances?: GroupBalance[];
+  groupBalances?: BalanceView[];
   users?: User[];
 }> = ({ groupBalances = [], users = [] }) => {
   const { displayName, t, getCurrencyHelpersCached } = useTranslationWithUtils();
@@ -36,8 +36,8 @@ export const BalanceList: React.FC<{
     }, {});
     groupBalances
       .filter(
-        ({ amount, userId, firendId }) =>
-          0 < BigMath.abs(amount) && userId !== firendId && res[userId] && res[firendId],
+        ({ amount, userId, friendId }) =>
+          0 < BigMath.abs(amount) && userId !== friendId && res[userId] && res[friendId],
       )
       .forEach((balance) => {
         if (!res[balance.userId]) {
@@ -49,10 +49,10 @@ export const BalanceList: React.FC<{
           console.error('BalanceList: userId not found in users list', balance.userId);
           toast.error(t('common:errors.group_balances_malformed'));
         }
-        if (!res[balance.userId]!.balances[balance.firendId]) {
-          res[balance.userId]!.balances[balance.firendId] = {};
+        if (!res[balance.userId]!.balances[balance.friendId]) {
+          res[balance.userId]!.balances[balance.friendId] = {};
         }
-        const friendBalance = res[balance.userId]!.balances[balance.firendId]!;
+        const friendBalance = res[balance.userId]!.balances[balance.friendId]!;
         friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0n) + balance.amount;
 
         res[balance.userId]!.total[balance.currency] =
@@ -113,7 +113,7 @@ export const BalanceList: React.FC<{
             </AccordionTrigger>
             <AccordionContent>
               {Object.entries(balances).map(([friendId, perFriendBalances]) => {
-                const friend = userMap[+friendId]!.user;
+                const friend = userMap[Number(friendId)]!.user;
 
                 return (
                   <Fragment key={friendId}>
@@ -125,19 +125,17 @@ export const BalanceList: React.FC<{
                       const sender = 0 < amount ? friend : user;
                       const receiver = 0 < amount ? user : friend;
 
-                      const onSubmit: ComponentProps<typeof CurrencyConversion>['onSubmit'] =
-                        useCallback(
-                          async (data) => {
-                            await addOrEditCurrencyConversionMutation.mutateAsync({
-                              ...data,
-                              senderId: sender.id,
-                              receiverId: receiver.id,
-                              groupId: groupBalances[0]!.groupId,
-                            });
-                            await apiUtils.invalidate();
-                          },
-                          [sender.id, receiver.id],
-                        );
+                      const onSubmit: ComponentProps<
+                        typeof CurrencyConversion
+                      >['onSubmit'] = async (data) => {
+                        await addOrEditCurrencyConversionMutation.mutateAsync({
+                          ...data,
+                          senderId: sender.id,
+                          receiverId: receiver.id,
+                          groupId: groupBalances[0]!.groupId,
+                        });
+                        await apiUtils.invalidate();
+                      };
 
                       return (
                         <div
@@ -179,10 +177,10 @@ export const BalanceList: React.FC<{
                               user={user}
                               amount={amount}
                               currency={currency}
-                              groupId={groupBalances[0]!.groupId}
+                              groupId={groupBalances[0]!.groupId!}
                             >
                               <Button size="icon" variant="secondary" className="size-8">
-                                <SETTLEUP_ICON className="size-4" />
+                                <SettleupIcon className="size-4" />
                               </Button>
                             </GroupSettleUp>
                             <CurrencyConversion
@@ -191,7 +189,7 @@ export const BalanceList: React.FC<{
                               currency={currency}
                             >
                               <Button size="icon" variant="secondary" className="size-8">
-                                <CURRENCY_CONVERSION_ICON className="size-4" />
+                                <CurrencyConversionIcon className="size-4" />
                               </Button>
                             </CurrencyConversion>
                           </div>

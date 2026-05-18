@@ -1,5 +1,4 @@
 import { createEnv } from '@t3-oss/env-nextjs';
-import { execSync } from 'node:child_process';
 import { z } from 'zod';
 
 export const env = createEnv({
@@ -16,6 +15,7 @@ export const env = createEnv({
         'You forgot to change the default URL',
       ),
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+    DOCKER_OUTPUT: z.boolean().default(false),
     NEXTAUTH_SECRET: 'production' === process.env.NODE_ENV ? z.string() : z.string().optional(),
     NEXTAUTH_URL: z.preprocess(
       // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
@@ -28,7 +28,8 @@ export const env = createEnv({
       (str) => process.env.VERCEL_URL ?? str,
       process.env.VERCEL ? z.string() : z.string().url(),
     ),
-    CLEAR_BANK_CACHE_FREQUENCY: z.enum(['weekly', 'monthly']).optional(),
+    CLEAR_CACHE_CRON_RULE: z.string().optional(),
+    CACHE_RETENTION_INTERVAL: z.string().optional(),
     ENABLE_SENDING_INVITES: z.boolean(),
     DISABLE_EMAIL_SIGNUP: z.boolean(),
     INVITE_ONLY: z.boolean(),
@@ -37,6 +38,7 @@ export const env = createEnv({
     EMAIL_SERVER_PORT: z.string().optional(),
     EMAIL_SERVER_USER: z.string().optional(),
     EMAIL_SERVER_PASSWORD: z.string().optional(),
+    EMAIL_TLS_REJECT_UNAUTHORIZED: z.boolean().default(true),
     GOCARDLESS_COUNTRY: z.string().optional(),
     GOCARDLESS_SECRET_ID: z.string().optional(),
     GOCARDLESS_SECRET_KEY: z.string().optional(),
@@ -54,11 +56,6 @@ export const env = createEnv({
     KEYCLOAK_ID: z.string().optional(),
     KEYCLOAK_SECRET: z.string().optional(),
     KEYCLOAK_ISSUER: z.string().optional(),
-    R2_ACCESS_KEY: z.string().optional(),
-    R2_SECRET_KEY: z.string().optional(),
-    R2_BUCKET: z.string().optional(),
-    R2_URL: z.string().optional(),
-    R2_PUBLIC_URL: z.string().optional(),
     WEB_PUSH_EMAIL: z.string().optional(),
     WEB_PUSH_PRIVATE_KEY: z.string().optional(),
     WEB_PUSH_PUBLIC_KEY: z.string().optional(),
@@ -74,17 +71,17 @@ export const env = createEnv({
     OIDC_CLIENT_SECRET: z.string().optional(),
     OIDC_WELL_KNOWN_URL: z.string().optional(),
     OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: z.boolean().optional(),
+    UPLOAD_MAX_FILE_SIZE_MB: z.coerce.number().int().positive().default(10),
   },
 
   /**
    * Specify your client-side environment variables schema here. This way you can ensure the app
    * isn't built with invalid env vars. To expose them to the client, prefix them with
-   * `NEXT_PUBLIC_`.
+   * `NEXT_PUBLIC_`. Note that these are only evaluated at build time!
    */
   client: {
-    NEXT_PUBLIC_FRANKFURTER_USED: z.boolean().default(false),
-    NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT: z.boolean().default(false),
-    NEXT_PUBLIC_VERSION: z.string().optional(),
+    NEXT_PUBLIC_APP_VERSION: z.string().optional(),
+    NEXT_PUBLIC_GIT_SHA: z.string().optional(),
   },
 
   /**
@@ -96,10 +93,12 @@ export const env = createEnv({
       process.env.DATABASE_URL ??
       `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}`,
     NODE_ENV: process.env.NODE_ENV,
+    DOCKER_OUTPUT: Boolean(JSON.parse(process.env.DOCKER_OUTPUT || 'false')),
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     NEXTAUTH_URL_INTERNAL: process.env.NEXTAUTH_URL_INTERNAL ?? process.env.NEXTAUTH_URL,
-    CLEAR_BANK_CACHE_FREQUENCY: process.env.CLEAR_BANK_CACHE_FREQUENCY,
+    CLEAR_CACHE_CRON_RULE: process.env.CLEAR_CACHE_CRON_RULE ?? '0 2 * * 0',
+    CACHE_RETENTION_INTERVAL: process.env.CACHE_RETENTION_INTERVAL ?? '2 days',
     ENABLE_SENDING_INVITES: 'true' === process.env.ENABLE_SENDING_INVITES,
     DISABLE_EMAIL_SIGNUP: 'true' === process.env.DISABLE_EMAIL_SIGNUP,
     INVITE_ONLY: 'true' === process.env.INVITE_ONLY,
@@ -108,6 +107,9 @@ export const env = createEnv({
     EMAIL_SERVER_PORT: process.env.EMAIL_SERVER_PORT,
     EMAIL_SERVER_USER: process.env.EMAIL_SERVER_USER,
     EMAIL_SERVER_PASSWORD: process.env.EMAIL_SERVER_PASSWORD,
+    EMAIL_TLS_REJECT_UNAUTHORIZED: Boolean(
+      JSON.parse(process.env.EMAIL_TLS_REJECT_UNAUTHORIZED || 'true'),
+    ),
     GOCARDLESS_COUNTRY: process.env.GOCARDLESS_COUNTRY,
     GOCARDLESS_SECRET_ID: process.env.GOCARDLESS_SECRET_ID,
     GOCARDLESS_SECRET_KEY: process.env.GOCARDLESS_SECRET_KEY,
@@ -125,11 +127,6 @@ export const env = createEnv({
     KEYCLOAK_ID: process.env.KEYCLOAK_ID,
     KEYCLOAK_SECRET: process.env.KEYCLOAK_SECRET,
     KEYCLOAK_ISSUER: process.env.KEYCLOAK_ISSUER,
-    R2_ACCESS_KEY: process.env.R2_ACCESS_KEY,
-    R2_SECRET_KEY: process.env.R2_SECRET_KEY,
-    R2_BUCKET: process.env.R2_BUCKET,
-    R2_URL: process.env.R2_URL,
-    R2_PUBLIC_URL: process.env.R2_PUBLIC_URL,
     WEB_PUSH_EMAIL: process.env.WEB_PUSH_EMAIL,
     WEB_PUSH_PRIVATE_KEY: process.env.WEB_PUSH_PRIVATE_KEY,
     WEB_PUSH_PUBLIC_KEY: process.env.WEB_PUSH_PUBLIC_KEY,
@@ -142,16 +139,18 @@ export const env = createEnv({
     OIDC_CLIENT_ID: process.env.OIDC_CLIENT_ID,
     OIDC_CLIENT_SECRET: process.env.OIDC_CLIENT_SECRET,
     OIDC_WELL_KNOWN_URL: process.env.OIDC_WELL_KNOWN_URL,
-    OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: !!process.env.OIDC_ALLOW_DANGEROUS_EMAIL_LINKING,
-    NEXT_PUBLIC_FRANKFURTER_USED: process.env.CURRENCY_RATE_PROVIDER === 'frankfurter',
-    NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT: process.env.NEXTAUTH_URL?.includes('splitpro.app') ?? false,
-    NEXT_PUBLIC_VERSION: process.env.APP_VERSION,
+    OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: Boolean(process.env.OIDC_ALLOW_DANGEROUS_EMAIL_LINKING),
+    UPLOAD_MAX_FILE_SIZE_MB: process.env.UPLOAD_MAX_FILE_SIZE_MB
+      ? Number(process.env.UPLOAD_MAX_FILE_SIZE_MB)
+      : 10,
+    NEXT_PUBLIC_APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION,
+    NEXT_PUBLIC_GIT_SHA: process.env.NEXT_PUBLIC_GIT_SHA,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
    * useful for Docker builds.
    */
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  skipValidation: Boolean(JSON.parse(process.env.SKIP_ENV_VALIDATION || 'false')),
   /**
    * Makes it so that empty strings are treated as undefined. `SOME_VAR: z.string()` and
    * `SOME_VAR=''` will throw an error.

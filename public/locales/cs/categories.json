@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Hry",
+        "movies": "Filmy",
+        "music": "Hudba",
+        "other": "Zábava",
+        "sports": "Sporty"
+      },
+      "name": "Zábava"
+    },
+    "food": {
+      "items": {
+        "diningOut": "Strava mimo domov",
+        "groceries": "Potraviny",
+        "liquor": "Alkohol",
+        "other": "Jídlo & Pití"
+      },
+      "name": "Jídlo & Pití"
+    },
+    "general": {
+      "items": {
+        "general": "Všeobecné",
+        "other": "Všeobecné"
+      },
+      "name": "Všeobecné"
+    },
+    "home": {
+      "items": {
+        "electronics": "Elektronika",
+        "furniture": "Nábytek",
+        "maintenance": "Údržba",
+        "mortgage": "Hypotéka",
+        "other": "Domácnost",
+        "pets": "Mazlíčci",
+        "rent": "Nájem",
+        "services": "Služby",
+        "supplies": "Zásoby"
+      },
+      "name": "Domácnost"
+    },
+    "life": {
+      "items": {
+        "childcare": "Péče o děti",
+        "clothing": "Oblečení",
+        "education": "Vzdělání",
+        "gifts": "Dárky",
+        "insurance": "Pojištění",
+        "medical": "Zdravotní",
+        "other": "Život",
+        "taxes": "Daně"
+      },
+      "name": "Život"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "Kolo",
+        "bus": "Autobus",
+        "car": "Auto",
+        "fuel": "Palivo",
+        "hotel": "Hotel",
+        "other": "Cestování",
+        "parking": "Parkování",
+        "plane": "Letadlo",
+        "taxi": "Taxi",
+        "train": "Vlak"
+      },
+      "name": "Cestování"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "Úklid",
+        "electricity": "Elektřina",
+        "gas": "Plyn",
+        "internet": "Internet",
+        "other": "Služby",
+        "phone": "Telefon",
+        "trash": "Odpad",
+        "water": "Voda"
+      },
+      "name": "Služby"
+    }
+  },
+  "title": "Kategorie"
+}

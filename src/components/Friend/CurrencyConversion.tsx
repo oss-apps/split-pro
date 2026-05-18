@@ -1,15 +1,15 @@
 import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { api } from '~/utils/api';
-import { BigMath } from '~/utils/numbers';
+import { MAX_RATE_PRECISION, currencyConversion, getRatePrecision } from '~/utils/numbers';
 
 import { toast } from 'sonner';
-import { env } from '~/env';
 import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
 import { useAddExpenseStore } from '~/store/addStore';
 import { CurrencyPicker } from '../AddExpense/CurrencyPicker';
 import { DateSelector } from '../AddExpense/DateSelector';
 import { Button } from '../ui/button';
+import { CurrencyInput } from '../ui/currency-input';
 import { AppDrawer } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -17,7 +17,7 @@ import { Label } from '../ui/label';
 export const CurrencyConversion: React.FC<{
   amount: bigint;
   editingRate?: number;
-  editingTargetCurrency?: CurrencyCode;
+  editingTargetCurrency?: string;
   currency: string;
   children: ReactNode;
   onSubmit: (data: {
@@ -28,6 +28,8 @@ export const CurrencyConversion: React.FC<{
   }) => Promise<void> | void;
 }> = ({ amount, editingRate, editingTargetCurrency, currency, children, onSubmit }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
+
+  const { toUIString, toSafeBigInt } = getCurrencyHelpersCached(currency);
 
   const [amountStr, setAmountStr] = useState('');
   const [rate, setRate] = useState('');
@@ -41,6 +43,8 @@ export const CurrencyConversion: React.FC<{
     { enabled: currency !== targetCurrency },
   );
 
+  const { toUIString: toUITargetString } = getCurrencyHelpersCached(targetCurrency);
+
   useEffect(() => {
     if (getCurrencyRate.isPending) {
       setRate('');
@@ -49,32 +53,49 @@ export const CurrencyConversion: React.FC<{
   }, [getCurrencyRate.isPending]);
 
   useEffect(() => {
-    setAmountStr((Number(BigMath.abs(amount)) / 100).toString());
-    setRate(editingRate ? editingRate.toFixed(4) : '');
-    if (editingTargetCurrency) {
+    setAmountStr(toUIString(amount, false, true));
+    if (editingRate) {
+      const precision = getRatePrecision(editingRate);
+      setRate(editingRate.toFixed(precision));
+    } else {
+      setRate('');
+    }
+    if (editingTargetCurrency && isCurrencyCode(editingTargetCurrency)) {
       setTargetCurrency(editingTargetCurrency);
     }
-  }, [amount, editingRate, editingTargetCurrency]);
+  }, [amount, editingRate, editingTargetCurrency, toUIString]);
 
   useEffect(() => {
     if (getCurrencyRate.data?.rate) {
-      setRate(getCurrencyRate.data.rate.toFixed(4));
+      const precision = getRatePrecision(getCurrencyRate.data.rate);
+      setRate(getCurrencyRate.data.rate.toFixed(precision));
     }
-  }, [getCurrencyRate.data, amountStr]);
+  }, [getCurrencyRate.data]);
 
   const dateDisabled = useMemo(() => ({ after: new Date() }), []);
 
   useEffect(() => {
-    setTargetAmountStr((Number(amountStr) * Number(rate)).toFixed(2));
-  }, [amountStr, rate]);
-
-  const onChangeAmount = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    if (Number(value) < 0 || Number.isNaN(Number(value))) {
+    if (!isCurrencyCode(currency) || !isCurrencyCode(targetCurrency)) {
       return;
     }
-    setAmountStr(value);
-  }, []);
+
+    const targetAmount = currencyConversion({
+      from: currency,
+      to: targetCurrency,
+      amount: toSafeBigInt(amountStr),
+      rate: Number(rate),
+    });
+    setTargetAmountStr(toUITargetString(targetAmount, false, true));
+  }, [amountStr, rate, toSafeBigInt, toUITargetString, currency, targetCurrency]);
+
+  const onUpdateAmount = useCallback(
+    ({ strValue }: { strValue?: string; bigIntValue?: bigint }) => {
+      if (strValue !== undefined) {
+        setAmountStr(strValue);
+      }
+    },
+    [setAmountStr],
+  );
 
   const onChangeRate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(',', '.');
@@ -88,13 +109,17 @@ export const CurrencyConversion: React.FC<{
       return;
     }
     const [int = '', dec = ''] = raw.split('.');
-    const trimmedDec = dec.slice(0, 4);
+    const trimmedDec = dec.slice(0, 10);
     const normalized = raw.includes('.') ? `${int}.${trimmedDec}` : int;
     setRate(normalized);
   }, []);
 
   const onChangeTargetCurrency = useCallback(
-    (currency: CurrencyCode) => {
+    (currency: CurrencyCode | null) => {
+      if (!currency) {
+        return;
+      }
+
       setRate('');
       setTargetCurrency(currency);
       setCurrency(currency);
@@ -103,14 +128,18 @@ export const CurrencyConversion: React.FC<{
   );
 
   const onChangeTargetAmount = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = e.target;
-      if (Number(value) < 0 || Number.isNaN(Number(value))) {
-        return;
+    ({ bigIntValue }: { strValue?: string; bigIntValue?: bigint }) => {
+      if (bigIntValue && isCurrencyCode(currency)) {
+        const amount = currencyConversion({
+          amount: bigIntValue ?? 0n,
+          rate: 1 / Number(rate),
+          from: targetCurrency,
+          to: currency,
+        });
+        setAmountStr(toUIString(amount, false, true));
       }
-      setAmountStr((Number(value) / Number(rate)).toFixed(2));
     },
-    [rate],
+    [rate, toUIString, targetCurrency, currency],
   );
 
   const onSave = useCallback(async () => {
@@ -132,6 +161,13 @@ export const CurrencyConversion: React.FC<{
       toast.error(t('errors.currency_conversion_error'));
     }
   }, [onSubmit, targetCurrency, amountStr, rate, currency, getCurrencyHelpersCached, t]);
+
+  const ratePrecision = useMemo(() => {
+    if (!rate) {
+      return 0;
+    }
+    return getRatePrecision(Number(rate));
+  }, [rate]);
 
   return (
     <AppDrawer
@@ -155,25 +191,23 @@ export const CurrencyConversion: React.FC<{
         <div className="w-full">
           <div className="mx-auto grid w-full max-w-3xl grid-cols-1 place-items-center gap-x-4 gap-y-4 sm:grid-cols-3 sm:gap-y-16">
             {/* From amount */}
-            <div className="flex w-full max-w-[240px] items-end gap-2 sm:col-span-2">
+            <div className="flex w-full max-w-60 items-end gap-2 sm:col-span-2">
               <div className="flex flex-col gap-2">
                 <Label className="capitalize">{t('ui.expense.from')}</Label>
                 <Button variant="outline" className="text-base" disabled>
                   {currency}
                 </Button>
               </div>
-              <Input
+              <CurrencyInput
                 aria-label="Amount"
-                type="number"
-                step="0.01"
-                min={0}
-                value={amountStr}
-                inputMode="decimal"
-                onChange={onChangeAmount}
+                currency={currency}
+                strValue={amountStr}
+                hideSymbol
+                onValueChange={onUpdateAmount}
               />
             </div>
 
-            <div className="flex w-full max-w-[240px] items-end gap-2 sm:col-span-2">
+            <div className="flex w-full max-w-60 items-end gap-2 sm:col-span-2">
               <div className="flex flex-col gap-2">
                 <Label className="capitalize">{t('ui.expense.to')}</Label>
                 {editingTargetCurrency ? (
@@ -185,50 +219,46 @@ export const CurrencyConversion: React.FC<{
                     className="mx-auto"
                     currentCurrency={targetCurrency}
                     onCurrencyPick={onChangeTargetCurrency}
-                    // Client env vars with pages router only work after next build :/
-                    showOnlyFrankfurter={env.NEXT_PUBLIC_FRANKFURTER_USED}
                   />
                 )}
               </div>
-              <Input
+              <CurrencyInput
                 aria-label="Converted Amount"
-                type="number"
-                step="0.01"
-                min={0}
-                value={targetAmountStr}
-                inputMode="decimal"
-                onChange={onChangeTargetAmount}
+                currency={targetCurrency}
+                strValue={targetAmountStr}
+                onValueChange={onChangeTargetAmount}
+                hideSymbol
                 disabled={getCurrencyRate.isPending || currency === targetCurrency}
               />
             </div>
 
             {/* Rate */}
-            <div className="flex w-full max-w-[240px] items-start sm:col-start-3 sm:row-span-2 sm:row-start-1 sm:h-full sm:flex-col sm:justify-between">
+            <div className="flex w-full max-w-60 items-start sm:col-start-3 sm:row-span-2 sm:row-start-1 sm:h-full sm:flex-col sm:justify-between">
               <div className="flex w-1/2 flex-col gap-2 sm:w-full">
                 <Label className="capitalize">{t('currency_conversion.rate')}</Label>
                 <div className="flex flex-col">
                   <Input
                     aria-label="Rate"
                     type="number"
-                    step="0.0001"
+                    step={`0.${'0'.repeat(MAX_RATE_PRECISION - 1)}1`}
                     min={0}
                     value={rate}
                     inputMode="numeric"
                     onChange={onChangeRate}
                     disabled={getCurrencyRate.isPending || currency === targetCurrency}
                   />
-                  {getCurrencyRate.isPending && (
+                  {currency !== targetCurrency && getCurrencyRate.isPending && (
                     <span className="pointer-events-none text-xs text-gray-500">
                       {t('currency_conversion.fetching_rate')}
                     </span>
                   )}
-                  {!!rate && (
+                  {Boolean(rate) && (
                     <>
                       <span className="pointer-events-none text-xs text-gray-500">
-                        1 {currency} = {Number(rate).toFixed(4)} {targetCurrency}
+                        1 {currency} = {Number(rate).toFixed(ratePrecision)} {targetCurrency}
                       </span>
                       <span className="pointer-events-none text-xs text-gray-500">
-                        1 {targetCurrency} = {(1 / Number(rate)).toFixed(4)} {currency}
+                        1 {targetCurrency} = {(1 / Number(rate)).toFixed(ratePrecision)} {currency}
                       </span>
                     </>
                   )}
@@ -245,6 +275,7 @@ export const CurrencyConversion: React.FC<{
                     disabled={dateDisabled}
                     selected={rateDate}
                     onSelect={setRateDate}
+                    popoverPortalled={false}
                   />
                 </div>
               </div>

@@ -5,7 +5,7 @@
       "title": "Connexion à ta banque"
     },
     "currency_conversion": {
-      "description": "Convertis rapidement les dépenses entre plusieurs devises, avec le taux de change actuel ou antérieur.",
+      "description": "Convertis rapidement les dépenses entre plusieurs devises, avec le taux de change actuel ou antérieur",
       "title": "Conversion monétaire"
     },
     "debt_simplification": {
@@ -40,6 +40,10 @@
       "description": "Tu aimes avoir l'app sur mobile ? Pas de souci : tu peux mettre un raccourci et ça fonctionne pareil !",
       "title": "App PWA (Appli Web Progressive)"
     },
+    "recurring_transactions": {
+      "description": "Enregistre des dépenses récurrentes pour tes abonnements, ton loyer ou n'importe quelle dépense régulière à partager.",
+      "title": "Dépenses récurrentes"
+    },
     "title": "Fonctionnalités",
     "unequal_split": {
       "description": "Des options de répartition des dépenses avancée. Par parts, pourcentages, ou montants précis, avec possibilité d'ajustement manuel.",
@@ -54,8 +58,8 @@
     "built_by": "Développé par"
   },
   "hero": {
-    "add_expense_button": "Ajouter une dépense",
-    "star_github_button": "Mettez-nous une étoile sur GitHub",
+    "add_expense_button": "Nouvelle dépense",
+    "star_github_button": "Soutiens-nous sur GitHub",
     "subtitle_link": "open source",
     "subtitle_part1": "Une alternative",
     "subtitle_part2": "à Splitwise",
@@ -63,8 +67,8 @@
     "title_part1": "Répartissez vos dépenses entre ami⋅es"
   },
   "meta": {
-    "description": "SplitPro : partagez vos dépenses entre ami⋅es. C'est gratuit !",
-    "title": "SplitPro : partagez vos dépenses entre ami⋅es. C'est gratuit !"
+    "description": "SplitPro : partagez gratuitement vos dépenses entre ami⋅es",
+    "title": "SplitPro : partagez gratuitement vos dépenses entre ami⋅es"
   },
   "nav": {
     "app_name": "SplitPro",

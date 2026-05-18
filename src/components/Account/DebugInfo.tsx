@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
+import { api } from '~/utils/api';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,13 +14,13 @@ import {
 } from '../ui/alert-dialog';
 import { toast } from 'sonner';
 import { env } from '~/env';
+import { cn } from '~/lib/utils';
+import { Button } from '../ui/button';
 
-export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string | null }>> = ({
-  children,
-  gitRevision,
-}) => {
+export const DebugInfo: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation('common');
-  const [newVersion, setNewVersion] = React.useState<string | null>('v1.6.3');
+  const [newVersion, setNewVersion] = React.useState<string | null>(null);
+  const sendTestPushNotification = api.user.sendTestPushNotification.useMutation();
 
   useEffect(() => {
     // Check github releases API for latest version
@@ -37,7 +38,7 @@ export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string |
       }
     };
 
-    if (process.env.NEXT_PUBLIC_VERSION) {
+    if (env.NEXT_PUBLIC_APP_VERSION) {
       void fetchLatestVersion();
     }
   }, []);
@@ -45,13 +46,11 @@ export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string |
   const copyToClipboard = useCallback(() => {
     // Copy to clipboard
     const debugInfo = [`UserAgent: ${navigator.userAgent}`];
-    if (gitRevision) {
-      debugInfo.push(`${t('account.debug_info_details.git')}: ${gitRevision}`);
+    if (env.NEXT_PUBLIC_GIT_SHA) {
+      debugInfo.push(`${t('account.debug_info_details.git')}: ${env.NEXT_PUBLIC_GIT_SHA}`);
     }
-    if (process.env.NEXT_PUBLIC_VERSION) {
-      debugInfo.push(
-        `${t('account.debug_info_details.version')} ${process.env.NEXT_PUBLIC_VERSION}`,
-      );
+    if (env.NEXT_PUBLIC_APP_VERSION) {
+      debugInfo.push(`${t('account.debug_info_details.version')} ${env.NEXT_PUBLIC_APP_VERSION}`);
     }
     try {
       void navigator.clipboard.writeText(debugInfo.join('\n'));
@@ -59,34 +58,50 @@ export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string |
       toast.error(t('account.debug_info_details.copy_failed'));
       console.error('Failed to copy debug info:', error);
     }
-  }, [gitRevision, t]);
+  }, [t]);
+
+  const onSendTestNotification = useCallback(async () => {
+    try {
+      const result = await sendTestPushNotification.mutateAsync();
+      if (0 === result.sentCount) {
+        toast.error(t('account.debug_info_details.test_notification_failed'));
+        return;
+      }
+
+      toast.success(t('account.debug_info_details.test_notification_sent'));
+    } catch (error) {
+      toast.error(t('account.debug_info_details.test_notification_failed'));
+      console.error('Failed to send test push notification:', error);
+    }
+  }, [sendTestPushNotification, t]);
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger>{children}</AlertDialogTrigger>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{t('account.debug_info_details.title')}</AlertDialogTitle>
           <AlertDialogDescription>
-            <p>{t('account.debug_info_details.description')}</p>
-            <pre className="mt-4 text-wrap">
-              {t('account.debug_info_details.user_agent')}:
-              <br />
-              {navigator.userAgent}
-            </pre>
-            {gitRevision && (
-              <pre className="text-wrap">
-                {t('account.debug_info_details.git')}:<br />
-                {gitRevision}
-              </pre>
-            )}
-            {process.env.NEXT_PUBLIC_VERSION && (
-              <pre className="text-wrap">
-                {t('account.debug_info_details.version')}:<br />
-                {env.NEXT_PUBLIC_VERSION}
-              </pre>
-            )}
-            {newVersion && env.NEXT_PUBLIC_VERSION && newVersion !== env.NEXT_PUBLIC_VERSION ? (
+            {t('account.debug_info_details.description')}
+            <DebugInfoRow
+              label={t('account.debug_info_details.user_agent')}
+              value={navigator.userAgent}
+              className="mt-4"
+            />
+
+            <DebugInfoRow
+              label={t('account.debug_info_details.git')}
+              value={env.NEXT_PUBLIC_GIT_SHA}
+              className="mt-4"
+            />
+            <DebugInfoRow
+              label={t('account.debug_info_details.version')}
+              value={env.NEXT_PUBLIC_APP_VERSION}
+              className="mt-4"
+            />
+            {newVersion &&
+            env.NEXT_PUBLIC_APP_VERSION &&
+            newVersion !== env.NEXT_PUBLIC_APP_VERSION ? (
               <p className="mt-4 text-sm text-yellow-600">
                 {t('account.debug_info_details.new_version_available')}: {newVersion}
               </p>
@@ -94,6 +109,15 @@ export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string |
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              void onSendTestNotification();
+            }}
+            loading={sendTestPushNotification.isPending}
+          >
+            {t('account.debug_info_details.send_test_notification')}
+          </Button>
           <AlertDialogCancel>{t('actions.close')}</AlertDialogCancel>
           <AlertDialogAction onClick={copyToClipboard}>{t('actions.copy')}</AlertDialogAction>
         </AlertDialogFooter>
@@ -101,3 +125,23 @@ export const DebugInfo: React.FC<React.PropsWithChildren<{ gitRevision: string |
     </AlertDialog>
   );
 };
+
+const Label: React.FC<React.PropsWithChildren<{ className?: string }>> = ({
+  children,
+  className,
+}) => <span className={cn('text-sm text-white', className)}>{children}</span>;
+
+const Value: React.FC<React.PropsWithChildren<{ className?: string }>> = ({
+  children,
+  className,
+}) => <span className={cn('text-primary text-sm', className)}>{children}</span>;
+
+export const DebugInfoRow: React.FC<
+  React.PropsWithChildren<{ label: string; value?: string | null; className?: string }>
+> = ({ label, value, className }) =>
+  value ? (
+    <span className={cn('flex flex-col', className)}>
+      <Label>{label}</Label>
+      <Value>{value}</Value>
+    </span>
+  ) : null;

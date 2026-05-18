@@ -4,7 +4,6 @@ import {
   BarChartHorizontal,
   Check,
   ChevronLeft,
-  Construction,
   DoorOpen,
   Info,
   Merge,
@@ -18,7 +17,7 @@ import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Fragment, useCallback, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { BalanceList } from '~/components/Expense/BalanceList';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
@@ -31,15 +30,20 @@ import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { Label } from '~/components/ui/label';
 import { SimpleConfirmationDialog } from '~/components/SimpleConfirmationDialog';
+import { DefaultSplitSettings } from '~/components/DefaultSplit/DefaultSplitSettings';
 import { Switch } from '~/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
-import { UpdateName } from '~/components/Account/UpdateName';
+import { UpdateName } from '~/components/Account/UpdateDetails';
+import { CurrencyPicker } from '~/components/AddExpense/CurrencyPicker';
 import { env } from '~/env';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { deserializeDefaultSplit } from '~/lib/defaultSplit';
+import { isCurrencyCode, parseCurrencyCode } from '~/lib/currency';
 import { db } from '~/server/db';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
+import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
@@ -47,6 +51,8 @@ const BalancePage: NextPageWithUser<{
   const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const router = useRouter();
   const groupId = parseInt(router.query.groupId as string);
+
+  const setGroupDefaultCurrency = useCurrencyPreferenceStore((s) => s.setGroupDefaultCurrency);
 
   const groupDetailQuery = api.group.getGroupDetails.useQuery({ groupId });
   const groupTotalQuery = api.group.getGroupTotals.useQuery({ groupId });
@@ -56,7 +62,8 @@ const BalancePage: NextPageWithUser<{
   const toggleArchiveMutation = api.group.toggleArchive.useMutation();
   const toggleSimplifyDebtsMutation = api.group.toggleSimplifyDebts.useMutation();
   const updateGroupDetailsMutation = api.group.updateGroupDetails.useMutation();
-  const recalculateGroupBalancesMutation = api.group.recalculateBalances.useMutation();
+  const upsertDefaultSplitMutation = api.group.upsertDefaultSplit.useMutation();
+  const clearDefaultSplitMutation = api.group.clearDefaultSplit.useMutation();
 
   const [isInviteCopied, setIsInviteCopied] = useState(false);
 
@@ -85,29 +92,13 @@ const BalancePage: NextPageWithUser<{
   }, [groupDetailQuery.data, t]);
 
   const isAdmin = groupDetailQuery.data?.userId === user.id;
-  const isArchived = !!groupDetailQuery.data?.archivedAt;
+  const isArchived = Boolean(groupDetailQuery.data?.archivedAt);
   const canDeleteOrArchive =
     groupDetailQuery.data?.userId === user.id &&
     !groupDetailQuery.data?.groupBalances.find((bal) => 0n !== bal.amount);
   const canLeave = !groupDetailQuery.data?.groupBalances.find(
     (bal) => 0n !== bal.amount && bal.userId === user.id,
   );
-
-  const onRecalculateBalances = useCallback(() => {
-    recalculateGroupBalancesMutation.mutate(
-      { groupId },
-      {
-        onSuccess: () => {
-          void groupDetailQuery.refetch();
-          toast.success(t('group_details.messages.balances_recalculated'));
-        },
-        onError: (e) => {
-          toast.error(t('errors.something_went_wrong'));
-          console.error(e);
-        },
-      },
-    );
-  }, [groupId, groupDetailQuery, recalculateGroupBalancesMutation, t]);
 
   const onGroupDelete = useCallback(() => {
     deleteGroupMutation.mutate(
@@ -145,6 +136,12 @@ const BalancePage: NextPageWithUser<{
     },
     [groupId, leaveGroupMutation, groupDetailQuery, router, t],
   );
+
+  useEffect(() => {
+    if (isCurrencyCode(groupDetailQuery.data?.defaultCurrency)) {
+      setGroupDefaultCurrency(groupId, groupDetailQuery.data.defaultCurrency);
+    }
+  }, [groupDetailQuery.data?.defaultCurrency, setGroupDefaultCurrency, groupId]);
 
   return (
     <>
@@ -209,25 +206,27 @@ const BalancePage: NextPageWithUser<{
                   <div className="text-primary text-xl font-semibold">
                     {groupDetailQuery.data?.name ?? ''}
                   </div>
-                  {isAdmin && (
-                    <UpdateName
-                      className="mr-2 size-5"
-                      defaultName={groupDetailQuery.data?.name ?? ''}
-                      onNameSubmit={async (values) => {
-                        try {
-                          await updateGroupDetailsMutation.mutateAsync({
-                            groupId,
-                            name: values.name,
-                          });
-                          toast.success(t('ui.messages.group_name_updated'), { duration: 1500 });
-                          await groupDetailQuery.refetch();
-                        } catch (error) {
-                          toast.error(t('errors.group_name_update_failed'));
-                          console.error(error);
-                        }
-                      }}
-                    />
-                  )}
+                  <UpdateName
+                    className="mr-2 size-5"
+                    defaultName={groupDetailQuery.data?.name ?? ''}
+                    defaultImage={groupDetailQuery.data?.image ?? null}
+                    onNameSubmit={async (values) => {
+                      try {
+                        await updateGroupDetailsMutation.mutateAsync({
+                          groupId,
+                          name: values.name,
+                          image: values.image,
+                        });
+                        toast.success(t('group_details.messages.group_name_updated'), {
+                          duration: 1500,
+                        });
+                        await groupDetailQuery.refetch();
+                      } catch (error) {
+                        toast.error(t('errors.group_name_update_failed'));
+                        console.error(error);
+                      }
+                    }}
+                  />
                 </div>
 
                 <p className="mt-5 font-semibold">{t('group_details.group_info.members')}</p>
@@ -277,6 +276,101 @@ const BalancePage: NextPageWithUser<{
                     </div>
                   ))}
                 </div>
+
+                <div className="mt-6">
+                  <p className="font-semibold">
+                    {t('group_details.group_info.default_balance_currency')}
+                  </p>
+                  <CurrencyPicker
+                    className="mt-2"
+                    currentCurrency={
+                      groupDetailQuery.data?.defaultCurrency &&
+                      isCurrencyCode(groupDetailQuery.data.defaultCurrency)
+                        ? parseCurrencyCode(groupDetailQuery.data.defaultCurrency)
+                        : null
+                    }
+                    allowClear
+                    onCurrencyPick={(currency) => {
+                      if (!groupDetailQuery.data) {
+                        return;
+                      }
+
+                      updateGroupDetailsMutation.mutate(
+                        {
+                          groupId,
+                          name: groupDetailQuery.data.name,
+                          image: groupDetailQuery.data.image,
+                          defaultCurrency: currency,
+                        },
+                        {
+                          onSuccess: () => {
+                            toast.success(
+                              t('group_details.messages.default_balance_currency_updated'),
+                            );
+                            setGroupDefaultCurrency(groupId, currency);
+                            void groupDetailQuery.refetch();
+                          },
+                          onError: () => {
+                            toast.error(t('errors.setting_update_failed'));
+                          },
+                        },
+                      );
+                    }}
+                  />
+                </div>
+
+                <div className="mt-6">
+                  <p className="font-semibold">{t('group_details.group_info.default_split')}</p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <DefaultSplitSettings
+                      participants={
+                        groupDetailQuery.data?.groupUsers.map((groupUser) => groupUser.user) ?? []
+                      }
+                      defaultSplit={groupDetailQuery.data?.defaultSplit}
+                      triggerLabel={t('group_details.group_info.configure_default_split')}
+                      disabled={isArchived || !groupDetailQuery.data}
+                      onSave={(defaultSplit) => {
+                        upsertDefaultSplitMutation.mutate(
+                          { groupId, defaultSplit },
+                          {
+                            onSuccess: () => {
+                              toast.success(t('group_details.messages.default_split_updated'));
+                              void groupDetailQuery.refetch();
+                            },
+                            onError: () => {
+                              toast.error(t('errors.setting_update_failed'));
+                            },
+                          },
+                        );
+                      }}
+                    />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={
+                        isArchived ||
+                        !deserializeDefaultSplit(groupDetailQuery.data?.defaultSplit) ||
+                        clearDefaultSplitMutation.isPending
+                      }
+                      onClick={() => {
+                        clearDefaultSplitMutation.mutate(
+                          { groupId },
+                          {
+                            onSuccess: () => {
+                              toast.success(t('group_details.messages.default_split_cleared'));
+                              void groupDetailQuery.refetch();
+                            },
+                            onError: () => {
+                              toast.error(t('errors.setting_update_failed'));
+                            },
+                          },
+                        );
+                      }}
+                    >
+                      {t('expense_details.clear')}
+                    </Button>
+                  </div>
+                </div>
               </>
               {groupDetailQuery.data?.createdAt && (
                 <div className="mt-8">
@@ -286,7 +380,7 @@ const BalancePage: NextPageWithUser<{
               )}
               <div className="mt-8">
                 <p className="font-semibold">{t('group_details.group_info.actions')}</p>
-                <div className="child:h-7 mt-2 flex flex-col">
+                <div className="child:h-7 mt-2 flex flex-col gap-4">
                   <Label className="flex cursor-pointer items-center justify-between">
                     <p className="flex items-center">
                       <Merge className="mr-2 size-4" />{' '}
@@ -294,6 +388,7 @@ const BalancePage: NextPageWithUser<{
                     </p>
                     <Switch
                       id="simplify-debts"
+                      disabled={isArchived}
                       checked={groupDetailQuery.data?.simplifyDebts ?? false}
                       onCheckedChange={() => {
                         toggleSimplifyDebtsMutation.mutate(
@@ -310,23 +405,6 @@ const BalancePage: NextPageWithUser<{
                       }}
                     />
                   </Label>
-                  {isAdmin && (
-                    <SimpleConfirmationDialog
-                      title={t('group_details.group_info.recalculate_balances_details.title')}
-                      description={t(
-                        'group_details.group_info.recalculate_balances_details.description',
-                      )}
-                      hasPermission
-                      onConfirm={onRecalculateBalances}
-                      loading={recalculateGroupBalancesMutation.isPending}
-                      variant="default"
-                    >
-                      <Button variant="ghost" className="text-primary justify-start p-0 text-left">
-                        <Construction className="mr-2 h-5 w-5" />{' '}
-                        {t('group_details.group_info.recalculate_balances')}
-                      </Button>
-                    </SimpleConfirmationDialog>
-                  )}
                   <Label className="flex cursor-pointer items-center justify-between">
                     <p className="flex items-center">
                       <Archive className="mr-2 size-4" />{' '}
@@ -434,6 +512,7 @@ const BalancePage: NextPageWithUser<{
                 userId={user.id}
                 groupBalances={groupDetailQuery.data?.groupBalances}
                 users={groupDetailQuery.data?.groupUsers.map((gu) => gu.user)}
+                groupId={groupId}
               />
             </div>
             <div className="mb-4 flex justify-center gap-2 overflow-y-auto border-b pb-4">

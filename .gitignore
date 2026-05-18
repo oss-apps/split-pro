@@ -12,6 +12,9 @@
 /prisma/db.sqlite
 /prisma/db.sqlite-journal
 
+# uploads
+/uploads
+
 # next.js
 /.next/
 /out/
@@ -54,3 +57,7 @@ certificates
 .vscode
 
 SEED_STATISTICS.md
+
+# Agents
+.worktrees/
+docs/superpowers/

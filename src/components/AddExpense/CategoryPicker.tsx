@@ -4,7 +4,7 @@ import { useTranslation } from 'next-i18next';
 
 import { Button } from '../ui/button';
 import { CategoryIcon } from '../ui/categoryIcons';
-import { AppDrawer, DrawerClose } from '../ui/drawer';
+import { AppDrawer, AppDrawerClose, DrawerClose } from '../ui/drawer';
 
 export const CategoryPicker: React.FC<{
   category: string;
@@ -38,7 +38,7 @@ export const CategoryPicker: React.FC<{
               );
 
               return (
-                <DrawerClose key={key}>
+                <AppDrawerClose key={key} asChild>
                   <Button
                     variant="ghost"
                     className="flex h-[75px] w-[75px] flex-col items-center justify-start gap-1 justify-self-center py-3 text-center"
@@ -53,7 +53,7 @@ export const CategoryPicker: React.FC<{
                       {t(`categories_list.${categoryName}.items.${key}`, { ns: 'categories' })}
                     </span>
                   </Button>
-                </DrawerClose>
+                </AppDrawerClose>
               );
             })}
           </div>

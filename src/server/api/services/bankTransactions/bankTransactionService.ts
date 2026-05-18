@@ -28,20 +28,21 @@ export class BankTransactionService {
         : this.connectedProvider === 'PLAID'
           ? new PlaidService()
           : null;
-
-    if (!this.provider) {
-      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Provider not found' });
-    }
   }
 
-  getProvider(): AbstractBankTransactionService {
+  getProvider(): AbstractBankTransactionService | null {
     if (!this.provider) {
-      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Provider not found' });
+      return null;
     }
+
     return this.provider;
   }
 
   async getTransactions(userId: number, token?: string): Promise<TransactionOutput | undefined> {
+    if (!this.provider) {
+      return;
+    }
+
     return this.provider?.getTransactions(userId, token);
   }
 
@@ -49,6 +50,10 @@ export class BankTransactionService {
     id?: string,
     preferredLanguage?: string,
   ): Promise<{ institutionId: string; authLink: string } | undefined> {
+    if (!this.provider) {
+      return;
+    }
+
     const res = this.provider?.connectToBank(id, preferredLanguage);
     if (!res) {
       throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to link to bank' });

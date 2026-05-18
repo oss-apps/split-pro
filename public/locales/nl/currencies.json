@@ -3,6 +3,17 @@
     "AED": {
       "name": "Verenigde Arabische Emiraten Dirham",
       "name_plural": "Verenigde Arabische Emiraten Dirhams"
+    },
+    "AFN": {
+      "name": "Afghaans",
+      "name_plural": "Afghaans"
+    },
+    "ALL": {
+      "name_plural": "Albanische lekë"
+    },
+    "ARS": {
+      "name": "Argentijnse Peso",
+      "name_plural": "Argentijnse pesos"
     }
   }
 }

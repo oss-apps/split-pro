@@ -1,0 +1,559 @@
+{
+  "currency_list": {
+    "AED": {
+      "name": "Dirham SAE",
+      "name_plural": "Dirhamy SAE"
+    },
+    "AFN": {
+      "name": "Afghánský Afghání",
+      "name_plural": "Afghánské Afghány"
+    },
+    "ALL": {
+      "name": "Albánský Lek",
+      "name_plural": "Albánské Leky"
+    },
+    "AMD": {
+      "name": "Arménský Dram",
+      "name_plural": "Arménské Dramy"
+    },
+    "ARS": {
+      "name": "Argentinské Peso",
+      "name_plural": "Argentinská Pesa"
+    },
+    "AUD": {
+      "name": "Australský Dolar",
+      "name_plural": "Australské Dolary"
+    },
+    "AZN": {
+      "name": "Ázerbájdžánský Manat",
+      "name_plural": "Ázerbájdžánské Manaty"
+    },
+    "BAM": {
+      "name": "Bosenská Konvertibilní Marka",
+      "name_plural": "Bosenské Konvertibilní Marky"
+    },
+    "BDT": {
+      "name": "Bangladéšská Taka",
+      "name_plural": "Bangladéšské Taky"
+    },
+    "BGN": {
+      "name": "Bulharský Lev",
+      "name_plural": "Bulharské Levy"
+    },
+    "BHD": {
+      "name": "Bahrajnský Dinár",
+      "name_plural": "Bahrajnské Dináry"
+    },
+    "BIF": {
+      "name": "Burundský Frank",
+      "name_plural": "Burundské Franky"
+    },
+    "BND": {
+      "name": "Brunejský dolar",
+      "name_plural": "Brunejské dolary"
+    },
+    "BOB": {
+      "name": "Bolivijský Boliviano",
+      "name_plural": "Bolivijské Boliviany"
+    },
+    "BRL": {
+      "name": "Brazilský Real",
+      "name_plural": "Brazilské Realy"
+    },
+    "BWP": {
+      "name": "Botswanská Pula",
+      "name_plural": "Botswanské Puly"
+    },
+    "BYN": {
+      "name": "Běloruský Rubl",
+      "name_plural": "Běloruské Rubly"
+    },
+    "BZD": {
+      "name": "Belizský Dolar",
+      "name_plural": "Belizské Dolary"
+    },
+    "CAD": {
+      "name": "Kanadský Dolar",
+      "name_plural": "Kanadské Dolary"
+    },
+    "CDF": {
+      "name": "Konžský Frank",
+      "name_plural": "Konžské Franky"
+    },
+    "CHF": {
+      "name": "Švýcarský Frank",
+      "name_plural": "Švýcarské Franky"
+    },
+    "CLP": {
+      "name": "Chilské Peso",
+      "name_plural": "Chilská Pesa"
+    },
+    "CNY": {
+      "name": "Čínský Yuan",
+      "name_plural": "Čínské Yuany"
+    },
+    "COP": {
+      "name": "Kolumbijské Peso",
+      "name_plural": "Kolumbijská Pesa"
+    },
+    "CRC": {
+      "name": "Kostarický Colón",
+      "name_plural": "Kostarické Colóny"
+    },
+    "CVE": {
+      "name": "Kapverdské Escudo",
+      "name_plural": "Kapverdská Escuda"
+    },
+    "CZK": {
+      "name": "Česká Koruna",
+      "name_plural": "České Koruny"
+    },
+    "DJF": {
+      "name": "Džibutský Frank",
+      "name_plural": "Džibutské Franky"
+    },
+    "DKK": {
+      "name": "Dánská Koruna",
+      "name_plural": "Dánské Koruny"
+    },
+    "DOP": {
+      "name": "Dominikánské Peso",
+      "name_plural": "Dominikánská Pesa"
+    },
+    "DZD": {
+      "name": "Alžírský Dinár",
+      "name_plural": "Alžírské Dináry"
+    },
+    "EEK": {
+      "name": "Estonská Kroona",
+      "name_plural": "Estonské Kroony"
+    },
+    "EGP": {
+      "name": "Egyptská Libra",
+      "name_plural": "Egyptské Libry"
+    },
+    "ERN": {
+      "name": "Eritrejská Nakfa",
+      "name_plural": "Eritrejské Nakfy"
+    },
+    "ETB": {
+      "name": "Etiopský Birr",
+      "name_plural": "Etiopské Birry"
+    },
+    "EUR": {
+      "name": "Euro",
+      "name_plural": "Eura"
+    },
+    "GBP": {
+      "name": "Britská Libra Šterlinků",
+      "name_plural": "Britské Libry Šterlinků"
+    },
+    "GEL": {
+      "name": "Gruzínský Lari",
+      "name_plural": "Gruzínské Lari"
+    },
+    "GHS": {
+      "name": "Ghanský Cedi",
+      "name_plural": "Ghanské Cedi"
+    },
+    "GNF": {
+      "name": "Guinejský Frank",
+      "name_plural": "Guinejské Franky"
+    },
+    "GTQ": {
+      "name": "Guatemalský Quetzal",
+      "name_plural": "Guatemalské Quetzaly"
+    },
+    "HKD": {
+      "name": "Hongkongský Dolar",
+      "name_plural": "Hongkongské Dolary"
+    },
+    "HNL": {
+      "name": "Honduraská Lempira",
+      "name_plural": "Honduraské Lempiry"
+    },
+    "HRK": {
+      "name": "Chorvatská Kuna",
+      "name_plural": "Chorvatské Kuny"
+    },
+    "HUF": {
+      "name": "Maďarský Forint",
+      "name_plural": "Maďarské Forinty"
+    },
+    "IDR": {
+      "name": "Indonéská Rupie",
+      "name_plural": "Indonéské Rupie"
+    },
+    "ILS": {
+      "name": "Izraelský Šekel",
+      "name_plural": "Izraelské Šekely"
+    },
+    "INR": {
+      "name": "Indická Rupie",
+      "name_plural": "Indické Rupie"
+    },
+    "IQD": {
+      "name": "Irácký Dinár",
+      "name_plural": "Irácké Dináry"
+    },
+    "IRR": {
+      "name": "Íránský Rijál",
+      "name_plural": "Íránské Rijály"
+    },
+    "ISK": {
+      "name": "Islandská Koruna",
+      "name_plural": "Islandské Koruny"
+    },
+    "JMD": {
+      "name": "Jamajský Dolar",
+      "name_plural": "Jamajské Dolary"
+    },
+    "JOD": {
+      "name": "Jordánský Dinár",
+      "name_plural": "Jordánské Dináry"
+    },
+    "JPY": {
+      "name": "Japonský Jen",
+      "name_plural": "Japonské Jeny"
+    },
+    "KES": {
+      "name": "Keňský Šilink",
+      "name_plural": "Keňské Šilinky"
+    },
+    "KHR": {
+      "name": "Kambodžský Riel",
+      "name_plural": "Kambodžské Riely"
+    },
+    "KMF": {
+      "name": "Komorský Frank",
+      "name_plural": "Komorské Franky"
+    },
+    "KRW": {
+      "name": "Jihokorejský Won",
+      "name_plural": "Jihokorejské Wony"
+    },
+    "KWD": {
+      "name": "Kuvajtský Dinár",
+      "name_plural": "Kuvajtské Dináry"
+    },
+    "KZT": {
+      "name": "Kazachstánské Tenge",
+      "name_plural": "Kazachstánské Tengy"
+    },
+    "LAK": {
+      "name": "Laoský Kip",
+      "name_plural": "Laoské Kipy"
+    },
+    "LBP": {
+      "name": "Libanonská Libra",
+      "name_plural": "Libanonské Libry"
+    },
+    "LKR": {
+      "name": "Srílanská Rupie",
+      "name_plural": "Srílanské Rupie"
+    },
+    "LRD": {
+      "name": "Liberijský Dolar",
+      "name_plural": "Liberijské Dolary"
+    },
+    "LSL": {
+      "name": "Lesothský Loti",
+      "name_plural": "Lesothské Loti"
+    },
+    "LYD": {
+      "name": "Libyjský Dinár",
+      "name_plural": "Libyjské Dináry"
+    },
+    "MAD": {
+      "name": "Marocký Dirham",
+      "name_plural": "Marocké Dirhamy"
+    },
+    "MDL": {
+      "name": "Moldavský Lei",
+      "name_plural": "Moldavské Leie"
+    },
+    "MGA": {
+      "name": "Malgašský Ariary",
+      "name_plural": "Malgašské Ariary"
+    },
+    "MKD": {
+      "name": "Makedonský Denár",
+      "name_plural": "Makedonské Denáry"
+    },
+    "MMK": {
+      "name": "Myanmarský Kyat",
+      "name_plural": "Myanmarské Kyaty"
+    },
+    "MNT": {
+      "name": "Mongolský Tugrik",
+      "name_plural": "Mongolské Tugriky"
+    },
+    "MOP": {
+      "name": "Macajská Pataca",
+      "name_plural": "Macajské Pataca"
+    },
+    "MUR": {
+      "name": "Mauricijská Rupie",
+      "name_plural": "Mauricijské Rupie"
+    },
+    "MVR": {
+      "name": "Maledivská Rupie",
+      "name_plural": "Maledivské Rupie"
+    },
+    "MWK": {
+      "name": "Malawiská Kwacha",
+      "name_plural": "Malawiské Kwachy"
+    },
+    "MXN": {
+      "name": "Mexické Peso",
+      "name_plural": "Mexická Pesa"
+    },
+    "MYR": {
+      "name": "Malajsijský Ringgit",
+      "name_plural": "Malajsijské Ringgity"
+    },
+    "MZN": {
+      "name": "Mosambický Metical",
+      "name_plural": "Mosambické Meticaly"
+    },
+    "NAD": {
+      "name": "Namibijský Dolar",
+      "name_plural": "Namibijské Dolary"
+    },
+    "NGN": {
+      "name": "Nigerijská Naira",
+      "name_plural": "Nigerijské Nairy"
+    },
+    "NIO": {
+      "name": "Nikaragujská Córdoba",
+      "name_plural": "Nikaragujské Córdoby"
+    },
+    "NOK": {
+      "name": "Norská Koruna",
+      "name_plural": "Norské Koruny"
+    },
+    "NPR": {
+      "name": "Nepálská Rupie",
+      "name_plural": "Nepálské Rupie"
+    },
+    "NZD": {
+      "name": "Novozélandský Dolar",
+      "name_plural": "Novozélandské Dolary"
+    },
+    "OMR": {
+      "name": "Ománský Rijál",
+      "name_plural": "Ománské Rijály"
+    },
+    "PAB": {
+      "name": "Panamská Balboa",
+      "name_plural": "Panamské Balboe"
+    },
+    "PEN": {
+      "name": "Peruánský Sol",
+      "name_plural": "Peruánské Soly"
+    },
+    "PGK": {
+      "name": "Papuánská Kina",
+      "name_plural": "Papuánské Kiny"
+    },
+    "PHP": {
+      "name": "Filipínské Peso",
+      "name_plural": "Filipínská Pesa"
+    },
+    "PKR": {
+      "name": "Pákistánská Rupie",
+      "name_plural": "Pákistánské Rupie"
+    },
+    "PLN": {
+      "name": "Polský Zlotý",
+      "name_plural": "Polské Zloté"
+    },
+    "PYG": {
+      "name": "Paraguayský Guarani",
+      "name_plural": "Paraguayské Guarany"
+    },
+    "QAR": {
+      "name": "Katarský Rijál",
+      "name_plural": "Katarské Rijály"
+    },
+    "RON": {
+      "name": "Rumunský Lei",
+      "name_plural": "Rumunské Leie"
+    },
+    "RSD": {
+      "name": "Srbský Dinár",
+      "name_plural": "Srbské Dináry"
+    },
+    "RUB": {
+      "name": "Ruský Rubl",
+      "name_plural": "Ruské Rubly"
+    },
+    "RWF": {
+      "name": "Rwandský Frank",
+      "name_plural": "Rwandské Franky"
+    },
+    "SAR": {
+      "name": "Saúdský Rijál",
+      "name_plural": "Saúdské Rijály"
+    },
+    "SBD": {
+      "name": "Dolar Šalamounových ostrovů",
+      "name_plural": "Dolary Šalamounových ostrovů"
+    },
+    "SCR": {
+      "name": "Seychelská Rupie",
+      "name_plural": "Seychelské Rupie"
+    },
+    "SDG": {
+      "name": "Súdánská Libra",
+      "name_plural": "Súdánské Libry"
+    },
+    "SEK": {
+      "name": "Švédská Koruna",
+      "name_plural": "Švédské Koruny"
+    },
+    "SGD": {
+      "name": "Singapurský Dolar",
+      "name_plural": "Singapurské Dolary"
+    },
+    "SHP": {
+      "name": "Svatohelenská Libra",
+      "name_plural": "Svatohelenské Libry"
+    },
+    "SLL": {
+      "name": "Sierraleonský Leone",
+      "name_plural": "Sierraleonské Leone"
+    },
+    "SOS": {
+      "name": "Somálský Šilink",
+      "name_plural": "Somálské Šilinky"
+    },
+    "SRD": {
+      "name": "Surinamský Dolar",
+      "name_plural": "Surinamské Dolary"
+    },
+    "SSP": {
+      "name": "Jihosúdánská Libra",
+      "name_plural": "Jihosúdánské Libry"
+    },
+    "STD": {
+      "name": "Svatotomášská Dobra",
+      "name_plural": "Svatotomášské Dobry"
+    },
+    "SYP": {
+      "name": "Syrská Libra",
+      "name_plural": "Syrské Libry"
+    },
+    "SZL": {
+      "name": "Svazijský Lilangeni",
+      "name_plural": "Svazijské Lilangeni"
+    },
+    "THB": {
+      "name": "Thajský Baht",
+      "name_plural": "Thajské Bahty"
+    },
+    "TJS": {
+      "name": "Tadžický Somoni",
+      "name_plural": "Tadžické Somoni"
+    },
+    "TMT": {
+      "name": "Turkmenský Manat",
+      "name_plural": "Turkmenské Manaty"
+    },
+    "TND": {
+      "name": "Tuniský Dinár",
+      "name_plural": "Tuniské Dináry"
+    },
+    "TOP": {
+      "name": "Tonžská Paʻanga",
+      "name_plural": "Tonžské Paʻangy"
+    },
+    "TRY": {
+      "name": "Turecká Lira",
+      "name_plural": "Turecké Liry"
+    },
+    "TTD": {
+      "name": "Dolar Trinidadu a Tobaga",
+      "name_plural": "Dolary Trinidadu a Tobaga"
+    },
+    "TWD": {
+      "name": "Tchajwanský Dolar",
+      "name_plural": "Tchajwanské Dolary"
+    },
+    "TZS": {
+      "name": "Tanzanský Šilink",
+      "name_plural": "Tanzanské Šilinky"
+    },
+    "UAH": {
+      "name": "Ukrajinská Hřivna",
+      "name_plural": "Ukrajinské Hřivny"
+    },
+    "UGX": {
+      "name": "Ugandský Šilink",
+      "name_plural": "Ugandské Šilinky"
+    },
+    "USD": {
+      "name": "Americký Dolar",
+      "name_plural": "Americké Dolary"
+    },
+    "UYU": {
+      "name": "Uruguayské Peso",
+      "name_plural": "Uruguayská Pesa"
+    },
+    "UZS": {
+      "name": "Uzbecký Sum",
+      "name_plural": "Uzbecké Sumy"
+    },
+    "VEF": {
+      "name": "Venezuelský Bolívar",
+      "name_plural": "Venezuelské Bolívary"
+    },
+    "VND": {
+      "name": "Vietnamský Dong",
+      "name_plural": "Vietnamské Dongy"
+    },
+    "VUV": {
+      "name": "Vanuatský Vatu",
+      "name_plural": "Vanuatské Vatu"
+    },
+    "WST": {
+      "name": "Samojská Tala",
+      "name_plural": "Samojské Taly"
+    },
+    "XAF": {
+      "name": "Čadský CFA Fank",
+      "name_plural": "Čadské CFA Fanky"
+    },
+    "XCD": {
+      "name": "Východokaribský Dolar",
+      "name_plural": "Východokaribské Dolary"
+    },
+    "XOF": {
+      "name": "Beninský CFA Frank",
+      "name_plural": "Beninské CFA Franky"
+    },
+    "XPF": {
+      "name": "CFP Frank",
+      "name_plural": "CFP Franky"
+    },
+    "YER": {
+      "name": "Jemenský Rijál",
+      "name_plural": "Jemenské Rijály"
+    },
+    "ZAR": {
+      "name": "Jihoafrický Rand",
+      "name_plural": "Jihoafrické Randy"
+    },
+    "ZMW": {
+      "name": "Zambijská Kwacha",
+      "name_plural": "Zambijské Kwachy"
+    },
+    "ZWL": {
+      "name": "Zimbabwský Dolar",
+      "name_plural": "Zimbabwské Dolary"
+    }
+  },
+  "no_currency_found": "Měna nenalezena.",
+  "placeholder": "Vyberte měnu",
+  "title": "Vyberte měnu"
+}

@@ -23,12 +23,12 @@ export const BankConnection: React.FC<BankConnectionProps> = ({
       if (!userQuery.data?.bankingId) {
         return;
       }
-      const res = await connectToBank.mutateAsync(userQuery.data.bankingId);
+      const res = await connectToBank.mutateAsync(userQuery.data.bankingId).catch(console.error);
       if (res?.authLink) {
         window.location.href = res.authLink;
       }
     } else if (bankConnection === 'PLAID') {
-      const res = await connectToBank.mutateAsync();
+      const res = await connectToBank.mutateAsync().catch(console.error);
       if (res?.authLink) {
         return res.authLink;
       }

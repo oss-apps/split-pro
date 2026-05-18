@@ -1,7 +1,7 @@
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { BalanceEntry } from '~/components/Expense/BalanceEntry';
 import { CreateGroup } from '~/components/group/CreateGroup';
 import MainLayout from '~/components/Layout/MainLayout';
@@ -15,12 +15,29 @@ import {
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
-import { BigMath } from '~/utils/numbers';
+import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
+import { isCurrencyCode } from '~/lib/currency';
+
+// Helper to transform balances object to array format
+function transformBalances(balances: Record<string, bigint>) {
+  return Object.entries(balances)
+    .filter(([_, amount]) => 0n !== amount)
+    .map(([currency, amount]) => ({ currency, amount }));
+}
 
 const BalancePage: NextPageWithUser = () => {
   const { t } = useTranslation();
   const groupQuery = api.group.getAllGroupsWithBalances.useQuery();
   const archivedGroupQuery = api.group.getAllGroupsWithBalances.useQuery({ getArchived: true });
+  const setGroupDefaultCurrency = useCurrencyPreferenceStore((s) => s.setGroupDefaultCurrency);
+
+  useEffect(() => {
+    groupQuery.data?.forEach(({ id, defaultCurrency }) => {
+      if (isCurrencyCode(defaultCurrency)) {
+        setGroupDefaultCurrency(id, defaultCurrency);
+      }
+    });
+  }, [groupQuery.data, setGroupDefaultCurrency]);
 
   const actions = useMemo(
     () => (
@@ -50,29 +67,14 @@ const BalancePage: NextPageWithUser = () => {
           ) : (
             <>
               {/* Active Groups */}
-              {groupQuery.data?.map((g) => {
-                const [currency, amount] = Object.entries(g.balances).reduce(
-                  (acc, balance) => {
-                    if (BigMath.abs(balance[1]) > BigMath.abs(acc[1])) {
-                      return balance;
-                    }
-                    return acc;
-                  },
-                  [g.defaultCurrency, 0n],
-                );
-                const multiCurrency = 1 < Object.values(g.balances).filter((b) => 0n !== b).length;
-                return (
-                  <BalanceEntry
-                    key={g.id}
-                    id={g.id}
-                    entity={g}
-                    amount={amount}
-                    isPositive={0 <= amount}
-                    currency={currency}
-                    hasMore={multiCurrency}
-                  />
-                );
-              })}
+              {groupQuery.data?.map((g) => (
+                <BalanceEntry
+                  key={g.id}
+                  id={g.id}
+                  entity={g}
+                  balances={transformBalances(g.balances)}
+                />
+              ))}
 
               {/* Archived Groups Accordion */}
               {archivedGroupQuery.data && archivedGroupQuery.data.length > 0 && (
@@ -84,14 +86,7 @@ const BalancePage: NextPageWithUser = () => {
                     <AccordionContent>
                       <div className="mt-7 flex flex-col gap-8">
                         {archivedGroupQuery.data.map((g) => (
-                          <BalanceEntry
-                            key={g.id}
-                            id={g.id}
-                            entity={g}
-                            amount={0n}
-                            isPositive
-                            currency=""
-                          />
+                          <BalanceEntry key={g.id} id={g.id} entity={g} />
                         ))}
                       </div>
                     </AccordionContent>

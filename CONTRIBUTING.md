@@ -2,6 +2,16 @@
 
 If you plan to contribute to Splitpro, please take a moment to feel awesome ✨ People like you are what open source is about ♥. Any contributions, no matter how big or small, are highly appreciated.
 
+## Tech stack
+
+- [NextJS](https://nextjs.org/)
+- [Tailwind](https://tailwindcss.com/)
+- [tRPC](https://trpc.io/)
+- [ShadcnUI](https://ui.shadcn.com/)
+- [Prisma](https://www.prisma.io/)
+- [Postgres](https://www.postgresql.org/)
+- [NextAuth](https://next-auth.js.org/)
+
 ## Adding a new locale
 
 If you speak a language that is missing here or spot some mistakes in the translations, feel free to use our [Weblate project](https://hosted.weblate.org/projects/splitpro/), no coding knowledge required! The GUI is easy to navigate and you can read Weblate docs in case of any issues. If you are adding a new language and have translated all the keys, you can submit a PR updating [config](./next-i18next.config.js) and [client](./src/utils/i18n/client.ts) to enable its use in the app.
@@ -14,6 +24,10 @@ To ease developer burden, you should only create English keys when adding new fe
 
 This is very straightforward and requires adding a new subclass in `./src/server/api/services/currencyRateService.ts`. You basically need to define a method that given a currency pair and a date, returns the appropriate date. If the provider returns more currencies in one API call, you can also return more, as well as only return an intermediate currencies, the inherited methods will put it all together!
 
+## Adding a new bank API
+
+Similar to currency rates, you can add a provider that you feel would be a good fit by creating a new class based on `./src/server/api/services/bankTransactions/bankTransactionService.ts`. Reach out to @alexanderwassbjer if you encounter any issues.
+
 ## Before getting started
 
 - Before jumping into a PR be sure to search [existing PRs](https://github.com/oss-apps/split-pro/pulls) or [issues](https://github.com/oss-apps/split-pro/issues) for an open or closed item that relates to your submission.
@@ -22,18 +36,9 @@ This is very straightforward and requires adding a new subclass in `./src/server
 
 ## Taking issues
 
-Before taking an issue, ensure that:
+No need to ask for permission when working on the issue, just check out if there is anybody already implementing a solution and submit a PR. Just please keep in mind that reducing the amount of burden you place on maintainers will greatly boost your chances of having it merged. AI slop will not be tolerated, check the AI guidelines below.
 
-- The issue is clearly defined and understood
-- No one has been assigned to the issue
-- No one has expressed intention to work on it
-
-You can then:
-
-1. Comment on the issue with your intention to work on it
-2. Begin work on the issue
-
-Always feel free to ask questions or seek clarification on the issue.
+Always feel free to ask questions or seek clarification on the issue. For complex features, it might be best to first agree on an approach with the maintainer.
 
 ## Developing
 
@@ -50,7 +55,37 @@ The development branch is <code>main</code>. All pull requests should be made ag
   git checkout -b feat/doc-999-somefeature-that-rocks
   ```
 
-3. See the [Developer Setup](https://github.com/oss-apps/split-pro?tab=readme-ov-file#developer-setup) for more setup details.
+### Prerequisites
+
+- Node.js (Version: >=22.x)
+- PostgreSQL
+- pnpm (recommended)
+
+### Install Dependencies
+
+```bash
+corepack enable
+```
+
+```bash
+pnpm i
+```
+
+### Setting up the environment
+
+- Copy `.env.example` to `.env`.
+- Configure at least one NextAuth provider (email, OAuth, or OIDC).
+- Configure uploads storage (local disk) and optional push notifications.
+- For bank integration, create a Plaid account and set the related env vars.
+- For currency conversions, set the provider and related keys if applicable.
+
+See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for a full variable reference.
+
+### Run the app
+
+```bash
+pnpm d
+```
 
 ## Linting
 

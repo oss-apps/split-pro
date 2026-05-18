@@ -2,10 +2,9 @@ import { PrismaClient, SplitType } from '@prisma/client';
 
 import { createExpense, deleteExpense, editExpense } from '~/server/api/services/splitService';
 import { dummyData } from '~/dummies';
-import { calculateParticipantSplit, Participant } from '~/store/addStore';
+import { calculateParticipantSplit } from '~/store/addStore';
 import assert from 'node:assert';
-import { BigMath } from '~/utils/numbers';
-import { DEFAULT_CATEGORY } from '~/lib/category';
+import { settleBalances } from './seedSettlement';
 
 const prisma = new PrismaClient();
 
@@ -40,35 +39,35 @@ async function createGroups() {
   return prisma.group.findMany();
 }
 
-const idLookup: string[] = [];
+const idLookup: Map<number, string> = new Map();
 
 async function createExpenses() {
-  for (let i = 0; i < dummyData.expenses.length; i++) {
-    const { splitShares, ...expense } = dummyData.expenses[i]!;
-    const res = await createExpense(
-      {
-        ...expense,
-        paidBy: expense.paidBy.id,
-        participants: calculateParticipantSplit(
-          expense.amount,
-          expense.participants as Participant[],
-          expense.splitType,
-          splitShares,
-          expense.paidBy as Participant,
-        ).participants.map((p) => ({
-          userId: p.id,
-          amount: p.amount ?? 0n,
-        })),
-      },
-      expense.addedBy,
-    );
+  await Promise.all(
+    dummyData.expenses.map(async (expense, idx) => {
+      const res = await createExpense(
+        {
+          ...expense,
+          paidBy: expense.paidBy.id,
+          participants: calculateParticipantSplit(expense as any).participants.map((p) => ({
+            userId: p.id,
+            amount: p.amount ?? 0n,
+          })),
+        },
+        expense.addedBy,
+      );
 
-    idLookup.push(res!.id);
+      await prisma.expense.update({
+        where: {
+          id: res!.id,
+        },
+        data: {
+          createdAt: expense.createdAt,
+        },
+      });
 
-    if ((i + 1) % 100 === 0) {
-      console.log(`Created ${i + 1} / ${dummyData.expenses.length} expenses`);
-    }
-  }
+      idLookup.set(idx, res!.id);
+    }),
+  );
 
   console.log('Finished creating expenses');
 
@@ -76,32 +75,23 @@ async function createExpenses() {
 }
 
 async function editExpenses() {
-  for (let i = 0; i < dummyData.expenseEdits.length; i++) {
-    const { splitShares, idx, ...expense } = dummyData.expenseEdits[i]!;
-    assert(idLookup[idx], `No expense ID found for index ${idx}`);
-    await editExpense(
-      {
-        ...expense,
-        expenseId: idLookup[idx]!,
-        paidBy: expense.paidBy.id,
-        participants: calculateParticipantSplit(
-          expense.amount,
-          expense.participants as Participant[],
-          expense.splitType,
-          splitShares,
-          expense.paidBy as Participant,
-        ).participants.map((p) => ({
-          userId: p.id,
-          amount: p.amount ?? 0n,
-        })),
-      },
-      expense.updatedBy.id,
-    );
-
-    if ((i + 1) % 100 === 0) {
-      console.log(`Edited ${i + 1} / ${dummyData.expenseEdits.length} expenses`);
-    }
-  }
+  await Promise.all(
+    dummyData.expenseEdits.map(async ({ idx, ...expense }) => {
+      assert(idLookup.get(idx), `No expense ID found for index ${idx}`);
+      await editExpense(
+        {
+          ...expense,
+          expenseId: idLookup.get(idx),
+          paidBy: expense.paidBy.id,
+          participants: calculateParticipantSplit(expense as any).participants.map((p) => ({
+            userId: p.id,
+            amount: p.amount ?? 0n,
+          })),
+        },
+        expense.updatedBy.id,
+      );
+    }),
+  );
 
   console.log('Finished editing expenses');
 
@@ -109,65 +99,16 @@ async function editExpenses() {
 }
 
 async function deleteExpenses() {
-  for (let i = 0; i < dummyData.expensesToDelete.length; i++) {
-    const { idx, deletedBy } = dummyData.expensesToDelete[i]!;
-    assert(idLookup[idx], `No expense ID found for index ${idx}`);
-    await deleteExpense(idLookup[idx]!, deletedBy.id);
-
-    if ((i + 1) % 100 === 0) {
-      console.log(`Deleted ${i + 1} / ${dummyData.expensesToDelete.length} expenses`);
-    }
-  }
+  await Promise.all(
+    dummyData.expensesToDelete.map(async ({ idx, deletedBy }) => {
+      assert(idLookup.get(idx), `No expense ID found for index ${idx}`);
+      await deleteExpense(idLookup.get(idx)!, deletedBy.id);
+    }),
+  );
 
   console.log('Finished deleting expenses');
 
   return prisma.expense.findMany({ include: { expenseParticipants: true } });
-}
-
-async function settleBalances() {
-  for (let i = 0; i < dummyData.balancesToSettle.length; i++) {
-    const [userId, friendId, groupId, currency] = dummyData.balancesToSettle[i]!;
-    const groupBalance = await prisma.groupBalance.findFirst({
-      where: {
-        userId,
-        firendId: friendId,
-        groupId,
-        currency,
-      },
-    });
-
-    const sender = 0n > groupBalance!.amount ? friendId : userId;
-    const receiver = 0n > groupBalance!.amount ? userId : friendId;
-
-    await createExpense(
-      {
-        name: 'Settle up',
-        amount: BigMath.abs(groupBalance!.amount),
-        currency,
-        splitType: SplitType.SETTLEMENT,
-        groupId,
-        participants: [
-          {
-            userId: sender,
-            amount: groupBalance!.amount,
-          },
-          {
-            userId: receiver,
-            amount: -groupBalance!.amount,
-          },
-        ],
-        paidBy: sender,
-        category: DEFAULT_CATEGORY,
-      },
-      sender,
-    );
-
-    if ((i + 1) % 100 === 0) {
-      console.log(`Settled ${i + 1} / ${dummyData.balancesToSettle.length} balances`);
-    }
-  }
-
-  console.log('Finished settling balances');
 }
 
 async function main() {
@@ -182,7 +123,7 @@ async function main() {
   await createExpenses();
   await editExpenses();
   await deleteExpenses();
-  await settleBalances();
+  await settleBalances(prisma, dummyData.balancesToSettle);
 }
 
 main()

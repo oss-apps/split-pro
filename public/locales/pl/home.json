@@ -1,5 +1,13 @@
 {
   "features": {
+    "bank_connection": {
+      "description": "Dodawaj szybciej wydatki dzięki integracji z GoCardless lub Plaid API transakcji bankowych",
+      "title": "Połączenie z bankiem"
+    },
+    "currency_conversion": {
+      "description": "Szybko przeliczaj różne waluty, korzystając z aktualnych lub historycznych kursów wymiany",
+      "title": "Przeliczanie walut"
+    },
     "debt_simplification": {
       "description": "Automatycznie uprość długi grupowe, aby zmniejszyć liczbę transakcji potrzebnych między znajomymi",
       "title": "Upraszczanie Długów"

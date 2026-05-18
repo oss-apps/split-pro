@@ -6,7 +6,7 @@ ALTER TABLE "User" ADD COLUMN     "bankingId" TEXT,
 ADD COLUMN     "obapiProviderId" TEXT;
 
 -- CreateTable
-CREATE TABLE "CachedBankData" (
+CREATE UNLOGGED TABLE "CachedBankData" (
     "id" SERIAL NOT NULL,
     "obapiProviderId" TEXT NOT NULL,
     "data" TEXT NOT NULL,

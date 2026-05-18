@@ -1,7 +1,10 @@
-import { ChevronLeftIcon, HandCoins, PlusIcon } from 'lucide-react';
+import { ChevronLeftIcon, HandCoins, Pencil, PlusIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useMemo } from 'react';
+import { toast } from 'sonner';
+import { DefaultSplitSettings } from '~/components/DefaultSplit/DefaultSplitSettings';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
 import { Export } from '~/components/Friend/Export';
@@ -9,15 +12,17 @@ import { SettleUp } from '~/components/Friend/Settleup';
 import MainLayout from '~/components/Layout/MainLayout';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
-import { Separator } from '~/components/ui/separator';
+import { AppDrawer } from '~/components/ui/drawer';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { type GetServerSideProps } from 'next';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import { CumulatedBalances } from '~/components/Expense/CumulatedBalances';
+import { deserializeDefaultSplit } from '~/lib/defaultSplit';
 
 const FriendPage: NextPageWithUser = ({ user }) => {
-  const { t, displayName, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { t, displayName } = useTranslationWithUtils();
   const router = useRouter();
   const { friendId } = router.query;
 
@@ -25,20 +30,36 @@ const FriendPage: NextPageWithUser = ({ user }) => {
 
   const friendQuery = api.user.getFriend.useQuery(
     { friendId: _friendId },
-    { enabled: !!_friendId },
+    { enabled: Boolean(_friendId) },
   );
 
   const expenses = api.expense.getExpensesWithFriend.useQuery(
     { friendId: _friendId },
-    { enabled: !!_friendId },
+    { enabled: Boolean(_friendId) },
   );
   const balances = api.user.getBalancesWithFriend.useQuery(
     { friendId: _friendId },
-    { enabled: !!_friendId },
+    { enabled: Boolean(_friendId) },
   );
+  const upsertFriendDefaultSplitMutation = api.user.upsertFriendDefaultSplit.useMutation();
+  const clearFriendDefaultSplitMutation = api.user.clearFriendDefaultSplit.useMutation();
 
-  const youLent = balances.data?.filter((b) => 0 < b.amount);
-  const youOwe = balances.data?.filter((b) => 0 > b.amount);
+  // Aggregate balances by currency for CumulatedBalances display
+  const aggregatedBalances = useMemo(() => {
+    if (!balances.data) {
+      return undefined;
+    }
+
+    const currencyMap = new Map<string, bigint>();
+    for (const b of balances.data) {
+      const current = currencyMap.get(b.currency) ?? 0n;
+      currencyMap.set(b.currency, current + b.amount);
+    }
+
+    return Array.from(currencyMap.entries())
+      .filter(([, amount]) => 0n !== amount)
+      .map(([currency, amount]) => ({ currency, amount }));
+  }, [balances.data]);
 
   return (
     <>
@@ -57,10 +78,86 @@ const FriendPage: NextPageWithUser = ({ user }) => {
           </div>
         }
         actions={
-          <DeleteFriend
-            friendId={_friendId}
-            disabled={!(0 === youLent?.length && 0 === youOwe?.length)}
-          />
+          <div className="flex items-center gap-2">
+            <DeleteFriend friendId={_friendId} disabled={!(0 === balances.data?.length)} />
+            <AppDrawer
+              title={t('balances.user_preferences.title')}
+              trigger={
+                <Button variant="ghost" size="icon" disabled={!friendQuery.data}>
+                  <Pencil className="size-4" />
+                </Button>
+              }
+            >
+              {!friendQuery.data ? null : (
+                <div>
+                  <p className="font-semibold">{t('group_details.group_info.default_split')}</p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <DefaultSplitSettings
+                      participants={[
+                        {
+                          ...user,
+                          emailVerified: null,
+                          name: user.name ?? null,
+                          email: user.email ?? null,
+                          image: user.image ?? null,
+                          obapiProviderId: user.obapiProviderId ?? null,
+                          bankingId: user.bankingId ?? null,
+                          preferredLanguage: user.preferredLanguage ?? '',
+                          hiddenFriendIds: user.hiddenFriendIds ?? [],
+                          currency: user.currency ?? 'USD',
+                          defaultCurrency: user.defaultCurrency ?? null,
+                        },
+                        friendQuery.data,
+                      ]}
+                      defaultSplit={friendQuery.data.defaultSplit}
+                      triggerLabel={t('group_details.group_info.configure_default_split')}
+                      onSave={(defaultSplit) => {
+                        upsertFriendDefaultSplitMutation.mutate(
+                          {
+                            friendId: friendQuery.data!.id,
+                            defaultSplit,
+                          },
+                          {
+                            onSuccess: () => {
+                              toast.success(t('balances.default_split.updated'));
+                              void friendQuery.refetch();
+                            },
+                            onError: () => {
+                              toast.error(t('errors.setting_update_failed'));
+                            },
+                          },
+                        );
+                      }}
+                    />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={
+                        !deserializeDefaultSplit(friendQuery.data.defaultSplit) ||
+                        clearFriendDefaultSplitMutation.isPending
+                      }
+                      onClick={() => {
+                        clearFriendDefaultSplitMutation.mutate(
+                          { friendId: friendQuery.data!.id },
+                          {
+                            onSuccess: () => {
+                              toast.success(t('balances.default_split.cleared'));
+                              void friendQuery.refetch();
+                            },
+                            onError: () => {
+                              toast.error(t('errors.setting_update_failed'));
+                            },
+                          },
+                        );
+                      }}
+                    >
+                      {t('expense_details.clear')}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </AppDrawer>
+          </div>
         }
         header={
           <div className="flex w-full items-center justify-between">
@@ -77,39 +174,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
       >
         {!friendQuery.data ? null : (
           <div className="mb-28 transition-discrete starting:opacity-0">
-            <div className="mx-4 flex flex-wrap gap-2">
-              <div className="text-orange-700">
-                {0 < (youOwe?.length ?? 0) && (
-                  <>
-                    {t('ui.expense.statements.you_owe')}{' '}
-                    {youOwe?.map((bal, index) => (
-                      <span key={bal.currency}>
-                        <span className="font-semibold tracking-wide">
-                          {getCurrencyHelpersCached(bal.currency).toUIString(bal.amount)}
-                        </span>
-                        {youOwe.length - 1 === index ? '' : ' + '}
-                      </span>
-                    ))}
-                  </>
-                )}
-              </div>
-              <div>{0 < (youOwe?.length ?? 0) && 0 < (youLent?.length ?? 0) ? '+' : null}</div>
-              <div className="text-emerald-600">
-                {0 < (youLent?.length ?? 0) && (
-                  <>
-                    {t('ui.expense.statements.you_lent')}{' '}
-                    {youLent?.map((bal, index) => (
-                      <span key={bal.currency}>
-                        <span className="font-semibold tracking-wide">
-                          {getCurrencyHelpersCached(bal.currency).toUIString(bal.amount)}
-                        </span>
-                        {youLent.length - 1 === index ? '' : ' + '}
-                      </span>
-                    ))}
-                  </>
-                )}
-              </div>
-            </div>
+            <CumulatedBalances entityId={friendQuery.data.id} balances={aggregatedBalances} />
             <div className="mt-6 mb-4 flex justify-center gap-2">
               <SettleUp balances={balances.data} friend={friendQuery.data}>
                 <Button
@@ -134,15 +199,12 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 disabled={!expenses.data || 0 === expenses.data.length}
               />
             </div>
-            <Separator />
-            <div className="mx-4 mt-4 flex flex-col gap-3">
-              <ExpenseList
-                expenses={expenses.data}
-                contactId={_friendId}
-                isLoading={expenses.isPending}
-                userId={user.id}
-              />
-            </div>
+            <ExpenseList
+              expenses={expenses.data}
+              contactId={_friendId}
+              isLoading={expenses.isPending}
+              userId={user.id}
+            />
           </div>
         )}
       </MainLayout>

@@ -34,20 +34,7 @@ abstract class CurrencyRateProvider {
 
     await Promise.all(
       Object.entries(data.rates).map(([to, rate]) =>
-        db.currencyRateCache.upsert({
-          where: {
-            from_to_date: { from: data.base, to, date },
-          },
-          create: {
-            from: data.base,
-            to,
-            date,
-            rate,
-          },
-          update: {
-            rate,
-          },
-        }),
+        this.upsertCache(data.base as CurrencyCode, to as CurrencyCode, date, rate),
       ),
     );
 
@@ -81,7 +68,7 @@ abstract class CurrencyRateProvider {
       return undefined;
     }
 
-    // try with intermediate base currency
+    // Try with intermediate base currency
     const rateFromIntermediate = await this.checkCache(this.intermediateBase!, from, date);
     const rateToIntermediate = await this.checkCache(this.intermediateBase!, to, date);
 
@@ -93,7 +80,7 @@ abstract class CurrencyRateProvider {
   }
 
   private upsertCache(from: CurrencyCode, to: CurrencyCode, date: Date, rate: number) {
-    return db.currencyRateCache.upsert({
+    return db.cachedCurrencyRate.upsert({
       where: {
         from_to_date: { from, to, date },
       },
@@ -102,26 +89,28 @@ abstract class CurrencyRateProvider {
         to,
         date,
         rate,
+        lastFetched: new Date(),
       },
       update: {
         rate,
+        lastFetched: new Date(),
       },
     });
   }
 
   private async getCache(from: CurrencyCode, to: CurrencyCode, date: Date) {
-    const result = await db.currencyRateCache.findUnique({
+    const result = await db.cachedCurrencyRate.findUnique({
       where: {
         from_to_date: { from, to, date },
       },
     });
     if (result) {
-      void db.currencyRateCache.update({
+      void db.cachedCurrencyRate.update({
         where: {
           from_to_date: { from, to, date },
         },
         data: {
-          insertedAt: new Date(),
+          lastFetched: new Date(),
         },
       });
     }
@@ -153,14 +142,14 @@ class OpenExchangeRatesProvider extends CurrencyRateProvider {
   intermediateBase: CurrencyCode = 'USD';
 
   async fetchRates(from: CurrencyCode, to: CurrencyCode, date?: Date): Promise<RateResponse> {
-    if (!process.env.OPEN_EXCHANGE_RATES_APP_ID) {
+    if (!env.OPEN_EXCHANGE_RATES_APP_ID) {
       throw new ProviderMissingError('Open Exchange Rates API key not provided');
     }
     const key = !date || isToday(date) ? 'latest' : `historical/${format(date, 'yyyy-MM-dd')}`;
 
-    // sadly the free tier supports only USD as base currency
+    // Sadly the free tier supports only USD as base currency
     const response = await fetch(
-      `https://openexchangerates.org/api/${key}.json?app_id=${process.env.OPEN_EXCHANGE_RATES_APP_ID}`,
+      `https://openexchangerates.org/api/${key}.json?app_id=${env.OPEN_EXCHANGE_RATES_APP_ID}`,
     );
     const data: RateResponse = await response.json();
 
@@ -183,7 +172,7 @@ class NbpProvider extends CurrencyRateProvider {
 
     return {
       base: 'PLN',
-      rates: Object.fromEntries(response.rates.map((rate) => [rate.code, rate.mid])),
+      rates: Object.fromEntries(response.rates.map((rate) => [rate.code, 1 / rate.mid])),
     };
   }
 
@@ -217,7 +206,7 @@ class NbpProvider extends CurrencyRateProvider {
       if (table === 'A') {
         throw new Error(response.statusText || 'Failed to fetch exchange rates');
       } else {
-        // table B is published weekly on Wednesdays
+        // Table B is published weekly on Wednesdays
         const currentIsoDay = getISODay(date);
         const previousWednesday = subDays(
           date,

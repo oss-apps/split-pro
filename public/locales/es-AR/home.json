@@ -1,5 +1,13 @@
 {
   "features": {
+    "bank_connection": {
+      "description": "Sumá gastos más rápido con una integración al API de transacciones bancarias de GoCardless o Plaid",
+      "title": "Conectar Banco"
+    },
+    "currency_conversion": {
+      "description": "Convertí rápidamente entre distintas monedas usando cotizaciones actuales o históricas",
+      "title": "Conversión de moneda"
+    },
     "debt_simplification": {
       "description": "Simplifica automáticamente las deudas del grupo para reducir el número de transacciones necesarias entre amigos",
       "title": "Simplificación de Deudas"
@@ -31,6 +39,10 @@
     "pwa_support": {
       "description": "¿Te encantan las aplicaciones móviles? Te tenemos cubierto. ¡Instalala como una PWA y ni siquiera lo notarás!",
       "title": "Soporte PWA"
+    },
+    "recurring_transactions": {
+      "description": "Configurá gastos recurrentes automáticos para el alquiler, suscripciones o cualquier otro costo compartido regular",
+      "title": "Transacciones Recurrentes"
     },
     "title": "Características",
     "unequal_split": {

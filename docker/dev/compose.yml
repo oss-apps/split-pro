@@ -2,7 +2,7 @@ name: split-pro-dev
 
 services:
   postgres:
-    image: ossapps/postgres
+    image: ossapps/postgres:18.3-trixie
     container_name: ${POSTGRES_CONTAINER_NAME:-splitpro-db}
     restart: always
     environment:
@@ -11,29 +11,20 @@ services:
       - POSTGRES_DB=${POSTGRES_DB:-splitpro}
       - POSTGRES_PORT=${POSTGRES_PORT:-5432}
     volumes:
-      - database:/var/lib/postgresql/data
+      - database:/var/lib/postgresql
     command: >
       postgres
       -c shared_preload_libraries=pg_cron
       -c cron.database_name=${POSTGRES_DB:-splitpro}
       -c cron.timezone=UTC
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - '${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}'
 
-  minio:
-    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
-    container_name: splitpro-storage-dev
-    ports:
-      - 9002:9002
-      - 9001:9001
-    volumes:
-      - minio:/data
-    environment:
-      MINIO_ROOT_USER: splitpro
-      MINIO_ROOT_PASSWORD: password
-    entrypoint: sh
-    command: -c 'mkdir -p /data/splitpro && minio server /data --console-address ":9001" --address ":9002"'
-
 volumes:
   database:
-  minio:
+  uploads:

@@ -1,5 +1,13 @@
 import { type Expense, type ExpenseParticipant, SplitType } from '@prisma/client';
-import { z } from 'zod';
+import { type ZodTypeAny, z } from 'zod';
+
+/**
+ * Converts a schema to accept both a single value and an array of values.
+ * If a single value is provided, it will be wrapped in an array.
+ * If an array is provided, it will be validated as-is.
+ */
+export const arrayify = <T extends ZodTypeAny>(schema: T) =>
+  z.preprocess((val) => (Array.isArray(val) ? val : [val]), z.array(schema));
 
 export type CreateExpense = Omit<
   Expense,
@@ -13,14 +21,13 @@ export type CreateExpense = Omit<
   | 'expenseDate'
   | 'fileKey'
   | 'transactionId'
-  | 'otherConversion'
+  | 'conversionToId'
   | 'recurrenceId'
 > & {
   expenseDate?: Date;
   fileKey?: string;
   expenseId?: string;
   transactionId?: string;
-  otherConversion?: string;
   participants: Omit<ExpenseParticipant, 'expenseId'>[];
 };
 
@@ -45,7 +52,7 @@ export const createExpenseSchema = z.object({
   transactionId: z.string().optional(),
   expenseDate: z.date().optional(),
   expenseId: z.string().optional(),
-  otherConversion: z.string().optional(),
+  conversionToId: z.string().optional(),
   cronExpression: z.string().optional(),
 }) satisfies z.ZodType<CreateExpense>;
 
@@ -65,4 +72,8 @@ export const getCurrencyRateSchema = z.object({
   from: z.string(),
   to: z.string(),
   date: z.date().transform((date) => new Date(date.toDateString())),
+});
+
+export const getBatchCurrencyRatesSchema = getCurrencyRateSchema.extend({
+  from: z.array(z.string()),
 });

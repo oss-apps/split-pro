@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Hry",
+        "movies": "Filmy",
+        "music": "Hudba",
+        "other": "Zábava",
+        "sports": "Šport"
+      },
+      "name": "Zábava"
+    },
+    "food": {
+      "items": {
+        "diningOut": "Stravovanie v reštauráciách",
+        "groceries": "Potraviny",
+        "liquor": "Alkohol",
+        "other": "Jedlo a pitie"
+      },
+      "name": "Jedlo a pitie"
+    },
+    "general": {
+      "items": {
+        "general": "Všeobecné",
+        "other": "Všeobecné"
+      },
+      "name": "Všeobecné"
+    },
+    "home": {
+      "items": {
+        "electronics": "Elektronika",
+        "furniture": "Nábytok",
+        "maintenance": "Údržba",
+        "mortgage": "Hypotéka",
+        "other": "Domov",
+        "pets": "Zvieratá",
+        "rent": "Nájom",
+        "services": "Služby",
+        "supplies": "Zásoby"
+      },
+      "name": "Domov"
+    },
+    "life": {
+      "items": {
+        "childcare": "Starostlivosť o deti",
+        "clothing": "Oblečenie",
+        "education": "Vzdelávanie",
+        "gifts": "Darčeky",
+        "insurance": "Poistenie",
+        "medical": "Zdravie",
+        "other": "Život",
+        "taxes": "Daň"
+      },
+      "name": "Život"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "Bicykel",
+        "bus": "Autobus",
+        "car": "Auto",
+        "fuel": "Palivo",
+        "hotel": "Hotel",
+        "other": "Cestovanie",
+        "parking": "Prakovanie",
+        "plane": "Lietadlo",
+        "taxi": "Taxík",
+        "train": "Vlak"
+      },
+      "name": "Cestovanie"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "Upratovanie",
+        "electricity": "Elektrina",
+        "gas": "Plyn",
+        "internet": "Internet",
+        "other": "Účty",
+        "phone": "Telefón",
+        "trash": "Odpad",
+        "water": "Voda"
+      },
+      "name": "Účty"
+    }
+  },
+  "title": "Kategórie"
+}

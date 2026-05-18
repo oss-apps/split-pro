@@ -2,22 +2,43 @@ import { ArrowUpOnSquareIcon } from '@heroicons/react/24/outline';
 import { Download, PlusIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { DownloadAppDrawer } from '~/components/Account/DownloadAppDrawer';
 import { BalanceEntry } from '~/components/Expense/BalanceEntry';
 import MainLayout from '~/components/Layout/MainLayout';
 import { NotificationModal } from '~/components/NotificationModal';
 import { Button } from '~/components/ui/button';
+import { ConvertibleBalance } from '~/components/Expense/ConvertibleBalance';
 import { useIsPwa } from '~/hooks/useIsPwa';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
+import { cn } from '~/lib/utils';
+import { isCurrencyCode } from '~/lib/currency';
+import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
 
-const BalancePage: NextPageWithUser = () => {
-  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
+const BalancePage: NextPageWithUser = ({ user }) => {
+  const { t } = useTranslationWithUtils();
   const isPwa = useIsPwa();
   const balanceQuery = api.expense.getBalances.useQuery();
+  const cumulatedQuery = api.expense.getCumulatedBalances.useQuery();
+
+  const selectedCurrency = useCurrencyPreferenceStore((s) => s.getPreference());
+  const setUserDefaultCurrency = useCurrencyPreferenceStore((s) => s.setUserDefaultCurrency);
+
+  useEffect(() => {
+    if (isCurrencyCode(user.defaultCurrency)) {
+      setUserDefaultCurrency(user.defaultCurrency);
+    }
+  }, [user, setUserDefaultCurrency]);
+
+  const allNonZeroCurrencies = useMemo(() => {
+    const nonZeroBalances = balanceQuery.data?.balances.flatMap((b) =>
+      b.currencies.filter((c) => c.amount !== 0n),
+    );
+    return nonZeroBalances ? [...new Set(nonZeroBalances.map((c) => c.currency))] : [];
+  }, [balanceQuery.data?.balances]);
 
   const shareWithFriends = useCallback(() => {
     if (navigator.share) {
@@ -40,7 +61,7 @@ const BalancePage: NextPageWithUser = () => {
       <MainLayout
         title={t('navigation.balances')}
         actions={
-          'undefined' !== typeof window && !!window.navigator?.share ? (
+          'undefined' !== typeof window && 'share' in window.navigator ? (
             <Button variant="ghost" onClick={shareWithFriends}>
               <ArrowUpOnSquareIcon className="h-6 w-6" />
             </Button>
@@ -48,52 +69,34 @@ const BalancePage: NextPageWithUser = () => {
             <div className="h-6 w-10" />
           )
         }
-        loading={balanceQuery.isPending}
+        loading={cumulatedQuery.isPending}
       >
         <NotificationModal />
-        <div className="">
-          <div className="mx-4 flex items-stretch justify-between gap-4">
-            {balanceQuery.data?.youOwe.length ? (
-              <div className="w-1/2 rounded-2xl border px-2 py-2">
-                <div className="mt-2 px-1">
-                  <div className="flex items-center justify-center gap-2 text-center">
-                    <p className="text-sm">{t('ui.expense.statements.you_owe')}</p>
-                  </div>
-                </div>
-                <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
-                  {balanceQuery.data?.youOwe.map((balance, index) => (
-                    <span key={balance.currency} className="flex gap-1">
-                      <span className="text-orange-600">
-                        {getCurrencyHelpersCached(balance.currency).toUIString(balance.amount)}
-                      </span>
-                      {index !== balanceQuery.data.youOwe.length - 1 ? <span>+</span> : null}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-            {balanceQuery.data?.youGet.length ? (
-              <div className="w-1/2 rounded-2xl border px-2 py-2">
-                <div className="mt-2 flex flex-col justify-center px-1">
-                  <div className="flex items-center justify-center gap-2">
-                    <p className="text-sm">{t('ui.expense.statements.you_lent')}</p>
-                  </div>
-                </div>
-                <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
-                  {balanceQuery.data?.youGet.map((balance, index) => (
-                    <span key={balance.currency} className="flex gap-1">
-                      <span className="text-emerald-500">
-                        {getCurrencyHelpersCached(balance.currency).toUIString(balance.amount)}
-                      </span>
-                      {index !== balanceQuery.data.youGet.length - 1 ? (
-                        <span className="text-gray-400">+</span>
-                      ) : null}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-          </div>
+        <div className="mx-4 flex items-stretch justify-between gap-4">
+          {selectedCurrency && isCurrencyCode(selectedCurrency) ? (
+            <CumulatedBalanceDisplay
+              prefix={`${t('ui.total_balance')}`}
+              cumulatedBalances={[
+                cumulatedQuery.data?.youOwe ?? [],
+                cumulatedQuery.data?.youGet ?? [],
+              ].flat()}
+              currencies={allNonZeroCurrencies}
+              className="mx-auto"
+            />
+          ) : (
+            <>
+              <CumulatedBalanceDisplay
+                prefix={`${t('actors.you')} ${t('ui.expense.you.owe')}`}
+                cumulatedBalances={cumulatedQuery.data?.youOwe}
+                currencies={allNonZeroCurrencies}
+              />
+              <CumulatedBalanceDisplay
+                prefix={`${t('actors.you')} ${t('ui.expense.you.lent')}`}
+                cumulatedBalances={cumulatedQuery.data?.youGet}
+                currencies={allNonZeroCurrencies}
+              />
+            </>
+          )}
         </div>
 
         <div className="mt-5 flex flex-col gap-8 pb-36">
@@ -102,24 +105,21 @@ const BalancePage: NextPageWithUser = () => {
               key={balance.friend.id}
               id={balance.friend.id}
               entity={balance.friend}
-              amount={balance.amount}
-              isPositive={0n < balance.amount}
-              currency={balance.currency}
-              hasMore={balance.hasMore}
+              balances={balance.currencies}
             />
           ))}
 
           {!balanceQuery.isPending && !balanceQuery.data?.balances.length ? (
             <div className="mt-[40vh] flex -translate-y-[130%] flex-col items-center justify-center gap-6">
               <DownloadAppDrawer>
-                <Button className="w-[250px]">
+                <Button className="w-62.5">
                   <Download className="mr-2 h-5 w-5 text-black" />
                   {t('account.download_app')}
                 </Button>
               </DownloadAppDrawer>
               {!isPwa && <p>{t('ui.or')}</p>}
               <Link href="/add">
-                <Button className="w-[250px]">
+                <Button className="w-62.5">
                   <PlusIcon className="mr-2 h-5 w-5 text-black" />
                   {t('actions.add_expense')}
                 </Button>
@@ -129,6 +129,36 @@ const BalancePage: NextPageWithUser = () => {
         </div>
       </MainLayout>
     </>
+  );
+};
+
+const CumulatedBalanceDisplay: React.FC<{
+  prefix?: string;
+  className?: string;
+  cumulatedBalances?: { currency: string; amount: bigint }[];
+  currencies: string[];
+}> = ({ prefix = '', className = '', cumulatedBalances, currencies }) => {
+  if (!cumulatedBalances || cumulatedBalances.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className={cn('w-1/2 rounded-2xl border px-4 py-2', className)}>
+      <div className="mt-2 px-1">
+        <div className="flex items-center justify-center gap-2 text-center">
+          <p className="text-sm">{prefix}</p>
+        </div>
+      </div>
+      <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
+        <ConvertibleBalance
+          balances={cumulatedBalances}
+          showMultiOption
+          className="flex-wrap"
+          overrideCurrencies={currencies}
+          forceShowButton={currencies.length > 1}
+        />
+      </div>
+    </div>
   );
 };
 

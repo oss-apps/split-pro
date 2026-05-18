@@ -1,4 +1,4 @@
-import { type Balance, SplitType, type User } from '@prisma/client';
+import { SplitType, type User } from '@prisma/client';
 import { ArrowRightIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
@@ -9,6 +9,7 @@ import { BigMath } from '~/utils/numbers';
 
 import { useSession } from 'next-auth/react';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import type { MinimalBalance } from '~/types/balance.types';
 import { EntityAvatar } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { CurrencyInput } from '../ui/currency-input';
@@ -17,7 +18,7 @@ import { FriendBalance } from './FriendBalance';
 
 export const SettleUp: React.FC<
   React.PropsWithChildren<{
-    balances?: Balance[];
+    balances?: MinimalBalance[];
     friend: User;
   }>
 > = ({ children, balances, friend }) => {
@@ -37,7 +38,7 @@ export const SettleUp: React.FC<
     );
   }
 
-  const [balanceToSettle, setBalanceToSettle] = useState<Balance | undefined>(
+  const [balanceToSettle, setBalanceToSettle] = useState<MinimalBalance | undefined>(
     1 < balances.length ? undefined : balances[0],
   );
   const [amount, setAmount] = useState<bigint>(
@@ -49,7 +50,7 @@ export const SettleUp: React.FC<
 
   const isCurrentUserPaying = 0 > (balanceToSettle?.amount ?? 0);
 
-  function onSelectBalance(balance: Balance) {
+  function onSelectBalance(balance: MinimalBalance) {
     setBalanceToSettle(balance);
     setAmount(BigMath.abs(balance.amount));
     setAmountStr(
@@ -83,11 +84,12 @@ export const SettleUp: React.FC<
         ],
         paidBy: isCurrentUserPaying ? currentUser.id : friend.id,
         category: DEFAULT_CATEGORY,
-        groupId: null,
+        groupId: balanceToSettle.groupId,
       },
       {
         onSuccess: () => {
           utils.user.invalidate().catch(console.error);
+          utils.expense.invalidate().catch(console.error);
         },
         onError: (error) => {
           console.error('Error while saving expense:', error);
@@ -131,7 +133,7 @@ export const SettleUp: React.FC<
       leftAction={t('actions.back')}
       leftActionOnClick={onBackClick}
       shouldCloseOnLeftAction={false}
-      title={balanceToSettle ? t('ui.settle_up_name') : t('ui.select_currency')}
+      title={balanceToSettle ? t('ui.settle_up_name') : t('ui.select_balance')}
       className="h-[70vh]"
       actionTitle={t('actions.save')}
       actionDisabled={!balanceToSettle || !amount}
@@ -142,11 +144,11 @@ export const SettleUp: React.FC<
         <div>
           {balances?.map((b) => (
             <div
-              key={`${b.friendId}-${b.currency}`}
+              key={`${b.friendId}-${b.currency}-${b.groupId ?? 'null'}`}
               onClick={() => onSelectBalance(b)}
               className="cursor-pointer px-4 py-2"
             >
-              <FriendBalance user={friend} balance={b} />
+              <FriendBalance user={friend} balance={b} groupName={b.groupName} />
             </div>
           ))}
         </div>
@@ -163,10 +165,12 @@ export const SettleUp: React.FC<
                 ? t('ui.expense.statements.you_pay_user', { user: displayName(friend) })
                 : t('ui.expense.statements.user_pays_you', { user: displayName(friend) })}
             </p>
+            {balanceToSettle.groupName ? (
+              <p className="mt-1 text-center text-xs text-gray-500">{balanceToSettle.groupName}</p>
+            ) : null}
           </div>
           <CurrencyInput
             currency={balanceToSettle.currency}
-            bigIntValue={amount}
             strValue={amountStr}
             className="mx-auto mt-4 w-[150px] text-center text-lg"
             onValueChange={onCurrencyInputValueChange}

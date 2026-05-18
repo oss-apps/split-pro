@@ -1,7 +1,6 @@
 import { SiGithub, SiX } from '@icons-pack/react-simple-icons';
 import {
   BadgeInfo,
-  BugOff,
   CreditCard,
   Download,
   DownloadCloud,
@@ -22,7 +21,7 @@ import { DownloadAppDrawer } from '~/components/Account/DownloadAppDrawer';
 import { LanguagePicker } from '~/components/Account/LanguagePicker';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
-import { UpdateName } from '~/components/Account/UpdateName';
+import { UpdateName } from '~/components/Account/UpdateDetails';
 import MainLayout from '~/components/Layout/MainLayout';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
@@ -37,19 +36,23 @@ import {
 import { api } from '~/utils/api';
 import type { NextPageWithUser } from '~/types';
 import { DebugInfo } from '~/components/Account/DebugInfo';
-import { execSync } from 'node:child_process';
+import { useAppStore } from '~/store/appStore';
 
 const AccountPage: NextPageWithUser<{
   feedBackPossible: boolean;
   bankConnectionEnabled: boolean;
   bankConnection: string;
-  gitRevision: string | null;
-}> = ({ user, feedBackPossible, bankConnectionEnabled, bankConnection, gitRevision }) => {
+  maxUploadFileSizeMB: number;
+}> = ({ feedBackPossible, bankConnectionEnabled, bankConnection, maxUploadFileSizeMB }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const userQuery = api.user.me.useQuery();
   const downloadQuery = api.user.downloadData.useMutation();
   const updateDetailsMutation = api.user.updateUserDetail.useMutation();
+
+  // TODO: Set this globally from env var with app router later
+  const { setMaxUploadFileSizeMB } = useAppStore((s) => s.actions);
+  setMaxUploadFileSizeMB(maxUploadFileSizeMB);
 
   const [downloading, setDownloading] = useState(false);
 
@@ -69,9 +72,9 @@ const AccountPage: NextPageWithUser<{
   const utils = api.useUtils();
 
   const onNameUpdate = useCallback(
-    async (values: { name: string }) => {
+    async (values: { name: string; image?: string | null; defaultCurrency?: string | null }) => {
       try {
-        await updateDetailsMutation.mutateAsync({ name: values.name });
+        await updateDetailsMutation.mutateAsync(values);
         toast.success(t('account.messages.submit_success'), { duration: 1500 });
         utils.user.me.refetch().catch(console.error);
       } catch (error) {
@@ -90,8 +93,6 @@ const AccountPage: NextPageWithUser<{
     void router.push('/auth/signin', '/auth/signin', { locale: 'default' });
   }, [router]);
 
-  const isCloud = env.NEXT_PUBLIC_IS_CLOUD_DEPLOYMENT;
-
   return (
     <>
       <Head>
@@ -100,16 +101,18 @@ const AccountPage: NextPageWithUser<{
       <MainLayout title={t('account.title')} header={header}>
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <EntityAvatar entity={user} size={50} />
+            <EntityAvatar entity={userQuery.data} size={50} />
             <div>
               <div className="text-xl font-semibold">{userQuery.data?.name}</div>
-              <div className="text-sm text-gray-500">{user.email}</div>
+              <div className="text-sm text-gray-500">{userQuery.data?.email}</div>
             </div>
           </div>
           {!userQuery.isPending && (
             <UpdateName
               className="size-5"
               defaultName={userQuery.data?.name ?? ''}
+              defaultImage={userQuery.data?.image}
+              defaultCurrency={userQuery.data?.defaultCurrency}
               onNameSubmit={onNameUpdate}
             />
           )}
@@ -132,13 +135,6 @@ const AccountPage: NextPageWithUser<{
               {t('bank_transactions.to_bank')}
             </AccountButton>
           </BankConnection>
-
-          {isCloud && (
-            <AccountButton href="https://twitter.com/KM_Koushik_">
-              <SiX className="size-5" />
-              {t('account.follow_on_x')}
-            </AccountButton>
-          )}
 
           <AccountButton href="https://github.com/oss-apps/split-pro">
             <SiGithub className="size-5" />
@@ -176,7 +172,7 @@ const AccountPage: NextPageWithUser<{
             {t('account.import_from_splitwise')}
           </AccountButton>
 
-          <DebugInfo gitRevision={gitRevision}>
+          <DebugInfo>
             <AccountButton>
               <BadgeInfo className="size-5 text-red-700" />
               {t('account.debug_info')}
@@ -200,21 +196,14 @@ const AccountPage: NextPageWithUser<{
 
 AccountPage.auth = true;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  let gitRevision = null;
-  try {
-    gitRevision = execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim();
-  } catch {}
-
-  return {
-    props: {
-      feedbackPossible: !!env.FEEDBACK_EMAIL,
-      bankConnectionEnabled: !!isBankConnectionConfigured(),
-      bankConnection: whichBankConnectionConfigured(),
-      gitRevision,
-      ...(await customServerSideTranslations(context.locale, ['common'])),
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async (context) => ({
+  props: {
+    feedbackPossible: Boolean(env.FEEDBACK_EMAIL),
+    bankConnectionEnabled: Boolean(isBankConnectionConfigured()),
+    bankConnection: whichBankConnectionConfigured(),
+    ...(await customServerSideTranslations(context.locale, ['common', 'currencies'])),
+    maxUploadFileSizeMB: env.UPLOAD_MAX_FILE_SIZE_MB,
+  },
+});
 
 export default AccountPage;

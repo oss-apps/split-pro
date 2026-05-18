@@ -39,45 +39,32 @@ model Session {
 }
 
 model User {
-  id                  Int                  @id @default(autoincrement())
-  name                String?
-  email               String?              @unique
-  emailVerified       DateTime?
-  image               String?
-  currency            String               @default("USD")
-  preferredLanguage   String               @default("")
-  bankingId           String?
-  obapiProviderId     String?
-  accounts            Account[]
-  friendBalances      Balance[]            @relation("FriendBalance")
-  userBalances        Balance[]            @relation("UserBalance")
-  cachedBankData      CachedBankData[]     @relation("UserCachedBankData")
-  addedExpenses       Expense[]            @relation("AddedByUser")
-  deletedExpenses     Expense[]            @relation("DeletedByUser")
-  paidExpenses        Expense[]            @relation("PaidByUser")
-  updatedExpenses     Expense[]            @relation("UpdatedByUser")
-  expenseNotes        ExpenseNote[]
-  expenseParticipants ExpenseParticipant[]
-  groups              Group[]
-  groupFriendBalances GroupBalance[]       @relation("GroupFriendBalance")
-  groupUserBalances   GroupBalance[]       @relation("GroupUserBalance")
-  associatedGroups    GroupUser[]
-  sessions            Session[]
-  userBalanceViews    BalanceView[]        @relation("UserBalanceView")
-  friendBalanceViews  BalanceView[]        @relation("FriendBalanceView")
-
-  @@schema("public")
-}
-
-model CachedBankData {
-  id              Int      @id @default(autoincrement())
-  obapiProviderId String   @unique
-  data            String
-  userId          Int
-  lastFetched     DateTime
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  user            User     @relation("UserCachedBankData", fields: [userId], references: [id], onDelete: Cascade)
+  id                   Int                  @id @default(autoincrement())
+  name                 String?
+  email                String?              @unique
+  emailVerified        DateTime?
+  image                String?
+  currency             String               @default("USD")
+  defaultCurrency      String?
+  preferredLanguage    String               @default("")
+  bankingId            String?
+  obapiProviderId      String?
+  accounts             Account[]
+  friendBalances       BalanceView[]        @relation("FriendBalanceView")
+  userBalances         BalanceView[]        @relation("UserBalanceView")
+  cachedBankData       CachedBankData[]     @relation("UserCachedBankData")
+  addedExpenses        Expense[]            @relation("AddedByUser")
+  deletedExpenses      Expense[]            @relation("DeletedByUser")
+  paidExpenses         Expense[]            @relation("PaidByUser")
+  updatedExpenses      Expense[]            @relation("UpdatedByUser")
+  expenseNotes         ExpenseNote[]
+  expenseParticipants  ExpenseParticipant[]
+  groups               Group[]
+  associatedGroups     GroupUser[]
+  friendDefaultSplitsA FriendDefaultSplit[] @relation("FriendDefaultSplitUserA")
+  friendDefaultSplitsB FriendDefaultSplit[] @relation("FriendDefaultSplitUserB")
+  sessions             Session[]
+  hiddenFriendIds      Int[]                @default([])
 
   @@schema("public")
 }
@@ -91,6 +78,7 @@ model VerificationToken {
   @@schema("public")
 }
 
+// Deprecated in favor of BalanceView. Kept to preserve existing data for now.
 model Balance {
   userId                Int
   currency              String
@@ -99,30 +87,56 @@ model Balance {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
   importedFromSplitwise Boolean  @default(false)
-  friend                User     @relation("FriendBalance", fields: [friendId], references: [id], onDelete: Cascade)
-  user                  User     @relation("UserBalance", fields: [userId], references: [id], onDelete: Cascade)
+  //  friend                User     @relation("FriendBalance", fields: [friendId], references: [id], onDelete: Cascade)
+  //  user                  User     @relation("UserBalance", fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, currency, friendId])
   @@schema("public")
 }
 
 model Group {
-  id                Int            @id @default(autoincrement())
-  publicId          String         @unique
+  id                Int                @id @default(autoincrement())
+  publicId          String             @unique
   name              String
+  image             String?
   userId            Int
-  defaultCurrency   String         @default("USD")
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  splitwiseGroupId  String?        @unique
-  simplifyDebts     Boolean        @default(false)
+  defaultCurrency   String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  splitwiseGroupId  String?            @unique
+  simplifyDebts     Boolean            @default(false)
   archivedAt        DateTime?
   expenses          Expense[]
-  createdBy         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  groupBalances     GroupBalance[]
+  createdBy         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   groupUsers        GroupUser[]
-  groupBalanceViews BalanceView[]
+  groupBalances     BalanceView[]
+  groupDefaultSplit GroupDefaultSplit?
 
+  @@schema("public")
+}
+
+model GroupDefaultSplit {
+  groupId   Int       @id
+  splitType SplitType
+  shares    Json
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  group     Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@schema("public")
+}
+
+model FriendDefaultSplit {
+  userAId   Int
+  userBId   Int
+  splitType SplitType
+  shares    Json
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userA     User      @relation("FriendDefaultSplitUserA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB     User      @relation("FriendDefaultSplitUserB", fields: [userBId], references: [id], onDelete: Cascade)
+
+  @@id([userAId, userBId])
   @@schema("public")
 }
 
@@ -136,6 +150,7 @@ model GroupUser {
   @@schema("public")
 }
 
+// Deprecated in favor of BalanceView. Kept to preserve existing data for now.
 model GroupBalance {
   groupId   Int
   currency  String
@@ -143,9 +158,9 @@ model GroupBalance {
   firendId  Int
   amount    BigInt
   updatedAt DateTime @updatedAt
-  friend    User     @relation("GroupFriendBalance", fields: [firendId], references: [id], onDelete: Cascade)
-  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  user      User     @relation("GroupUserBalance", fields: [userId], references: [id], onDelete: Cascade)
+  //  friend    User     @relation("GroupFriendBalance", fields: [firendId], references: [id], onDelete: Cascade)
+  //  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  //  user      User     @relation("GroupUserBalance", fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([groupId, currency, firendId, userId])
   @@schema("public")
@@ -170,14 +185,14 @@ model Expense {
   transactionId       String?
   recurrenceId        Int?
   id                  String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  otherConversion     String?              @unique @db.Uuid
+  conversionToId      String?              @unique @db.Uuid
   addedByUser         User                 @relation("AddedByUser", fields: [addedBy], references: [id], onDelete: Cascade)
   deletedByUser       User?                @relation("DeletedByUser", fields: [deletedBy], references: [id], onDelete: Cascade)
   group               Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  conversionTo        Expense?             @relation("CurrencyConversion", fields: [otherConversion], references: [id], onDelete: Cascade)
+  conversionTo        Expense?             @relation("CurrencyConversion", fields: [conversionToId], references: [id], onDelete: Cascade)
   conversionFrom      Expense?             @relation("CurrencyConversion")
   paidByUser          User                 @relation("PaidByUser", fields: [paidBy], references: [id], onDelete: Cascade)
-  recurrence          ExpenseRecurrence?   @relation(fields: [recurrenceId], references: [id], onDelete: Cascade)
+  recurrence          ExpenseRecurrence?   @relation(fields: [recurrenceId], references: [id], onDelete: SetNull)
   updatedByUser       User?                @relation("UpdatedByUser", fields: [updatedBy], references: [id])
   expenseNotes        ExpenseNote[]
   expenseParticipants ExpenseParticipant[]
@@ -220,20 +235,46 @@ model ExpenseRecurrence {
   @@schema("public")
 }
 
-model CurrencyRateCache {
-  from       String
-  to         String
-  date       DateTime
-  rate       Float
-  insertedAt DateTime @default(now())
+model CachedCurrencyRate {
+  from        String
+  to          String
+  date        DateTime
+  rate        Float
+  lastFetched DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@id([from, to, date])
   @@schema("public")
 }
 
+model CachedBankData {
+  id              Int      @id @default(autoincrement())
+  obapiProviderId String   @unique
+  data            String
+  userId          Int
+  lastFetched     DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation("UserCachedBankData", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@schema("public")
+}
+
 model PushNotification {
-  userId       Int    @id
+  userId       Int
+  endpoint     String
   subscription String
+
+  @@id([userId, endpoint])
+  @@schema("public")
+}
+
+model AppMetadata {
+  key       String   @id
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@schema("public")
 }

@@ -1,20 +1,17 @@
+import i18nConfig from '@/next-i18next.config.js';
 import { clsx } from 'clsx';
+import { type Session } from 'next-auth';
+import { SessionProvider, useSession } from 'next-auth/react';
+import { appWithTranslation, useTranslation } from 'next-i18next';
 import { type AppType } from 'next/app';
 import { Poppins } from 'next/font/google';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { type Session } from 'next-auth';
-import { SessionProvider, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
-import { appWithTranslation, useTranslation } from 'next-i18next';
-import i18nConfig from '@/next-i18next.config.js';
-import { ThemeProvider } from '~/components/ui/theme-provider';
-import { CurrencyHelpersProvider } from '~/contexts/CurrencyHelpersContext';
-import '~/styles/globals.css';
 import { LoadingSpinner } from '~/components/ui/spinner';
-import { env } from '~/env';
-import { parseCurrencyCode } from '~/lib/currency';
+import { ThemeProvider } from 'next-themes';
+import { CurrencyHelpersProvider } from '~/contexts/CurrencyHelpersContext';
 import { useAddExpenseStore } from '~/store/addStore';
 import { useAppStore } from '~/store/appStore';
 import { type NextPageWithUser } from '~/types';
@@ -23,12 +20,15 @@ import { registerICU } from '~/utils/i18n/registerICU';
 
 registerICU();
 
+import 'react-easy-crop/react-easy-crop.css';
+import '~/styles/globals.css';
+
 const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });
 const toastOptions = { duration: 1500 };
 
-const MyApp: AppType<{ session: Session | null; baseUrl: string }> = ({
+const MyApp: AppType<{ session: Session | null }> = ({
   Component,
-  pageProps: { session, baseUrl, ...pageProps },
+  pageProps: { session, ...pageProps },
 }) => {
   const { t, ready } = useTranslation();
 
@@ -39,6 +39,9 @@ const MyApp: AppType<{ session: Session | null; baseUrl: string }> = ({
       </div>
     );
   }
+
+  // TODO: Migrate to APP router and get it from env var
+  const baseUrl = global?.window?.location?.origin;
 
   return (
     <main className={clsx(poppins.className, 'h-full')}>
@@ -123,8 +126,6 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
 
   useEffect(() => {
     if ('authenticated' === status && data.user) {
-      setCurrency(parseCurrencyCode(data.user.currency));
-
       if (!data.user.preferredLanguage) {
         // If user has no preferred language, set it to the current locale
         const currentLocale = router.locale ?? 'en';
@@ -139,6 +140,22 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
               user: {
                 ...data.user,
                 preferredLanguage: currentLocale,
+              },
+            }),
+          )
+          .catch(console.error);
+      } else if (data.user.preferredLanguage === 'pt') {
+        // Fix for 'pt' preferred language to 'pt-PT'
+        data.user.preferredLanguage = 'pt-PT';
+        updateUser
+          .mutateAsync({
+            preferredLanguage: 'pt-PT',
+          })
+          .then(() =>
+            update({
+              user: {
+                ...data.user,
+                preferredLanguage: 'pt-PT',
               },
             }),
           )
@@ -165,11 +182,5 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
 
   return <Page user={data.user} {...pageProps} />;
 };
-
-export const getServerSideProps = () => ({
-  props: {
-    baseUrl: env.NEXTAUTH_URL,
-  },
-});
 
 export default api.withTRPC(appWithTranslation(MyApp, i18nConfig));

@@ -3,35 +3,39 @@ import { type User } from 'next-auth';
 import { z } from 'zod';
 
 import { env } from '~/env';
+import {
+  deserializeDefaultSplit,
+  serializeDefaultSplit,
+  toSortedFriendPair,
+} from '~/lib/defaultSplit';
+import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
 import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
 
-// import { sendExpensePushNotification } from '../services/notificationService';
+import {
+  getSubscriptionEndpoint,
+  sendPushNotificationToUsers,
+} from '../services/notificationService';
 import {
   getCompleteFriendsDetails,
   getCompleteGroupDetails,
   importGroupFromSplitwise,
   importUserBalanceFromSplitWise,
 } from '../services/splitService';
-import { getBalancesWithFriend, getUserFriends } from '../services/balanceService';
 
 export const userRouter = createTRPCRouter({
   me: protectedProcedure.query(({ ctx }) => ctx.session.user),
 
   getFriends: protectedProcedure.query(async ({ ctx }) => {
-    const friendsIds = await getUserFriends(ctx.session.user.id);
-
-    const friends = await db.user.findMany({
-      where: {
-        id: {
-          in: friendsIds,
-        },
-      },
+    const friends = await db.balanceView.findMany({
+      where: { userId: ctx.session.user.id, friendId: { notIn: ctx.session.user.hiddenFriendIds } },
+      include: { friend: true },
+      distinct: ['friendId'],
     });
 
-    return friends;
+    return friends.map((f) => f.friend);
   }),
 
   getOwnExpenses: protectedProcedure.query(async ({ ctx }) => {
@@ -83,15 +87,69 @@ export const userRouter = createTRPCRouter({
   getBalancesWithFriend: protectedProcedure
     .input(z.object({ friendId: z.number() }))
     .query(async ({ input, ctx }) => {
-      const balances = await getBalancesWithFriend(ctx.session.user.id, input.friendId);
-      return balances;
+      const rawBalances = await db.balanceView.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          friendId: input.friendId,
+          amount: { not: 0 },
+        },
+        include: {
+          group: {
+            select: {
+              name: true,
+              simplifyDebts: true,
+            },
+          },
+        },
+      });
+
+      const processedBalances = await Promise.all(
+        rawBalances.map(async ({ groupId, currency, amount, group }) => {
+          // For non-simplifyDebts groups and non-group balances, use raw balance
+          if (!group?.simplifyDebts || null === groupId) {
+            return {
+              friendId: input.friendId,
+              currency,
+              amount,
+              groupId,
+              groupName: group?.name ?? null,
+            };
+          }
+
+          // For simplifyDebts groups, fetch all group balances and simplify
+          const allGroupBalances = await db.balanceView.findMany({
+            where: { groupId, currency },
+          });
+
+          const simplified = simplifyDebts(allGroupBalances);
+
+          const simplifiedBalance = simplified.find(
+            (b) =>
+              b.userId === ctx.session.user.id &&
+              b.friendId === input.friendId &&
+              b.currency === currency,
+          );
+
+          return {
+            friendId: input.friendId,
+            currency,
+            amount: simplifiedBalance?.amount ?? 0n,
+            groupId,
+            groupName: group.name,
+          };
+        }),
+      );
+
+      return processedBalances.filter((b) => 0n !== b.amount);
     }),
 
   updateUserDetail: protectedProcedure
     .input(
       z.object({
         name: z.string().optional(),
+        image: z.string().nullable().optional(),
         currency: z.string().optional(),
+        defaultCurrency: z.string().nullable().optional(),
         obapiProviderId: z.string().optional(),
         bankingId: z.string().optional(),
         preferredLanguage: z.string().optional(),
@@ -142,10 +200,58 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      const viewFriend = await db.user.findUnique({
+      if (!friend) {
+        return friend;
+      }
+
+      const [userAId, userBId] = toSortedFriendPair(ctx.session.user.id, input.friendId);
+
+      const friendDefaultSplit = await db.friendDefaultSplit.findUnique({
+        where: {
+          userAId_userBId: {
+            userAId,
+            userBId,
+          },
+        },
+      });
+
+      const defaultSplit =
+        friendDefaultSplit &&
+        (() => {
+          const parsedShares = z
+            .record(z.string(), z.string())
+            .safeParse(friendDefaultSplit.shares);
+          if (!parsedShares.success) {
+            return null;
+          }
+
+          return deserializeDefaultSplit({
+            splitType: friendDefaultSplit.splitType,
+            shares: parsedShares.data,
+          });
+        })();
+
+      return {
+        ...friend,
+        defaultSplit: defaultSplit ? serializeDefaultSplit(defaultSplit) : null,
+      };
+    }),
+
+  upsertFriendDefaultSplit: protectedProcedure
+    .input(
+      z.object({
+        friendId: z.number(),
+        defaultSplit: z.object({
+          splitType: z.enum(['EQUAL', 'PERCENTAGE', 'SHARE']),
+          shares: z.record(z.string(), z.string()),
+        }),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const friend = await db.user.findUnique({
         where: {
           id: input.friendId,
-          userBalanceViews: {
+          userBalances: {
             some: {
               friendId: ctx.session.user.id,
             },
@@ -153,25 +259,65 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      if (friend?.id !== viewFriend?.id) {
-        console.error(`[getFriend] Friend data mismatch for friendId ${input.friendId}:`, {
-          old: friend,
-          view: viewFriend,
-        });
+      if (!friend) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Friend not found' });
       }
 
-      return friend;
+      const parsed = deserializeDefaultSplit(input.defaultSplit);
+      if (!parsed) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Malformed default split' });
+      }
+
+      const [userAId, userBId] = toSortedFriendPair(ctx.session.user.id, input.friendId);
+      const serialized = serializeDefaultSplit(parsed);
+
+      await db.friendDefaultSplit.upsert({
+        where: { userAId_userBId: { userAId, userBId } },
+        create: {
+          userAId,
+          userBId,
+          splitType: serialized.splitType,
+          shares: serialized.shares,
+        },
+        update: {
+          splitType: serialized.splitType,
+          shares: serialized.shares,
+        },
+      });
+
+      return serialized;
+    }),
+
+  clearFriendDefaultSplit: protectedProcedure
+    .input(z.object({ friendId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const [userAId, userBId] = toSortedFriendPair(ctx.session.user.id, input.friendId);
+      await db.friendDefaultSplit.deleteMany({ where: { userAId, userBId } });
+      return true;
     }),
 
   updatePushNotification: protectedProcedure
     .input(z.object({ subscription: z.string() }))
     .mutation(async ({ input, ctx }) => {
+      const endpoint = getSubscriptionEndpoint(input.subscription);
+
+      if (!endpoint) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Invalid push subscription payload',
+        });
+      }
+
       await db.pushNotification.upsert({
         where: {
-          userId: ctx.session.user.id,
+          userId_endpoint: {
+            userId: ctx.session.user.id,
+            endpoint,
+          },
         },
         create: {
           userId: ctx.session.user.id,
+          endpoint,
           subscription: input.subscription,
         },
         update: {
@@ -180,10 +326,57 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
+  deletePushNotification: protectedProcedure
+    .input(z.object({ subscription: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const endpoint = getSubscriptionEndpoint(input.subscription);
+      if (!endpoint) {
+        return;
+      }
+
+      await db.pushNotification
+        .delete({
+          where: {
+            userId_endpoint: {
+              userId: ctx.session.user.id,
+              endpoint,
+            },
+          },
+        })
+        .catch(() => null);
+    }),
+
+  sendTestPushNotification: protectedProcedure.mutation(async ({ ctx }) => {
+    const { sentCount } = await sendPushNotificationToUsers([ctx.session.user.id], {
+      title: 'SplitPro',
+      message: 'Test notification from debug info',
+      data: {
+        url: '/account',
+      },
+    });
+
+    return { sentCount };
+  }),
+
   deleteFriend: protectedProcedure
     .input(z.object({ friendId: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      const friendBalances = await getBalancesWithFriend(ctx.session.user.id, input.friendId);
+      const friendBalances = await db.balanceView.groupBy({
+        by: ['currency'],
+        _sum: { amount: true },
+        where: {
+          userId: ctx.session.user.id,
+          friendId: input.friendId,
+          amount: { not: 0 },
+        },
+        having: {
+          amount: {
+            _sum: {
+              not: 0,
+            },
+          },
+        },
+      });
 
       if (0 < friendBalances.length) {
         throw new TRPCError({
@@ -192,17 +385,14 @@ export const userRouter = createTRPCRouter({
         });
       }
 
-      await db.balance.deleteMany({
+      await db.user.update({
         where: {
-          userId: input.friendId,
-          friendId: ctx.session.user.id,
+          id: ctx.session.user.id,
         },
-      });
-
-      await db.balance.deleteMany({
-        where: {
-          friendId: input.friendId,
-          userId: ctx.session.user.id,
+        data: {
+          hiddenFriendIds: {
+            push: input.friendId,
+          },
         },
       });
     }),
@@ -230,5 +420,15 @@ export const userRouter = createTRPCRouter({
 
   getWebPushPublicKey: protectedProcedure.query(() => env.WEB_PUSH_PUBLIC_KEY ?? ''),
 });
+
+export const getUserMap = async (userIds: number[]) => {
+  const users = await db.user.findMany({
+    where: {
+      id: { in: userIds },
+    },
+  });
+
+  return Object.fromEntries(users.map((u) => [u.id, u]));
+};
 
 export type UserRouter = typeof userRouter;

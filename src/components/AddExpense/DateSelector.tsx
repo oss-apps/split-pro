@@ -6,7 +6,15 @@ import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '../ui/calendar';
 import type { DayPickerProps, PropsSingleRequired } from 'react-day-picker';
 
-export const DateSelector: React.FC<DayPickerProps & PropsSingleRequired> = (calendarProps) => {
+type DateSelectorProps = DayPickerProps &
+  PropsSingleRequired & {
+    popoverPortalled?: boolean;
+  };
+
+export const DateSelector: React.FC<DateSelectorProps> = ({
+  popoverPortalled = true,
+  ...calendarProps
+}) => {
   const { t, toUIDate } = useTranslationWithUtils();
 
   return (
@@ -28,7 +36,7 @@ export const DateSelector: React.FC<DayPickerProps & PropsSingleRequired> = (cal
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0">
+        <PopoverContent className="w-auto p-0" portalled={popoverPortalled}>
           <Calendar fixedWeeks {...calendarProps} />
         </PopoverContent>
       </Popover>

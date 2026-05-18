@@ -1,6 +1,7 @@
 import { type NextPage } from 'next';
 import { type User } from 'next-auth';
 import { z } from 'zod';
+import { type CurrencyCode } from './lib/currency';
 
 export type NextPageWithUser<T = {}> = NextPage<{ user: User } & T> & { auth: boolean };
 
@@ -39,8 +40,9 @@ export interface SplitwiseGroup {
 export interface TransactionAddInputModel {
   date: Date;
   description: string;
-  amount: string;
-  currency: string;
+  amountStr: string;
+  amount: bigint;
+  currency: CurrencyCode;
   transactionId?: string;
   expenseId?: string;
 }

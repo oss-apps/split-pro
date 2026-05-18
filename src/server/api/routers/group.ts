@@ -4,20 +4,24 @@ import { z } from 'zod';
 
 import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
-
-import { recalculateGroupBalances } from '../services/splitService';
-import { assertBalancesMatch, getGroupBalances } from '../services/balanceService';
+import { sendGroupSimplifyDebtsToggleNotification } from '~/server/api/services/notificationService';
+import { SplitType } from '@prisma/client';
+import {
+  defaultSplitInputSchema,
+  deserializeDefaultSplit,
+  parseSerializedDefaultSplit,
+  serializeDefaultSplit,
+} from '~/lib/defaultSplit';
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(z.object({ name: z.string().min(1), currency: z.string().optional() }))
+    .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       const group = await ctx.db.group.create({
         data: {
           name: input.name,
           publicId: nanoid(),
           userId: ctx.session.user.id,
-          defaultCurrency: input.currency ?? 'USD',
           groupUsers: {
             create: {
               userId: ctx.session.user.id,
@@ -66,9 +70,6 @@ export const groupRouter = createTRPCRouter({
               groupBalances: {
                 where: { userId: ctx.session.user.id },
               },
-              groupBalanceViews: {
-                where: { userId: ctx.session.user.id, NOT: { groupId: null } },
-              },
               // We can sort by group balance view instead
               expenses: {
                 orderBy: {
@@ -80,12 +81,6 @@ export const groupRouter = createTRPCRouter({
           },
         },
       });
-
-      assertBalancesMatch(
-        groups.flatMap((g) => g.group.groupBalances),
-        groups.flatMap((g) => g.group.groupBalanceViews),
-        'getAllGroupsWithBalances',
-      );
 
       const sortedGroupsByLatestExpense = groups.sort((a, b) => {
         const aDate = a.group.expenses[0]?.createdAt ?? new Date(0);
@@ -129,6 +124,8 @@ export const groupRouter = createTRPCRouter({
         },
       });
 
+      await ctx.db.groupDefaultSplit.deleteMany({ where: { groupId: group.id } });
+
       return group;
     }),
 
@@ -144,21 +141,29 @@ export const groupRouter = createTRPCRouter({
           },
         },
         groupBalances: true,
-        groupBalanceViews: true,
+        groupDefaultSplit: true,
       },
     });
 
-    assertBalancesMatch(
-      group?.groupBalances || [],
-      group?.groupBalanceViews || [],
-      'getGroupDetails',
-    );
+    if (!group) {
+      return group;
+    }
 
-    if (group?.simplifyDebts) {
+    if (group.simplifyDebts) {
       group.groupBalances = simplifyDebts(group.groupBalances);
     }
 
-    return group;
+    const defaultSplit =
+      group.groupDefaultSplit &&
+      parseSerializedDefaultSplit(
+        group.groupDefaultSplit.splitType,
+        group.groupDefaultSplit.shares,
+      );
+
+    return {
+      ...group,
+      defaultSplit,
+    };
   }),
 
   getGroupTotals: groupProcedure.query(async ({ input, ctx }) => {
@@ -170,6 +175,9 @@ export const groupRouter = createTRPCRouter({
       where: {
         groupId: input.groupId,
         deletedAt: null,
+        splitType: {
+          not: SplitType.SETTLEMENT,
+        },
       },
     });
 
@@ -186,30 +194,9 @@ export const groupRouter = createTRPCRouter({
         })),
       });
 
+      await ctx.db.groupDefaultSplit.deleteMany({ where: { groupId: input.groupId } });
+
       return groupUsers;
-    }),
-
-  recalculateBalances: groupProcedure
-    .input(z.object({ groupId: z.number() }))
-    .mutation(async ({ input, ctx }) => {
-      const group = await ctx.db.group.findUnique({
-        where: {
-          id: input.groupId,
-        },
-      });
-
-      if (!group) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
-      }
-
-      if (group.userId !== ctx.session.user.id) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'Only creator can recalculate balances',
-        });
-      }
-
-      return recalculateGroupBalances(input.groupId);
     }),
 
   toggleSimplifyDebts: groupProcedure
@@ -223,6 +210,13 @@ export const groupRouter = createTRPCRouter({
 
       if (!group) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
+      }
+
+      if (group.archivedAt) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Cannot toggle simplify debts for archived groups',
+        });
       }
 
       const isInGroup = await ctx.db.groupUser.findFirst({
@@ -239,16 +233,23 @@ export const groupRouter = createTRPCRouter({
         });
       }
 
-      const simplifyDebts = !group.simplifyDebts;
+      const simplifyDebtsInv = !group.simplifyDebts;
 
       await ctx.db.group.update({
         where: {
           id: input.groupId,
         },
         data: {
-          simplifyDebts,
+          simplifyDebts: simplifyDebtsInv,
         },
       });
+
+      // Send notifications asynchronously
+      void sendGroupSimplifyDebtsToggleNotification(
+        input.groupId,
+        ctx.session.user.id,
+        simplifyDebtsInv,
+      );
 
       return simplifyDebts;
     }),
@@ -274,9 +275,10 @@ export const groupRouter = createTRPCRouter({
         });
       }
 
-      const groupBalances = await getGroupBalances(input.groupId);
+      const groupBalances = await ctx.db.balanceView.findMany({
+        where: { groupId: input.groupId },
+      });
 
-      // @ts-ignore This will be resolved once we move away from balance tables
       const finalGroupBalances = group.simplifyDebts ? simplifyDebts(groupBalances) : groupBalances;
 
       if (finalGroupBalances.some((b) => b.userId === userId && 0n !== b.amount)) {
@@ -295,11 +297,61 @@ export const groupRouter = createTRPCRouter({
         },
       });
 
+      await ctx.db.groupDefaultSplit.deleteMany({ where: { groupId: input.groupId } });
+
       return groupUser;
     }),
 
+  upsertDefaultSplit: groupProcedure
+    .input(
+      z.object({
+        groupId: z.number(),
+        defaultSplit: defaultSplitInputSchema,
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const parsed = deserializeDefaultSplit(input.defaultSplit);
+      if (!parsed) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Malformed default split' });
+      }
+
+      const serialized = serializeDefaultSplit(parsed);
+
+      const groupDefaultSplit = await ctx.db.groupDefaultSplit.upsert({
+        where: { groupId: input.groupId },
+        create: {
+          groupId: input.groupId,
+          splitType: serialized.splitType,
+          shares: serialized.shares,
+        },
+        update: {
+          splitType: serialized.splitType,
+          shares: serialized.shares,
+        },
+      });
+
+      return {
+        splitType: groupDefaultSplit.splitType,
+        shares: serialized.shares,
+      };
+    }),
+
+  clearDefaultSplit: groupProcedure
+    .input(z.object({ groupId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      await ctx.db.groupDefaultSplit.deleteMany({ where: { groupId: input.groupId } });
+      return true;
+    }),
+
   updateGroupDetails: groupProcedure
-    .input(z.object({ name: z.string().min(1), groupId: z.number() }))
+    .input(
+      z.object({
+        name: z.string().min(1),
+        image: z.string().nullable().optional(),
+        defaultCurrency: z.string().nullable().optional(),
+        groupId: z.number(),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       const group = await ctx.db.group.findUnique({
         where: {
@@ -311,16 +363,14 @@ export const groupRouter = createTRPCRouter({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
       }
 
-      if (group.userId !== ctx.session.user.id) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Only creator can update the group' });
-      }
-
       const updatedGroup = await ctx.db.group.update({
         where: {
           id: input.groupId,
         },
         data: {
           name: input.name,
+          image: input.image,
+          defaultCurrency: input.defaultCurrency,
         },
       });
 
@@ -336,15 +386,8 @@ export const groupRouter = createTRPCRouter({
         },
         include: {
           groupBalances: true,
-          groupBalanceViews: true,
         },
       });
-
-      assertBalancesMatch(
-        group?.groupBalances || [],
-        group?.groupBalanceViews || [],
-        'toggleArchive',
-      );
 
       if (!group) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Group not found' });
@@ -405,15 +448,8 @@ export const groupRouter = createTRPCRouter({
         },
         include: {
           groupBalances: true,
-          groupBalanceViews: true,
         },
       });
-
-      assertBalancesMatch(
-        group?.groupBalances || [],
-        group?.groupBalanceViews || [],
-        'deleteGroup',
-      );
 
       if (group?.userId !== ctx.session.user.id) {
         throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Only creator can delete the group' });

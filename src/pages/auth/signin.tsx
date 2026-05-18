@@ -4,6 +4,7 @@ import {
   SiAuthelia,
   SiAuthentik,
   SiGithub,
+  SiGitlab,
   SiGoogle,
   SiKeycloak,
 } from '@icons-pack/react-simple-icons';
@@ -38,6 +39,7 @@ const providerSvgs = {
   authelia: <SiAuthelia />,
   auth0: <SiAuth0 />,
   keycloak: <SiKeycloak />,
+  gitlab: <SiGitlab />,
 };
 
 const providerTypeGuard = (providerId: string): providerId is keyof typeof providerSvgs =>
@@ -203,7 +205,7 @@ const Home: NextPage<{
                     .filter((provider) => 'email' !== provider.id)
                     .map((provider) => (
                       <Button
-                        className="mx-auto flex w-[300px] items-center gap-3 bg-white hover:bg-gray-100 focus:bg-gray-100"
+                        className="mx-auto my-2 flex w-[300px] items-center gap-3 bg-white hover:bg-gray-100 focus:bg-gray-100"
                         onClick={handleProviderSignIn(provider.id)}
                         key={provider.id}
                       >

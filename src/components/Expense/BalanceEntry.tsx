@@ -1,49 +1,36 @@
-import { clsx } from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useCallback } from 'react';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { EntityAvatar } from '../ui/avatar';
+import { ConvertibleBalance } from './ConvertibleBalance';
+
+const emptyBalances: { currency: string; amount: bigint }[] = [];
 
 export const BalanceEntry: React.FC<{
   entity: { name?: string | null; image?: string | null; email?: string | null };
-  amount: bigint;
-  isPositive: boolean;
-  currency: string;
+  balances?: { currency: string; amount: bigint }[];
   id: number;
-  hasMore?: boolean;
-}> = ({ entity, amount, isPositive, currency, id, hasMore }) => {
-  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
-  const { toUIString } = getCurrencyHelpersCached(currency);
+}> = ({ entity, balances = emptyBalances, id }) => {
+  const { displayName } = useTranslationWithUtils();
   const router = useRouter();
 
   const currentRoute = router.pathname;
+
+  const stopPropagation = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+  }, []);
 
   return (
     <Link className="flex items-center justify-between" href={`${currentRoute}/${id}`}>
       <div className="flex items-center gap-3">
         <EntityAvatar entity={entity} size={35} />
-        <div className="text-foreground">{entity.name ?? entity.email}</div>
+        <div className="text-foreground">{displayName(entity)}</div>
       </div>
-      {0n === amount ? (
-        <div>
-          <p className="text-xs">{t('ui.settled_up')}</p>
-        </div>
-      ) : (
-        <div>
-          <div
-            className={clsx(
-              'text-right text-xs',
-              isPositive ? 'text-emerald-500' : 'text-orange-600',
-            )}
-          >
-            {t(`ui.expense.statements.${isPositive ? 'you_lent' : 'you_owe'}`)}
-          </div>
-          <div className={`${isPositive ? 'text-emerald-500' : 'text-orange-600'} text-right`}>
-            {toUIString(amount)}
-            <span className="mt-0.5 text-xs">{hasMore ? '*' : ''}</span>
-          </div>
-        </div>
-      )}
+      <div className="text-right" onClick={stopPropagation}>
+        <ConvertibleBalance withText balances={balances} entityId={id} />
+      </div>
     </Link>
   );
 };

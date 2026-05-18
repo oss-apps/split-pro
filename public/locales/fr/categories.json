@@ -5,7 +5,7 @@
         "games": "Jeux",
         "movies": "Films",
         "music": "Musique",
-        "other": "Divertissements (autre)",
+        "other": "Divertissements",
         "sports": "Sports"
       },
       "name": "Divertissements"
@@ -15,14 +15,14 @@
         "diningOut": "Restaurant",
         "groceries": "Courses",
         "liquor": "Alcools",
-        "other": "Nourriture & boissons (autre)"
+        "other": "Nourriture & boissons"
       },
       "name": "Nourriture & boissons"
     },
     "general": {
       "items": {
         "general": "Général",
-        "other": "Général (autre)"
+        "other": "Général"
       },
       "name": "Général"
     },
@@ -32,7 +32,7 @@
         "furniture": "Meubles",
         "maintenance": "Entretien courant",
         "mortgage": "Prêt",
-        "other": "Habitat (autre)",
+        "other": "Habitat",
         "pets": "Animaux",
         "rent": "Loyer",
         "services": "Réparations",
@@ -48,7 +48,7 @@
         "gifts": "Cadeaux",
         "insurance": "Assurance",
         "medical": "Médical",
-        "other": "Vie courante (autre)",
+        "other": "Vie courante",
         "taxes": "Impôts et taxes"
       },
       "name": "Vie courante"
@@ -60,7 +60,7 @@
         "car": "Voiture",
         "fuel": "Essence",
         "hotel": "Hôtel",
-        "other": "Déplacements (autre)",
+        "other": "Déplacements",
         "parking": "Parking",
         "plane": "Avion",
         "taxi": "Taxi",

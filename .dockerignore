@@ -24,6 +24,8 @@ CODE_OF_CONDUCT.md
 components.json
 CONTRIBUTING.md
 Dockerfile
+compose.yml
+.dockerignore
 LICENSE
 next-env.d.ts
 prettier.config.js

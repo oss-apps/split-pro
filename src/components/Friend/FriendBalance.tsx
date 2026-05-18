@@ -1,10 +1,15 @@
-import { type Balance, type User } from '@prisma/client';
+import { type User } from '@prisma/client';
 import { clsx } from 'clsx';
 
-import { EntityAvatar } from '../ui/avatar';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
+import type { MinimalBalance } from '~/types/balance.types';
+import { EntityAvatar } from '../ui/avatar';
 
-export const FriendBalance: React.FC<{ user: User; balance: Balance }> = ({ user, balance }) => {
+export const FriendBalance: React.FC<{
+  user: User;
+  balance: MinimalBalance;
+  groupName?: string | null;
+}> = ({ user, balance, groupName }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const { toUIString } = getCurrencyHelpersCached(balance.currency);
   const isPositive = 0 < balance.amount;
@@ -13,7 +18,10 @@ export const FriendBalance: React.FC<{ user: User; balance: Balance }> = ({ user
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
         <EntityAvatar entity={user} size={30} />
-        <div className="text-foreground">{user.name}</div>
+        <div>
+          <div className="text-foreground">{user.name}</div>
+          {groupName ? <div className="text-xs text-gray-500">{groupName}</div> : null}
+        </div>
       </div>
       <div>
         <div

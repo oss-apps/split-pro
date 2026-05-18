@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 import { env } from '~/env';
 
+// oxlint-disable-next-line no-shadow-restricted-names
 declare namespace globalThis {
   // oxlint-disable-next-line no-unused-vars
   let prisma: PrismaClient | undefined;

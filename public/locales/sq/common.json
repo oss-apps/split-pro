@@ -1,0 +1,11 @@
+{
+  "account": {
+    "change_language": "Ndrysho Gjuhën",
+    "change_language_details": {
+      "messages": {
+        "language_changed": "Gjuha u ndryshua me sukses"
+      },
+      "placeholder": "Zgjidhni gjuhën"
+    }
+  }
+}

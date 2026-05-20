@@ -5,65 +5,76 @@
       "messages": {
         "language_changed": "Taal succesvol gewijzigd"
       },
+      "no_language_found": "Geen taal gevonden.",
       "placeholder": "Selecteer een taal",
       "title": "Selecteer een taal"
     },
-    "debug_info": "",
+    "debug_info": "Foutopsporingsinformatie",
     "debug_info_details": {
-      "copy_failed": "",
-      "description": "",
-      "git": "",
-      "new_version_available": "",
-      "title": "",
-      "user_agent": "",
-      "version": ""
+      "copy_failed": "Foutopsporingsbericht naar klembord kopiëren mislukt",
+      "description": "Plak hieronder de informatie bij het aanmaken van een ondersteuningsaanvraag:",
+      "git": "Git",
+      "new_version_available": "Een nieuwere versie is beschikbaar:",
+      "send_test_notification": "Verstuur testnotificatie",
+      "test_notification_failed": "Niet gelukt om testnotificatie te versturen",
+      "test_notification_sent": "Testnotificatie verstuurd",
+      "title": "Foutopsporingsinformatie",
+      "user_agent": "UserAgent",
+      "version": "Versie"
     },
+    "default_balance_currency": "Standaard saldo munteenheid",
     "download_app": "App downloaden",
     "download_app_details": {
-      "download_as_pwa": "",
-      "title": "",
-      "using_android": "",
-      "using_ios": "",
-      "video": ""
+      "download_as_pwa": "Je kan SplitPro downloaden naar je startscherm als PWA.",
+      "title": "Download app",
+      "using_android": "Als je Android gebruikt, kijk dan hier eens naar",
+      "using_ios": "Als je iOS gebruikt, kijk dan hier eens naar",
+      "video": "video"
     },
-    "download_splitpro_data": "",
+    "download_splitpro_data": "Download SplitPro gegevens",
     "edit_name": {
-      "placeholder": "",
-      "title": ""
+      "apply_avatar": "Avatar toepassen",
+      "avatar_label": "Profielfoto",
+      "avatar_preview": "Voorvertoning avatar",
+      "placeholder": "Naam invoegen",
+      "remove_avatar": "Avatar verwijderen",
+      "select_avatar": "Selecteer foto",
+      "title": "Details bewerken",
+      "zoom": "Inzoomen"
     },
-    "follow_on_x": "",
-    "import_from_splitwise": "",
+    "follow_on_x": "Volg ons op X",
+    "import_from_splitwise": "Importeren van Splitwise",
     "import_from_splitwise_details": {
-      "choose_file": "",
-      "export_splitwise_data_button": "",
-      "follow_to_export_splitwise_data": "",
+      "choose_file": "Kies bestand",
+      "export_splitwise_data_button": "Exporteer Splitwise gegevens",
+      "follow_to_export_splitwise_data": "Volg deze link om de Splitwise gegevens te exporteren",
       "messages": {
-        "import_success": ""
+        "import_success": "Succesvol geïmporteerd"
       },
-      "no_file_chosen": "",
-      "note": ""
+      "no_file_chosen": "Geen bestand gekozen",
+      "note": "Info: Momenteel importeert het enkel vrienden en groepen. Het importeert nog geen transacties. We werken er aan."
     },
-    "logout": "",
+    "logout": "Log uit",
     "messages": {
-      "submit_error": "",
-      "submit_success": ""
+      "submit_error": "Details updaten mislukt",
+      "submit_success": "Details geüpdatet"
     },
     "notifications": {
-      "disable_notification": "",
-      "enable_notification": "",
+      "disable_notification": "Notificatie uitschakelen",
+      "enable_notification": "Notificatie inschakelen",
       "messages": {
-        "notification_granted": ""
+        "notification_granted": "Je zal vanaf nu notificaties ontvangen"
       }
     },
-    "star_on_github": "",
-    "submit_feedback": "",
+    "star_on_github": "Volg ons op Github",
+    "submit_feedback": "Verzend feedback",
     "submit_feedback_details": {
-      "placeholder": "",
-      "title": ""
+      "placeholder": "Vul jouw feedback in",
+      "title": "Feedback indienen"
     },
-    "support_us": "",
-    "title": "",
-    "write_review": ""
+    "support_us": "Sponsor ons",
+    "title": "Profiel",
+    "write_review": "Schrijf een review"
   },
   "actions": {
     "add_expense": "Voeg Uitgave Toe",
@@ -71,8 +82,8 @@
     "cancel": "Annuleer",
     "close": "Sluit",
     "confirm": "Bevestig",
-    "connect": "",
-    "copy": "",
+    "connect": "Verbind",
+    "copy": "Kopieer",
     "create": "Creëer",
     "edit_expense": "Pas Uitgave Aan",
     "export": "Exporteer",
@@ -80,8 +91,8 @@
     "import": "Importeer",
     "invite": "Nodig Uit",
     "leave": "Verlaat",
-    "next": "",
-    "reconnect": "",
+    "next": "Volgende",
+    "reconnect": "Opnieuw verbinden",
     "save": "Sla Op",
     "settle_up": "Regel het",
     "submit": "Dien In"
@@ -107,17 +118,22 @@
     "setup_instructions": "Docker installatie-instructies",
     "trouble_logging_in": "Problemen met inloggen? Neem contact op"
   },
+  "balances": {
+    "user_preferences": {
+      "title": "Voorkeuren"
+    }
+  },
   "bank_transactions": {
-    "choose_bank_provider": "",
-    "no_bank_providers_found": "",
+    "choose_bank_provider": "Kies financiële instelling",
+    "no_bank_providers_found": "Geen financiële instelling gevonden",
     "plaid": {
-      "bank_connected_successfully": "",
-      "bank_connection_cancelled": "",
-      "bank_connection_failed": ""
+      "bank_connected_successfully": "Bank succesvol verbonden",
+      "bank_connection_cancelled": "Verbinding met bank geannuleerd",
+      "bank_connection_failed": "Mislukt om te verbinden met de bank"
     },
-    "search_bank": "",
-    "select_bank_provider": "",
-    "to_bank": ""
+    "search_bank": "Zoek bank",
+    "select_bank_provider": "Selecteer financiële instelling",
+    "to_bank": "naar bank"
   },
   "currency_conversion": {
     "amount_to_receive": "Bedrag te ontvangen",
@@ -129,167 +145,174 @@
     "title": "Valuta conversie"
   },
   "errors": {
-    "currency_conversion_error": "",
-    "currency_conversion_failed": "",
-    "currency_conversion_malformed": "",
-    "email_invalid": "",
-    "email_required": "",
-    "feedback_min_length": "",
-    "feedback_required": "",
-    "group_balances_malformed": "",
-    "group_name_update_failed": "",
-    "import_failed": "",
-    "invalid_cron_expression": "",
-    "invalid_currency_code": "",
-    "language_change_failed": "",
-    "less_than": "",
-    "name_required": "",
-    "no_providers": "",
-    "notification_not_supported": "",
-    "otp_invalid": "",
-    "otp_required": "",
-    "recurrence_delete_failed": "",
+    "currency_conversion_error": "Fout bij het converteren van de munteenheid",
+    "currency_conversion_failed": "Het omrekenen van valuta mislukt",
+    "currency_conversion_malformed": "De gegevens voor de valutaconversie zijn onjuist",
+    "email_invalid": "E-mailadres is ongeldig, probeer het inlogproces opnieuw.",
+    "email_required": "E-mailadres is vereist",
+    "feedback_min_length": "Feedback moet ten minste 10 tekens hebben",
+    "feedback_required": "Feedback is vereist",
+    "group_balances_malformed": "De gegevens van de groepssaldo's zijn onjuist. Meld dit als een probleem of probeer de berekening opnieuw uit te voeren.",
+    "group_name_update_failed": "Fout in het updaten van de groepsnaam",
+    "image_compression_failed": "Afbeeldingscompressie mislukt, ik probeer het originele bestand te uploaden",
+    "import_failed": "Fout bij importeren bestand",
+    "invalid_cron_expression": "Ongeldige cron-uitdrukking",
+    "invalid_currency_code": "Ongeldige valuta code {{code}}",
+    "language_change_failed": "Fout bij taalwijziging",
+    "less_than": "Bestand moet minder dan {{size}}MB zijn",
+    "name_required": "Naam is vereist",
+    "no_providers": "Er is een fout opgetreden bij het ophalen van authenticatieproviders. Controleer de backend-logbestanden.",
+    "notification_not_supported": "Notificatie is niet ondersteund",
+    "otp_invalid": "Ongeldige OTP",
+    "otp_required": "OTP is vereist",
+    "recurrence_delete_failed": "Het verwijderen van de terugkerende betaling is mislukt",
     "recurrence_update_failed": "",
-    "request_error": "",
-    "saving_expense": "",
-    "setting_update_failed": "",
-    "signin_error": "",
-    "signup_disabled": "",
-    "something_went_wrong": "",
-    "subscribe_error": "",
-    "unsubscribe_error": "",
-    "upload_failed": "",
-    "uploading_error": "",
-    "valid_email": ""
+    "request_error": "Fout bij ophalen notificatie",
+    "saving_expense": "Fout tijdens het opslaan van uitgaven",
+    "setting_update_failed": "Mislukt om instelling aan te passen",
+    "signin_error": "Een fout deed zich voor bij het inloggen: ",
+    "signup_disabled": "Het registreren van nieuwe profielen is in die omgeving uitgeschakeld",
+    "something_went_wrong": "Er is iets misgegaan",
+    "subscribe_error": "Aanmelden voor meldingen niet mogelijk",
+    "unsubscribe_error": "Fout bij het afmelden van meldingen",
+    "upload_failed": "Bestand uploaden mislukt",
+    "uploading_error": "Fout bij uploaden bestand",
+    "valid_email": "Voer een geldig e-mailadres in"
   },
   "expense_details": {
-    "add_expense": "",
+    "add_expense": "Uitgave toevoegen",
     "add_expense_details": {
-      "add_new_expense": "",
-      "amount_placeholder": "",
-      "description_placeholder": "",
-      "pick_a_date": "",
+      "add_new_expense": "Nieuwe uitgave toevoegen",
+      "amount_placeholder": "Bedrag invullen",
+      "description_placeholder": "Beschrijving invullen",
+      "pick_a_date": "Kies een datum",
       "select_user_or_group": {
-        "add_to_split_pro": "",
-        "note": "",
-        "only_one_group_time": "",
-        "send_invite": "",
-        "warning": ""
+        "add_to_split_pro": "Toevoegen aan Split Pro",
+        "note": "Info: uitnodigingen versturen is voorlopig uitgeschakeld omwille van spam",
+        "only_one_group_time": "Je kunt maar één groep tegelijk hebben",
+        "send_invite": "Uitnodiging naar gebruiker versturen",
+        "warning": "Waarschuwing: Gebruik de functie ‘Uitnodiging versturen’ niet als het e-mailadres ongeldig is. Gebruik in plaats daarvan de functie ‘Toevoegen aan Split Pro’. Je account wordt geblokkeerd als deze functie wordt misbruikt"
       },
       "split_type_section": {
-        "split_equally": "",
-        "split_unequally": "",
+        "split_equally": "gelijk verdelen",
+        "split_unequally": "ongelijk verdelen",
         "types": {
           "adjustment": {
-            "remaining_to_split_equally": "",
-            "title": ""
+            "remaining_to_split_equally": "Resterende bedrag gelijk verdelen",
+            "title": "Aanpassing"
           },
           "equal": {
-            "per_person": "",
-            "title": ""
+            "per_person": "per persoon",
+            "title": "Gelijk"
           },
           "exact": {
-            "remaining": "",
-            "title": ""
+            "remaining": "Resterend",
+            "title": "Exact"
           },
           "percentage": {
-            "remaining": "",
-            "title": ""
+            "remaining": "Resterend",
+            "title": "Percentage"
           },
           "share": {
-            "shares": "",
-            "title": "",
-            "total_shares": ""
+            "shares": "Delen",
+            "title": "Deel",
+            "total_shares": "Totaal aantal delen"
           }
         }
       },
-      "sponsor_us": "",
+      "sponsor_us": "Sponsor ons",
       "upload_file": {
         "messages": {
-          "upload_success": ""
+          "upload_success": "Bestand succesvol opgeladen"
         }
       },
       "user_input": {
-        "add_more_friends": "",
-        "cannot_change_group": "",
-        "remove_group": "",
-        "search_friends": ""
+        "add_more_friends": "Zoek vrienden, groepen of voeg een e-mailadres toe",
+        "cannot_change_group": "Je kunt tijdens het bewerken niet van groep wisselen",
+        "remove_group": "Klik op delete om de groep te verwijderen",
+        "search_friends": "Zoek vrienden, groepen of voeg een e-mailadres toe"
       }
     },
-    "already_added": "",
+    "already_added": "Reeds toegevoegd",
     "balance_list": {
-      "are_settled_up": "",
-      "is_settled_up": "",
-      "press_balance_info": ""
+      "are_settled_up": "zijn verrekend",
+      "is_settled_up": "is verrekend",
+      "press_balance_info": "Klik op de individuele balans om de afrekening te starten"
     },
-    "bank_transactions": "",
-    "clear": "",
+    "bank_transactions": "Banktransacties",
+    "clear": "Klaar",
     "delete_expense_details": {
-      "text": "",
-      "title": ""
+      "text": "Deze actie kan niet ongedaan worden gemaakt. Hiermee wordt uw uitgave definitief verwijderd.",
+      "title": "Ben je absoluut zeker?"
     },
     "multiple_transactions": {
-      "add_all": "",
-      "add_one_by_one": "",
-      "description": "",
-      "title": ""
+      "add_all": "Alles toevoegen",
+      "add_one_by_one": "Eén per één toevoegen",
+      "description": "Je hebt meerdere transacties geselecteerd. Kies of je ze allemaal tegelijk wilt toevoegen met de huidige instellingen om te splitsen, of dat je de instellingen één voor één wilt aanpassen.",
+      "title": "Meerdere transacties toevoegen"
     },
-    "no_transactions_yet": "",
-    "pending": "",
-    "submit_all": "",
-    "title": "",
-    "title_mobile": ""
+    "no_transactions_yet": "Nog geen transacties",
+    "pending": "Wachtend",
+    "submit_all": "Alles indienen",
+    "title": "Uitgave toevoegen",
+    "title_mobile": "Toevoegen"
   },
   "group_details": {
-    "add_members": "",
-    "copied": "",
+    "add_members": "Leden toevoegen",
+    "copied": "Gekopieerd",
     "create_group": {
-      "group_name_placeholder": "",
-      "title": ""
+      "group_name_placeholder": "Groepsnaam",
+      "title": "Maak een groep"
     },
     "group_info": {
-      "actions": "",
-      "archive_group": "",
+      "actions": "Acties",
+      "archive_group": "Groep archiveren",
       "archive_group_details": {
-        "can_archive": "",
-        "cant_archive": "",
-        "title": ""
+        "can_archive": "Deze groep wordt gearchiveerd en uit je hoofdlijst met groepen verborgen. Je kunt er later nog steeds naar terugkeren als dat nodig is.",
+        "cant_archive": "Kan geen groep archiveren met openstaande saldo's. Alle saldo's moeten eerst worden vereffend.",
+        "title": "Ben je zeker dat je deze groep wilt archiveren?"
       },
-      "archived": "",
-      "delete_group": "",
+      "archived": "Gearchiveerd",
+      "configure_default_split": "Standaardsplitsing instellen",
+      "default_balance_currency": "Standaard valuta",
+      "default_split": "Standaardsplitsing",
+      "delete_group": "Groep verwijderen",
       "delete_group_details": {
-        "can_delete": "",
-        "cant_delete": "",
-        "title": ""
+        "can_delete": "Deze handeling kan niet ongedaan worden gemaakt",
+        "cant_delete": "De groep kan pas worden verwijderd als iedereen zijn of haar saldo heeft vereffend",
+        "title": "Ben je absoluut zeker?"
       },
-      "group_created": "",
-      "leave_group": "",
+      "edit_group": "Groep bewerken",
+      "group_created": "Groep aangemaakt",
+      "leave_group": "Groep verlaten",
       "leave_group_details": {
-        "can_leave": "",
-        "cant_leave": "",
-        "title": ""
+        "can_leave": "Deze handeling kan niet ongedaan worden gemaakt",
+        "cant_leave": "Je kunt de groep pas verlaten als je openstaande saldo is verekend",
+        "title": "Ben je absoluut zeker?"
       },
-      "members": "",
-      "recalculate_balances": "",
+      "members": "Leden",
+      "recalculate_balances": "Saldo's opnieuw berekenen",
       "recalculate_balances_details": {
-        "description": "",
-        "title": ""
+        "description": "Als de saldo's niet overeenkomen met de uitgaven, kan je ze opnieuw berekenen. Houd er rekening mee dat dit enige tijd kan duren als het om een groot aantal uitgaven gaat. Saldo's buiten de groep worden hierdoor niet beïnvloed.",
+        "title": "Ben je zeker?"
       },
       "remove_member_details": {
-        "can_remove": "",
+        "can_remove": "Je staat op het punt dit lid uit de groep te verwijderen",
         "cant_remove": "",
-        "title": ""
+        "title": "Ben je absoluut zeker?"
       },
-      "simplify_debts": "",
-      "title": ""
+      "simplify_debts": "Schulden versimpelen",
+      "title": "Groepsinfo"
     },
     "group_statistics": {
-      "first_expense": "",
-      "title": "",
-      "total_expenses": ""
+      "first_expense": "Eerste uitgave",
+      "title": "Groepsstatistieken",
+      "total_expenses": "Uitgaventotaal"
     },
     "messages": {
       "balances_recalculated": "",
+      "default_split_cleared": "Standaardsplitsing gewist",
+      "default_split_updated": "Standaardsplitsing upgedatet",
       "group_archived": "",
       "group_name_updated": ""
     },
@@ -301,21 +324,21 @@
         "placeholder": "",
         "send_invite": "",
         "title": "",
-        "warning": ""
+        "warning": "Waarschuwing: Gebruik de functie ‘Uitnodiging versturen’ niet als het e-mailadres ongeldig is. Gebruik in plaats daarvan de functie ‘Toevoegen aan Split Pro’. Je account wordt geblokkeerd als deze functie wordt misbruikt"
       },
       "invite_link": "",
       "no_members": ""
     },
     "tabs": {
       "balances": "Saldos",
-      "expenses": ""
+      "expenses": "Uitgaven"
     },
     "title": ""
   },
   "invite_message": {
     "in_splitpro": "",
     "join_to": "",
-    "text": ""
+    "text": "Word lid van de groep en je kunt uitgaven toevoegen en beheren, en je saldo bijhouden"
   },
   "meta": {
     "application_name": "SplitPro",
@@ -329,38 +352,38 @@
     "add_expense": "Voeg Uitgave Toe",
     "balances": "Saldos",
     "groups": "Groepen",
-    "recurring": ""
+    "recurring": "Terugkerend"
   },
   "recurrence": {
     "cron_expression": "",
     "days_of_month": "",
     "days_of_week": "",
-    "delete_description": "",
+    "delete_description": "Hierdoor worden er in de toekomst geen nieuwe uitgaven meer aangemaakt. Bestaande uitgaven die door deze terugkerende actie zijn aangemaakt, worden niet verwijderd.",
     "delete_title": "",
-    "derived_delete_warning": "",
-    "derived_edit_warning": "",
+    "derived_delete_warning": "Deze uitgave maakt deel uit van een terugkerende post. Alleen deze uitgave wordt verwijderd. Toekomstige terugkerende uitgaven blijven bestaan.",
+    "derived_edit_warning": "Deze uitgave maakt deel uit van een reeks terugkerende uitgaven. Wijzigingen hebben alleen gevolgen voor deze uitgave.",
     "description": "",
     "edit_confirmation_title": "",
-    "edit_description": "",
+    "edit_description": "Dit zal de planning voor toekomstige uitgaven veranderen. Bestaande uitgaven blijven ongewijzigd.",
     "edit_title": "",
     "empty": "",
     "expense_for_the_amount_of": "",
     "last_day": "",
-    "months": "",
+    "months": "Maanden",
     "never": "",
-    "recurring": "",
+    "recurring": "Terugkerend",
     "schedule_type": {
-      "custom": "",
-      "day": "",
-      "month": "",
-      "never": "",
-      "week": "",
-      "year": ""
+      "custom": "Aangepast",
+      "day": "Dagelijks",
+      "month": "Maandelijks",
+      "never": "Nooit",
+      "week": "Wekelijks",
+      "year": "Jaarlijks"
     },
-    "template_delete_warning": "",
-    "template_edit_warning": "",
+    "template_delete_warning": "Dit is een sjabloon voor terugkerende uitgaven. Dit verwijderen zal alle toekomstige terugkerende uitgaven stoppen.",
+    "template_edit_warning": "Dit is een sjabloon voor terugkerende uitgaven. Wijzigingen worden toegepast op alle toekomstige terugkerende uitgaven.",
     "time_of_day": "",
-    "title": "",
+    "title": "Herhaling",
     "view_recurring_page": ""
   },
   "ui": {
@@ -401,13 +424,13 @@
     "no_activity": "",
     "not_involved": "",
     "not_set": "Niet ingesteld",
-    "on": "",
+    "on": "aan",
     "or": "of",
     "outstanding_balances": "",
     "select_balance": "",
     "settle_up_name": "",
     "settled_up": "",
-    "settlement": "",
+    "settlement": "Schikking",
     "share_text": "",
     "show_all_currencies": "",
     "today": "Vandaag",

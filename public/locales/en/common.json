@@ -31,6 +31,7 @@
     },
     "follow_on_x": "Follow us on X",
     "import_from_splitwise": "Import from Splitwise",
+    "import_from_splitwise_api": "Import from Splitwise (API)",
     "import_from_splitwise_details": {
       "choose_file": "Choose file",
       "export_splitwise_data_button": "Export splitwise data",

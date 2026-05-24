@@ -172,6 +172,11 @@ const AccountPage: NextPageWithUser<{
             {t('account.import_from_splitwise')}
           </AccountButton>
 
+          <AccountButton href="/import-splitwise-api">
+            <DownloadCloud className="size-5 text-emerald-500" />
+            {t('account.import_from_splitwise_api')}
+          </AccountButton>
+
           <DebugInfo>
             <AccountButton>
               <BadgeInfo className="size-5 text-red-700" />

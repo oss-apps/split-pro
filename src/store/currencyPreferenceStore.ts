@@ -19,7 +19,7 @@ interface CurrencyPreferenceState {
   setUserDefaultCurrency: (currency: CurrencyCode | null) => void;
   setGroupDefaultCurrency: (groupId: number, currency: CurrencyCode | null) => void;
   setPreference: (key?: number | string, currency?: string) => void;
-  getPreference: (key?: number | string) => CurrencyPreference;
+  getPreference: (key?: number | string, entityType?: 'group') => CurrencyPreference;
   clearPreference: (key?: number | string) => void;
 }
 
@@ -50,9 +50,9 @@ export const useCurrencyPreferenceStore = create<CurrencyPreferenceState>()(
             [key]: isCurrencyCode(currency) ? currency : SHOW_ALL_VALUE,
           },
         })),
-      getPreference: (key = DEFAULT_KEY) =>
+      getPreference: (key = DEFAULT_KEY, entityType?: 'group') =>
         get().preferences[key] ||
-        (typeof key === 'number' && get().groupDefaultCurrencies[key]) ||
+        (entityType === 'group' && typeof key === 'number' && get().groupDefaultCurrencies[key]) ||
         get().userDefaultCurrency ||
         SHOW_ALL_VALUE,
       clearPreference: (key = DEFAULT_KEY) =>

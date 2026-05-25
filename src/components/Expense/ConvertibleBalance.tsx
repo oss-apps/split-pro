@@ -25,6 +25,7 @@ interface ConvertibleBalanceProps {
   forceShowButton?: boolean;
   withText?: boolean;
   entityId?: number;
+  entityType?: 'group';
 }
 
 export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
@@ -35,6 +36,7 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
   forceShowButton = false,
   withText = false,
   entityId,
+  entityType,
 }) => {
   const { t } = useTranslationWithUtils();
   const [open, setOpen] = useState(false);
@@ -43,7 +45,7 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
 
   const userDefaultCurrency = useCurrencyPreferenceStore((s) => s.userDefaultCurrency);
   const groupDefaultCurrency = useCurrencyPreferenceStore((s) =>
-    entityId ? s.groupDefaultCurrencies[entityId] : null,
+    entityId && entityType === 'group' ? s.groupDefaultCurrencies[entityId] : null,
   );
 
   // Available currencies from balances
@@ -60,14 +62,14 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
     return res;
   }, [userDefaultCurrency, groupDefaultCurrency, overrideCurrencies, balances]);
 
-  const sessionPreference = useCurrencyPreferenceStore((s) => s.getPreference(entityId));
+  const sessionPreference = useCurrencyPreferenceStore((s) => s.getPreference(entityId, entityType));
   const setSelectedCurrency = useCurrencyPreferenceStore(
     (s) => (preference?: string) => s.setPreference(entityId, preference),
   );
   const clearPreference = useCurrencyPreferenceStore((s) => s.clearPreference);
 
   const selectedCurrency = useCurrencyPreferenceStore((s) => {
-    const preference = s.getPreference(entityId);
+    const preference = s.getPreference(entityId, entityType);
     if (preference === SHOW_ALL_VALUE || availableCurrencies.includes(preference ?? '')) {
       return preference;
     } else {
@@ -159,8 +161,6 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
 
     return total;
   }, [shouldShowAll, balances, ratesQuery, selectedCurrency, t, setSelectedCurrency]);
-
-  console.log(selectedCurrency, groupDefaultCurrency);
 
   if (0 === balances.length) {
     return <AmountDisplay className={className} amount={0n} currency="USD" />;

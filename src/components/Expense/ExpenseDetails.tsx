@@ -132,7 +132,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
             `ui.expense.${expense.paidByUser.id === user.id ? 'you' : 'user'}.${expense.amount < 0 ? 'received' : 'paid'}`,
           )}
         </span>
-        <span className={expense.amount < 0 ? 'text-negative' : 'text-positive'}>
+        <span className={expense.amount > 0 ? 'text-negative' : 'text-positive'}>
           {toUIString(expense.amount)}
         </span>
       </div>

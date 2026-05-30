@@ -8,31 +8,27 @@ import { sendToDiscord } from './service-notification';
 // oxlint-disable-next-line init-declarations
 let transporter: Transporter;
 
+export const mailServerConfig = {
+  host: env.EMAIL_SERVER_HOST,
+  port: parseInt(env.EMAIL_SERVER_PORT ?? ''),
+  auth: { user: env.EMAIL_SERVER_USER, pass: env.EMAIL_SERVER_PASSWORD },
+  tls: {
+    rejectUnauthorized: env.NODE_ENV !== 'development' ? env.EMAIL_TLS_REJECT_UNAUTHORIZED : false,
+  },
+};
+
 const getTransporter = () => {
   if (transporter) {
     return transporter;
   }
 
-  const host = env.EMAIL_SERVER_HOST;
-  const port = parseInt(env.EMAIL_SERVER_PORT ?? '');
-  const user = env.EMAIL_SERVER_USER;
-  const pass = env.EMAIL_SERVER_PASSWORD;
-
-  if (!host) {
+  if (!mailServerConfig.host) {
     return;
   }
 
   const transport = {
-    host,
-    secure: 465 === port,
-    port,
-    auth: {
-      user,
-      pass,
-    },
-    tls: {
-      rejectUnauthorized: 'development' !== env.NODE_ENV,
-    },
+    ...mailServerConfig,
+    secure: 465 === mailServerConfig.port,
   };
 
   transporter = nodemailer.createTransport(transport);

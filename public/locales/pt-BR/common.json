@@ -412,6 +412,7 @@
         "get": "recebe",
         "lent": "emprestou",
         "owe": "deve",
+        "owe_to_you": "deve Você",
         "paid": "pagou",
         "pay": "paga",
         "received": "recebeu"

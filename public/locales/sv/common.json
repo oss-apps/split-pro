@@ -412,6 +412,7 @@
         "get": "får",
         "lent": "lånade ut",
         "owe": "är skyldig",
+        "owe_to_you": "är skyldig Dig",
         "paid": "betalade",
         "pay": "betalar",
         "received": "fick"

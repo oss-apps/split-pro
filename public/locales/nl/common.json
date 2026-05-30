@@ -412,6 +412,7 @@
         "get": "krijgt",
         "lent": "heeft geleend",
         "owe": "is verschuldigd",
+        "owe_to_you": "is verschuldigd Jou",
         "paid": "betaalde",
         "pay": "betaalt",
         "received": "ontving"

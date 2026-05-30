@@ -11,6 +11,7 @@ export const getSupportedLanguages = (): SupportedLanguage[] =>
     { code: 'it', name: 'Italiano' },
     { code: 'cs', name: 'Čeština' },
     { code: 'pl', name: 'Polski' },
+    { code: 'nl', name: 'Nederlands' },
     { code: 'pt-BR', name: 'Português (Brasil)' },
     { code: 'pt-PT', name: 'Português (Portugal)' },
     { code: 'es', name: 'Español' },

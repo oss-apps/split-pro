@@ -394,6 +394,7 @@
         "get": "dostaje",
         "lent": "odzyskuje",
         "owe": "ma do oddania",
+        "owe_to_you": "ma do oddania Ciebie",
         "paid": "płaci",
         "pay": "płaci",
         "received": "dostaje"

@@ -412,6 +412,7 @@
         "get": "reçoit",
         "lent": "a avancé",
         "owe": "doit",
+        "owe_to_you": "te doit",
         "paid": "a payé",
         "pay": "doit",
         "received": "a reçu"

@@ -387,6 +387,7 @@
         "get": "riceve",
         "lent": "ha prestato",
         "owe": "deve",
+        "owe_to_you": "deve Te",
         "paid": "ha pagato",
         "pay": "paga",
         "received": "ha ricevuto"

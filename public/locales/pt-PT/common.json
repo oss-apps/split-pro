@@ -386,6 +386,7 @@
         "get": "recebe",
         "lent": "emprestou",
         "owe": "deve",
+        "owe_to_you": "deve Tu",
         "paid": "pagou",
         "pay": "paga",
         "received": "recebeu"

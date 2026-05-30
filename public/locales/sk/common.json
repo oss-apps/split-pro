@@ -382,6 +382,7 @@
         "get": "dostane",
         "lent": "požičal",
         "owe": "dlhuje",
+        "owe_to_you": "dlhuje Tebe",
         "paid": "zaplatil",
         "pay": "platí",
         "received": "prijaté"

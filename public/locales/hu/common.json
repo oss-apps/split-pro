@@ -412,6 +412,7 @@
         "get": "kap",
         "lent": "adott",
         "owe": "tartozik",
+        "owe_to_you": "tartozik Neked",
         "paid": "fizetett",
         "pay": "fizet",
         "received": "kapott"

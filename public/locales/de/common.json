@@ -415,6 +415,7 @@
         "get": "bekommt",
         "lent": "hat ausgegeben",
         "owe": "schuldet",
+        "owe_to_you": "schuldet Dir",
         "paid": "hat bezahlt",
         "pay": "bezahlt",
         "received": "hat erhalten"

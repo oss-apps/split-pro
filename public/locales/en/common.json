@@ -412,6 +412,7 @@
         "get": "gets",
         "lent": "lent",
         "owe": "owes",
+        "owe_to_you": "owes you",
         "paid": "paid",
         "pay": "pays",
         "received": "received"

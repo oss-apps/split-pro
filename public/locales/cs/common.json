@@ -382,6 +382,7 @@
         "get": "dostane",
         "lent": "půjčil/a",
         "owe": "dluží",
+        "owe_to_you": "dluží Vám",
         "paid": "zaplatil/a",
         "pay": "platí",
         "received": "dostal/a"

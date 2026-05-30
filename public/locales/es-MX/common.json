@@ -385,6 +385,7 @@
         "get": "recibe",
         "lent": "prestó",
         "owe": "debe",
+        "owe_to_you": "debe A ti",
         "paid": "pagó",
         "pay": "paga",
         "received": "recibió"

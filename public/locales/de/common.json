@@ -5,6 +5,7 @@
       "messages": {
         "language_changed": "Sprache erfolgreich geändert"
       },
+      "no_language_found": "Sprache nicht gefunden",
       "placeholder": "Sprache auswählen",
       "title": "Sprache auswählen"
     },
@@ -14,10 +15,14 @@
       "description": "Fügen Sie nachfolgend die Informationen ein, wenn Sie eine Supportanfrage erstellen:",
       "git": "Git",
       "new_version_available": "Eine neue Version ist verfügbar:",
+      "send_test_notification": "Testbenachrichtigung senden",
+      "test_notification_failed": "Testbenachrichtigung konnte nicht gesendet werden",
+      "test_notification_sent": "Testbenachrichtigung gesendet",
       "title": "Fehlerbehebungsinformationen",
       "user_agent": "Benutzeragent",
       "version": "Version"
     },
+    "default_balance_currency": "Standardwährung",
     "download_app": "App herunterladen",
     "download_app_details": {
       "download_as_pwa": "Du kannst SplitPro als App auf deinen Startbildschirm herunterladen.",
@@ -28,8 +33,14 @@
     },
     "download_splitpro_data": "SplitPro-Daten herunterladen",
     "edit_name": {
+      "apply_avatar": "Profilbild speichern",
+      "avatar_label": "Profilbild",
+      "avatar_preview": "Profilbildvorschau",
       "placeholder": "Name eingeben",
-      "title": "Namen bearbeiten"
+      "remove_avatar": "Profilbild entfernen",
+      "select_avatar": "Profilbild auswählen",
+      "title": "Namen bearbeiten",
+      "zoom": "Zoom"
     },
     "follow_on_x": "Folge uns auf X",
     "import_from_splitwise": "Von Splitwise importieren",
@@ -45,8 +56,8 @@
     },
     "logout": "Abmelden",
     "messages": {
-      "submit_error": "Fehler beim Senden des Feedbacks",
-      "submit_success": "Feedback gesendet"
+      "submit_error": "Fehler beim Aktualisieren deines Profils",
+      "submit_success": "Profil aktualisiert"
     },
     "notifications": {
       "disable_notification": "Benachrichtigung deaktivieren",
@@ -107,6 +118,16 @@
     "setup_instructions": "Docker-Setup-Anleitung",
     "trouble_logging_in": "Probleme beim anmelden? Kontakt"
   },
+  "balances": {
+    "default_split": {
+      "cleared": "Standardaufteilung zurückgesetzt",
+      "configure": "Standardaufteilung",
+      "updated": "Standardaufteilung aktualisiert"
+    },
+    "user_preferences": {
+      "title": "Einstellungen"
+    }
+  },
   "bank_transactions": {
     "choose_bank_provider": "Bankinstitut auswählen",
     "no_bank_providers_found": "Keine Bankinstitute gefunden",
@@ -141,11 +162,12 @@
     "group_balances_malformed": "Die Daten der Gruppenbilanz sind fehlerhaft. Bitte melden Sie das Problem oder versuchen Sie eine Neuberechnung.",
     "group_name_update_failed": "Fehler beim Aktualisieren des Gruppennamens",
     "group_required": "Gruppe eingeben",
+    "image_compression_failed": "Bildkomprimierung fehlgeschlagen, versuche Originaldatei hochzuladen",
     "import_failed": "Fehler beim Importieren der Datei",
     "invalid_cron_expression": "Ungültiger Cron-Ausdruck",
     "invalid_currency_code": "Ungültiger Währungscode {{code}}",
     "language_change_failed": "Fehler beim Ändern der Sprache",
-    "less_than": "Datei sollte kleiner als",
+    "less_than": "Datei sollte kleiner als {{size}}MB sein",
     "name_required": "Name ist erforderlich",
     "no_providers": "Fehler beim Abrufen der Authentifizierungsanbieter. Bitte prüfen Sie die Backend-Logs.",
     "notification_not_supported": "Benachrichtigungen werden nicht unterstützt",
@@ -259,12 +281,16 @@
         "title": "Bist du sicher, dass du diese Gruppe archivieren möchtest?"
       },
       "archived": "Archiviert",
+      "configure_default_split": "Standardaufteilung bearbeiten",
+      "default_balance_currency": "Standardwährung für Saldo",
+      "default_split": "Standardaufteilung",
       "delete_group": "Gruppe löschen",
       "delete_group_details": {
         "can_delete": "Diese Aktion kann nicht rückgängig gemacht werden",
         "cant_delete": "Gruppe kann nicht gelöscht werden, bis alle Salden ausgeglichen sind",
         "title": "Bist du dir absolut sicher?"
       },
+      "edit_group": "Gruppe bearbeiten",
       "group_created": "Gruppe erstellt",
       "leave_group": "Gruppe verlassen",
       "leave_group_details": {
@@ -293,8 +319,12 @@
     },
     "messages": {
       "balances_recalculated": "Salden erfolgreich neu berechnet",
+      "default_balance_currency_cleared": "Standardwährung für Salden zurückgesetzt",
+      "default_balance_currency_updated": "Standardwährung für Salden aktualisiert",
+      "default_split_cleared": "Standardaufteilung zurückgesetzt",
+      "default_split_updated": "Standardaufteilung aktualisiert",
       "group_archived": "Gruppe erfolgreich archiviert",
-      "group_name_updated": "Gruppenname aktualisiert"
+      "group_name_updated": "Gruppeninfos aktualisiert"
     },
     "no_members": {
       "add_members": "Mitglied hinzufügen",

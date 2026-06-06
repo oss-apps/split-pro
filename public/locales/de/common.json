@@ -39,7 +39,7 @@
       "placeholder": "Name eingeben",
       "remove_avatar": "Profilbild entfernen",
       "select_avatar": "Profilbild auswählen",
-      "title": "Namen bearbeiten",
+      "title": "Details bearbeiten",
       "zoom": "Zoom"
     },
     "follow_on_x": "Folge uns auf X",
@@ -133,8 +133,8 @@
     "no_bank_providers_found": "Keine Bankinstitute gefunden",
     "plaid": {
       "bank_connected_successfully": "Bankinstitut erfolgreich verknüpft",
-      "bank_connection_cancelled": "Bank-Verbindung abgebrochen",
-      "bank_connection_failed": "Bank-Verbindung gescheitert"
+      "bank_connection_cancelled": "Verbindung zur Bank abgebrochen",
+      "bank_connection_failed": "Verbindung zur Bank gescheitert"
     },
     "search_bank": "Bank suchen",
     "select_bank_provider": "Bankinstitut auswählen",
@@ -352,7 +352,7 @@
   },
   "meta": {
     "application_name": "SplitPro",
-    "description": "Teile Ausgaben mit deinen Freunden. Kostenlos",
+    "description": "Ausgaben mit deinen Freunden kostenlos teilen",
     "title": "SplitPro: Teile Ausgaben mit deinen Freunden. Kostenlos"
   },
   "navigation": {
@@ -366,7 +366,7 @@
   },
   "recurrence": {
     "cron_expression": "Cron-Ausdruck",
-    "days_of_month": "Monatstage",
+    "days_of_month": "Tage des Monats",
     "days_of_week": "Wochentage",
     "delete_description": "Dadurch wird die Erstellung zukünftiger Ausgaben verhindert. Durch diese Wiederholung erstellte Ausgaben werden nicht gelöscht.",
     "delete_title": "Wiederholung löschen",
@@ -422,7 +422,7 @@
       "you": {
         "deleted": "hast gelöscht",
         "get": "bekommst",
-        "lent": "hast ausgegeben",
+        "lent": "hast ausgelegt",
         "owe": "schuldest",
         "paid": "hast bezahlt",
         "pay": "bezahlst",

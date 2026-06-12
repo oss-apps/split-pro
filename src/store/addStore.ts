@@ -294,11 +294,12 @@ export function calculateParticipantSplit(
       const totalParticipants = participants.filter((p) => 0n !== getSplitShare(p)).length;
       updatedParticipants = participants.map((p) => ({
         ...p,
-        amount: 0n === getSplitShare(p) ? 0n : amount / BigInt(totalParticipants),
+        amount:
+          0 === totalParticipants || 0n === getSplitShare(p)
+            ? 0n
+            : amount / BigInt(totalParticipants),
       }));
-      canSplitScreenClosed = Boolean(
-        Object.values(splitShares).find((p) => 0n !== p[SplitType.EQUAL]),
-      );
+      canSplitScreenClosed = 0 < totalParticipants;
       break;
     case SplitType.PERCENTAGE:
       updatedParticipants = participants.map((p) => ({
@@ -370,6 +371,14 @@ export function calculateParticipantSplit(
           i++;
         }
       }
+    }
+
+    if (
+      canSplitScreenClosed &&
+      1 < participants.length &&
+      updatedParticipants.every((p) => 0n === (p.amount ?? 0n))
+    ) {
+      canSplitScreenClosed = false;
     }
   }
 

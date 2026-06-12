@@ -189,6 +189,12 @@
         "warning": "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused"
       },
       "split_type_section": {
+        "direction": {
+          "no_money_flow": "No one else owes anything",
+          "owes_payer": "{{debtor}} owes {{payer}}",
+          "owes_you": "{{debtor}} owes you",
+          "you_owe": "You owe {{payer}}"
+        },
         "split_equally": "split equally",
         "split_unequally": "split unequally",
         "types": {
@@ -213,6 +219,9 @@
             "title": "Share",
             "total_shares": "Total shares"
           }
+        },
+        "validation": {
+          "invalid_split": "Adjust who owes this expense before saving."
         }
       },
       "sponsor_us": "Sponsor us",

@@ -1,3 +1,4 @@
+import { SplitType } from '@prisma/client';
 import { HeartHandshakeIcon, Landmark, RefreshCcwDot, X } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
@@ -55,8 +56,73 @@ export const AddOrEditExpensePage: React.FC<{
   const cronExpression = useAddExpenseStore((s) => s.cronExpression);
   const multipleTransactions = useAddExpenseStore((s) => s.multipleTransactions);
 
-  const { t, displayName, generateSplitDescription, getCurrencyHelpersCached } =
-    useTranslationWithUtils();
+  const { t, displayName, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const splitValidationMessage = t(
+    'expense_details.add_expense_details.split_type_section.validation.invalid_split',
+  );
+  const splitDescription = React.useMemo(() => {
+    const splitEquallyText = t(
+      'expense_details.add_expense_details.split_type_section.split_equally',
+    );
+
+    if (SplitType.EQUAL !== splitType) {
+      return t('expense_details.add_expense_details.split_type_section.split_unequally');
+    }
+
+    if (!paidBy || !currentUser) {
+      return splitEquallyText;
+    }
+
+    const selectedParticipants = participants.filter((participant) => {
+      const share = splitShares[participant.id]?.[SplitType.EQUAL];
+      return share === undefined || 0n !== share;
+    });
+
+    if (0 === selectedParticipants.length) {
+      return splitValidationMessage;
+    }
+
+    const splitParticipant = selectedParticipants[0];
+    if (1 === selectedParticipants.length && splitParticipant) {
+      if (splitParticipant.id === paidBy.id) {
+        return t('expense_details.add_expense_details.split_type_section.direction.no_money_flow');
+      }
+
+      const debtor = isNegative ? paidBy : splitParticipant;
+      const payer = isNegative ? splitParticipant : paidBy;
+      const debtorName = displayName(debtor, currentUser.id);
+      const payerName = displayName(payer, currentUser.id);
+
+      if (payer.id === currentUser.id) {
+        return t('expense_details.add_expense_details.split_type_section.direction.owes_you', {
+          debtor: debtorName,
+        });
+      }
+
+      if (debtor.id === currentUser.id) {
+        return t('expense_details.add_expense_details.split_type_section.direction.you_owe', {
+          payer: payerName,
+        });
+      }
+
+      return t('expense_details.add_expense_details.split_type_section.direction.owes_payer', {
+        debtor: debtorName,
+        payer: payerName,
+      });
+    }
+
+    return `${splitEquallyText} (${selectedParticipants.length})`;
+  }, [
+    currentUser,
+    displayName,
+    isNegative,
+    paidBy,
+    participants,
+    splitShares,
+    splitType,
+    splitValidationMessage,
+    t,
+  ]);
 
   const {
     setCurrency,
@@ -111,6 +177,7 @@ export const AddOrEditExpensePage: React.FC<{
     }
 
     if (!isExpenseSettled) {
+      toast.error(splitValidationMessage);
       setSplitScreenOpen(true);
       return;
     }
@@ -220,6 +287,7 @@ export const AddOrEditExpensePage: React.FC<{
     multipleTransactions,
     setSingleTransaction,
     update,
+    splitValidationMessage,
   ]);
 
   const handleDescriptionChange = useCallback(
@@ -345,16 +413,13 @@ export const AddOrEditExpensePage: React.FC<{
                   <p>{t('ui.and')} </p>
                   <SplitExpenseForm>
                     <Button variant="ghost" className="text-primary h-8 px-1.5 py-0 text-base">
-                      {generateSplitDescription(
-                        splitType,
-                        participants,
-                        splitShares,
-                        paidBy,
-                        currentUser,
-                      )}
+                      {splitDescription}
                     </Button>
                   </SplitExpenseForm>
                 </div>
+                {!isExpenseSettled ? (
+                  <p className="mt-2 text-center text-xs text-red-500">{splitValidationMessage}</p>
+                ) : null}
 
                 <div className="mt-4 flex items-start justify-between sm:mt-10">
                   <DateSelector

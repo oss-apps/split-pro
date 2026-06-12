@@ -132,6 +132,84 @@ describe('calculateParticipantSplit', () => {
       expect(result.participants[2]?.amount).toBe(0n); // Excluded from split
     });
 
+    it('should allow one non-payer to owe the full amount', () => {
+      const participants = createParticipants([user1, user2]);
+      const splitShares = createSplitShares(participants, SplitType.EQUAL, [0n, 1n]);
+
+      const state: Partial<AddExpenseState> = {
+        amount: 10000n,
+        participants,
+        splitType: SplitType.EQUAL,
+        splitShares,
+        paidBy: user1,
+        expenseDate: new Date('2024-01-01'),
+      };
+
+      const result = calculateParticipantSplit(state as AddExpenseState);
+
+      expect(result.participants[0]?.amount).toBe(10000n);
+      expect(result.participants[1]?.amount).toBe(-10000n);
+      expect(result.canSplitScreenClosed).toBe(true);
+    });
+
+    it('should mark a multi-person self-only split as incomplete', () => {
+      const participants = createParticipants([user1, user2]);
+      const splitShares = createSplitShares(participants, SplitType.EQUAL, [1n, 0n]);
+
+      const state: Partial<AddExpenseState> = {
+        amount: 10000n,
+        participants,
+        splitType: SplitType.EQUAL,
+        splitShares,
+        paidBy: user1,
+        expenseDate: new Date('2024-01-01'),
+      };
+
+      const result = calculateParticipantSplit(state as AddExpenseState);
+
+      expect(result.participants[0]?.amount).toBe(0n);
+      expect(result.participants[1]?.amount).toBe(0n);
+      expect(result.canSplitScreenClosed).toBe(false);
+    });
+
+    it('should keep a penny-only equal split valid when rounding zeroes every share', () => {
+      const participants = createParticipants([user1, user2]);
+      const splitShares = createSplitShares(participants, SplitType.EQUAL, [1n, 1n]);
+
+      const state: Partial<AddExpenseState> = {
+        amount: 1n,
+        participants,
+        splitType: SplitType.EQUAL,
+        splitShares,
+        paidBy: user1,
+        expenseDate: new Date('2024-01-01'),
+      };
+
+      const result = calculateParticipantSplit(state as AddExpenseState);
+
+      expect(result.participants[0]?.amount).toBe(1n);
+      expect(result.participants[1]?.amount).toBe(-1n);
+      expect(result.canSplitScreenClosed).toBe(true);
+    });
+
+    it('should mark equal split incomplete when every share is disabled', () => {
+      const participants = createParticipants([user1, user2]);
+      const splitShares = createSplitShares(participants, SplitType.EQUAL, [0n, 0n]);
+
+      const state: Partial<AddExpenseState> = {
+        amount: 10000n,
+        participants,
+        splitType: SplitType.EQUAL,
+        splitShares,
+        paidBy: user1,
+        expenseDate: new Date('2024-01-01'),
+      };
+
+      const result = calculateParticipantSplit(state as AddExpenseState);
+
+      expect(result.canSplitScreenClosed).toBe(false);
+    });
+
     it('should handle uneven division with penny adjustment', () => {
       const participants = createParticipants([user1, user2, user3]);
       const splitShares = createSplitShares(participants, SplitType.EQUAL, [1n, 1n, 1n]);

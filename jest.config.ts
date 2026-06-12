@@ -6,8 +6,6 @@
 import type { Config } from 'jest';
 import nextJest from 'next/jest.js';
 
-process.env.SKIP_ENV_VALIDATION ??= 'true';
-
 // @ts-expect-error we are extending BigInt prototype for JSON serialization
 // oxlint-disable-next-line no-extend-native
 BigInt.prototype.toJSON = function toJSON() {
@@ -22,28 +20,28 @@ const createJestConfig = nextJest({
 
 const config: Config = {
   // All imported modules in your tests should be mocked automatically
-  // Automock: false,
+  // automock: false,
 
   // Stop running tests after `n` failures
-  // Bail: 0,
+  // bail: 0,
 
   // The directory where Jest should store its cached dependency information
-  // CacheDirectory: "C:\\Users\\Wiktor\\AppData\\Local\\Temp\\jest",
+  // cacheDirectory: "C:\\Users\\Wiktor\\AppData\\Local\\Temp\\jest",
 
   // Automatically clear mock calls, instances, contexts and results before every test
-  // ClearMocks: false,
+  // clearMocks: false,
 
   // Indicates whether the coverage information should be collected while executing the test
-  // CollectCoverage: false,
+  // collectCoverage: false,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  // CollectCoverageFrom: undefined,
+  // collectCoverageFrom: undefined,
 
   // The directory where Jest should output its coverage files
-  // CoverageDirectory: undefined,
+  // coverageDirectory: undefined,
 
   // An array of regexp pattern strings used to skip coverage collection
-  // CoveragePathIgnorePatterns: [
+  // coveragePathIgnorePatterns: [
   //   "\\\\node_modules\\\\"
   // ],
 
@@ -51,7 +49,7 @@ const config: Config = {
   coverageProvider: 'v8',
 
   // A list of reporter names that Jest uses when writing coverage reports
-  // CoverageReporters: [
+  // coverageReporters: [
   //   "json",
   //   "text",
   //   "lcov",
@@ -59,41 +57,41 @@ const config: Config = {
   // ],
 
   // An object that configures minimum threshold enforcement for coverage results
-  // CoverageThreshold: undefined,
+  // coverageThreshold: undefined,
 
   // A path to a custom dependency extractor
-  // DependencyExtractor: undefined,
+  // dependencyExtractor: undefined,
 
   // Make calling deprecated APIs throw helpful error messages
-  // ErrorOnDeprecated: false,
+  // errorOnDeprecated: false,
 
   // The default configuration for fake timers
-  // FakeTimers: {
+  // fakeTimers: {
   //   "enableGlobally": false
   // },
 
   // Force coverage collection from ignored files using an array of glob patterns
-  // ForceCoverageMatch: [],
+  // forceCoverageMatch: [],
 
   // A path to a module which exports an async function that is triggered once before all test suites
-  // GlobalSetup: undefined,
+  // globalSetup: undefined,
 
   // A path to a module which exports an async function that is triggered once after all test suites
-  // GlobalTeardown: undefined,
+  // globalTeardown: undefined,
 
   // A set of global variables that need to be available in all test environments
-  // Globals: {},
+  // globals: {},
 
   // The maximum amount of workers used to run your tests. Can be specified as % or a number. E.g. maxWorkers: 10% will use 10% of your CPU amount + 1 as the maximum worker number. maxWorkers: 2 will use a maximum of 2 workers.
-  // MaxWorkers: "50%",
+  // maxWorkers: "50%",
 
   // An array of directory names to be searched recursively up from the requiring module's location
-  // ModuleDirectories: [
+  // moduleDirectories: [
   //   "node_modules"
   // ],
 
   // An array of file extensions your modules use
-  // ModuleFileExtensions: [
+  // moduleFileExtensions: [
   //   "js",
   //   "mjs",
   //   "cjs",
@@ -110,107 +108,107 @@ const config: Config = {
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
-  // ModulePathIgnorePatterns: [],
+  // modulePathIgnorePatterns: [],
 
   // Activates notifications for test results
-  // Notify: false,
+  // notify: false,
 
   // An enum that specifies notification mode. Requires { notify: true }
-  // NotifyMode: "failure-change",
+  // notifyMode: "failure-change",
 
   // A preset that is used as a base for Jest's configuration
-  // Preset: undefined,
+  // preset: undefined,
 
   // Run tests from one or more projects
-  // Projects: undefined,
+  // projects: undefined,
 
   // Use this configuration option to add custom reporters to Jest
-  // Reporters: undefined,
+  // reporters: undefined,
 
   // Automatically reset mock state before every test
-  // ResetMocks: false,
+  // resetMocks: false,
 
   // Reset the module registry before running each individual test
-  // ResetModules: false,
+  // resetModules: false,
 
   // A path to a custom resolver
-  // Resolver: undefined,
+  // resolver: undefined,
 
   // Automatically restore mock state and implementation before every test
-  // RestoreMocks: false,
+  // restoreMocks: false,
 
   // The root directory that Jest should scan for tests and modules within
-  // RootDir: undefined,
+  // rootDir: undefined,
 
   // A list of paths to directories that Jest should use to search for files in
-  // Roots: [
+  // roots: [
   //   "<rootDir>"
   // ],
 
   // Allows you to use a custom runner instead of Jest's default test runner
-  // Runner: "jest-runner",
+  // runner: "jest-runner",
 
   // The paths to modules that run some code to configure or set up the testing environment before each test
-  // SetupFiles: [],
+  // setupFiles: [],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
-  // SetupFilesAfterEnv: [],
+  // setupFilesAfterEnv: [],
 
   // The number of seconds after which a test is considered as slow and reported as such in the results.
-  // SlowTestThreshold: 5,
+  // slowTestThreshold: 5,
 
   // A list of paths to snapshot serializer modules Jest should use for snapshot testing
-  // SnapshotSerializers: [],
+  // snapshotSerializers: [],
 
   // The test environment that will be used for testing
   testEnvironment: 'jsdom',
 
   // Options that will be passed to the testEnvironment
-  // TestEnvironmentOptions: {},
+  // testEnvironmentOptions: {},
 
   // Adds a location field to test results
-  // TestLocationInResults: false,
+  // testLocationInResults: false,
 
   // The glob patterns Jest uses to detect test files
-  // TestMatch: [
+  // testMatch: [
   //   "**/__tests__/**/*.[jt]s?(x)",
   //   "**/?(*.)+(spec|test).[tj]s?(x)"
   // ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-  // TestPathIgnorePatterns: [
+  // testPathIgnorePatterns: [
   //   "\\\\node_modules\\\\"
   // ],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
-  // TestRegex: [],
+  // testRegex: [],
 
   // This option allows the use of a custom results processor
-  // TestResultsProcessor: undefined,
+  // testResultsProcessor: undefined,
 
   // This option allows use of a custom test runner
-  // TestRunner: "jest-circus/runner",
+  // testRunner: "jest-circus/runner",
 
   // A map from regular expressions to paths to transformers
-  // Transform: undefined,
+  // transform: undefined,
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
-  // TransformIgnorePatterns: [
+  // transformIgnorePatterns: [
   //   "\\\\node_modules\\\\",
   //   "\\.pnp\\.[^\\\\]+$"
   // ],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
-  // UnmockedModulePathPatterns: undefined,
+  // unmockedModulePathPatterns: undefined,
 
   // Indicates whether each individual test should be reported during the run
-  // Verbose: undefined,
+  // verbose: undefined,
 
   // An array of regexp patterns that are matched against all source file paths before re-running tests in watch mode
-  // WatchPathIgnorePatterns: [],
+  // watchPathIgnorePatterns: [],
 
   // Whether to use watchman for file crawling
-  // Watchman: true,
+  // watchman: true,
 };
 
 export default createJestConfig(config);

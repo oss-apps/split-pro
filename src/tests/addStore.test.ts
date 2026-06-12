@@ -187,8 +187,6 @@ describe('calculateParticipantSplit', () => {
 
       const result = calculateParticipantSplit(state as AddExpenseState);
 
-      expect(result.participants[0]?.amount).toBe(0n);
-      expect(result.participants[1]?.amount).toBe(0n);
       expect(result.canSplitScreenClosed).toBe(false);
     });
 

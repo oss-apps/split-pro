@@ -172,6 +172,26 @@ describe('calculateParticipantSplit', () => {
       expect(result.canSplitScreenClosed).toBe(false);
     });
 
+    it('should keep a penny-only equal split valid when rounding zeroes every share', () => {
+      const participants = createParticipants([user1, user2]);
+      const splitShares = createSplitShares(participants, SplitType.EQUAL, [1n, 1n]);
+
+      const state: Partial<AddExpenseState> = {
+        amount: 1n,
+        participants,
+        splitType: SplitType.EQUAL,
+        splitShares,
+        paidBy: user1,
+        expenseDate: new Date('2024-01-01'),
+      };
+
+      const result = calculateParticipantSplit(state as AddExpenseState);
+
+      expect(result.participants[0]?.amount).toBe(1n);
+      expect(result.participants[1]?.amount).toBe(-1n);
+      expect(result.canSplitScreenClosed).toBe(true);
+    });
+
     it('should mark equal split incomplete when every share is disabled', () => {
       const participants = createParticipants([user1, user2]);
       const splitShares = createSplitShares(participants, SplitType.EQUAL, [0n, 0n]);

@@ -82,16 +82,18 @@ export const AddOrEditExpensePage: React.FC<{
       return splitValidationMessage;
     }
 
-    const debtor = selectedParticipants[0];
-    if (1 === selectedParticipants.length && debtor) {
-      if (debtor.id === paidBy.id) {
+    const splitParticipant = selectedParticipants[0];
+    if (1 === selectedParticipants.length && splitParticipant) {
+      if (splitParticipant.id === paidBy.id) {
         return t('expense_details.add_expense_details.split_type_section.direction.no_money_flow');
       }
 
+      const debtor = isNegative ? paidBy : splitParticipant;
+      const payer = isNegative ? splitParticipant : paidBy;
       const debtorName = displayName(debtor, currentUser.id);
-      const payerName = displayName(paidBy, currentUser.id);
+      const payerName = displayName(payer, currentUser.id);
 
-      if (paidBy.id === currentUser.id) {
+      if (payer.id === currentUser.id) {
         return t('expense_details.add_expense_details.split_type_section.direction.owes_you', {
           debtor: debtorName,
         });
@@ -113,6 +115,7 @@ export const AddOrEditExpensePage: React.FC<{
   }, [
     currentUser,
     displayName,
+    isNegative,
     paidBy,
     participants,
     splitShares,
@@ -415,9 +418,7 @@ export const AddOrEditExpensePage: React.FC<{
                   </SplitExpenseForm>
                 </div>
                 {!isExpenseSettled ? (
-                  <p className="mt-2 text-center text-xs text-red-500">
-                    {splitValidationMessage}
-                  </p>
+                  <p className="mt-2 text-center text-xs text-red-500">{splitValidationMessage}</p>
                 ) : null}
 
                 <div className="mt-4 flex items-start justify-between sm:mt-10">

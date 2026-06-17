@@ -91,6 +91,8 @@ Used for magic-link login and invites.
 - `OIDC_CLIENT_SECRET`
 - `OIDC_WELL_KNOWN_URL`: OpenID well-known discovery URL.
 - `OIDC_ALLOW_DANGEROUS_EMAIL_LINKING`: Optional flag to allow email-based account linking.
+- `OIDC_PKCE_ENABLED`: Optional flag to enable PKCE (Proof Key for Code Exchange).
+- `OIDC_ID_TOKEN_SIGNED_RESPONSE_ALG`: Optional ID token signed response algorithm (e.g. `ES256`, `RS256`).
 
 ### Web push notifications
 
@@ -142,6 +144,20 @@ OIDC_NAME="keycloak"
 OIDC_CLIENT_ID="<client-id>"
 OIDC_CLIENT_SECRET="<client-secret>"
 OIDC_WELL_KNOWN_URL="https://keycloak.example.com/realms/My_Realm/.well-known/openid-configuration"
+```
+
+### OIDC (Kanidm)
+
+```bash
+DATABASE_URL="postgresql://postgres:strong-password@localhost:5432/splitpro"
+NEXTAUTH_SECRET="<generated>"
+NEXTAUTH_URL="https://splitpro.example.com"
+OIDC_NAME="kanidm"
+OIDC_CLIENT_ID="<client-id>"
+OIDC_CLIENT_SECRET="<client-secret>"
+OIDC_WELL_KNOWN_URL="https://kanidm.example.com/oauth2/openid/<app-name>/.well-known/openid-configuration"
+OIDC_PKCE_ENABLED=1
+OIDC_ID_TOKEN_SIGNED_RESPONSE_ALG=ES256
 ```
 
 ## Security notes

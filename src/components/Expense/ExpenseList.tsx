@@ -103,13 +103,13 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
 
   return (
     <>
-      <div className="flex items-center gap-4">
-        <div className="inline-block w-6 text-center text-xs text-gray-500">
+      <div className="flex min-w-0 items-center gap-4">
+        <div className="inline-block w-6 shrink-0 text-center text-xs text-gray-500">
           {toUIDate(e.expenseDate)}
         </div>
         <CategoryIcon category={e.category} className="size-5 shrink-0 text-gray-400" />
-        <div>
-          <p className="max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">{e.name}</p>
+        <div className="min-w-0 pe-1">
+          <p className="truncate text-sm lg:text-base">{e.name}</p>
           <p className="xs:max-w-full flex max-w-32 truncate text-center text-xs text-gray-500">
             {displayName(e.paidByUser, userId)}{' '}
             {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`)} {toUIString(e.amount)}
@@ -178,13 +178,13 @@ const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
   const userDetails = api.user.getUserDetails.useQuery({ userId: receiverId! });
 
   return (
-    <div className="flex items-center gap-4">
-      <div className="inline-block w-6 text-center text-xs text-gray-500">
+    <div className="flex min-w-0 items-center gap-4">
+      <div className="inline-block w-6 shrink-0 text-center text-xs text-gray-500">
         {toUIDate(e.expenseDate)}
       </div>
       <CurrencyConversionIcon className="size-5 shrink-0 text-gray-400" />
-      <div>
-        <p className="max-w-[180px] truncate text-sm lg:max-w-md lg:text-base">
+      <div className="min-w-0">
+        <p className="truncate text-sm lg:text-base">
           {getCurrencyHelpersCached(e.currency).toUIString(e.amount)} ➡️{' '}
           {
             /* @ts-ignore */

@@ -335,8 +335,13 @@ export const AddOrEditExpensePage: React.FC<{
                 <div className="flex flex-col items-center justify-center text-sm text-gray-400 sm:mt-4 sm:flex-row">
                   <p>{t(`ui.expense.${isNegative ? 'received_by' : 'paid_by'}`)}</p>
                   <PayerSelectionForm>
-                    <Button variant="ghost" className="text-primary h-8 px-1.5 py-0 text-base">
-                      {displayName(paidBy, currentUser?.id, 'dativus')}
+                    <Button
+                      variant="ghost"
+                      className="text-primary h-8 max-w-full min-w-0 justify-start px-1.5 py-0 text-base sm:max-w-none"
+                    >
+                      <span className="max-w-full truncate">
+                        {displayName(paidBy, currentUser?.id, 'dativus')}
+                      </span>
                     </Button>
                   </PayerSelectionForm>
                   <p>{t('ui.and')} </p>

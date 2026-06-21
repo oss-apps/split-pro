@@ -53,7 +53,7 @@ export const CurrencyConversion: React.FC<{
   }, [getCurrencyRate.isPending]);
 
   useEffect(() => {
-    setAmountStr(toUIString(amount, false, true));
+    setAmountStr(toUIString(amount, true, true));
     if (editingRate) {
       const precision = getRatePrecision(editingRate);
       setRate(editingRate.toFixed(precision));
@@ -136,7 +136,7 @@ export const CurrencyConversion: React.FC<{
           from: targetCurrency,
           to: currency,
         });
-        setAmountStr(toUIString(amount, false, true));
+        setAmountStr(toUIString(amount, true, true));
       }
     },
     [rate, toUIString, targetCurrency, currency],

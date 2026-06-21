@@ -53,7 +53,7 @@ export const Export: React.FC<ExportCSVProps> = ({
         expense.paidBy === currentUserId ? 'You' : friendName,
         expense.name,
         expense.category,
-        parseToCleanString(expense?.amount),
+        parseToCleanString(expense?.amount, true),
         expense.splitType,
         format(new Date(expense.expenseDate), 'yyyy-MM-dd HH:mm:ss'),
         expense.currency,

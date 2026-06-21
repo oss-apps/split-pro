@@ -195,7 +195,7 @@ const AddPage: NextPageWithUser<{
     setAmountStr(
       getCurrencyHelpersCached(expenseQuery.data.currency).toUIString(
         expenseQuery.data.amount,
-        false,
+        true,
         true,
       ),
     );

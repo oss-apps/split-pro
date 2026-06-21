@@ -110,7 +110,7 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
         <CategoryIcon category={e.category} className="size-5 shrink-0 text-gray-400" />
         <div className="min-w-0 pe-1">
           <p className="truncate text-sm lg:text-base">{e.name}</p>
-          <p className="xs:max-w-full flex max-w-32 truncate text-center text-xs text-gray-500">
+          <p className="truncate text-xs text-gray-500">
             {displayName(e.paidByUser, userId)}{' '}
             {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`)} {toUIString(e.amount)}
           </p>
@@ -152,8 +152,8 @@ const Settlement: ExpenseComponent = ({ e, userId }) => {
         {toUIDate(e.expenseDate)}
       </div>
       <SettleupIcon className="size-5 shrink-0 text-gray-400" />
-      <div>
-        <p className="flex text-center text-sm text-gray-400">
+      <div className="min-w-0">
+        <p className="line-clamp-2 text-sm text-gray-400">
           {displayName(e.paidByUser, userId)}{' '}
           {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`)} {toUIString(e.amount)}{' '}
           {t('ui.expense.to')} {displayName(userDetails.data, userId)}
@@ -191,7 +191,7 @@ const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
             getCurrencyHelpersCached(e.conversionTo.currency).toUIString(e.conversionTo.amount)
           }
         </p>
-        <p className="flex text-center text-xs text-gray-500">
+        <p className="truncate text-xs text-gray-500">
           {t('ui.expense.for')} {displayName(e.paidByUser, userId)} {t('ui.and')}{' '}
           {displayName(userDetails.data, userId)}
         </p>

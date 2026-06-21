@@ -70,7 +70,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
   return (
     <div className="flex gap-2">
       <div className="flex flex-col gap-2">
-        <CumulatedBalances entityId={groupId} balances={cumulatedBalances} />
+        <CumulatedBalances entityId={groupId} entityType="group" balances={cumulatedBalances} />
 
         {Object.entries(friendBalances)
           .slice(0, 2)

@@ -6,7 +6,9 @@ import {
   calculateParticipantSplit,
   calculateSplitShareBasedOnAmount,
   initSplitShares,
+  useAddExpenseStore,
 } from '~/store/addStore';
+import { getCurrencyHelpers } from '~/utils/numbers';
 
 // Mock dependencies
 jest.mock('~/utils/array', () => ({
@@ -1077,5 +1079,53 @@ describe('Function Reversibility Tests', () => {
       expect(reversedShares[user2.id]![SplitType.EQUAL]).toBe(0n);
       expect(reversedShares[user3.id]![SplitType.EQUAL]).toBe(0n);
     });
+  });
+});
+
+// Regression test for #658: editing a negative expense must preserve the sign
+describe('useAddExpenseStore sign preservation on edit (#658)', () => {
+  const { toUIString } = getCurrencyHelpers({ locale: 'en-US', currency: 'USD' });
+  const { actions } = useAddExpenseStore.getState();
+
+  beforeEach(() => {
+    actions.resetState();
+  });
+
+  it('loads a negative expense with the minus sign visible in amountStr', () => {
+    actions.setAmount(-20000n);
+    actions.setAmountStr(toUIString(-20000n, true, true));
+
+    const state = useAddExpenseStore.getState();
+    expect(state.amountStr).toBe('-200');
+    expect(state.isNegative).toBe(true);
+    expect(state.amount).toBe(20000n);
+  });
+
+  it('preserves the sign when the user edits digits without removing the minus', () => {
+    actions.setAmount(-20000n);
+    actions.setAmountStr(toUIString(-20000n, true, true));
+
+    // Simulate the user changing -200 to -200.01 via the input
+    actions.setAmountStr('-200.01');
+    actions.setAmount(-20001n);
+
+    const state = useAddExpenseStore.getState();
+    expect(state.amountStr).toBe('-200.01');
+    expect(state.isNegative).toBe(true);
+    expect(state.amount).toBe(20001n);
+  });
+
+  it('flips the sign when the user deletes the minus and edits the value', () => {
+    actions.setAmount(-20000n);
+    actions.setAmountStr(toUIString(-20000n, true, true));
+
+    // Simulate the user deleting the minus and changing the value to 200.01
+    actions.setAmountStr('200.01');
+    actions.setAmount(20001n);
+
+    const state = useAddExpenseStore.getState();
+    expect(state.amountStr).toBe('200.01');
+    expect(state.isNegative).toBe(false);
+    expect(state.amount).toBe(20001n);
   });
 });

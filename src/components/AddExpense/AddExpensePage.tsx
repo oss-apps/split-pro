@@ -172,16 +172,14 @@ export const AddOrEditExpensePage: React.FC<{
                   navPromise = async () => router.back();
                 }
 
+                navPromise().catch(console.error);
                 update((session: any) => ({
                   ...session,
                   user: {
                     ...(session?.user ?? {}),
                     currency,
                   },
-                }))
-                  .then(() => navPromise())
-                  .then(() => resetState())
-                  .catch(console.error);
+                })).catch(console.error);
               }
             }
           },
@@ -206,7 +204,6 @@ export const AddOrEditExpensePage: React.FC<{
     expenseDate,
     expenseId,
     router,
-    resetState,
     addExpenseMutation,
     group,
     paidBy,

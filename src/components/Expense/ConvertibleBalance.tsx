@@ -160,8 +160,6 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
     return total;
   }, [shouldShowAll, balances, ratesQuery, selectedCurrency, t, setSelectedCurrency]);
 
-  console.log(selectedCurrency, groupDefaultCurrency);
-
   if (0 === balances.length) {
     return <AmountDisplay className={className} amount={0n} currency="USD" />;
   }

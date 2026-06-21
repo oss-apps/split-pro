@@ -44,7 +44,7 @@ Create expenses with categories, currencies, dates, and receipt attachments. Spl
 
 ### 2) Application info
 
-SplitPro is a PWA and that is the recommended way to use the app. It supports push notifications for new expenses and updates.
+SplitPro is a PWA and that is the recommended way to use the app. It supports push notifications for new expenses and updates, but push delivery requires additional configuration. See [docs/CONFIGURATION.md](docs/CONFIGURATION.md).
 
 ### 3) Groups
 

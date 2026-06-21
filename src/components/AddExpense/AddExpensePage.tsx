@@ -248,7 +248,7 @@ export const AddOrEditExpensePage: React.FC<{
           to: currency,
         });
       setAmount(targetAmount);
-      setAmountStr(getCurrencyHelpersCached(currency).toUIString(targetAmount, true, true));
+      setAmountStr(getCurrencyHelpersCached(currency).toUIString(targetAmount, false, true));
       previousCurrencyRef.current = null;
     },
     [setAmount, setAmountStr, currency, getCurrencyHelpersCached],

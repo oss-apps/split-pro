@@ -62,7 +62,9 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
     return res;
   }, [userDefaultCurrency, groupDefaultCurrency, overrideCurrencies, balances]);
 
-  const sessionPreference = useCurrencyPreferenceStore((s) => s.getPreference(entityId, entityType));
+  const sessionPreference = useCurrencyPreferenceStore((s) =>
+    s.getPreference(entityId, entityType),
+  );
   const setSelectedCurrency = useCurrencyPreferenceStore(
     (s) => (preference?: string) => s.setPreference(entityId, preference),
   );

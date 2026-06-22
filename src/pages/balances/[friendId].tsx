@@ -9,6 +9,7 @@ import { ExpenseList } from '~/components/Expense/ExpenseList';
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
 import { RenameFriend } from '~/components/Friend/RenameFriend';
 import { Export } from '~/components/Friend/Export';
+import { MergeLocalFriend } from '~/components/Friend/MergeLocalFriend';
 import { SettleUp } from '~/components/Friend/Settleup';
 import MainLayout from '~/components/Layout/MainLayout';
 import { EntityAvatar } from '~/components/ui/avatar';
@@ -92,16 +93,28 @@ const FriendPage: NextPageWithUser = ({ user }) => {
               {!friendQuery.data ? null : (
                 <div className="flex flex-col gap-6">
                   {!friendQuery.data.email ? (
-                    <div>
-                      <p className="font-semibold">Rename</p>
-                      <div className="mt-2">
-                        <RenameFriend
+                    <>
+                      <div>
+                        <p className="font-semibold">Rename</p>
+                        <div className="mt-2">
+                          <RenameFriend
+                            friendId={_friendId}
+                            currentName={friendQuery.data.name}
+                            onRenamed={() => void friendQuery.refetch()}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Merge with registered account</p>
+                        <p className="text-muted-foreground mt-1 mb-2 text-sm">
+                          If this person has since registered, enter their email to transfer all expenses to their account.
+                        </p>
+                        <MergeLocalFriend
                           friendId={_friendId}
-                          currentName={friendQuery.data.name}
-                          onRenamed={() => void friendQuery.refetch()}
+                          friendName={friendQuery.data.name}
                         />
                       </div>
-                    </div>
+                    </>
                   ) : null}
                   <div>
                     <p className="font-semibold">{t('group_details.group_info.default_split')}</p>

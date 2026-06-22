@@ -494,7 +494,7 @@ export const userRouter = createTRPCRouter({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Local friend not found' });
       }
 
-      if (0 < localFriend.accounts.length || localFriend.emailVerified ?? localFriend.email) {
+      if (0 < localFriend.accounts.length || (localFriend.emailVerified ?? localFriend.email)) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Target is not a local friend' });
       }
 

@@ -91,6 +91,8 @@ Used for magic-link login and invites.
 - `OIDC_CLIENT_SECRET`
 - `OIDC_WELL_KNOWN_URL`: OpenID well-known discovery URL.
 - `OIDC_ALLOW_DANGEROUS_EMAIL_LINKING`: Optional flag to allow email-based account linking.
+- `OIDC_PKCE_ENABLED`: Optional flag to enable PKCE (Proof Key for Code Exchange).
+- `OIDC_ID_TOKEN_SIGNED_RESPONSE_ALG`: Optional ID token signed response algorithm (e.g. `ES256`, `RS256`).
 
 ### Web push notifications
 

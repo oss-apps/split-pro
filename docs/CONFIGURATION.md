@@ -146,20 +146,6 @@ OIDC_CLIENT_SECRET="<client-secret>"
 OIDC_WELL_KNOWN_URL="https://keycloak.example.com/realms/My_Realm/.well-known/openid-configuration"
 ```
 
-### OIDC (Kanidm)
-
-```bash
-DATABASE_URL="postgresql://postgres:strong-password@localhost:5432/splitpro"
-NEXTAUTH_SECRET="<generated>"
-NEXTAUTH_URL="https://splitpro.example.com"
-OIDC_NAME="kanidm"
-OIDC_CLIENT_ID="<client-id>"
-OIDC_CLIENT_SECRET="<client-secret>"
-OIDC_WELL_KNOWN_URL="https://kanidm.example.com/oauth2/openid/<app-name>/.well-known/openid-configuration"
-OIDC_PKCE_ENABLED=1
-OIDC_ID_TOKEN_SIGNED_RESPONSE_ALG=ES256
-```
-
 ## Security notes
 
 - Rotate `NEXTAUTH_SECRET` if it is ever exposed.

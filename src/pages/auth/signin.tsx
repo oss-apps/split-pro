@@ -59,7 +59,8 @@ const Home: NextPage<{
   feedbackEmail: string;
   providers: ClientSafeProvider[];
   callbackUrl?: string;
-}> = ({ error, providers: serverProviders, feedbackEmail, callbackUrl }) => {
+  oauthAutoRedirect: boolean;
+}> = ({ error, providers: serverProviders, feedbackEmail, callbackUrl, oauthAutoRedirect }) => {
   const { t } = useTranslation();
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success'>('idle');
   const [showVerificationStep, setShowVerificationStep] = useState(false);
@@ -109,6 +110,15 @@ const Home: NextPage<{
       }
     }
   }, [error, t]);
+
+  useEffect(() => {
+    if (oauthAutoRedirect && !showVerificationStep && providers.length > 0 && !isLoadingProviders) {
+      const oauthProvider = providers.find((provider) => 'oauth' === provider.type);
+      if (oauthProvider) {
+        void signIn(oauthProvider.id, { callbackUrl });
+      }
+    }
+  }, [oauthAutoRedirect, showVerificationStep, providers, isLoadingProviders, callbackUrl]);
 
   const onEmailSubmit = useCallback(async () => {
     setEmailStatus('sending');
@@ -293,6 +303,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       feedbackEmail: env.FEEDBACK_EMAIL ?? '',
       providers: Object.values(providers ?? {}),
       callbackUrl: callbackUrl && !Array.isArray(callbackUrl) ? callbackUrl : '',
+      oauthAutoRedirect: env.OAUTH_AUTO_REDIRECT,
     },
   };
 };

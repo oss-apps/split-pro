@@ -44,9 +44,10 @@ export const UserInput: React.FC<{
       } else {
         removeLastParticipant(); // Assuming deleteUser is the function you want to call
       }
-    } else if ('Enter' === e.key && isEmail.success) {
+    } else if ('Enter' === e.key && (isEmail.success || '' !== nameOrEmail.trim())) {
+      const trimmed = nameOrEmail.trim();
       addFriendMutation.mutate(
-        { email: nameOrEmail.toLowerCase() },
+        isEmail.success ? { email: trimmed.toLowerCase() } : { name: trimmed },
         {
           onSuccess: (user) => {
             removeParticipant(-1);
@@ -57,8 +58,8 @@ export const UserInput: React.FC<{
       );
       addOrUpdateParticipant({
         id: -1,
-        name: nameOrEmail,
-        email: nameOrEmail,
+        name: trimmed,
+        email: isEmail.success ? trimmed : null,
         emailVerified: new Date(),
         image: null,
         currency: 'USD',

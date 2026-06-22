@@ -28,6 +28,7 @@ export const SelectUserOrGroup: React.FC<{
   const addFriendMutation = api.user.inviteFriend.useMutation();
 
   const isEmail = z.string().email().safeParse(nameOrEmail);
+  const hasName = '' !== nameOrEmail.trim();
 
   const filteredGroups = groupsQuery.data?.filter((g) =>
     g.group.name.toLowerCase().includes(nameOrEmail.toLowerCase()),
@@ -38,9 +39,10 @@ export const SelectUserOrGroup: React.FC<{
 
   const onAddEmailClick = useCallback(
     (invite = false) => {
-      if (isEmail.success) {
+      const trimmed = nameOrEmail.trim();
+      if (isEmail.success || '' !== trimmed) {
         addFriendMutation.mutate(
-          { email: nameOrEmail, sendInviteEmail: invite },
+          isEmail.success ? { email: trimmed, sendInviteEmail: invite } : { name: trimmed },
           {
             onSuccess: (user) => {
               removeParticipant(-1);
@@ -51,8 +53,8 @@ export const SelectUserOrGroup: React.FC<{
         );
         addOrUpdateParticipant({
           id: -1,
-          name: nameOrEmail,
-          email: nameOrEmail,
+          name: trimmed,
+          email: isEmail.success ? trimmed : null,
           emailVerified: new Date(),
           image: null,
           currency: 'USD',
@@ -62,7 +64,7 @@ export const SelectUserOrGroup: React.FC<{
           preferredLanguage: '',
           hiddenFriendIds: [],
         });
-        // Add email to split pro
+        // Add user to split pro
       }
     },
     [
@@ -143,7 +145,7 @@ export const SelectUserOrGroup: React.FC<{
           <Button
             className="mt-4 text-cyan-500 hover:text-cyan-500"
             variant="outline"
-            disabled={!isEmail.success}
+            disabled={!isEmail.success && !hasName}
             onClick={handleAddEmailClickFalse}
           >
             <UserPlusIcon className="mr-2 h-4 w-4" />

@@ -56,8 +56,27 @@ export const userRouter = createTRPCRouter({
   }),
 
   inviteFriend: protectedProcedure
-    .input(z.object({ email: z.string(), sendInviteEmail: z.boolean().optional() }))
+    .input(
+      z
+        .object({
+          email: z.string().email().optional(),
+          name: z.string().trim().min(1).optional(),
+          sendInviteEmail: z.boolean().optional(),
+        })
+        .refine((data) => data.email ?? data.name, {
+          message: 'Either email or name must be provided',
+        }),
+    )
     .mutation(async ({ input, ctx: { session } }) => {
+      // Local friend: only a name provided, no email. Mirrors Splitwise-imported users.
+      if (!input.email) {
+        return db.user.create({
+          data: {
+            name: input.name,
+          },
+        });
+      }
+
       const friend = await db.user.findUnique({
         where: {
           email: input.email,
@@ -71,7 +90,7 @@ export const userRouter = createTRPCRouter({
       const user = await db.user.create({
         data: {
           email: input.email,
-          name: input.email.split('@')[0],
+          name: input.name ?? input.email.split('@')[0],
         },
       });
 
@@ -394,6 +413,72 @@ export const userRouter = createTRPCRouter({
             push: input.friendId,
           },
         },
+      });
+    }),
+
+  updateFriendName: protectedProcedure
+    .input(z.object({ friendId: z.number(), name: z.string().trim().min(1) }))
+    .mutation(async ({ input, ctx }) => {
+      // Only allow renaming users the current user has shared an expense with.
+      // Using ExpenseParticipant instead of BalanceView so this works even after settle-up
+      // or when the friend was just added but no expense exists yet.
+      const sharedExpense = await db.expense.findFirst({
+        where: {
+          deletedBy: null,
+          expenseParticipants: { some: { userId: ctx.session.user.id } },
+          OR: [
+            { paidBy: input.friendId },
+            { expenseParticipants: { some: { userId: input.friendId } } },
+          ],
+        },
+        select: { id: true },
+      });
+
+      if (!sharedExpense) {
+        const friendExists = await db.user.findUnique({
+          where: { id: input.friendId },
+          select: { id: true, accounts: true, emailVerified: true },
+        });
+
+        if (!friendExists) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+        }
+
+        // Registered users own their profile — nobody else may rename them.
+        if (0 < friendExists.accounts.length || friendExists.emailVerified) {
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: 'Cannot rename a registered user',
+          });
+        }
+
+        // Local user with no shared expense yet — allow the rename.
+        return db.user.update({
+          where: { id: input.friendId },
+          data: { name: input.name },
+        });
+      }
+
+      const friend = await db.user.findUnique({
+        where: { id: input.friendId },
+        include: { accounts: true },
+      });
+
+      if (!friend) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+      }
+
+      // Local friends only: registered users (linked account or verified email) own their profile.
+      if (0 < friend.accounts.length || friend.emailVerified) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Cannot rename a registered user',
+        });
+      }
+
+      return db.user.update({
+        where: { id: input.friendId },
+        data: { name: input.name },
       });
     }),
 

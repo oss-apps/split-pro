@@ -82,11 +82,22 @@ const AddMembers: React.FC<{
   );
 
   const isEmail = z.string().email().safeParse(inputValue);
+  const hasName = '' !== inputValue.trim();
 
   function onAddEmailClick(invite = false) {
+    const trimmed = inputValue.trim();
     if (isEmail.success) {
       addFriendMutation.mutate(
-        { email: inputValue.toLowerCase(), sendInviteEmail: invite },
+        { email: trimmed.toLowerCase(), sendInviteEmail: invite },
+        {
+          onSuccess: (user) => {
+            onSave({ ...userIds, [user.id]: true });
+          },
+        },
+      );
+    } else if (hasName) {
+      addFriendMutation.mutate(
+        { name: trimmed },
         {
           onSuccess: (user) => {
             onSave({ ...userIds, [user.id]: true });
@@ -147,11 +158,11 @@ const AddMembers: React.FC<{
           <Button
             className="mt-4 w-full text-cyan-500"
             variant="outline"
-            disabled={!isEmail.success}
+            disabled={!isEmail.success && !hasName}
             onClick={() => onAddEmailClick(false)}
           >
             <UserPlusIcon className="mr-2 h-4 w-4" />
-            {isEmail.success
+            {isEmail.success || hasName
               ? t('group_details.no_members.add_members_details.add_to_split_pro')
               : t('errors.valid_email')}
           </Button>

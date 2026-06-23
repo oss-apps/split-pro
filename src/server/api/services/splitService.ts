@@ -545,6 +545,7 @@ export async function importSplitProData(
       if (missingParticipants.length > 0) {
         await db.expenseParticipant.createMany({
           data: missingParticipants.map((p) => ({ ...p, expenseId: exportedExpense.id })),
+          skipDuplicates: true,
         });
       }
       continue;

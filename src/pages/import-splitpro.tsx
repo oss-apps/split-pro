@@ -9,8 +9,9 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { LoadingSpinner } from '~/components/ui/spinner';
+import { ImportLogWindow } from '~/components/Import/ImportLogWindow';
+import { useImportStream } from '~/hooks/useImportStream';
 import { type NextPageWithUser } from '~/types';
-import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
 
 const ImportSplitProPage: NextPageWithUser = () => {
@@ -21,7 +22,7 @@ const ImportSplitProPage: NextPageWithUser = () => {
   const [mode, setMode] = useState<'merge' | 'restore'>('merge');
   const router = useRouter();
 
-  const importMutation = api.user.importSplitProData.useMutation();
+  const { logs, isStreaming, startStream } = useImportStream();
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -46,28 +47,28 @@ const ImportSplitProPage: NextPageWithUser = () => {
     }
   };
 
-  const onImport = () => {
-    if (!parsedData) {
+  const onImport = async () => {
+    if (!parsedData || !uploadedFile || isStreaming) {
       return;
     }
 
-    importMutation.mutate(
-      { mode, ...(parsedData as Parameters<typeof importMutation.mutate>[0]) },
-      {
-        onSuccess: (result) => {
-          toast.success(
-            t('account.import_splitpro_data_details.messages.import_success', {
-              expenses: result.expensesImported,
-              groups: result.groupsImported,
-            }),
-          );
-          router.push('/balances').catch(console.error);
-        },
-        onError: () => {
-          toast.error(t('errors.import_splitpro_failed'));
-        },
-      },
-    );
+    const formData = new FormData();
+    formData.append('file', uploadedFile);
+    formData.append('mode', mode);
+
+    const outcome = await startStream('/api/import-splitpro-stream', formData);
+
+    if (outcome.ok) {
+      toast.success(
+        t('account.import_splitpro_data_details.messages.import_success', {
+          expenses: outcome.result.expensesImported,
+          groups: outcome.result.groupsImported,
+        }),
+      );
+      router.push('/balances').catch(console.error);
+    } else {
+      toast.error(t('errors.import_splitpro_failed'));
+    }
   };
 
   return (
@@ -87,11 +88,11 @@ const ImportSplitProPage: NextPageWithUser = () => {
           <div className="font-medium">{t('account.import_splitpro_data')}</div>
           <div className="flex gap-4">
             <Button
-              onClick={onImport}
+              onClick={() => void onImport()}
               variant="ghost"
               className="text-primary px-0 py-0"
               size="sm"
-              disabled={importMutation.isPending || !parsedData}
+              disabled={isStreaming || !parsedData}
             >
               {t('actions.import')}
             </Button>
@@ -173,13 +174,13 @@ const ImportSplitProPage: NextPageWithUser = () => {
             />
           </label>
           <Button
-            onClick={onImport}
-            disabled={!parsedData || importMutation.isPending}
+            onClick={() => void onImport()}
+            disabled={!parsedData || isStreaming}
             className="w-[100px]"
             size="sm"
             variant={mode === 'restore' ? 'destructive' : 'default'}
           >
-            {importMutation.isPending ? <LoadingSpinner /> : t('actions.import')}
+            {isStreaming ? <LoadingSpinner /> : t('actions.import')}
           </Button>
         </div>
 
@@ -187,7 +188,7 @@ const ImportSplitProPage: NextPageWithUser = () => {
           <div className="mt-4 text-sm text-red-500">{t('errors.import_splitpro_failed')}</div>
         )}
 
-        {parsedData && (
+        {parsedData && !isStreaming && 0 === logs.length && (
           <div className="mt-6 flex flex-col gap-2 text-sm text-gray-400">
             <div>{t('account.import_splitpro_data_details.note')}</div>
             <div className="mt-2 rounded border border-gray-700 p-3 text-gray-300">
@@ -204,6 +205,8 @@ const ImportSplitProPage: NextPageWithUser = () => {
             </div>
           </div>
         )}
+
+        <ImportLogWindow entries={logs} isStreaming={isStreaming} />
       </MainLayout>
     </>
   );

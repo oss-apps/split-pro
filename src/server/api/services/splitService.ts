@@ -456,10 +456,20 @@ export async function getFullExportData(userId: number) {
   };
 }
 
+export type ImportLogFn = (type: 'info' | 'warn' | 'error' | 'success', message: string) => void;
+
 export async function importSplitProData(
   currentUserId: number,
   data: Awaited<ReturnType<typeof getFullExportData>>,
+  onLog?: ImportLogFn,
 ) {
+  const log: ImportLogFn = onLog ?? (() => undefined);
+
+  log(
+    'info',
+    `Starting import: ${data.users.length} users, ${data.groups.length} groups, ${data.expenses.length} expenses`,
+  );
+
   // Build mapping from exported userId → existing or new local userId
   const userIdMap = new Map<number, number>();
 
@@ -474,6 +484,7 @@ export async function importSplitProData(
       const existing = await db.user.findUnique({ where: { email: exportedUser.email } });
       if (existing) {
         userIdMap.set(exportedUser.id, existing.id);
+        log('info', `User mapped: ${exportedUser.name ?? exportedUser.email} → existing account`);
         continue;
       }
     }
@@ -485,6 +496,7 @@ export async function importSplitProData(
     });
     if (existingLocal) {
       userIdMap.set(exportedUser.id, existingLocal.id);
+      log('info', `User mapped: ${localName} → existing local user`);
       continue;
     }
 
@@ -497,7 +509,10 @@ export async function importSplitProData(
       },
     });
     userIdMap.set(exportedUser.id, newUser.id);
+    log('info', `User created: ${localName}`);
   }
+
+  log('info', `Users resolved: ${userIdMap.size} total`);
 
   // Create groups
   const groupIdMap = new Map<number, number>();
@@ -520,6 +535,9 @@ export async function importSplitProData(
           data: missingMembers.map((userId) => ({ userId, groupId: existing.id })),
           skipDuplicates: true,
         });
+        log('info', `Group "${exportedGroup.name}": restored ${missingMembers.length} member(s)`);
+      } else {
+        log('info', `Group "${exportedGroup.name}": already exists`);
       }
       continue;
     }
@@ -538,11 +556,21 @@ export async function importSplitProData(
       },
     });
     groupIdMap.set(exportedGroup.id, newGroup.id);
+    log('info', `Group "${exportedGroup.name}" created`);
   }
+
+  log('info', `Groups processed: ${groupIdMap.size}`);
 
   // Create expenses (or restore missing participants for existing ones)
   let expensesImported = 0;
-  for (const exportedExpense of data.expenses) {
+  let expensesSkipped = 0;
+  const total = data.expenses.length;
+  for (let i = 0; i < total; i++) {
+    const exportedExpense = data.expenses[i]!;
+    if (i > 0 && i % 100 === 0) {
+      log('info', `Progress: ${i}/${total} expenses processed...`);
+    }
+
     const existing = await db.expense.findUnique({
       where: { id: exportedExpense.id },
       include: { expenseParticipants: { select: { userId: true } } },
@@ -564,56 +592,70 @@ export async function importSplitProData(
           skipDuplicates: true,
         });
       }
+      expensesSkipped++;
       continue;
     }
 
     const paidByUserId = userIdMap.get(exportedExpense.paidByUserId);
     const addedByUserId = userIdMap.get(exportedExpense.addedByUserId);
     if (!paidByUserId || !addedByUserId) {
+      log('warn', `Expense "${exportedExpense.name}": skipped (unknown payer/creator)`);
+      expensesSkipped++;
       continue;
     }
 
     const groupId = exportedExpense.groupId ? groupIdMap.get(exportedExpense.groupId) : null;
 
-    await db.expense.create({
-      data: {
-        id: exportedExpense.id,
-        name: exportedExpense.name,
-        category: exportedExpense.category,
-        amount: BigInt(exportedExpense.amount),
-        currency: exportedExpense.currency,
-        splitType: exportedExpense.splitType,
-        expenseDate: new Date(exportedExpense.expenseDate),
-        paidBy: paidByUserId,
-        addedBy: addedByUserId,
-        groupId: groupId ?? null,
-        expenseParticipants: {
-          create: [
-            ...exportedExpense.participants
-              .map((p) => ({
-                userId: userIdMap.get(p.userId),
-                amount: BigInt(p.amount),
-              }))
-              .filter((p): p is { userId: number; amount: bigint } => p.userId !== undefined)
-              .reduce(
-                (acc, p) => (acc.has(p.userId) ? acc : acc.set(p.userId, p)),
-                new Map<number, { userId: number; amount: bigint }>(),
-              )
-              .values(),
-          ],
+    try {
+      await db.expense.create({
+        data: {
+          id: exportedExpense.id,
+          name: exportedExpense.name,
+          category: exportedExpense.category,
+          amount: BigInt(exportedExpense.amount),
+          currency: exportedExpense.currency,
+          splitType: exportedExpense.splitType,
+          expenseDate: new Date(exportedExpense.expenseDate),
+          paidBy: paidByUserId,
+          addedBy: addedByUserId,
+          groupId: groupId ?? null,
+          expenseParticipants: {
+            create: [
+              ...exportedExpense.participants
+                .map((p) => ({
+                  userId: userIdMap.get(p.userId),
+                  amount: BigInt(p.amount),
+                }))
+                .filter((p): p is { userId: number; amount: bigint } => p.userId !== undefined)
+                .reduce(
+                  (acc, p) => (acc.has(p.userId) ? acc : acc.set(p.userId, p)),
+                  new Map<number, { userId: number; amount: bigint }>(),
+                )
+                .values(),
+            ],
+          },
         },
-      },
-    });
-    expensesImported++;
+      });
+      expensesImported++;
+    } catch (err) {
+      log('error', `Expense "${exportedExpense.name}": ${String(err)}`);
+      expensesSkipped++;
+    }
   }
 
+  log('success', `Import complete: ${expensesImported} imported, ${expensesSkipped} skipped`);
   return { usersImported: userIdMap.size, groupsImported: groupIdMap.size, expensesImported };
 }
 
 export async function restoreSplitProData(
   currentUserId: number,
   data: Awaited<ReturnType<typeof getFullExportData>>,
+  onLog?: ImportLogFn,
 ) {
+  const log: ImportLogFn = onLog ?? (() => undefined);
+
+  log('info', 'Restore mode: deleting existing data...');
+
   // Delete all expenses the current user is involved in (as payer or participant)
   const userExpenseIds = await db.expense.findMany({
     where: {
@@ -623,6 +665,8 @@ export async function restoreSplitProData(
     select: { id: true },
   });
   const expenseIds = userExpenseIds.map((e) => e.id);
+
+  log('info', `Deleting ${expenseIds.length} expenses and group memberships...`);
 
   await db.$transaction([
     db.expenseParticipant.deleteMany({ where: { expenseId: { in: expenseIds } } }),
@@ -636,8 +680,10 @@ export async function restoreSplitProData(
     where: { userId: currentUserId, groupUsers: { none: {} } },
   });
 
+  log('info', 'Existing data deleted. Starting fresh import...');
+
   // Now import fresh from the backup
-  return importSplitProData(currentUserId, data);
+  return importSplitProData(currentUserId, data, onLog);
 }
 
 // Converts a numeric Splitwise expense ID to a deterministic UUID-shaped string
@@ -677,7 +723,18 @@ interface SplitwiseProBackup {
   expenses: SplitwiseExpense[];
 }
 
-export async function importFromSplitwisePro(currentUserId: number, data: SplitwiseProBackup) {
+export async function importFromSplitwisePro(
+  currentUserId: number,
+  data: SplitwiseProBackup,
+  onLog?: ImportLogFn,
+) {
+  const log: ImportLogFn = onLog ?? (() => undefined);
+  const activeExpenses = data.expenses.filter((e) => !e.deleted_at);
+  log(
+    'info',
+    `Starting Splitwise import: ${data.friends.length} friends, ${data.groups.length} groups, ${activeExpenses.length} active expenses`,
+  );
+
   // Build Splitwise userId → SplitPro userId map
   const userIdMap = new Map<number, number>();
   userIdMap.set(data.user.id, currentUserId);
@@ -724,6 +781,8 @@ export async function importFromSplitwisePro(currentUserId: number, data: Splitw
     }
   }
 
+  log('info', `Users resolved: ${userIdMap.size} total`);
+
   // Build Splitwise groupId → SplitPro groupId map
   const groupIdMap = new Map<number, number>();
   for (const swGroup of data.groups) {
@@ -733,6 +792,7 @@ export async function importFromSplitwisePro(currentUserId: number, data: Splitw
     const existing = await db.group.findFirst({ where: { name: swGroup.name } });
     if (existing) {
       groupIdMap.set(swGroup.id, existing.id);
+      log('info', `Group "${swGroup.name}": already exists`);
     } else {
       const members = swGroup.members
         .map((m) => userIdMap.get(m.id))
@@ -746,16 +806,23 @@ export async function importFromSplitwisePro(currentUserId: number, data: Splitw
         },
       });
       groupIdMap.set(swGroup.id, newGroup.id);
+      log('info', `Group "${swGroup.name}" created with ${members.length} member(s)`);
     }
   }
+
+  log('info', `Groups processed: ${groupIdMap.size}`);
 
   // Import expenses
   let expensesImported = 0;
   let expensesSkipped = 0;
+  const total = activeExpenses.length;
 
-  const activeExpenses = data.expenses.filter((e) => !e.deleted_at);
+  for (let i = 0; i < total; i++) {
+    const swExp = activeExpenses[i]!;
+    if (i > 0 && i % 100 === 0) {
+      log('info', `Progress: ${i}/${total} expenses processed...`);
+    }
 
-  for (const swExp of activeExpenses) {
     const expenseId = splitwiseIdToUuid(swExp.id);
     const existing = await db.expense.findUnique({ where: { id: expenseId } });
     if (existing) {
@@ -772,6 +839,8 @@ export async function importFromSplitwisePro(currentUserId: number, data: Splitw
 
     const paidByUserId = userIdMap.get(payerSwId);
     if (!paidByUserId) {
+      log('warn', `Expense "${swExp.description}": skipped (unknown payer)`);
+      expensesSkipped++;
       continue;
     }
 
@@ -821,24 +890,30 @@ export async function importFromSplitwisePro(currentUserId: number, data: Splitw
     const groupId = swExp.group_id ? groupIdMap.get(swExp.group_id) : null;
     const category = swExp.category?.name?.toLowerCase() ?? DEFAULT_CATEGORY;
 
-    await db.expense.create({
-      data: {
-        id: expenseId,
-        name: swExp.description,
-        category,
-        amount: BigInt(amountCents),
-        currency: swExp.currency_code,
-        splitType: swExp.payment ? SplitType.SETTLEMENT : SplitType.EXACT,
-        expenseDate: new Date(swExp.date),
-        paidBy: paidByUserId,
-        addedBy: currentUserId,
-        groupId: groupId ?? null,
-        expenseParticipants: { create: participants },
-      },
-    });
-    expensesImported++;
+    try {
+      await db.expense.create({
+        data: {
+          id: expenseId,
+          name: swExp.description,
+          category,
+          amount: BigInt(amountCents),
+          currency: swExp.currency_code,
+          splitType: swExp.payment ? SplitType.SETTLEMENT : SplitType.EXACT,
+          expenseDate: new Date(swExp.date),
+          paidBy: paidByUserId,
+          addedBy: currentUserId,
+          groupId: groupId ?? null,
+          expenseParticipants: { create: participants },
+        },
+      });
+      expensesImported++;
+    } catch (err) {
+      log('error', `Expense "${swExp.description}": ${String(err)}`);
+      expensesSkipped++;
+    }
   }
 
+  log('success', `Import complete: ${expensesImported} imported, ${expensesSkipped} skipped`);
   return {
     usersImported: userIdMap.size - 1,
     groupsImported: groupIdMap.size,

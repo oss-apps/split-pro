@@ -12,13 +12,21 @@ import { Checkbox } from '~/components/ui/checkbox';
 import { Input } from '~/components/ui/input';
 import { Separator } from '~/components/ui/separator';
 import { LoadingSpinner } from '~/components/ui/spinner';
+import { ImportLogWindow } from '~/components/Import/ImportLogWindow';
+import { useImportStream } from '~/hooks/useImportStream';
 import { type NextPageWithUser, type SplitwiseGroup, type SplitwiseUser } from '~/types';
 import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
 
 type ParsedFile =
   | { mode: 'balance'; users: SplitwiseUser[]; groups: SplitwiseGroup[] }
-  | { mode: 'full'; raw: Record<string, unknown>; expenseCount: number; friendCount: number; groupCount: number };
+  | {
+      mode: 'full';
+      raw: Record<string, unknown>;
+      expenseCount: number;
+      friendCount: number;
+      groupCount: number;
+    };
 
 const ImportSpliwisePage: NextPageWithUser = () => {
   const { t } = useTranslation();
@@ -31,7 +39,9 @@ const ImportSpliwisePage: NextPageWithUser = () => {
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     setUploadedFile(file);
     setParsed(null);
@@ -40,10 +50,11 @@ const ImportSpliwisePage: NextPageWithUser = () => {
       const json = JSON.parse(await file.text()) as Record<string, unknown>;
 
       const expenses = json.expenses as Record<string, unknown>[] | undefined;
-      const isFullBackup = Array.isArray(expenses) && expenses.length > 0 && 'repayments' in expenses[0]!;
+      const isFullBackup =
+        Array.isArray(expenses) && expenses.length > 0 && 'repayments' in expenses[0]!;
 
       if (isFullBackup) {
-        const activeExpenses = expenses!.filter((e) => !e.deleted_at);
+        const activeExpenses = expenses.filter((e) => !e.deleted_at);
         const friends = (json.friends as Record<string, unknown>[]) ?? [];
         const groups = ((json.groups as Record<string, unknown>[]) ?? []).filter(
           (g) => 0 !== g.id && (g.members as unknown[]).length > 0,
@@ -71,12 +82,8 @@ const ImportSpliwisePage: NextPageWithUser = () => {
         );
 
         setParsed({ mode: 'balance', users: friendsWithBalance, groups });
-        setSelectedUsers(
-          friendsWithBalance.reduce((acc, u) => ({ ...acc, [u.id]: true }), {} as Record<string, boolean>),
-        );
-        setSelectedGroups(
-          groups.reduce((acc, g) => ({ ...acc, [g.id]: true }), {} as Record<string, boolean>),
-        );
+        setSelectedUsers(Object.fromEntries(friendsWithBalance.map((u) => [u.id, true])));
+        setSelectedGroups(Object.fromEntries(groups.map((g) => [g.id, true])));
       }
     } catch (e) {
       console.error(e);
@@ -84,31 +91,31 @@ const ImportSpliwisePage: NextPageWithUser = () => {
     }
   };
 
-  const [fullImportPending, setFullImportPending] = useState(false);
   const balanceMutation = api.user.importUsersFromSplitWise.useMutation();
+  const { logs, isStreaming, startStream } = useImportStream();
 
-  function onImport() {
-    if (!parsed) return;
+  async function onImport() {
+    if (!parsed) {
+      return;
+    }
 
-    if (parsed.mode === 'full') {
-      if (!uploadedFile) return;
-      setFullImportPending(true);
+    if ('full' === parsed.mode) {
+      if (!uploadedFile) {
+        return;
+      }
       const formData = new FormData();
       formData.append('file', uploadedFile);
-      fetch('/api/import-splitwise', { method: 'POST', body: formData })
-        .then(async (res) => {
-          if (!res.ok) throw new Error(await res.text());
-          return res.json() as Promise<{ expensesImported: number; expensesSkipped: number }>;
-        })
-        .then((result) => {
-          toast.success(
-            `Import abgeschlossen: ${result.expensesImported} Ausgaben importiert, ${result.expensesSkipped} übersprungen`,
-            { duration: 4000 },
-          );
-          router.push('/balances').catch(console.error);
-        })
-        .catch(() => toast.error(t('errors.import_failed')))
-        .finally(() => setFullImportPending(false));
+      const outcome = await startStream('/api/import-splitwise-stream', formData);
+
+      if (outcome.ok) {
+        toast.success(
+          `Import abgeschlossen: ${outcome.result.expensesImported} Ausgaben importiert, ${outcome.result.expensesSkipped ?? 0} übersprungen`,
+          { duration: 4000 },
+        );
+        router.push('/balances').catch(console.error);
+      } else {
+        toast.error(t('errors.import_failed'));
+      }
     } else {
       balanceMutation.mutate(
         {
@@ -126,7 +133,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
     }
   }
 
-  const isPending = balanceMutation.isPending || fullImportPending;
+  const isPending = balanceMutation.isPending || isStreaming;
 
   return (
     <>
@@ -167,12 +174,25 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                 </span>
               </div>
               <div className="pl-4 text-gray-400">
-                {uploadedFile ? uploadedFile.name : t('account.import_from_splitwise_details.no_file_chosen')}
+                {uploadedFile
+                  ? uploadedFile.name
+                  : t('account.import_from_splitwise_details.no_file_chosen')}
               </div>
             </div>
-            <Input onChange={handleFileChange} id="splitwise-json" type="file" accept=".json" className="hidden" />
+            <Input
+              onChange={handleFileChange}
+              id="splitwise-json"
+              type="file"
+              accept=".json"
+              className="hidden"
+            />
           </label>
-          <Button onClick={onImport} disabled={!parsed || isPending} className="w-[100px]" size="sm">
+          <Button
+            onClick={onImport}
+            disabled={!parsed || isPending}
+            className="w-[100px]"
+            size="sm"
+          >
             {isPending ? <LoadingSpinner /> : t('actions.import')}
           </Button>
         </div>
@@ -180,9 +200,15 @@ const ImportSpliwisePage: NextPageWithUser = () => {
         {parsed?.mode === 'full' && (
           <div className="mt-6 flex flex-col gap-2 text-sm text-gray-400">
             <div className="rounded border border-gray-700 p-3 text-gray-300">
-              <div>{t('actors.friends')}: {parsed.friendCount}</div>
-              <div>{t('actors.groups')}: {parsed.groupCount}</div>
-              <div>{parsed.expenseCount} {t('account.import_splitpro_data_details.expenses')}</div>
+              <div>
+                {t('actors.friends')}: {parsed.friendCount}
+              </div>
+              <div>
+                {t('actors.groups')}: {parsed.groupCount}
+              </div>
+              <div>
+                {parsed.expenseCount} {t('account.import_splitpro_data_details.expenses')}
+              </div>
             </div>
             <div className="text-xs text-gray-500">
               Splitwise Pro Backup erkannt — alle Ausgaben werden importiert.
@@ -206,9 +232,14 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                       <div className="flex shrink-0 items-center gap-2">
                         <Checkbox
                           checked={selectedUsers[user.id]}
-                          onCheckedChange={(checked) => setSelectedUsers({ ...selectedUsers, [user.id]: checked })}
+                          onCheckedChange={(checked) =>
+                            setSelectedUsers({ ...selectedUsers, [user.id]: checked })
+                          }
                         />
-                        <p>{user.first_name}{user.last_name ? ` ${user.last_name}` : ''}</p>
+                        <p>
+                          {user.first_name}
+                          {user.last_name ? ` ${user.last_name}` : ''}
+                        </p>
                       </div>
                       <div className="flex flex-wrap justify-end gap-1">
                         {user.balance.map((b, i) => (
@@ -217,7 +248,9 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                             className={`text-sm ${0 < Number(b.amount) ? 'text-green-500' : 'text-orange-600'}`}
                           >
                             {b.currency_code} {Math.abs(Number(b.amount)).toFixed(2)}
-                            {i !== user.balance.length - 1 && <span className="text-xs text-gray-300"> + </span>}
+                            {i !== user.balance.length - 1 && (
+                              <span className="text-xs text-gray-300"> + </span>
+                            )}
                           </span>
                         ))}
                       </div>
@@ -228,7 +261,9 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               </div>
             ) : null}
 
-            <div className="mt-8 font-semibold">{t('actors.groups')} ({parsed.groups.length})</div>
+            <div className="mt-8 font-semibold">
+              {t('actors.groups')} ({parsed.groups.length})
+            </div>
             {parsed.groups.length ? (
               <div className="mt-4 flex flex-col gap-3">
                 {parsed.groups.map((group, index) => (
@@ -237,7 +272,9 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                       <div className="flex items-center gap-2">
                         <Checkbox
                           checked={selectedGroups[group.id]}
-                          onCheckedChange={(checked) => setSelectedGroups({ ...selectedGroups, [group.id]: checked })}
+                          onCheckedChange={(checked) =>
+                            setSelectedGroups({ ...selectedGroups, [group.id]: checked })
+                          }
                         />
                         <p>{group.name}</p>
                       </div>
@@ -264,6 +301,8 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             </Link>
           </div>
         )}
+
+        <ImportLogWindow entries={logs} isStreaming={isStreaming} />
       </MainLayout>
     </>
   );

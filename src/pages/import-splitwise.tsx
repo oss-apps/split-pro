@@ -84,23 +84,31 @@ const ImportSpliwisePage: NextPageWithUser = () => {
     }
   };
 
+  const [fullImportPending, setFullImportPending] = useState(false);
   const balanceMutation = api.user.importUsersFromSplitWise.useMutation();
-  const fullMutation = api.user.importFromSplitwisePro.useMutation();
 
   function onImport() {
     if (!parsed) return;
 
     if (parsed.mode === 'full') {
-      fullMutation.mutate(parsed.raw as Parameters<typeof fullMutation.mutate>[0], {
-        onSuccess: (result) => {
+      if (!uploadedFile) return;
+      setFullImportPending(true);
+      const formData = new FormData();
+      formData.append('file', uploadedFile);
+      fetch('/api/import-splitwise', { method: 'POST', body: formData })
+        .then(async (res) => {
+          if (!res.ok) throw new Error(await res.text());
+          return res.json() as Promise<{ expensesImported: number; expensesSkipped: number }>;
+        })
+        .then((result) => {
           toast.success(
             `Import abgeschlossen: ${result.expensesImported} Ausgaben importiert, ${result.expensesSkipped} übersprungen`,
             { duration: 4000 },
           );
           router.push('/balances').catch(console.error);
-        },
-        onError: () => toast.error(t('errors.import_failed')),
-      });
+        })
+        .catch(() => toast.error(t('errors.import_failed')))
+        .finally(() => setFullImportPending(false));
     } else {
       balanceMutation.mutate(
         {
@@ -118,7 +126,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
     }
   }
 
-  const isPending = balanceMutation.isPending || fullMutation.isPending;
+  const isPending = balanceMutation.isPending || fullImportPending;
 
   return (
     <>

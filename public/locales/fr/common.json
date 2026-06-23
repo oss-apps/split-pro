@@ -12,9 +12,9 @@
     "debug_info": "Info de débug",
     "debug_info_details": {
       "copy_failed": "Échec de la copie des infos de débug",
-      "description": "Collez les informations suivantes lorsque que vous faites une demande au support :",
+      "description": "Collez les informations suivantes lorsque que vous faites une demande au support :",
       "git": "Git",
-      "new_version_available": "Une nouvelle version est disponible :",
+      "new_version_available": "Une nouvelle version est disponible :",
       "send_test_notification": "Envoyer une notification de test",
       "test_notification_failed": "Impossible d'envoyer une notification de test",
       "test_notification_sent": "Notification de test envoyée",
@@ -52,7 +52,7 @@
         "import_success": "L'import a bien fonctionné"
       },
       "no_file_chosen": "Aucun fichier choisi",
-      "note": "Note : l'import ne fonctionne actuellement que pour les ami⋅es et les groupes, mais pas pour les transactions. On y travaille !"
+      "note": "Note : l'import ne fonctionne actuellement que pour les ami⋅es et les groupes, mais pas pour les transactions. On y travaille !"
     },
     "logout": "Déconnexion",
     "messages": {
@@ -116,7 +116,7 @@
     "send_magic_link": "Envoyer le lien de connexion",
     "sending": "Envoi en cours…",
     "setup_instructions": "instructions de configuration Docker",
-    "trouble_logging_in": "Un problème pour te connecter ? Contact"
+    "trouble_logging_in": "Un problème pour te connecter ? Contact"
   },
   "balances": {
     "default_split": {
@@ -126,6 +126,24 @@
     },
     "user_preferences": {
       "title": "Préférences"
+    },
+    "rename": {
+      "title": "Rename",
+      "placeholder": "Name",
+      "save": "Save",
+      "success": "Name updated",
+      "error": "Failed to rename user"
+    },
+    "merge": {
+      "title": "Merge with registered account",
+      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
+      "email_placeholder": "Email of registered user",
+      "button": "Merge accounts",
+      "confirm_title": "Are you sure?",
+      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
+      "confirm_button": "Yes, merge accounts",
+      "success": "Accounts successfully merged",
+      "error": "Merge failed"
     }
   },
   "bank_transactions": {
@@ -164,7 +182,7 @@
     "invalid_cron_expression": "Expression cron invalide",
     "invalid_currency_code": "Le code de devise {{code}} est invalide",
     "language_change_failed": "Le changement de langage a échoué",
-    "less_than": "Le poids du fichier doit être inférieur à {{size}}Mo",
+    "less_than": "Le poids du fichier doit être inférieur à {{size}}Mo",
     "name_required": "Un nom est requis",
     "no_providers": "Une erreur est survenue lors du chargement des fournisseurs d'authentification. Vérifiez les logs du backend sur le serveur.",
     "notification_not_supported": "Notification non supportée",
@@ -175,7 +193,7 @@
     "request_error": "Une erreur est survenue lors du chargement des notifications",
     "saving_expense": "Un erreur est survenue lors de l'enregistrement de la dépense",
     "setting_update_failed": "Une erreur est survenue lors de la mise à jour des paramètres",
-    "signin_error": "Une erreur est survenue lors de la connexion : ",
+    "signin_error": "Une erreur est survenue lors de la connexion : ",
     "signup_disabled": "L'inscription de nouveaux comptes est désactivée sur cette instance",
     "something_went_wrong": "Une erreur est survenue",
     "subscribe_error": "Une erreur est survenue lors de l'abonnement aux notifications",
@@ -193,17 +211,17 @@
       "pick_a_date": "Choisir une date",
       "select_user_or_group": {
         "add_to_split_pro": "Inviter sur SplitPro",
-        "note": "Note : l'envoi de mails d'invitation est désactivé pour le moment pour éviter le spam",
+        "note": "Note : l'envoi de mails d'invitation est désactivé pour le moment pour éviter le spam",
         "only_one_group_time": "Une dépense ne peut concerner qu'un seul groupe à la fois",
         "send_invite": "Envoyer une invitation",
-        "warning": "Attention : N'envoyez pas d'invitation à des adresses mail non enregistrées ici, utilisez plutôt la fonction « inviter sur SplitPro ». Votre compte sera bloqué si vous utilisez mal cette fonctionnalité"
+        "warning": "Attention : N'envoyez pas d'invitation à des adresses mail non enregistrées ici, utilisez plutôt la fonction « inviter sur SplitPro ». Votre compte sera bloqué si vous utilisez mal cette fonctionnalité"
       },
       "split_type_section": {
         "split_equally": "partagé à parts égales",
         "split_unequally": "partagé inégalement",
         "types": {
           "adjustment": {
-            "remaining_to_split_equally": "Montant partagé à parts égales :",
+            "remaining_to_split_equally": "Montant partagé à parts égales :",
             "title": "Ajustement manuel"
           },
           "equal": {
@@ -215,13 +233,13 @@
             "title": "Montants"
           },
           "percentage": {
-            "remaining": "Pourcentage restant :",
+            "remaining": "Pourcentage restant :",
             "title": "Pourcentages"
           },
           "share": {
             "shares": "Part(s)",
             "title": "Par parts",
-            "total_shares": "Nombre total de parts :"
+            "total_shares": "Nombre total de parts :"
           }
         }
       },
@@ -234,7 +252,7 @@
       "user_input": {
         "add_more_friends": "Rechercher des ami⋅es, des groupes ou ajouter une adresse mail",
         "cannot_change_group": "Impossible de changer de groupe en cours d'édition",
-        "remove_group": "Presse « Retour Arrière » pour supprimer le groupe",
+        "remove_group": "Presse « Retour Arrière » pour supprimer le groupe",
         "search_friends": "Rechercher des ami⋅es, des groupes ou ajouter une adresse mail"
       }
     },
@@ -248,7 +266,7 @@
     "clear": "Effacer",
     "delete_expense_details": {
       "text": "Cette action n'est pas réversible. Ceci supprimera définitivement ta dépense.",
-      "title": "Confirmer la suppression définitive ?"
+      "title": "Confirmer la suppression définitive ?"
     },
     "multiple_transactions": {
       "add_all": "Tout ajouter",
@@ -275,7 +293,7 @@
       "archive_group_details": {
         "can_archive": "Ce groupe sera archivé et caché de ta liste de groupes principale. Tu pourras toujours y accéder ultérieurement si besoin.",
         "cant_archive": "Impossible d'archiver le groupe tant qu'il y a des soldes en cours. Tous les soldes doivent être préalablement réglés.",
-        "title": "Es-tu sûr⋅e de vouloir archiver ce groupe ?"
+        "title": "Es-tu sûr⋅e de vouloir archiver ce groupe ?"
       },
       "archived": "Archivé",
       "configure_default_split": "Choisir la méthode de répartition par défaut",
@@ -285,26 +303,26 @@
       "delete_group_details": {
         "can_delete": "Cette action est irréversible",
         "cant_delete": "Impossible de supprimer le groupe tant que tous les soldes ne sont pas réglés",
-        "title": "Confirmer la suppression définitive du groupe ?"
+        "title": "Confirmer la suppression définitive du groupe ?"
       },
       "edit_group": "Éditer le groupe",
-      "group_created": "Création du groupe :",
+      "group_created": "Création du groupe :",
       "leave_group": "Quitter ce groupe",
       "leave_group_details": {
         "can_leave": "Cette action est irréversible",
         "cant_leave": "Impossible de quitter le groupe tant que tes soldes avec ses membres ne sont pas réglés",
-        "title": "Es-tu sûr⋅e de quitter ce groupe ?"
+        "title": "Es-tu sûr⋅e de quitter ce groupe ?"
       },
       "members": "Membres",
       "recalculate_balances": "Recalculer les soldes",
       "recalculate_balances_details": {
         "description": "Si les soldes ne correspondent pas aux dépenses, il est possible de les recalculer. Cela peut prendre un moment s'il y a beaucoup de dépenses. Les soldes en dehors de ce groupe ne seront pas affectés.",
-        "title": "Confirmer le re-calcul des soldes  ?"
+        "title": "Confirmer le re-calcul des soldes  ?"
       },
       "remove_member_details": {
         "can_remove": "Tu es sur le point de retirer ce⋅tte membre du groupe",
         "cant_remove": "Impossible de supprimer un⋅e membre tant que leur solde en cours n'est pas réglé",
-        "title": "Confirmer le retrait de ce⋅tte membre du groupe ?"
+        "title": "Confirmer le retrait de ce⋅tte membre du groupe ?"
       },
       "simplify_debts": "Simplifier les dettes",
       "title": "Informations du groupe"
@@ -327,11 +345,11 @@
       "add_members": "Ajouter des membres",
       "add_members_details": {
         "add_to_split_pro": "Ajouter à ce groupe",
-        "note": "Note : l'envoi d'invitation par mail est désactivé",
+        "note": "Note : l'envoi d'invitation par mail est désactivé",
         "placeholder": "Entrer un pseudo ou un mail",
         "send_invite": "Envoyer une invitation",
         "title": "Ajouter des membres",
-        "warning": "Attention : N'envoyez pas d'invitation à des adresses mail non enregistrées ici, utilisez plutôt la fonction « inviter sur SplitPro ». Votre compte sera bloqué si vous utilisez mal cette fonctionnalité"
+        "warning": "Attention : N'envoyez pas d'invitation à des adresses mail non enregistrées ici, utilisez plutôt la fonction « inviter sur SplitPro ». Votre compte sera bloqué si vous utilisez mal cette fonctionnalité"
       },
       "invite_link": "Lien d'invitation",
       "no_members": "Aucun⋅e membre dans ce groupe pour l'instant."
@@ -350,7 +368,7 @@
   "meta": {
     "application_name": "SplitPro",
     "description": "Partagez gratuitement vos dépenses entre ami⋅es",
-    "title": "SplitPro : partagez gratuitement vos dépenses entre ami⋅es"
+    "title": "SplitPro : partagez gratuitement vos dépenses entre ami⋅es"
   },
   "navigation": {
     "account": "Compte",
@@ -362,7 +380,7 @@
     "recurring": "Récurrences"
   },
   "recurrence": {
-    "cron_expression": "Expression « cron »",
+    "cron_expression": "Expression « cron »",
     "days_of_month": "Jours dans le mois",
     "days_of_week": "Jours de la semaine",
     "delete_description": "Ceci arrêtera la création de futures dépenses sur ce modèle récurrent, mais les dépenses déjà créées seront conservées.",
@@ -439,7 +457,7 @@
     "settle_up_name": "Régler une dette",
     "settled_up": "À l'équilibre",
     "settlement": "Règlement de dette",
-    "share_text": "Jette un œil à SplitPro : c'est une alternative open source et gratuite à Splitwise",
+    "share_text": "Jette un œil à SplitPro : c'est une alternative open source et gratuite à Splitwise",
     "show_all_currencies": "Montrer toutes les devises",
     "today": "Aujourd'hui",
     "total_balance": "Solde global"

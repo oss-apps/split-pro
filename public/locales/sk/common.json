@@ -109,22 +109,22 @@
   },
   "balances": {
     "rename": {
-      "title": "Rename",
-      "placeholder": "Name",
-      "save": "Save",
-      "success": "Name updated",
-      "error": "Failed to rename user"
+      "title": "Premenovať",
+      "placeholder": "Meno",
+      "save": "Uložiť",
+      "success": "Meno aktualizované",
+      "error": "Premenovanie zlyhalo"
     },
     "merge": {
-      "title": "Merge with registered account",
-      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
-      "email_placeholder": "Email of registered user",
-      "button": "Merge accounts",
-      "confirm_title": "Are you sure?",
-      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
-      "confirm_button": "Yes, merge accounts",
-      "success": "Accounts successfully merged",
-      "error": "Merge failed"
+      "title": "Zlúčiť s registrovaným účtom",
+      "description": "Ak sa táto osoba medzitým zaregistrovala, zadajte jej email pre prenos všetkých výdavkov na jej účet.",
+      "email_placeholder": "Email registrovaného používateľa",
+      "button": "Zlúčiť účty",
+      "confirm_title": "Ste si istý?",
+      "confirm_description": "Tým sa zlúči {{name}} s registrovaným účtom {{email}}. Všetky výdavky a členstvá v skupinách budú prenesené. Túto akciu nie je možné vrátiť späť.",
+      "confirm_button": "Áno, zlúčiť účty",
+      "success": "Účty boli úspešne zlúčené",
+      "error": "Zlúčenie zlyhalo"
     }
   },
   "bank_transactions": {

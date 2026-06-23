@@ -415,22 +415,22 @@
   },
   "balances": {
     "rename": {
-      "title": "Rename",
-      "placeholder": "Name",
-      "save": "Save",
-      "success": "Name updated",
-      "error": "Failed to rename user"
+      "title": "שינוי שם",
+      "placeholder": "שם",
+      "save": "שמור",
+      "success": "השם עודכן",
+      "error": "שינוי השם נכשל"
     },
     "merge": {
-      "title": "Merge with registered account",
-      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
-      "email_placeholder": "Email of registered user",
-      "button": "Merge accounts",
-      "confirm_title": "Are you sure?",
-      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
-      "confirm_button": "Yes, merge accounts",
-      "success": "Accounts successfully merged",
-      "error": "Merge failed"
+      "title": "מיזוג עם חשבון רשום",
+      "description": "אם אדם זה נרשם מאז, הזן את האימייל שלו להעברת כל ההוצאות לחשבונו.",
+      "email_placeholder": "אימייל של משתמש רשום",
+      "button": "מיזוג חשבונות",
+      "confirm_title": "האם אתה בטוח?",
+      "confirm_description": "פעולה זו תמזג את {{name}} עם החשבון הרשום {{email}}. כל ההוצאות וחברויות הקבוצות יועברו. לא ניתן לבטל פעולה זו.",
+      "confirm_button": "כן, מזג חשבונות",
+      "success": "החשבונות מוזגו בהצלחה",
+      "error": "המיזוג נכשל"
     }
   }
 }

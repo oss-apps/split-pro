@@ -128,22 +128,22 @@
       "title": "Preferências"
     },
     "rename": {
-      "title": "Rename",
-      "placeholder": "Name",
-      "save": "Save",
-      "success": "Name updated",
-      "error": "Failed to rename user"
+      "title": "Renomear",
+      "placeholder": "Nome",
+      "save": "Salvar",
+      "success": "Nome atualizado",
+      "error": "Falha ao renomear usuário"
     },
     "merge": {
-      "title": "Merge with registered account",
-      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
-      "email_placeholder": "Email of registered user",
-      "button": "Merge accounts",
-      "confirm_title": "Are you sure?",
-      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
-      "confirm_button": "Yes, merge accounts",
-      "success": "Accounts successfully merged",
-      "error": "Merge failed"
+      "title": "Mesclar com conta registrada",
+      "description": "Se esta pessoa se registrou, insira o email dela para transferir todas as despesas para a conta.",
+      "email_placeholder": "Email do usuário registrado",
+      "button": "Mesclar contas",
+      "confirm_title": "Tem certeza?",
+      "confirm_description": "Isso mesclará {{name}} com a conta registrada {{email}}. Todas as despesas e participações em grupos serão transferidas. Esta ação não pode ser desfeita.",
+      "confirm_button": "Sim, mesclar contas",
+      "success": "Contas mescladas com sucesso",
+      "error": "Falha ao mesclar"
     }
   },
   "bank_transactions": {

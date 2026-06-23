@@ -420,22 +420,22 @@
   },
   "balances": {
     "rename": {
-      "title": "Rename",
-      "placeholder": "Name",
-      "save": "Save",
-      "success": "Name updated",
-      "error": "Failed to rename user"
+      "title": "Renomear",
+      "placeholder": "Nome",
+      "save": "Guardar",
+      "success": "Nome atualizado",
+      "error": "Falha ao renomear utilizador"
     },
     "merge": {
-      "title": "Merge with registered account",
-      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
-      "email_placeholder": "Email of registered user",
-      "button": "Merge accounts",
-      "confirm_title": "Are you sure?",
-      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
-      "confirm_button": "Yes, merge accounts",
-      "success": "Accounts successfully merged",
-      "error": "Merge failed"
+      "title": "Fundir com conta registada",
+      "description": "Se esta pessoa entretanto se registou, insere o email dela para transferir todas as despesas para a conta.",
+      "email_placeholder": "Email do utilizador registado",
+      "button": "Fundir contas",
+      "confirm_title": "Tens a certeza?",
+      "confirm_description": "Isto irá fundir {{name}} com a conta registada {{email}}. Todas as despesas e participações em grupos serão transferidas. Esta ação não pode ser desfeita.",
+      "confirm_button": "Sim, fundir contas",
+      "success": "Contas fundidas com sucesso",
+      "error": "Falha ao fundir"
     }
   }
 }

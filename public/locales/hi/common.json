@@ -415,22 +415,22 @@
   },
   "balances": {
     "rename": {
-      "title": "Rename",
-      "placeholder": "Name",
-      "save": "Save",
-      "success": "Name updated",
-      "error": "Failed to rename user"
+      "title": "नाम बदलें",
+      "placeholder": "नाम",
+      "save": "सहेजें",
+      "success": "नाम अपडेट किया गया",
+      "error": "उपयोगकर्ता का नाम बदलने में विफल"
     },
     "merge": {
-      "title": "Merge with registered account",
-      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
-      "email_placeholder": "Email of registered user",
-      "button": "Merge accounts",
-      "confirm_title": "Are you sure?",
-      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
-      "confirm_button": "Yes, merge accounts",
-      "success": "Accounts successfully merged",
-      "error": "Merge failed"
+      "title": "पंजीकृत खाते के साथ मर्ज करें",
+      "description": "अगर यह व्यक्ति तब से पंजीकृत हो गया है, तो उनके खाते में सभी खर्चे स्थानांतरित करने के लिए उनका ईमेल दर्ज करें।",
+      "email_placeholder": "पंजीकृत उपयोगकर्ता का ईमेल",
+      "button": "खाते मर्ज करें",
+      "confirm_title": "क्या आप सुनिश्चित हैं?",
+      "confirm_description": "यह {{name}} को पंजीकृत खाते {{email}} के साथ मर्ज कर देगा। सभी खर्चे और समूह सदस्यताएं स्थानांतरित की जाएंगी। यह क्रिया पूर्ववत नहीं की जा सकती।",
+      "confirm_button": "हाँ, खाते मर्ज करें",
+      "success": "खाते सफलतापूर्वक मर्ज किए गए",
+      "error": "मर्ज विफल"
     }
   }
 }

@@ -128,22 +128,22 @@
       "title": "Voorkeuren"
     },
     "rename": {
-      "title": "Rename",
-      "placeholder": "Name",
-      "save": "Save",
-      "success": "Name updated",
-      "error": "Failed to rename user"
+      "title": "Hernoemen",
+      "placeholder": "Naam",
+      "save": "Opslaan",
+      "success": "Naam bijgewerkt",
+      "error": "Hernoemen mislukt"
     },
     "merge": {
-      "title": "Merge with registered account",
-      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
-      "email_placeholder": "Email of registered user",
-      "button": "Merge accounts",
-      "confirm_title": "Are you sure?",
-      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
-      "confirm_button": "Yes, merge accounts",
-      "success": "Accounts successfully merged",
-      "error": "Merge failed"
+      "title": "Samenvoegen met geregistreerd account",
+      "description": "Als deze persoon zich inmiddels heeft geregistreerd, voer dan hun e-mail in om alle uitgaven naar hun account over te zetten.",
+      "email_placeholder": "E-mail van geregistreerde gebruiker",
+      "button": "Accounts samenvoegen",
+      "confirm_title": "Weet je het zeker?",
+      "confirm_description": "Dit zal {{name}} samenvoegen met het geregistreerde account {{email}}. Alle uitgaven en groepslidmaatschappen worden overgedragen. Deze actie kan niet ongedaan worden gemaakt.",
+      "confirm_button": "Ja, accounts samenvoegen",
+      "success": "Accounts succesvol samengevoegd",
+      "error": "Samenvoegen mislukt"
     }
   },
   "bank_transactions": {

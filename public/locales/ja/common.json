@@ -16,22 +16,22 @@
   },
   "balances": {
     "rename": {
-      "title": "Rename",
-      "placeholder": "Name",
-      "save": "Save",
-      "success": "Name updated",
-      "error": "Failed to rename user"
+      "title": "名前を変更",
+      "placeholder": "名前",
+      "save": "保存",
+      "success": "名前を更新しました",
+      "error": "名前の変更に失敗しました"
     },
     "merge": {
-      "title": "Merge with registered account",
-      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
-      "email_placeholder": "Email of registered user",
-      "button": "Merge accounts",
-      "confirm_title": "Are you sure?",
-      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
-      "confirm_button": "Yes, merge accounts",
-      "success": "Accounts successfully merged",
-      "error": "Merge failed"
+      "title": "登録済みアカウントとマージ",
+      "description": "この人がその後登録した場合、メールアドレスを入力してすべての支出をそのアカウントに転送してください。",
+      "email_placeholder": "登録済みユーザーのメールアドレス",
+      "button": "アカウントをマージ",
+      "confirm_title": "よろしいですか？",
+      "confirm_description": "{{name}}を登録済みアカウント{{email}}とマージします。すべての支出とグループのメンバーシップが転送されます。この操作は元に戻せません。",
+      "confirm_button": "はい、アカウントをマージ",
+      "success": "アカウントが正常にマージされました",
+      "error": "マージに失敗しました"
     }
   }
 }

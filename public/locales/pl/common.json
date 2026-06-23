@@ -128,22 +128,22 @@
       "title": "Preferencje"
     },
     "rename": {
-      "title": "Rename",
-      "placeholder": "Name",
-      "save": "Save",
-      "success": "Name updated",
-      "error": "Failed to rename user"
+      "title": "Zmień nazwę",
+      "placeholder": "Nazwa",
+      "save": "Zapisz",
+      "success": "Nazwa zaktualizowana",
+      "error": "Nie udało się zmienić nazwy"
     },
     "merge": {
-      "title": "Merge with registered account",
-      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
-      "email_placeholder": "Email of registered user",
-      "button": "Merge accounts",
-      "confirm_title": "Are you sure?",
-      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
-      "confirm_button": "Yes, merge accounts",
-      "success": "Accounts successfully merged",
-      "error": "Merge failed"
+      "title": "Połącz z zarejestrowanym kontem",
+      "description": "Jeśli ta osoba zarejestrowała się, podaj jej email, aby przenieść wszystkie wydatki na jej konto.",
+      "email_placeholder": "Email zarejestrowanego użytkownika",
+      "button": "Połącz konta",
+      "confirm_title": "Czy jesteś pewny?",
+      "confirm_description": "Spowoduje to połączenie {{name}} z zarejestrowanym kontem {{email}}. Wszystkie wydatki i członkostwa w grupach zostaną przeniesione. Tej czynności nie można cofnąć.",
+      "confirm_button": "Tak, połącz konta",
+      "success": "Konta zostały pomyślnie połączone",
+      "error": "Łączenie nie powiodło się"
     }
   },
   "bank_transactions": {

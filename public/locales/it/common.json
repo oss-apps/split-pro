@@ -421,22 +421,22 @@
   },
   "balances": {
     "rename": {
-      "title": "Rename",
-      "placeholder": "Name",
-      "save": "Save",
-      "success": "Name updated",
-      "error": "Failed to rename user"
+      "title": "Rinomina",
+      "placeholder": "Nome",
+      "save": "Salva",
+      "success": "Nome aggiornato",
+      "error": "Errore durante la rinomina"
     },
     "merge": {
-      "title": "Merge with registered account",
-      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
-      "email_placeholder": "Email of registered user",
-      "button": "Merge accounts",
-      "confirm_title": "Are you sure?",
-      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
-      "confirm_button": "Yes, merge accounts",
-      "success": "Accounts successfully merged",
-      "error": "Merge failed"
+      "title": "Unisci con account registrato",
+      "description": "Se questa persona si è nel frattempo registrata, inserisci la sua email per trasferire tutte le spese al suo account.",
+      "email_placeholder": "Email dell'utente registrato",
+      "button": "Unisci account",
+      "confirm_title": "Sei sicuro?",
+      "confirm_description": "Questo unirà {{name}} con l'account registrato {{email}}. Tutte le spese e le appartenenze ai gruppi saranno trasferite. Questa azione non può essere annullata.",
+      "confirm_button": "Sì, unisci account",
+      "success": "Account uniti con successo",
+      "error": "Unione fallita"
     }
   }
 }

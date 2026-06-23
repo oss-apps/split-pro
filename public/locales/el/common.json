@@ -125,22 +125,22 @@
   },
   "balances": {
     "rename": {
-      "title": "Rename",
-      "placeholder": "Name",
-      "save": "Save",
-      "success": "Name updated",
-      "error": "Failed to rename user"
+      "title": "Μετονομασία",
+      "placeholder": "Όνομα",
+      "save": "Αποθήκευση",
+      "success": "Το όνομα ενημερώθηκε",
+      "error": "Αποτυχία μετονομασίας"
     },
     "merge": {
-      "title": "Merge with registered account",
-      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
-      "email_placeholder": "Email of registered user",
-      "button": "Merge accounts",
-      "confirm_title": "Are you sure?",
-      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
-      "confirm_button": "Yes, merge accounts",
-      "success": "Accounts successfully merged",
-      "error": "Merge failed"
+      "title": "Συγχώνευση με εγγεγραμμένο λογαριασμό",
+      "description": "Εάν αυτό το άτομο έχει εγγραφεί εν τω μεταξύ, εισαγάγετε το email του για να μεταφερθούν όλα τα έξοδα στον λογαριασμό του.",
+      "email_placeholder": "Email εγγεγραμμένου χρήστη",
+      "button": "Συγχώνευση λογαριασμών",
+      "confirm_title": "Είστε σίγουροι;",
+      "confirm_description": "Αυτό θα συγχωνεύσει τον {{name}} με τον εγγεγραμμένο λογαριασμό {{email}}. Όλα τα έξοδα και οι συμμετοχές σε ομάδες θα μεταφερθούν. Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.",
+      "confirm_button": "Ναι, συγχώνευση λογαριασμών",
+      "success": "Οι λογαριασμοί συγχωνεύτηκαν επιτυχώς",
+      "error": "Η συγχώνευση απέτυχε"
     }
   }
 }

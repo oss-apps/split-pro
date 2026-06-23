@@ -108,22 +108,22 @@
   },
   "balances": {
     "rename": {
-      "title": "Rename",
-      "placeholder": "Name",
-      "save": "Save",
-      "success": "Name updated",
-      "error": "Failed to rename user"
+      "title": "Переименовать",
+      "placeholder": "Имя",
+      "save": "Сохранить",
+      "success": "Имя обновлено",
+      "error": "Ошибка при переименовании"
     },
     "merge": {
-      "title": "Merge with registered account",
-      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
-      "email_placeholder": "Email of registered user",
-      "button": "Merge accounts",
-      "confirm_title": "Are you sure?",
-      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
-      "confirm_button": "Yes, merge accounts",
-      "success": "Accounts successfully merged",
-      "error": "Merge failed"
+      "title": "Объединить с зарегистрированным аккаунтом",
+      "description": "Если этот человек зарегистрировался, введите его email для переноса всех расходов на его аккаунт.",
+      "email_placeholder": "Email зарегистрированного пользователя",
+      "button": "Объединить аккаунты",
+      "confirm_title": "Вы уверены?",
+      "confirm_description": "Это объединит {{name}} с зарегистрированным аккаунтом {{email}}. Все расходы и членства в группах будут перенесены. Это действие нельзя отменить.",
+      "confirm_button": "Да, объединить аккаунты",
+      "success": "Аккаунты успешно объединены",
+      "error": "Ошибка объединения"
     }
   },
   "currency_conversion": {

@@ -126,22 +126,22 @@
       "title": "प्राथमिकताहरू"
     },
     "rename": {
-      "title": "Rename",
-      "placeholder": "Name",
-      "save": "Save",
-      "success": "Name updated",
-      "error": "Failed to rename user"
+      "title": "नाम परिवर्तन",
+      "placeholder": "नाम",
+      "save": "सुरक्षित गर्नुहोस्",
+      "success": "नाम अद्यावधिक भयो",
+      "error": "प्रयोगकर्ताको नाम परिवर्तन गर्न असफल"
     },
     "merge": {
-      "title": "Merge with registered account",
-      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
-      "email_placeholder": "Email of registered user",
-      "button": "Merge accounts",
-      "confirm_title": "Are you sure?",
-      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
-      "confirm_button": "Yes, merge accounts",
-      "success": "Accounts successfully merged",
-      "error": "Merge failed"
+      "title": "दर्ता गरिएको खातासँग मर्ज गर्नुहोस्",
+      "description": "यदि यो व्यक्ति त्यसपछि दर्ता भएको छ भने, सबै खर्चहरू उनको खातामा स्थानान्तरण गर्न उनको इमेल प्रविष्ट गर्नुहोस्।",
+      "email_placeholder": "दर्ता गरिएको प्रयोगकर्ताको इमेल",
+      "button": "खाताहरू मर्ज गर्नुहोस्",
+      "confirm_title": "के तपाईं निश्चित हुनुहुन्छ?",
+      "confirm_description": "यसले {{name}} लाई दर्ता गरिएको खाता {{email}} सँग मर्ज गर्नेछ। सबै खर्चहरू र समूह सदस्यताहरू स्थानान्तरण हुनेछन्। यो कार्य पूर्ववत गर्न सकिँदैन।",
+      "confirm_button": "हो, खाताहरू मर्ज गर्नुहोस्",
+      "success": "खाताहरू सफलतापूर्वक मर्ज गरियो",
+      "error": "मर्ज असफल"
     }
   },
   "bank_transactions": {

@@ -128,22 +128,22 @@
       "title": "Egenskaper"
     },
     "rename": {
-      "title": "Rename",
-      "placeholder": "Name",
-      "save": "Save",
-      "success": "Name updated",
-      "error": "Failed to rename user"
+      "title": "Byt namn",
+      "placeholder": "Namn",
+      "save": "Spara",
+      "success": "Namn uppdaterat",
+      "error": "Det gick inte att byta namn"
     },
     "merge": {
-      "title": "Merge with registered account",
-      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
-      "email_placeholder": "Email of registered user",
-      "button": "Merge accounts",
-      "confirm_title": "Are you sure?",
-      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
-      "confirm_button": "Yes, merge accounts",
-      "success": "Accounts successfully merged",
-      "error": "Merge failed"
+      "title": "Slå ihop med registrerat konto",
+      "description": "Om den här personen har registrerat sig, ange deras e-post för att överföra alla utgifter till deras konto.",
+      "email_placeholder": "E-post till registrerad användare",
+      "button": "Slå ihop konton",
+      "confirm_title": "Är du säker?",
+      "confirm_description": "Detta kommer att slå ihop {{name}} med det registrerade kontot {{email}}. Alla utgifter och gruppmedlemskap kommer att överföras. Denna åtgärd kan inte ångras.",
+      "confirm_button": "Ja, slå ihop konton",
+      "success": "Konton har slagits ihop",
+      "error": "Sammanslagning misslyckades"
     }
   },
   "bank_transactions": {

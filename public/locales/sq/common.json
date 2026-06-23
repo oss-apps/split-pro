@@ -10,22 +10,22 @@
   },
   "balances": {
     "rename": {
-      "title": "Rename",
-      "placeholder": "Name",
-      "save": "Save",
-      "success": "Name updated",
-      "error": "Failed to rename user"
+      "title": "Riemërtim",
+      "placeholder": "Emri",
+      "save": "Ruaj",
+      "success": "Emri u përditësua",
+      "error": "Riemërtimi dështoi"
     },
     "merge": {
-      "title": "Merge with registered account",
-      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
-      "email_placeholder": "Email of registered user",
-      "button": "Merge accounts",
-      "confirm_title": "Are you sure?",
-      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
-      "confirm_button": "Yes, merge accounts",
-      "success": "Accounts successfully merged",
-      "error": "Merge failed"
+      "title": "Bashko me llogarinë e regjistruar",
+      "description": "Nëse kjo person është regjistruar që atëherë, shkruani emailin e tyre për të transferuar të gjitha shpenzimet në llogarinë e tyre.",
+      "email_placeholder": "Email i përdoruesit të regjistruar",
+      "button": "Bashko llogaritë",
+      "confirm_title": "Jeni i sigurt?",
+      "confirm_description": "Kjo do të bashkojë {{name}} me llogarinë e regjistruar {{email}}. Të gjitha shpenzimet dhe anëtarësimet në grupe do të transferohen. Ky veprim nuk mund të zhbëhet.",
+      "confirm_button": "Po, bashko llogaritë",
+      "success": "Llogaritë u bashkuan me sukses",
+      "error": "Bashkimi dështoi"
     }
   }
 }

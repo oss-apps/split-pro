@@ -583,7 +583,7 @@ export async function importSplitProData(
 // Converts a numeric Splitwise expense ID to a deterministic UUID-shaped string
 function splitwiseIdToUuid(swId: number): string {
   const hex = swId.toString(16).padStart(12, '0');
-  return `sw000000-0000-4000-8000-${hex.padStart(12, '0')}`;
+  return `00000000-0000-4000-8000-${hex}`;
 }
 
 type SplitwiseFriend = {

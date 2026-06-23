@@ -479,10 +479,20 @@ export async function importSplitProData(
       }
     }
 
+    // For local users (no email), deduplicate by name to avoid duplicates on repeated imports
+    const localName = exportedUser.name ?? 'Unknown';
+    const existingLocal = await db.user.findFirst({
+      where: { name: localName, email: null, accounts: { none: {} } },
+    });
+    if (existingLocal) {
+      userIdMap.set(exportedUser.id, existingLocal.id);
+      continue;
+    }
+
     // Create as local (unregistered) user
     const newUser = await db.user.create({
       data: {
-        name: exportedUser.name ?? exportedUser.email ?? 'Unknown',
+        name: localName,
         email: null,
         emailVerified: null,
       },

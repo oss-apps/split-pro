@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth/next';
 import { type File, formidable } from 'formidable';
 import { authOptions } from '~/server/auth';
 import { importFromSplitwisePro } from '~/server/api/services/splitService';
+import { setupSSE } from '~/server/sseHelper';
 
 export const config = {
   api: { bodyParser: false, responseLimit: false },
@@ -19,23 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache, no-transform');
-  res.setHeader('Connection', 'keep-alive');
-  res.setHeader('X-Accel-Buffering', 'no');
-  res.setHeader('Content-Encoding', 'none');
-  res.flushHeaders();
-
-  const flush = () => {
-    if ('flush' in res && typeof res.flush === 'function') {
-      (res as unknown as { flush: () => void }).flush();
-    }
-  };
-
-  const send = (type: string, payload: object) => {
-    res.write(`data: ${JSON.stringify({ type, ...payload })}\n\n`);
-    flush();
-  };
+  const { send, end } = setupSSE(res);
 
   let uploadedFile: File | undefined;
   try {
@@ -45,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (!uploadedFile) {
       send('error', { message: 'No file provided' });
-      return res.end();
+      return end();
     }
 
     const content = await fs.readFile(uploadedFile.filepath, 'utf-8');
@@ -53,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (!data.user || !data.expenses || !data.friends) {
       send('error', { message: 'Invalid Splitwise backup file' });
-      return res.end();
+      return end();
     }
 
     const result = await importFromSplitwisePro(
@@ -69,6 +54,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (uploadedFile) {
       await fs.unlink(uploadedFile.filepath).catch(() => null);
     }
-    res.end();
+    end();
   }
 }

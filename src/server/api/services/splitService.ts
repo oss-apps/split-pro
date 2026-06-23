@@ -330,26 +330,8 @@ export async function getCompleteFriendsDetails(userId: number) {
     },
   });
 
-  const friends = viewBalances.reduce(
-    (acc, balance) => {
-      const { friendId } = balance;
-      acc[friendId] ??= {
-        balances: [],
-        id: friendId,
-        email: balance.friend.email,
-        name: balance.friend.name,
-      };
-
-      if (0n !== balance.amount) {
-        acc[friendId]?.balances.push({
-          currency: balance.currency,
-          amount: balance.amount,
-        });
-      }
-
-      return acc;
-    },
-    {} as Record<
+  const friends = viewBalances.reduce<
+    Record<
       number,
       {
         id: number;
@@ -357,8 +339,25 @@ export async function getCompleteFriendsDetails(userId: number) {
         name?: string | null;
         balances: { currency: string; amount: bigint }[];
       }
-    >,
-  );
+    >
+  >((acc, balance) => {
+    const { friendId } = balance;
+    acc[friendId] ??= {
+      balances: [],
+      id: friendId,
+      email: balance.friend.email,
+      name: balance.friend.name,
+    };
+
+    if (0n !== balance.amount) {
+      acc[friendId]?.balances.push({
+        currency: balance.currency,
+        amount: balance.amount,
+      });
+    }
+
+    return acc;
+  }, {});
 
   return friends;
 }
@@ -538,17 +537,24 @@ export async function importSplitProData(
       const existingUserIds = new Set(existing.expenseParticipants.map((p) => p.userId));
       const missingParticipants = exportedExpense.participants
         .map((p) => ({ userId: userIdMap.get(p.userId), amount: BigInt(p.amount) }))
-        .filter((p): p is { userId: number; amount: bigint } => p.userId !== undefined && !existingUserIds.has(p.userId));
+        .filter(
+          (p): p is { userId: number; amount: bigint } =>
+            p.userId !== undefined && !existingUserIds.has(p.userId),
+        );
 
       if (missingParticipants.length > 0) {
-        await db.expenseParticipant.createMany({ data: missingParticipants.map((p) => ({ ...p, expenseId: exportedExpense.id })) });
+        await db.expenseParticipant.createMany({
+          data: missingParticipants.map((p) => ({ ...p, expenseId: exportedExpense.id })),
+        });
       }
       continue;
     }
 
     const paidByUserId = userIdMap.get(exportedExpense.paidByUserId);
     const addedByUserId = userIdMap.get(exportedExpense.addedByUserId);
-    if (!paidByUserId || !addedByUserId) continue;
+    if (!paidByUserId || !addedByUserId) {
+      continue;
+    }
 
     const groupId = exportedExpense.groupId ? groupIdMap.get(exportedExpense.groupId) : null;
 
@@ -586,14 +592,14 @@ function splitwiseIdToUuid(swId: number): string {
   return `00000000-0000-4000-8000-${hex}`;
 }
 
-type SplitwiseFriend = {
+interface SplitwiseFriend {
   id: number;
   first_name: string;
   last_name?: string | null;
   email?: string | null;
-};
+}
 
-type SplitwiseExpense = {
+interface SplitwiseExpense {
   id: number;
   description: string;
   cost: string;
@@ -604,14 +610,18 @@ type SplitwiseExpense = {
   deleted_at: string | null;
   category?: { name: string } | null;
   repayments: { from: number; to: number; amount: string }[];
-};
+}
 
-type SplitwiseProBackup = {
+interface SplitwiseProBackup {
   user: { id: number; email: string; first_name: string; last_name?: string };
   friends: SplitwiseFriend[];
-  groups: { id: number; name: string; members: { id: number; first_name?: string; last_name?: string; email?: string | null }[] }[];
+  groups: {
+    id: number;
+    name: string;
+    members: { id: number; first_name?: string; last_name?: string; email?: string | null }[];
+  }[];
   expenses: SplitwiseExpense[];
-};
+}
 
 export async function importFromSplitwisePro(currentUserId: number, data: SplitwiseProBackup) {
   // Build Splitwise userId → SplitPro userId map
@@ -620,15 +630,25 @@ export async function importFromSplitwisePro(currentUserId: number, data: Splitw
 
   // Helper: resolve or create a local user by name
   async function resolveLocalUser(id: number, name: string, email?: string | null) {
-    if (userIdMap.has(id)) return;
+    if (userIdMap.has(id)) {
+      return;
+    }
     if (email) {
       const existing = await db.user.findUnique({ where: { email } });
-      if (existing) { userIdMap.set(id, existing.id); return; }
+      if (existing) {
+        userIdMap.set(id, existing.id);
+        return;
+      }
       const newUser = await db.user.create({ data: { name, email } });
       userIdMap.set(id, newUser.id);
     } else {
-      const existing = await db.user.findFirst({ where: { name, email: null, accounts: { none: {} } } });
-      if (existing) { userIdMap.set(id, existing.id); return; }
+      const existing = await db.user.findFirst({
+        where: { name, email: null, accounts: { none: {} } },
+      });
+      if (existing) {
+        userIdMap.set(id, existing.id);
+        return;
+      }
       const newUser = await db.user.create({ data: { name, email: null } });
       userIdMap.set(id, newUser.id);
     }
@@ -642,7 +662,9 @@ export async function importFromSplitwisePro(currentUserId: number, data: Splitw
   // Also register all group members so no expense participant is unknown
   for (const swGroup of data.groups) {
     for (const m of swGroup.members) {
-      if (userIdMap.has(m.id)) continue;
+      if (userIdMap.has(m.id)) {
+        continue;
+      }
       const name = [m.first_name, m.last_name].filter(Boolean).join(' ') || 'Unknown';
       await resolveLocalUser(m.id, name, m.email);
     }
@@ -651,7 +673,9 @@ export async function importFromSplitwisePro(currentUserId: number, data: Splitw
   // Build Splitwise groupId → SplitPro groupId map
   const groupIdMap = new Map<number, number>();
   for (const swGroup of data.groups) {
-    if (swGroup.id === 0) continue; // Splitwise uses 0 for "no group"
+    if (swGroup.id === 0) {
+      continue;
+    } // Splitwise uses 0 for "no group"
     const existing = await db.group.findFirst({ where: { name: swGroup.name } });
     if (existing) {
       groupIdMap.set(swGroup.id, existing.id);
@@ -694,15 +718,38 @@ export async function importFromSplitwisePro(currentUserId: number, data: Splitw
       toCount.set(payerSide, (toCount.get(payerSide) ?? 0) + 1);
     }
     const payerSwId =
-      toCount.size > 0
-        ? [...toCount.entries()].sort((a, b) => b[1] - a[1])[0]![0]
-        : data.user.id;
+      toCount.size > 0 ? [...toCount.entries()].sort((a, b) => b[1] - a[1])[0]![0] : data.user.id;
 
     const paidByUserId = userIdMap.get(payerSwId);
-    if (!paidByUserId) continue;
+    if (!paidByUserId) {
+      continue;
+    }
+
+    // Currencies with no subunits (stored as whole units, not cents)
+    const ZERO_DECIMAL_CURRENCIES = new Set([
+      'VND',
+      'JPY',
+      'KRW',
+      'IDR',
+      'ISK',
+      'HUF',
+      'TWD',
+      'BIF',
+      'CLP',
+      'GNF',
+      'MGA',
+      'PYG',
+      'RWF',
+      'UGX',
+      'VUV',
+      'XAF',
+      'XOF',
+      'XPF',
+    ]);
+    const multiplier = ZERO_DECIMAL_CURRENCIES.has(swExp.currency_code) ? 1 : 100;
 
     // Reconstruct participants: payer gets positive, debtors get negative
-    const amountCents = Math.round(parseFloat(swExp.cost) * 100);
+    const amountCents = Math.round(parseFloat(swExp.cost) * multiplier);
     const debtorAmounts = new Map<number, number>();
     for (const r of swExp.repayments) {
       // For payments: receiver (to) is the "debtor" in SplitPro terms (negative amount)
@@ -710,7 +757,7 @@ export async function importFromSplitwisePro(currentUserId: number, data: Splitw
       const debtorSwId = swExp.payment ? r.to : r.from;
       const debtorId = userIdMap.get(debtorSwId);
       if (debtorId !== undefined) {
-        debtorAmounts.set(debtorId, Math.round(parseFloat(r.amount) * 100));
+        debtorAmounts.set(debtorId, Math.round(parseFloat(r.amount) * multiplier));
       }
     }
     const totalOwed = [...debtorAmounts.values()].reduce((a, b) => a + b, 0);
@@ -761,16 +808,13 @@ export async function importUserBalanceFromSplitWise(
 
   const users = await createUsersFromSplitwise(splitWiseUsers);
 
-  const userMap = users.reduce(
-    (acc, user) => {
-      if (user.email) {
-        acc[user.email] = user;
-      }
+  const userMap = users.reduce<Record<string, User>>((acc, user) => {
+    if (user.email) {
+      acc[user.email] = user;
+    }
 
-      return acc;
-    },
-    {} as Record<string, User>,
-  );
+    return acc;
+  }, {});
 
   const currencyHelperCache: Record<string, ReturnType<typeof getCurrencyHelpers>['toSafeBigInt']> =
     {};
@@ -875,16 +919,13 @@ export async function importGroupFromSplitwise(
 
   const users = await createUsersFromSplitwise(Object.values(splitwiseUserMap));
 
-  const userMap = users.reduce(
-    (acc, user) => {
-      if (user.email) {
-        acc[user.email] = user;
-      }
+  const userMap = users.reduce<Record<string, User>>((acc, user) => {
+    if (user.email) {
+      acc[user.email] = user;
+    }
 
-      return acc;
-    },
-    {} as Record<string, User>,
-  );
+    return acc;
+  }, {});
 
   const missingGroups = await Promise.all(
     splitWiseGroups.map(async (group) => {

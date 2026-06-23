@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
-import { formidable, type File } from 'formidable';
+import { type File, formidable } from 'formidable';
 import { authOptions } from '~/server/auth';
 import { importFromSplitwisePro } from '~/server/api/services/splitService';
 
@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const result = await importFromSplitwisePro(
       session.user.id,
-      data as Parameters<typeof importFromSplitwisePro>[1],
+      data as unknown as Parameters<typeof importFromSplitwisePro>[1],
     );
 
     return res.status(200).json(result);

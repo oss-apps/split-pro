@@ -6,6 +6,14 @@
         "language_changed": "Gjuha u ndryshua me sukses"
       },
       "placeholder": "Zgjidhni gjuhën"
+    },
+    "import_splitpro_data": "Importo të dhënat SplitPro",
+    "import_splitpro_data_details": {
+      "note": "Të dhënat e mëposhtme do të importohen. Shpenzimet do të përputhen sipas ID-së për të shmangur dublikatat.",
+      "expenses": "shpenzime",
+      "messages": {
+        "import_success": "U importuan me sukses {{expenses}} shpenzime dhe {{groups}} grupe"
+      }
     }
   },
   "balances": {
@@ -27,5 +35,8 @@
       "success": "Llogaritë u bashkuan me sukses",
       "error": "Bashkimi dështoi"
     }
+  },
+  "errors": {
+    "import_splitpro_failed": "Dështoi importimi i të dhënave SplitPro. Sigurohuni që keni ngarkuar një skedar të vlefshëm të eksportimit SplitPro."
   }
 }

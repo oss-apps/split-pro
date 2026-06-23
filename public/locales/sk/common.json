@@ -63,7 +63,15 @@
     },
     "support_us": "Sponzorujte nás",
     "title": "Účet",
-    "write_review": "Napíšte recenziu"
+    "write_review": "Napíšte recenziu",
+    "import_splitpro_data": "Importovať dáta SplitPro",
+    "import_splitpro_data_details": {
+      "note": "Nasledujúce údaje budú importované. Výdavky budú porovnané podľa ID, aby sa predišlo duplikátom.",
+      "expenses": "výdavky",
+      "messages": {
+        "import_success": "Úspešne importovaných {{expenses}} výdavkov a {{groups}} skupín"
+      }
+    }
   },
   "actions": {
     "add_expense": "Pridať výdavok",
@@ -180,7 +188,8 @@
     "unsubscribe_error": "Chyba pri odhlásení sa z odberu upozornení",
     "upload_failed": "Zlyhalo nahrávanie súboru",
     "uploading_error": "Chyba pri nahrávaní súboru",
-    "valid_email": "Zadajte platný e-mail"
+    "valid_email": "Zadajte platný e-mail",
+    "import_splitpro_failed": "Import dát SplitPro zlyhal. Uistite sa, že ste nahrali platný exportný súbor SplitPro."
   },
   "expense_details": {
     "add_expense": "Pridať výdavok",

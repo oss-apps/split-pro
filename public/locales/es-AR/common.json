@@ -63,7 +63,15 @@
     },
     "support_us": "Patrocinanos",
     "title": "Cuenta",
-    "write_review": "Escribir una reseña"
+    "write_review": "Escribir una reseña",
+    "import_splitpro_data": "Importar datos de SplitPro",
+    "import_splitpro_data_details": {
+      "note": "Se importarán los siguientes datos. Los gastos se compararán por ID para evitar duplicados.",
+      "expenses": "gastos",
+      "messages": {
+        "import_success": "Se importaron con éxito {{expenses}} gastos y {{groups}} grupos"
+      }
+    }
   },
   "actions": {
     "add_expense": "Agregar gasto",
@@ -162,7 +170,8 @@
     "upload_failed": "Error al subir el archivo",
     "upload_file_less_than": "El archivo debe ser menor de",
     "uploading_error": "Error al subir el archivo",
-    "valid_email": "Ingresá un correo electrónico válido"
+    "valid_email": "Ingresá un correo electrónico válido",
+    "import_splitpro_failed": "Error al importar los datos de SplitPro. Asegúrese de haber subido un archivo de exportación de SplitPro válido."
   },
   "expense_details": {
     "add_expense": "Agregar gasto",

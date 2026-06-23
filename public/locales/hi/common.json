@@ -63,7 +63,15 @@
     },
     "support_us": "",
     "title": "",
-    "write_review": ""
+    "write_review": "",
+    "import_splitpro_data": "SplitPro डेटा आयात करें",
+    "import_splitpro_data_details": {
+      "note": "निम्नलिखित डेटा आयात किया जाएगा। डुप्लिकेट से बचने के लिए खर्चों को ID से मिलाया जाएगा।",
+      "expenses": "खर्च",
+      "messages": {
+        "import_success": "{{expenses}} खर्च और {{groups}} समूह सफलतापूर्वक आयात हुए"
+      }
+    }
   },
   "actions": {
     "add_expense": "",
@@ -160,7 +168,8 @@
     "unsubscribe_error": "",
     "upload_failed": "",
     "uploading_error": "",
-    "valid_email": ""
+    "valid_email": "",
+    "import_splitpro_failed": "SplitPro डेटा आयात करने में विफल। कृपया सुनिश्चित करें कि आपने एक वैध SplitPro निर्यात फ़ाइल अपलोड की है।"
   },
   "expense_details": {
     "add_expense": "",

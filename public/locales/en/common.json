@@ -74,6 +74,14 @@
       "send_test_notification": "Send test notification",
       "test_notification_sent": "Test notification sent",
       "test_notification_failed": "Could not send test notification"
+    },
+    "import_splitpro_data": "Import SplitPro Data",
+    "import_splitpro_data_details": {
+      "note": "The following data will be imported. Expenses will be matched by ID to avoid duplicates.",
+      "expenses": "expenses",
+      "messages": {
+        "import_success": "Successfully imported {{expenses}} expenses and {{groups}} groups"
+      }
     }
   },
   "actions": {
@@ -160,7 +168,8 @@
     "invalid_cron_expression": "Invalid cron expression",
     "currency_conversion_failed": "Failed to convert currencies",
     "recurrence_delete_failed": "Failed to delete recurrence",
-    "recurrence_update_failed": "Failed to update recurrence"
+    "recurrence_update_failed": "Failed to update recurrence",
+    "import_splitpro_failed": "Failed to import SplitPro data. Please make sure you uploaded a valid SplitPro export file."
   },
   "bank_transactions": {
     "choose_bank_provider": "Choose bank provider",

@@ -142,16 +142,54 @@ export const authOptions: NextAuthOptions = {
   providers: getProviders(),
   events: {
     createUser: async ({ user }) => {
-      // Check if the user's name is empty
       if ((!user.name || '' === user.name.trim()) && user.email) {
-        // Define the logic to update the user's name here
         const [updatedName] = user.email.split('@');
-
-        // Use your database client to update the user's name
         await db.user.update({
           where: { id: user.id },
           data: { name: updatedName },
         });
+      }
+
+      // Auto-match: if a local (unregistered) user with this email was imported, merge them
+      if (user.email && user.id) {
+        const newUserId = Number(user.id);
+        const localUser = await db.user.findFirst({
+          where: {
+            email: user.email,
+            id: { not: newUserId },
+            emailVerified: null,
+            accounts: { none: {} },
+          },
+        });
+
+        if (localUser) {
+          const oldId = localUser.id;
+          const newId = newUserId;
+          await db.$transaction(async (tx) => {
+            await tx.$executeRaw`
+              DELETE FROM "public"."ExpenseParticipant"
+              WHERE "userId" = ${oldId}
+                AND "expenseId" IN (
+                  SELECT "expenseId" FROM "public"."ExpenseParticipant" WHERE "userId" = ${newId}
+                )
+            `;
+            await tx.expenseParticipant.updateMany({ where: { userId: oldId }, data: { userId: newId } });
+            await tx.expense.updateMany({ where: { paidBy: oldId }, data: { paidBy: newId } });
+            await tx.expense.updateMany({ where: { addedBy: oldId }, data: { addedBy: newId } });
+            await tx.expense.updateMany({ where: { deletedBy: oldId }, data: { deletedBy: newId } });
+            await tx.expense.updateMany({ where: { updatedBy: oldId }, data: { updatedBy: newId } });
+            await tx.$executeRaw`
+              DELETE FROM "public"."GroupUser"
+              WHERE "userId" = ${oldId}
+                AND "groupId" IN (
+                  SELECT "groupId" FROM "public"."GroupUser" WHERE "userId" = ${newId}
+                )
+            `;
+            await tx.groupUser.updateMany({ where: { userId: oldId }, data: { userId: newId } });
+            await tx.expenseNote.updateMany({ where: { createdById: oldId }, data: { createdById: newId } });
+            await tx.user.delete({ where: { id: oldId } });
+          });
+        }
       }
     },
   },

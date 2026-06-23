@@ -74,7 +74,15 @@
     },
     "support_us": "Faire un don",
     "title": "Compte",
-    "write_review": "Écrire un avis"
+    "write_review": "Écrire un avis",
+    "import_splitpro_data": "Importer les données SplitPro",
+    "import_splitpro_data_details": {
+      "note": "Les données suivantes seront importées. Les dépenses seront correspondues par ID pour éviter les doublons.",
+      "expenses": "dépenses",
+      "messages": {
+        "import_success": "{{expenses}} dépenses et {{groups}} groupes importés avec succès"
+      }
+    }
   },
   "actions": {
     "add_expense": "Nouvelle dépense",
@@ -200,7 +208,8 @@
     "unsubscribe_error": "Une erreur est survenue lors du désabonnement des notifications",
     "upload_failed": "Échec de l'envoi du fichier",
     "uploading_error": "Une erreur est survenue lors de l'envoi du fichier",
-    "valid_email": "Entre une adresse mail valide"
+    "valid_email": "Entre une adresse mail valide",
+    "import_splitpro_failed": "Échec de l'importation des données SplitPro. Veuillez vous assurer d'avoir téléchargé un fichier d'exportation SplitPro valide."
   },
   "expense_details": {
     "add_expense": "Nouvelle dépense",

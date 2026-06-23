@@ -63,7 +63,15 @@
     },
     "support_us": "",
     "title": "",
-    "write_review": ""
+    "write_review": "",
+    "import_splitpro_data": "ייבא נתוני SplitPro",
+    "import_splitpro_data_details": {
+      "note": "הנתונים הבאים ייובאו. הוצאות יותאמו לפי מזהה כדי למנוע כפילויות.",
+      "expenses": "הוצאות",
+      "messages": {
+        "import_success": "יובאו בהצלחה {{expenses}} הוצאות ו-{{groups}} קבוצות"
+      }
+    }
   },
   "actions": {
     "add_expense": "",
@@ -160,7 +168,8 @@
     "unsubscribe_error": "",
     "upload_failed": "",
     "uploading_error": "",
-    "valid_email": ""
+    "valid_email": "",
+    "import_splitpro_failed": "ייבוא נתוני SplitPro נכשל. אנא ודא שהעלית קובץ ייצוא SplitPro תקין."
   },
   "expense_details": {
     "add_expense": "",

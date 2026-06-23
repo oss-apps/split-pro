@@ -167,6 +167,11 @@ const AccountPage: NextPageWithUser<{
             {t('account.download_splitpro_data')}
           </AccountButton>
 
+          <AccountButton href="/import-splitpro">
+            <DownloadCloud className="size-5 text-teal-400" />
+            {t('account.import_splitpro_data')}
+          </AccountButton>
+
           <AccountButton href="/import-splitwise">
             <DownloadCloud className="size-5 text-violet-500" />
             {t('account.import_from_splitwise')}

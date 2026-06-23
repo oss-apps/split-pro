@@ -74,7 +74,15 @@
     },
     "support_us": "Unterstütze uns",
     "title": "Konto",
-    "write_review": "Eine Bewertung schreiben"
+    "write_review": "Eine Bewertung schreiben",
+    "import_splitpro_data": "SplitPro-Daten importieren",
+    "import_splitpro_data_details": {
+      "note": "Die folgenden Daten werden importiert. Ausgaben werden per ID abgeglichen, um Duplikate zu vermeiden.",
+      "expenses": "Ausgaben",
+      "messages": {
+        "import_success": "Erfolgreich {{expenses}} Ausgaben und {{groups}} Gruppen importiert"
+      }
+    }
   },
   "actions": {
     "add_expense": "Ausgabe hinzufügen",
@@ -203,7 +211,8 @@
     "unsubscribe_error": "Fehler beim Abbestellen der Benachrichtigung",
     "upload_failed": "Datei konnte nicht hochgeladen werden",
     "uploading_error": "Fehler beim Hochladen der Datei",
-    "valid_email": "Gültige E-Mail-Adresse eingeben"
+    "valid_email": "Gültige E-Mail-Adresse eingeben",
+    "import_splitpro_failed": "Fehler beim Importieren der SplitPro-Daten. Bitte stellen Sie sicher, dass Sie eine gültige SplitPro-Exportdatei hochgeladen haben."
   },
   "expense_details": {
     "add_expense": "Ausgabe hinzufügen",

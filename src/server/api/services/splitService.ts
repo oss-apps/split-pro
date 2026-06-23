@@ -381,6 +381,178 @@ export async function getCompleteGroupDetails(userId: number) {
   return groups;
 }
 
+export async function getFullExportData(userId: number) {
+  // All users this user has interacted with
+  const allExpenses = await db.expense.findMany({
+    where: {
+      deletedAt: null,
+      expenseParticipants: {
+        some: { userId },
+      },
+    },
+    include: {
+      expenseParticipants: {
+        include: { user: { select: { id: true, name: true, email: true } } },
+      },
+      paidByUser: { select: { id: true, name: true, email: true } },
+      addedByUser: { select: { id: true, name: true, email: true } },
+      group: { select: { id: true, name: true, publicId: true } },
+    },
+    orderBy: { expenseDate: 'asc' },
+  });
+
+  const groups = await db.group.findMany({
+    where: { groupUsers: { some: { userId } } },
+    include: {
+      groupUsers: {
+        include: { user: { select: { id: true, name: true, email: true } } },
+      },
+    },
+  });
+
+  // Collect all unique users referenced in expenses
+  const userMap = new Map<number, { id: number; name: string | null; email: string | null }>();
+  for (const expense of allExpenses) {
+    userMap.set(expense.paidByUser.id, expense.paidByUser);
+    userMap.set(expense.addedByUser.id, expense.addedByUser);
+    for (const p of expense.expenseParticipants) {
+      userMap.set(p.user.id, p.user);
+    }
+  }
+  for (const group of groups) {
+    for (const gu of group.groupUsers) {
+      userMap.set(gu.user.id, gu.user);
+    }
+  }
+
+  return {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    exportedByUserId: userId,
+    users: Array.from(userMap.values()),
+    groups: groups.map((g) => ({
+      id: g.id,
+      name: g.name,
+      publicId: g.publicId,
+      defaultCurrency: g.defaultCurrency,
+      createdAt: g.createdAt,
+      members: g.groupUsers.map((gu) => ({ userId: gu.userId })),
+    })),
+    expenses: allExpenses.map((e) => ({
+      id: e.id,
+      name: e.name,
+      category: e.category,
+      amount: e.amount.toString(),
+      currency: e.currency,
+      splitType: e.splitType,
+      expenseDate: e.expenseDate,
+      paidByUserId: e.paidBy,
+      addedByUserId: e.addedBy,
+      groupId: e.groupId,
+      participants: e.expenseParticipants.map((p) => ({
+        userId: p.userId,
+        amount: p.amount.toString(),
+      })),
+    })),
+  };
+}
+
+export async function importSplitProData(
+  currentUserId: number,
+  data: Awaited<ReturnType<typeof getFullExportData>>,
+) {
+  // Build mapping from exported userId → existing or new local userId
+  const userIdMap = new Map<number, number>();
+
+  for (const exportedUser of data.users) {
+    if (exportedUser.id === data.exportedByUserId) {
+      userIdMap.set(exportedUser.id, currentUserId);
+      continue;
+    }
+
+    // Try to find by email first
+    if (exportedUser.email) {
+      const existing = await db.user.findUnique({ where: { email: exportedUser.email } });
+      if (existing) {
+        userIdMap.set(exportedUser.id, existing.id);
+        continue;
+      }
+    }
+
+    // Create as local (unregistered) user
+    const newUser = await db.user.create({
+      data: {
+        name: exportedUser.name ?? exportedUser.email ?? 'Unknown',
+        email: null,
+        emailVerified: null,
+      },
+    });
+    userIdMap.set(exportedUser.id, newUser.id);
+  }
+
+  // Create groups
+  const groupIdMap = new Map<number, number>();
+  for (const exportedGroup of data.groups) {
+    const existing = await db.group.findUnique({ where: { publicId: exportedGroup.publicId } });
+    if (existing) {
+      groupIdMap.set(exportedGroup.id, existing.id);
+      continue;
+    }
+
+    const newGroup = await db.group.create({
+      data: {
+        name: exportedGroup.name,
+        publicId: exportedGroup.publicId,
+        defaultCurrency: exportedGroup.defaultCurrency,
+        userId: currentUserId,
+        groupUsers: {
+          create: exportedGroup.members
+            .map((m) => ({ userId: userIdMap.get(m.userId) }))
+            .filter((m): m is { userId: number } => m.userId !== undefined),
+        },
+      },
+    });
+    groupIdMap.set(exportedGroup.id, newGroup.id);
+  }
+
+  // Create expenses
+  for (const exportedExpense of data.expenses) {
+    const existing = await db.expense.findUnique({ where: { id: exportedExpense.id } });
+    if (existing) continue;
+
+    const paidByUserId = userIdMap.get(exportedExpense.paidByUserId);
+    const addedByUserId = userIdMap.get(exportedExpense.addedByUserId);
+    if (!paidByUserId || !addedByUserId) continue;
+
+    const groupId = exportedExpense.groupId ? groupIdMap.get(exportedExpense.groupId) : null;
+
+    await db.expense.create({
+      data: {
+        id: exportedExpense.id,
+        name: exportedExpense.name,
+        category: exportedExpense.category,
+        amount: BigInt(exportedExpense.amount),
+        currency: exportedExpense.currency,
+        splitType: exportedExpense.splitType,
+        expenseDate: new Date(exportedExpense.expenseDate),
+        paidBy: paidByUserId,
+        addedBy: addedByUserId,
+        groupId: groupId ?? null,
+        expenseParticipants: {
+          create: exportedExpense.participants
+            .map((p) => ({
+              userId: userIdMap.get(p.userId),
+              amount: BigInt(p.amount),
+            }))
+            .filter((p): p is { userId: number; amount: bigint } => p.userId !== undefined),
+        },
+      },
+    });
+  }
+
+  return { usersImported: userIdMap.size, groupsImported: groupIdMap.size, expensesImported: data.expenses.length };
+}
+
 export async function importUserBalanceFromSplitWise(
   currentUserId: number,
   splitWiseUsers: SplitwiseUser[],

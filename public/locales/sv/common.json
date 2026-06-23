@@ -74,7 +74,15 @@
     },
     "support_us": "Sponsra oss",
     "title": "Konto",
-    "write_review": "Skriv en recension"
+    "write_review": "Skriv en recension",
+    "import_splitpro_data": "Importera SplitPro-data",
+    "import_splitpro_data_details": {
+      "note": "Följande data kommer att importeras. Utgifter matchas med ID för att undvika dubbletter.",
+      "expenses": "utgifter",
+      "messages": {
+        "import_success": "{{expenses}} utgifter och {{groups}} grupper har importerats"
+      }
+    }
   },
   "actions": {
     "add_expense": "Lägg till utgift",
@@ -200,7 +208,8 @@
     "unsubscribe_error": "Fel vid avslutning av prenumeration",
     "upload_failed": "Uppladdning misslyckades",
     "uploading_error": "Fel vid uppladdning av fil",
-    "valid_email": "Ange giltig e-post"
+    "valid_email": "Ange giltig e-post",
+    "import_splitpro_failed": "Det gick inte att importera SplitPro-data. Se till att du laddade upp en giltig SplitPro-exportfil."
   },
   "expense_details": {
     "add_expense": "Lägg till utgift",

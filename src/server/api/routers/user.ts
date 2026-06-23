@@ -21,7 +21,9 @@ import {
 import {
   getCompleteFriendsDetails,
   getCompleteGroupDetails,
+  getFullExportData,
   importGroupFromSplitwise,
+  importSplitProData,
   importUserBalanceFromSplitWise,
 } from '../services/splitService';
 
@@ -573,12 +575,57 @@ export const userRouter = createTRPCRouter({
 
   downloadData: protectedProcedure.mutation(async ({ ctx }) => {
     const { user } = ctx.session;
-
-    const friends = await getCompleteFriendsDetails(user.id);
-    const groups = await getCompleteGroupDetails(user.id);
-
-    return { friends, groups };
+    return getFullExportData(user.id);
   }),
+
+  importSplitProData: protectedProcedure
+    .input(
+      z.object({
+        version: z.number(),
+        exportedAt: z.string(),
+        exportedByUserId: z.number(),
+        users: z.array(
+          z.object({
+            id: z.number(),
+            name: z.string().nullable(),
+            email: z.string().nullable(),
+          }),
+        ),
+        groups: z.array(
+          z.object({
+            id: z.number(),
+            name: z.string(),
+            publicId: z.string(),
+            defaultCurrency: z.string().nullable(),
+            createdAt: z.string(),
+            members: z.array(z.object({ userId: z.number() })),
+          }),
+        ),
+        expenses: z.array(
+          z.object({
+            id: z.string(),
+            name: z.string(),
+            category: z.string(),
+            amount: z.string(),
+            currency: z.string(),
+            splitType: z.nativeEnum(require('@prisma/client').SplitType),
+            expenseDate: z.string(),
+            paidByUserId: z.number(),
+            addedByUserId: z.number(),
+            groupId: z.number().nullable(),
+            participants: z.array(
+              z.object({
+                userId: z.number(),
+                amount: z.string(),
+              }),
+            ),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return importSplitProData(ctx.session.user.id, input as Parameters<typeof importSplitProData>[1]);
+    }),
 
   importUsersFromSplitWise: protectedProcedure
     .input(

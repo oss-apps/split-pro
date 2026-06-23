@@ -74,7 +74,15 @@
     },
     "support_us": "Sponsor ons",
     "title": "Account",
-    "write_review": "Schrijf een recensie"
+    "write_review": "Schrijf een recensie",
+    "import_splitpro_data": "SplitPro-gegevens importeren",
+    "import_splitpro_data_details": {
+      "note": "De volgende gegevens worden geïmporteerd. Uitgaven worden gekoppeld op ID om duplicaten te voorkomen.",
+      "expenses": "uitgaven",
+      "messages": {
+        "import_success": "{{expenses}} uitgaven en {{groups}} groepen succesvol geïmporteerd"
+      }
+    }
   },
   "actions": {
     "add_expense": "Uitgave toevoegen",
@@ -200,7 +208,8 @@
     "unsubscribe_error": "Fout bij het afmelden van meldingen",
     "upload_failed": "Bestand uploaden mislukt",
     "uploading_error": "Fout bij uploaden bestand",
-    "valid_email": "Voer een geldig e-mailadres in"
+    "valid_email": "Voer een geldig e-mailadres in",
+    "import_splitpro_failed": "Importeren van SplitPro-gegevens mislukt. Zorg ervoor dat u een geldig SplitPro-exportbestand hebt geüpload."
   },
   "expense_details": {
     "add_expense": "Uitgave toevoegen",

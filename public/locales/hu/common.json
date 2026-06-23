@@ -74,7 +74,15 @@
     },
     "support_us": "Támogass minket",
     "title": "Fiók",
-    "write_review": "Írj véleményt"
+    "write_review": "Írj véleményt",
+    "import_splitpro_data": "SplitPro adatok importálása",
+    "import_splitpro_data_details": {
+      "note": "A következő adatok kerülnek importálásra. A kiadások azonosító alapján kerülnek egyeztetésre a duplikátumok elkerülése érdekében.",
+      "expenses": "kiadások",
+      "messages": {
+        "import_success": "Sikeresen importálva {{expenses}} kiadás és {{groups}} csoport"
+      }
+    }
   },
   "actions": {
     "add_expense": "Költség hozzáadása",
@@ -200,7 +208,8 @@
     "unsubscribe_error": "Hiba az értesítésekről történő leiratkozáskor",
     "upload_failed": "Nem sikerült feltölteni a fájlt",
     "uploading_error": "Nem sikerült feltölteni a fájlt",
-    "valid_email": "Adj meg érvényes e-mail címet"
+    "valid_email": "Adj meg érvényes e-mail címet",
+    "import_splitpro_failed": "A SplitPro adatok importálása nem sikerült. Győződjön meg arról, hogy érvényes SplitPro exportfájlt töltött fel."
   },
   "expense_details": {
     "add_expense": "Költség hozzáadása",

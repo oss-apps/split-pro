@@ -63,7 +63,15 @@
     },
     "support_us": "",
     "title": "",
-    "write_review": ""
+    "write_review": "",
+    "import_splitpro_data": "匯入 SplitPro 資料",
+    "import_splitpro_data_details": {
+      "note": "將匯入以下資料。費用將按 ID 進行匹配以避免重複。",
+      "expenses": "筆費用",
+      "messages": {
+        "import_success": "成功匯入 {{expenses}} 筆費用和 {{groups}} 個群組"
+      }
+    }
   },
   "actions": {
     "add_expense": "",
@@ -160,7 +168,8 @@
     "unsubscribe_error": "",
     "upload_failed": "",
     "uploading_error": "",
-    "valid_email": ""
+    "valid_email": "",
+    "import_splitpro_failed": "匯入 SplitPro 資料失敗。請確保您上傳了有效的 SplitPro 匯出檔案。"
   },
   "expense_details": {
     "add_expense": "",

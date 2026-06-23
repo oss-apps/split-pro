@@ -12,6 +12,14 @@
     "download_app_details": {
       "download_as_pwa": "SplitProをPWAとしてホーム画面に追加できます.",
       "title": "アプリをダウンロード"
+    },
+    "import_splitpro_data": "SplitProデータをインポート",
+    "import_splitpro_data_details": {
+      "note": "以下のデータがインポートされます。重複を避けるため、支出はIDで照合されます。",
+      "expenses": "件の支出",
+      "messages": {
+        "import_success": "{{expenses}} 件の支出と {{groups}} 件のグループが正常にインポートされました"
+      }
     }
   },
   "balances": {
@@ -33,5 +41,8 @@
       "success": "アカウントが正常にマージされました",
       "error": "マージに失敗しました"
     }
+  },
+  "errors": {
+    "import_splitpro_failed": "SplitProデータのインポートに失敗しました。有効なSplitProエクスポートファイルをアップロードしてください。"
   }
 }

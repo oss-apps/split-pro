@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'next-i18next';
 
 import { api } from '~/utils/api';
 
@@ -11,6 +12,7 @@ export const RenameFriend: React.FC<{
   currentName: string | null;
   onRenamed?: () => void;
 }> = ({ friendId, currentName, onRenamed }) => {
+  const { t } = useTranslation();
   const [name, setName] = useState(currentName ?? '');
 
   const renameFriendMutation = api.user.updateFriendName.useMutation();
@@ -25,13 +27,13 @@ export const RenameFriend: React.FC<{
       await renameFriendMutation.mutateAsync({ friendId, name: trimmed });
     } catch (e) {
       console.error('Failed to rename friend', e);
-      toast.error('Failed to rename user');
+      toast.error(t('balances.rename.error'));
       return;
     }
 
-    toast.success('Name updated');
+    toast.success(t('balances.rename.success'));
     onRenamed?.();
-  }, [name, currentName, friendId, renameFriendMutation, onRenamed]);
+  }, [name, currentName, friendId, renameFriendMutation, onRenamed, t]);
 
   const handleNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value),
@@ -48,13 +50,13 @@ export const RenameFriend: React.FC<{
 
   return (
     <div className="flex items-center gap-2">
-      <Input value={name} onChange={handleNameChange} placeholder="Name" />
+      <Input value={name} onChange={handleNameChange} placeholder={t('balances.rename.placeholder')} />
       <Button
         size="sm"
         onClick={handleSaveClick}
         disabled={'' === name.trim() || name.trim() === currentName || renameFriendMutation.isPending}
       >
-        Save
+        {t('balances.rename.save')}
       </Button>
     </div>
   );

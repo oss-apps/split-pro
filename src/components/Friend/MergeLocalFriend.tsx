@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 
 import { api } from '~/utils/api';
 import { Button } from '../ui/button';
@@ -21,6 +22,7 @@ export const MergeLocalFriend: React.FC<{
   friendId: number;
   friendName: string | null;
 }> = ({ friendId, friendName }) => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [confirmOpen, setConfirmOpen] = useState(false);
   const router = useRouter();
@@ -33,13 +35,13 @@ export const MergeLocalFriend: React.FC<{
 
     try {
       await mergeMutation.mutateAsync({ localFriendId: friendId, registeredUserEmail: trimmed });
-      toast.success('Accounts successfully merged');
+      toast.success(t('balances.merge.success'));
       void router.push('/balances');
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : 'Merge failed';
+      const message = e instanceof Error ? e.message : t('balances.merge.error');
       toast.error(message);
     }
-  }, [email, friendId, mergeMutation, router]);
+  }, [email, friendId, mergeMutation, router, t]);
 
   const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
@@ -48,31 +50,32 @@ export const MergeLocalFriend: React.FC<{
       <Input
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email of registered user"
+        placeholder={t('balances.merge.email_placeholder')}
         type="email"
       />
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogTrigger asChild>
           <Button size="sm" variant="destructive" disabled={!isValidEmail || mergeMutation.isPending}>
-            Merge accounts
+            {t('balances.merge.button')}
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>{t('balances.merge.confirm_title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will merge <strong>{friendName ?? 'the local contact'}</strong> with the
-              registered account <strong>{email.trim().toLowerCase()}</strong>. All expenses and
-              group memberships will be transferred. This action cannot be undone.
+              {t('balances.merge.confirm_description', {
+                name: friendName ?? '?',
+                email: email.trim().toLowerCase(),
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('actions.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => { void handleMerge(); }}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Yes, merge accounts
+              {t('balances.merge.confirm_button')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -95,7 +95,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                   {!friendQuery.data.email ? (
                     <>
                       <div>
-                        <p className="font-semibold">Rename</p>
+                        <p className="font-semibold">{t('balances.rename.title')}</p>
                         <div className="mt-2">
                           <RenameFriend
                             friendId={_friendId}
@@ -105,9 +105,9 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                         </div>
                       </div>
                       <div>
-                        <p className="font-semibold">Merge with registered account</p>
+                        <p className="font-semibold">{t('balances.merge.title')}</p>
                         <p className="text-muted-foreground mt-1 mb-2 text-sm">
-                          If this person has since registered, enter their email to transfer all expenses to their account.
+                          {t('balances.merge.description')}
                         </p>
                         <MergeLocalFriend
                           friendId={_friendId}

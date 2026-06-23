@@ -6,7 +6,7 @@ import { authOptions } from '~/server/auth';
 import { importSplitProData, restoreSplitProData } from '~/server/api/services/splitService';
 
 export const config = {
-  api: { bodyParser: false },
+  api: { bodyParser: false, responseLimit: false },
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -20,12 +20,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
   res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  res.setHeader('Content-Encoding', 'none');
   res.flushHeaders();
+
+  const flush = () => {
+    if ('flush' in res && typeof res.flush === 'function') {
+      (res as unknown as { flush: () => void }).flush();
+    }
+  };
 
   const send = (type: string, payload: object) => {
     res.write(`data: ${JSON.stringify({ type, ...payload })}\n\n`);
+    flush();
   };
 
   let uploadedFile: File | undefined;

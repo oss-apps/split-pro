@@ -709,13 +709,9 @@ export async function importFromSplitwisePro(currentUserId: number, data: Splitw
       continue;
     }
 
-    // Determine payer:
-    // - Regular expense: "to" = who paid the bill
-    // - Payment/settlement: "from" = who sends the money
     const toCount = new Map<number, number>();
     for (const r of swExp.repayments) {
-      const payerSide = swExp.payment ? r.from : r.to;
-      toCount.set(payerSide, (toCount.get(payerSide) ?? 0) + 1);
+      toCount.set(r.to, (toCount.get(r.to) ?? 0) + 1);
     }
     const payerSwId =
       toCount.size > 0 ? [...toCount.entries()].sort((a, b) => b[1] - a[1])[0]![0] : data.user.id;
@@ -752,10 +748,7 @@ export async function importFromSplitwisePro(currentUserId: number, data: Splitw
     const amountCents = Math.round(parseFloat(swExp.cost) * multiplier);
     const debtorAmounts = new Map<number, number>();
     for (const r of swExp.repayments) {
-      // For payments: receiver (to) is the "debtor" in SplitPro terms (negative amount)
-      // For regular: from = debtor
-      const debtorSwId = swExp.payment ? r.to : r.from;
-      const debtorId = userIdMap.get(debtorSwId);
+      const debtorId = userIdMap.get(r.from);
       if (debtorId !== undefined) {
         debtorAmounts.set(debtorId, Math.round(parseFloat(r.amount) * multiplier));
       }

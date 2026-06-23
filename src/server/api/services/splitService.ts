@@ -580,6 +580,165 @@ export async function importSplitProData(
   return { usersImported: userIdMap.size, groupsImported: groupIdMap.size, expensesImported };
 }
 
+// Converts a numeric Splitwise expense ID to a deterministic UUID-shaped string
+function splitwiseIdToUuid(swId: number): string {
+  const hex = swId.toString(16).padStart(12, '0');
+  return `sw000000-0000-4000-8000-${hex.padStart(12, '0')}`;
+}
+
+type SplitwiseFriend = {
+  id: number;
+  first_name: string;
+  last_name?: string | null;
+  email?: string | null;
+};
+
+type SplitwiseExpense = {
+  id: number;
+  description: string;
+  cost: string;
+  currency_code: string;
+  date: string;
+  group_id: number | null;
+  payment: boolean;
+  deleted_at: string | null;
+  category?: { name: string } | null;
+  repayments: { from: number; to: number; amount: string }[];
+};
+
+type SplitwiseProBackup = {
+  user: { id: number; email: string; first_name: string; last_name?: string };
+  friends: SplitwiseFriend[];
+  groups: { id: number; name: string; members: { id: number }[] }[];
+  expenses: SplitwiseExpense[];
+};
+
+export async function importFromSplitwisePro(currentUserId: number, data: SplitwiseProBackup) {
+  // Build Splitwise userId → SplitPro userId map
+  const userIdMap = new Map<number, number>();
+  userIdMap.set(data.user.id, currentUserId);
+
+  for (const friend of data.friends) {
+    if (!friend.email) {
+      const name = [friend.first_name, friend.last_name].filter(Boolean).join(' ');
+      const existing = await db.user.findFirst({ where: { name, email: null, accounts: { none: {} } } });
+      if (existing) {
+        userIdMap.set(friend.id, existing.id);
+      } else {
+        const newUser = await db.user.create({ data: { name, email: null } });
+        userIdMap.set(friend.id, newUser.id);
+      }
+      continue;
+    }
+    const existing = await db.user.findUnique({ where: { email: friend.email } });
+    if (existing) {
+      userIdMap.set(friend.id, existing.id);
+    } else {
+      const name = [friend.first_name, friend.last_name].filter(Boolean).join(' ');
+      const newUser = await db.user.create({ data: { name, email: friend.email } });
+      userIdMap.set(friend.id, newUser.id);
+    }
+  }
+
+  // Build Splitwise groupId → SplitPro groupId map
+  const groupIdMap = new Map<number, number>();
+  for (const swGroup of data.groups) {
+    if (swGroup.id === 0) continue; // Splitwise uses 0 for "no group"
+    const existing = await db.group.findFirst({ where: { name: swGroup.name } });
+    if (existing) {
+      groupIdMap.set(swGroup.id, existing.id);
+    } else {
+      const members = swGroup.members
+        .map((m) => userIdMap.get(m.id))
+        .filter((id): id is number => id !== undefined);
+      const newGroup = await db.group.create({
+        data: {
+          name: swGroup.name,
+          publicId: nanoid(),
+          userId: currentUserId,
+          groupUsers: { create: members.map((userId) => ({ userId })) },
+        },
+      });
+      groupIdMap.set(swGroup.id, newGroup.id);
+    }
+  }
+
+  // Import expenses
+  let expensesImported = 0;
+  let expensesSkipped = 0;
+
+  const activeExpenses = data.expenses.filter((e) => !e.deleted_at);
+
+  for (const swExp of activeExpenses) {
+    const expenseId = splitwiseIdToUuid(swExp.id);
+    const existing = await db.expense.findUnique({ where: { id: expenseId } });
+    if (existing) {
+      expensesSkipped++;
+      continue;
+    }
+
+    // Determine payer: the "to" in repayments who appears most, or current user if no repayments
+    const toCount = new Map<number, number>();
+    for (const r of swExp.repayments) {
+      toCount.set(r.to, (toCount.get(r.to) ?? 0) + 1);
+    }
+    const payerSwId =
+      toCount.size > 0
+        ? [...toCount.entries()].sort((a, b) => b[1] - a[1])[0]![0]
+        : data.user.id;
+
+    const paidByUserId = userIdMap.get(payerSwId);
+    if (!paidByUserId) continue;
+
+    // Reconstruct participants: payer gets positive, debtors get negative
+    const amountCents = Math.round(parseFloat(swExp.cost) * 100);
+    const debtorAmounts = new Map<number, number>();
+    for (const r of swExp.repayments) {
+      const debtorId = userIdMap.get(r.from);
+      if (debtorId !== undefined) {
+        debtorAmounts.set(debtorId, Math.round(parseFloat(r.amount) * 100));
+      }
+    }
+    const totalOwed = [...debtorAmounts.values()].reduce((a, b) => a + b, 0);
+    const payerShare = amountCents - totalOwed;
+
+    const participants: { userId: number; amount: bigint }[] = [
+      { userId: paidByUserId, amount: BigInt(payerShare) },
+      ...[...debtorAmounts.entries()].map(([userId, amount]) => ({
+        userId,
+        amount: BigInt(-amount),
+      })),
+    ];
+
+    const groupId = swExp.group_id ? groupIdMap.get(swExp.group_id) : null;
+    const category = swExp.category?.name?.toLowerCase() ?? DEFAULT_CATEGORY;
+
+    await db.expense.create({
+      data: {
+        id: expenseId,
+        name: swExp.description,
+        category,
+        amount: BigInt(amountCents),
+        currency: swExp.currency_code,
+        splitType: swExp.payment ? SplitType.SETTLEMENT : SplitType.EXACT,
+        expenseDate: new Date(swExp.date),
+        paidBy: paidByUserId,
+        addedBy: currentUserId,
+        groupId: groupId ?? null,
+        expenseParticipants: { create: participants },
+      },
+    });
+    expensesImported++;
+  }
+
+  return {
+    usersImported: userIdMap.size - 1,
+    groupsImported: groupIdMap.size,
+    expensesImported,
+    expensesSkipped,
+  };
+}
+
 export async function importUserBalanceFromSplitWise(
   currentUserId: number,
   splitWiseUsers: SplitwiseUser[],

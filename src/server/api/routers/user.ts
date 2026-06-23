@@ -22,6 +22,7 @@ import {
   getCompleteFriendsDetails,
   getCompleteGroupDetails,
   getFullExportData,
+  importFromSplitwisePro,
   importGroupFromSplitwise,
   importSplitProData,
   importUserBalanceFromSplitWise,
@@ -625,6 +626,39 @@ export const userRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       return importSplitProData(ctx.session.user.id, input as unknown as Parameters<typeof importSplitProData>[1]);
+    }),
+
+  importFromSplitwisePro: protectedProcedure
+    .input(
+      z.object({
+        user: z.object({ id: z.number(), email: z.string(), first_name: z.string(), last_name: z.string().optional() }),
+        friends: z.array(z.object({
+          id: z.number(),
+          first_name: z.string(),
+          last_name: z.string().nullable().optional(),
+          email: z.string().nullable().optional(),
+        })),
+        groups: z.array(z.object({
+          id: z.number(),
+          name: z.string(),
+          members: z.array(z.object({ id: z.number() })),
+        })),
+        expenses: z.array(z.object({
+          id: z.number(),
+          description: z.string(),
+          cost: z.string(),
+          currency_code: z.string(),
+          date: z.string(),
+          group_id: z.number().nullable(),
+          payment: z.boolean(),
+          deleted_at: z.string().nullable(),
+          category: z.object({ id: z.number(), name: z.string() }).nullable().optional(),
+          repayments: z.array(z.object({ from: z.number(), to: z.number(), amount: z.string() })),
+        })),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return importFromSplitwisePro(ctx.session.user.id, input);
     }),
 
   importUsersFromSplitWise: protectedProcedure

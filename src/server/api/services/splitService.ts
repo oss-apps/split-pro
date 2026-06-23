@@ -572,12 +572,19 @@ export async function importSplitProData(
         addedBy: addedByUserId,
         groupId: groupId ?? null,
         expenseParticipants: {
-          create: exportedExpense.participants
-            .map((p) => ({
-              userId: userIdMap.get(p.userId),
-              amount: BigInt(p.amount),
-            }))
-            .filter((p): p is { userId: number; amount: bigint } => p.userId !== undefined),
+          create: [
+            ...exportedExpense.participants
+              .map((p) => ({
+                userId: userIdMap.get(p.userId),
+                amount: BigInt(p.amount),
+              }))
+              .filter((p): p is { userId: number; amount: bigint } => p.userId !== undefined)
+              .reduce(
+                (acc, p) => (acc.has(p.userId) ? acc : acc.set(p.userId, p)),
+                new Map<number, { userId: number; amount: bigint }>(),
+              )
+              .values(),
+          ],
         },
       },
     });

@@ -515,10 +515,26 @@ export async function importSplitProData(
     groupIdMap.set(exportedGroup.id, newGroup.id);
   }
 
-  // Create expenses
+  // Create expenses (or restore missing participants for existing ones)
+  let expensesImported = 0;
   for (const exportedExpense of data.expenses) {
-    const existing = await db.expense.findUnique({ where: { id: exportedExpense.id } });
-    if (existing) continue;
+    const existing = await db.expense.findUnique({
+      where: { id: exportedExpense.id },
+      include: { expenseParticipants: { select: { userId: true } } },
+    });
+
+    if (existing) {
+      // Restore any participants that were deleted after the export
+      const existingUserIds = new Set(existing.expenseParticipants.map((p) => p.userId));
+      const missingParticipants = exportedExpense.participants
+        .map((p) => ({ userId: userIdMap.get(p.userId), amount: BigInt(p.amount) }))
+        .filter((p): p is { userId: number; amount: bigint } => p.userId !== undefined && !existingUserIds.has(p.userId));
+
+      if (missingParticipants.length > 0) {
+        await db.expenseParticipant.createMany({ data: missingParticipants.map((p) => ({ ...p, expenseId: exportedExpense.id })) });
+      }
+      continue;
+    }
 
     const paidByUserId = userIdMap.get(exportedExpense.paidByUserId);
     const addedByUserId = userIdMap.get(exportedExpense.addedByUserId);
@@ -548,9 +564,10 @@ export async function importSplitProData(
         },
       },
     });
+    expensesImported++;
   }
 
-  return { usersImported: userIdMap.size, groupsImported: groupIdMap.size, expensesImported: data.expenses.length };
+  return { usersImported: userIdMap.size, groupsImported: groupIdMap.size, expensesImported };
 }
 
 export async function importUserBalanceFromSplitWise(

@@ -586,6 +586,36 @@ export async function importSplitProData(
   return { usersImported: userIdMap.size, groupsImported: groupIdMap.size, expensesImported };
 }
 
+export async function restoreSplitProData(
+  currentUserId: number,
+  data: Awaited<ReturnType<typeof getFullExportData>>,
+) {
+  // Delete all expenses the current user is involved in (as payer or participant)
+  const userExpenseIds = await db.expense.findMany({
+    where: {
+      OR: [{ paidBy: currentUserId }, { expenseParticipants: { some: { userId: currentUserId } } }],
+      deletedAt: null,
+    },
+    select: { id: true },
+  });
+  const expenseIds = userExpenseIds.map((e) => e.id);
+
+  await db.$transaction([
+    db.expenseParticipant.deleteMany({ where: { expenseId: { in: expenseIds } } }),
+    db.expense.deleteMany({ where: { id: { in: expenseIds } } }),
+    // Remove user from all groups, then delete groups they own with no remaining members
+    db.groupUser.deleteMany({ where: { userId: currentUserId } }),
+  ]);
+
+  // Delete groups created by this user that now have no members
+  await db.group.deleteMany({
+    where: { userId: currentUserId, groupUsers: { none: {} } },
+  });
+
+  // Now import fresh from the backup
+  return importSplitProData(currentUserId, data);
+}
+
 // Converts a numeric Splitwise expense ID to a deterministic UUID-shaped string
 function splitwiseIdToUuid(swId: number): string {
   const hex = swId.toString(16).padStart(12, '0');

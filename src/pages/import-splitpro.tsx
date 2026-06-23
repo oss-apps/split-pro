@@ -18,13 +18,16 @@ const ImportSplitProPage: NextPageWithUser = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [parsedData, setParsedData] = useState<Record<string, unknown> | null>(null);
   const [parseError, setParseError] = useState(false);
+  const [mode, setMode] = useState<'merge' | 'restore'>('merge');
   const router = useRouter();
 
   const importMutation = api.user.importSplitProData.useMutation();
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     setUploadedFile(file);
     setParseError(false);
@@ -44,22 +47,27 @@ const ImportSplitProPage: NextPageWithUser = () => {
   };
 
   const onImport = () => {
-    if (!parsedData) return;
+    if (!parsedData) {
+      return;
+    }
 
-    importMutation.mutate(parsedData as Parameters<typeof importMutation.mutate>[0], {
-      onSuccess: (result) => {
-        toast.success(
-          t('account.import_splitpro_data_details.messages.import_success', {
-            expenses: result.expensesImported,
-            groups: result.groupsImported,
-          }),
-        );
-        router.push('/balances').catch(console.error);
+    importMutation.mutate(
+      { mode, ...(parsedData as Parameters<typeof importMutation.mutate>[0]) },
+      {
+        onSuccess: (result) => {
+          toast.success(
+            t('account.import_splitpro_data_details.messages.import_success', {
+              expenses: result.expensesImported,
+              groups: result.groupsImported,
+            }),
+          );
+          router.push('/balances').catch(console.error);
+        },
+        onError: () => {
+          toast.error(t('errors.import_splitpro_failed'));
+        },
       },
-      onError: () => {
-        toast.error(t('errors.import_splitpro_failed'));
-      },
-    });
+    );
   };
 
   return (
@@ -90,6 +98,54 @@ const ImportSplitProPage: NextPageWithUser = () => {
           </div>
         </div>
 
+        <div className="mt-6 flex flex-col gap-3">
+          <label
+            className={`flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition-colors ${mode === 'merge' ? 'border-primary bg-primary/5' : 'border-gray-700'}`}
+            onClick={() => setMode('merge')}
+          >
+            <input
+              type="radio"
+              name="mode"
+              value="merge"
+              checked={mode === 'merge'}
+              onChange={() => setMode('merge')}
+              className="mt-1"
+            />
+            <div>
+              <div className="font-medium">Zusammenführen</div>
+              <div className="mt-1 text-sm text-gray-400">
+                Neue Daten werden ergänzt, bestehende Ausgaben bleiben unverändert.
+              </div>
+            </div>
+          </label>
+
+          <label
+            className={`flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition-colors ${mode === 'restore' ? 'border-red-500 bg-red-500/5' : 'border-gray-700'}`}
+            onClick={() => setMode('restore')}
+          >
+            <input
+              type="radio"
+              name="mode"
+              value="restore"
+              checked={mode === 'restore'}
+              onChange={() => setMode('restore')}
+              className="mt-1"
+            />
+            <div>
+              <div className="font-medium">Wiederherstellen</div>
+              <div className="mt-1 text-sm text-gray-400">
+                Alle deine bestehenden Ausgaben und Gruppen werden gelöscht und durch das Backup
+                ersetzt.
+              </div>
+              {mode === 'restore' && (
+                <div className="mt-2 text-sm font-medium text-red-400">
+                  ⚠ Diese Aktion kann nicht rückgängig gemacht werden.
+                </div>
+              )}
+            </div>
+          </label>
+        </div>
+
         <div className="mt-4 flex items-center gap-4">
           <label htmlFor="splitpro-json" className="w-full cursor-pointer rounded border">
             <div className="flex cursor-pointer px-3 py-[6px]">
@@ -100,7 +156,9 @@ const ImportSplitProPage: NextPageWithUser = () => {
                 </span>
               </div>
               <div className="pl-4 text-gray-400">
-                {uploadedFile ? uploadedFile.name : t('account.import_from_splitwise_details.no_file_chosen')}
+                {uploadedFile
+                  ? uploadedFile.name
+                  : t('account.import_from_splitwise_details.no_file_chosen')}
               </div>
             </div>
             <Input
@@ -116,15 +174,14 @@ const ImportSplitProPage: NextPageWithUser = () => {
             disabled={!parsedData || importMutation.isPending}
             className="w-[100px]"
             size="sm"
+            variant={mode === 'restore' ? 'destructive' : 'default'}
           >
             {importMutation.isPending ? <LoadingSpinner /> : t('actions.import')}
           </Button>
         </div>
 
         {parseError && (
-          <div className="mt-4 text-sm text-red-500">
-            {t('errors.import_splitpro_failed')}
-          </div>
+          <div className="mt-4 text-sm text-red-500">{t('errors.import_splitpro_failed')}</div>
         )}
 
         {parsedData && (

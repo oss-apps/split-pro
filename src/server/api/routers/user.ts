@@ -26,6 +26,7 @@ import {
   importGroupFromSplitwise,
   importSplitProData,
   importUserBalanceFromSplitWise,
+  restoreSplitProData,
 } from '../services/splitService';
 
 export const userRouter = createTRPCRouter({
@@ -592,6 +593,7 @@ export const userRouter = createTRPCRouter({
   importSplitProData: protectedProcedure
     .input(
       z.object({
+        mode: z.enum(['merge', 'restore']).default('merge'),
         version: z.number(),
         exportedAt: z.string(),
         exportedByUserId: z.number(),
@@ -634,12 +636,19 @@ export const userRouter = createTRPCRouter({
         ),
       }),
     )
-    .mutation(async ({ input, ctx }) =>
-      importSplitProData(
+    .mutation(async ({ input, ctx }) => {
+      const { mode, ...data } = input;
+      if (mode === 'restore') {
+        return restoreSplitProData(
+          ctx.session.user.id,
+          data as unknown as Parameters<typeof restoreSplitProData>[1],
+        );
+      }
+      return importSplitProData(
         ctx.session.user.id,
-        input as unknown as Parameters<typeof importSplitProData>[1],
-      ),
-    ),
+        data as unknown as Parameters<typeof importSplitProData>[1],
+      );
+    }),
 
   importFromSplitwisePro: protectedProcedure
     .input(

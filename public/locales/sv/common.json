@@ -126,6 +126,24 @@
     },
     "user_preferences": {
       "title": "Egenskaper"
+    },
+    "rename": {
+      "title": "Rename",
+      "placeholder": "Name",
+      "save": "Save",
+      "success": "Name updated",
+      "error": "Failed to rename user"
+    },
+    "merge": {
+      "title": "Merge with registered account",
+      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
+      "email_placeholder": "Email of registered user",
+      "button": "Merge accounts",
+      "confirm_title": "Are you sure?",
+      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
+      "confirm_button": "Yes, merge accounts",
+      "success": "Accounts successfully merged",
+      "error": "Merge failed"
     }
   },
   "bank_transactions": {

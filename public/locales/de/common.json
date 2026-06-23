@@ -126,6 +126,24 @@
     },
     "user_preferences": {
       "title": "Einstellungen"
+    },
+    "rename": {
+      "title": "Umbenennen",
+      "placeholder": "Name",
+      "save": "Speichern",
+      "success": "Name aktualisiert",
+      "error": "Umbenennen fehlgeschlagen"
+    },
+    "merge": {
+      "title": "Mit registriertem Konto zusammenführen",
+      "description": "Falls sich diese Person inzwischen registriert hat, gib ihre E-Mail ein, um alle Ausgaben zu übertragen.",
+      "email_placeholder": "E-Mail des registrierten Nutzers",
+      "button": "Konten zusammenführen",
+      "confirm_title": "Bist du sicher?",
+      "confirm_description": "Dies führt {{name}} mit dem registrierten Konto {{email}} zusammen. Alle Ausgaben und Gruppenmitgliedschaften werden übertragen. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "confirm_button": "Ja, Konten zusammenführen",
+      "success": "Konten erfolgreich zusammengeführt",
+      "error": "Zusammenführen fehlgeschlagen"
     }
   },
   "bank_transactions": {

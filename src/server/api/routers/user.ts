@@ -624,7 +624,7 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      return importSplitProData(ctx.session.user.id, input as Parameters<typeof importSplitProData>[1]);
+      return importSplitProData(ctx.session.user.id, input as unknown as Parameters<typeof importSplitProData>[1]);
     }),
 
   importUsersFromSplitWise: protectedProcedure

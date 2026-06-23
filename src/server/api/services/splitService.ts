@@ -609,7 +609,7 @@ type SplitwiseExpense = {
 type SplitwiseProBackup = {
   user: { id: number; email: string; first_name: string; last_name?: string };
   friends: SplitwiseFriend[];
-  groups: { id: number; name: string; members: { id: number }[] }[];
+  groups: { id: number; name: string; members: { id: number; first_name?: string; last_name?: string; email?: string | null }[] }[];
   expenses: SplitwiseExpense[];
 };
 
@@ -618,25 +618,33 @@ export async function importFromSplitwisePro(currentUserId: number, data: Splitw
   const userIdMap = new Map<number, number>();
   userIdMap.set(data.user.id, currentUserId);
 
-  for (const friend of data.friends) {
-    if (!friend.email) {
-      const name = [friend.first_name, friend.last_name].filter(Boolean).join(' ');
-      const existing = await db.user.findFirst({ where: { name, email: null, accounts: { none: {} } } });
-      if (existing) {
-        userIdMap.set(friend.id, existing.id);
-      } else {
-        const newUser = await db.user.create({ data: { name, email: null } });
-        userIdMap.set(friend.id, newUser.id);
-      }
-      continue;
-    }
-    const existing = await db.user.findUnique({ where: { email: friend.email } });
-    if (existing) {
-      userIdMap.set(friend.id, existing.id);
+  // Helper: resolve or create a local user by name
+  async function resolveLocalUser(id: number, name: string, email?: string | null) {
+    if (userIdMap.has(id)) return;
+    if (email) {
+      const existing = await db.user.findUnique({ where: { email } });
+      if (existing) { userIdMap.set(id, existing.id); return; }
+      const newUser = await db.user.create({ data: { name, email } });
+      userIdMap.set(id, newUser.id);
     } else {
-      const name = [friend.first_name, friend.last_name].filter(Boolean).join(' ');
-      const newUser = await db.user.create({ data: { name, email: friend.email } });
-      userIdMap.set(friend.id, newUser.id);
+      const existing = await db.user.findFirst({ where: { name, email: null, accounts: { none: {} } } });
+      if (existing) { userIdMap.set(id, existing.id); return; }
+      const newUser = await db.user.create({ data: { name, email: null } });
+      userIdMap.set(id, newUser.id);
+    }
+  }
+
+  for (const friend of data.friends) {
+    const name = [friend.first_name, friend.last_name].filter(Boolean).join(' ');
+    await resolveLocalUser(friend.id, name, friend.email);
+  }
+
+  // Also register all group members so no expense participant is unknown
+  for (const swGroup of data.groups) {
+    for (const m of swGroup.members) {
+      if (userIdMap.has(m.id)) continue;
+      const name = [m.first_name, m.last_name].filter(Boolean).join(' ') || 'Unknown';
+      await resolveLocalUser(m.id, name, m.email);
     }
   }
 

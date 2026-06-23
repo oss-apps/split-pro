@@ -79,6 +79,11 @@
     "import_splitpro_data_details": {
       "note": "A következő adatok kerülnek importálásra. A kiadások azonosító alapján kerülnek egyeztetésre a duplikátumok elkerülése érdekében.",
       "expenses": "kiadások",
+      "mode_merge": "Összevonás",
+      "mode_merge_description": "Az új adatok hozzáadásra kerülnek, a meglévő kiadások változatlanok maradnak.",
+      "mode_restore": "Visszaállítás",
+      "mode_restore_description": "Az összes meglévő kiadásod és csoportod törlésre kerül, és a mentés váltja fel őket.",
+      "mode_restore_warning": "Ez a művelet nem vonható vissza.",
       "messages": {
         "import_success": "Sikeresen importálva {{expenses}} kiadás és {{groups}} csoport"
       }

@@ -68,6 +68,11 @@
     "import_splitpro_data_details": {
       "note": "הנתונים הבאים ייובאו. הוצאות יותאמו לפי מזהה כדי למנוע כפילויות.",
       "expenses": "הוצאות",
+      "mode_merge": "מיזוג",
+      "mode_merge_description": "נתונים חדשים יתווספו, הוצאות קיימות יישארו ללא שינוי.",
+      "mode_restore": "שחזור",
+      "mode_restore_description": "כל ההוצאות והקבוצות הקיימות שלך יימחקו ויוחלפו בגיבוי.",
+      "mode_restore_warning": "לא ניתן לבטל פעולה זו.",
       "messages": {
         "import_success": "יובאו בהצלחה {{expenses}} הוצאות ו-{{groups}} קבוצות"
       }

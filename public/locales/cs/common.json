@@ -68,6 +68,11 @@
     "import_splitpro_data_details": {
       "note": "Budou importována následující data. Výdaje budou spárovány podle ID, aby se zabránilo duplikátům.",
       "expenses": "výdaje",
+      "mode_merge": "Sloučit",
+      "mode_merge_description": "Nová data budou přidána, stávající výdaje zůstanou nezměněny.",
+      "mode_restore": "Obnovit",
+      "mode_restore_description": "Všechny vaše stávající výdaje a skupiny budou smazány a nahrazeny zálohou.",
+      "mode_restore_warning": "Tuto akci nelze vrátit zpět.",
       "messages": {
         "import_success": "Úspěšně importováno {{expenses}} výdajů a {{groups}} skupin"
       }

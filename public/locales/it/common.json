@@ -68,6 +68,11 @@
     "import_splitpro_data_details": {
       "note": "Verranno importati i seguenti dati. Le spese saranno abbinate per ID per evitare duplicati.",
       "expenses": "spese",
+      "mode_merge": "Unisci",
+      "mode_merge_description": "I nuovi dati verranno aggiunti, le spese esistenti rimarranno invariate.",
+      "mode_restore": "Ripristina",
+      "mode_restore_description": "Tutte le tue spese e i tuoi gruppi esistenti verranno eliminati e sostituiti dal backup.",
+      "mode_restore_warning": "Questa azione non può essere annullata.",
       "messages": {
         "import_success": "Importati con successo {{expenses}} spese e {{groups}} gruppi"
       }

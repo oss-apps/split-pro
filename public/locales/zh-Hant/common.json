@@ -68,6 +68,11 @@
     "import_splitpro_data_details": {
       "note": "將匯入以下資料。費用將按 ID 進行匹配以避免重複。",
       "expenses": "筆費用",
+      "mode_merge": "合併",
+      "mode_merge_description": "新資料將被加入，現有費用保持不變。",
+      "mode_restore": "還原",
+      "mode_restore_description": "您所有現有的費用和群組將被刪除，並由備份取代。",
+      "mode_restore_warning": "此操作無法復原。",
       "messages": {
         "import_success": "成功匯入 {{expenses}} 筆費用和 {{groups}} 個群組"
       }

@@ -79,6 +79,11 @@
     "import_splitpro_data_details": {
       "note": "Następujące dane zostaną zaimportowane. Wydatki będą dopasowywane po ID, aby uniknąć duplikatów.",
       "expenses": "wydatki",
+      "mode_merge": "Scal",
+      "mode_merge_description": "Nowe dane zostaną dodane, istniejące wydatki pozostaną bez zmian.",
+      "mode_restore": "Przywróć",
+      "mode_restore_description": "Wszystkie Twoje istniejące wydatki i grupy zostaną usunięte i zastąpione kopią zapasową.",
+      "mode_restore_warning": "Tej czynności nie można cofnąć.",
       "messages": {
         "import_success": "Pomyślnie zaimportowano {{expenses}} wydatków i {{groups}} grup"
       }

@@ -112,9 +112,11 @@ const ImportSplitProPage: NextPageWithUser = () => {
               className="mt-1"
             />
             <div>
-              <div className="font-medium">Zusammenführen</div>
+              <div className="font-medium">
+                {t('account.import_splitpro_data_details.mode_merge')}
+              </div>
               <div className="mt-1 text-sm text-gray-400">
-                Neue Daten werden ergänzt, bestehende Ausgaben bleiben unverändert.
+                {t('account.import_splitpro_data_details.mode_merge_description')}
               </div>
             </div>
           </label>
@@ -132,14 +134,15 @@ const ImportSplitProPage: NextPageWithUser = () => {
               className="mt-1"
             />
             <div>
-              <div className="font-medium">Wiederherstellen</div>
+              <div className="font-medium">
+                {t('account.import_splitpro_data_details.mode_restore')}
+              </div>
               <div className="mt-1 text-sm text-gray-400">
-                Alle deine bestehenden Ausgaben und Gruppen werden gelöscht und durch das Backup
-                ersetzt.
+                {t('account.import_splitpro_data_details.mode_restore_description')}
               </div>
               {mode === 'restore' && (
                 <div className="mt-2 text-sm font-medium text-red-400">
-                  ⚠ Diese Aktion kann nicht rückgängig gemacht werden.
+                  {t('account.import_splitpro_data_details.mode_restore_warning')}
                 </div>
               )}
             </div>

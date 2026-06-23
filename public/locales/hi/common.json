@@ -68,6 +68,11 @@
     "import_splitpro_data_details": {
       "note": "निम्नलिखित डेटा आयात किया जाएगा। डुप्लिकेट से बचने के लिए खर्चों को ID से मिलाया जाएगा।",
       "expenses": "खर्च",
+      "mode_merge": "मर्ज करें",
+      "mode_merge_description": "नया डेटा जोड़ा जाएगा, मौजूदा खर्च अपरिवर्तित रहेंगे।",
+      "mode_restore": "पुनर्स्थापित करें",
+      "mode_restore_description": "आपके सभी मौजूदा खर्च और समूह हटा दिए जाएंगे और बैकअप से बदल दिए जाएंगे।",
+      "mode_restore_warning": "यह क्रिया पूर्ववत नहीं की जा सकती।",
       "messages": {
         "import_success": "{{expenses}} खर्च और {{groups}} समूह सफलतापूर्वक आयात हुए"
       }

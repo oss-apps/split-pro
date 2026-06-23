@@ -79,6 +79,11 @@
     "import_splitpro_data_details": {
       "note": "Följande data kommer att importeras. Utgifter matchas med ID för att undvika dubbletter.",
       "expenses": "utgifter",
+      "mode_merge": "Sammanfoga",
+      "mode_merge_description": "Nya data läggs till, befintliga utgifter förblir oförändrade.",
+      "mode_restore": "Återställ",
+      "mode_restore_description": "Alla dina befintliga utgifter och grupper kommer att raderas och ersättas av säkerhetskopian.",
+      "mode_restore_warning": "Denna åtgärd kan inte ångras.",
       "messages": {
         "import_success": "{{expenses}} utgifter och {{groups}} grupper har importerats"
       }

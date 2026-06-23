@@ -11,6 +11,11 @@
     "import_splitpro_data_details": {
       "note": "Të dhënat e mëposhtme do të importohen. Shpenzimet do të përputhen sipas ID-së për të shmangur dublikatat.",
       "expenses": "shpenzime",
+      "mode_merge": "Bashko",
+      "mode_merge_description": "Të dhënat e reja do të shtohen, shpenzimet ekzistuese do të mbeten të pandryshuara.",
+      "mode_restore": "Rivendos",
+      "mode_restore_description": "Të gjitha shpenzimet dhe grupet tuaja ekzistuese do të fshihen dhe do të zëvendësohen nga kopja rezervë.",
+      "mode_restore_warning": "Ky veprim nuk mund të zhbëhet.",
       "messages": {
         "import_success": "U importuan me sukses {{expenses}} shpenzime dhe {{groups}} grupe"
       }

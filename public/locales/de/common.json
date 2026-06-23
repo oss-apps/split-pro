@@ -79,6 +79,11 @@
     "import_splitpro_data_details": {
       "note": "Die folgenden Daten werden importiert. Ausgaben werden per ID abgeglichen, um Duplikate zu vermeiden.",
       "expenses": "Ausgaben",
+      "mode_merge": "Zusammenführen",
+      "mode_merge_description": "Neue Daten werden ergänzt, bestehende Ausgaben bleiben unverändert.",
+      "mode_restore": "Wiederherstellen",
+      "mode_restore_description": "Alle deine bestehenden Ausgaben und Gruppen werden gelöscht und durch das Backup ersetzt.",
+      "mode_restore_warning": "Diese Aktion kann nicht rückgängig gemacht werden.",
       "messages": {
         "import_success": "Erfolgreich {{expenses}} Ausgaben und {{groups}} Gruppen importiert"
       }

@@ -68,6 +68,11 @@
     "import_splitpro_data_details": {
       "note": "Os dados seguintes serão importados. As despesas serão correspondidas por ID para evitar duplicados.",
       "expenses": "despesas",
+      "mode_merge": "Fundir",
+      "mode_merge_description": "Os novos dados serão adicionados, as despesas existentes permanecerão inalteradas.",
+      "mode_restore": "Restaurar",
+      "mode_restore_description": "Todas as suas despesas e grupos existentes serão eliminados e substituídos pela cópia de segurança.",
+      "mode_restore_warning": "Esta ação não pode ser revertida.",
       "messages": {
         "import_success": "{{expenses}} despesas e {{groups}} grupos importados com sucesso"
       }

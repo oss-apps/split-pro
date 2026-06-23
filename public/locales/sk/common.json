@@ -68,6 +68,11 @@
     "import_splitpro_data_details": {
       "note": "Nasledujúce údaje budú importované. Výdavky budú porovnané podľa ID, aby sa predišlo duplikátom.",
       "expenses": "výdavky",
+      "mode_merge": "Zlúčiť",
+      "mode_merge_description": "Nové údaje budú pridané, existujúce výdavky zostanú nezmenené.",
+      "mode_restore": "Obnoviť",
+      "mode_restore_description": "Všetky vaše existujúce výdavky a skupiny budú vymazané a nahradené zálohou.",
+      "mode_restore_warning": "Túto akciu nie je možné vrátiť späť.",
       "messages": {
         "import_success": "Úspešne importovaných {{expenses}} výdavkov a {{groups}} skupín"
       }

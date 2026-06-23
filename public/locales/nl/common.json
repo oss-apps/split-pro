@@ -79,6 +79,11 @@
     "import_splitpro_data_details": {
       "note": "De volgende gegevens worden geïmporteerd. Uitgaven worden gekoppeld op ID om duplicaten te voorkomen.",
       "expenses": "uitgaven",
+      "mode_merge": "Samenvoegen",
+      "mode_merge_description": "Nieuwe gegevens worden toegevoegd, bestaande uitgaven blijven ongewijzigd.",
+      "mode_restore": "Herstellen",
+      "mode_restore_description": "Al je bestaande uitgaven en groepen worden verwijderd en vervangen door de back-up.",
+      "mode_restore_warning": "Deze actie kan niet ongedaan worden gemaakt.",
       "messages": {
         "import_success": "{{expenses}} uitgaven en {{groups}} groepen succesvol geïmporteerd"
       }

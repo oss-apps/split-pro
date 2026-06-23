@@ -17,6 +17,11 @@
     "import_splitpro_data_details": {
       "note": "以下のデータがインポートされます。重複を避けるため、支出はIDで照合されます。",
       "expenses": "件の支出",
+      "mode_merge": "マージ",
+      "mode_merge_description": "新しいデータが追加され、既存の支出は変更されません。",
+      "mode_restore": "復元",
+      "mode_restore_description": "既存のすべての支出とグループが削除され、バックアップに置き換えられます。",
+      "mode_restore_warning": "この操作は元に戻せません。",
       "messages": {
         "import_success": "{{expenses}} 件の支出と {{groups}} 件のグループが正常にインポートされました"
       }

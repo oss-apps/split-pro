@@ -92,7 +92,8 @@ const FriendPage: NextPageWithUser = ({ user }) => {
             >
               {!friendQuery.data ? null : (
                 <div className="flex flex-col gap-6">
-                  {!friendQuery.data.email ? (
+                  {0 === (friendQuery.data.accounts?.length ?? 0) &&
+                  !friendQuery.data.emailVerified ? (
                     <>
                       <div>
                         <p className="font-semibold">{t('balances.rename.title')}</p>
@@ -109,10 +110,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                         <p className="text-muted-foreground mt-1 mb-2 text-sm">
                           {t('balances.merge.description')}
                         </p>
-                        <MergeLocalFriend
-                          friendId={_friendId}
-                          friendName={friendQuery.data.name}
-                        />
+                        <MergeLocalFriend friendId={_friendId} friendName={friendQuery.data.name} />
                       </div>
                     </>
                   ) : null}

@@ -220,6 +220,7 @@ export const userRouter = createTRPCRouter({
             },
           },
         },
+        include: { accounts: { select: { id: true } } },
       });
 
       if (!friend) {
@@ -424,7 +425,7 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       // Only allow renaming users the current user has shared an expense with.
       // Using ExpenseParticipant instead of BalanceView so this works even after settle-up
-      // or when the friend was just added but no expense exists yet.
+      // Or when the friend was just added but no expense exists yet.
       const sharedExpense = await db.expense.findFirst({
         where: {
           deletedBy: null,
@@ -497,7 +498,7 @@ export const userRouter = createTRPCRouter({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Local friend not found' });
       }
 
-      if (0 < localFriend.accounts.length || (localFriend.emailVerified ?? localFriend.email)) {
+      if (0 < localFriend.accounts.length || localFriend.emailVerified) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Target is not a local friend' });
       }
 
@@ -511,7 +512,10 @@ export const userRouter = createTRPCRouter({
       }
 
       if (0 === registeredUser.accounts.length && !registeredUser.emailVerified) {
-        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Target user is not a registered user' });
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Target user is not a registered user',
+        });
       }
 
       if (registeredUser.id === ctx.session.user.id) {
@@ -531,7 +535,10 @@ export const userRouter = createTRPCRouter({
             )
         `;
 
-        await tx.expenseParticipant.updateMany({ where: { userId: oldId }, data: { userId: newId } });
+        await tx.expenseParticipant.updateMany({
+          where: { userId: oldId },
+          data: { userId: newId },
+        });
 
         await tx.expense.updateMany({ where: { paidBy: oldId }, data: { paidBy: newId } });
         await tx.expense.updateMany({ where: { addedBy: oldId }, data: { addedBy: newId } });
@@ -566,7 +573,10 @@ export const userRouter = createTRPCRouter({
           UPDATE "public"."FriendDefaultSplit" SET "userBId" = ${newId} WHERE "userBId" = ${oldId}
         `;
 
-        await tx.expenseNote.updateMany({ where: { createdById: oldId }, data: { createdById: newId } });
+        await tx.expenseNote.updateMany({
+          where: { createdById: oldId },
+          data: { createdById: newId },
+        });
 
         await tx.user.delete({ where: { id: oldId } });
       });
@@ -624,42 +634,54 @@ export const userRouter = createTRPCRouter({
         ),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
-      return importSplitProData(ctx.session.user.id, input as unknown as Parameters<typeof importSplitProData>[1]);
-    }),
+    .mutation(async ({ input, ctx }) =>
+      importSplitProData(
+        ctx.session.user.id,
+        input as unknown as Parameters<typeof importSplitProData>[1],
+      ),
+    ),
 
   importFromSplitwisePro: protectedProcedure
     .input(
       z.object({
-        user: z.object({ id: z.number(), email: z.string(), first_name: z.string(), last_name: z.string().optional() }),
-        friends: z.array(z.object({
+        user: z.object({
           id: z.number(),
+          email: z.string(),
           first_name: z.string(),
-          last_name: z.string().nullable().optional(),
-          email: z.string().nullable().optional(),
-        })),
-        groups: z.array(z.object({
-          id: z.number(),
-          name: z.string(),
-          members: z.array(z.object({ id: z.number() })),
-        })),
-        expenses: z.array(z.object({
-          id: z.number(),
-          description: z.string(),
-          cost: z.string(),
-          currency_code: z.string(),
-          date: z.string(),
-          group_id: z.number().nullable(),
-          payment: z.boolean(),
-          deleted_at: z.string().nullable(),
-          category: z.object({ id: z.number(), name: z.string() }).nullable().optional(),
-          repayments: z.array(z.object({ from: z.number(), to: z.number(), amount: z.string() })),
-        })),
+          last_name: z.string().optional(),
+        }),
+        friends: z.array(
+          z.object({
+            id: z.number(),
+            first_name: z.string(),
+            last_name: z.string().nullable().optional(),
+            email: z.string().nullable().optional(),
+          }),
+        ),
+        groups: z.array(
+          z.object({
+            id: z.number(),
+            name: z.string(),
+            members: z.array(z.object({ id: z.number() })),
+          }),
+        ),
+        expenses: z.array(
+          z.object({
+            id: z.number(),
+            description: z.string(),
+            cost: z.string(),
+            currency_code: z.string(),
+            date: z.string(),
+            group_id: z.number().nullable(),
+            payment: z.boolean(),
+            deleted_at: z.string().nullable(),
+            category: z.object({ id: z.number(), name: z.string() }).nullable().optional(),
+            repayments: z.array(z.object({ from: z.number(), to: z.number(), amount: z.string() })),
+          }),
+        ),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
-      return importFromSplitwisePro(ctx.session.user.id, input);
-    }),
+    .mutation(async ({ input, ctx }) => importFromSplitwisePro(ctx.session.user.id, input)),
 
   importUsersFromSplitWise: protectedProcedure
     .input(

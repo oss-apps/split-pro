@@ -502,9 +502,25 @@ export async function importSplitProData(
   // Create groups
   const groupIdMap = new Map<number, number>();
   for (const exportedGroup of data.groups) {
-    const existing = await db.group.findUnique({ where: { publicId: exportedGroup.publicId } });
+    const existing = await db.group.findUnique({
+      where: { publicId: exportedGroup.publicId },
+      include: { groupUsers: { select: { userId: true } } },
+    });
     if (existing) {
       groupIdMap.set(exportedGroup.id, existing.id);
+
+      // Restore missing group memberships
+      const existingMemberIds = new Set(existing.groupUsers.map((gu) => gu.userId));
+      const missingMembers = exportedGroup.members
+        .map((m) => userIdMap.get(m.userId))
+        .filter((uid): uid is number => uid !== undefined && !existingMemberIds.has(uid));
+
+      if (missingMembers.length > 0) {
+        await db.groupUser.createMany({
+          data: missingMembers.map((userId) => ({ userId, groupId: existing.id })),
+          skipDuplicates: true,
+        });
+      }
       continue;
     }
 

@@ -297,7 +297,7 @@
       "add_members": "Añadir miembros",
       "add_members_details": {
         "add_to_split_pro": "Añadir a SplitPro",
-        "note": "Nota: el envío de invitaciones está deshabilitado",
+        "note": "Nota: el envío de invitaciones está deshabilitado por ahora debido al spam",
         "placeholder": "Nombre o correo electrónico",
         "send_invite": "Enviar invitación",
         "title": "Añadir miembros",
@@ -413,5 +413,25 @@
     "show_all_currencies": "Mostrar todas las monedas",
     "today": "Hoy",
     "total_balance": "Saldo total"
+  },
+  "balances": {
+    "rename": {
+      "title": "Rename",
+      "placeholder": "Name",
+      "save": "Save",
+      "success": "Name updated",
+      "error": "Failed to rename user"
+    },
+    "merge": {
+      "title": "Merge with registered account",
+      "description": "If this person has since registered, enter their email to transfer all expenses to their account.",
+      "email_placeholder": "Email of registered user",
+      "button": "Merge accounts",
+      "confirm_title": "Are you sure?",
+      "confirm_description": "This will merge {{name}} with the registered account {{email}}. All expenses and group memberships will be transferred. This action cannot be undone.",
+      "confirm_button": "Yes, merge accounts",
+      "success": "Accounts successfully merged",
+      "error": "Merge failed"
+    }
   }
 }

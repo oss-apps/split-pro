@@ -512,6 +512,22 @@ export async function importSplitProData(
     log('info', `User created: ${localName}`);
   }
 
+  // Warn about multiple export IDs mapping to the same DB user
+  const reverseMap = new Map<number, number[]>();
+  for (const [exportId, dbId] of userIdMap) {
+    const list = reverseMap.get(dbId) ?? [];
+    list.push(exportId);
+    reverseMap.set(dbId, list);
+  }
+  for (const [, exportIds] of reverseMap) {
+    if (exportIds.length > 1) {
+      log(
+        'warn',
+        `${exportIds.length} exported user IDs (${exportIds.join(', ')}) map to same DB user — participants will be deduplicated`,
+      );
+    }
+  }
+
   log('info', `Users resolved: ${userIdMap.size} total`);
 
   // Create groups
@@ -592,6 +608,10 @@ export async function importSplitProData(
           skipDuplicates: true,
         });
       }
+      log(
+        'warn',
+        `Expense "${exportedExpense.name}" (${exportedExpense.id}): skipped (already exists)`,
+      );
       expensesSkipped++;
       continue;
     }
@@ -599,7 +619,10 @@ export async function importSplitProData(
     const paidByUserId = userIdMap.get(exportedExpense.paidByUserId);
     const addedByUserId = userIdMap.get(exportedExpense.addedByUserId);
     if (!paidByUserId || !addedByUserId) {
-      log('warn', `Expense "${exportedExpense.name}": skipped (unknown payer/creator)`);
+      log(
+        'warn',
+        `Expense "${exportedExpense.name}" (${exportedExpense.id}): skipped (paidBy=${exportedExpense.paidByUserId} addedBy=${exportedExpense.addedByUserId} not found in user map)`,
+      );
       expensesSkipped++;
       continue;
     }

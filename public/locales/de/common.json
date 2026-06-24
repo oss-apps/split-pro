@@ -217,7 +217,9 @@
     "upload_failed": "Datei konnte nicht hochgeladen werden",
     "uploading_error": "Fehler beim Hochladen der Datei",
     "valid_email": "Gültige E-Mail-Adresse eingeben",
-    "import_splitpro_failed": "Fehler beim Importieren der SplitPro-Daten. Bitte stellen Sie sicher, dass Sie eine gültige SplitPro-Exportdatei hochgeladen haben."
+    "import_splitpro_failed": "Fehler beim Importieren der SplitPro-Daten. Bitte stellen Sie sicher, dass Sie eine gültige SplitPro-Exportdatei hochgeladen haben.",
+    "wrong_file_splitpro_on_splitwise": "Dies ist eine SplitPro-Exportdatei. Bitte verwende die SplitPro-Importseite.",
+    "wrong_file_splitwise_on_splitpro": "Dies ist eine Splitwise-Exportdatei. Bitte verwende die Splitwise-Importseite."
   },
   "expense_details": {
     "add_expense": "Ausgabe hinzufügen",

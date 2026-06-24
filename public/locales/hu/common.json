@@ -214,7 +214,9 @@
     "upload_failed": "Nem sikerült feltölteni a fájlt",
     "uploading_error": "Nem sikerült feltölteni a fájlt",
     "valid_email": "Adj meg érvényes e-mail címet",
-    "import_splitpro_failed": "A SplitPro adatok importálása nem sikerült. Győződjön meg arról, hogy érvényes SplitPro exportfájlt töltött fel."
+    "import_splitpro_failed": "A SplitPro adatok importálása nem sikerült. Győződjön meg arról, hogy érvényes SplitPro exportfájlt töltött fel.",
+    "wrong_file_splitpro_on_splitwise": "This is a SplitPro export file. Please use the SplitPro import page.",
+    "wrong_file_splitwise_on_splitpro": "This is a Splitwise export file. Please use the Splitwise import page."
   },
   "expense_details": {
     "add_expense": "Költség hozzáadása",

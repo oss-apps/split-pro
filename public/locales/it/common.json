@@ -177,7 +177,9 @@
     "upload_file_less_than": "Il file deve essere inferiore a",
     "uploading_error": "Errore durante il caricamento del file",
     "valid_email": "Inserisci un'email valida",
-    "import_splitpro_failed": "Importazione dei dati SplitPro non riuscita. Assicurarsi di aver caricato un file di esportazione SplitPro valido."
+    "import_splitpro_failed": "Importazione dei dati SplitPro non riuscita. Assicurarsi di aver caricato un file di esportazione SplitPro valido.",
+    "wrong_file_splitpro_on_splitwise": "This is a SplitPro export file. Please use the SplitPro import page.",
+    "wrong_file_splitwise_on_splitpro": "This is a Splitwise export file. Please use the Splitwise import page."
   },
   "expense_details": {
     "add_expense": "Aggiungi spesa",

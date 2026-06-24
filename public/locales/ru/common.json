@@ -159,6 +159,8 @@
     "invalid_currency_code": "Неправильный код валюты {{code}}",
     "language_change_failed": "Ошибка смены языка",
     "no_providers": "Ошибка при получении данных о провадерах аутентификации. Пожалуйста, проверьте логи бэкэнда.",
-    "import_splitpro_failed": "Не удалось импортировать данные SplitPro. Убедитесь, что вы загрузили действительный файл экспорта SplitPro."
+    "import_splitpro_failed": "Не удалось импортировать данные SplitPro. Убедитесь, что вы загрузили действительный файл экспорта SplitPro.",
+    "wrong_file_splitpro_on_splitwise": "This is a SplitPro export file. Please use the SplitPro import page.",
+    "wrong_file_splitwise_on_splitpro": "This is a Splitwise export file. Please use the Splitwise import page."
   }
 }

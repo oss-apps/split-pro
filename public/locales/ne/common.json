@@ -212,7 +212,9 @@
     "upload_failed": "अपलोड असफल भयो",
     "uploading_error": "अपलोड गर्दा त्रुटि",
     "valid_email": "कृपया मान्य इमेल राख्नुहोस्",
-    "import_splitpro_failed": "SplitPro डाटा आयात गर्न असफल भयो। कृपया सुनिश्चित गर्नुहोस् कि तपाईंले मान्य SplitPro निर्यात फाइल अपलोड गर्नुभयो।"
+    "import_splitpro_failed": "SplitPro डाटा आयात गर्न असफल भयो। कृपया सुनिश्चित गर्नुहोस् कि तपाईंले मान्य SplitPro निर्यात फाइल अपलोड गर्नुभयो।",
+    "wrong_file_splitpro_on_splitwise": "This is a SplitPro export file. Please use the SplitPro import page.",
+    "wrong_file_splitwise_on_splitpro": "This is a Splitwise export file. Please use the Splitwise import page."
   },
   "expense_details": {
     "add_expense": "खर्च थप्नुहोस्",

@@ -174,7 +174,9 @@
     "upload_failed": "Soubor se nepodařilo nahrát",
     "uploading_error": "Chyba při nahrávání souboru",
     "valid_email": "Zadejte platný email",
-    "import_splitpro_failed": "Import dat SplitPro se nezdařil. Ujistěte se, že jste nahráli platný exportní soubor SplitPro."
+    "import_splitpro_failed": "Import dat SplitPro se nezdařil. Ujistěte se, že jste nahráli platný exportní soubor SplitPro.",
+    "wrong_file_splitpro_on_splitwise": "This is a SplitPro export file. Please use the SplitPro import page.",
+    "wrong_file_splitwise_on_splitpro": "This is a Splitwise export file. Please use the Splitwise import page."
   },
   "expense_details": {
     "add_expense": "Přidat výdaj",

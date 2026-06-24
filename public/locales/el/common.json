@@ -157,6 +157,8 @@
     }
   },
   "errors": {
-    "import_splitpro_failed": "Αποτυχία εισαγωγής δεδομένων SplitPro. Βεβαιωθείτε ότι ανεβάσατε έγκυρο αρχείο εξαγωγής SplitPro."
+    "import_splitpro_failed": "Αποτυχία εισαγωγής δεδομένων SplitPro. Βεβαιωθείτε ότι ανεβάσατε έγκυρο αρχείο εξαγωγής SplitPro.",
+    "wrong_file_splitpro_on_splitwise": "This is a SplitPro export file. Please use the SplitPro import page.",
+    "wrong_file_splitwise_on_splitpro": "This is a Splitwise export file. Please use the Splitwise import page."
   }
 }

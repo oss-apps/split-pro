@@ -49,6 +49,11 @@ const ImportSpliwisePage: NextPageWithUser = () => {
     try {
       const json = JSON.parse(await file.text()) as Record<string, unknown>;
 
+      if (json.version && json.users && json.expenses) {
+        toast.error(t('errors.wrong_file_splitpro_on_splitwise'));
+        return;
+      }
+
       const expenses = json.expenses as Record<string, unknown>[] | undefined;
       const isFullBackup =
         Array.isArray(expenses) && expenses.length > 0 && 'repayments' in expenses[0]!;

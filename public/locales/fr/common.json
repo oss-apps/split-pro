@@ -214,7 +214,9 @@
     "upload_failed": "Échec de l'envoi du fichier",
     "uploading_error": "Une erreur est survenue lors de l'envoi du fichier",
     "valid_email": "Entre une adresse mail valide",
-    "import_splitpro_failed": "Échec de l'importation des données SplitPro. Veuillez vous assurer d'avoir téléchargé un fichier d'exportation SplitPro valide."
+    "import_splitpro_failed": "Échec de l'importation des données SplitPro. Veuillez vous assurer d'avoir téléchargé un fichier d'exportation SplitPro valide.",
+    "wrong_file_splitpro_on_splitwise": "This is a SplitPro export file. Please use the SplitPro import page.",
+    "wrong_file_splitwise_on_splitpro": "This is a Splitwise export file. Please use the Splitwise import page."
   },
   "expense_details": {
     "add_expense": "Nouvelle dépense",

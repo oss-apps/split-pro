@@ -36,6 +36,19 @@ const ImportSplitProPage: NextPageWithUser = () => {
 
     try {
       const json = JSON.parse(await file.text()) as Record<string, unknown>;
+
+      const expenses = json.expenses as Record<string, unknown>[] | undefined;
+      const looksLikeSplitwise =
+        json.friends &&
+        !json.version &&
+        Array.isArray(expenses) &&
+        expenses.length > 0 &&
+        'repayments' in expenses[0]!;
+      if (looksLikeSplitwise) {
+        toast.error(t('errors.wrong_file_splitwise_on_splitpro'));
+        return;
+      }
+
       if (!json.version || !json.expenses || !json.users) {
         setParseError(true);
         return;

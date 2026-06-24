@@ -174,7 +174,9 @@
     "currency_conversion_failed": "Failed to convert currencies",
     "recurrence_delete_failed": "Failed to delete recurrence",
     "recurrence_update_failed": "Failed to update recurrence",
-    "import_splitpro_failed": "Failed to import SplitPro data. Please make sure you uploaded a valid SplitPro export file."
+    "import_splitpro_failed": "Failed to import SplitPro data. Please make sure you uploaded a valid SplitPro export file.",
+    "wrong_file_splitpro_on_splitwise": "This is a SplitPro export file. Please use the SplitPro import page.",
+    "wrong_file_splitwise_on_splitpro": "This is a Splitwise export file. Please use the Splitwise import page."
   },
   "bank_transactions": {
     "choose_bank_provider": "Choose bank provider",

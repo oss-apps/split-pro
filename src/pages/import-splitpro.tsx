@@ -55,7 +55,7 @@ const ImportSplitProPage: NextPageWithUser = () => {
         expenses.length > 0 &&
         'repayments' in expenses[0]!;
       if (looksLikeSplitwise) {
-        toast.error(t('errors.wrong_file_splitwise_on_splitpro'));
+        toast.error(t('errors.wrong_file_splitwise_on_splitpro'), { duration: 10000 });
         return;
       }
 

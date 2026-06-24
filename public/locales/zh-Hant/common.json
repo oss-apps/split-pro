@@ -41,7 +41,13 @@
         "import_success": ""
       },
       "no_file_chosen": "",
-      "note": ""
+      "note": "",
+      "two_ways_intro": "有兩種方式匯出您的 Splitwise 資料：",
+      "option1_title": "1. 透過外部連結匯出餘額",
+      "option1_note": "僅匯出餘額，不包含個別支出。",
+      "option2_title": "2. 使用 Splitwise Pro 完整匯出",
+      "option2_note": "匯出所有群組及所有個別支出。",
+      "option2_instructions": "前往 Splitwise 網站 → ⚙️ → 帳戶設定 → 進階功能 → 「下載完整備份（JSON）」。"
     },
     "logout": "",
     "messages": {

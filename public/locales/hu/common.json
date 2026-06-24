@@ -52,7 +52,13 @@
         "import_success": "Importálás sikeres"
       },
       "no_file_chosen": "Nincs kiválasztott fájl",
-      "note": "Megjegyzés: Jelenleg csak a barátok és csoportok importálását támogatja. Tranzakciókat nem fog importálni. Dolgozunk rajta."
+      "note": "Megjegyzés: Jelenleg csak a barátok és csoportok importálását támogatja. Tranzakciókat nem fog importálni. Dolgozunk rajta.",
+      "two_ways_intro": "Kétféleképpen exportálhatod a Splitwise adataidat:",
+      "option1_title": "1. Egyenleg-exportálás külső linken keresztül",
+      "option1_note": "Csak egyenlegek kerülnek exportálásra — egyedi kiadások nem.",
+      "option2_title": "2. Teljes exportálás Splitwise Pro-val",
+      "option2_note": "Minden csoport az összes egyedi kiadással együtt exportálásra kerül.",
+      "option2_instructions": "A Splitwise weboldalon menj a ⚙️ → Fiókbeállítások → Speciális funkciók → \"Teljes biztonsági mentés letöltése (JSON)\" menüpontra."
     },
     "logout": "Kijelentkezés",
     "messages": {

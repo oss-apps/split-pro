@@ -52,7 +52,13 @@
         "import_success": "Import erfolgreich"
       },
       "no_file_chosen": "Keine Datei ausgewählt",
-      "note": "Hinweis: Es werden derzeit nur Freunde und Gruppen importiert. Transaktionen werden nicht importiert. Wir arbeiten daran."
+      "note": "Hinweis: Es werden derzeit nur Freunde und Gruppen importiert. Transaktionen werden nicht importiert. Wir arbeiten daran.",
+      "two_ways_intro": "Es gibt zwei Wege, deine Splitwise-Daten zu exportieren:",
+      "option1_title": "1. Balance-Export über externen Link",
+      "option1_note": "Hierbei werden nur Salden exportiert — keine Einzelausgaben.",
+      "option2_title": "2. Vollständiger Export mit Splitwise Pro",
+      "option2_note": "Hierbei werden alle Gruppen mit sämtlichen Einzelausgaben exportiert.",
+      "option2_instructions": "Gehe auf der Splitwise-Website auf ⚙️ → Account-Einstellungen → Erweiterte Funktionen → „Vollständiges Backup herunterladen (JSON)“."
     },
     "logout": "Abmelden",
     "messages": {

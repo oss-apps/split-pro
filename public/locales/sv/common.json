@@ -52,7 +52,13 @@
         "import_success": "Import lyckades"
       },
       "no_file_chosen": "Ingen fil vald",
-      "note": "Notera: Vi stödjer för närvarande endast import av vänner och grupper. Transaktioner kommer inte importeras. Vi arbetar på det."
+      "note": "Notera: Vi stödjer för närvarande endast import av vänner och grupper. Transaktioner kommer inte importeras. Vi arbetar på det.",
+      "two_ways_intro": "Det finns två sätt att exportera dina Splitwise-data:",
+      "option1_title": "1. Saldoexport via extern länk",
+      "option1_note": "Endast saldon exporteras — inga enskilda utgifter.",
+      "option2_title": "2. Fullständig export med Splitwise Pro",
+      "option2_note": "Alla grupper med alla enskilda utgifter exporteras.",
+      "option2_instructions": "Gå till Splitwise webbplats → ⚙️ → Kontoinställningar → Avancerade funktioner → \"Ladda ner fullständig säkerhetskopia (JSON)\"."
     },
     "logout": "Logga ut",
     "messages": {

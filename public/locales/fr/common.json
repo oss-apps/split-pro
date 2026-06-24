@@ -52,7 +52,13 @@
         "import_success": "L'import a bien fonctionné"
       },
       "no_file_chosen": "Aucun fichier choisi",
-      "note": "Note : l'import ne fonctionne actuellement que pour les ami⋅es et les groupes, mais pas pour les transactions. On y travaille !"
+      "note": "Note : l'import ne fonctionne actuellement que pour les ami⋅es et les groupes, mais pas pour les transactions. On y travaille !",
+      "two_ways_intro": "Il y a deux façons d'exporter vos données Splitwise :",
+      "option1_title": "1. Export des soldes via un lien externe",
+      "option1_note": "Seuls les soldes sont exportés — pas les dépenses individuelles.",
+      "option2_title": "2. Export complet avec Splitwise Pro",
+      "option2_note": "Tous les groupes avec toutes les dépenses individuelles sont exportés.",
+      "option2_instructions": "Allez sur le site Splitwise → ⚙️ → Paramètres du compte → Fonctionnalités avancées → « Télécharger la sauvegarde complète (JSON) »."
     },
     "logout": "Déconnexion",
     "messages": {

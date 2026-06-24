@@ -19,6 +19,22 @@
       "messages": {
         "import_success": "U importuan me sukses {{expenses}} shpenzime dhe {{groups}} grupe"
       }
+    },
+    "import_from_splitwise_details": {
+      "choose_file": "Zgjidh skedarin",
+      "export_splitwise_data_button": "Eksporto të dhënat Splitwise",
+      "follow_to_export_splitwise_data": "Ndiqni këtë lidhëje për të eksportuar të dhënat Splitwise",
+      "messages": {
+        "import_success": "Importimi u krye me sukses"
+      },
+      "no_file_chosen": "Asnjë skedar i zgjedhur",
+      "note": "Shënim: Aktualisht importohen vetëm miqtë dhe grupet. Transaksionet nuk importohen.",
+      "two_ways_intro": "Ka dy mënyra për të eksportuar të dhënat tuaja nga Splitwise:",
+      "option1_title": "1. Eksport i bilanceve përmes një linku të jashtëm",
+      "option1_note": "Eksportohen vetëm bilancet — jo shpenzimet individuale.",
+      "option2_title": "2. Eksport i plotë me Splitwise Pro",
+      "option2_note": "Eksportohen të gjitha grupet me të gjitha shpenzimet individuale.",
+      "option2_instructions": "Shkoni në faqen e Splitwise → ⚙️ → Cilësimet e llogarisë → Veçoritë e avancuara → \"Shkarko kopjen rezervë të plotë (JSON)\"."
     }
   },
   "balances": {

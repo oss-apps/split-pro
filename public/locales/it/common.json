@@ -41,7 +41,13 @@
         "import_success": "Importazione riuscita"
       },
       "no_file_chosen": "Nessun file scelto",
-      "note": "Nota: al momento supporta solo l'importazione di amici e gruppi. Non importerà transazioni. Ci stiamo lavorando."
+      "note": "Nota: al momento supporta solo l'importazione di amici e gruppi. Non importerà transazioni. Ci stiamo lavorando.",
+      "two_ways_intro": "Ci sono due modi per esportare i tuoi dati Splitwise:",
+      "option1_title": "1. Esportazione saldi tramite link esterno",
+      "option1_note": "Vengono esportati solo i saldi — nessuna spesa individuale.",
+      "option2_title": "2. Esportazione completa con Splitwise Pro",
+      "option2_note": "Vengono esportati tutti i gruppi con tutte le spese individuali.",
+      "option2_instructions": "Vai sul sito Splitwise → ⚙️ → Impostazioni account → Funzionalità avanzate → \"Scarica backup completo (JSON)\"."
     },
     "logout": "Esci",
     "messages": {

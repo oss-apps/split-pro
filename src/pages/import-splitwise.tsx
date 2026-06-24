@@ -57,7 +57,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
       const json = JSON.parse(await file.text()) as Record<string, unknown>;
 
       if (json.version && json.users && json.expenses) {
-        toast.error(t('errors.wrong_file_splitpro_on_splitwise'));
+        toast.error(t('errors.wrong_file_splitpro_on_splitwise'), { duration: 10000 });
         return;
       }
 
@@ -353,14 +353,39 @@ const ImportSpliwisePage: NextPageWithUser = () => {
         )}
 
         {!uploadedFile && (
-          <div className="mt-20 flex flex-col items-center justify-center gap-4">
-            {t('account.import_from_splitwise_details.follow_to_export_splitwise_data')}
-            <Link href="https://export-splitwise.vercel.app/" target="_blank">
-              <Button>
-                <DownloadCloud className="mr-2 text-gray-800" />
-                {t('account.import_from_splitwise_details.export_splitwise_data_button')}
-              </Button>
-            </Link>
+          <div className="mt-10 flex flex-col gap-6 text-sm text-gray-300">
+            <p className="text-center text-gray-400">
+              {t('account.import_from_splitwise_details.two_ways_intro')}
+            </p>
+
+            <div className="rounded border border-gray-700 p-4">
+              <h3 className="font-semibold text-gray-200">
+                {t('account.import_from_splitwise_details.option1_title')}
+              </h3>
+              <p className="mt-1 text-gray-400">
+                {t('account.import_from_splitwise_details.option1_note')}
+              </p>
+              <div className="mt-3 flex justify-center">
+                <Link href="https://export-splitwise.vercel.app/" target="_blank">
+                  <Button>
+                    <DownloadCloud className="mr-2 text-gray-800" />
+                    {t('account.import_from_splitwise_details.export_splitwise_data_button')}
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            <div className="rounded border border-gray-700 p-4">
+              <h3 className="font-semibold text-gray-200">
+                {t('account.import_from_splitwise_details.option2_title')}
+              </h3>
+              <p className="mt-1 text-gray-400">
+                {t('account.import_from_splitwise_details.option2_note')}
+              </p>
+              <p className="mt-2 text-gray-400">
+                {t('account.import_from_splitwise_details.option2_instructions')}
+              </p>
+            </div>
           </div>
         )}
 

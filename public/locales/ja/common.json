@@ -25,6 +25,22 @@
       "messages": {
         "import_success": "{{expenses}} 件の支出と {{groups}} 件のグループが正常にインポートされました"
       }
+    },
+    "import_from_splitwise_details": {
+      "choose_file": "ファイルを選択",
+      "export_splitwise_data_button": "Splitwiseデータをエクスポート",
+      "follow_to_export_splitwise_data": "Splitwiseデータをエクスポートするにはこのリンクへ",
+      "messages": {
+        "import_success": "インポート成功"
+      },
+      "no_file_chosen": "ファイル未選択",
+      "note": "注意: 現在は友達とグループのみインポートされます。取引はインポートされません。",
+      "two_ways_intro": "Splitwiseデータをエクスポートするには2つの方法があります：",
+      "option1_title": "1. 外部リンクによる残高エクスポート",
+      "option1_note": "残高のみがエクスポートされます（個別の支出は含まれません）。",
+      "option2_title": "2. Splitwise Proによる完全エクスポート",
+      "option2_note": "すべてのグループとすべての個別支出がエクスポートされます。",
+      "option2_instructions": "SplitwiseのWebサイトで ⚙️ → アカウント設定 → 高度な機能 → 「完全なバックアップをダウンロード（JSON）」を選択してください。"
     }
   },
   "balances": {

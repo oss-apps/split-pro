@@ -41,7 +41,13 @@
         "import_success": "Import ból úspešný"
       },
       "no_file_chosen": "Žiaden súbor nie je vybraný",
-      "note": "Poznámka: Aktuálne podporujeme len import priateľov a skupín. Neimportuje to žiadne transakcie. Pracujeme na tom."
+      "note": "Poznámka: Aktuálne podporujeme len import priateľov a skupín. Neimportuje to žiadne transakcie. Pracujeme na tom.",
+      "two_ways_intro": "Existujú dva spôsoby exportu dát zo Splitwise:",
+      "option1_title": "1. Export zostatkov cez externý odkaz",
+      "option1_note": "Exportujú sa iba zostatky — žiadne jednotlivé výdavky.",
+      "option2_title": "2. Kompletný export so Splitwise Pro",
+      "option2_note": "Exportujú sa všetky skupiny so všetkými jednotlivými výdavkami.",
+      "option2_instructions": "Na webe Splitwise prejdite na ⚙️ → Nastavenia účtu → Pokročilé funkcie → „Stiahnúť kompletnú zálohu (JSON)“."
     },
     "logout": "Odhlásiť sa",
     "messages": {

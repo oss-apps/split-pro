@@ -52,7 +52,13 @@
         "import_success": "Succesvol geïmporteerd"
       },
       "no_file_chosen": "Geen bestand gekozen",
-      "note": "Info: Momenteel importeert het enkel vrienden en groepen. Het importeert nog geen transacties. We werken er aan."
+      "note": "Info: Momenteel importeert het enkel vrienden en groepen. Het importeert nog geen transacties. We werken er aan.",
+      "two_ways_intro": "Er zijn twee manieren om je Splitwise-gegevens te exporteren:",
+      "option1_title": "1. Saldo-export via externe link",
+      "option1_note": "Hierbij worden alleen saldi geëxporteerd — geen individuele uitgaven.",
+      "option2_title": "2. Volledige export met Splitwise Pro",
+      "option2_note": "Hierbij worden alle groepen met alle individuele uitgaven geëxporteerd.",
+      "option2_instructions": "Ga op de Splitwise-website naar ⚙️ → Accountinstellingen → Geavanceerde functies → \"Volledige back-up downloaden (JSON)\"."
     },
     "logout": "Uitloggen",
     "messages": {

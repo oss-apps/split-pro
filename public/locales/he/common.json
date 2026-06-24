@@ -41,7 +41,13 @@
         "import_success": ""
       },
       "no_file_chosen": "",
-      "note": ""
+      "note": "",
+      "two_ways_intro": "ישנן שתי דרכים לייצא את נתוני ה-Splitwise שלך:",
+      "option1_title": "1. ייצוא יתרות דרך קישור חיצוני",
+      "option1_note": "רק יתרות מיוצאות — ללא הוצאות בודדות.",
+      "option2_title": "2. ייצוא מלא עם Splitwise Pro",
+      "option2_note": "כל הקבוצות עם כל ההוצאות הבודדות מיוצאות.",
+      "option2_instructions": "עבור באתר Splitwise ל-⚙️ → הגדרות חשבון → תכונות מתקדמות → \"הורד גיבוי מלא (JSON)\"."
     },
     "logout": "",
     "messages": {

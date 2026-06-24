@@ -65,7 +65,6 @@ const ImportSplitProPage: NextPageWithUser = () => {
           groups: outcome.result.groupsImported,
         }),
       );
-      router.push('/balances').catch(console.error);
     } else {
       toast.error(t('errors.import_splitpro_failed'));
     }

@@ -112,7 +112,6 @@ const ImportSpliwisePage: NextPageWithUser = () => {
           `Import abgeschlossen: ${outcome.result.expensesImported} Ausgaben importiert, ${outcome.result.expensesSkipped ?? 0} übersprungen`,
           { duration: 4000 },
         );
-        router.push('/balances').catch(console.error);
       } else {
         toast.error(t('errors.import_failed'));
       }

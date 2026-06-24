@@ -107,6 +107,8 @@
     "next": "Próxima",
     "reconnect": "Reconectar",
     "save": "Salvar",
+    "select_all": "Select all",
+    "deselect_all": "Deselect all",
     "settle_up": "Quitar despesas",
     "submit": "Enviar"
   },

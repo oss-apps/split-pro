@@ -462,6 +462,7 @@ export async function importSplitProData(
   currentUserId: number,
   data: Awaited<ReturnType<typeof getFullExportData>>,
   onLog?: ImportLogFn,
+  selectedGroupIds?: Set<number>,
 ) {
   const log: ImportLogFn = onLog ?? (() => undefined);
 
@@ -554,7 +555,16 @@ export async function importSplitProData(
 
   // Create groups
   const groupIdMap = new Map<number, number>();
+  const skippedGroupIds = new Set<number>();
   for (const exportedGroup of data.groups) {
+    if (selectedGroupIds && !selectedGroupIds.has(exportedGroup.id)) {
+      skippedGroupIds.add(exportedGroup.id);
+      log(
+        'info',
+        `Group "${exportedGroup.name}" (${exportedGroup.publicId}): skipped (not selected)`,
+      );
+      continue;
+    }
     const existing = await db.group.findUnique({
       where: { publicId: exportedGroup.publicId },
       include: { groupUsers: { select: { userId: true } } },
@@ -615,14 +625,27 @@ export async function importSplitProData(
     );
   }
 
-  log('info', `Groups processed: ${groupIdMap.size}`);
+  log(
+    'info',
+    `Groups processed: ${groupIdMap.size}${skippedGroupIds.size > 0 ? `, ${skippedGroupIds.size} skipped` : ''}`,
+  );
 
   // Create expenses (or restore missing participants for existing ones)
   let expensesImported = 0;
   let expensesSkipped = 0;
-  const total = data.expenses.length;
+  const filteredExpenses =
+    skippedGroupIds.size > 0
+      ? data.expenses.filter((e) => !e.groupId || !skippedGroupIds.has(e.groupId))
+      : data.expenses;
+  const total = filteredExpenses.length;
+  if (filteredExpenses.length < data.expenses.length) {
+    log(
+      'info',
+      `Expenses: ${data.expenses.length} total, ${data.expenses.length - filteredExpenses.length} filtered out (group not selected), ${total} to process`,
+    );
+  }
   for (let i = 0; i < total; i++) {
-    const exportedExpense = data.expenses[i]!;
+    const exportedExpense = filteredExpenses[i]!;
     if (i > 0 && i % 100 === 0) {
       log('info', `Progress: ${i}/${total} expenses processed...`);
     }
@@ -742,6 +765,7 @@ export async function restoreSplitProData(
   currentUserId: number,
   data: Awaited<ReturnType<typeof getFullExportData>>,
   onLog?: ImportLogFn,
+  _selectedGroupIds?: Set<number>,
 ) {
   const log: ImportLogFn = onLog ?? (() => undefined);
 
@@ -818,6 +842,7 @@ export async function importFromSplitwisePro(
   currentUserId: number,
   data: SplitwiseProBackup,
   onLog?: ImportLogFn,
+  selectedGroupIds?: Set<number>,
 ) {
   const log: ImportLogFn = onLog ?? (() => undefined);
   const activeExpenses = data.expenses.filter((e) => !e.deleted_at);
@@ -876,10 +901,16 @@ export async function importFromSplitwisePro(
 
   // Build Splitwise groupId → SplitPro groupId map
   const groupIdMap = new Map<number, number>();
+  const skippedGroupIds = new Set<number>();
   for (const swGroup of data.groups) {
     if (swGroup.id === 0) {
       continue;
     } // Splitwise uses 0 for "no group"
+    if (selectedGroupIds && !selectedGroupIds.has(swGroup.id)) {
+      skippedGroupIds.add(swGroup.id);
+      log('info', `Group "${swGroup.name}" (SW #${swGroup.id}): skipped (not selected)`);
+      continue;
+    }
     const existing = await db.group.findFirst({ where: { name: swGroup.name } });
     if (existing) {
       groupIdMap.set(swGroup.id, existing.id);
@@ -907,15 +938,28 @@ export async function importFromSplitwisePro(
     }
   }
 
-  log('info', `Groups processed: ${groupIdMap.size}`);
+  log(
+    'info',
+    `Groups processed: ${groupIdMap.size}${skippedGroupIds.size > 0 ? `, ${skippedGroupIds.size} skipped` : ''}`,
+  );
 
   // Import expenses
   let expensesImported = 0;
   let expensesSkipped = 0;
-  const total = activeExpenses.length;
+  const filteredExpenses =
+    skippedGroupIds.size > 0
+      ? activeExpenses.filter((e) => !e.group_id || !skippedGroupIds.has(e.group_id))
+      : activeExpenses;
+  const total = filteredExpenses.length;
+  if (filteredExpenses.length < activeExpenses.length) {
+    log(
+      'info',
+      `Expenses: ${activeExpenses.length} total, ${activeExpenses.length - filteredExpenses.length} filtered out (group not selected), ${total} to process`,
+    );
+  }
 
   for (let i = 0; i < total; i++) {
-    const swExp = activeExpenses[i]!;
+    const swExp = filteredExpenses[i]!;
     if (i > 0 && i % 100 === 0) {
       log('info', `Progress: ${i}/${total} expenses processed...`);
     }

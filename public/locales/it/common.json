@@ -96,6 +96,8 @@
     "next": "Avanti",
     "reconnect": "Riconnettiti",
     "save": "Salva",
+    "select_all": "Select all",
+    "deselect_all": "Deselect all",
     "settle_up": "Regola",
     "submit": "Invia"
   },

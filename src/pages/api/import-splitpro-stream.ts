@@ -34,6 +34,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return end();
     }
 
+    const selectedGroupsRaw = fields.selectedGroups?.[0];
+
     const content = await fs.readFile(uploadedFile.filepath, 'utf-8');
     const data = JSON.parse(content) as Record<string, unknown>;
 
@@ -42,11 +44,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return end();
     }
 
+    const selectedGroupIds = selectedGroupsRaw
+      ? new Set(JSON.parse(selectedGroupsRaw) as number[])
+      : undefined;
+
     const importFn = mode === 'restore' ? restoreSplitProData : importSplitProData;
     const result = await importFn(
       session.user.id,
       data as unknown as Parameters<typeof importSplitProData>[1],
       (type, message) => send(type, { message }),
+      mode === 'merge' ? selectedGroupIds : undefined,
     );
 
     send('done', { result });

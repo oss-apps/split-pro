@@ -1,26 +1,34 @@
 import { PaperClipIcon } from '@heroicons/react/24/solid';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
 import MainLayout from '~/components/Layout/MainLayout';
 import { Button } from '~/components/ui/button';
+import { Checkbox } from '~/components/ui/checkbox';
 import { Input } from '~/components/ui/input';
+import { Separator } from '~/components/ui/separator';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { ImportLogWindow } from '~/components/Import/ImportLogWindow';
 import { useImportStream } from '~/hooks/useImportStream';
 import { type NextPageWithUser } from '~/types';
 import { withI18nStaticProps } from '~/utils/i18n/server';
 
+interface ParsedGroup {
+  id: number;
+  name: string;
+  members: { userId: number }[];
+}
+
 const ImportSplitProPage: NextPageWithUser = () => {
   const { t } = useTranslation();
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [parsedData, setParsedData] = useState<Record<string, unknown> | null>(null);
+  const [parsedGroups, setParsedGroups] = useState<ParsedGroup[]>([]);
+  const [selectedGroups, setSelectedGroups] = useState<Record<number, boolean>>({});
   const [parseError, setParseError] = useState(false);
   const [mode, setMode] = useState<'merge' | 'restore'>('merge');
-  const router = useRouter();
 
   const { logs, isStreaming, startStream } = useImportStream();
 
@@ -33,6 +41,8 @@ const ImportSplitProPage: NextPageWithUser = () => {
     setUploadedFile(file);
     setParseError(false);
     setParsedData(null);
+    setParsedGroups([]);
+    setSelectedGroups({});
 
     try {
       const json = JSON.parse(await file.text()) as Record<string, unknown>;
@@ -53,7 +63,11 @@ const ImportSplitProPage: NextPageWithUser = () => {
         setParseError(true);
         return;
       }
+
+      const groups = (json.groups as ParsedGroup[]) ?? [];
       setParsedData(json);
+      setParsedGroups(groups);
+      setSelectedGroups(Object.fromEntries(groups.map((g) => [g.id, true])));
     } catch {
       setParseError(true);
       toast.error(t('errors.import_splitpro_failed'));
@@ -69,6 +83,13 @@ const ImportSplitProPage: NextPageWithUser = () => {
     formData.append('file', uploadedFile);
     formData.append('mode', mode);
 
+    if (mode === 'merge') {
+      const selected = Object.entries(selectedGroups)
+        .filter(([, v]) => v)
+        .map(([k]) => Number(k));
+      formData.append('selectedGroups', JSON.stringify(selected));
+    }
+
     const outcome = await startStream('/api/import-splitpro-stream', formData);
 
     if (outcome.ok) {
@@ -82,6 +103,9 @@ const ImportSplitProPage: NextPageWithUser = () => {
       toast.error(t('errors.import_splitpro_failed'));
     }
   };
+
+  const allSelected = parsedGroups.length > 0 && parsedGroups.every((g) => selectedGroups[g.id]);
+  const noneSelected = parsedGroups.length > 0 && parsedGroups.every((g) => !selectedGroups[g.id]);
 
   return (
     <>
@@ -104,7 +128,7 @@ const ImportSplitProPage: NextPageWithUser = () => {
               variant="ghost"
               className="text-primary px-0 py-0"
               size="sm"
-              disabled={isStreaming || !parsedData}
+              disabled={isStreaming || !parsedData || (mode === 'merge' && noneSelected)}
             >
               {t('actions.import')}
             </Button>
@@ -187,7 +211,7 @@ const ImportSplitProPage: NextPageWithUser = () => {
           </label>
           <Button
             onClick={() => void onImport()}
-            disabled={!parsedData || isStreaming}
+            disabled={!parsedData || isStreaming || (mode === 'merge' && noneSelected)}
             className="w-[100px]"
             size="sm"
             variant={mode === 'restore' ? 'destructive' : 'default'}
@@ -215,6 +239,49 @@ const ImportSplitProPage: NextPageWithUser = () => {
                 {t('account.import_splitpro_data_details.expenses')}
               </div>
             </div>
+
+            {mode === 'merge' && parsedGroups.length > 0 && (
+              <>
+                <div className="mt-6 flex items-center justify-between">
+                  <span className="font-semibold text-gray-200">
+                    {t('actors.groups')} ({parsedGroups.length})
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs text-gray-400"
+                    onClick={() =>
+                      setSelectedGroups(
+                        Object.fromEntries(parsedGroups.map((g) => [g.id, !allSelected])),
+                      )
+                    }
+                  >
+                    {allSelected ? t('actions.deselect_all') : t('actions.select_all')}
+                  </Button>
+                </div>
+                <div className="mt-2 flex flex-col gap-3">
+                  {parsedGroups.map((group, index) => (
+                    <div key={group.id}>
+                      <div className="flex justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            checked={selectedGroups[group.id] ?? true}
+                            onCheckedChange={(checked) =>
+                              setSelectedGroups({ ...selectedGroups, [group.id]: !!checked })
+                            }
+                          />
+                          <p className="text-gray-200">{group.name}</p>
+                        </div>
+                        <div className="shrink-0 text-sm text-gray-400">
+                          {group.members.length} {t('actors.members')}
+                        </div>
+                      </div>
+                      {index !== parsedGroups.length - 1 && <Separator className="mt-3" />}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         )}
 

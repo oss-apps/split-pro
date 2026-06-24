@@ -107,6 +107,8 @@
     "next": "Következő",
     "reconnect": "Újracsatlakozás",
     "save": "Mentés",
+    "select_all": "Select all",
+    "deselect_all": "Deselect all",
     "settle_up": "Kiegyenlítés",
     "submit": "Küldés"
   },

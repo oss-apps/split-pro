@@ -105,6 +105,8 @@
     "leave": "Leave",
     "next": "Next",
     "save": "Save",
+    "select_all": "Select all",
+    "deselect_all": "Deselect all",
     "settle_up": "Settle up",
     "submit": "Submit",
     "reconnect": "Reconnect",

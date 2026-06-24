@@ -105,6 +105,8 @@
     "next": "अर्को",
     "reconnect": "पुन: जडान गर्नुहोस्",
     "save": "बचत गर्नुहोस्",
+    "select_all": "Select all",
+    "deselect_all": "Deselect all",
     "settle_up": "हिसाब मिलान गर्नुहोस्",
     "submit": "पेश गर्नुहोस्"
   },

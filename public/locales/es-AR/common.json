@@ -96,6 +96,8 @@
     "next": "Siguiente",
     "reconnect": "Reconectar",
     "save": "Guardar",
+    "select_all": "Select all",
+    "deselect_all": "Deselect all",
     "settle_up": "Liquidar",
     "submit": "Enviar"
   },

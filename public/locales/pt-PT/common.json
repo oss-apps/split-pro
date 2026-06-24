@@ -96,6 +96,8 @@
     "next": "",
     "reconnect": "Reconectar",
     "save": "Salvar",
+    "select_all": "Select all",
+    "deselect_all": "Deselect all",
     "settle_up": "Acertar contas",
     "submit": "Submeter"
   },

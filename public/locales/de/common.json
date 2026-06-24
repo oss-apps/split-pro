@@ -107,6 +107,8 @@
     "next": "Weiter",
     "reconnect": "Wieder verbinden",
     "save": "Speichern",
+    "select_all": "Alle auswählen",
+    "deselect_all": "Alle abwählen",
     "settle_up": "Ausgleichen",
     "submit": "Speichern"
   },

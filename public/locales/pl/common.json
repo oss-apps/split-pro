@@ -107,6 +107,8 @@
     "next": "Następny",
     "reconnect": "Połącz ponownie",
     "save": "Zapisz",
+    "select_all": "Select all",
+    "deselect_all": "Deselect all",
     "settle_up": "Rozlicz",
     "submit": "Zapisz"
   },

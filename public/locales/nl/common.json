@@ -107,6 +107,8 @@
     "next": "Volgende",
     "reconnect": "Opnieuw verbinden",
     "save": "Opslaan",
+    "select_all": "Select all",
+    "deselect_all": "Deselect all",
     "settle_up": "Vereffenen",
     "submit": "Indienen"
   },

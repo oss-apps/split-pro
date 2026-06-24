@@ -107,6 +107,8 @@
     "next": "Nästa",
     "reconnect": "Återanslut",
     "save": "Spara",
+    "select_all": "Select all",
+    "deselect_all": "Deselect all",
     "settle_up": "Gör kvitt",
     "submit": "Skicka"
   },

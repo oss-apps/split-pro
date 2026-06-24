@@ -25,13 +25,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   let uploadedFile: File | undefined;
   try {
     const form = formidable({ maxFileSize: 50 * 1024 * 1024 });
-    const [, files] = await form.parse(req);
+    const [fields, files] = await form.parse(req);
     uploadedFile = files.file?.[0];
 
     if (!uploadedFile) {
       send('error', { message: 'No file provided' });
       return end();
     }
+
+    const selectedGroupsRaw = fields.selectedGroups?.[0];
 
     const content = await fs.readFile(uploadedFile.filepath, 'utf-8');
     const data = JSON.parse(content) as Record<string, unknown>;
@@ -41,10 +43,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return end();
     }
 
+    const selectedGroupIds = selectedGroupsRaw
+      ? new Set(JSON.parse(selectedGroupsRaw) as number[])
+      : undefined;
+
     const result = await importFromSplitwisePro(
       session.user.id,
       data as unknown as Parameters<typeof importFromSplitwisePro>[1],
       (type, message) => send(type, { message }),
+      selectedGroupIds,
     );
 
     send('done', { result });

@@ -18,6 +18,12 @@ import { type NextPageWithUser, type SplitwiseGroup, type SplitwiseUser } from '
 import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
 
+interface FullBackupGroup {
+  id: number;
+  name: string;
+  members: unknown[];
+}
+
 type ParsedFile =
   | { mode: 'balance'; users: SplitwiseUser[]; groups: SplitwiseGroup[] }
   | {
@@ -25,7 +31,7 @@ type ParsedFile =
       raw: Record<string, unknown>;
       expenseCount: number;
       friendCount: number;
-      groupCount: number;
+      groups: FullBackupGroup[];
     };
 
 const ImportSpliwisePage: NextPageWithUser = () => {
@@ -33,7 +39,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [parsed, setParsed] = useState<ParsedFile | null>(null);
   const [selectedUsers, setSelectedUsers] = useState<Record<string, boolean>>({});
-  const [selectedGroups, setSelectedGroups] = useState<Record<string, boolean>>({});
+  const [selectedGroups, setSelectedGroups] = useState<Record<number, boolean>>({});
 
   const router = useRouter();
 
@@ -45,6 +51,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
 
     setUploadedFile(file);
     setParsed(null);
+    setSelectedGroups({});
 
     try {
       const json = JSON.parse(await file.text()) as Record<string, unknown>;
@@ -61,8 +68,8 @@ const ImportSpliwisePage: NextPageWithUser = () => {
       if (isFullBackup) {
         const activeExpenses = expenses.filter((e) => !e.deleted_at);
         const friends = (json.friends as Record<string, unknown>[]) ?? [];
-        const groups = ((json.groups as Record<string, unknown>[]) ?? []).filter(
-          (g) => 0 !== g.id && (g.members as unknown[]).length > 0,
+        const groups = ((json.groups as FullBackupGroup[]) ?? []).filter(
+          (g) => 0 !== g.id && g.members.length > 0,
         );
 
         setParsed({
@@ -70,8 +77,9 @@ const ImportSpliwisePage: NextPageWithUser = () => {
           raw: json,
           expenseCount: activeExpenses.length,
           friendCount: friends.length,
-          groupCount: groups.length,
+          groups,
         });
+        setSelectedGroups(Object.fromEntries(groups.map((g) => [g.id, true])));
       } else {
         // Legacy balance-only mode
         const friendsWithBalance: SplitwiseUser[] = [];
@@ -110,6 +118,12 @@ const ImportSpliwisePage: NextPageWithUser = () => {
       }
       const formData = new FormData();
       formData.append('file', uploadedFile);
+
+      const selected = Object.entries(selectedGroups)
+        .filter(([, v]) => v)
+        .map(([k]) => Number(k));
+      formData.append('selectedGroups', JSON.stringify(selected));
+
       const outcome = await startStream('/api/import-splitwise-stream', formData);
 
       if (outcome.ok) {
@@ -139,6 +153,10 @@ const ImportSpliwisePage: NextPageWithUser = () => {
 
   const isPending = balanceMutation.isPending || isStreaming;
 
+  const fullGroups = parsed?.mode === 'full' ? parsed.groups : [];
+  const allSelected = fullGroups.length > 0 && fullGroups.every((g) => selectedGroups[g.id]);
+  const noneSelected = fullGroups.length > 0 && fullGroups.every((g) => !selectedGroups[g.id]);
+
   return (
     <>
       <Head>
@@ -161,7 +179,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               variant="ghost"
               className="text-primary px-0 py-0"
               size="sm"
-              disabled={isPending || !parsed}
+              disabled={isPending || !parsed || (parsed.mode === 'full' && noneSelected)}
             >
               {t('actions.import')}
             </Button>
@@ -193,7 +211,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
           </label>
           <Button
             onClick={onImport}
-            disabled={!parsed || isPending}
+            disabled={!parsed || isPending || (parsed?.mode === 'full' && noneSelected)}
             className="w-[100px]"
             size="sm"
           >
@@ -208,15 +226,55 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                 {t('actors.friends')}: {parsed.friendCount}
               </div>
               <div>
-                {t('actors.groups')}: {parsed.groupCount}
+                {t('actors.groups')}: {parsed.groups.length}
               </div>
               <div>
                 {parsed.expenseCount} {t('account.import_splitpro_data_details.expenses')}
               </div>
             </div>
-            <div className="text-xs text-gray-500">
-              Splitwise Pro Backup erkannt — alle Ausgaben werden importiert.
-            </div>
+
+            {parsed.groups.length > 0 && (
+              <>
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="font-semibold text-gray-200">
+                    {t('actors.groups')} ({parsed.groups.length})
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs text-gray-400"
+                    onClick={() =>
+                      setSelectedGroups(
+                        Object.fromEntries(parsed.groups.map((g) => [g.id, !allSelected])),
+                      )
+                    }
+                  >
+                    {allSelected ? t('actions.deselect_all') : t('actions.select_all')}
+                  </Button>
+                </div>
+                <div className="mt-2 flex flex-col gap-3">
+                  {parsed.groups.map((group, index) => (
+                    <div key={group.id}>
+                      <div className="flex justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            checked={selectedGroups[group.id] ?? true}
+                            onCheckedChange={(checked) =>
+                              setSelectedGroups({ ...selectedGroups, [group.id]: !!checked })
+                            }
+                          />
+                          <p className="text-gray-200">{group.name}</p>
+                        </div>
+                        <div className="shrink-0 text-sm text-gray-400">
+                          {group.members.length} {t('actors.members')}
+                        </div>
+                      </div>
+                      {index !== parsed.groups.length - 1 && <Separator className="mt-3" />}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         )}
 
@@ -277,7 +335,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                         <Checkbox
                           checked={selectedGroups[group.id]}
                           onCheckedChange={(checked) =>
-                            setSelectedGroups({ ...selectedGroups, [group.id]: checked })
+                            setSelectedGroups({ ...selectedGroups, [group.id]: !!checked })
                           }
                         />
                         <p>{group.name}</p>

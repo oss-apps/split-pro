@@ -96,6 +96,8 @@
     "next": "Ďalšie",
     "reconnect": "Znovu sa pripojiť",
     "save": "Uložiť",
+    "select_all": "Select all",
+    "deselect_all": "Deselect all",
     "settle_up": "Vyrovnať sa",
     "submit": "Odoslať"
   },

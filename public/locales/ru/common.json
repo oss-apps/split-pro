@@ -95,6 +95,8 @@
     "next": "Следующая",
     "reconnect": "Переподключить",
     "save": "Сохранить",
+    "select_all": "Select all",
+    "deselect_all": "Deselect all",
     "settle_up": "Рассчитаться",
     "submit": "Утвердить"
   },

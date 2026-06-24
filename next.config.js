@@ -14,7 +14,6 @@ await jiti.import('./src/env');
 /** @type {import("next").NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  compress: false,
   output: process.env.DOCKER_OUTPUT ? 'standalone' : undefined,
   transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core'],
   /**

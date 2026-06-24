@@ -496,7 +496,7 @@ export async function importSplitProData(
         userIdMap.set(exportedUser.id, existing.id);
         log(
           'info',
-          `User mapped: "${exportedUser.name ?? 'unknown'}" (${exportedUser.email}) → existing account (DB #${existing.id})`,
+          `User mapped: "${exportedUser.name ?? 'unknown'}" (${exportedUser.email}, export #${exportedUser.id}) → existing account (DB #${existing.id})`,
         );
         continue;
       }
@@ -511,7 +511,7 @@ export async function importSplitProData(
       userIdMap.set(exportedUser.id, existingLocal.id);
       log(
         'info',
-        `User mapped: "${localName}" (no email, local user) → existing DB #${existingLocal.id}`,
+        `User mapped: "${localName}" (no email, export #${exportedUser.id}) → existing local DB #${existingLocal.id}`,
       );
       continue;
     }
@@ -525,7 +525,10 @@ export async function importSplitProData(
       },
     });
     userIdMap.set(exportedUser.id, newUser.id);
-    log('info', `User created: "${localName}" (no email) → new DB #${newUser.id}`);
+    log(
+      'info',
+      `User created: "${localName}" (no email, export #${exportedUser.id}) → new DB #${newUser.id}`,
+    );
   }
 
   // Warn about multiple export IDs mapping to the same DB user
@@ -537,10 +540,12 @@ export async function importSplitProData(
   }
   for (const [dbId, exportIds] of reverseMap) {
     if (exportIds.length > 1) {
-      const names = exportIds.map((id) => `"${exportUserNames.get(id) ?? id}"`).join(', ');
+      const names = exportIds
+        .map((id) => `"${exportUserNames.get(id) ?? 'unknown'}" (export #${id})`)
+        .join(', ');
       log(
         'warn',
-        `${exportIds.length} exported users (${names}) all map to same DB user #${dbId} — their expenses will be merged. This usually means duplicate local users existed during export.`,
+        `${exportIds.length} exported users ${names} all map to same DB user #${dbId} — their expenses will be merged. This usually means duplicate local users existed during export.`,
       );
     }
   }
@@ -573,16 +578,18 @@ export async function importSplitProData(
             const uid = userIdMap.get(m.userId);
             return uid !== undefined && !existingMemberIds.has(uid);
           })
-          .map((m) => exportUserNames.get(m.userId) ?? `#${m.userId}`)
-          .map((n) => `"${n}"`);
+          .map(
+            (m) =>
+              `"${exportUserNames.get(m.userId) ?? 'unknown'}" (DB #${userIdMap.get(m.userId)})`,
+          );
         log(
           'info',
-          `Group "${exportedGroup.name}": restored ${missingMembers.length} member(s): ${memberNames.join(', ')}`,
+          `Group "${exportedGroup.name}" (${exportedGroup.publicId}, DB #${existing.id}): restored ${missingMembers.length} member(s): ${memberNames.join(', ')}`,
         );
       } else {
         log(
           'info',
-          `Group "${exportedGroup.name}": already exists (${existing.groupUsers.length} members)`,
+          `Group "${exportedGroup.name}" (${exportedGroup.publicId}, DB #${existing.id}): already exists (${existing.groupUsers.length} members)`,
         );
       }
       continue;
@@ -602,7 +609,10 @@ export async function importSplitProData(
       },
     });
     groupIdMap.set(exportedGroup.id, newGroup.id);
-    log('info', `Group "${exportedGroup.name}" created`);
+    log(
+      'info',
+      `Group "${exportedGroup.name}" (${exportedGroup.publicId}) created → DB #${newGroup.id}`,
+    );
   }
 
   log('info', `Groups processed: ${groupIdMap.size}`);
@@ -644,7 +654,7 @@ export async function importSplitProData(
       const expDate = new Date(exportedExpense.expenseDate).toLocaleDateString('de-DE');
       log(
         'warn',
-        `Expense skipped (already exists): "${exportedExpense.name}" — ${exportedExpense.amount} ${exportedExpense.currency}, ${expDate}, ${groupName}`,
+        `Expense skipped (already exists): "${exportedExpense.name}" [${exportedExpense.id}] — ${exportedExpense.amount} ${exportedExpense.currency}, ${expDate}, ${groupName}`,
       );
       expensesSkipped++;
       continue;
@@ -661,14 +671,16 @@ export async function importSplitProData(
       const expDate = new Date(exportedExpense.expenseDate).toLocaleDateString('de-DE');
       const missing = [];
       if (!paidByUserId) {
-        missing.push(`payer "${paidByName}" not found`);
+        missing.push(`payer "${paidByName}" (export #${exportedExpense.paidByUserId}) not found`);
       }
       if (!addedByUserId) {
-        missing.push(`creator "${addedByName}" not found`);
+        missing.push(
+          `creator "${addedByName}" (export #${exportedExpense.addedByUserId}) not found`,
+        );
       }
       log(
         'error',
-        `Expense skipped (${missing.join(', ')}): "${exportedExpense.name}" — ${exportedExpense.amount} ${exportedExpense.currency}, ${expDate}, ${groupName}`,
+        `Expense skipped (${missing.join(', ')}): "${exportedExpense.name}" [${exportedExpense.id}] — ${exportedExpense.amount} ${exportedExpense.currency}, ${expDate}, ${groupName}`,
       );
       expensesSkipped++;
       continue;
@@ -716,7 +728,7 @@ export async function importSplitProData(
       const errMsg = err instanceof Error ? err.message : String(err);
       log(
         'error',
-        `Expense failed: "${exportedExpense.name}" — ${exportedExpense.amount} ${exportedExpense.currency}, ${expDate}, ${groupName}, paid by "${paidByName}". Error: ${errMsg}`,
+        `Expense failed: "${exportedExpense.name}" [${exportedExpense.id}] — ${exportedExpense.amount} ${exportedExpense.currency}, ${expDate}, ${groupName}, paid by "${paidByName}" (DB #${paidByUserId}). Error: ${errMsg}`,
       );
       expensesSkipped++;
     }
@@ -871,7 +883,10 @@ export async function importFromSplitwisePro(
     const existing = await db.group.findFirst({ where: { name: swGroup.name } });
     if (existing) {
       groupIdMap.set(swGroup.id, existing.id);
-      log('info', `Group "${swGroup.name}": already exists`);
+      log(
+        'info',
+        `Group "${swGroup.name}" (SW #${swGroup.id}): already exists → DB #${existing.id}`,
+      );
     } else {
       const members = swGroup.members
         .map((m) => userIdMap.get(m.id))
@@ -885,7 +900,10 @@ export async function importFromSplitwisePro(
         },
       });
       groupIdMap.set(swGroup.id, newGroup.id);
-      log('info', `Group "${swGroup.name}" created with ${members.length} member(s)`);
+      log(
+        'info',
+        `Group "${swGroup.name}" (SW #${swGroup.id}) created → DB #${newGroup.id}, ${members.length} member(s)`,
+      );
     }
   }
 
@@ -911,7 +929,7 @@ export async function importFromSplitwisePro(
       const expDate = new Date(swExp.date).toLocaleDateString('de-DE');
       log(
         'warn',
-        `Expense skipped (already exists): "${swExp.description}" — ${swExp.cost} ${swExp.currency_code}, ${expDate}, ${groupName}`,
+        `Expense skipped (already exists): "${swExp.description}" [SW #${swExp.id} → ${expenseId}] — ${swExp.cost} ${swExp.currency_code}, ${expDate}, ${groupName}`,
       );
       expensesSkipped++;
       continue;
@@ -933,7 +951,7 @@ export async function importFromSplitwisePro(
       const expDate = new Date(swExp.date).toLocaleDateString('de-DE');
       log(
         'error',
-        `Expense skipped (payer "${payerName ? [payerName.first_name, payerName.last_name].filter(Boolean).join(' ') : `Splitwise #${payerSwId}`}" not found): "${swExp.description}" — ${swExp.cost} ${swExp.currency_code}, ${expDate}, ${groupName}`,
+        `Expense skipped (payer "${payerName ? [payerName.first_name, payerName.last_name].filter(Boolean).join(' ') : 'unknown'}" [SW #${payerSwId}] not found): "${swExp.description}" [SW #${swExp.id}] — ${swExp.cost} ${swExp.currency_code}, ${expDate}, ${groupName}`,
       );
       expensesSkipped++;
       continue;
@@ -1010,7 +1028,7 @@ export async function importFromSplitwisePro(
       const errMsg = err instanceof Error ? err.message : String(err);
       log(
         'error',
-        `Expense failed: "${swExp.description}" — ${swExp.cost} ${swExp.currency_code}, ${expDate}, ${groupName}. Error: ${errMsg}`,
+        `Expense failed: "${swExp.description}" [SW #${swExp.id} → ${expenseId}] — ${swExp.cost} ${swExp.currency_code}, ${expDate}, ${groupName}, paid by DB #${paidByUserId}. Error: ${errMsg}`,
       );
       expensesSkipped++;
     }

@@ -1,4 +1,5 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { Prisma } from '@prisma/client';
 import { type GetServerSidePropsContext } from 'next';
 import { type DefaultSession, type NextAuthOptions, type User, getServerSession } from 'next-auth';
 import { type Adapter, type AdapterAccount, type AdapterUser } from 'next-auth/adapters';
@@ -71,32 +72,21 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
       return prismaCreateUser(user);
     },
     linkAccount: async (account: AdapterAccount) => {
-      // oxlint-disable-next-line typescript/no-unsafe-assignment
       const originalLinkAccount = prismaAdapter.linkAccount;
-
       if (!originalLinkAccount) {
         throw new Error('Adapter is missing the linkAccount method.');
       }
-
-      // Keycloak and Gitlab provide some non-standard fields that do not exist in the prisma schema.
+      // OIDC providers can provide non-standard fields that do not exist in the prisma schema.
       // We strip them out before passing them on to the original adapter.
-      if (account.provider === 'keycloak') {
-        const {
-          'not-before-policy': _notBeforePolicy,
-          refresh_expires_in: _refresh_expires_in,
-          ...standardAccountData
-        } = account as AdapterAccount & Record<string, unknown>;
+      const knownAccountFields = new Set<string>(Object.values(Prisma.AccountScalarFieldEnum));
 
-        return originalLinkAccount(standardAccountData as AdapterAccount);
-      } else if (account.provider === 'gitlab') {
-        const { created_at: _createdAt, ...standardAccountData } = account as AdapterAccount &
-          Record<string, unknown>;
+      const sanitised = Object.fromEntries(
+        Object.entries(account as Record<string, unknown>).filter(([k]) =>
+          knownAccountFields.has(k),
+        ),
+      ) as AdapterAccount;
 
-        return originalLinkAccount(standardAccountData as AdapterAccount);
-      }
-
-      // Default: proceed directly
-      return originalLinkAccount(account);
+      return originalLinkAccount(sanitised);
     },
   } as Adapter;
 };
@@ -253,6 +243,10 @@ function getProviders() {
       type: 'oauth',
       wellKnown: env.OIDC_WELL_KNOWN_URL,
       authorization: { params: { scope: 'openid email profile' } },
+      checks: env.OIDC_PKCE_ENABLED ? ['pkce'] : [],
+      client: env.OIDC_ID_TOKEN_SIGNED_RESPONSE_ALG
+        ? { id_token_signed_response_alg: env.OIDC_ID_TOKEN_SIGNED_RESPONSE_ALG }
+        : undefined,
       allowDangerousEmailAccountLinking: env.OIDC_ALLOW_DANGEROUS_EMAIL_LINKING,
       idToken: true,
       profile(profile) {

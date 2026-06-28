@@ -44,7 +44,15 @@ const AddPage: NextPageWithUser<{
   const initializedFriendIdRef = useRef<number | null>(null);
   const initializedExpenseIdRef = useRef<string | null>(null);
 
-  useEffect(() => () => resetState(), [resetState]);
+  useEffect(
+    () => () => {
+      resetState();
+      initializedExpenseIdRef.current = null;
+      initializedGroupIdRef.current = null;
+      initializedFriendIdRef.current = null;
+    },
+    [resetState],
+  );
 
   // TODO: Set this globally from env var with app router later
   const { setMaxUploadFileSizeMB } = useAppStore((s) => s.actions);
@@ -195,7 +203,7 @@ const AddPage: NextPageWithUser<{
     setAmountStr(
       getCurrencyHelpersCached(expenseQuery.data.currency).toUIString(
         expenseQuery.data.amount,
-        false,
+        true,
         true,
       ),
     );

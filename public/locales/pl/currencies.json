@@ -1,7 +1,7 @@
 {
   "currency_list": {
     "AED": {
-      "name": "Dirham ZEA",
+      "name": "Dirham Zjednoczonych Emiratów Arabskich",
       "name_plural": "Dirhamy ZEA"
     },
     "AFN": {
@@ -74,8 +74,8 @@
     },
     "CAD": {
       "name": "Dolar kanadyjski",
-      "name_plural": "Dolary kanadyjskie",
-      "name_2": "Dolarów kanadyjskich"
+      "name_2": "Dolarów kanadyjskich",
+      "name_plural": "Dolary kanadyjskie"
     },
     "CDF": {
       "name": "Frank kongijski",
@@ -556,5 +556,5 @@
   },
   "no_currency_found": "Nie znaleziono waluty.",
   "placeholder": "Wybierz walutę",
-  "title": "Waluty"
+  "title": "Wybierz walutę"
 }

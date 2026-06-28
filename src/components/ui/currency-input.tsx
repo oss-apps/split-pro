@@ -21,7 +21,7 @@ const CurrencyInput: React.FC<
       className={cn('text-lg placeholder:text-sm', className)}
       inputMode="decimal"
       value={strValue}
-      onFocus={() => onValueChange({ strValue: parseToCleanString(strValue) })}
+      onFocus={() => onValueChange({ strValue: parseToCleanString(strValue, allowNegative) })}
       onBlur={() => {
         const formattedValue = format(strValue, { signed: allowNegative, hideSymbol });
         return onValueChange({ strValue: formattedValue });

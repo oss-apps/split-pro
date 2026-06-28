@@ -63,9 +63,9 @@ const PayerRow = ({ p, isPaying }: { p: Participant; isPaying: boolean }) => {
 
   return (
     <AppDrawerClose className="flex items-center justify-between px-2" onClick={onClick}>
-      <div className="flex items-center gap-1">
+      <div className="flex min-w-0 items-center gap-1">
         <EntityAvatar entity={p} size={30} />
-        <p className="ml-4">{displayName(p, currentUser?.id)}</p>
+        <p className="ml-4 truncate">{displayName(p, currentUser?.id)}</p>
       </div>
       {isPaying ? <Check className="h-6 w-6 text-cyan-500" /> : null}
     </AppDrawerClose>
@@ -434,10 +434,10 @@ export const UserAndAmount: React.FC<{ user: Participant; currency: CurrencyCode
   const shareAmount = paidBy?.id === user.id ? (user.amount ?? 0n) - amount : user.amount;
 
   return (
-    <div className="flex h-11 items-center gap-2">
+    <div className="flex h-11 min-w-0 flex-1 items-center gap-2">
       <EntityAvatar entity={user} size={30} />
-      <div className="flex flex-col items-start">
-        <p>{displayName(user, currentUser?.id)}</p>
+      <div className="flex min-w-0 flex-col">
+        <p className="truncate">{displayName(user, currentUser?.id)}</p>
         <p
           className={cn(
             canSplitScreenClosed || 'hidden',

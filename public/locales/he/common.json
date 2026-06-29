@@ -1,12 +1,12 @@
 {
   "account": {
-    "change_language": "",
+    "change_language": "שנה שפה",
     "change_language_details": {
       "messages": {
-        "language_changed": ""
+        "language_changed": "השפה שונתה בהצלחה"
       },
-      "placeholder": "",
-      "title": ""
+      "placeholder": "בחר שפה",
+      "title": "בחר שפה"
     },
     "debug_info": "",
     "debug_info_details": {
@@ -16,25 +16,28 @@
       "new_version_available": "",
       "title": "",
       "user_agent": "",
-      "version": ""
+      "version": "גרסה"
     },
-    "download_app": "",
+    "default_balance_currency": "מטבע ברירת מחדל ליתרה",
+    "download_app": "הורד יישומון",
     "download_app_details": {
-      "download_as_pwa": "",
-      "title": "",
+      "download_as_pwa": "ניתן להוריד את ספליט-פרו בתור PWA למסך הבית שלך.",
+      "title": "הורד יישומון",
       "using_android": "",
       "using_ios": "",
       "video": ""
     },
     "download_splitpro_data": "",
     "edit_name": {
-      "placeholder": "",
-      "title": ""
+      "avatar_label": "תמונת פרופיל",
+      "placeholder": "הכנס שם",
+      "select_avatar": "בחר תמונה",
+      "title": "ערוך פרטים"
     },
-    "follow_on_x": "",
-    "import_from_splitwise": "",
+    "follow_on_x": "עקבו אחרינו ב-X",
+    "import_from_splitwise": "יבוא מ-Splitwise",
     "import_from_splitwise_details": {
-      "choose_file": "",
+      "choose_file": "בחר קובץ",
       "export_splitwise_data_button": "",
       "follow_to_export_splitwise_data": "",
       "messages": {
@@ -43,26 +46,26 @@
       "no_file_chosen": "",
       "note": ""
     },
-    "logout": "",
+    "logout": "התנתקות",
     "messages": {
       "submit_error": "",
-      "submit_success": ""
+      "submit_success": "פרטים עודכנו"
     },
     "notifications": {
-      "disable_notification": "",
-      "enable_notification": "",
+      "disable_notification": "בטל התראה",
+      "enable_notification": "אפשר התראה",
       "messages": {
         "notification_granted": ""
       }
     },
-    "star_on_github": "",
+    "star_on_github": "שימו לנו כוכב ב-GitHub",
     "submit_feedback": "",
     "submit_feedback_details": {
       "placeholder": "",
       "title": ""
     },
     "support_us": "",
-    "title": "",
+    "title": "חשבון",
     "write_review": ""
   },
   "actions": {

@@ -5,6 +5,7 @@
       "messages": {
         "language_changed": "Idioma alterado com sucesso"
       },
+      "no_language_found": "Nenhum idioma encontrado.",
       "placeholder": "Seleciona um idioma",
       "title": "Seleciona um idioma"
     },
@@ -12,12 +13,16 @@
     "debug_info_details": {
       "copy_failed": "Falha ao copiar informação de depuração para a área de transferência",
       "description": "Inclua a informação abaixo ao criar um pedido de suporte:",
-      "git": "",
+      "git": "Git",
       "new_version_available": "Nova versão disponível:",
+      "send_test_notification": "Enviar notificação de teste",
+      "test_notification_failed": "Não foi possível enviar a notificação de teste",
+      "test_notification_sent": "Notificação de teste enviada",
       "title": "Informação de Depuração",
-      "user_agent": "",
+      "user_agent": "UserAgent",
       "version": "Versão"
     },
+    "default_balance_currency": "Moeda de saldo padrão",
     "download_app": "Descarregar app",
     "download_app_details": {
       "download_as_pwa": "Poderás descarregar o SplitPro como PWA.",
@@ -28,8 +33,14 @@
     },
     "download_splitpro_data": "Descarregar dados do SplitPro",
     "edit_name": {
+      "apply_avatar": "Aplicar avatar",
+      "avatar_label": "Foto de perfil",
+      "avatar_preview": "Prévia do avatar",
       "placeholder": "Inserir nome",
-      "title": "Editar nome"
+      "remove_avatar": "Remover avatar",
+      "select_avatar": "Selecione a imagem",
+      "title": "Editar pormenores",
+      "zoom": "Zoom"
     },
     "follow_on_x": "Segue-nos no X",
     "import_from_splitwise": "Importar do Splitwise",
@@ -45,8 +56,8 @@
     },
     "logout": "Terminar Sessão",
     "messages": {
-      "submit_error": "Falha ao submeter feedback",
-      "submit_success": "Feedback submetido"
+      "submit_error": "Não foi possível atualizar os pormenores",
+      "submit_success": "Pormenor atualizado"
     },
     "notifications": {
       "disable_notification": "Desativar notificações",
@@ -80,7 +91,7 @@
     "import": "Importar",
     "invite": "Convidar",
     "leave": "Sair",
-    "next": "",
+    "next": "Próxima",
     "reconnect": "Reconectar",
     "save": "Salvar",
     "settle_up": "Acertar contas",
@@ -106,6 +117,16 @@
     "sending": "A enviar...",
     "setup_instructions": "instruções de configuração do Docker",
     "trouble_logging_in": "Problemas com a autenticação? Contacta-nos"
+  },
+  "balances": {
+    "default_split": {
+      "cleared": "Divisão padrão desfeita",
+      "configure": "Divisão padrão",
+      "updated": "Divisão padrão atualizada"
+    },
+    "user_preferences": {
+      "title": "Preferências"
+    }
   },
   "bank_transactions": {
     "choose_bank_provider": "Escolha o fornecedor de dados do seu banco",
@@ -139,18 +160,19 @@
     "feedback_required": "Feedback é obrigatório",
     "group_balances_malformed": "Dados de balanços do grupo inválidos, por favor reporte o problema ou tente recalcular.",
     "group_name_update_failed": "Erro ao atualizar o nome do grupo",
+    "image_compression_failed": "A compressão da imagem falhou. Tentar a enviar o ficheiro original",
     "import_failed": "Error ao importar ficheiro",
     "invalid_cron_expression": "Expressão \"cron\" inválida",
-    "invalid_currency_code": "Código de moeda inválido",
+    "invalid_currency_code": "Código {{code}} de moeda inválido",
     "language_change_failed": "Erro ao alterar idioma",
-    "less_than": "O ficheiro deverá ser mais pequeno que",
+    "less_than": "O ficheiro deve ter menos que {{size}}MB",
     "name_required": "O nome é obrigatório",
     "no_providers": "Ocorreu um erro ao transferir os fornecedores de autenticação. Por favor consulte os logs do backend.",
     "notification_not_supported": "Notificação não suportada",
     "otp_invalid": "OTP inválido",
     "otp_required": "OTP é obrigatório",
-    "recurrence_delete_failed": "",
-    "recurrence_update_failed": "",
+    "recurrence_delete_failed": "Falha ao apagar recorrência",
+    "recurrence_update_failed": "Falha ao atualizar recorrência",
     "request_error": "Erro requisitando notificação",
     "saving_expense": "Erro ao salvar despesa",
     "setting_update_failed": "Falha ao atualizar a configuração",
@@ -176,7 +198,7 @@
         "note": "Nota: opção de envio de convite está desativa para já devido ao spam",
         "only_one_group_time": "Só podes ter um grupo de cada vez",
         "send_invite": "Enviar convite para o utilizador",
-        "warning": "Atenção: Não uses o envio de convite se for um email inválido. Usa a opção de adicionar ao Split Pro em vez disso. A tua conta será bloqueada se esta funcionalidade for mal utilizada."
+        "warning": "Atenção: Não envie um convite se o e-mail for inválido. Use a opção de adicionar ao Split Pro em vez disso. O uso indevido dos convites resultará no bloqueio da sua conta"
       },
       "split_type_section": {
         "split_equally": "dividir igualmente",
@@ -231,10 +253,10 @@
       "title": "Tens mesmo a certeza?"
     },
     "multiple_transactions": {
-      "add_all": "",
-      "add_one_by_one": "",
-      "description": "",
-      "title": ""
+      "add_all": "Adicionar todas",
+      "add_one_by_one": "Adicionar uma a uma",
+      "description": "Selecionou várias transações. Escolha se deseja adicioná-las todas juntas com as configurações de divisão atuais ou ajustar as configurações uma a uma.",
+      "title": "Adicionar várias transações"
     },
     "no_transactions_yet": "Sem transações por enquanto",
     "pending": "Pendente",
@@ -258,12 +280,16 @@
         "title": "Tens a certeza que queres arquivar este grupo?"
       },
       "archived": "Arquivado",
+      "configure_default_split": "Configurar divisão padrão",
+      "default_balance_currency": "Moeda de saldo padrão",
+      "default_split": "Divisão padrão",
       "delete_group": "Eliminar grupo",
       "delete_group_details": {
         "can_delete": "Esta ação não pode ser desfeita",
         "cant_delete": "Não é possível eliminar o grupo até que todos acerte o saldo",
         "title": "Tens a certeza?"
       },
+      "edit_group": "Editar grupo",
       "group_created": "Grupo criado",
       "leave_group": "Sair do grupo",
       "leave_group_details": {
@@ -292,8 +318,12 @@
     },
     "messages": {
       "balances_recalculated": "Saldos recalculados com sucesso",
+      "default_balance_currency_cleared": "Moeda de saldo padrão zerada",
+      "default_balance_currency_updated": "Moeda de saldo padrão atualizada",
+      "default_split_cleared": "Divisão padrão desfeita",
+      "default_split_updated": "Divisão padrão atualizada",
       "group_archived": "Grupo arquivado com sucesso",
-      "group_name_updated": "Nome do grupo atualizado"
+      "group_name_updated": "Pormenores do grupo atualizados"
     },
     "no_members": {
       "add_members": "Adicionar membros",
@@ -303,7 +333,7 @@
         "placeholder": "Insira o nome ou email",
         "send_invite": "Enviar convite para o utilizador",
         "title": "Adicionar membros",
-        "warning": "Atenção: Não uses o envio de convite se for um email inválido. Usa a opção de adicionar ao Split Pro em vez disso. A tua conta será bloqueada se esta funcionalidade for mal utilizada."
+        "warning": "Atenção: Não envie um convite para um e-mail inválido. Em vez disso, use adicionar ao Split Pro. O uso indevido de convites resultará no bloqueio da sua conta"
       },
       "copied": "Copiado",
       "invite_link": "Partilhar link de convite",
@@ -337,35 +367,35 @@
   },
   "recurrence": {
     "cron_expression": "Expressão \"Cron\"",
-    "days_of_month": "",
-    "days_of_week": "",
-    "delete_description": "",
-    "delete_title": "",
-    "derived_delete_warning": "",
-    "derived_edit_warning": "",
+    "days_of_month": "Dias do Mês",
+    "days_of_week": "Dias da Semana",
+    "delete_description": "Isto interromperá a criação de despesas futuras. As despesas já criadas por esta recorrência não serão apagadas.",
+    "delete_title": "Apagar Recorrência",
+    "derived_delete_warning": "Esta despesa faz parte de uma recorrência. Apenas esta despesa será apagada. As despesas recorrentes futuras permanecem.",
+    "derived_edit_warning": "Esta despesa faz parte de uma recorrência. As alterações afetarão apenas esta despesa.",
     "description": "Configurar recorrência automática para esta despesa.",
-    "edit_confirmation_title": "",
-    "edit_description": "",
-    "edit_title": "",
-    "empty": "",
-    "expense_for_the_amount_of": "",
-    "last_day": "",
+    "edit_confirmation_title": "Editar Despesa Recorrente",
+    "edit_description": "Isto vai mudar a programação das despesas futuras. As despesas existentes não serão modificadas.",
+    "edit_title": "Editar Recorrência",
+    "empty": "Nenhuma despesa recorrente ainda",
+    "expense_for_the_amount_of": "Despesa {{name}} pelo valor de {{amount}} {{currency}}",
+    "last_day": "Último dia",
     "months": "Meses",
-    "never": "",
-    "recurring": "",
+    "never": "Nenhum pagamento recorrente configurado",
+    "recurring": "Recorrente",
     "schedule_type": {
-      "custom": "",
-      "day": "",
-      "month": "",
-      "never": "",
-      "week": "",
-      "year": ""
+      "custom": "Personalizado",
+      "day": "Diário",
+      "month": "Mensal",
+      "never": "Nunca",
+      "week": "Semanal",
+      "year": "Anual"
     },
-    "template_delete_warning": "",
-    "template_edit_warning": "",
-    "time_of_day": "",
+    "template_delete_warning": "Este é um modelo de despesa recorrente. Apagá-lo interromperá todas as despesas recorrentes futuras.",
+    "template_edit_warning": "Este é um modelo de despesa recorrente. As alterações serão aplicadas a todas as despesas recorrentes futuras.",
+    "time_of_day": "Hora do dia",
     "title": "Recorrência",
-    "view_recurring_page": ""
+    "view_recurring_page": "Ver Página de Recorrências"
   },
   "ui": {
     "added_by": "Adicionado por",
@@ -401,21 +431,21 @@
       }
     },
     "expense_details": "Detalhes da despesa",
-    "in_group": "",
+    "in_group": "Em grupo",
     "no_activity": "Ainda sem atividade",
     "not_involved": "Não envolvido",
     "not_set": "Não definido",
     "on": "em",
     "or": "ou",
     "outstanding_balances": "Saldos em aberto",
-    "select_balance": "",
+    "select_balance": "Selecionar saldo",
     "select_currency": "Selecionar moeda",
     "settle_up_name": "Acertar contas",
     "settled_up": "Acertou contas",
     "settlement": "Acerto de contas",
     "share_text": "Testa o SplitPro. É uma alternativa gratuita ao Splitwise",
-    "show_all_currencies": "",
+    "show_all_currencies": "Mostrar todas as moedas",
     "today": "Hoje",
-    "total_balance": ""
+    "total_balance": "Saldo total"
   }
 }

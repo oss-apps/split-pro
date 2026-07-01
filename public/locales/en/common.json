@@ -62,6 +62,23 @@
     "support_us": "Sponsor us",
     "title": "Account",
     "write_review": "Write a review",
+    "api_keys": "API Keys",
+    "api_key": {
+      "title": "API Keys",
+      "description": "Generate API keys to access the SplitPro REST API. Use the X-API-Key header to authenticate.",
+      "generate": "Generate",
+      "name_placeholder": "Key name (e.g., Personal, Zapier)",
+      "name_required": "Please enter a key name",
+      "new_key": "New API Key",
+      "copy_warning": "Copy this now — you won't be able to see it again.",
+      "created": "Created",
+      "last_used": "Last used",
+      "never_used": "Never used",
+      "deleted": "API key deleted",
+      "delete_error": "Failed to delete API key",
+      "create_error": "Failed to create API key",
+      "no_keys": "No API keys yet"
+    },
     "debug_info": "Debug info",
     "debug_info_details": {
       "title": "Debug Information",

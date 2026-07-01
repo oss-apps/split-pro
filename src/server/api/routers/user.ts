@@ -1,3 +1,5 @@
+import { createHash } from 'crypto';
+
 import { TRPCError } from '@trpc/server';
 import { type User } from 'next-auth';
 import { z } from 'zod';
@@ -419,6 +421,68 @@ export const userRouter = createTRPCRouter({
     }),
 
   getWebPushPublicKey: protectedProcedure.query(() => env.WEB_PUSH_PUBLIC_KEY ?? ''),
+
+  getApiKeys: protectedProcedure.query(async ({ ctx }) => {
+    const keys = await db.apiKey.findMany({
+      where: { userId: ctx.session.user.id },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+        lastUsedAt: true,
+      },
+    });
+
+    return keys;
+  }),
+
+  createApiKey: protectedProcedure
+    .input(z.object({ name: z.string().min(1) }))
+    .mutation(async ({ input, ctx }) => {
+      const existingCount = await db.apiKey.count({
+        where: { userId: ctx.session.user.id },
+      });
+
+      if (existingCount >= 10) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Maximum of 10 API keys per user',
+        });
+      }
+
+      const rawKey = `sp_${crypto.randomUUID().replace(/-/g, '')}`;
+      const keyHash = createHash('sha256').update(rawKey).digest('hex');
+
+      await db.apiKey.create({
+        data: {
+          userId: ctx.session.user.id,
+          name: input.name,
+          keyHash,
+        },
+      });
+
+      return { key: rawKey };
+    }),
+
+  deleteApiKey: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const key = await db.apiKey.findFirst({
+        where: {
+          id: input.id,
+          userId: ctx.session.user.id,
+        },
+      });
+
+      if (!key) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'API key not found' });
+      }
+
+      await db.apiKey.delete({ where: { id: input.id } });
+
+      return true;
+    }),
 });
 
 export const getUserMap = async (userIds: number[]) => {

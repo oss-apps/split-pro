@@ -6,6 +6,7 @@ import {
   DownloadCloud,
   FileDown,
   HeartHandshakeIcon,
+  Key,
   Languages,
   Star,
 } from 'lucide-react';
@@ -17,6 +18,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { AccountButton } from '~/components/Account/AccountButton';
+import { ApiKeyManager } from '~/components/Account/ApiKeyManager';
 import { DownloadAppDrawer } from '~/components/Account/DownloadAppDrawer';
 import { LanguagePicker } from '~/components/Account/LanguagePicker';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
@@ -154,6 +156,13 @@ const AccountPage: NextPageWithUser<{
             <Star className="size-5 text-yellow-400" />
             {t('account.write_review')}
           </AccountButton>
+
+          <ApiKeyManager>
+            <AccountButton>
+              <Key className="size-5 text-amber-500" />
+              {t('account.api_keys')}
+            </AccountButton>
+          </ApiKeyManager>
 
           <DownloadAppDrawer>
             <AccountButton>

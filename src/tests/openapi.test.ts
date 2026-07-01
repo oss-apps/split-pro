@@ -52,9 +52,33 @@ describe('API key hash', () => {
 describe('simplifyDebts', () => {
   it('should simplify group balances to zero in a 3-way cycle', () => {
     const balances = [
-      { userId: 1, friendId: 2, groupId: 1, currency: 'USD', amount: 100n, createdAt: new Date(), updatedAt: new Date() },
-      { userId: 2, friendId: 3, groupId: 1, currency: 'USD', amount: 100n, createdAt: new Date(), updatedAt: new Date() },
-      { userId: 3, friendId: 1, groupId: 1, currency: 'USD', amount: 100n, createdAt: new Date(), updatedAt: new Date() },
+      {
+        userId: 1,
+        friendId: 2,
+        groupId: 1,
+        currency: 'USD',
+        amount: 100n,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        userId: 2,
+        friendId: 3,
+        groupId: 1,
+        currency: 'USD',
+        amount: 100n,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        userId: 3,
+        friendId: 1,
+        groupId: 1,
+        currency: 'USD',
+        amount: 100n,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     ];
 
     const simplified = simplifyDebts(balances);
@@ -64,12 +88,22 @@ describe('simplifyDebts', () => {
 
   it('should preserve a simple direct debt', () => {
     const balances = [
-      { userId: 1, friendId: 2, groupId: null, currency: 'USD', amount: 5000n, createdAt: new Date(), updatedAt: new Date() },
+      {
+        userId: 1,
+        friendId: 2,
+        groupId: null,
+        currency: 'USD',
+        amount: 5000n,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     ];
 
     const simplified = simplifyDebts(balances);
     expect(simplified.length).toBeGreaterThanOrEqual(1);
-    expect(simplified.some(b => b.userId === 1 && b.friendId === 2 && b.amount === 5000n)).toBe(true);
+    expect(simplified.some((b) => b.userId === 1 && b.friendId === 2 && b.amount === 5000n)).toBe(
+      true,
+    );
   });
 });
 

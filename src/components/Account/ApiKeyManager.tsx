@@ -61,10 +61,13 @@ export const ApiKeyManager: React.FC<React.PropsWithChildren> = ({ children }) =
     [deleteApiKey, t],
   );
 
-  const copyToClipboard = useCallback((text: string) => {
-    navigator.clipboard.writeText(text).catch(console.error);
-    toast.success(t('group_details.copied'));
-  }, [t]);
+  const copyToClipboard = useCallback(
+    (text: string) => {
+      navigator.clipboard.writeText(text).catch(console.error);
+      toast.success(t('group_details.copied'));
+    },
+    [t],
+  );
 
   return (
     <AlertDialog>

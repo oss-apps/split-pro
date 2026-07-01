@@ -98,12 +98,7 @@ const mapRestToServiceInput = (
     expenseDate: input.expenseDate ? new Date(input.expenseDate) : new Date(),
     participants: input.participants.map((p) => ({
       userId: p.userId,
-      amount:
-        null !== equalShare
-          ? equalShare
-          : p.share !== undefined
-            ? BigInt(p.share)
-            : 0n,
+      amount: null !== equalShare ? equalShare : p.share !== undefined ? BigInt(p.share) : 0n,
     })),
   };
 };
@@ -360,9 +355,7 @@ export const openApiRouter = createTRPCRouter({
         }),
       ]);
 
-      const simplified = group?.simplifyDebts
-        ? simplifyDebts(rawBalances)
-        : [...rawBalances];
+      const simplified = group?.simplifyDebts ? simplifyDebts(rawBalances) : [...rawBalances];
 
       const userIds = [...new Set(simplified.map((b) => b.friendId ?? b.userId))];
 

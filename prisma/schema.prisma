@@ -65,6 +65,7 @@ model User {
   friendDefaultSplitsB FriendDefaultSplit[] @relation("FriendDefaultSplitUserB")
   sessions             Session[]
   hiddenFriendIds      Int[]                @default([])
+  apiKeys              ApiKey[]
 
   @@schema("public")
 }
@@ -267,6 +268,19 @@ model PushNotification {
   subscription String
 
   @@id([userId, endpoint])
+  @@schema("public")
+}
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  userId    Int
+  name      String
+  keyHash   String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lastUsedAt DateTime?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@schema("public")
 }
 

@@ -12,6 +12,8 @@ import { type CreateNextContextOptions } from '@trpc/server/adapters/next';
 import { type Session } from 'next-auth';
 import superjson from 'superjson';
 import { ZodError, z } from 'zod';
+import { OpenApiMeta } from 'trpc-to-openapi';
+import { createHash } from 'crypto';
 
 import { getServerAuthSession } from '~/server/auth';
 import { db } from '~/server/db';
@@ -38,7 +40,7 @@ interface CreateContextOptions {
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-const createInnerTRPCContext = (opts: CreateContextOptions) => ({
+export const createInnerTRPCContext = (opts: CreateContextOptions) => ({
   session: opts.session,
   db,
 });
@@ -61,6 +63,55 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 };
 
 /**
+ * Creates context for OpenAPI REST requests. Authenticates via X-API-Key header.
+ */
+export const createOpenApiContext = async (opts: CreateNextContextOptions & { info?: unknown }) => {
+  const { req, res } = opts;
+
+  const apiKey = req.headers['x-api-key'];
+  if (apiKey && 'string' === typeof apiKey) {
+    const keyHash = createHash('sha256').update(apiKey).digest('hex');
+    const keyRecord = await db.apiKey.findUnique({
+      where: { keyHash },
+      include: { user: true },
+    });
+
+    if (keyRecord) {
+      const shouldUpdateLastUsed =
+        !keyRecord.lastUsedAt ||
+        new Date().getTime() - keyRecord.lastUsedAt.getTime() > 5 * 60 * 1000;
+
+      if (shouldUpdateLastUsed) {
+        await db.apiKey.update({
+          where: { id: keyRecord.id },
+          data: { lastUsedAt: new Date() },
+        });
+      }
+
+      return createInnerTRPCContext({
+        session: {
+          user: {
+            id: keyRecord.user.id,
+            name: keyRecord.user.name,
+            email: keyRecord.user.email,
+            image: keyRecord.user.image,
+            currency: keyRecord.user.currency,
+            defaultCurrency: keyRecord.user.defaultCurrency,
+            obapiProviderId: keyRecord.user.obapiProviderId,
+            bankingId: keyRecord.user.bankingId,
+            preferredLanguage: keyRecord.user.preferredLanguage,
+            hiddenFriendIds: keyRecord.user.hiddenFriendIds,
+          },
+          expires: new Date(Date.now() + 86400000).toISOString(),
+        } as Session,
+      });
+    }
+  }
+
+  throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid or missing API key' });
+};
+
+/**
  * 2. INITIALIZATION
  *
  * This is where the tRPC API is initialized, connecting the context and transformer. We also parse
@@ -68,18 +119,21 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
  * errors on the backend.
  */
 
-const t = initTRPC.context<typeof createTRPCContext>().create({
-  transformer: superjson,
-  errorFormatter({ shape, error }) {
-    return {
-      ...shape,
-      data: {
-        ...shape.data,
-        zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
-      },
-    };
-  },
-});
+const t = initTRPC
+  .context<typeof createTRPCContext>()
+  .meta<OpenApiMeta>()
+  .create({
+    transformer: superjson,
+    errorFormatter({ shape, error }) {
+      return {
+        ...shape,
+        data: {
+          ...shape.data,
+          zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
+        },
+      };
+    },
+  });
 
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
@@ -94,6 +148,7 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
  * @see https://trpc.io/docs/router
  */
 export const createTRPCRouter = t.router;
+export const createCallerFactory = t.createCallerFactory;
 
 /**
  * Public (unauthenticated) procedure

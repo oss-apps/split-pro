@@ -80,6 +80,17 @@ Recurring expenses require a PostgreSQL database with the `pg_cron` extension. W
 
 Bank integration allows you to load transactions from providers like Plaid and convert them into expenses. This feature was provided by @alexanderwassbjer, who is currently maintaining related issues. See [docs/BANK_TRANSACTIONS.md](docs/BANK_TRANSACTIONS.md).
 
+### 10) REST API
+
+SplitPro exposes a REST API for integrations with external tools. Generate an API key in Account Settings, then authenticate with the `X-API-Key` header. The OpenAPI spec is available at `/api/openapi.json` and interactive docs at `/api/docs`.
+
+```bash
+# Example: list expenses
+curl -H "X-API-Key: sp_YOUR_KEY" https://your-instance.com/api/v1/expenses
+```
+
+Endpoints cover users, friends, groups, balances, and full expense CRUD.
+
 ## Limitations and notes
 
 - SplitPro computes balances from expenses on the fly using database views. Expenses are the source of truth, which keeps balances consistent and trustworthy. For self hosted deployments the efficiency of database aggregations is entirely sufficient, but please do report any performance issues.

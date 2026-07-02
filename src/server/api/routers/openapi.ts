@@ -21,7 +21,7 @@ const userOutputSchema = z.object({
 const MAX_API_KEY_FRIENDS_PER_PAGE = 50;
 
 const validateGroupMembership = async (groupId: number, userId: number, participants: number[]) => {
-  const userIds = [userId, ...participants].filter(Boolean);
+  const userIds = [userId, ...participants];
   const groupUsers = await db.groupUser.findMany({
     where: {
       groupId,
@@ -368,7 +368,9 @@ export const openApiRouter = createTRPCRouter({
         ),
       }),
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      await validateGroupMembership(input.id, ctx.session.user.id, []);
+
       const group = await db.group.findUnique({
         where: { id: input.id },
         include: {
@@ -420,7 +422,9 @@ export const openApiRouter = createTRPCRouter({
         ),
       }),
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      await validateGroupMembership(input.id, ctx.session.user.id, []);
+
       const [rawBalances, group] = await Promise.all([
         db.balanceView.findMany({
           where: { groupId: input.id },
@@ -476,7 +480,9 @@ export const openApiRouter = createTRPCRouter({
         total: z.number(),
       }),
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      await validateGroupMembership(input.id, ctx.session.user.id, []);
+
       const { id, since, limit, offset } = input;
 
       const where = {
@@ -671,15 +677,17 @@ export const openApiRouter = createTRPCRouter({
 
       await editExpense(serviceInput, ctx.session.user.id);
 
-      if (notes) {
+      if (notes !== undefined) {
         await db.expenseNote.deleteMany({ where: { expenseId: id } });
-        await db.expenseNote.create({
-          data: {
-            note: notes,
-            createdById: ctx.session.user.id,
-            expenseId: id,
-          },
-        });
+        if (notes) {
+          await db.expenseNote.create({
+            data: {
+              note: notes,
+              createdById: ctx.session.user.id,
+              expenseId: id,
+            },
+          });
+        }
       }
 
       return { id };
@@ -740,6 +748,7 @@ function expenseDetailSchema() {
       id: z.number(),
       name: z.string().nullable(),
     }),
+    deletedAt: z.string().datetime().nullable(),
   });
 }
 
@@ -812,6 +821,7 @@ function normalizeExpenseDetail(expense: {
   category: string;
   splitType: SplitType;
   groupId: number | null;
+  deletedAt: Date | null;
   expenseNotes: { note: string }[];
   paidByUser: { id: number; name: string | null } | null;
   addedByUser: { id: number; name: string | null } | null;
@@ -824,6 +834,7 @@ function normalizeExpenseDetail(expense: {
       id: expense.addedByUser?.id ?? 0,
       name: expense.addedByUser?.name ?? null,
     },
+    deletedAt: expense.deletedAt?.toISOString() ?? null,
   };
 }
 

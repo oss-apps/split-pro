@@ -408,6 +408,26 @@ describe('group membership validation logic', () => {
     const allMembers = participantIds.every((id) => memberIds.has(id));
     expect(allMembers).toBe(false);
   });
+
+  it('should include userId 0 in participants list', () => {
+    const userId = 10;
+    const participants = [0, 1, 2];
+    const userIds = [userId, ...participants];
+
+    expect(userIds).toContain(0);
+    expect(userIds).toHaveLength(4);
+    expect(userIds[0]).toBe(10);
+    expect(userIds[1]).toBe(0);
+  });
+
+  it('should include paidById even when already in participants', () => {
+    const userId = 1;
+    const participants = [1, 2, 3];
+    const userIds = [userId, ...participants];
+
+    expect(userIds).toEqual([1, 1, 2, 3]);
+    expect(userIds.filter((id) => id === 1)).toHaveLength(2);
+  });
 });
 
 describe('normalizeExpenseDetail', () => {
@@ -420,6 +440,7 @@ describe('normalizeExpenseDetail', () => {
     category: string;
     splitType: SplitType;
     groupId: number | null;
+    deletedAt: Date | null;
     expenseNotes: { note: string }[];
     paidByUser: { id: number; name: string | null } | null;
     addedByUser: { id: number; name: string | null } | null;
@@ -442,6 +463,7 @@ describe('normalizeExpenseDetail', () => {
       id: e.addedByUser?.id ?? 0,
       name: e.addedByUser?.name ?? null,
     },
+    deletedAt: e.deletedAt?.toISOString() ?? null,
   });
 
   const normalize = (e: {
@@ -484,6 +506,7 @@ describe('normalizeExpenseDetail', () => {
     category: 'Travel',
     splitType: SplitType.EXACT,
     groupId: null as number | null,
+    deletedAt: null as Date | null,
     paidByUser: { id: 10, name: 'Bob' } as { id: number; name: string | null },
     addedByUser: { id: 10, name: 'Bob' } as { id: number; name: string | null },
     expenseParticipants: [{ userId: 10, amount: 5000n }],
@@ -513,6 +536,19 @@ describe('normalizeExpenseDetail', () => {
     const result = normalizeDetail(expense);
     expect(result.addedBy.id).toBe(0);
     expect(result.addedBy.name).toBeNull();
+  });
+
+  it('should return null for deletedAt when expense is active', () => {
+    const expense = { ...baseExpense, expenseNotes: [] };
+    const result = normalizeDetail(expense);
+    expect(result.deletedAt).toBeNull();
+  });
+
+  it('should return ISO string for deletedAt when expense is deleted', () => {
+    const deletedDate = new Date('2025-01-15T12:00:00.000Z');
+    const expense = { ...baseExpense, expenseNotes: [], deletedAt: deletedDate };
+    const result = normalizeDetail(expense);
+    expect(result.deletedAt).toBe('2025-01-15T12:00:00.000Z');
   });
 });
 
@@ -886,5 +922,60 @@ describe('GET /groups/{id} endpoint logic', () => {
 
     expect(queryConfig.where.id).toBe(groupId);
     expect(queryConfig.include.groupUsers).toBeDefined();
+  });
+
+  it('should validate group membership before returning details', () => {
+    const memberIds = new Set([1, 2, 3]);
+    const userId = 1;
+    const participants: number[] = [];
+
+    const userIds = [userId, ...participants];
+    const allMembers = userIds.every((id) => memberIds.has(id));
+
+    expect(allMembers).toBe(true);
+    expect(userIds).toEqual([1]);
+  });
+});
+
+describe('PUT /expenses/{id} notes logic', () => {
+  it('should clear existing notes when empty string is sent', () => {
+    const notes = '';
+    const shouldDelete = notes !== undefined;
+
+    expect(shouldDelete).toBe(true);
+
+    let noteExists = true;
+    if (notes !== undefined) {
+      noteExists = false;
+      if (notes) {
+        noteExists = true;
+      }
+    }
+
+    expect(noteExists).toBe(false);
+  });
+
+  it('should replace notes when non-empty string is sent', () => {
+    const notes = 'updated note';
+    const shouldDelete = notes !== undefined;
+
+    expect(shouldDelete).toBe(true);
+
+    let noteExists = false;
+    if (notes !== undefined) {
+      noteExists = false;
+      if (notes) {
+        noteExists = true;
+      }
+    }
+
+    expect(noteExists).toBe(true);
+  });
+
+  it('should leave notes untouched when notes field is not sent', () => {
+    const notes = undefined;
+    const shouldDelete = notes !== undefined;
+
+    expect(shouldDelete).toBe(false);
   });
 });

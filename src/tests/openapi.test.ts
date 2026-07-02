@@ -282,19 +282,42 @@ describe('REST input to service input mapping', () => {
     expect(result.reduce((acc, p) => acc + p.amount, 0n)).toBe(0n);
   });
 
-  it('should leave non-EQUAL split shares as-is (pass-through)', () => {
+  it('should apply sign convention for non-EQUAL splits too', () => {
+    const totalAmount = 1000n;
+    const paidById = 1;
     const participants = [
-      { userId: 1, share: 50 },
-      { userId: 2, share: -50 },
+      { userId: 1, share: 500 },
+      { userId: 2, share: 500 },
     ];
 
-    const result = participants.map((p) => ({
-      userId: p.userId,
-      amount: p.share !== undefined ? BigInt(p.share) : 0n,
-    }));
+    const result = participants.map((p) => {
+      const share = p.share !== undefined ? BigInt(p.share) : 0n;
+      if (p.userId === paidById) {
+        return { userId: p.userId, amount: -share + totalAmount };
+      }
+      return { userId: p.userId, amount: -share };
+    });
 
-    expect(result[0]?.amount).toBe(50n);
-    expect(result[1]?.amount).toBe(-50n);
+    expect(result[0]?.amount).toBe(500n);
+    expect(result[1]?.amount).toBe(-500n);
+    expect(result.reduce((acc, p) => acc + p.amount, 0n)).toBe(0n);
+  });
+
+  it('should default missing share to 0 for non-EQUAL splits', () => {
+    const totalAmount = 500n;
+    const paidById = 1;
+    const participants = [{ userId: 1 }, { userId: 2, share: 500 }];
+
+    const result = participants.map((p) => {
+      const share = p.share !== undefined ? BigInt(p.share) : 0n;
+      if (p.userId === paidById) {
+        return { userId: p.userId, amount: -share + totalAmount };
+      }
+      return { userId: p.userId, amount: -share };
+    });
+
+    expect(result[0]?.amount).toBe(500n);
+    expect(result[1]?.amount).toBe(-500n);
   });
 
   it('should compute 0 as share for EQUAL split with single participant', () => {

@@ -101,16 +101,12 @@ const mapRestToServiceInput = (
 
   const participants = deduplicateByUserId(
     input.participants.map((p) => {
-      if (null !== equalShare) {
-        const share = equalShare;
-        if (p.userId === input.paidById) {
-          return { userId: p.userId, amount: -share + totalAmount };
-        }
-        return { userId: p.userId, amount: -share };
-      }
+      const share = null !== equalShare ? equalShare : p.share !== undefined ? BigInt(p.share) : 0n;
 
-      const amount = p.share !== undefined ? BigInt(p.share) : 0n;
-      return { userId: p.userId, amount };
+      if (p.userId === input.paidById) {
+        return { userId: p.userId, amount: -share + totalAmount };
+      }
+      return { userId: p.userId, amount: -share };
     }),
   );
 

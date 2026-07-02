@@ -184,10 +184,28 @@ export const openApiRouter = createTRPCRouter({
       ),
     )
     .query(async ({ ctx }) => {
+      const userId = ctx.session.user.id;
+      const hiddenIds = ctx.session.user.hiddenFriendIds;
+
+      const participantRecords = await db.expenseParticipant.findMany({
+        where: {
+          expense: {
+            expenseParticipants: {
+              some: { userId },
+            },
+          },
+          userId: { not: userId },
+        },
+        select: { userId: true },
+        distinct: ['userId'],
+      });
+
+      const friendIdsFromExpenses = new Set(participantRecords.map((p) => p.userId));
+
       const rawBalances = await db.balanceView.findMany({
         where: {
-          userId: ctx.session.user.id,
-          friendId: { notIn: ctx.session.user.hiddenFriendIds },
+          userId,
+          friendId: { notIn: hiddenIds },
         },
         include: {
           group: {
@@ -197,6 +215,18 @@ export const openApiRouter = createTRPCRouter({
           },
         },
       });
+
+      for (const b of rawBalances) {
+        friendIdsFromExpenses.add(b.friendId);
+      }
+
+      for (const hiddenId of hiddenIds) {
+        friendIdsFromExpenses.delete(hiddenId);
+      }
+
+      if (0 === friendIdsFromExpenses.size) {
+        return [];
+      }
 
       const processedBalances = await Promise.all(
         rawBalances.map(async ({ friendId, currency, amount, groupId, group }) => {
@@ -210,10 +240,7 @@ export const openApiRouter = createTRPCRouter({
 
           const simplified = simplifyDebts(allGroupBalances);
           const simplifiedBalance = simplified.find(
-            (b) =>
-              b.userId === ctx.session.user.id &&
-              b.friendId === friendId &&
-              b.currency === currency,
+            (b) => b.userId === userId && b.friendId === friendId && b.currency === currency,
           );
 
           return { friendId, currency, amount: simplifiedBalance?.amount ?? 0n };
@@ -232,19 +259,22 @@ export const openApiRouter = createTRPCRouter({
         new Map(),
       );
 
-      const friendIds = [...aggregated.keys()];
+      const friendIds = [...friendIdsFromExpenses];
       const users = await db.user.findMany({
         where: { id: { in: friendIds } },
       });
-      const userMap = Object.fromEntries(users.map((u) => [u.id, u]));
+      const userMap = new Map(users.map((u) => [u.id, u]));
 
       const result = [];
-      for (const [friendId, currencies] of aggregated) {
-        const user = userMap[friendId];
-        if (!user) continue;
+      for (const friendId of friendIds) {
+        const user = userMap.get(friendId);
+        if (!user) {
+          continue;
+        }
 
-        for (const [currency, amount] of currencies) {
-          if (0n !== amount) {
+        const currencies = aggregated.get(friendId);
+        if (currencies && 0 < currencies.size) {
+          for (const [currency, amount] of currencies) {
             result.push({
               id: user.id,
               name: user.name,
@@ -254,6 +284,15 @@ export const openApiRouter = createTRPCRouter({
               currency,
             });
           }
+        } else {
+          result.push({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            balance: 0,
+            currency: user.currency,
+          });
         }
       }
 

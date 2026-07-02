@@ -702,6 +702,128 @@ describe('GET /me endpoint logic', () => {
   });
 });
 
+describe('GET /friends endpoint logic', () => {
+  it('should include friends with zero balance from shared expenses', () => {
+    const userId = 150;
+    const friendId = 151;
+
+    const participantRecords = [{ userId: friendId }];
+    const friendIdsFromExpenses = new Set(participantRecords.map((p) => p.userId));
+
+    const rawBalances: { friendId: number; currency: string; amount: bigint }[] = [];
+    for (const b of rawBalances) {
+      friendIdsFromExpenses.add(b.friendId);
+    }
+
+    const aggregated = new Map<number, Map<string, bigint>>();
+
+    const users = [{ id: friendId, name: 'test2', email: 'test2@test.com', image: null }];
+    const userMap = new Map(users.map((u) => [u.id, u]));
+
+    const result = [];
+    for (const fid of friendIdsFromExpenses) {
+      const user = userMap.get(fid);
+      if (!user) {
+        continue;
+      }
+
+      const currencies = aggregated.get(fid);
+      if (currencies && 0 < currencies.size) {
+        for (const [currency, amount] of currencies) {
+          result.push({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            balance: Number(amount),
+            currency,
+          });
+        }
+      } else {
+        result.push({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          balance: 0,
+          currency: 'USD',
+        });
+      }
+    }
+
+    expect(result).toHaveLength(1);
+    expect(result[0]?.id).toBe(friendId);
+    expect(result[0]?.balance).toBe(0);
+  });
+
+  it('should still show per-currency entries for non-zero balances', () => {
+    const friendId = 151;
+
+    const friendIdsFromExpenses = new Set([friendId]);
+    const aggregated = new Map<number, Map<string, bigint>>();
+    aggregated.set(
+      friendId,
+      new Map([
+        ['USD', 500n],
+        ['GBP', -200n],
+      ]),
+    );
+
+    const users = [{ id: friendId, name: 'test2', email: 'test2@test.com', image: null }];
+    const userMap = new Map(users.map((u) => [u.id, u]));
+
+    const result = [];
+    for (const fid of friendIdsFromExpenses) {
+      const user = userMap.get(fid);
+      if (!user) {
+        continue;
+      }
+
+      const currencies = aggregated.get(fid);
+      if (currencies && 0 < currencies.size) {
+        for (const [currency, amount] of currencies) {
+          result.push({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            balance: Number(amount),
+            currency,
+          });
+        }
+      } else {
+        result.push({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          balance: 0,
+          currency: 'USD',
+        });
+      }
+    }
+
+    expect(result).toHaveLength(2);
+    expect(result[0]?.currency).toBe('USD');
+    expect(result[0]?.balance).toBe(500);
+    expect(result[1]?.currency).toBe('GBP');
+    expect(result[1]?.balance).toBe(-200);
+  });
+
+  it('should filter out hidden friends', () => {
+    const hiddenIds = [151];
+    const participantRecords = [{ userId: 151 }, { userId: 152 }];
+    const friendIdsFromExpenses = new Set(participantRecords.map((p) => p.userId));
+
+    for (const hiddenId of hiddenIds) {
+      friendIdsFromExpenses.delete(hiddenId);
+    }
+
+    expect(friendIdsFromExpenses.has(151)).toBe(false);
+    expect(friendIdsFromExpenses.has(152)).toBe(true);
+  });
+});
+
 describe('GET /groups endpoint logic', () => {
   it('should query groups where user is a member', () => {
     const userId = 150;

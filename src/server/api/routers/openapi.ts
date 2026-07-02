@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
+import { BigMath } from '~/utils/numbers';
 import { createExpense, deleteExpense, editExpense } from '../services/splitService';
 
 import type { CreateExpense as CreateExpenseType } from '~/types/expense.types';
@@ -66,6 +67,16 @@ const validateEditExpensePermission = async (expenseId: string, userId: number) 
   }
 };
 
+const deduplicateByUserId = <T extends { userId: number }>(participants: T[]): T[] => {
+  const seen = new Map<number, T>();
+  for (const p of participants) {
+    if (!seen.has(p.userId)) {
+      seen.set(p.userId, p);
+    }
+  }
+  return [...seen.values()];
+};
+
 const mapRestToServiceInput = (
   input: {
     expenseName: string;
@@ -86,20 +97,51 @@ const mapRestToServiceInput = (
       ? BigInt(input.amount) / BigInt(participantCount)
       : null;
 
+  const totalAmount = BigInt(input.amount);
+
+  const participants = deduplicateByUserId(
+    input.participants.map((p) => {
+      if (null !== equalShare) {
+        const share = equalShare;
+        if (p.userId === input.paidById) {
+          return { userId: p.userId, amount: -share + totalAmount };
+        }
+        return { userId: p.userId, amount: -share };
+      }
+
+      const amount = p.share !== undefined ? BigInt(p.share) : 0n;
+      return { userId: p.userId, amount };
+    }),
+  );
+
+  if (null !== equalShare) {
+    let penniesLeft = participants.reduce((acc, p) => acc + p.amount, 0n);
+    const nonPayerParticipants = participants.filter(
+      (p) => p.userId !== input.paidById && 0n !== p.amount,
+    );
+
+    if (nonPayerParticipants.length > 0) {
+      let i = 0;
+      while (0n !== penniesLeft) {
+        const p = nonPayerParticipants[i % nonPayerParticipants.length]!;
+        p.amount -= BigMath.sign(penniesLeft);
+        penniesLeft -= BigMath.sign(penniesLeft);
+        i++;
+      }
+    }
+  }
+
   return {
     ...(expenseId ? { expenseId } : {}),
     name: input.expenseName,
-    amount: BigInt(input.amount),
+    amount: totalAmount,
     currency: input.currency,
     category: input.category,
     groupId: input.groupId,
     paidBy: input.paidById,
     splitType: input.splitMethod as SplitType,
     expenseDate: input.expenseDate ? new Date(input.expenseDate) : new Date(),
-    participants: input.participants.map((p) => ({
-      userId: p.userId,
-      amount: null !== equalShare ? equalShare : p.share !== undefined ? BigInt(p.share) : 0n,
-    })),
+    participants,
   };
 };
 

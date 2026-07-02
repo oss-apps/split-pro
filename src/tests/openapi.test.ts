@@ -232,6 +232,86 @@ describe('REST input to service input mapping', () => {
 
     expect(share).toBe(333n);
   });
+
+  it('should apply sign convention for EQUAL split: payer gets positive, non-payers negative', () => {
+    const amount = 10;
+    const paidBy = 150;
+    const participants = [{ userId: 150 }, { userId: 151 }];
+
+    const totalAmount = BigInt(amount);
+    const equalShare = totalAmount / BigInt(participants.length);
+
+    const result = participants.map((p) => {
+      if (p.userId === paidBy) {
+        return { userId: p.userId, amount: -equalShare + totalAmount };
+      }
+      return { userId: p.userId, amount: -equalShare };
+    });
+
+    expect(result[0]?.amount).toBe(5n);
+    expect(result[1]?.amount).toBe(-5n);
+    expect(result.reduce((acc, p) => acc + p.amount, 0n)).toBe(0n);
+  });
+
+  it('should handle penny remainder for EQUAL split with uneven division', () => {
+    const amount = 10;
+    const paidBy = 1;
+    const participants = [{ userId: 1 }, { userId: 2 }, { userId: 3 }];
+
+    const totalAmount = BigInt(amount);
+    const equalShare = totalAmount / BigInt(participants.length);
+
+    const result = participants.map((p) => {
+      if (p.userId === paidBy) {
+        return { userId: p.userId, amount: -equalShare + totalAmount };
+      }
+      return { userId: p.userId, amount: -equalShare };
+    });
+
+    let penniesLeft = result.reduce((acc, p) => acc + p.amount, 0n);
+    const nonPayerParticipants = result.filter((p) => p.userId !== paidBy && 0n !== p.amount);
+    const sign = (x: bigint) => (0n === x ? 0n : 0n > x ? -1n : 1n);
+    let i = 0;
+    while (0n !== penniesLeft) {
+      const p = nonPayerParticipants[i % nonPayerParticipants.length]!;
+      p.amount -= sign(penniesLeft);
+      penniesLeft -= sign(penniesLeft);
+      i++;
+    }
+
+    expect(result[0]?.amount).toBe(7n);
+    expect(result.reduce((acc, p) => acc + p.amount, 0n)).toBe(0n);
+  });
+
+  it('should leave non-EQUAL split shares as-is (pass-through)', () => {
+    const participants = [{ userId: 1, share: 50 }, { userId: 2, share: -50 }];
+
+    const result = participants.map((p) => ({
+      userId: p.userId,
+      amount: p.share !== undefined ? BigInt(p.share) : 0n,
+    }));
+
+    expect(result[0]?.amount).toBe(50n);
+    expect(result[1]?.amount).toBe(-50n);
+  });
+
+  it('should compute 0 as share for EQUAL split with single participant', () => {
+    const amount = 1000;
+    const paidBy = 1;
+    const participants = [{ userId: 1 }];
+
+    const totalAmount = BigInt(amount);
+    const equalShare = totalAmount / BigInt(participants.length);
+
+    expect(equalShare).toBe(1000n);
+
+    const result = participants.map((p) => ({
+      userId: p.userId,
+      amount: -equalShare + totalAmount,
+    }));
+
+    expect(result[0]?.amount).toBe(0n);
+  });
 });
 
 describe('validateEditExpensePermission logic', () => {

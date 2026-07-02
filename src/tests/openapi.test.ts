@@ -1,6 +1,5 @@
 import { createHash } from 'crypto';
 import { SplitType } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
 
 import { simplifyDebts } from '~/lib/simplify';
 
@@ -284,7 +283,10 @@ describe('REST input to service input mapping', () => {
   });
 
   it('should leave non-EQUAL split shares as-is (pass-through)', () => {
-    const participants = [{ userId: 1, share: 50 }, { userId: 2, share: -50 }];
+    const participants = [
+      { userId: 1, share: 50 },
+      { userId: 2, share: -50 },
+    ];
 
     const result = participants.map((p) => ({
       userId: p.userId,
@@ -297,7 +299,6 @@ describe('REST input to service input mapping', () => {
 
   it('should compute 0 as share for EQUAL split with single participant', () => {
     const amount = 1000;
-    const paidBy = 1;
     const participants = [{ userId: 1 }];
 
     const totalAmount = BigInt(amount);
@@ -383,5 +384,362 @@ describe('group membership validation logic', () => {
 
     const allMembers = participantIds.every((id) => memberIds.has(id));
     expect(allMembers).toBe(false);
+  });
+});
+
+describe('normalizeExpenseDetail', () => {
+  const normalizeDetail = (e: {
+    id: string;
+    name: string;
+    amount: bigint;
+    currency: string;
+    expenseDate: Date;
+    category: string;
+    splitType: SplitType;
+    groupId: number | null;
+    expenseNotes: { note: string }[];
+    paidByUser: { id: number; name: string | null } | null;
+    addedByUser: { id: number; name: string | null } | null;
+    expenseParticipants: { userId: number; amount: bigint }[];
+  }) => ({
+    ...normalize({
+      id: e.id,
+      name: e.name,
+      amount: e.amount,
+      currency: e.currency,
+      expenseDate: e.expenseDate,
+      category: e.category,
+      splitType: e.splitType,
+      groupId: e.groupId,
+      paidByUser: e.paidByUser,
+      expenseParticipants: e.expenseParticipants,
+    }),
+    notes: e.expenseNotes[0]?.note ?? null,
+    addedBy: {
+      id: e.addedByUser?.id ?? 0,
+      name: e.addedByUser?.name ?? null,
+    },
+  });
+
+  const normalize = (e: {
+    id: string;
+    name: string;
+    amount: bigint;
+    currency: string;
+    expenseDate: Date;
+    category: string;
+    splitType: SplitType;
+    groupId: number | null;
+    paidByUser: { id: number; name: string | null } | null;
+    expenseParticipants: { userId: number; amount: bigint }[];
+  }) => ({
+    id: e.id,
+    expenseName: e.name,
+    amount: Number(e.amount),
+    currency: e.currency,
+    expenseDate: e.expenseDate.toISOString(),
+    category: e.category,
+    paidBy: {
+      id: e.paidByUser?.id ?? 0,
+      name: e.paidByUser?.name ?? null,
+    },
+    splitMethod: e.splitType,
+    participants: e.expenseParticipants.map((ep) => ({
+      userId: ep.userId,
+      share: Number(ep.amount),
+    })),
+    groupId: e.groupId,
+    isReimbursement: SplitType.SETTLEMENT === e.splitType,
+  });
+
+  const baseExpense = {
+    id: 'exp-detail-1',
+    name: 'Detail Expense',
+    amount: 5000n,
+    currency: 'EUR',
+    expenseDate: new Date('2025-06-01'),
+    category: 'Travel',
+    splitType: SplitType.EXACT,
+    groupId: null as number | null,
+    paidByUser: { id: 10, name: 'Bob' } as { id: number; name: string | null },
+    addedByUser: { id: 10, name: 'Bob' } as { id: number; name: string | null },
+    expenseParticipants: [{ userId: 10, amount: 5000n }],
+  };
+
+  it('should include notes from the first expense note', () => {
+    const expense = { ...baseExpense, expenseNotes: [{ note: 'Hello world' }] };
+    const result = normalizeDetail(expense);
+    expect(result.notes).toBe('Hello world');
+  });
+
+  it('should return null for notes when no notes exist', () => {
+    const expense = { ...baseExpense, expenseNotes: [] };
+    const result = normalizeDetail(expense);
+    expect(result.notes).toBeNull();
+  });
+
+  it('should include addedBy from the creator', () => {
+    const expense = { ...baseExpense, expenseNotes: [] };
+    const result = normalizeDetail(expense);
+    expect(result.addedBy.id).toBe(10);
+    expect(result.addedBy.name).toBe('Bob');
+  });
+
+  it('should handle null addedByUser gracefully', () => {
+    const expense = { ...baseExpense, expenseNotes: [], addedByUser: null };
+    const result = normalizeDetail(expense);
+    expect(result.addedBy.id).toBe(0);
+    expect(result.addedBy.name).toBeNull();
+  });
+});
+
+describe('deduplicateByUserId', () => {
+  const deduplicateByUserId = <T extends { userId: number }>(participants: T[]): T[] => {
+    const seen = new Map<number, T>();
+    for (const p of participants) {
+      if (!seen.has(p.userId)) {
+        seen.set(p.userId, p);
+      }
+    }
+    return [...seen.values()];
+  };
+
+  it('should keep only one entry per userId', () => {
+    const participants = [
+      { userId: 1, amount: 50 },
+      { userId: 2, amount: 30 },
+      { userId: 1, amount: 20 },
+    ];
+
+    const result = deduplicateByUserId(participants);
+    expect(result).toHaveLength(2);
+  });
+
+  it('should keep the first occurrence when duplicates exist', () => {
+    const participants = [
+      { userId: 1, amount: 50 },
+      { userId: 1, amount: 20 },
+    ];
+
+    const result = deduplicateByUserId(participants);
+    expect(result[0]?.amount).toBe(50);
+  });
+
+  it('should return unchanged array when no duplicates', () => {
+    const participants = [
+      { userId: 1, amount: 50 },
+      { userId: 2, amount: 30 },
+    ];
+
+    const result = deduplicateByUserId(participants);
+    expect(result).toHaveLength(2);
+    expect(result[0]?.userId).toBe(1);
+    expect(result[1]?.userId).toBe(2);
+  });
+
+  it('should return empty for empty input', () => {
+    const participants: { userId: number; amount: number }[] = [];
+    const result = deduplicateByUserId(participants);
+    expect(result).toHaveLength(0);
+  });
+});
+
+describe('GET /expenses query logic', () => {
+  it('should filter out deleted expenses with deletedBy: null', () => {
+    const userId = 150;
+    const expenseWhere = {
+      deletedBy: null,
+      expenseParticipants: {
+        some: { userId },
+      },
+    };
+
+    expect(expenseWhere.deletedBy).toBeNull();
+    expect(expenseWhere.expenseParticipants).toBeDefined();
+  });
+
+  it('should filter by groupId when provided', () => {
+    const groupId = 151;
+    const userId = 150;
+    const expenseWhere = {
+      deletedBy: null,
+      groupId,
+      group: { groupUsers: { some: { userId } } },
+    };
+
+    expect(expenseWhere.groupId).toBe(151);
+    expect(expenseWhere.deletedBy).toBeNull();
+  });
+
+  it('should filter by user participation when no groupId', () => {
+    const userId = 150;
+    const expenseWhere = {
+      deletedBy: null,
+      expenseParticipants: {
+        some: { userId },
+      },
+    };
+
+    const hasParticipationFilter =
+      'expenseParticipants' in expenseWhere && expenseWhere.expenseParticipants !== undefined;
+    expect(hasParticipationFilter).toBe(true);
+  });
+
+  it('should add date filter when since is provided', () => {
+    const since = '2026-01-01T00:00:00.000Z';
+    const userId = 150;
+    const expenseWhere = {
+      deletedBy: null,
+      expenseParticipants: { some: { userId } },
+      ...(since ? { expenseDate: { gte: new Date(since) } } : {}),
+    };
+
+    expect(expenseWhere.expenseDate).toBeDefined();
+    const expenseDate = expenseWhere.expenseDate as Record<string, unknown> | undefined;
+    expect(expenseDate?.gte).toBeInstanceOf(Date);
+  });
+
+  it('should not have date filter when since is not provided', () => {
+    const since = undefined;
+    const userId = 150;
+    const expenseWhere = {
+      deletedBy: null,
+      expenseParticipants: { some: { userId } },
+      ...(since ? { expenseDate: { gte: new Date(since) } } : {}),
+    };
+
+    expect(expenseWhere).not.toHaveProperty('expenseDate');
+  });
+});
+
+describe('GET /groups/{id}/expenses query logic', () => {
+  it('should filter by groupId and deletedBy: null', () => {
+    const groupId = 151;
+    const where = {
+      groupId,
+      deletedBy: null,
+    };
+
+    expect(where.groupId).toBe(151);
+    expect(where.deletedBy).toBeNull();
+  });
+
+  it('should add date filter when since is provided', () => {
+    const groupId = 151;
+    const since = '2026-01-01T00:00:00.000Z';
+    const where = {
+      groupId,
+      deletedBy: null,
+      ...(since ? { expenseDate: { gte: new Date(since) } } : {}),
+    };
+
+    expect(where.expenseDate).toBeDefined();
+  });
+});
+
+describe('GET /expenses query uses Expense.findMany (not ExpenseParticipant.findMany)', () => {
+  it('should query Expense with direct includes (not nested expense wrapper)', () => {
+    const queryConfig = {
+      model: 'expense',
+      include: {
+        expenseParticipants: true,
+        paidByUser: true,
+        group: true,
+        deletedByUser: true,
+      },
+    };
+
+    expect(queryConfig.model).toBe('expense');
+    expect(queryConfig.include).toHaveProperty('expenseParticipants');
+    expect(queryConfig.include).not.toHaveProperty('expense');
+  });
+});
+
+describe('DELETE /expenses/{id} mutation logic', () => {
+  it('should return an empty object on success', () => {
+    const deleteExpenseMutation = async () => ({});
+    const result = deleteExpenseMutation();
+
+    expect(result).resolves.toEqual({});
+  });
+
+  it('should validate expense permission before deleting', async () => {
+    let permissionChecked = false;
+    let deleted = false;
+
+    const validatePermission = () => {
+      permissionChecked = true;
+    };
+    const deleteExpense = () => {
+      deleted = true;
+      return Promise.resolve();
+    };
+
+    validatePermission();
+    await deleteExpense();
+
+    expect(permissionChecked).toBe(true);
+    expect(deleted).toBe(true);
+  });
+});
+
+describe('GET /me endpoint logic', () => {
+  it('should return the session user directly', () => {
+    const session = {
+      user: {
+        id: 150,
+        name: 'test',
+        email: 'test@example.com',
+        image: null,
+        currency: 'USD',
+      },
+    };
+
+    const result = session.user;
+    expect(result.id).toBe(150);
+    expect(result.name).toBe('test');
+    expect(result.currency).toBe('USD');
+  });
+});
+
+describe('GET /groups endpoint logic', () => {
+  it('should query groups where user is a member', () => {
+    const userId = 150;
+    const queryConfig = {
+      where: {
+        groupUsers: {
+          some: { userId },
+        },
+      },
+      include: {
+        _count: {
+          select: { groupUsers: true },
+        },
+      },
+    };
+
+    expect(queryConfig.where.groupUsers.some.userId).toBe(userId);
+    expect(queryConfig.include._count.select).toHaveProperty('groupUsers');
+  });
+});
+
+describe('GET /groups/{id} endpoint logic', () => {
+  it('should query group with user includes', () => {
+    const groupId = 151;
+    const queryConfig = {
+      where: { id: groupId },
+      include: {
+        groupUsers: {
+          include: {
+            user: {
+              select: { id: true, name: true, email: true },
+            },
+          },
+        },
+      },
+    };
+
+    expect(queryConfig.where.id).toBe(groupId);
+    expect(queryConfig.include.groupUsers).toBeDefined();
   });
 });

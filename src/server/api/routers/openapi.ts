@@ -508,28 +508,24 @@ export const openApiRouter = createTRPCRouter({
         ...(since ? { expenseDate: { gte: new Date(since) } } : {}),
       };
 
-      const [expenseParticipants, total] = await Promise.all([
-        db.expenseParticipant.findMany({
-          where: { expense: expenseWhere },
-          orderBy: { expense: { expenseDate: 'desc' } },
+      const [expenses, total] = await Promise.all([
+        db.expense.findMany({
+          where: expenseWhere,
+          orderBy: { expenseDate: 'desc' },
           skip: offset,
           take: limit,
           include: {
-            expense: {
-              include: {
-                expenseParticipants: true,
-                paidByUser: true,
-                group: true,
-                deletedByUser: true,
-              },
-            },
+            expenseParticipants: true,
+            paidByUser: true,
+            group: true,
+            deletedByUser: true,
           },
         }),
         db.expense.count({ where: expenseWhere }),
       ]);
 
       return {
-        expenses: expenseParticipants.map((ep) => normalizeExpense(ep.expense)),
+        expenses: expenses.map(normalizeExpense),
         total,
       };
     }),
@@ -669,6 +665,8 @@ export const openApiRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       await validateEditExpensePermission(input.id, ctx.session.user.id);
       await deleteExpense(input.id, ctx.session.user.id);
+
+      return {};
     }),
 });
 

@@ -123,25 +123,18 @@ class FrankfurterProvider extends CurrencyRateProvider {
 
   async fetchRates(from: CurrencyCode, to: CurrencyCode, date?: Date): Promise<RateResponse> {
     const url = new URL(`https://api.frankfurter.dev/v2/rate/${from}/${to}`);
-
     if (date && !isToday(date)) {
       url.searchParams.append('date', format(date, 'yyyy-MM-dd'));
     }
 
     const response = await fetch(url.toString());
+    const { base, quote, rate } = await response.json();
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      const message = errorData.message || response.statusText || 'Failed to fetch exchange rates';
-      throw new Error(message);
+    if (response.ok) {
+      return { base, rates: { [quote]: rate } };
     }
 
-    const data: { date: string; base: string; quote: string; rate: number } = await response.json();
-
-    return {
-      base: data.base,
-      rates: { [data.quote]: data.rate },
-    };
+    throw new Error(response.statusText || 'Failed to fetch exchange rates');
   }
 }
 

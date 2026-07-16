@@ -294,10 +294,7 @@ export function calculateParticipantSplit(
       const totalParticipants = participants.filter((p) => 0n !== getSplitShare(p)).length;
       updatedParticipants = participants.map((p) => ({
         ...p,
-        amount:
-          0 === totalParticipants || 0n === getSplitShare(p)
-            ? 0n
-            : amount / BigInt(totalParticipants),
+        amount: 0n === getSplitShare(p) ? 0n : amount / BigInt(totalParticipants),
       }));
       canSplitScreenClosed = 0 < totalParticipants;
       break;
@@ -351,14 +348,7 @@ export function calculateParticipantSplit(
 
     if (canSplitScreenClosed) {
       let penniesLeft = updatedParticipants.reduce((acc, p) => acc + (p.amount ?? 0n), 0n);
-      const roundedToZeroParticipants =
-        SplitType.EQUAL === splitType
-          ? updatedParticipants.filter((p) => 0n === (p.amount ?? 0n) && 0n !== getSplitShare(p))
-          : [];
-      const participantsToPick =
-        0 < roundedToZeroParticipants.length
-          ? roundedToZeroParticipants
-          : updatedParticipants.filter((p) => p.amount);
+      const participantsToPick = updatedParticipants.filter((p) => p.amount);
       const seed =
         cyrb128(
           `${participantsToPick

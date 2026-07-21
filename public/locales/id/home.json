@@ -1,0 +1,78 @@
+{
+  "features": {
+    "bank_connection": {
+      "description": "Tambahkan pengeluaran lebih cepat dengan integrasi ke API transaksi akun bank GoCardless atau Plaid",
+      "title": "Koneksi bank"
+    },
+    "currency_conversion": {
+      "description": "Konversikan berbagai mata uang secara cepat menggunakan nilai tukar terkini atau historis",
+      "title": "Konversi Mata Uang"
+    },
+    "debt_simplification": {
+      "description": "Penyederhanaan utang kelompok secara otomatis untuk mengurangi jumlah transaksi yang diperlukan antar teman",
+      "title": "Penyederhanaan Utang"
+    },
+    "groups_and_friends": {
+      "description": "Dapat membuat beberapa kelompok atau menambahkan saldo secara langsung. Semuanya akan dikonsolidasikan",
+      "title": "Kelompok dan Teman"
+    },
+    "i18": {
+      "description": "Tersedia dalam berbagai bahasa untuk memudahkan pembagian pengeluaran di seluruh dunia",
+      "title": "Internasionalisasi"
+    },
+    "import_splitwise": {
+      "description": "Tidak perlu memindahkan saldo secara manual. Anda dapat mengimpor pengguna dan kelompok dari Splitwise",
+      "title": "Impor dari Splitwise"
+    },
+    "multiple_currencies": {
+      "description": "Perlu menambahkan pengeluaran dengan mata uang berbeda untuk pengguna yang sama? Tidak masalah!",
+      "title": "Berbagai mata uang"
+    },
+    "open_source": {
+      "description": "Membuatnya sulit untuk berbuat curang. Mudah untuk di-self host",
+      "title": "Sumber terbuka"
+    },
+    "push_notifications": {
+      "description": "Jangan pernah melewatkan pemberitahuan penting. Dapatkan pemberitahuan saat seseorang menambahkan pengeluaran atau melunasi utang",
+      "title": "Notifikasi push"
+    },
+    "pwa_support": {
+      "description": "Suka aplikasi seluler? Kami siap membantu Anda. Pasang sebagai PWA dan Anda bahkan tidak akan menyadarinya!",
+      "title": "Dukungan PWA"
+    },
+    "recurring_transactions": {
+      "description": "Atur pengeluaran berulang otomatis untuk sewa, langganan, atau biaya bersama rutin lainnya",
+      "title": "Transaksi Berulang"
+    },
+    "title": "Fitur",
+    "unequal_split": {
+      "description": "Opsi pembagian tingkat lanjut. Berdasarkan bagian, persentase, atau jumlah pasti.",
+      "title": "Pembagian Tidak Sama Rata"
+    },
+    "upload_receipts": {
+      "description": "Unggah resi bersama dengan pengeluaran",
+      "title": "Unggah Resi"
+    }
+  },
+  "footer": {
+    "built_by": "Dibuat oleh"
+  },
+  "hero": {
+    "add_expense_button": "Tambah Pengeluaran",
+    "star_github_button": "Beri kami star di GitHub",
+    "subtitle_link": "sumber terbuka",
+    "subtitle_part1": "Sebuah",
+    "subtitle_part2": "alternatif untuk Splitwise",
+    "title_highlight": "gratis",
+    "title_part1": "Bagi Pengeluaran dengan teman-teman Anda secara"
+  },
+  "meta": {
+    "description": "SplitPro: Bagi Pengeluaran dengan teman-teman Anda secara gratis",
+    "title": "SplitPro: Bagi Pengeluaran dengan teman-teman Anda secara gratis"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "privacy": "Privasi",
+    "terms": "Syarat dan Ketentuan"
+  }
+}

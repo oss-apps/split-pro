@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Game",
+        "movies": "Film",
+        "music": "Musik",
+        "other": "Hiburan",
+        "sports": "Olahraga"
+      },
+      "name": "Hiburan"
+    },
+    "food": {
+      "items": {
+        "diningOut": "Makan di Luar",
+        "groceries": "Bahan Makanan",
+        "liquor": "Minuman Beralkohol",
+        "other": "Makanan & Minuman"
+      },
+      "name": "Makanan & Minuman"
+    },
+    "general": {
+      "items": {
+        "general": "Umum",
+        "other": "Umum"
+      },
+      "name": "Umum"
+    },
+    "home": {
+      "items": {
+        "electronics": "Elektronik",
+        "furniture": "Furnitur",
+        "maintenance": "Pemeliharaan",
+        "mortgage": "Hipotek",
+        "other": "Rumah",
+        "pets": "Hewan Peliharaan",
+        "rent": "Sewa",
+        "services": "Layanan",
+        "supplies": "Perlengkapan"
+      },
+      "name": "Rumah"
+    },
+    "life": {
+      "items": {
+        "childcare": "Perawatan Anak",
+        "clothing": "Pakaian",
+        "education": "Pendidikan",
+        "gifts": "Hadiah",
+        "insurance": "Asuransi",
+        "medical": "Medis",
+        "other": "Kehidupan",
+        "taxes": "Pajak"
+      },
+      "name": "Kehidupan"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "Sepeda",
+        "bus": "Bus",
+        "car": "Mobil",
+        "fuel": "Bahan Bakar",
+        "hotel": "Hotel",
+        "other": "Perjalanan",
+        "parking": "Parkir",
+        "plane": "Pesawat",
+        "taxi": "Taksi",
+        "train": "Kereta"
+      },
+      "name": "Perjalanan"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "Pembersihan",
+        "electricity": "Listrik",
+        "gas": "Gas",
+        "internet": "Internet",
+        "other": "Utilitas",
+        "phone": "Telepon",
+        "trash": "Sampah",
+        "water": "Air"
+      },
+      "name": "Utilitas"
+    }
+  },
+  "title": "Kategori"
+}

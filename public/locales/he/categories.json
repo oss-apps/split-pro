@@ -2,85 +2,85 @@
   "categories_list": {
     "entertainment": {
       "items": {
-        "games": "",
-        "movies": "",
-        "music": "",
-        "other": "",
-        "sports": ""
+        "games": "משחקים",
+        "movies": "סרטים",
+        "music": "מוזיקה",
+        "other": "בילויים",
+        "sports": "ספורט"
       },
-      "name": ""
+      "name": "בידור"
     },
     "food": {
       "items": {
-        "diningOut": "",
-        "groceries": "",
-        "liquor": "",
-        "other": ""
+        "diningOut": "אוכל בחוץ",
+        "groceries": "מצרכים",
+        "liquor": "אלכוהול",
+        "other": "אוכל ושתיה"
       },
-      "name": ""
+      "name": "אוכל ושתיה"
     },
     "general": {
       "items": {
-        "general": "",
-        "other": ""
+        "general": "כללי",
+        "other": "כללי"
       },
-      "name": ""
+      "name": "כללי"
     },
     "home": {
       "items": {
-        "electronics": "",
-        "furniture": "",
-        "maintenance": "",
-        "mortgage": "",
-        "other": "",
-        "pets": "",
-        "rent": "",
-        "services": "",
-        "supplies": ""
+        "electronics": "אלקטרוניקה",
+        "furniture": "ריהוט",
+        "maintenance": "תחזוקה",
+        "mortgage": "משכנתא",
+        "other": "בית",
+        "pets": "חיות מחמד",
+        "rent": "שכירות",
+        "services": "שירותים",
+        "supplies": "אספקה"
       },
-      "name": ""
+      "name": "בית"
     },
     "life": {
       "items": {
-        "childcare": "",
-        "clothing": "",
-        "education": "",
-        "gifts": "",
-        "insurance": "",
-        "medical": "",
-        "other": "",
-        "taxes": ""
+        "childcare": "טיפול בילדים",
+        "clothing": "ביגוד",
+        "education": "חינוך",
+        "gifts": "מתנות",
+        "insurance": "ביטוח",
+        "medical": "רפואה",
+        "other": "חיים",
+        "taxes": "מסים"
       },
-      "name": ""
+      "name": "חיים"
     },
     "travel": {
       "items": {
-        "bicycle": "",
-        "bus": "",
-        "car": "",
-        "fuel": "",
-        "hotel": "",
-        "other": "",
-        "parking": "",
-        "plane": "",
-        "taxi": "",
-        "train": ""
+        "bicycle": "אופניים",
+        "bus": "אוטובוס",
+        "car": "רכב",
+        "fuel": "דלק",
+        "hotel": "מלון",
+        "other": "נסיעות",
+        "parking": "חניה",
+        "plane": "מטוס",
+        "taxi": "מונית",
+        "train": "רכבת"
       },
-      "name": ""
+      "name": "נסיעות"
     },
     "utilities": {
       "items": {
-        "cleaning": "",
-        "electricity": "",
-        "gas": "",
-        "internet": "",
-        "other": "",
-        "phone": "",
-        "trash": "",
-        "water": ""
+        "cleaning": "נקיון",
+        "electricity": "חשמל",
+        "gas": "גז",
+        "internet": "אינטרנט",
+        "other": "חשבונות",
+        "phone": "טלפון",
+        "trash": "אשפה",
+        "water": "מים"
       },
-      "name": ""
+      "name": "חשבונות"
     }
   },
-  "title": ""
+  "title": "קטגוריות"
 }

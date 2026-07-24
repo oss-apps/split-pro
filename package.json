@@ -15,6 +15,7 @@
     "postinstall": "prisma generate",
     "generate": "prisma generate",
     "lint": "next lint",
+    "test": "tsx --test src/tests/*.test.ts",
     "start": "sleep 3 && pnpm prisma:prod && next start",
     "start-with-latest-migrations": "prisma migrate deploy && next start",
     "d": "pnpm dx && pnpm dev",

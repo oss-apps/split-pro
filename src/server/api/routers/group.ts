@@ -1,5 +1,6 @@
 import { SplitType } from '@prisma/client';
 import { z } from 'zod';
+import { getGroupTotalsWhere } from '~/utils/balances';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { createGroupExpense, deleteExpense, editExpense } from '../services/splitService';
@@ -262,10 +263,7 @@ export const groupRouter = createTRPCRouter({
       _sum: {
         amount: true,
       },
-      where: {
-        groupId: input.groupId,
-        deletedAt: null,
-      },
+      where: getGroupTotalsWhere(input.groupId),
     });
 
     return totals;

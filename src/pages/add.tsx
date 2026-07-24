@@ -8,7 +8,7 @@ import { isStorageConfigured } from '~/server/storage';
 import { calculateSplitShareBasedOnAmount, useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
-import { toFixedNumber, toInteger } from '~/utils/numbers';
+import { toFixedNumber } from '~/utils/numbers';
 
 // 🧾
 
@@ -16,18 +16,7 @@ const AddPage: NextPageWithUser<{
   isStorageConfigured: boolean;
   enableSendingInvites: boolean;
 }> = ({ user, isStorageConfigured, enableSendingInvites }) => {
-  const {
-    setCurrentUser,
-    setGroup,
-    setParticipants,
-    setCurrency,
-    setAmount,
-    setDescription,
-    setPaidBy,
-    setAmountStr,
-    setSplitType,
-    setExpenseDate,
-  } = useAddExpenseStore((s) => s.actions);
+  const { setCurrentUser, setGroup, setParticipants } = useAddExpenseStore((s) => s.actions);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
 
   useEffect(() => {
@@ -86,40 +75,32 @@ const AddPage: NextPageWithUser<{
 
   useEffect(() => {
     if (_expenseId && expenseQuery.data) {
-      console.log(
-        'expenseQuery.data 123',
-        expenseQuery.data.expenseParticipants,
+      const amount = toFixedNumber(expenseQuery.data.amount);
+      const participants = calculateSplitShareBasedOnAmount(
+        amount,
+        expenseQuery.data.expenseParticipants.map((participant) => ({
+          ...participant.user,
+          amount: toFixedNumber(participant.amount),
+        })),
         expenseQuery.data.splitType,
-        calculateSplitShareBasedOnAmount(
-          toFixedNumber(expenseQuery.data.amount),
-          expenseQuery.data.expenseParticipants.map((ep) => ({
-            ...ep.user,
-            amount: toFixedNumber(ep.amount),
-          })),
-          expenseQuery.data.splitType,
-          expenseQuery.data.paidByUser,
-        ),
+        expenseQuery.data.paidByUser,
       );
-      expenseQuery.data.group && setGroup(expenseQuery.data.group);
-      setParticipants(
-        calculateSplitShareBasedOnAmount(
-          toFixedNumber(expenseQuery.data.amount),
-          expenseQuery.data.expenseParticipants.map((ep) => ({
-            ...ep.user,
-            amount: toFixedNumber(ep.amount),
-          })),
-          expenseQuery.data.splitType,
-          expenseQuery.data.paidByUser,
-        ),
-      );
-      setCurrency(expenseQuery.data.currency);
-      setAmountStr(toFixedNumber(expenseQuery.data.amount).toString());
-      setDescription(expenseQuery.data.name);
-      setPaidBy(expenseQuery.data.paidByUser);
-      setAmount(toFixedNumber(expenseQuery.data.amount));
-      setSplitType(expenseQuery.data.splitType);
-      useAddExpenseStore.setState({ showFriends: false });
-      setExpenseDate(expenseQuery.data.expenseDate);
+
+      useAddExpenseStore.setState({
+        amount,
+        amountStr: amount.toString(),
+        canSplitScreenClosed: true,
+        category: expenseQuery.data.category,
+        currency: expenseQuery.data.currency,
+        description: expenseQuery.data.name,
+        expenseDate: expenseQuery.data.expenseDate,
+        fileKey: expenseQuery.data.fileKey ?? undefined,
+        group: expenseQuery.data.group ?? undefined,
+        paidBy: expenseQuery.data.paidByUser,
+        participants,
+        showFriends: false,
+        splitType: expenseQuery.data.splitType,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_expenseId, expenseQuery.data]);

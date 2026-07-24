@@ -1,6 +1,7 @@
 import { type Group, SplitType, type User } from '@prisma/client';
 import Router from 'next/router';
 import { create } from 'zustand';
+import { toFixedNumber, toInteger } from '~/utils/numbers';
 
 export type Participant = User & { amount?: number; splitShare?: number };
 
@@ -78,9 +79,16 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     setAmountStr: (amountStr) => set({ amountStr }),
     setSplitType: (splitType) =>
       set((state) => {
+        const participants = calculateSplitShareBasedOnAmount(
+          state.amount,
+          state.participants,
+          splitType,
+          state.paidBy,
+        );
+
         return {
           splitType,
-          ...calculateParticipantSplit(state.amount, state.participants, splitType, state.paidBy),
+          ...calculateParticipantSplit(state.amount, participants, splitType, state.paidBy),
         };
       }),
     setGroup: (group) => {
@@ -176,7 +184,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         amount: 0,
         participants: s.currentUser ? [s.currentUser] : [],
         description: '',
-        fileKey: '',
+        fileKey: undefined,
         category: 'general',
         splitType: SplitType.EQUAL,
         group: undefined,
@@ -245,12 +253,47 @@ export function calculateParticipantSplit(
       break;
   }
 
+  const participantsToAdjust = updatedParticipants
+    .filter((participant) => 0 !== participant.amount)
+    .map((participant) => participant.id)
+    .sort((a, b) => a - b);
+
   updatedParticipants = updatedParticipants.map((p) => {
     if (p.id === paidBy?.id) {
       return { ...p, amount: -(p.amount ?? 0) + amount };
     }
     return { ...p, amount: -(p.amount ?? 0) };
   });
+
+  if (canSplitScreenClosed && participantsToAdjust.length) {
+    const amounts = new Map(
+      updatedParticipants.map((participant) => [
+        participant.id,
+        toInteger(participant.amount ?? 0),
+      ]),
+    );
+    let imbalance = [...amounts.values()].reduce((total, participantAmount) => {
+      return total + participantAmount;
+    }, 0);
+    let index = 0;
+
+    while (0 !== imbalance) {
+      const participantId = participantsToAdjust[index % participantsToAdjust.length];
+      if (undefined === participantId) {
+        break;
+      }
+
+      const correction = 0 < imbalance ? -1 : 1;
+      amounts.set(participantId, (amounts.get(participantId) ?? 0) + correction);
+      imbalance += correction;
+      index += 1;
+    }
+
+    updatedParticipants = updatedParticipants.map((participant) => ({
+      ...participant,
+      amount: toFixedNumber(amounts.get(participant.id) ?? 0),
+    }));
+  }
 
   return { participants: updatedParticipants, canSplitScreenClosed };
 }
@@ -262,8 +305,6 @@ export function calculateSplitShareBasedOnAmount(
   paidBy?: User,
 ) {
   let updatedParticipants = [...participants];
-
-  console.log('calculateSplitShareBasedOnAmount', amount, participants, splitType);
 
   switch (splitType) {
     case SplitType.EQUAL:
@@ -282,8 +323,8 @@ export function calculateSplitShareBasedOnAmount(
           amount === 0
             ? 0
             : paidBy?.id !== p.id
-              ? (Math.abs(p.amount ?? 0) / amount) * 100
-              : (Math.abs(amount - (p.amount ?? 0)) / amount) * 100,
+              ? Math.round((Math.abs(p.amount ?? 0) / amount) * 10000) / 100
+              : Math.round((Math.abs(amount - (p.amount ?? 0)) / amount) * 10000) / 100,
       }));
       break;
 

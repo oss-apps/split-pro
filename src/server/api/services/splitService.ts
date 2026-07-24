@@ -3,6 +3,8 @@ import { nanoid } from 'nanoid';
 import { db } from '~/server/db';
 import { type SplitwiseGroup, type SplitwiseUser } from '~/types';
 import { toFixedNumber, toInteger } from '~/utils/numbers';
+import { toBalancedParticipants } from '~/utils/splits';
+import { getSettleGroupBalanceQueries } from './balanceProjection';
 import { sendExpensePushNotification } from './notificationService';
 
 export async function joinGroup(userId: number, publicGroupId: string) {
@@ -42,6 +44,7 @@ export async function createGroupExpense(
   const operations = [];
 
   const modifiedAmount = toInteger(amount);
+  participants = toBalancedParticipants(amount, paidBy, participants);
 
   // Create expense operation
   operations.push(
@@ -176,17 +179,21 @@ export async function createGroupExpense(
     );
   });
 
+  operations.push(
+    ...getSettleGroupBalanceQueries(
+      paidBy,
+      participants.map((participant) => participant.userId),
+      currency,
+    ).map((query) => db.$executeRaw(query)),
+  );
+
   // Execute all operations in a transaction
   const result = await db.$transaction(operations);
-  await updateGroupExpenseForIfBalanceIsZero(
-    paidBy,
-    participants.map((p) => p.userId),
-    currency,
-  );
-  if (result[0]) {
-    sendExpensePushNotification(result[0].id).catch(console.error);
+  const expense = result[0] as Expense | undefined;
+  if (expense) {
+    sendExpensePushNotification(expense.id).catch(console.error);
   }
-  return result[0];
+  return expense;
 }
 
 export async function addUserExpense(
@@ -202,6 +209,7 @@ export async function addUserExpense(
   fileKey?: string,
 ) {
   const operations = [];
+  participants = toBalancedParticipants(amount, paidBy, participants);
 
   // Create expense operation
   operations.push(
@@ -281,17 +289,21 @@ export async function addUserExpense(
     );
   });
 
+  operations.push(
+    ...getSettleGroupBalanceQueries(
+      paidBy,
+      participants.map((participant) => participant.userId),
+      currency,
+    ).map((query) => db.$executeRaw(query)),
+  );
+
   // Execute all operations in a transaction
   const result = await db.$transaction(operations);
-  await updateGroupExpenseForIfBalanceIsZero(
-    paidBy,
-    participants.map((p) => p.userId),
-    currency,
-  );
-  if (result[0]) {
-    sendExpensePushNotification(result[0].id).catch(console.error);
+  const expense = result[0] as Expense | undefined;
+  if (expense) {
+    sendExpensePushNotification(expense.id).catch(console.error);
   }
-  return result[0];
+  return expense;
 }
 
 export async function deleteExpense(expenseId: string, deletedBy: number) {
@@ -455,6 +467,7 @@ export async function editExpense(
   }
 
   const operations = [];
+  participants = toBalancedParticipants(amount, paidBy, participants);
 
   // First reverse all existing balances
   for (const participant of expense.expenseParticipants) {
@@ -675,62 +688,22 @@ export async function editExpense(
     }
   });
 
-  await db.$transaction(operations);
-  await updateGroupExpenseForIfBalanceIsZero(
-    paidBy,
-    participants.map((p) => p.userId),
-    currency,
+  operations.push(
+    ...getSettleGroupBalanceQueries(
+      expense.paidBy,
+      expense.expenseParticipants.map((participant) => participant.userId),
+      expense.currency,
+    ).map((query) => db.$executeRaw(query)),
+    ...getSettleGroupBalanceQueries(
+      paidBy,
+      participants.map((participant) => participant.userId),
+      currency,
+    ).map((query) => db.$executeRaw(query)),
   );
+
+  await db.$transaction(operations);
   sendExpensePushNotification(expenseId).catch(console.error);
   return { id: expenseId }; // Return the updated expense
-}
-
-async function updateGroupExpenseForIfBalanceIsZero(
-  userId: number,
-  friendIds: Array<number>,
-  currency: string,
-) {
-  console.log('Checking for users with 0 balance to reflect in group');
-  const balances = await db.balance.findMany({
-    where: {
-      userId,
-      currency,
-      friendId: {
-        in: friendIds,
-      },
-      amount: 0,
-    },
-  });
-
-  console.log('Total balances needs to be updated:', balances.length);
-
-  if (balances.length) {
-    await db.groupBalance.updateMany({
-      where: {
-        userId,
-        firendId: {
-          in: friendIds,
-        },
-        currency,
-      },
-      data: {
-        amount: 0,
-      },
-    });
-
-    await db.groupBalance.updateMany({
-      where: {
-        userId: {
-          in: friendIds,
-        },
-        firendId: userId,
-        currency,
-      },
-      data: {
-        amount: 0,
-      },
-    });
-  }
 }
 
 export async function getCompleteFriendsDetails(userId: number) {

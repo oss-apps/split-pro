@@ -227,9 +227,10 @@ export function calculateParticipantSplit(
       break;
     case SplitType.SHARE:
       const totalShare = participants.reduce((acc, p) => acc + (p.splitShare ?? 0), 0);
+      canSplitScreenClosed = Number.isFinite(totalShare) && 0 < totalShare;
       updatedParticipants = participants.map((p) => ({
         ...p,
-        amount: ((p.splitShare ?? 0) * amount) / totalShare,
+        amount: canSplitScreenClosed ? ((p.splitShare ?? 0) * amount) / totalShare : 0,
       }));
       break;
     case SplitType.EXACT:
@@ -265,6 +266,13 @@ export function calculateParticipantSplit(
     return { ...p, amount: -(p.amount ?? 0) };
   });
 
+  if (updatedParticipants.some((participant) => !Number.isFinite(participant.amount))) {
+    return {
+      participants: updatedParticipants.map((participant) => ({ ...participant, amount: 0 })),
+      canSplitScreenClosed: false,
+    };
+  }
+
   if (canSplitScreenClosed && participantsToAdjust.length) {
     const amounts = new Map(
       updatedParticipants.map((participant) => [
@@ -276,6 +284,10 @@ export function calculateParticipantSplit(
       return total + participantAmount;
     }, 0);
     let index = 0;
+
+    if (!Number.isFinite(imbalance)) {
+      return { participants: updatedParticipants, canSplitScreenClosed: false };
+    }
 
     while (0 !== imbalance) {
       const participantId = participantsToAdjust[index % participantsToAdjust.length];

@@ -46,6 +46,28 @@ void describe('split cent conservation', () => {
     });
   });
 
+  void it('rejects zero and non-finite SHARE totals without producing non-finite amounts', () => {
+    const invalidShares = [
+      [0, 0, 0],
+      [1, -1, 0],
+      [Number.POSITIVE_INFINITY, 1, 1],
+    ];
+
+    invalidShares.forEach((shares) => {
+      const participants: Participant[] = users.map((user, index) => ({
+        ...user,
+        splitShare: shares[index],
+      }));
+      const result = calculateParticipantSplit(10, participants, SplitType.SHARE, users[0]);
+
+      assert.equal(result.canSplitScreenClosed, false);
+      assert.equal(
+        result.participants.every((participant) => Number.isFinite(participant.amount)),
+        true,
+      );
+    });
+  });
+
   void it('normalizes bounded rounding drift from old clients', () => {
     assert.deepEqual(
       toBalancedParticipants(10, 1, [

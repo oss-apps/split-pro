@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { getGroupTotalsWhere } from '~/utils/balances';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
+import { runBalanceTransaction } from '../services/balanceTransaction';
 import { createGroupExpense, deleteExpense, editExpense } from '../services/splitService';
 import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
@@ -283,10 +284,9 @@ export const groupRouter = createTRPCRouter({
       return groupUsers;
     }),
 
-  leaveGroup: groupProcedure
-    .input(z.object({ groupId: z.number() }))
-    .mutation(async ({ input, ctx }) => {
-      const nonZeroBalance = await ctx.db.groupBalance.findFirst({
+  leaveGroup: groupProcedure.input(z.object({ groupId: z.number() })).mutation(({ input, ctx }) =>
+    runBalanceTransaction(async (tx) => {
+      const nonZeroBalance = await tx.groupBalance.findFirst({
         where: {
           groupId: input.groupId,
           userId: ctx.session.user.id,
@@ -303,7 +303,7 @@ export const groupRouter = createTRPCRouter({
         });
       }
 
-      const groupUser = await ctx.db.groupUser.delete({
+      return tx.groupUser.delete({
         where: {
           groupId_userId: {
             groupId: input.groupId,
@@ -311,14 +311,12 @@ export const groupRouter = createTRPCRouter({
           },
         },
       });
-
-      return groupUser;
     }),
+  ),
 
-  delete: groupProcedure
-    .input(z.object({ groupId: z.number() }))
-    .mutation(async ({ input, ctx }) => {
-      const group = await ctx.db.group.findUnique({
+  delete: groupProcedure.input(z.object({ groupId: z.number() })).mutation(({ input, ctx }) =>
+    runBalanceTransaction(async (tx) => {
+      const group = await tx.group.findUnique({
         where: {
           id: input.groupId,
         },
@@ -328,10 +326,13 @@ export const groupRouter = createTRPCRouter({
       });
 
       if (group?.userId !== ctx.session.user.id) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Only creator can delete the group' });
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only creator can delete the group',
+        });
       }
 
-      const balanceWithNonZero = group?.groupBalances.find((b) => b.amount !== 0);
+      const balanceWithNonZero = group.groupBalances.find((balance) => 0 !== balance.amount);
 
       if (balanceWithNonZero) {
         throw new TRPCError({
@@ -340,7 +341,7 @@ export const groupRouter = createTRPCRouter({
         });
       }
 
-      await ctx.db.group.delete({
+      await tx.group.delete({
         where: {
           id: input.groupId,
         },
@@ -348,4 +349,5 @@ export const groupRouter = createTRPCRouter({
 
       return group;
     }),
+  ),
 });

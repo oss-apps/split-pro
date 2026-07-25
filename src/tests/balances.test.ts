@@ -2,22 +2,9 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { SplitType } from '@prisma/client';
 
-import { getSettleGroupBalanceQueries } from '~/server/api/services/balanceProjection';
 import { getGroupBalanceSummary, getGroupTotalsWhere } from '~/utils/balances';
 
-void describe('balance projection safeguards', () => {
-  void it('only settles group balances with a matching zero overall balance', () => {
-    const queries = getSettleGroupBalanceQueries(1, [1, 2, 3], 'USD');
-
-    assert.equal(queries.length, 2);
-    queries.forEach((query) => {
-      assert.match(query.sql, /EXISTS/);
-      assert.match(query.sql, /"balance"\."amount" = 0/);
-    });
-    assert.match(queries[0]?.sql ?? '', /"balance"\."friendId" = "groupBalance"\."firendId"/);
-    assert.match(queries[1]?.sql ?? '', /"balance"\."friendId" = "groupBalance"\."userId"/);
-  });
-
+void describe('group spending safeguards', () => {
   void it('excludes settlements from group spending totals', () => {
     assert.deepEqual(getGroupTotalsWhere(42), {
       groupId: 42,

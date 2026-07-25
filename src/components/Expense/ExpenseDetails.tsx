@@ -3,7 +3,7 @@ import { isSameDay } from 'date-fns';
 import { type User as NextUser } from 'next-auth';
 
 import type { inferRouterOutputs } from '@trpc/server';
-import { ArrowRightIcon, Landmark, Merge, PencilIcon, Users } from 'lucide-react';
+import { ArrowRightIcon, Landmark, MapPin, Merge, PencilIcon, Users } from 'lucide-react';
 import Link from 'next/link';
 import React, { type ComponentProps, useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -26,6 +26,8 @@ import { CurrencyInput } from '../ui/currency-input';
 import { AppDrawer } from '../ui/drawer';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
+import { ExpenseRatings } from './ExpenseRatings';
+import { ItemRatings } from './ItemRatings';
 import { DateSelector } from '../AddExpense/DateSelector';
 
 type ExpenseDetailsOutput = NonNullable<inferRouterOutputs<ExpenseRouter>['getExpenseDetails']>;
@@ -111,6 +113,16 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
                 </Button>
               </Link>
             ) : null}
+            {/* Only the current viewer's own attached place is ever returned here. */}
+            {expense.place ? (
+              <div className="mt-1 flex items-center gap-1.5 text-sm text-gray-400">
+                <MapPin className="text-primary h-4 w-4" />
+                <span>{expense.place.name}</span>
+                {expense.place.address ? (
+                  <span className="text-gray-500">· {expense.place.address}</span>
+                ) : null}
+              </div>
+            ) : null}
           </div>
         </div>
         <div>{expense.fileKey ? <Receipt fileKey={expense.fileKey} /> : null}</div>
@@ -162,6 +174,11 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
           </>
         )}
       </div>
+
+      {/* Private-journal layer overlaid on the shared expense: each participant's own
+          rating and item notes, shown side by side. */}
+      <ExpenseRatings expense={expense} userId={user.id} />
+      <ItemRatings expense={expense} userId={user.id} />
     </>
   );
 };

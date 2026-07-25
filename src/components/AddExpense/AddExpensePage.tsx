@@ -18,6 +18,7 @@ import AddBankTransactions from './AddBankTransactions';
 import { CategoryPicker } from './CategoryPicker';
 import { CurrencyPicker } from './CurrencyPicker';
 import { DateSelector } from './DateSelector';
+import { LocationPicker } from './LocationPicker';
 import { RecurrenceInput } from './RecurrenceInput';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { PayerSelectionForm, SplitExpenseForm } from './SplitTypeSection';
@@ -54,6 +55,7 @@ export const AddOrEditExpensePage: React.FC<{
   const transactionId = useAddExpenseStore((s) => s.transactionId);
   const cronExpression = useAddExpenseStore((s) => s.cronExpression);
   const multipleTransactions = useAddExpenseStore((s) => s.multipleTransactions);
+  const place = useAddExpenseStore((s) => s.place);
 
   const { t, displayName, generateSplitDescription, getCurrencyHelpersCached } =
     useTranslationWithUtils();
@@ -73,6 +75,7 @@ export const AddOrEditExpensePage: React.FC<{
   } = useAddExpenseStore((s) => s.actions);
 
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
+  const upsertPlaceMutation = api.place.upsert.useMutation();
   const updateProfile = api.user.updateUserDetail.useMutation();
   const { update } = useSession();
 
@@ -120,6 +123,26 @@ export const AddOrEditExpensePage: React.FC<{
 
     const sign = isNegative ? -1n : 1n;
 
+    /*
+     * Upsert the chosen location under the current user's account (private per user),
+     * then attach its id to the expense. `null` clears it (server only clears the
+     * caller's own place, so a shared expense never loses another member's location).
+     */
+    let placeId: string | null = null;
+    try {
+      if (place?.name) {
+        const savedPlace = await upsertPlaceMutation.mutateAsync({
+          name: place.name,
+          address: place.address ?? undefined,
+          lat: place.lat ?? undefined,
+          lng: place.lng ?? undefined,
+        });
+        placeId = savedPlace.id;
+      }
+    } catch (error) {
+      console.error('Failed to save location:', error);
+    }
+
     try {
       await addExpenseMutation.mutateAsync(
         [
@@ -139,6 +162,7 @@ export const AddOrEditExpensePage: React.FC<{
             expenseDate,
             expenseId,
             transactionId,
+            placeId,
             cronExpression: cronExpression ? cronToBackend(cronExpression) : undefined,
           },
         ],
@@ -217,6 +241,8 @@ export const AddOrEditExpensePage: React.FC<{
     multipleTransactions,
     setSingleTransaction,
     update,
+    place,
+    upsertPlaceMutation,
   ]);
 
   const handleDescriptionChange = useCallback(
@@ -356,6 +382,10 @@ export const AddOrEditExpensePage: React.FC<{
                       )}
                     </Button>
                   </SplitExpenseForm>
+                </div>
+
+                <div className="mt-2 flex justify-center">
+                  <LocationPicker />
                 </div>
 
                 <div className="mt-4 flex items-start justify-between sm:mt-10">

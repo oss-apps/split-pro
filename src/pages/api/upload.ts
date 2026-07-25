@@ -1,23 +1,33 @@
 import { randomUUID } from 'node:crypto';
-import fs from 'node:fs/promises';
-import path from 'node:path';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
-import sharp from 'sharp';
 
 import { authOptions } from '~/server/auth';
 import { env } from '~/env';
+import { isStorageConfigured, putObject } from '~/server/storage';
 
-import { type File, formidable } from 'formidable';
-import { fileExists } from '~/utils/file';
-
+// We read the raw request body ourselves and stream it straight to object storage —
+// No multipart temp files, no local filesystem, no native image processing (sharp).
+// The client compresses/resizes the image to webp before uploading.
 export const config = {
   api: {
     bodyParser: false,
   },
 };
 
-const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
+const readBody = async (req: NextApiRequest, maxBytes: number): Promise<Buffer> => {
+  const chunks: Buffer[] = [];
+  let size = 0;
+  for await (const chunk of req) {
+    const buf = chunk as Buffer;
+    size += buf.length;
+    if (size > maxBytes) {
+      throw new Error('File too large');
+    }
+    chunks.push(buf);
+  }
+  return Buffer.concat(chunks);
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if ('POST' !== req.method) {
@@ -29,60 +39,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  if (!(await fileExists(UPLOAD_DIR))) {
-    await fs.mkdir(UPLOAD_DIR, { recursive: true });
+  if (!isStorageConfigured()) {
+    return res.status(500).json({ error: 'Object storage is not configured' });
   }
 
-  const form = formidable({
-    keepExtensions: true,
-    maxFileSize: env.UPLOAD_MAX_FILE_SIZE_MB * 1024 * 1024,
-  });
-
-  let uploadedFile: File | undefined;
+  const contentType = req.headers['content-type'] ?? '';
+  if (!contentType.startsWith('image/')) {
+    return res.status(400).json({ error: 'Only image uploads are allowed' });
+  }
 
   try {
-    const [, files] = await form.parse(req);
-    uploadedFile = files.file?.[0];
-
-    if (!uploadedFile) {
+    const buffer = await readBody(req, env.UPLOAD_MAX_FILE_SIZE_MB * 1024 * 1024);
+    if (buffer.length === 0) {
       return res.status(400).json({ error: 'No file provided' });
     }
 
     const userId = String(session.user.id);
-    const userDir = path.join(UPLOAD_DIR, userId);
+    const key = `${userId}/${randomUUID()}.webp`;
 
-    if (!(await fileExists(userDir))) {
-      await fs.mkdir(userDir, { recursive: true });
-    }
+    await putObject(key, buffer, 'image/webp');
 
-    const fileUUID = randomUUID();
-    const fileName = `${fileUUID}.webp`;
-    const thumbName = `${fileUUID}-thumb.webp`;
-    const finalPath = path.join(userDir, fileName);
-    const thumbPath = path.join(userDir, thumbName);
-
-    const fileBuffer = await fs.readFile(uploadedFile.filepath);
-
-    await sharp(fileBuffer)
-      .resize({ width: 1200, withoutEnlargement: true })
-      .webp({ quality: 80 })
-      .toFile(finalPath);
-
-    await sharp(fileBuffer).resize(200).webp({ quality: 60 }).toFile(thumbPath);
-
-    return res.status(200).json({
-      key: `${userId}/${fileName}`,
-    });
+    return res.status(200).json({ key });
   } catch (error) {
+    if (error instanceof Error && error.message === 'File too large') {
+      return res.status(413).json({ error: 'File too large' });
+    }
     console.error('Upload error:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
-  } finally {
-    try {
-      if (uploadedFile) {
-        await fs.unlink(uploadedFile.filepath);
-      }
-    } catch {
-      // Ignore errors
-    }
   }
 }

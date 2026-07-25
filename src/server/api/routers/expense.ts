@@ -132,6 +132,24 @@ export const expenseRouter = createTRPCRouter({
   addOrEditExpense: protectedProcedure
     .input(arrayify(createExpenseSchema))
     .mutation(async ({ input: expenses, ctx }) => {
+      /*
+       * A place can only be attached if it belongs to the current user, keeping the
+       * private saved-locations layer private even when the expense itself is shared.
+       * Validate every referenced place up front in a single query (no per-item lookup).
+       */
+      const requestedPlaceIds = [
+        ...new Set(expenses.map((e) => e.placeId).filter((id): id is string => Boolean(id))),
+      ];
+      if (requestedPlaceIds.length > 0) {
+        const ownedPlaces = await db.place.findMany({
+          where: { id: { in: requestedPlaceIds }, createdById: ctx.session.user.id },
+          select: { id: true },
+        });
+        if (ownedPlaces.length !== requestedPlaceIds.length) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid place' });
+        }
+      }
+
       const results = [];
       for (const input of expenses) {
         if (input.expenseId) {
@@ -350,7 +368,7 @@ export const expenseRouter = createTRPCRouter({
 
   getExpenseDetails: protectedProcedure
     .input(z.object({ expenseId: z.string() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const expense = await db.expense.findUnique({
         where: {
           id: input.expenseId,
@@ -361,7 +379,16 @@ export const expenseRouter = createTRPCRouter({
               user: true,
             },
           },
-          expenseNotes: true,
+          expenseNotes: {
+            include: { createdBy: true },
+            orderBy: { createdAt: 'asc' },
+          },
+          // Every participant's rating, shown side by side on the details page.
+          expenseRatings: {
+            include: { user: true },
+          },
+          // Attached place (if any); scoped to the viewer below so a shared expense never leaks another member's private location.
+          place: true,
           addedByUser: true,
           paidByUser: true,
           deletedByUser: true,
@@ -419,6 +446,14 @@ export const expenseRouter = createTRPCRouter({
 
       if (expense?.recurrence?.job.schedule) {
         expense.recurrence.job.schedule = expense.recurrence.job.schedule.replaceAll('$', 'L');
+      }
+
+      /*
+       * Private-journal scoping: only the person who attached a place can see it. For
+       * everyone else the location stays hidden, even on a shared expense.
+       */
+      if (expense?.place && expense.place.createdById !== ctx.session.user.id) {
+        expense.place = null;
       }
 
       return expense;
@@ -579,6 +614,55 @@ export const expenseRouter = createTRPCRouter({
       }
 
       await deleteExpense(input.expenseId, ctx.session.user.id);
+    }),
+
+  /**
+   * Set or clear the current user's own rating for an expense. Reuses the existing
+   * edit-permission model (any participant, or the adder, may act). Passing rating=null
+   * clears it — the UI wires this to tapping the already-selected star again.
+   */
+  setMyRating: protectedProcedure
+    .input(z.object({ expenseId: z.string(), rating: z.number().int().min(1).max(5).nullable() }))
+    .mutation(async ({ input, ctx }) => {
+      await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
+
+      if (input.rating === null) {
+        await db.expenseRating.deleteMany({
+          where: { expenseId: input.expenseId, userId: ctx.session.user.id },
+        });
+        return;
+      }
+
+      await db.expenseRating.upsert({
+        where: {
+          expenseId_userId: { expenseId: input.expenseId, userId: ctx.session.user.id },
+        },
+        update: { rating: input.rating },
+        create: {
+          expenseId: input.expenseId,
+          userId: ctx.session.user.id,
+          rating: input.rating,
+        },
+      });
+    }),
+
+  /**
+   * Append a note authored by the current user. Item ratings are rendered into a note
+   * (see stage 3) — we always append a new note rather than overwriting, so each
+   * person's notes stay separate and edits never clobber someone else's.
+   */
+  addNote: protectedProcedure
+    .input(z.object({ expenseId: z.string(), note: z.string().trim().min(1).max(5000) }))
+    .mutation(async ({ input, ctx }) => {
+      await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
+
+      await db.expenseNote.create({
+        data: {
+          expenseId: input.expenseId,
+          note: input.note,
+          createdById: ctx.session.user.id,
+        },
+      });
     }),
 
   getCurrencyRate: protectedProcedure.input(getCurrencyRateSchema).query(async ({ input }) => {

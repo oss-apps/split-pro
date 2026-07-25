@@ -14,6 +14,14 @@ export const env = createEnv({
         (str) => !str.includes('YOUR_MYSQL_URL_HERE'),
         'You forgot to change the default URL',
       ),
+    // Unpooled connection for migrations/CLI (Prisma directUrl). Falls back to DATABASE_URL.
+    DIRECT_DATABASE_URL: z.string().url().optional(),
+    // S3-compatible object storage (e.g. Cloudflare R2) for receipt/image uploads.
+    STORAGE_ENDPOINT: z.string().url().optional(),
+    STORAGE_REGION: z.string().default('auto'),
+    STORAGE_BUCKET: z.string().optional(),
+    STORAGE_ACCESS_KEY_ID: z.string().optional(),
+    STORAGE_SECRET_ACCESS_KEY: z.string().optional(),
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     DOCKER_OUTPUT: z.boolean().default(false),
     NEXTAUTH_SECRET: 'production' === process.env.NODE_ENV ? z.string() : z.string().optional(),
@@ -92,6 +100,12 @@ export const env = createEnv({
     DATABASE_URL:
       process.env.DATABASE_URL ??
       `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}`,
+    DIRECT_DATABASE_URL: process.env.DIRECT_DATABASE_URL,
+    STORAGE_ENDPOINT: process.env.STORAGE_ENDPOINT,
+    STORAGE_REGION: process.env.STORAGE_REGION,
+    STORAGE_BUCKET: process.env.STORAGE_BUCKET,
+    STORAGE_ACCESS_KEY_ID: process.env.STORAGE_ACCESS_KEY_ID,
+    STORAGE_SECRET_ACCESS_KEY: process.env.STORAGE_SECRET_ACCESS_KEY,
     NODE_ENV: process.env.NODE_ENV,
     DOCKER_OUTPUT: Boolean(JSON.parse(process.env.DOCKER_OUTPUT || 'false')),
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,

@@ -1,8 +1,9 @@
 import { AppDrawer } from '../ui/drawer';
 
 export const Receipt = ({ fileKey }: { fileKey: string }) => {
-  const thumbKey = fileKey.replace('.webp', '-thumb.webp');
-  const thumbUrl = `/api/files/${thumbKey}`;
+  // The full image is served for both the thumbnail and the full view; it's already
+  // Compressed client-side, so no separate server-generated thumbnail is needed.
+  const thumbUrl = `/api/files/${fileKey}`;
   const fullUrl = `/api/files/${fileKey}`;
 
   return (

@@ -12,6 +12,19 @@ import { cyrb128, splitmix32 } from '~/utils/random';
 export type Participant = User & { amount?: bigint };
 export type SplitShares = Record<number, Record<SplitType, bigint | undefined>>;
 
+/**
+ * A location selected/typed while adding an expense. `id` is present when it resolves to
+ * an already-saved place; otherwise it's a new place that gets upserted on save. This
+ * always belongs to the current user — the saved-locations layer is private per user.
+ */
+export interface SelectedPlace {
+  id?: string;
+  name: string;
+  address?: string | null;
+  lat?: number | null;
+  lng?: number | null;
+}
+
 export interface AddExpenseState {
   amount: bigint;
   amountStr: string;
@@ -29,6 +42,7 @@ export interface AddExpenseState {
   showFriends: boolean;
   isFileUploading: boolean;
   fileKey?: string;
+  place?: SelectedPlace | null;
   canSplitScreenClosed: boolean;
   splitScreenOpen: boolean;
   expenseDate: Date;
@@ -55,6 +69,7 @@ export interface AddExpenseState {
     setDescription: (description: string) => void;
     setFileUploading: (isFileUploading: boolean) => void;
     setFileKey: (fileKey: string) => void;
+    setPlace: (place: SelectedPlace | null) => void;
     resetState: () => void;
     setSplitScreenOpen: (splitScreenOpen: boolean) => void;
     setExpenseDate: (expenseDate: Date | undefined) => void;
@@ -222,12 +237,14 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
     setDescription: (description) => set({ description }),
     setFileUploading: (isFileUploading) => set({ isFileUploading }),
     setFileKey: (fileKey) => set({ fileKey }),
+    setPlace: (place) => set({ place }),
     resetState: () => {
       set((s) => ({
         amount: 0n,
         participants: s.currentUser ? [s.currentUser] : [],
         description: '',
         fileKey: '',
+        place: null,
         category: DEFAULT_CATEGORY,
         splitType: SplitType.EQUAL,
         group: undefined,

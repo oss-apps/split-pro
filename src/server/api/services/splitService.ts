@@ -47,6 +47,7 @@ export async function createExpense(
     fileKey,
     transactionId,
     cronExpression,
+    placeId,
   }: CreateExpense & { cronExpression?: string },
   currentUserId: number,
   conversionFromParams?: CreateExpense,
@@ -104,6 +105,7 @@ export async function createExpense(
         addedBy: currentUserId,
         expenseDate,
         transactionId,
+        placeId,
         conversionFrom,
       },
     }),
@@ -211,6 +213,7 @@ export async function editExpense(
     fileKey,
     transactionId,
     cronExpression,
+    placeId,
   }: CreateExpense & { cronExpression?: string },
   currentUserId: number,
   conversionToParams?: CreateExpense,
@@ -241,6 +244,30 @@ export async function editExpense(
     : null;
   const isTemplate = templateId === expenseId;
 
+  /*
+   * Resolve the placeId update honoring the private-journal model:
+   * - undefined => leave the existing place untouched (e.g. a plain edit of amount).
+   * - string    => set it (the router has already checked the caller owns that place).
+   * - null      => only clear it if the CURRENT placeId belongs to the caller, so one
+   *                member's edit never wipes another member's private location.
+   */
+  let placeIdUpdate: { placeId?: string | null } = {};
+  if (placeId !== undefined) {
+    if (placeId === null) {
+      if (expense.placeId) {
+        const existingPlace = await db.place.findUnique({
+          where: { id: expense.placeId },
+          select: { createdById: true },
+        });
+        if (existingPlace?.createdById === currentUserId) {
+          placeIdUpdate = { placeId: null };
+        }
+      }
+    } else {
+      placeIdUpdate = { placeId };
+    }
+  }
+
   const operations = [];
 
   // Delete existing participants
@@ -269,6 +296,7 @@ export async function editExpense(
         fileKey,
         transactionId,
         expenseDate,
+        ...placeIdUpdate,
         updatedBy: currentUserId,
       },
     }),
@@ -330,26 +358,8 @@ export async function getCompleteFriendsDetails(userId: number) {
     },
   });
 
-  const friends = viewBalances.reduce(
-    (acc, balance) => {
-      const { friendId } = balance;
-      acc[friendId] ??= {
-        balances: [],
-        id: friendId,
-        email: balance.friend.email,
-        name: balance.friend.name,
-      };
-
-      if (0n !== balance.amount) {
-        acc[friendId]?.balances.push({
-          currency: balance.currency,
-          amount: balance.amount,
-        });
-      }
-
-      return acc;
-    },
-    {} as Record<
+  const friends = viewBalances.reduce<
+    Record<
       number,
       {
         id: number;
@@ -357,8 +367,25 @@ export async function getCompleteFriendsDetails(userId: number) {
         name?: string | null;
         balances: { currency: string; amount: bigint }[];
       }
-    >,
-  );
+    >
+  >((acc, balance) => {
+    const { friendId } = balance;
+    acc[friendId] ??= {
+      balances: [],
+      id: friendId,
+      email: balance.friend.email,
+      name: balance.friend.name,
+    };
+
+    if (0n !== balance.amount) {
+      acc[friendId]?.balances.push({
+        currency: balance.currency,
+        amount: balance.amount,
+      });
+    }
+
+    return acc;
+  }, {});
 
   return friends;
 }
@@ -389,16 +416,13 @@ export async function importUserBalanceFromSplitWise(
 
   const users = await createUsersFromSplitwise(splitWiseUsers);
 
-  const userMap = users.reduce(
-    (acc, user) => {
-      if (user.email) {
-        acc[user.email] = user;
-      }
+  const userMap = users.reduce<Record<string, User>>((acc, user) => {
+    if (user.email) {
+      acc[user.email] = user;
+    }
 
-      return acc;
-    },
-    {} as Record<string, User>,
-  );
+    return acc;
+  }, {});
 
   const currencyHelperCache: Record<string, ReturnType<typeof getCurrencyHelpers>['toSafeBigInt']> =
     {};
@@ -503,16 +527,13 @@ export async function importGroupFromSplitwise(
 
   const users = await createUsersFromSplitwise(Object.values(splitwiseUserMap));
 
-  const userMap = users.reduce(
-    (acc, user) => {
-      if (user.email) {
-        acc[user.email] = user;
-      }
+  const userMap = users.reduce<Record<string, User>>((acc, user) => {
+    if (user.email) {
+      acc[user.email] = user;
+    }
 
-      return acc;
-    },
-    {} as Record<string, User>,
-  );
+    return acc;
+  }, {});
 
   const missingGroups = await Promise.all(
     splitWiseGroups.map(async (group) => {

@@ -1,17 +1,17 @@
 import imageCompression from 'browser-image-compression';
 
-import { env } from '~/env';
-
 const compressImage = async (file: File, maxSizeMB: number) => {
   if (!file.type.startsWith('image/')) {
     return file;
   }
 
+  // Compress/resize to webp entirely in the browser, so the server just stores the bytes
+  // (no server-side image processing / native binaries — Cloudflare Workers friendly).
   return imageCompression(file, {
     maxSizeMB,
     maxWidthOrHeight: 1920,
     useWebWorker: true,
-    fileType: 'image/jpeg',
+    fileType: 'image/webp',
   });
 };
 
@@ -24,12 +24,12 @@ export const prepareImageForUpload = async (file: File, maxSizeMB: number) =>
   compressImage(file, maxSizeMB);
 
 export const uploadImage = async (file: File): Promise<string> => {
-  const formData = new FormData();
-  formData.append('file', file);
-
+  // Send the raw image bytes as the request body; the server streams them to object
+  // Storage without multipart parsing or temp files.
   const response = await fetch('/api/upload', {
     method: 'POST',
-    body: formData,
+    headers: { 'content-type': file.type || 'image/webp' },
+    body: file,
   });
 
   if (!response.ok) {

@@ -1,12 +1,8 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
 
 import { authOptions } from '~/server/auth';
-import { fileExists } from '~/utils/file';
-
-const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
+import { getObject } from '~/server/storage';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if ('GET' !== req.method) {
@@ -19,27 +15,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const { path: pathParts } = req.query;
-
   if (!pathParts || !Array.isArray(pathParts)) {
     return res.status(400).send('Invalid path');
   }
 
-  const filePath = path.join(UPLOAD_DIR, ...pathParts);
-  const resolvedPath = path.resolve(filePath);
+  // The key is the object path under the bucket, e.g. "<userId>/<uuid>.webp". Any signed-in
+  // User may fetch it (receipts on shared expenses are viewable by all participants), which
+  // Matches the previous behaviour.
+  const key = pathParts.join('/');
 
-  if (!resolvedPath.startsWith(path.resolve(UPLOAD_DIR))) {
-    return res.status(403).send('Forbidden');
+  try {
+    const object = await getObject(key);
+    if (!object) {
+      return res.status(404).send('File not found');
+    }
+
+    res.setHeader('Content-Type', object.contentType);
+    res.setHeader('Cache-Control', 'private, max-age=31536000, immutable');
+    object.body.pipe(res);
+  } catch (error) {
+    console.error('File fetch error:', error);
+    return res.status(500).send('Internal Server Error');
   }
-
-  if (!(await fileExists(filePath))) {
-    return res.status(404).send('File not found');
-  }
-
-  res.setHeader('Content-Type', 'image/webp');
-  res.setHeader('Cache-Control', 'private, max-age=31536000, immutable');
-
-  const fileStream = await fs
-    .open(filePath, 'r')
-    .then((fileHandle) => fileHandle.createReadStream());
-  fileStream.pipe(res);
 }

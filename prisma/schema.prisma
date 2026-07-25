@@ -1,12 +1,17 @@
 generator client {
   provider        = "prisma-client-js"
+  // No-native-binary WASM query engine (GA since Prisma 6.16), required for Cloudflare
+  // Workers, which can't run the default Rust engine binary.
+  engineType      = "client"
   previewFeatures = ["relationJoins", "views"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  schemas  = ["cron", "public"]
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  // Unpooled connection used by migrations/CLI; runtime uses the pooled `url`.
+  directUrl = env("DIRECT_DATABASE_URL")
+  schemas   = ["cron", "public"]
 }
 
 model Account {
@@ -65,7 +70,47 @@ model User {
   friendDefaultSplitsB FriendDefaultSplit[] @relation("FriendDefaultSplitUserB")
   sessions             Session[]
   hiddenFriendIds      Int[]                @default([])
+  places               Place[]
+  expenseRatings       ExpenseRating[]
 
+  @@schema("public")
+}
+
+/// A participant's own 1-5 rating of a shared expense. This is deliberately a join
+/// model rather than a column on Expense: each participant rates independently and
+/// nobody's rating overwrites anyone else's. A missing row means "not rated".
+model ExpenseRating {
+  expenseId String   @db.Uuid
+  userId    Int
+  rating    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expense   Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([expenseId, userId])
+  @@index([userId])
+  @@schema("public")
+}
+
+/// A saved location, private to the user who created it. This is the "private journal"
+/// layer overlaid on shared expenses: places are always scoped to createdById and are
+/// never visible to other members of a group an expense is shared with.
+model Place {
+  id          String    @id @default(cuid())
+  name        String
+  address     String?
+  lat         Float?
+  lng         Float?
+  createdById Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  createdBy   User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  expenses    Expense[]
+
+  // A given user cannot have two saved places with the same name; this backs the upsert on attach.
+  @@unique([createdById, name])
+  @@index([createdById])
   @@schema("public")
 }
 
@@ -184,6 +229,7 @@ model Expense {
   updatedBy           Int?
   transactionId       String?
   recurrenceId        Int?
+  placeId             String?
   id                  String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   conversionToId      String?              @unique @db.Uuid
   addedByUser         User                 @relation("AddedByUser", fields: [addedBy], references: [id], onDelete: Cascade)
@@ -194,11 +240,15 @@ model Expense {
   paidByUser          User                 @relation("PaidByUser", fields: [paidBy], references: [id], onDelete: Cascade)
   recurrence          ExpenseRecurrence?   @relation(fields: [recurrenceId], references: [id], onDelete: SetNull)
   updatedByUser       User?                @relation("UpdatedByUser", fields: [updatedBy], references: [id])
+  // Deleting a place must never cascade into expense history: SetNull preserves the expense.
+  place               Place?               @relation(fields: [placeId], references: [id], onDelete: SetNull)
   expenseNotes        ExpenseNote[]
   expenseParticipants ExpenseParticipant[]
+  expenseRatings      ExpenseRating[]
 
   @@index([groupId])
   @@index([paidBy])
+  @@index([placeId])
   @@schema("public")
 }
 

@@ -226,6 +226,28 @@
         "cannot_change_group": "Cannot change group while editing",
         "remove_group": "Press delete to remove group",
         "search_friends": "Search friends, groups or add email"
+      },
+      "location": {
+        "add_location": "Add location",
+        "search_placeholder": "Search your places…",
+        "use_current_location": "Use my current location",
+        "create": "Create “{{name}}”",
+        "remove": "Remove location",
+        "visits_one": "{{count}} visit",
+        "visits_other": "{{count}} visits",
+        "geolocation_unsupported": "Geolocation is not supported on this device",
+        "geolocation_error": "Could not get your current location",
+        "new_place": "New place",
+        "name_required": "Give this place a name first"
+      },
+      "receipt_scan": {
+        "scan": "Scan receipt",
+        "scanning": "Scanning receipt…",
+        "suggestions_title": "Suggested items",
+        "add_all": "Add all",
+        "no_items": "No items detected. Try a clearer photo.",
+        "disclaimer": "Detected automatically — tap to add the ones you want.",
+        "error": "Could not scan the receipt"
       }
     },
     "balance_list": {
@@ -250,7 +272,29 @@
     "submit_all": "Submit all",
     "pending": "Pending",
     "no_transactions_yet": "No transactions yet",
-    "already_added": "Already added"
+    "already_added": "Already added",
+    "ratings": {
+      "title": "Ratings",
+      "your_rating": "Your rating",
+      "tap_to_rate": "Tap a star to rate",
+      "clear_hint": "Tap the selected star again to clear",
+      "rated_by": "Rated by",
+      "save_error": "Could not save your rating"
+    },
+    "item_ratings": {
+      "title": "Item ratings",
+      "add": "Add item ratings",
+      "add_item": "Add item",
+      "item_name_placeholder": "Item name",
+      "save": "Save item ratings",
+      "empty": "Add items and rate each one",
+      "note_header": "Item ratings:",
+      "save_error": "Could not save item ratings",
+      "saved": "Item ratings saved"
+    },
+    "notes": {
+      "title": "Notes"
+    }
   },
   "group_details": {
     "add_members": "Add members",
@@ -443,5 +487,19 @@
     "show_all_currencies": "Show all currencies",
     "today": "Today",
     "in_group": "In group"
+  },
+  "places": {
+    "title": "Places",
+    "list_tab": "List",
+    "map_tab": "Map",
+    "visits_one": "{{count}} visit",
+    "visits_other": "{{count}} visits",
+    "your_rating": "Your rating",
+    "no_rating": "Not rated yet",
+    "no_places": "No saved places yet. Attach a location to an expense to start your map.",
+    "no_coordinates": "None of your places have coordinates yet.",
+    "delete": "Delete place",
+    "delete_confirm": "Delete this place? Your expenses stay, they just lose this location.",
+    "total_spent": "Total"
   }
 }

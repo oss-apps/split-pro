@@ -16,6 +16,19 @@ const nextConfig = {
   reactStrictMode: true,
   output: process.env.DOCKER_OUTPUT ? 'standalone' : undefined,
   transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core'],
+  // The Prisma driver adapter pulls in `pg`, which uses Node built-ins (net/crypto/tls).
+  // Keep it (and Prisma) external so webpack requires them at runtime instead of bundling.
+  serverExternalPackages: ['pg', '@prisma/adapter-pg', '@prisma/client', '@prisma/engines'],
+  webpack: (config, { nextRuntime }) => {
+    // `instrumentation.ts` is also compiled for the edge runtime; its DB work is guarded to
+    // NEXT_RUNTIME==='nodejs' and never runs on edge, but webpack still tries to bundle `pg`
+    // (and its Node-built-in-using deps) there. Externalize `pg` in the edge build so its whole
+    // Subtree is left as an unbundled require — the edge code path never loads it, so it's inert.
+    if (nextRuntime === 'edge') {
+      config.externals = [...(config.externals ?? []), 'pg', 'pg-native'];
+    }
+    return config;
+  },
   /**
    * If you are using `appDir` then you must comment the below `i18n` config out.
    *

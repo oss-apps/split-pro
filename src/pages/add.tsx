@@ -37,6 +37,7 @@ const AddPage: NextPageWithUser<{
     resetState,
     setCronExpression,
     setFileKey,
+    setPlace,
     applySplitPreset,
   } = useAddExpenseStore((s) => s.actions);
   const currentUser = useAddExpenseStore((s) => s.currentUser);
@@ -233,6 +234,18 @@ const AddPage: NextPageWithUser<{
     if (expenseQuery.data.fileKey) {
       setFileKey(expenseQuery.data.fileKey);
     }
+    // Only the viewer's own attached place is returned (private per user); load it so editing preserves it and removal is explicit.
+    setPlace(
+      expenseQuery.data.place
+        ? {
+            id: expenseQuery.data.place.id,
+            name: expenseQuery.data.place.name,
+            address: expenseQuery.data.place.address,
+            lat: expenseQuery.data.place.lat,
+            lng: expenseQuery.data.place.lng,
+          }
+        : null,
+    );
   }, [
     _expenseId,
     _friendId,
@@ -256,6 +269,7 @@ const AddPage: NextPageWithUser<{
     setParticipants,
     setCronExpression,
     setFileKey,
+    setPlace,
     getCurrencyHelpersCached,
     t,
   ]);

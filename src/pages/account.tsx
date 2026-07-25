@@ -7,6 +7,7 @@ import {
   FileDown,
   HeartHandshakeIcon,
   Languages,
+  MapPin,
   Star,
 } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
@@ -165,6 +166,11 @@ const AccountPage: NextPageWithUser<{
           <AccountButton onClick={downloadData} disabled={downloading} loading={downloading}>
             <FileDown className="size-5 text-teal-500" />
             {t('account.download_splitpro_data')}
+          </AccountButton>
+
+          <AccountButton href="/places">
+            <MapPin className="size-5 text-emerald-500" />
+            {t('places.title')}
           </AccountButton>
 
           <AccountButton href="/import-splitwise">

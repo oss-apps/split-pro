@@ -12,6 +12,7 @@ import { GroupAvatar } from '~/components/ui/avatar';
 import { toUIString } from '~/utils/numbers';
 import { motion } from 'framer-motion';
 import { type NextPageWithUser } from '~/types';
+import { getGroupBalanceSummary } from '~/utils/balances';
 
 const BalancePage: NextPageWithUser = () => {
   const groupQuery = api.group.getAllGroupsWithBalances.useQuery();
@@ -47,9 +48,10 @@ const BalancePage: NextPageWithUser = () => {
               </motion.div>
             ) : (
               groupQuery.data?.map((g) => {
-                const [amount, currency] = Object.keys(g.balances).length
-                  ? [Object.values(g.balances)[0] ?? 0, Object.keys(g.balances)[0] ?? 'USD']
-                  : [0, 'USD'];
+                const { amount, currency, multiCurrency } = getGroupBalanceSummary(
+                  g.balances,
+                  g.defaultCurrency,
+                );
                 return (
                   <GroupBalance
                     key={g.id}
@@ -58,6 +60,7 @@ const BalancePage: NextPageWithUser = () => {
                     amount={amount}
                     isPositive={amount >= 0 ? true : false}
                     currency={currency}
+                    multiCurrency={multiCurrency}
                   />
                 );
               })
@@ -75,7 +78,8 @@ const GroupBalance: React.FC<{
   amount: number;
   isPositive: boolean;
   currency: string;
-}> = ({ name, amount, isPositive, currency, groupId }) => {
+  multiCurrency: boolean;
+}> = ({ name, amount, isPositive, currency, groupId, multiCurrency }) => {
   return (
     <Link href={`/groups/${groupId}`}>
       <div className="flex items-center justify-between">
@@ -98,6 +102,7 @@ const GroupBalance: React.FC<{
               </div>
               <div className={`${isPositive ? 'text-emerald-500' : 'text-orange-600'} text-right`}>
                 {currency} {toUIString(amount)}
+                {multiCurrency ? '*' : ''}
               </div>
             </>
           )}

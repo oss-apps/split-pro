@@ -151,6 +151,7 @@ model Expense {
     deletedAt           DateTime?
     deletedBy           Int?
     updatedBy           Int?
+    settlementAllocationVersion Int?
     group               Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
     paidByUser          User                 @relation(name: "PaidByUser", fields: [paidBy], references: [id], onDelete: Cascade)
     addedByUser         User                 @relation(name: "AddedByUser", fields: [addedBy], references: [id], onDelete: Cascade)
@@ -158,9 +159,25 @@ model Expense {
     updatedByUser       User?                @relation(name: "UpdatedByUser", fields: [updatedBy], references: [id], onDelete: SetNull)
     expenseParticipants ExpenseParticipant[]
     expenseNotes        ExpenseNote[]
+    settlementAllocations SettlementAllocation[]
 
     @@index([groupId])
     @@index([paidBy])
+}
+
+model SettlementAllocation {
+    settlementExpenseId String
+    /// Kept without a relation so deleting a settled group does not erase settlement provenance.
+    groupId             Int
+    currency            String
+    userId              Int
+    friendId            Int
+    amount              Int
+    createdAt           DateTime @default(now())
+    settlementExpense   Expense  @relation(fields: [settlementExpenseId], references: [id], onDelete: Cascade)
+
+    @@id([settlementExpenseId, groupId, currency, friendId, userId])
+    @@index([groupId, currency, friendId, userId])
 }
 
 model ExpenseParticipant {

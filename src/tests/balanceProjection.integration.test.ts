@@ -445,6 +445,25 @@ void test(
     await db.groupUser.delete({
       where: { groupId_userId: { groupId: groupTwo.id, userId: debtor.id } },
     });
+    await assert.rejects(
+      () =>
+        createGroupExpense(
+          groupTwo.id,
+          creditor.id,
+          'Expense after leaving',
+          'general',
+          1,
+          SplitType.EQUAL,
+          'USD',
+          [
+            { userId: creditor.id, amount: 1 },
+            { userId: debtor.id, amount: -1 },
+          ],
+          creditor.id,
+          new Date('2026-03-02'),
+        ),
+      /must be current group members/,
+    );
     await editExpense(
       detachedSettlement.id,
       debtor.id,

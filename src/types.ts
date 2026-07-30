@@ -37,6 +37,15 @@ export interface SplitwiseGroup {
   members: SplitwiseUser[];
 }
 
+export interface ReceiptItemInputModel {
+  description: string;
+  amountStr: string;
+  amount: bigint;
+  category: string;
+  currency: CurrencyCode;
+  selected: boolean;
+}
+
 export interface TransactionAddInputModel {
   date: Date;
   description: string;

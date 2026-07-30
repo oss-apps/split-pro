@@ -1,4 +1,4 @@
-import { HeartHandshakeIcon, Landmark, RefreshCcwDot, X } from 'lucide-react';
+import { Camera, HeartHandshakeIcon, Landmark, RefreshCcwDot, X } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -28,12 +28,15 @@ import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { currencyConversion } from '~/utils/numbers';
 import { CurrencyConversionIcon } from '../ui/categoryIcons';
 import { useSession } from 'next-auth/react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { ReceiptItemsList } from './ReceiptItems/ReceiptItemsList';
 
 export const AddOrEditExpensePage: React.FC<{
   enableSendingInvites: boolean;
   expenseId?: string;
   bankConnectionEnabled: boolean;
-}> = ({ enableSendingInvites, expenseId, bankConnectionEnabled }) => {
+  receiptScanEnabled: boolean;
+}> = ({ enableSendingInvites, expenseId, bankConnectionEnabled, receiptScanEnabled }) => {
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
   const isNegative = useAddExpenseStore((s) => s.isNegative);
@@ -43,30 +46,22 @@ export const AddOrEditExpensePage: React.FC<{
   const category = useAddExpenseStore((s) => s.category);
   const description = useAddExpenseStore((s) => s.description);
   const isFileUploading = useAddExpenseStore((s) => s.isFileUploading);
-  const amtStr = useAddExpenseStore((s) => s.amountStr);
   const expenseDate = useAddExpenseStore((s) => s.expenseDate);
   const isExpenseSettled = useAddExpenseStore((s) => s.canSplitScreenClosed);
   const paidBy = useAddExpenseStore((s) => s.paidBy);
   const splitType = useAddExpenseStore((s) => s.splitType);
   const fileKey = useAddExpenseStore((s) => s.fileKey);
-  const currentUser = useAddExpenseStore((s) => s.currentUser);
-  const splitShares = useAddExpenseStore((s) => s.splitShares);
   const transactionId = useAddExpenseStore((s) => s.transactionId);
   const cronExpression = useAddExpenseStore((s) => s.cronExpression);
   const multipleTransactions = useAddExpenseStore((s) => s.multipleTransactions);
 
-  const { t, displayName, generateSplitDescription, getCurrencyHelpersCached } =
-    useTranslationWithUtils();
+  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
 
   const {
     setCurrency,
-    setCategory,
-    setDescription,
     setAmount,
     setAmountStr,
-    resetState,
     setSplitScreenOpen,
-    setExpenseDate,
     setMultipleTransactions,
     setIsTransactionLoading,
     setSingleTransaction,
@@ -219,18 +214,6 @@ export const AddOrEditExpensePage: React.FC<{
     update,
   ]);
 
-  const handleDescriptionChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setDescription(e.target.value.toString() ?? '');
-    },
-    [setDescription],
-  );
-
-  const clearTransaction = useCallback(() => {
-    resetState();
-    setMultipleTransactions([]);
-  }, [resetState, setMultipleTransactions]);
-
   const previousCurrencyRef = React.useRef<CurrencyCode | null>(null);
 
   const onConvertAmount: React.ComponentProps<typeof CurrencyConversion>['onSubmit'] = useCallback(
@@ -282,6 +265,19 @@ export const AddOrEditExpensePage: React.FC<{
     router.back();
   }, [router]);
 
+  const singleExpenseForm = (
+    <SingleExpenseForm
+      receiptScanEnabled={receiptScanEnabled}
+      bankConnectionEnabled={bankConnectionEnabled}
+      expenseId={expenseId}
+      onCurrencyPick={onCurrencyPick}
+      onUpdateAmount={onUpdateAmount}
+      currencyConversionComponent={currencyConversionComponent}
+      addExpense={addExpense}
+      addExpenseMutationPending={addExpenseMutation.isPending}
+    />
+  );
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
@@ -307,126 +303,204 @@ export const AddOrEditExpensePage: React.FC<{
         <SelectUserOrGroup enableSendingInvites={enableSendingInvites} />
       ) : (
         <>
-          <div className="mt-4 flex gap-2 sm:mt-10">
-            <CategoryPicker category={category} onCategoryPick={setCategory} />
-            <Input
-              placeholder={t('expense_details.add_expense_details.description_placeholder')}
-              value={description}
-              onChange={handleDescriptionChange}
-              className="text-lg placeholder:text-sm"
-              autoFocus
-            />
-          </div>
-          <div className="flex gap-2">
-            <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
-            <CurrencyInput
-              placeholder={t('expense_details.add_expense_details.amount_placeholder')}
-              currency={currency}
-              strValue={amtStr}
-              allowNegative
-              hideSymbol
-              onValueChange={onUpdateAmount}
-              rightIcon={currencyConversionComponent}
-            />
-          </div>
-          <div className="h-[180px]">
-            {amount && '' !== description ? (
-              <>
-                <div className="flex flex-col items-center justify-center text-sm text-gray-400 sm:mt-4 sm:flex-row">
-                  <p>{t(`ui.expense.${isNegative ? 'received_by' : 'paid_by'}`)}</p>
-                  <PayerSelectionForm>
-                    <Button
-                      variant="ghost"
-                      className="text-primary h-8 max-w-full min-w-0 justify-start px-1.5 py-0 text-base sm:max-w-none"
-                    >
-                      <span className="max-w-full truncate">
-                        {displayName(paidBy, currentUser?.id, 'dativus')}
-                      </span>
-                    </Button>
-                  </PayerSelectionForm>
-                  <p>{t('ui.and')} </p>
-                  <SplitExpenseForm>
-                    <Button variant="ghost" className="text-primary h-8 px-1.5 py-0 text-base">
-                      {generateSplitDescription(
-                        splitType,
-                        participants,
-                        splitShares,
-                        paidBy,
-                        currentUser,
-                      )}
-                    </Button>
-                  </SplitExpenseForm>
-                </div>
-
-                <div className="mt-4 flex items-start justify-between sm:mt-10">
-                  <DateSelector
-                    mode="single"
-                    required
-                    selected={expenseDate}
-                    onSelect={setExpenseDate}
-                  />
-                  <div className="flex items-center gap-4">
-                    <UploadFile />
-                    <Button
-                      className="min-w-[100px]"
-                      size="sm"
-                      loading={addExpenseMutation.isPending || isFileUploading}
-                      disabled={
-                        addExpenseMutation.isPending ||
-                        !amount ||
-                        '' === description ||
-                        isFileUploading ||
-                        !isExpenseSettled
-                      }
-                      onClick={addExpense}
-                    >
-                      {t('actions.save')}
-                    </Button>
-                  </div>
-                </div>
-              </>
-            ) : null}
-          </div>
-          <div className="flex items-center justify-evenly px-4 lg:px-0">
-            {!expenseId && (
-              <RecurrenceInput>
-                <Button variant="ghost" size="sm">
-                  <RefreshCcwDot
-                    className={cn(
-                      cronExpression && 'text-primary',
-                      (!amtStr || !description) && 'invisible',
-                      'size-6',
-                    )}
-                  />
-                  <span className="sr-only">Toggle recurring expense options</span>
-                </Button>
-              </RecurrenceInput>
-            )}
-            <SponsorUs />
-            <div className="flex gap-2">
-              <AddBankTransactions bankConnectionEnabled={bankConnectionEnabled}>
-                <Button
-                  variant="ghost"
-                  className="hover:text-foreground/80 items-center justify-between px-2"
-                >
-                  <Landmark
-                    className={cn(transactionId ? 'text-primary' : 'text-white-500', 'h-6 w-6')}
-                  />
-                </Button>
-              </AddBankTransactions>
-              <Button
-                variant="ghost"
-                className={cn('px-2', transactionId ? 'text-red-500' : 'invisible')}
-                disabled={!transactionId}
-                onClick={clearTransaction}
-              >
-                <X className="h-6 w-6" />
-              </Button>
-            </div>
-          </div>
+          {receiptScanEnabled ? (
+            <Tabs defaultValue="single" className="mt-2">
+              <TabsList className="w-full">
+                <TabsTrigger value="single" className="flex-1">
+                  {t('expense_details.tabs.single')}
+                </TabsTrigger>
+                <TabsTrigger value="receipt_items" className="flex-1 gap-1.5">
+                  <Camera className="h-4 w-4" />
+                  {t('expense_details.tabs.scan')}
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="single">{singleExpenseForm}</TabsContent>
+              <TabsContent value="receipt_items">
+                <ReceiptItemsList />
+              </TabsContent>
+            </Tabs>
+          ) : (
+            singleExpenseForm
+          )}
         </>
       )}
     </div>
+  );
+};
+
+const SingleExpenseForm: React.FC<{
+  receiptScanEnabled: boolean;
+  bankConnectionEnabled: boolean;
+  expenseId?: string;
+  onCurrencyPick: (currency: CurrencyCode | null) => void;
+  onUpdateAmount: (v: { strValue?: string; bigIntValue?: bigint }) => void;
+  currencyConversionComponent: React.ReactNode;
+  addExpense: () => Promise<void>;
+  addExpenseMutationPending: boolean;
+}> = ({
+  receiptScanEnabled,
+  bankConnectionEnabled,
+  expenseId,
+  onCurrencyPick,
+  onUpdateAmount,
+  currencyConversionComponent,
+  addExpense,
+  addExpenseMutationPending,
+}) => {
+  const { t, displayName, generateSplitDescription } = useTranslationWithUtils();
+
+  const category = useAddExpenseStore((s) => s.category);
+  const description = useAddExpenseStore((s) => s.description);
+  const currency = useAddExpenseStore((s) => s.currency);
+  const amtStr = useAddExpenseStore((s) => s.amountStr);
+  const amount = useAddExpenseStore((s) => s.amount);
+  const isNegative = useAddExpenseStore((s) => s.isNegative);
+  const paidBy = useAddExpenseStore((s) => s.paidBy);
+  const currentUser = useAddExpenseStore((s) => s.currentUser);
+  const splitType = useAddExpenseStore((s) => s.splitType);
+  const participants = useAddExpenseStore((s) => s.participants);
+  const splitShares = useAddExpenseStore((s) => s.splitShares);
+  const expenseDate = useAddExpenseStore((s) => s.expenseDate);
+  const isFileUploading = useAddExpenseStore((s) => s.isFileUploading);
+  const isExpenseSettled = useAddExpenseStore((s) => s.canSplitScreenClosed);
+  const cronExpression = useAddExpenseStore((s) => s.cronExpression);
+  const transactionId = useAddExpenseStore((s) => s.transactionId);
+
+  const { setCategory, setDescription, setExpenseDate, resetState, setMultipleTransactions } =
+    useAddExpenseStore((s) => s.actions);
+
+  const handleDescriptionChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setDescription(e.target.value.toString() ?? '');
+    },
+    [setDescription],
+  );
+
+  const clearTransaction = useCallback(() => {
+    resetState();
+    setMultipleTransactions([]);
+  }, [resetState, setMultipleTransactions]);
+
+  return (
+    <>
+      <div className="mt-4 flex gap-2 sm:mt-10">
+        <CategoryPicker category={category} onCategoryPick={setCategory} />
+        <Input
+          placeholder={t('expense_details.add_expense_details.description_placeholder')}
+          value={description}
+          onChange={handleDescriptionChange}
+          className="text-lg placeholder:text-sm"
+          autoFocus
+        />
+      </div>
+      <div className="flex gap-2">
+        <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
+        <CurrencyInput
+          placeholder={t('expense_details.add_expense_details.amount_placeholder')}
+          currency={currency}
+          strValue={amtStr}
+          allowNegative
+          hideSymbol
+          onValueChange={onUpdateAmount}
+          rightIcon={currencyConversionComponent}
+        />
+      </div>
+      <div className="h-[180px]">
+        {amount && '' !== description ? (
+          <>
+            <div className="flex flex-col items-center justify-center text-sm text-gray-400 sm:mt-4 sm:flex-row">
+              <p>{t(`ui.expense.${isNegative ? 'received_by' : 'paid_by'}`)}</p>
+              <PayerSelectionForm>
+                <Button
+                  variant="ghost"
+                  className="text-primary h-8 max-w-full min-w-0 justify-start px-1.5 py-0 text-base sm:max-w-none"
+                >
+                  <span className="max-w-full truncate">
+                    {displayName(paidBy, currentUser?.id, 'dativus')}
+                  </span>
+                </Button>
+              </PayerSelectionForm>
+              <p>{t('ui.and')} </p>
+              <SplitExpenseForm>
+                <Button variant="ghost" className="text-primary h-8 px-1.5 py-0 text-base">
+                  {generateSplitDescription(
+                    splitType,
+                    participants,
+                    splitShares,
+                    paidBy,
+                    currentUser,
+                  )}
+                </Button>
+              </SplitExpenseForm>
+            </div>
+
+            <div className="mt-4 flex items-start justify-between sm:mt-10">
+              <DateSelector
+                mode="single"
+                required
+                selected={expenseDate}
+                onSelect={setExpenseDate}
+              />
+              <div className="flex items-center gap-4">
+                <UploadFile receiptScanEnabled={receiptScanEnabled} />
+                <Button
+                  className="min-w-[100px]"
+                  size="sm"
+                  loading={addExpenseMutationPending || isFileUploading}
+                  disabled={
+                    addExpenseMutationPending ||
+                    !amount ||
+                    '' === description ||
+                    isFileUploading ||
+                    !isExpenseSettled
+                  }
+                  onClick={addExpense}
+                >
+                  {t('actions.save')}
+                </Button>
+              </div>
+            </div>
+          </>
+        ) : null}
+      </div>
+      <div className="flex items-center justify-evenly px-4 lg:px-0">
+        {!expenseId && (
+          <RecurrenceInput>
+            <Button variant="ghost" size="sm">
+              <RefreshCcwDot
+                className={cn(
+                  cronExpression && 'text-primary',
+                  (!amtStr || !description) && 'invisible',
+                  'size-6',
+                )}
+              />
+              <span className="sr-only">Toggle recurring expense options</span>
+            </Button>
+          </RecurrenceInput>
+        )}
+        <SponsorUs />
+        <div className="flex gap-2">
+          <AddBankTransactions bankConnectionEnabled={bankConnectionEnabled}>
+            <Button
+              variant="ghost"
+              className="hover:text-foreground/80 items-center justify-between px-2"
+            >
+              <Landmark
+                className={cn(transactionId ? 'text-primary' : 'text-white-500', 'h-6 w-6')}
+              />
+            </Button>
+          </AddBankTransactions>
+          <Button
+            variant="ghost"
+            className={cn('px-2', transactionId ? 'text-red-500' : 'invisible')}
+            disabled={!transactionId}
+            onClick={clearTransaction}
+          >
+            <X className="h-6 w-6" />
+          </Button>
+        </div>
+      </div>
+    </>
   );
 };
 

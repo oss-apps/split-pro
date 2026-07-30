@@ -9,16 +9,19 @@ import { AppDrawer, AppDrawerClose, DrawerClose } from '../ui/drawer';
 export const CategoryPicker: React.FC<{
   category: string;
   onCategoryPick: (category: string) => void;
-}> = ({ category, onCategoryPick }) => {
+  compact?: boolean;
+}> = ({ category, onCategoryPick, compact }) => {
   const { t } = useTranslation('categories');
 
   const trigger = useMemo(
     () => (
-      <div className="flex w-[73px] cursor-pointer justify-center rounded-lg border py-2">
+      <div
+        className={`flex cursor-pointer justify-center rounded-lg border ${compact ? 'p-2' : 'w-[73px] py-2'}`}
+      >
         <CategoryIcon category={category} size={20} />
       </div>
     ),
-    [category],
+    [category, compact],
   );
 
   return (

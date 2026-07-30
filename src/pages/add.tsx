@@ -8,6 +8,7 @@ import { env } from '~/env';
 import { cronFromBackend } from '~/lib/cron';
 import { parseCurrencyCode } from '~/lib/currency';
 import { isBankConnectionConfigured } from '~/server/bankTransactionHelper';
+import { isReceiptScanConfigured } from '~/server/api/services/receiptScanService';
 import { useAddExpenseStore } from '~/store/addStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
@@ -21,7 +22,14 @@ const AddPage: NextPageWithUser<{
   enableSendingInvites: boolean;
   bankConnectionEnabled: boolean;
   maxUploadFileSizeMB: number;
-}> = ({ user, enableSendingInvites, bankConnectionEnabled, maxUploadFileSizeMB }) => {
+  receiptScanEnabled: boolean;
+}> = ({
+  user,
+  enableSendingInvites,
+  bankConnectionEnabled,
+  maxUploadFileSizeMB,
+  receiptScanEnabled,
+}) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const {
     setCurrentUser,
@@ -271,6 +279,7 @@ const AddPage: NextPageWithUser<{
             enableSendingInvites={enableSendingInvites}
             expenseId={_expenseId}
             bankConnectionEnabled={Boolean(bankConnectionEnabled)}
+            receiptScanEnabled={Boolean(receiptScanEnabled)}
           />
         )}
       </MainLayout>
@@ -287,6 +296,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => ({
     enableSendingInvites: Boolean(env.ENABLE_SENDING_INVITES),
     bankConnectionEnabled: isBankConnectionConfigured(),
     maxUploadFileSizeMB: env.UPLOAD_MAX_FILE_SIZE_MB,
+    receiptScanEnabled: await isReceiptScanConfigured(),
     ...(await customServerSideTranslations(context.locale, ['common', 'categories', 'currencies'])),
   },
 });

@@ -221,6 +221,29 @@
           "upload_success": "File uploaded successfully"
         }
       },
+      "receipt_items": {
+        "scan_receipt": "Scan receipt",
+        "scanning": "Extracting items...",
+        "uploading": "Uploading...",
+        "no_items": "No items scanned yet",
+        "select_all": "Select all",
+        "deselect_all": "Deselect all",
+        "total": "Total",
+        "add_selected": "Add selected expenses",
+        "messages": {
+          "scan_success": "Items extracted successfully",
+          "scan_error": "Failed to extract items"
+        }
+      },
+      "receipt_scan": {
+        "button_title": "Scan receipt",
+        "uploading": "Uploading...",
+        "scanning": "Scanning receipt...",
+        "messages": {
+          "scan_success": "Receipt scanned successfully",
+          "scan_error": "Failed to scan receipt"
+        }
+      },
       "user_input": {
         "add_more_friends": "Search friends, groups or add email",
         "cannot_change_group": "Cannot change group while editing",
@@ -242,6 +265,10 @@
       "description": "You have selected multiple transactions. Pick whether you want them added all together with the current split settings or adjust the settings one by one.",
       "add_all": "Add all",
       "add_one_by_one": "Add one by one"
+    },
+    "tabs": {
+      "single": "Single",
+      "scan": "Scan"
     },
     "title": "Add expense",
     "title_mobile": "Add",

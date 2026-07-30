@@ -4,7 +4,7 @@ import { create } from 'zustand';
 
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { type CurrencyCode } from '~/lib/currency';
-import type { TransactionAddInputModel } from '~/types';
+import type { ReceiptItemInputModel, TransactionAddInputModel } from '~/types';
 import { shuffleArray } from '~/utils/array';
 import { BigMath } from '~/utils/numbers';
 import { cyrb128, splitmix32 } from '~/utils/random';
@@ -36,6 +36,8 @@ export interface AddExpenseState {
   transactionId?: string;
   multipleTransactions: TransactionAddInputModel[];
   isTransactionLoading: boolean;
+  receiptItems: ReceiptItemInputModel[];
+  isReceiptItemsScanning: boolean;
   actions: {
     setAmount: (amount: bigint) => void;
     setAmountStr: (amountStr: string) => void;
@@ -63,6 +65,11 @@ export interface AddExpenseState {
     setSingleTransaction: (singleTransaction: TransactionAddInputModel) => void;
     setIsTransactionLoading: (isTransactionLoading: boolean) => void;
     setCronExpression: (cronExpression: string) => void;
+    setReceiptItems: (items: ReceiptItemInputModel[]) => void;
+    updateReceiptItem: (index: number, updates: Partial<ReceiptItemInputModel>) => void;
+    removeReceiptItem: (index: number) => void;
+    toggleReceiptItemSelected: (index: number) => void;
+    setIsReceiptItemsScanning: (isScanning: boolean) => void;
   };
 }
 
@@ -92,6 +99,8 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
   repeatEvery: 1,
   multipleTransactions: [],
   isTransactionLoading: false,
+  receiptItems: [],
+  isReceiptItemsScanning: false,
   cronExpression: '',
   actions: {
     setAmount: (realAmount) =>
@@ -240,6 +249,8 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
         transactionId: undefined,
         multipleTransactions: [],
         isTransactionLoading: false,
+        receiptItems: [],
+        isReceiptItemsScanning: false,
         cronExpression: '',
         isFileUploading: false,
         paidBy: s.currentUser,
@@ -264,6 +275,30 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
       }),
     setIsTransactionLoading: (isTransactionLoading) => set({ isTransactionLoading }),
     setCronExpression: (cronExpression) => set({ cronExpression }),
+    setReceiptItems: (receiptItems) => set({ receiptItems }),
+    updateReceiptItem: (index, updates) =>
+      set((s) => {
+        const receiptItems = [...s.receiptItems];
+        const item = receiptItems[index];
+        if (item) {
+          receiptItems[index] = { ...item, ...updates };
+        }
+        return { receiptItems };
+      }),
+    removeReceiptItem: (index) =>
+      set((s) => ({
+        receiptItems: s.receiptItems.filter((_, i) => i !== index),
+      })),
+    toggleReceiptItemSelected: (index) =>
+      set((s) => {
+        const receiptItems = [...s.receiptItems];
+        const item = receiptItems[index];
+        if (item) {
+          receiptItems[index] = { ...item, selected: !item.selected };
+        }
+        return { receiptItems };
+      }),
+    setIsReceiptItemsScanning: (isReceiptItemsScanning) => set({ isReceiptItemsScanning }),
   },
 }));
 

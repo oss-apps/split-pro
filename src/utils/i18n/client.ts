@@ -17,6 +17,7 @@ export const getSupportedLanguages = (): SupportedLanguage[] =>
     { code: 'es', name: 'Español' },
     { code: 'es-MX', name: 'Español (Mexico)' },
     { code: 'es-AR', name: 'Español (Argentina)' },
+    { code: 'id', name: 'Bahasa Indonesia' },
     { code: 'sv', name: 'Svenska' },
     { code: 'hu', name: 'Magyar' },
   ].sort((a, b) => a.name.localeCompare(b.name));

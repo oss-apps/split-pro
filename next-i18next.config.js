@@ -17,6 +17,7 @@ const config = {
       'es',
       'es-MX',
       'es-AR',
+      'id',
       'hu',
     ],
     localeDetection: false,

@@ -143,7 +143,7 @@ export const env = createEnv({
     OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: Boolean(
       JSON.parse(process.env.OIDC_ALLOW_DANGEROUS_EMAIL_LINKING || 'false'),
     ),
-    OAUTH_AUTO_REDIRECT: 'true' === process.env.OAUTH_AUTO_REDIRECT,
+    OAUTH_AUTO_REDIRECT: Boolean(JSON.parse(process.env.OAUTH_AUTO_REDIRECT || 'false')),
     UPLOAD_MAX_FILE_SIZE_MB: process.env.UPLOAD_MAX_FILE_SIZE_MB
       ? Number(process.env.UPLOAD_MAX_FILE_SIZE_MB)
       : 10,

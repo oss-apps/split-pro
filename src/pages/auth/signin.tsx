@@ -112,11 +112,13 @@ const Home: NextPage<{
   }, [error, t]);
 
   useEffect(() => {
-    if (oauthAutoRedirect && !showVerificationStep && providers.length > 0 && !isLoadingProviders) {
-      const oauthProvider = providers.find((provider) => 'oauth' === provider.type);
-      if (oauthProvider) {
-        void signIn(oauthProvider.id, { callbackUrl });
-      }
+    const oauthProviders = providers.filter((provider) => 'oauth' === provider.type);
+    const shouldAutoRedirect =
+      oauthAutoRedirect && 1 === oauthProviders.length && 1 === providers.length;
+
+    const oauthProvider = oauthProviders[0];
+    if (shouldAutoRedirect && oauthProvider && !showVerificationStep && !isLoadingProviders) {
+      void signIn(oauthProvider.id, { callbackUrl });
     }
   }, [oauthAutoRedirect, showVerificationStep, providers, isLoadingProviders, callbackUrl]);
 

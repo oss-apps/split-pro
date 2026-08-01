@@ -69,7 +69,7 @@ Used for magic-link login and invites.
 
 #### Shared OAuth settings
 
-- `OAUTH_AUTO_REDIRECT`: Optional flag. When set to `true`, the sign-in page automatically redirects to the first configured OAuth provider. This applies to any configured OAuth provider, including Google, Authentik, Keycloak, and generic OIDC.
+- `OAUTH_AUTO_REDIRECT`: Optional flag. When set to `true`, the sign-in page automatically redirects when exactly one OAuth provider is configured and no other authentication providers are enabled. This applies to Google, Authentik, Keycloak, and generic OIDC.
 
 #### Google
 

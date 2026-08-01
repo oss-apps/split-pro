@@ -155,7 +155,7 @@ Thanks to @johanngrobe there is now also a Proxmox Community Script available [h
 
 ### Development and contributing
 
-See the [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) document.
+See the [CONTRIBUTING.md](CONTRIBUTING.md) document.
 
 ## Sponsors
 

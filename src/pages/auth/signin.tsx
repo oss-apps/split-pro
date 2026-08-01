@@ -113,14 +113,26 @@ const Home: NextPage<{
 
   useEffect(() => {
     const oauthProviders = providers.filter((provider) => 'oauth' === provider.type);
+    // SessionRequired indicates an unauthenticated route redirect, not a failed sign-in.
+    const hasSignInError = Boolean(error && 'SessionRequired' !== error);
     const shouldAutoRedirect =
-      oauthAutoRedirect && 1 === oauthProviders.length && 1 === providers.length;
+      oauthAutoRedirect && !hasSignInError && 1 === oauthProviders.length && 1 === providers.length;
 
     const oauthProvider = oauthProviders[0];
     if (shouldAutoRedirect && oauthProvider && !showVerificationStep && !isLoadingProviders) {
-      void signIn(oauthProvider.id, { callbackUrl });
+      void signIn(oauthProvider.id, { callbackUrl }).catch(() => {
+        toast.error(t('errors.signin_error'));
+      });
     }
-  }, [oauthAutoRedirect, showVerificationStep, providers, isLoadingProviders, callbackUrl]);
+  }, [
+    oauthAutoRedirect,
+    error,
+    showVerificationStep,
+    providers,
+    isLoadingProviders,
+    callbackUrl,
+    t,
+  ]);
 
   const onEmailSubmit = useCallback(async () => {
     setEmailStatus('sending');

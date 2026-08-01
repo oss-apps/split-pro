@@ -1,0 +1,14 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Jocs",
+        "movies": "Pel·lícules",
+        "music": "Música",
+        "other": "Entreteniment",
+        "sports": "Esports"
+      },
+      "name": "Entreteniment"
+    }
+  }
+}

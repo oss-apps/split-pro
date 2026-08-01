@@ -137,6 +137,7 @@
     "group_name_update_failed": "Error in updating group name",
     "import_failed": "Error importing file",
     "invalid_currency_code": "Invalid currency code {{code}}",
+    "invalid_split": "Adjust who owes this expense before saving.",
     "language_change_failed": "Error changing language",
     "less_than": "File should be less than {{size}}MB",
     "image_compression_failed": "Image compression failed, trying to upload original file",
@@ -219,9 +220,6 @@
             "title": "Share",
             "total_shares": "Total shares"
           }
-        },
-        "validation": {
-          "invalid_split": "Adjust who owes this expense before saving."
         }
       },
       "sponsor_us": "Sponsor us",

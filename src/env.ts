@@ -70,7 +70,7 @@ export const env = createEnv({
     OIDC_CLIENT_ID: z.string().optional(),
     OIDC_CLIENT_SECRET: z.string().optional(),
     OIDC_WELL_KNOWN_URL: z.string().optional(),
-    OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: z.boolean().optional(),
+    OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: z.boolean().default(false),
     UPLOAD_MAX_FILE_SIZE_MB: z.coerce.number().int().positive().default(10),
   },
 

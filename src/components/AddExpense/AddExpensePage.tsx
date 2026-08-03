@@ -290,7 +290,11 @@ export const AddOrEditExpensePage: React.FC<{
           variant="ghost"
           className="text-primary px-0"
           disabled={
-            addExpenseMutation.isPending || !amount || '' === description || isFileUploading
+            addExpenseMutation.isPending ||
+            !amount ||
+            '' === description ||
+            isFileUploading ||
+            !isExpenseSettled
           }
           onClick={addExpense}
         >

@@ -70,7 +70,7 @@ export const env = createEnv({
     OIDC_CLIENT_ID: z.string().optional(),
     OIDC_CLIENT_SECRET: z.string().optional(),
     OIDC_WELL_KNOWN_URL: z.string().optional(),
-    OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: z.boolean().optional(),
+    OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: z.boolean().default(false),
     UPLOAD_MAX_FILE_SIZE_MB: z.coerce.number().int().positive().default(10),
   },
 
@@ -139,7 +139,9 @@ export const env = createEnv({
     OIDC_CLIENT_ID: process.env.OIDC_CLIENT_ID,
     OIDC_CLIENT_SECRET: process.env.OIDC_CLIENT_SECRET,
     OIDC_WELL_KNOWN_URL: process.env.OIDC_WELL_KNOWN_URL,
-    OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: Boolean(process.env.OIDC_ALLOW_DANGEROUS_EMAIL_LINKING),
+    OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: Boolean(
+      JSON.parse(process.env.OIDC_ALLOW_DANGEROUS_EMAIL_LINKING || 'false'),
+    ),
     UPLOAD_MAX_FILE_SIZE_MB: process.env.UPLOAD_MAX_FILE_SIZE_MB
       ? Number(process.env.UPLOAD_MAX_FILE_SIZE_MB)
       : 10,

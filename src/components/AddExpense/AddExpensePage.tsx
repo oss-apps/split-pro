@@ -65,7 +65,6 @@ export const AddOrEditExpensePage: React.FC<{
     setAmount,
     setAmountStr,
     resetState,
-    setSplitScreenOpen,
     setExpenseDate,
     setMultipleTransactions,
     setIsTransactionLoading,
@@ -107,11 +106,6 @@ export const AddOrEditExpensePage: React.FC<{
 
   const addExpense = useCallback(async () => {
     if (!paidBy) {
-      return;
-    }
-
-    if (!isExpenseSettled) {
-      setSplitScreenOpen(true);
       return;
     }
 
@@ -194,7 +188,6 @@ export const AddOrEditExpensePage: React.FC<{
       }
     }
   }, [
-    setSplitScreenOpen,
     description,
     currency,
     isNegative,
@@ -209,7 +202,6 @@ export const AddOrEditExpensePage: React.FC<{
     paidBy,
     splitType,
     fileKey,
-    isExpenseSettled,
     setMultipleTransactions,
     transactionId,
     setIsTransactionLoading,
@@ -295,7 +287,11 @@ export const AddOrEditExpensePage: React.FC<{
           variant="ghost"
           className="text-primary px-0"
           disabled={
-            addExpenseMutation.isPending || !amount || '' === description || isFileUploading
+            addExpenseMutation.isPending ||
+            !amount ||
+            '' === description ||
+            isFileUploading ||
+            !isExpenseSettled
           }
           onClick={addExpense}
         >
@@ -353,6 +349,7 @@ export const AddOrEditExpensePage: React.FC<{
                         splitShares,
                         paidBy,
                         currentUser,
+                        isNegative,
                       )}
                     </Button>
                   </SplitExpenseForm>

@@ -304,6 +304,11 @@ const SplitSection: React.FC<SplitSectionProps> = (props) => {
       >
         {fmtSummartyText(amount, totalShares, toUIString)}
       </p>
+      {!canSplitScreenClosed ? (
+        <p role="alert" className="text-center text-xs text-red-500">
+          {t('errors.invalid_split')}
+        </p>
+      ) : null}
       {isBoolean && (
         <Button
           variant="outline"

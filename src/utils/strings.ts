@@ -52,42 +52,58 @@ export function generateSplitDescription(
   splitShares: AddExpenseState['splitShares'],
   paidBy?: Participant,
   currentUser?: Participant,
+  isNegative = false,
 ): string {
-  // Only enhance the description for EQUAL split type
-  if (splitType !== SplitType.EQUAL) {
+  if (SplitType.EQUAL !== splitType) {
     return t('expense_details.add_expense_details.split_type_section.split_unequally');
   }
 
+  const splitEquallyText = t(
+    'expense_details.add_expense_details.split_type_section.split_equally',
+  );
   if (!paidBy || !currentUser) {
-    return t('expense_details.add_expense_details.split_type_section.split_equally');
+    return splitEquallyText;
   }
 
-  // Get participants who are actually selected for the split (have non-zero shares)
-  // If split shares are not initialized yet (undefined), include all participants
   const selectedParticipants = participants.filter((p) => {
     const share = splitShares[p.id]?.[SplitType.EQUAL];
-    return share === undefined || share !== 0n;
+    return share === undefined || 0n !== share;
   });
 
-  // If no one is selected, fall back to default
-  if (selectedParticipants.length === 0) {
-    return t('expense_details.add_expense_details.split_type_section.split_equally');
+  const splitParticipant = selectedParticipants[0];
+  if (!splitParticipant) {
+    return splitEquallyText;
   }
 
-  // Case 1: Paying for exactly one person
-  if (selectedParticipants.length === 1) {
-    const beneficiary = selectedParticipants[0];
-    const beneficiaryName = displayName(t, beneficiary as User, currentUser.id) || 'someone';
-    return `${t('ui.expense.user.paid')} ${t('ui.expense.for')} ${beneficiaryName}`;
+  if (1 !== selectedParticipants.length) {
+    return `${splitEquallyText} (${selectedParticipants.length})`;
   }
 
-  // Case 2: Splitting with multiple people
-  if (selectedParticipants.length > 1) {
-    return `${t('expense_details.add_expense_details.split_type_section.split_equally')} (${selectedParticipants.length})`;
+  if (splitParticipant.id === paidBy.id) {
+    return t('expense_details.add_expense_details.split_type_section.direction.no_money_flow');
   }
 
-  // Fallback to default for all other cases
-  return t('expense_details.add_expense_details.split_type_section.split_equally');
+  const debtor = isNegative ? paidBy : splitParticipant;
+  const payer = isNegative ? splitParticipant : paidBy;
+  const debtorName = displayName(t, debtor, currentUser.id);
+  const payerName = displayName(t, payer, currentUser.id);
+
+  if (payer.id === currentUser.id) {
+    return t('expense_details.add_expense_details.split_type_section.direction.owes_you', {
+      debtor: debtorName,
+    });
+  }
+
+  if (debtor.id === currentUser.id) {
+    return t('expense_details.add_expense_details.split_type_section.direction.you_owe', {
+      payer: payerName,
+    });
+  }
+
+  return t('expense_details.add_expense_details.split_type_section.direction.owes_payer', {
+    debtor: debtorName,
+    payer: payerName,
+  });
 }
 
 export function getCurrencyName(t: TFunction, code: CurrencyCode, plural = false): string {

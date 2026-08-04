@@ -1,6 +1,8 @@
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 
+import { parseEnvBoolean } from './utils/env';
+
 export const env = createEnv({
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
@@ -93,23 +95,21 @@ export const env = createEnv({
       process.env.DATABASE_URL ??
       `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}`,
     NODE_ENV: process.env.NODE_ENV,
-    DOCKER_OUTPUT: Boolean(JSON.parse(process.env.DOCKER_OUTPUT || 'false')),
+    DOCKER_OUTPUT: parseEnvBoolean(process.env.DOCKER_OUTPUT),
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     NEXTAUTH_URL_INTERNAL: process.env.NEXTAUTH_URL_INTERNAL ?? process.env.NEXTAUTH_URL,
     CLEAR_CACHE_CRON_RULE: process.env.CLEAR_CACHE_CRON_RULE ?? '0 2 * * 0',
     CACHE_RETENTION_INTERVAL: process.env.CACHE_RETENTION_INTERVAL ?? '2 days',
-    ENABLE_SENDING_INVITES: 'true' === process.env.ENABLE_SENDING_INVITES,
-    DISABLE_EMAIL_SIGNUP: 'true' === process.env.DISABLE_EMAIL_SIGNUP,
-    INVITE_ONLY: 'true' === process.env.INVITE_ONLY,
+    ENABLE_SENDING_INVITES: parseEnvBoolean(process.env.ENABLE_SENDING_INVITES),
+    DISABLE_EMAIL_SIGNUP: parseEnvBoolean(process.env.DISABLE_EMAIL_SIGNUP),
+    INVITE_ONLY: parseEnvBoolean(process.env.INVITE_ONLY),
     FROM_EMAIL: process.env.FROM_EMAIL,
     EMAIL_SERVER_HOST: process.env.EMAIL_SERVER_HOST,
     EMAIL_SERVER_PORT: process.env.EMAIL_SERVER_PORT,
     EMAIL_SERVER_USER: process.env.EMAIL_SERVER_USER,
     EMAIL_SERVER_PASSWORD: process.env.EMAIL_SERVER_PASSWORD,
-    EMAIL_TLS_REJECT_UNAUTHORIZED: Boolean(
-      JSON.parse(process.env.EMAIL_TLS_REJECT_UNAUTHORIZED || 'true'),
-    ),
+    EMAIL_TLS_REJECT_UNAUTHORIZED: parseEnvBoolean(process.env.EMAIL_TLS_REJECT_UNAUTHORIZED, true),
     GOCARDLESS_COUNTRY: process.env.GOCARDLESS_COUNTRY,
     GOCARDLESS_SECRET_ID: process.env.GOCARDLESS_SECRET_ID,
     GOCARDLESS_SECRET_KEY: process.env.GOCARDLESS_SECRET_KEY,
@@ -139,8 +139,8 @@ export const env = createEnv({
     OIDC_CLIENT_ID: process.env.OIDC_CLIENT_ID,
     OIDC_CLIENT_SECRET: process.env.OIDC_CLIENT_SECRET,
     OIDC_WELL_KNOWN_URL: process.env.OIDC_WELL_KNOWN_URL,
-    OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: Boolean(
-      JSON.parse(process.env.OIDC_ALLOW_DANGEROUS_EMAIL_LINKING || 'false'),
+    OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: parseEnvBoolean(
+      process.env.OIDC_ALLOW_DANGEROUS_EMAIL_LINKING,
     ),
     UPLOAD_MAX_FILE_SIZE_MB: process.env.UPLOAD_MAX_FILE_SIZE_MB
       ? Number(process.env.UPLOAD_MAX_FILE_SIZE_MB)
@@ -152,7 +152,7 @@ export const env = createEnv({
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
    * useful for Docker builds.
    */
-  skipValidation: Boolean(JSON.parse(process.env.SKIP_ENV_VALIDATION || 'false')),
+  skipValidation: parseEnvBoolean(process.env.SKIP_ENV_VALIDATION),
   /**
    * Makes it so that empty strings are treated as undefined. `SOME_VAR: z.string()` and
    * `SOME_VAR=''` will throw an error.

@@ -5,6 +5,10 @@ import { createJiti } from 'jiti';
 const jiti = createJiti(fileURLToPath(import.meta.url));
 import withSerwistInit from '@serwist/next';
 
+/** @type {typeof import('./src/utils/env')} */
+const envUtils = await jiti.import('./src/utils/env');
+const { parseEnvBoolean } = envUtils;
+
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
@@ -14,7 +18,7 @@ await jiti.import('./src/env');
 /** @type {import("next").NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: process.env.DOCKER_OUTPUT ? 'standalone' : undefined,
+  output: parseEnvBoolean(process.env.DOCKER_OUTPUT) ? 'standalone' : undefined,
   transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core'],
   /**
    * If you are using `appDir` then you must comment the below `i18n` config out.

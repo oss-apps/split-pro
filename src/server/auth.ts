@@ -10,6 +10,7 @@ import KeycloakProvider from 'next-auth/providers/keycloak';
 
 import { env } from '~/env';
 import { db } from '~/server/db';
+import { parseEnvBoolean } from '~/utils/env';
 
 import { mailServerConfig, sendSignUpEmail } from './mailer';
 import { getBaseUrl } from '~/utils/api';
@@ -281,7 +282,7 @@ function getProviders() {
  */
 export function validateAuthEnv() {
   console.log('Validating auth env');
-  if (!process.env.SKIP_ENV_VALIDATION) {
+  if (!parseEnvBoolean(process.env.SKIP_ENV_VALIDATION)) {
     const providers = getProviders();
     if (0 === providers.length) {
       throw new Error(

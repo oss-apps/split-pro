@@ -137,6 +137,7 @@
     "group_name_update_failed": "Error in updating group name",
     "import_failed": "Error importing file",
     "invalid_currency_code": "Invalid currency code {{code}}",
+    "invalid_split": "Adjust who owes this expense before saving.",
     "language_change_failed": "Error changing language",
     "less_than": "File should be less than {{size}}MB",
     "image_compression_failed": "Image compression failed, trying to upload original file",
@@ -189,6 +190,12 @@
         "warning": "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused"
       },
       "split_type_section": {
+        "direction": {
+          "no_money_flow": "No one else owes anything",
+          "owes_payer": "{{debtor}} owes {{payer}}",
+          "owes_you": "{{debtor}} owes you",
+          "you_owe": "You owe {{payer}}"
+        },
         "split_equally": "split equally",
         "split_unequally": "split unequally",
         "types": {

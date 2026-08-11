@@ -1,4 +1,5 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { Prisma } from '@prisma/client';
 import { type GetServerSidePropsContext } from 'next';
 import { type DefaultSession, type NextAuthOptions, type User, getServerSession } from 'next-auth';
 import { type Adapter, type AdapterAccount, type AdapterUser } from 'next-auth/adapters';
@@ -9,6 +10,7 @@ import KeycloakProvider from 'next-auth/providers/keycloak';
 
 import { env } from '~/env';
 import { db } from '~/server/db';
+import { parseEnvBoolean } from '~/utils/env';
 
 import { mailServerConfig, sendSignUpEmail } from './mailer';
 import { getBaseUrl } from '~/utils/api';
@@ -78,25 +80,17 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
         throw new Error('Adapter is missing the linkAccount method.');
       }
 
-      // Keycloak and Gitlab provide some non-standard fields that do not exist in the prisma schema.
+      // OIDC providers can provide non-standard fields that do not exist in the prisma schema.
       // We strip them out before passing them on to the original adapter.
-      if (account.provider === 'keycloak') {
-        const {
-          'not-before-policy': _notBeforePolicy,
-          refresh_expires_in: _refresh_expires_in,
-          ...standardAccountData
-        } = account as AdapterAccount & Record<string, unknown>;
+      const knownAccountFields = new Set<string>(Object.values(Prisma.AccountScalarFieldEnum));
 
-        return originalLinkAccount(standardAccountData as AdapterAccount);
-      } else if (account.provider === 'gitlab') {
-        const { created_at: _createdAt, ...standardAccountData } = account as AdapterAccount &
-          Record<string, unknown>;
+      const sanitised = Object.fromEntries(
+        Object.entries(account as Record<string, unknown>).filter(([k]) =>
+          knownAccountFields.has(k),
+        ),
+      ) as AdapterAccount;
 
-        return originalLinkAccount(standardAccountData as AdapterAccount);
-      }
-
-      // Default: proceed directly
-      return originalLinkAccount(account);
+      return originalLinkAccount(sanitised);
     },
   } as Adapter;
 };
@@ -288,8 +282,16 @@ function getProviders() {
  */
 export function validateAuthEnv() {
   console.log('Validating auth env');
-  if (!process.env.SKIP_ENV_VALIDATION) {
+  if (!parseEnvBoolean(process.env.SKIP_ENV_VALIDATION)) {
     const providers = getProviders();
+    const oauthProviders = providers.filter((provider) => 'oauth' === provider.type);
+
+    if (env.OAUTH_AUTO_REDIRECT && (1 !== oauthProviders.length || 1 !== providers.length)) {
+      console.warn(
+        'OAUTH_AUTO_REDIRECT is enabled, but automatic redirection will not happen until exactly one OAuth provider and no other authentication providers are configured.',
+      );
+    }
+
     if (0 === providers.length) {
       throw new Error(
         'No authentication providers are configured, at least one is required. Learn more here: https://github.com/oss-apps/split-pro?tab=readme-ov-file#setting-up-the-environment',

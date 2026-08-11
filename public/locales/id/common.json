@@ -1,0 +1,447 @@
+{
+  "account": {
+    "change_language": "Ubah bahasa",
+    "change_language_details": {
+      "messages": {
+        "language_changed": "Bahasa berhasil diubah"
+      },
+      "no_language_found": "Bahasa tidak ditemukan.",
+      "placeholder": "Pilih bahasa",
+      "title": "Pilih bahasa"
+    },
+    "debug_info": "Info debug",
+    "debug_info_details": {
+      "copy_failed": "Gagal menyalin info debug ke papan klip",
+      "description": "Tempelkan informasi di bawah ini saat membuat permintaan bantuan:",
+      "git": "Git",
+      "new_version_available": "Versi baru telah tersedia:",
+      "send_test_notification": "Kirim notifikasi uji coba",
+      "test_notification_failed": "Tidak dapat mengirim notifikasi uji coba",
+      "test_notification_sent": "Notifikasi uji coba terkirim",
+      "title": "Informasi Debug",
+      "user_agent": "UserAgent",
+      "version": "Versi"
+    },
+    "default_balance_currency": "Mata uang saldo bawaan",
+    "download_app": "Unduh aplikasi",
+    "download_app_details": {
+      "download_as_pwa": "Anda dapat mengunduh SplitPro sebagai PWA ke layar utama Anda.",
+      "title": "Unduh aplikasi",
+      "using_android": "Jika Anda menggunakan Android, lihat ini",
+      "using_ios": "Jika Anda menggunakan iOS, lihat ini",
+      "video": "video"
+    },
+    "download_splitpro_data": "Unduh data SplitPro",
+    "edit_name": {
+      "apply_avatar": "Terapkan avatar",
+      "avatar_label": "Foto profil",
+      "avatar_preview": "Pratinjau avatar",
+      "placeholder": "Masukkan nama",
+      "remove_avatar": "Hapus avatar",
+      "select_avatar": "Pilih gambar",
+      "title": "Edit detail",
+      "zoom": "Zom"
+    },
+    "follow_on_x": "Ikuti kami di X",
+    "import_from_splitwise": "Impor dari Splitwise",
+    "import_from_splitwise_details": {
+      "choose_file": "Pilih berkas",
+      "export_splitwise_data_button": "Ekspor data Splitwise",
+      "follow_to_export_splitwise_data": "Ikuti tautan ini untuk mengekspor data Splitwise",
+      "messages": {
+        "import_success": "Impor berhasil"
+      },
+      "no_file_chosen": "Tidak ada berkas yang dipilih",
+      "note": "Catatan: Saat ini hanya mendukung pengimporan teman dan kelompok. Ini tidak akan mengimpor transaksi. Kami sedang mengerjakannya."
+    },
+    "logout": "Keluar",
+    "messages": {
+      "submit_error": "Gagal memperbarui detail",
+      "submit_success": "Detail diperbarui"
+    },
+    "notifications": {
+      "disable_notification": "Nonaktifkan notifikasi",
+      "enable_notification": "Aktifkan notifikasi",
+      "messages": {
+        "notification_granted": "Anda akan menerima notifikasi sekarang"
+      }
+    },
+    "star_on_github": "Beri kami star di GitHub",
+    "submit_feedback": "Kirim masukan",
+    "submit_feedback_details": {
+      "placeholder": "Masukkan masukan Anda",
+      "title": "Kirim masukan"
+    },
+    "support_us": "Sponsori kami",
+    "title": "Akun",
+    "write_review": "Tulis ulasan"
+  },
+  "actions": {
+    "add_expense": "Tambah pengeluaran",
+    "back": "Kembali",
+    "cancel": "Batal",
+    "close": "Tutup",
+    "confirm": "Konfirmasi",
+    "connect": "Hubungkan",
+    "copy": "Salin",
+    "create": "Buat",
+    "edit_expense": "Edit pengeluaran",
+    "export": "Ekspor",
+    "fetch": "Ambil",
+    "import": "Impor",
+    "invite": "Undang",
+    "leave": "Keluar",
+    "next": "Lanjut",
+    "reconnect": "Hubungkan ulang",
+    "save": "Simpan",
+    "settle_up": "Lunasi",
+    "submit": "Kirim"
+  },
+  "actors": {
+    "all": "Semua",
+    "friends": "Teman",
+    "groups": "Kelompok",
+    "members": "Anggota",
+    "owner": "Pemilik",
+    "you": "Anda",
+    "you_accusativus": "Anda",
+    "you_dativus": "Anda"
+  },
+  "auth": {
+    "continue_with": "Lanjutkan dengan {{provider}}",
+    "email_placeholder": "Masukkan email Anda",
+    "no_providers_configured": "Tidak ada penyedia autentikasi yang dikonfigurasi",
+    "no_providers_instructions": "Harap konfigurasikan setidaknya satu penyedia autentikasi untuk masuk. Lihat",
+    "otp_sent": "Kami telah mengirimkan email berisi OTP. Harap periksa kotak masuk Anda dan klik tautan di dalam email untuk masuk.",
+    "send_magic_link": "Kirim magic link",
+    "sending": "Mengirim...",
+    "setup_instructions": "Petunjuk penyiapan Docker",
+    "trouble_logging_in": "Kendala saat masuk? Hubungi"
+  },
+  "balances": {
+    "default_split": {
+      "cleared": "Pembagian bawaan dibersihkan",
+      "configure": "Pembagian bawaan",
+      "updated": "Pembagian bawaan diperbarui"
+    },
+    "user_preferences": {
+      "title": "Preferensi"
+    }
+  },
+  "bank_transactions": {
+    "choose_bank_provider": "Pilih penyedia bank",
+    "no_bank_providers_found": "Penyedia bank tidak ditemukan",
+    "plaid": {
+      "bank_connected_successfully": "Bank berhasil terhubung",
+      "bank_connection_cancelled": "Koneksi bank dibatalkan",
+      "bank_connection_failed": "Gagal terhubung ke bank"
+    },
+    "search_bank": "Cari bank",
+    "select_bank_provider": "Pilih penyedia bank",
+    "to_bank": "ke bank"
+  },
+  "currency_conversion": {
+    "amount_to_receive": "Jumlah yang diterima",
+    "description": "Konversikan jumlah tersebut ke mata uang yang berbeda.",
+    "exchange_rate": "Nilai tukar",
+    "fetching_rate": "Mengambil nilai tukar...",
+    "rate": "Nilai tukar",
+    "success_toast": "Konversi mata uang berhasil diatur",
+    "title": "Konversi mata uang"
+  },
+  "errors": {
+    "currency_conversion_error": "Gagal saat mengatur konversi mata uang",
+    "currency_conversion_failed": "Gagal mengonversi mata uang",
+    "currency_conversion_malformed": "Data konversi mata uang cacat/rusak",
+    "email_invalid": "Email tidak valid, silakan coba alur masuk kembali.",
+    "email_required": "Email wajib diisi",
+    "feedback_min_length": "Masukan harus terdiri dari minimal 10 karakter",
+    "feedback_required": "Masukan wajib diisi",
+    "group_balances_malformed": "Data saldo kelompok cacat/rusak, silakan laporkan masalah atau coba hitung ulang.",
+    "group_name_update_failed": "Gagal memperbarui nama kelompok",
+    "image_compression_failed": "Kompresi gambar gagal, mencoba mengunggah berkas asli",
+    "import_failed": "Gagal mengimpor berkas",
+    "invalid_cron_expression": "Ekspresi cron tidak valid",
+    "invalid_currency_code": "Kode mata uang tidak valid {{code}}",
+    "language_change_failed": "Gagal mengubah bahasa",
+    "less_than": "Ukuran berkas harus kurang dari {{size}}MB",
+    "name_required": "Nama wajib diisi",
+    "no_providers": "Gagal saat mengambil penyedia autentikasi. Harap periksa log backend.",
+    "notification_not_supported": "Notifikasi tidak didukung",
+    "otp_invalid": "OTP tidak valid",
+    "otp_required": "OTP wajib diisi",
+    "recurrence_delete_failed": "Gagal menghapus pengulangan",
+    "recurrence_update_failed": "Gagal memperbarui pengulangan",
+    "request_error": "Gagal meminta notifikasi",
+    "saving_expense": "Gagal saat menyimpan pengeluaran",
+    "setting_update_failed": "Gagal memperbarui pengaturan",
+    "signin_error": "Terjadi kesalahan saat masuk: ",
+    "signup_disabled": "Pendaftaran akun baru dinonaktifkan pada instansi ini",
+    "something_went_wrong": "Ada yang salah",
+    "subscribe_error": "Tidak dapat berlangganan notifikasi",
+    "unsubscribe_error": "Gagal berhenti berlangganan notifikasi",
+    "upload_failed": "Gagal mengunggah berkas",
+    "uploading_error": "Gagal mengunggah berkas",
+    "valid_email": "Masukkan email yang valid"
+  },
+  "expense_details": {
+    "add_expense": "Tambah pengeluaran",
+    "add_expense_details": {
+      "add_new_expense": "Tambah pengeluaran baru",
+      "amount_placeholder": "Masukkan jumlah",
+      "description_placeholder": "Masukkan deskripsi",
+      "pick_a_date": "Pilih tanggal",
+      "select_user_or_group": {
+        "add_to_split_pro": "Tambahkan ke Split Pro",
+        "note": "Catatan: pengiriman undangan dinonaktifkan untuk saat ini karena spam",
+        "only_one_group_time": "Anda hanya dapat memiliki satu kelompok dalam satu waktu",
+        "send_invite": "Kirim undangan ke pengguna",
+        "warning": "Peringatan: Jangan gunakan kirim undangan jika email tidak valid. Gunakan tambahkan ke Split Pro sebagai gantinya. Akun Anda akan diblokir jika fitur ini disalahgunakan"
+      },
+      "split_type_section": {
+        "split_equally": "bagi rata",
+        "split_unequally": "bagi tidak sama rata",
+        "types": {
+          "adjustment": {
+            "remaining_to_split_equally": "Sisa yang akan dibagi rata",
+            "title": "Penyesuaian"
+          },
+          "equal": {
+            "per_person": "per orang",
+            "title": "Sama rata"
+          },
+          "exact": {
+            "remaining": "Sisa",
+            "title": "Pasti"
+          },
+          "percentage": {
+            "remaining": "Sisa",
+            "title": "Persentase"
+          },
+          "share": {
+            "shares": "Bagian",
+            "title": "Bagian",
+            "total_shares": "Total bagian"
+          }
+        }
+      },
+      "sponsor_us": "Sponsori kami",
+      "upload_file": {
+        "messages": {
+          "upload_success": "Berkas berhasil diunggah"
+        }
+      },
+      "user_input": {
+        "add_more_friends": "Cari teman, kelompok, atau tambah email",
+        "cannot_change_group": "Tidak dapat mengubah kelompok saat mengedit",
+        "remove_group": "Tekan hapus untuk menghapus kelompok",
+        "search_friends": "Cari teman, kelompok, atau tambah email"
+      }
+    },
+    "already_added": "Sudah ditambahkan",
+    "balance_list": {
+      "are_settled_up": "sudah lunas",
+      "is_settled_up": "sudah lunas",
+      "press_balance_info": "Tekan pada saldo individu untuk memulai pelunasan"
+    },
+    "bank_transactions": "Transaksi bank",
+    "clear": "Bersihkan",
+    "delete_expense_details": {
+      "text": "Tindakan ini tidak dapat dibatalkan. Ini akan menghapus pengeluaran Anda secara permanen.",
+      "title": "Apakah Anda benar-benar yakin?"
+    },
+    "multiple_transactions": {
+      "add_all": "Tambah semua",
+      "add_one_by_one": "Tambah satu per satu",
+      "description": "Anda telah memilih beberapa transaksi. Pilih apakah Anda ingin semuanya ditambahkan sekaligus dengan pengaturan pembagian saat ini atau menyesuaikan pengaturannya satu per satu.",
+      "title": "Tambah beberapa transaksi"
+    },
+    "no_transactions_yet": "Belum ada transaksi",
+    "pending": "Pending",
+    "submit_all": "Kirim semua",
+    "title": "Tambah pengeluaran",
+    "title_mobile": "Tambah"
+  },
+  "group_details": {
+    "add_members": "Tambah anggota",
+    "copied": "Disalin",
+    "create_group": {
+      "group_name_placeholder": "Nama kelompok",
+      "title": "Buat kelompok"
+    },
+    "group_info": {
+      "actions": "Tindakan",
+      "archive_group": "Arsipkan kelompok",
+      "archive_group_details": {
+        "can_archive": "Kelompok ini akan diarsipkan dan disembunyikan dari daftar kelompok utama Anda. Anda masih dapat mengaksesnya nanti jika diperlukan.",
+        "cant_archive": "Tidak dapat mengarsipkan kelompok yang masih memiliki saldo tertunggak. Semua saldo harus dilunasi terlebih dahulu.",
+        "title": "Apakah Anda yakin ingin mengarsipkan kelompok ini?"
+      },
+      "archived": "Diarsipkan",
+      "configure_default_split": "Konfigurasikan pembagian bawaan",
+      "default_balance_currency": "Mata uang saldo bawaan",
+      "default_split": "Pembagian bawaan",
+      "delete_group": "Hapus kelompok",
+      "delete_group_details": {
+        "can_delete": "Tindakan ini tidak dapat dibatalkan",
+        "cant_delete": "Tidak dapat menghapus kelompok sampai semua orang melunasi saldonya",
+        "title": "Apakah Anda benar-benar yakin?"
+      },
+      "edit_group": "Edit kelompok",
+      "group_created": "Kelompok berhasil dibuat",
+      "leave_group": "Tinggalkan kelompok",
+      "leave_group_details": {
+        "can_leave": "Tindakan ini tidak dapat dibatalkan",
+        "cant_leave": "Tidak dapat meninggalkan kelompok sampai saldo tertunggak Anda dilunasi",
+        "title": "Apakah Anda benar-benar yakin?"
+      },
+      "members": "Anggota",
+      "recalculate_balances": "Hitung ulang saldo",
+      "recalculate_balances_details": {
+        "description": "Jika saldo tidak cocok dengan pengeluaran, Anda dapat menghitungnya kembali. Perhatikan bahwa ini mungkin memerlukan waktu jika jumlah pengeluaran banyak. Saldo di luar kelompok tidak akan terpengaruh.",
+        "title": "Apakah Anda yakin?"
+      },
+      "remove_member_details": {
+        "can_remove": "Anda akan menghapus anggota ini dari kelompok",
+        "cant_remove": "Tidak dapat menghapus anggota sampai saldo tertunggak mereka dilunasi",
+        "title": "Apakah Anda benar-benar yakin?"
+      },
+      "simplify_debts": "Sederhanakan utang",
+      "title": "Info kelompok"
+    },
+    "group_statistics": {
+      "first_expense": "Pengeluaran pertama",
+      "title": "Statistik kelompok",
+      "total_expenses": "Total pengeluaran"
+    },
+    "messages": {
+      "balances_recalculated": "Saldo berhasil dihitung ulang",
+      "default_balance_currency_cleared": "Mata uang saldo bawaan dibersihkan",
+      "default_balance_currency_updated": "Mata uang saldo bawaan diperbarui",
+      "default_split_cleared": "Pembagian bawaan dibersihkan",
+      "default_split_updated": "Pembagian bawaan diperbarui",
+      "group_archived": "Kelompok berhasil diarsipkan",
+      "group_name_updated": "Detail kelompok diperbarui"
+    },
+    "no_members": {
+      "add_members": "Tambah anggota",
+      "add_members_details": {
+        "add_to_split_pro": "Tambahkan ke Split Pro",
+        "note": "Catatan: pengiriman undangan email dinonaktifkan",
+        "placeholder": "Masukkan nama atau email",
+        "send_invite": "Kirim undangan ke pengguna",
+        "title": "Tambah anggota",
+        "warning": "Peringatan: Jangan gunakan kirim undangan jika email tidak valid. Gunakan tambahkan ke Split Pro sebagai gantinya. Akun Anda akan diblokir jika fitur ini disalahgunakan"
+      },
+      "invite_link": "Tautan undangan",
+      "no_members": "Belum ada anggota di kelompok ini."
+    },
+    "tabs": {
+      "balances": "Saldo",
+      "expenses": "Pengeluaran"
+    },
+    "title": "Saldo tertunggak kelompok"
+  },
+  "invite_message": {
+    "in_splitpro": "di Splitpro",
+    "join_to": "Bergabung ke",
+    "text": "Bergabunglah ke kelompok dan Anda dapat menambahkan, mengelola pengeluaran, serta melacak saldo Anda"
+  },
+  "meta": {
+    "application_name": "SplitPro",
+    "description": "Bagi Pengeluaran dengan teman-teman Anda secara gratis",
+    "title": "SplitPro: Bagi Pengeluaran dengan teman-teman Anda secara gratis"
+  },
+  "navigation": {
+    "account": "Akun",
+    "activity": "Aktivitas",
+    "add": "Tambah",
+    "add_expense": "Tambah Pengeluaran",
+    "balances": "Saldo",
+    "groups": "Kelompok",
+    "recurring": "Berulang"
+  },
+  "recurrence": {
+    "cron_expression": "Ekspresi Cron",
+    "days_of_month": "Hari dalam Sebulan",
+    "days_of_week": "Hari dalam Seminggu",
+    "delete_description": "Ini akan menghentikan pembuatan pengeluaran di masa mendatang. Pengeluaran yang sudah dibuat oleh pengulangan ini tidak akan dihapus.",
+    "delete_title": "Hapus Pengulangan",
+    "derived_delete_warning": "Pengeluaran ini adalah bagian dari pengulangan. Hanya pengeluaran ini yang akan dihapus. Pengeluaran berulang di masa mendatang akan tetap berlanjut.",
+    "derived_edit_warning": "Pengeluaran ini adalah bagian dari pengulangan. Perubahan hanya akan memengaruhi pengeluaran ini.",
+    "description": "Atur pengulangan otomatis untuk pengeluaran ini.",
+    "edit_confirmation_title": "Edit Pengeluaran Berulang",
+    "edit_description": "Ini akan mengubah jadwal untuk pengeluaran di masa mendatang. Pengeluaran yang ada tidak akan diubah.",
+    "edit_title": "Edit Pengulangan",
+    "empty": "Belum ada pengeluaran berulang",
+    "expense_for_the_amount_of": "Pengeluaran {{name}} sebesar {{amount}} {{currency}}",
+    "last_day": "Hari terakhir",
+    "months": "Bulan",
+    "never": "Tidak ada jadwal yang dikonfigurasi",
+    "recurring": "Berulang",
+    "schedule_type": {
+      "custom": "Kustom",
+      "day": "Harian",
+      "month": "Bulanan",
+      "never": "Tidak pernah",
+      "week": "Mingguan",
+      "year": "Tahunan"
+    },
+    "template_delete_warning": "Ini adalah templat pengeluaran berulang. Menghapusnya akan menghentikan semua pengeluaran berulang di masa mendatang.",
+    "template_edit_warning": "Ini adalah templat pengeluaran berulang. Perubahan akan berlaku untuk semua pengeluaran berulang di masa mendatang.",
+    "time_of_day": "Waktu Hari",
+    "title": "Pengulangan",
+    "view_recurring_page": "Lihat halaman Berulang"
+  },
+  "ui": {
+    "added_by": "Ditambahkan oleh",
+    "and": "dan",
+    "balance": "saldo",
+    "balances": "saldo",
+    "delete": "Hapus",
+    "deleted_by": "Dihapus oleh",
+    "edited_by": "Diedit oleh",
+    "expense": {
+      "for": "untuk",
+      "from": "dari",
+      "paid_by": "Dibayar oleh",
+      "received_by": "Diterima oleh",
+      "to": "kepada",
+      "user": {
+        "deleted": "dihapus",
+        "get": "mendapatkan",
+        "lent": "meminjamkan",
+        "owe": "berutang",
+        "paid": "membayar",
+        "pay": "membayar",
+        "received": "menerima"
+      },
+      "you": {
+        "deleted": "dihapus",
+        "get": "mendapatkan",
+        "lent": "meminjamkan",
+        "owe": "berutang",
+        "paid": "membayar",
+        "pay": "membayar",
+        "received": "menerima"
+      }
+    },
+    "expense_details": "Detail pengeluaran",
+    "in_group": "Dalam kelompok",
+    "no_activity": "Belum ada aktivitas",
+    "not_involved": "Tidak terlibat",
+    "not_set": "Belum diatur",
+    "on": "pada",
+    "or": "atau",
+    "outstanding_balances": "Saldo tertunggak",
+    "select_balance": "Pilih saldo",
+    "select_currency": "Pilih mata uang",
+    "settle_up_name": "Lunasi",
+    "settled_up": "Sudah dilunasi",
+    "settlement": "Pelunasan",
+    "share_text": "Coba SplitPro. Ini adalah alternatif gratis dan sumber terbuka untuk Splitwise",
+    "show_all_currencies": "Tampilkan semua mata uang",
+    "today": "Hari ini",
+    "total_balance": "Total saldo"
+  }
+}

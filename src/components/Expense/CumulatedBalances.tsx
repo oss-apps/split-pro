@@ -7,11 +7,12 @@ import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
 
 export const CumulatedBalances: React.FC<{
   entityId: number;
+  entityType?: 'group';
   balances?: { currency: string; amount: bigint }[];
-}> = ({ entityId, balances }) => {
+}> = ({ entityId, entityType, balances }) => {
   const { t } = useTranslationWithUtils();
 
-  const selectedCurrency = useCurrencyPreferenceStore((s) => s.getPreference(entityId));
+  const selectedCurrency = useCurrencyPreferenceStore((s) => s.getPreference(entityId, entityType));
 
   const allNonZeroCurrencies = useMemo(() => {
     const nonZeroBalances = balances?.filter((b) => b.amount !== 0n);
@@ -31,6 +32,7 @@ export const CumulatedBalances: React.FC<{
         <CumulatedBalanceDisplay
           prefix={`${t('ui.total_balance')}: `}
           entityId={entityId}
+          entityType={entityType}
           cumulatedBalances={balances}
           currencies={allNonZeroCurrencies}
         />
@@ -39,6 +41,7 @@ export const CumulatedBalances: React.FC<{
           <CumulatedBalanceDisplay
             prefix={`${t('actors.you')} ${t('ui.expense.you.lent')}`}
             entityId={entityId}
+            entityType={entityType}
             cumulatedBalances={youLent}
             className="text-positive"
             forceShowButton={allNonZeroCurrencies.length > 1}
@@ -47,6 +50,7 @@ export const CumulatedBalances: React.FC<{
           <CumulatedBalanceDisplay
             prefix={`${t('actors.you')} ${t('ui.expense.you.owe')}`}
             entityId={entityId}
+            entityType={entityType}
             className="text-negative"
             cumulatedBalances={youOwe}
             forceShowButton={allNonZeroCurrencies.length > 1}
@@ -61,6 +65,7 @@ export const CumulatedBalances: React.FC<{
 const CumulatedBalanceDisplay: React.FC<{
   prefix?: string;
   entityId: number;
+  entityType?: 'group';
   className?: string;
   cumulatedBalances?: { currency: string; amount: bigint }[];
   forceShowButton?: boolean;
@@ -68,6 +73,7 @@ const CumulatedBalanceDisplay: React.FC<{
 }> = ({
   prefix = '',
   entityId,
+  entityType,
   className = '',
   cumulatedBalances,
   forceShowButton = false,
@@ -83,6 +89,7 @@ const CumulatedBalanceDisplay: React.FC<{
       <ConvertibleBalance
         balances={cumulatedBalances}
         entityId={entityId}
+        entityType={entityType}
         forceShowButton={forceShowButton}
         showMultiOption
         overrideCurrencies={currencies}

@@ -83,10 +83,10 @@ export const UserInput: React.FC<{
           p.id !== currentUser?.id ? (
             <div
               key={p.id}
-              className="flex items-center gap-2 rounded-full bg-slate-800 p-0.5 pr-4"
+              className="flex max-w-40 items-center gap-2 rounded-full bg-slate-800 p-0.5 pr-4"
             >
               <EntityAvatar entity={p} size={30} />
-              <p className="text-xs">{p.name ?? p.email}</p>
+              <p className="truncate text-xs">{p.name ?? p.email}</p>
             </div>
           ) : null,
         )

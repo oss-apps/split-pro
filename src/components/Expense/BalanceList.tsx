@@ -76,10 +76,10 @@ export const BalanceList: React.FC<{
 
         return (
           <AccordionItem key={user.id} value={displayName(user)}>
-            <AccordionTrigger className="hover:no-underline">
-              <div className="flex items-center gap-3">
+            <AccordionTrigger className="overflow-hidden hover:no-underline">
+              <div className="mr-2 flex min-w-0 flex-1 items-center gap-3">
                 <EntityAvatar entity={user} />
-                <div className="text-foreground">
+                <div className="text-foreground line-clamp-2 min-w-0 break-words">
                   {displayName(user, userQuery.data?.id)}
                   {Object.values(total).every((amount) => 0n === amount) ? (
                     <span className="text-gray-400">

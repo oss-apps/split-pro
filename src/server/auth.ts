@@ -10,7 +10,7 @@ import KeycloakProvider from 'next-auth/providers/keycloak';
 import { env } from '~/env';
 import { db } from '~/server/db';
 
-import { sendSignUpEmail } from './mailer';
+import { mailServerConfig, sendSignUpEmail } from './mailer';
 import { getBaseUrl } from '~/utils/api';
 import type { OAuthConfig } from 'next-auth/providers/oauth';
 
@@ -208,17 +208,7 @@ function getProviders() {
     providersList.push(
       EmailProvider({
         from: env.FROM_EMAIL,
-        server: {
-          host: env.EMAIL_SERVER_HOST,
-          port: parseInt(env.EMAIL_SERVER_PORT ?? ''),
-          auth: {
-            user: env.EMAIL_SERVER_USER,
-            pass: env.EMAIL_SERVER_PASSWORD,
-          },
-          tls: {
-            rejectUnauthorized: env.EMAIL_TLS_REJECT_UNAUTHORIZED,
-          },
-        },
+        server: mailServerConfig,
         async sendVerificationRequest({ identifier: email, url, token }) {
           const result = await sendSignUpEmail(email, url, token);
           if (!result) {

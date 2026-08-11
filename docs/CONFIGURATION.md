@@ -94,9 +94,17 @@ Used for magic-link login and invites.
 
 ### Web push notifications
 
-- `WEB_PUSH_PRIVATE_KEY`
-- `WEB_PUSH_PUBLIC_KEY`
-- `WEB_PUSH_EMAIL`
+Push notifications are disabled until VAPID keys are configured. Without them, the in-app notification toggle has no effect.
+
+To enable push notifications:
+
+1. Generate a VAPID keypair, either with `npx web-push generate-vapid-keys --json` or the online tool at https://vapidkeys.com
+2. Set these env vars in `.env`:
+   - `WEB_PUSH_PUBLIC_KEY` — generated public key
+   - `WEB_PUSH_PRIVATE_KEY` — generated private key
+   - `WEB_PUSH_EMAIL` — contact email as a bare address (e.g. `you@example.com`); the app prepends `mailto:` automatically
+3. Redeploy or restart your container.
+4. If you previously toggled notifications off in the PWA or system settings, re-enable them after redeploying.
 
 ### Feedback email
 

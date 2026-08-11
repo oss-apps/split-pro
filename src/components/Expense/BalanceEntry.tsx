@@ -24,9 +24,9 @@ export const BalanceEntry: React.FC<{
 
   return (
     <Link className="flex items-center justify-between" href={`${currentRoute}/${id}`}>
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 items-center gap-3">
         <EntityAvatar entity={entity} size={35} />
-        <div className="text-foreground">{displayName(entity)}</div>
+        <div className="text-foreground truncate">{displayName(entity)}</div>
       </div>
       <div className="text-right" onClick={stopPropagation}>
         <ConvertibleBalance withText balances={balances} entityId={id} />

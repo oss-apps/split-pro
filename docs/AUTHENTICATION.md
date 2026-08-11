@@ -18,10 +18,18 @@ Provider-specific variables are listed in [CONFIGURATION](CONFIGURATION.md).
 
 ## OIDC callback
 
-For generic OIDC providers, configure the callback URL as:
+For generic OIDC providers, the callback URL uses the lowercased value of the
+`OIDC_NAME` env var as the provider segment of the path:
 
 ```
-https://<your-domain>/api/auth/callback/oidc
+https://<your-domain>/api/auth/callback/<provider-name>
+```
+
+`<provider-name>` defaults to `oidc` when `OIDC_NAME` is not set. For example,
+with `OIDC_NAME=tinyauth` the callback URL is:
+
+```
+https://<your-domain>/api/auth/callback/tinyauth
 ```
 
 ## Provider setup notes

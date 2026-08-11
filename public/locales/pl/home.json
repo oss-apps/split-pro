@@ -1,7 +1,7 @@
 {
   "features": {
     "bank_connection": {
-      "description": "Dodawaj szybciej wydatki dzięki integracji z GoCardless lub Plaid API transakcji bankowych",
+      "description": "Dodawaj wydatki szybciej dzięki integracji z GoCardless lub API transakcji bankowych Plaid",
       "title": "Połączenie z bankiem"
     },
     "currency_conversion": {
@@ -13,7 +13,7 @@
       "title": "Upraszczanie Długów"
     },
     "groups_and_friends": {
-      "description": "Możesz tworzyć wiele grup lub dodawać wydatki bezpośrednio.",
+      "description": "Możesz tworzyć wiele grup lub dodać bezpośrednio saldo. Wszystko zostanie skonsolidowane",
       "title": "Grupy i Znajomi"
     },
     "i18": {
@@ -39,6 +39,10 @@
     "pwa_support": {
       "description": "Kochasz aplikacje mobilne? Mamy cię na oku. Zainstaluj jako PWA i nawet tego nie zauważysz!",
       "title": "Wsparcie PWA"
+    },
+    "recurring_transactions": {
+      "description": "Stwórz wydatki cykliczne dla wydatków takich jak czynsz, subskrypcje lub inne stałe wydatki",
+      "title": "Wydatki cykliczne"
     },
     "title": "Funkcje",
     "unequal_split": {

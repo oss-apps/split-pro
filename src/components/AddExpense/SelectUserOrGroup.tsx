@@ -161,9 +161,9 @@ export const SelectUserOrGroup: React.FC<{
                 className="flex w-full items-center justify-between border-b border-gray-900 py-4"
                 onClick={() => handleFriendClick(f)}
               >
-                <div className="flex items-center gap-4">
+                <div className="flex min-w-0 items-center gap-4">
                   <EntityAvatar entity={f} size={35} />
-                  <div>{f.name ?? f.email}</div>
+                  <div className="truncate">{f.name ?? f.email}</div>
                 </div>
                 {participants.some((p) => p.id === f.id) ? (
                   <div>
@@ -186,9 +186,9 @@ export const SelectUserOrGroup: React.FC<{
                   className="border-b border-gray-900 py-4"
                   onClick={() => onGroupSelect(g.group)}
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex min-w-0 items-center gap-4">
                     <EntityAvatar entity={g.group} size={35} />
-                    <p>{g.group.name}</p>
+                    <p className="truncate">{g.group.name}</p>
                   </div>
                 </button>
               ))}

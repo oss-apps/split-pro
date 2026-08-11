@@ -46,6 +46,15 @@ describe('getCurrencyHelpers', () => {
         ])('should format %p as %p with signed flag', (value, expected) => {
           expect(toUIString(value, true)).toBe(expected);
         });
+
+        it.each([
+          [12345n, '123.45'],
+          [-12345n, '-123.45'],
+          [-50n, '-0.5'],
+          [-0n, '0'],
+        ])('should format %p as %p with signed flag and hideSymbol', (value, expected) => {
+          expect(toUIString(value, true, true)).toBe(expected);
+        });
       });
       describe('JPY (no decimals)', () => {
         const currency = 'JPY';
@@ -171,6 +180,38 @@ describe('getCurrencyHelpers', () => {
       ['--123.45', '-123.45'],
     ])('should sanitize %p to %p with signed flag', (input, expected) => {
       expect(sanitizeInput(input, true)).toBe(expected);
+    });
+  });
+
+  describe('parseToCleanString', () => {
+    const { parseToCleanString } = getCurrencyHelpers({
+      locale: 'en-US',
+      currency: 'USD',
+    });
+
+    it.each([
+      ['-200', '-200'],
+      ['-200.01', '-200.01'],
+      ['--200', '-200'],
+      ['-$200.00', '-200.00'],
+    ])('should keep the minus sign for %p with signed flag', (input, expected) => {
+      expect(parseToCleanString(input, true)).toBe(expected);
+    });
+
+    it.each([
+      [-20000n, '-200.00'],
+      [-12345n, '-123.45'],
+      [-50n, '-0.50'],
+      [-0n, '0.00'],
+    ])('should keep the minus sign for bigint %p with signed flag', (value, expected) => {
+      expect(parseToCleanString(value, true)).toBe(expected);
+    });
+
+    it.each([
+      ['-200', '200'],
+      ['-123.45', '123.45'],
+    ])('should drop the minus sign for %p without signed flag', (input, expected) => {
+      expect(parseToCleanString(input)).toBe(expected);
     });
   });
 });

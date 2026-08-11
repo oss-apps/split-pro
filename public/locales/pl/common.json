@@ -5,6 +5,7 @@
       "messages": {
         "language_changed": "Język zmieniony pomyślnie"
       },
+      "no_language_found": "Nie znaleziono języka.",
       "placeholder": "Wybierz język",
       "title": "Wybierz język"
     },
@@ -14,10 +15,14 @@
       "description": "Podczas tworzenia zgłoszenia do pomocy technicznej wklej poniższe informacje:",
       "git": "Git",
       "new_version_available": "Nowa wersja jest dostępna:",
+      "send_test_notification": "Wyślij powiadomienie testowe",
+      "test_notification_failed": "Nie udało się wysłać powiadomienia testowego",
+      "test_notification_sent": "Wysłano powiadomienie testowe",
       "title": "Informacje dotyczące debugowania",
-      "user_agent": "UserAgent",
+      "user_agent": "Nagłówek UserAgent",
       "version": "Wersja"
     },
+    "default_balance_currency": "Domyślna waluta bilansu",
     "download_app": "Pobierz aplikację",
     "download_app_details": {
       "download_as_pwa": "Możesz pobrać SplitPro jako PWA na swój ekran główny.",
@@ -28,8 +33,14 @@
     },
     "download_splitpro_data": "Pobierz dane SplitPro",
     "edit_name": {
+      "apply_avatar": "Zastosuj awatar",
+      "avatar_label": "Zdjęcie profilowe",
+      "avatar_preview": "Podgląd awatara",
       "placeholder": "Wprowadź nazwę",
-      "title": "Edytuj nazwę"
+      "remove_avatar": "Usuń awatar",
+      "select_avatar": "Wybierz obraz",
+      "title": "Edytuj szczegóły",
+      "zoom": "Przybliżenie"
     },
     "follow_on_x": "Śledź nas na X",
     "import_from_splitwise": "Importuj ze Splitwise",
@@ -45,8 +56,8 @@
     },
     "logout": "Wyloguj",
     "messages": {
-      "submit_error": "Nie udało się wysłać opinii",
-      "submit_success": "Opinia wysłana"
+      "submit_error": "Nie udało się zmienić szczegółów",
+      "submit_success": "Zaktualizowano szczegóły"
     },
     "notifications": {
       "disable_notification": "Wyłącz powiadomienia",
@@ -80,7 +91,7 @@
     "import": "Importuj",
     "invite": "Zaproś",
     "leave": "Opuść",
-    "next": "",
+    "next": "Następny",
     "reconnect": "Połącz ponownie",
     "save": "Zapisz",
     "settle_up": "Rozlicz",
@@ -107,6 +118,16 @@
     "setup_instructions": "instrukcje konfiguracji Docker",
     "trouble_logging_in": "Problemy z logowaniem? Skontaktuj się"
   },
+  "balances": {
+    "default_split": {
+      "cleared": "Wyczyszczono domyślny podział",
+      "configure": "Domyślny podział",
+      "updated": "Zmieniono domyślny podział"
+    },
+    "user_preferences": {
+      "title": "Preferencje"
+    }
+  },
   "bank_transactions": {
     "choose_bank_provider": "Wybierz bank",
     "no_bank_providers_found": "Nie znaleziono żadnych dostawców usług bankowych",
@@ -131,8 +152,8 @@
   "errors": {
     "amount_required": "Kwota jest wymagana",
     "currency_conversion_error": "Błąd podczas ustawiania konwersji waluty",
-    "currency_conversion_failed": "",
-    "currency_conversion_malformed": "",
+    "currency_conversion_failed": "Nie udało się zamienić walut",
+    "currency_conversion_malformed": "Dane zamiany walut są nieprawidłowe",
     "description_required": "Opis jest wymagany",
     "email_invalid": "Email jest nieprawidłowy, spróbuj ponownie proces logowania.",
     "email_required": "Email jest wymagany",
@@ -141,18 +162,19 @@
     "group_balances_malformed": "Dane dotyczące sald grupowych są nieprawidłowe. Proszę zgłosić problem lub spróbować ponownie wykonać obliczenia.",
     "group_name_update_failed": "Błąd podczas aktualizacji nazwy grupy",
     "group_required": "Grupa jest wymagana",
+    "image_compression_failed": "Kompresja obrazu nie powiodła się. Wczytuję oryginalny plik",
     "import_failed": "Błąd podczas importowania pliku",
     "invalid_cron_expression": "Błędne wyrażenie cron",
     "invalid_currency_code": "Nieprawidłowy kod waluty {{code}}",
     "language_change_failed": "Błąd podczas zmiany języka",
-    "less_than": "Plik powinien być mniejszy niż",
+    "less_than": "Plik powinien być mniejszy niż {{size}}MB",
     "name_required": "Nazwa jest wymagana",
     "no_providers": "Błąd podczas pobierania dostawców uwierzytelniania. Sprawdź logi.",
     "notification_not_supported": "Powiadomienia nie są obsługiwane",
     "otp_invalid": "Nieprawidłowy kod OTP",
     "otp_required": "Kod OTP jest wymagany",
-    "recurrence_delete_failed": "",
-    "recurrence_update_failed": "",
+    "recurrence_delete_failed": "Nie udało się usunąć cyklicznego wydatku",
+    "recurrence_update_failed": "Nie udało się zaktualizować cyklicznego wydatku",
     "request_error": "Błąd podczas żądania powiadomienia",
     "saving_expense": "Błąd podczas zapisywania wydatku",
     "setting_update_failed": "Nie udało się zaktualizować ustawienia",
@@ -219,13 +241,13 @@
         "search_friends": "Szukaj znajomych, grup lub dodaj email"
       }
     },
-    "already_added": "",
+    "already_added": "Już istnieje",
     "balance_list": {
       "are_settled_up": "rozliczono",
       "is_settled_up": "rozliczono",
       "press_balance_info": "Naciśnij na poszczególne saldo aby rozpocząć rozliczenie"
     },
-    "bank_transactions": "",
+    "bank_transactions": "Operacje bankowe",
     "clear": "Wyczyść",
     "delete_expense_details": {
       "text": "Ta akcja nie może być cofnięta. To trwale usunie twój wydatek.",
@@ -241,14 +263,14 @@
       "title": "Zaległe salda"
     },
     "multiple_transactions": {
-      "add_all": "",
-      "add_one_by_one": "",
-      "description": "",
-      "title": ""
+      "add_all": "Dodaj wszystkie",
+      "add_one_by_one": "Dodaj pojedynczo",
+      "description": "Wybrałeś wiele transakcji. Zdecyduj czy chcesz dodać je wszystkie z obecnymi ustawieniami podziału czy dostosować ustawienia pojedynczo.",
+      "title": "Dodaj wiele transakcji"
     },
-    "no_transactions_yet": "",
-    "pending": "",
-    "submit_all": "",
+    "no_transactions_yet": "Brak transakcji",
+    "pending": "Oczekuje",
+    "submit_all": "Dodaj wszystko",
     "title": "Dodaj wydatek",
     "title_mobile": "Dodaj"
   },
@@ -263,17 +285,21 @@
       "actions": "Akcje",
       "archive_group": "Zarchiwizuj grupę",
       "archive_group_details": {
-        "can_archive": "Ta grupa zostanie zarchiwizowana i ukryta z głównej listy grup. Nadal będziesz mógł uzyskać do niej dostęp później, jeśli będzie to potrzebne.",
+        "can_archive": "Ta grupa zostanie zarchiwizowana i usunięta z głównej listy grup. Nadal będziesz mógł uzyskać do niej dostęp później, jeśli będzie to potrzebne.",
         "cant_archive": "Nie można zarchiwizować grupy z zaległymi saldami. Wszystkie salda muszą być najpierw rozliczone.",
         "title": "Na pewno chcesz zarchiwizować tę grupę?"
       },
       "archived": "Zarchiwizowano",
+      "configure_default_split": "Skonfiguruj domyślny podział",
+      "default_balance_currency": "Domyślna waluta salda",
+      "default_split": "Domyślny podział",
       "delete_group": "Usuń grupę",
       "delete_group_details": {
         "can_delete": "Ta akcja nie może być cofnięta",
         "cant_delete": "Nie można usunąć grupy, dopóki wszyscy się nie rozliczą",
         "title": "Na pewno?"
       },
+      "edit_group": "Edytuj grupę",
       "group_created": "Grupa utworzona",
       "leave_group": "Opuść grupę",
       "leave_group_details": {
@@ -302,8 +328,12 @@
     },
     "messages": {
       "balances_recalculated": "Salda przeliczone pomyślnie",
+      "default_balance_currency_cleared": "Wyczyszczono domyślną walutę salda",
+      "default_balance_currency_updated": "Zmieniono domyślną walutę salda",
+      "default_split_cleared": "Wyczyszczono domyślny podział",
+      "default_split_updated": "Zmieniono domyślny podział",
       "group_archived": "Grupa została pomyślnie zarchiwizowana",
-      "group_name_updated": "Zaktualizowano nazwę grupy"
+      "group_name_updated": "Zaktualizowano szczegóły grupy"
     },
     "no_members": {
       "add_members": "Dodaj członków",
@@ -315,7 +345,7 @@
         "title": "Dodaj członków",
         "warning": "Ostrzeżenie: Nie używaj wysyłania zaproszenia, jeśli to nieprawidłowy email. Zamiast tego użyj dodaj do Split Pro. Twoje konto zostanie zablokowane, jeśli ta funkcja będzie nadużywana"
       },
-      "invite_link": "",
+      "invite_link": "Link do zaproszenia",
       "no_members": "Brak członków w grupie."
     },
     "tabs": {
@@ -331,7 +361,7 @@
   },
   "meta": {
     "application_name": "SplitPro",
-    "description": "Dziel wydatki ze znajomymi - za darmo",
+    "description": "Dziel wydatki ze znajomymi za darmo",
     "title": "SplitPro: Dziel wydatki ze znajomymi za darmo"
   },
   "navigation": {
@@ -341,39 +371,39 @@
     "add_expense": "Dodaj Wydatek",
     "balances": "Salda",
     "groups": "Grupy",
-    "recurring": ""
+    "recurring": "Cykliczność"
   },
   "recurrence": {
-    "cron_expression": "",
-    "days_of_month": "",
-    "days_of_week": "",
-    "delete_description": "",
-    "delete_title": "",
-    "derived_delete_warning": "",
-    "derived_edit_warning": "",
-    "description": "",
-    "edit_confirmation_title": "",
-    "edit_description": "",
-    "edit_title": "",
-    "empty": "",
-    "expense_for_the_amount_of": "",
-    "last_day": "",
-    "months": "",
-    "never": "",
-    "recurring": "",
+    "cron_expression": "Wyrażenie Cron",
+    "days_of_month": "Dni miesiąca",
+    "days_of_week": "Dni tygodnia",
+    "delete_description": "Spowoduje zatrzymanie cyklicznego tworzenia wydatków. Istniejące wydatki utworzone z wykorzystaniem cykliczności nie zostaną usunięte.",
+    "delete_title": "Usuń cykliczność",
+    "derived_delete_warning": "Ten wydatek jest częścią wydatku cyklicznego. Tylko obecne wystąpienie zostanie usunięty. Przyszłe wystąpienia wydatku cykliczne będą dalej tworzone.",
+    "derived_edit_warning": "Ten wydatek jest częścią wydatku cyklicznego. Zmiany zostaną zastosowany wyłącznie do obecnego wydatku.",
+    "description": "Ustaw cykliczne dodawanie nowych wystąpień tego wydatku.",
+    "edit_confirmation_title": "Edytuj cykliczne wydatki",
+    "edit_description": "Spowoduje zmianę harmonogramu przyszłych wydatków. Istniejące wydatki nie zostaną zmienione.",
+    "edit_title": "Edytuj cykliczność",
+    "empty": "Brak wydatków cyklicznych",
+    "expense_for_the_amount_of": "Wydatek {{name}} w wysokości {{amount}} {{currency}}",
+    "last_day": "Ostatni dzień",
+    "months": "Miesiące",
+    "never": "Brak harmonogramu",
+    "recurring": "Cykliczne",
     "schedule_type": {
-      "custom": "",
-      "day": "",
-      "month": "",
-      "never": "",
-      "week": "",
-      "year": ""
+      "custom": "Niestandardowy",
+      "day": "Dzienny",
+      "month": "Miesięczny",
+      "never": "Nigdy",
+      "week": "Tygodniowy",
+      "year": "Roczny"
     },
-    "template_delete_warning": "",
-    "template_edit_warning": "",
-    "time_of_day": "",
-    "title": "",
-    "view_recurring_page": ""
+    "template_delete_warning": "To jest szablon wydatku cyklicznego. Usunięcie spowoduje zaprzestanie tworzenia wydatków cyklicznych.",
+    "template_edit_warning": "To jest szablon cyklicznych wydatków. Zmiany zostaną zastosowany do wszystkich przyszłych wydatków cyklicznych.",
+    "time_of_day": "Godzina",
+    "title": "Wydatek cykliczny",
+    "view_recurring_page": "Wyświetl stronę: Cykliczność"
   },
   "ui": {
     "added_by": "Dodane przez",
@@ -409,21 +439,21 @@
       }
     },
     "expense_details": "Szczegóły wydatku",
-    "in_group": "",
+    "in_group": "W grupie",
     "no_activity": "Brak aktywności",
     "not_involved": "Nie uczestniczy",
     "not_set": "Nie ustawiono",
     "on": "dnia",
     "or": "lub",
     "outstanding_balances": "Zaległe salda",
-    "select_balance": "",
+    "select_balance": "Wybierz saldo",
     "select_currency": "Wybierz walutę",
     "settle_up_name": "Rozlicz",
     "settled_up": "Rozliczone",
     "settlement": "Rozliczenie",
     "share_text": "Sprawdź SplitPro. To darmowa alternatywa open source dla Splitwise",
-    "show_all_currencies": "",
+    "show_all_currencies": "Pokaż wszystkie waluty",
     "today": "Dzisiaj",
-    "total_balance": ""
+    "total_balance": "Saldo końcowe"
   }
 }

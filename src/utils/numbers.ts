@@ -130,8 +130,8 @@ export const getCurrencyHelpers = ({
     return cleaned;
   };
 
-  const normalizeToMaxLength = (inputString: string) => {
-    const sanitized = sanitizeInput(inputString);
+  const normalizeToMaxLength = (inputString: string, signed = false) => {
+    const sanitized = sanitizeInput(inputString, signed);
     const trimmedExceedingDecimals = trimExceedingDecimals(sanitized);
     return trimmedExceedingDecimals.endsWith(decimalSeparator)
       ? trimmedExceedingDecimals.slice(0, -1)
@@ -173,7 +173,7 @@ export const getCurrencyHelpers = ({
     }
 
     if (typeof value === 'string') {
-      return normalizeToMaxLength(value);
+      return normalizeToMaxLength(value, signed);
     }
 
     return '';
@@ -233,7 +233,6 @@ export const getCurrencyHelpers = ({
   return {
     parseToCleanString,
     toUIString,
-    toUIStringSigned: (value: unknown) => toUIString(value, true),
     format,
     formatter,
     sanitizeInput,

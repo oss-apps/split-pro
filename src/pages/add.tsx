@@ -44,11 +44,22 @@ const AddPage: NextPageWithUser<{
   const initializedFriendIdRef = useRef<number | null>(null);
   const initializedExpenseIdRef = useRef<string | null>(null);
 
-  useEffect(() => () => resetState(), [resetState]);
+  useEffect(
+    () => () => {
+      resetState();
+      initializedExpenseIdRef.current = null;
+      initializedGroupIdRef.current = null;
+      initializedFriendIdRef.current = null;
+    },
+    [resetState],
+  );
 
   // TODO: Set this globally from env var with app router later
   const { setMaxUploadFileSizeMB } = useAppStore((s) => s.actions);
   setMaxUploadFileSizeMB(maxUploadFileSizeMB);
+
+  const router = useRouter();
+  const { friendId, groupId, expenseId } = router.query;
 
   useEffect(() => {
     setCurrentUser({
@@ -61,10 +72,13 @@ const AddPage: NextPageWithUser<{
       obapiProviderId: user.obapiProviderId ?? null,
       bankingId: user.bankingId ?? null,
     });
-  }, [setCurrentUser, user]);
-
-  const router = useRouter();
-  const { friendId, groupId, expenseId } = router.query;
+    if (router.isReady && !groupId) {
+      const preferredCurrency = user.currency ?? user.defaultCurrency;
+      if (preferredCurrency) {
+        setCurrency(parseCurrencyCode(preferredCurrency));
+      }
+    }
+  }, [setCurrentUser, setCurrency, groupId, router.isReady, user]);
 
   const _groupId = parseInt(groupId as string);
   const _friendId = parseInt(friendId as string);
@@ -117,6 +131,11 @@ const AddPage: NextPageWithUser<{
           .map((gu) => gu.user)
           .filter((groupUser) => groupUser.id !== currentUser.id),
       ]);
+      const preferredCurrency =
+        currentUser.currency ?? groupQuery.data.defaultCurrency ?? currentUser.defaultCurrency;
+      if (preferredCurrency) {
+        setCurrency(parseCurrencyCode(preferredCurrency));
+      }
       const parsedDefaultSplit = deserializeDefaultSplit(groupQuery.data.defaultSplit);
       if (parsedDefaultSplit) {
         applySplitPreset(parsedDefaultSplit.splitType, parsedDefaultSplit.shares);
@@ -131,6 +150,7 @@ const AddPage: NextPageWithUser<{
     currentUser,
     setGroup,
     setParticipants,
+    setCurrency,
     applySplitPreset,
   ]);
 
@@ -183,7 +203,7 @@ const AddPage: NextPageWithUser<{
     setAmountStr(
       getCurrencyHelpersCached(expenseQuery.data.currency).toUIString(
         expenseQuery.data.amount,
-        false,
+        true,
         true,
       ),
     );

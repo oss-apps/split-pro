@@ -1,0 +1,126 @@
+{
+  "account": {
+    "change_language": "Αλλαγή Γλώσσας",
+    "change_language_details": {
+      "messages": {
+        "language_changed": "Επιτυχής Αλλαγή Γλώσσας"
+      },
+      "no_language_found": "Δεν βρέθηκε η γλώσσα.",
+      "placeholder": "Επιλογή Γλώσσας",
+      "title": "Επιλογή Γλώσσας"
+    },
+    "debug_info": "Πληροφορίες εντοπισμού σφαλμάτων",
+    "debug_info_details": {
+      "git": "Git",
+      "title": "Πληροφορίες εντοπισμού σφαλμάτων",
+      "version": "Έκδοση"
+    },
+    "default_balance_currency": "Προεπιλεγμένο Νόμισμα",
+    "download_app": "Κατέβασμα Εφαρμογής",
+    "download_app_details": {
+      "download_as_pwa": "Μπορείτε να κατεβάσετε το SplitPro ως PWA στην αρχική σας οθόνη.",
+      "title": "Κατέβασμα Εφαρμογής",
+      "using_android": "Αν χρησιμοποιείτε Android, κοιτάξτε εδώ",
+      "using_ios": "Αν χρησιμοποιείτε iOS, κοιτάξτε εδώ",
+      "video": "βίντεο"
+    },
+    "download_splitpro_data": "Λήψη Δεδομένων SplitPro",
+    "edit_name": {
+      "apply_avatar": "Εφαρμογή Avatar",
+      "avatar_label": "Φωτογραφία Προφίλ",
+      "avatar_preview": "Προεπισκόπιση Avatar",
+      "placeholder": "Εισάγετε όνομα",
+      "remove_avatar": "Αφαίρεση Avatar",
+      "select_avatar": "Επιλέξτε φωτογραφία",
+      "title": "Επεξεργασία",
+      "zoom": "Ζουμ"
+    },
+    "follow_on_x": "Ακολουθήστε μας στο X",
+    "import_from_splitwise": "Εισαγωγή από Splitwise",
+    "import_from_splitwise_details": {
+      "choose_file": "Επιλέξτε αρχείο",
+      "export_splitwise_data_button": "Εξαγωγή δεδομένων splitwise",
+      "follow_to_export_splitwise_data": "Ακολουθήστε το σύνδεσμο για να εξάγετε τα δεδομένα από το Splitwise",
+      "messages": {
+        "import_success": "Επιτυχής εισαγωγή"
+      },
+      "no_file_chosen": "Δεν επιλέχθηκε αρχείο",
+      "note": "Σημείωση: Αυτή τη στιγμή υποστηρίζεται μόνο η εισαγωγή φίλων και γκρουπ. Δεν θα εισαχθούν συναλλαγές. Εργαζόμαστε πάνω σε αυτό."
+    },
+    "logout": "Αποσύνδεση",
+    "messages": {
+      "submit_error": "Αποτυχία ενημέρωσης στοιχείων",
+      "submit_success": "Τα στοιχεία ενημερώθηκαν"
+    },
+    "notifications": {
+      "disable_notification": "Απενεργοποίηση ειδοποιήσεων",
+      "enable_notification": "Ενεργοποίηση ειδοποιήσεων",
+      "messages": {
+        "notification_granted": "Θα λαμβάνετε ειδοποιήσεις"
+      }
+    },
+    "star_on_github": "Δώστε μας ένα αστέρι στο GitHub",
+    "submit_feedback": "Υποβολή σχολίων",
+    "submit_feedback_details": {
+      "placeholder": "Εισαγωγή σχολίων",
+      "title": "Υποβολή σχολίων"
+    },
+    "support_us": "Υποστηρίξτε μας",
+    "title": "Λογαριασμός",
+    "write_review": "Γράψτε μία αξιολόγηση"
+  },
+  "actions": {
+    "add_expense": "Προσθήκη εξόδου",
+    "back": "Πίσω",
+    "cancel": "Ακύρωση",
+    "close": "Κλείσιμο",
+    "confirm": "Επιβεβαίωση",
+    "connect": "Σύνδεση",
+    "copy": "Αντιγραφή",
+    "create": "Δημιουργία",
+    "edit_expense": "Επεξεργασία εξόδου",
+    "export": "Εξαγωγή",
+    "import": "Εισαγωγή",
+    "invite": "Πρόσκληση",
+    "leave": "Αποχώρηση",
+    "next": "Επόμενο",
+    "reconnect": "Επανασύνδεση",
+    "save": "Αποθήκευση",
+    "submit": "Υποβολή"
+  },
+  "actors": {
+    "all": "Όλοι",
+    "friends": "Φίλοι",
+    "groups": "Γκρουπ",
+    "members": "Μέλη",
+    "owner": "Ιδιοκτήτης",
+    "you": "Εσύ",
+    "you_accusativus": "Εσύ",
+    "you_dativus": "Εσύ"
+  },
+  "auth": {
+    "continue_with": "Συνέχεια με {{provider}}"
+  },
+  "expense_details": {
+    "add_expense": "Προσθήκη εξόδου",
+    "add_expense_details": {
+      "add_new_expense": "Προσθήκη νέου εξόδου",
+      "amount_placeholder": "Εισάγετε ποσό",
+      "description_placeholder": "Εισάγετε περιγραφή",
+      "pick_a_date": "Επιλέξτε ημερομηνία",
+      "select_user_or_group": {
+        "add_to_split_pro": "Προσθήκη στο Split Pro"
+      },
+      "split_type_section": {
+        "types": {
+          "equal": {
+            "per_person": "ανά άτομο"
+          },
+          "percentage": {
+            "title": "Ποσοστό"
+          }
+        }
+      }
+    }
+  }
+}

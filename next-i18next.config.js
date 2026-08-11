@@ -9,6 +9,7 @@ const config = {
       'fr',
       'it',
       'cs',
+      'nl',
       'pl',
       'pt-PT',
       'pt-BR',

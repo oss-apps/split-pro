@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "Παιχνίδια",
+        "movies": "Ταινίες",
+        "music": "Μουσική",
+        "other": "Διασκέδαση",
+        "sports": "Αθλητικά"
+      },
+      "name": "Διασκέδαση"
+    },
+    "food": {
+      "items": {
+        "diningOut": "Φαγητό έξω",
+        "groceries": "Ψώνια",
+        "liquor": "Αλκοόλ",
+        "other": "Φαγητό και Ποτά"
+      },
+      "name": "Φαγητό και Ποτά"
+    },
+    "general": {
+      "items": {
+        "general": "Γενικά",
+        "other": "Γενικά"
+      },
+      "name": "Γενικά"
+    },
+    "home": {
+      "items": {
+        "electronics": "Ηλεκτρονικά",
+        "furniture": "Έπιπλα",
+        "maintenance": "Συντήρηση",
+        "mortgage": "Δάνειο",
+        "other": "Σπίτι",
+        "pets": "Κατοικίδια",
+        "rent": "Ενοίκιο",
+        "services": "Υπηρεσίες",
+        "supplies": "Προμήθειες"
+      },
+      "name": "Σπίτι"
+    },
+    "life": {
+      "items": {
+        "childcare": "Παιδική μέριμνα",
+        "clothing": "Ρουχισμός",
+        "education": "Εκπαίδευση",
+        "gifts": "Δώρα",
+        "insurance": "Ασφάλιση",
+        "medical": "Ιατρικά",
+        "other": "Ζωή",
+        "taxes": "Φόροι"
+      },
+      "name": "Ζωή"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "Ποδήλατο",
+        "bus": "Λεωφορείο",
+        "car": "Αυτοκίνητο",
+        "fuel": "Καύσιμο",
+        "hotel": "Διαμονή",
+        "other": "Ταξίδια",
+        "parking": "Στάθμευση",
+        "plane": "Αεροπορικά",
+        "taxi": "Ταξί",
+        "train": "Τρένο"
+      },
+      "name": "Ταξίδια"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "Καθαριότητα",
+        "electricity": "Ηλεκτρισμός",
+        "gas": "Αέριο",
+        "internet": "Ίντερνετ",
+        "other": "Υπηρεσίες Κοινής Ωφέλειας",
+        "phone": "Τηλέφωνο",
+        "trash": "Σκουπίδια",
+        "water": "Ύδρευση"
+      },
+      "name": "Υπηρεσίες Κοινής Ωφέλειας"
+    }
+  },
+  "title": "Κατηγορίες"
+}

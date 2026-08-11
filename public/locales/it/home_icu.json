@@ -1,0 +1,78 @@
+{
+  "features": {
+    "currency_conversion": {
+      "description": "Converti rapidamente tra diverse valute utilizzando tassi di cambio aggiornati o storici",
+      "title": "Conversione Valuta"
+    },
+    "recurring_transactions": {
+      "description": "Configura spese ricorrenti automatiche per affitto, abbonamenti o altri costi condivisi ricorrenti",
+      "title": "Spese ricorrenti"
+    },
+    "debt_simplification": {
+      "description": "Semplifica automaticamente i debiti di gruppo per ridurre il numero di transazioni necessarie tra amici",
+      "title": "Semplificazione Debiti"
+    },
+    "groups_and_friends": {
+      "description": "Puoi creare più gruppi o aggiungere saldi direttamente. Tutto verrà consolidato",
+      "title": "Gruppi e Amici"
+    },
+    "i18": {
+      "description": "Disponibile in più lingue per rendere la divisione delle spese accessibile in tutto il mondo",
+      "title": "Internazionalizzazione"
+    },
+    "bank_connection": {
+      "title": "Connessione bancaria",
+      "description": "Aggiungi spese più velocemente con un'integrazione alle API delle transazioni bancarie di GoCardless o Plaid"
+    },
+    "import_splitwise": {
+      "description": "Non devi migrare manualmente i saldi. Puoi importare utenti e gruppi da Splitwise",
+      "title": "Importa da Splitwise"
+    },
+    "multiple_currencies": {
+      "description": "Devi aggiungere una spesa con una valuta diversa per lo stesso utente? Nessun problema!",
+      "title": "Valute multiple"
+    },
+    "open_source": {
+      "description": "Il che rende difficile farci diventare cattivi. Facile da hostare autonomamente",
+      "title": "Open source"
+    },
+    "push_notifications": {
+      "description": "Non perdere mai le notifiche importanti. Ricevi notifiche quando qualcuno aggiunge una spesa o un saldo",
+      "title": "Notifiche push"
+    },
+    "pwa_support": {
+      "description": "Ami le app mobile? Abbiamo pensato anche a te. Installala come PWA e non ti accorgerai della differenza!",
+      "title": "Supporto PWA"
+    },
+    "title": "Funzionalità",
+    "unequal_split": {
+      "description": "Opzioni di divisione avanzate. Per quote, percentuale o importi esatti.",
+      "title": "Divisione ineguale"
+    },
+    "upload_receipts": {
+      "description": "Carica gli scontrini insieme alla spesa",
+      "title": "Carica Scontrini"
+    }
+  },
+  "footer": {
+    "built_by": "Creato da"
+  },
+  "hero": {
+    "image_alt": "Anteprima dell'app SplitPro",
+    "add_expense_button": "Aggiungi una spesa",
+    "star_github_button": "Dacci una stella su github",
+    "title_before_highlight": "Dividi le spese con i tuoi amici",
+    "title_highlight": "gratis",
+    "title_after_highlight": ".",
+    "subtitle": "Un'alternativa open source a SplitWise."
+  },
+  "meta": {
+    "description": "SplitPro: Dividi le spese con i tuoi amici gratuitamente",
+    "title": "SplitPro: Dividi le spese con i tuoi amici gratuitamente"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "privacy": "Informativa sulla privacy",
+    "terms": "Termini"
+  }
+}

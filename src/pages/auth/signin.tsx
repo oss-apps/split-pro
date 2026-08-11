@@ -288,7 +288,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      ...(await customServerSideTranslations(context.locale, ['common'])),
+      ...(await customServerSideTranslations(context.locale, ['common_icu'])),
       error: typeof error === 'string' ? error : '',
       feedbackEmail: env.FEEDBACK_EMAIL ?? '',
       providers: Object.values(providers ?? {}),

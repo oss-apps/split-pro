@@ -12,10 +12,9 @@ export const displayName = (
   t: TFunction,
   user?: Partial<User> | null,
   currentUserId?: number,
-  useCase?: 'dativus' | 'accusativus',
 ): string => {
   if (currentUserId === user?.id) {
-    return t(`actors.you${useCase ? `_${useCase}` : ''}`);
+    return t('actors.you');
   }
   return user?.name ?? user?.email ?? '';
 };
@@ -77,13 +76,17 @@ export function generateSplitDescription(
   // Case 1: Paying for exactly one person
   if (selectedParticipants.length === 1) {
     const beneficiary = selectedParticipants[0];
-    const beneficiaryName = displayName(t, beneficiary as User, currentUser.id) || 'someone';
-    return t('ui.expense.statements.paid_for_beneficiary', { beneficiary: beneficiaryName });
+    return t('ui.expense.statements.paid_for_beneficiary', {
+      beneficiaryRole: beneficiary?.id === currentUser.id ? 'you' : 'other',
+      beneficiary: displayName(t, beneficiary as User),
+    });
   }
 
   // Case 2: Splitting with multiple people
   if (selectedParticipants.length > 1) {
-    return `${t('expense_details.add_expense_details.split_type_section.split_equally')} (${selectedParticipants.length})`;
+    return t('expense_details.add_expense_details.split_type_section.split_equally_with_count', {
+      count: selectedParticipants.length,
+    });
   }
 
   // Fallback to default for all other cases

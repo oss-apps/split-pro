@@ -16,9 +16,7 @@ import { useAddExpenseStore } from '~/store/addStore';
 import { useAppStore } from '~/store/appStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
-import { registerICU } from '~/utils/i18n/registerICU';
-
-registerICU();
+import { resolveSupportedLocale } from '~/utils/i18n/resolveLocale';
 
 import 'react-easy-crop/react-easy-crop.css';
 import '~/styles/globals.css';
@@ -126,47 +124,37 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
 
   useEffect(() => {
     if ('authenticated' === status && data.user) {
-      if (!data.user.preferredLanguage) {
-        // If user has no preferred language, set it to the current locale
-        const currentLocale = router.locale ?? 'en';
+      const currentLocale = resolveSupportedLocale(
+        router.locale,
+        i18nConfig.i18n.locales,
+        i18nConfig.i18n.defaultLocale,
+      );
+      const preferredLanguage = data.user.preferredLanguage;
+      const resolvedLanguage = preferredLanguage
+        ? resolveSupportedLocale(
+            preferredLanguage,
+            i18nConfig.i18n.locales,
+            i18nConfig.i18n.defaultLocale,
+          )
+        : currentLocale;
 
-        data.user.preferredLanguage = currentLocale;
+      if (preferredLanguage !== resolvedLanguage) {
         updateUser
           .mutateAsync({
-            preferredLanguage: currentLocale,
+            preferredLanguage: resolvedLanguage,
           })
           .then(() =>
             update({
               user: {
                 ...data.user,
-                preferredLanguage: currentLocale,
+                preferredLanguage: resolvedLanguage,
               },
             }),
           )
           .catch(console.error);
-      } else if (data.user.preferredLanguage === 'pt') {
-        // Fix for 'pt' preferred language to 'pt-PT'
-        data.user.preferredLanguage = 'pt-PT';
-        updateUser
-          .mutateAsync({
-            preferredLanguage: 'pt-PT',
-          })
-          .then(() =>
-            update({
-              user: {
-                ...data.user,
-                preferredLanguage: 'pt-PT',
-              },
-            }),
-          )
-          .catch(console.error);
-      } else if (data.user.preferredLanguage && data.user.preferredLanguage !== router.locale) {
-        // Set user's preferred language by changing the locale
+      } else if (resolvedLanguage !== router.locale) {
         router
-          .push(router.asPath, router.asPath, {
-            locale: data.user.preferredLanguage,
-            scroll: false,
-          })
+          .push(router.asPath, router.asPath, { locale: resolvedLanguage, scroll: false })
           .catch(console.error);
       }
     }

@@ -1,5 +1,5 @@
 import { type VariantProps } from 'class-variance-authority';
-import { useCallback, useState } from 'react';
+import { type FormEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 
 import {
@@ -43,6 +43,14 @@ export const SimpleConfirmationDialog: React.FC<
   const isControlled = typeof controlledOpen === 'boolean';
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
+  const handleSubmit = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      await onConfirm();
+      setOpen(false);
+    },
+    [onConfirm, setOpen],
+  );
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -55,13 +63,7 @@ export const SimpleConfirmationDialog: React.FC<
         <AlertDialogFooter>
           <AlertDialogCancel onClick={onCancel}>{t('actions.cancel')}</AlertDialogCancel>
           {hasPermission && (
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                await onConfirm();
-                setOpen(false);
-              }}
-            >
+            <form onSubmit={handleSubmit}>
               <Button
                 type="submit"
                 size="sm"

@@ -185,13 +185,10 @@ describe('simplifyDebts', () => {
       {} as Record<number, bigint>,
     );
 
-    const userBalances = simplifyDebts(graph).reduce< Record<number, bigint>>(
-      (acc, balance) => {
-        acc[balance.userId] = (acc[balance.userId] ?? 0n) + balance.amount;
-        return acc;
-      },
-      {},
-    );
+    const userBalances = simplifyDebts(graph).reduce<Record<number, bigint>>((acc, balance) => {
+      acc[balance.userId] = (acc[balance.userId] ?? 0n) + balance.amount;
+      return acc;
+    }, {});
 
     expect(startingBalances).toEqual(userBalances);
   });

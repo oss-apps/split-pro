@@ -49,13 +49,10 @@ const ImportSpliwisePage: NextPageWithUser = () => {
 
       setUsersWithBalance(friendsWithOutStandingBalance);
       setSelectedUsers(
-        friendsWithOutStandingBalance.reduce< Record<string, boolean>>(
-          (acc, user) => {
-            acc[user.id] = true;
-            return acc;
-          },
-          {},
-        ),
+        friendsWithOutStandingBalance.reduce<Record<string, boolean>>((acc, user) => {
+          acc[user.id] = true;
+          return acc;
+        }, {}),
       );
 
       const _groups = (json.groups as SplitwiseGroup[]).filter(
@@ -64,13 +61,10 @@ const ImportSpliwisePage: NextPageWithUser = () => {
 
       setGroups(_groups);
       setSelectedGroups(
-        _groups.reduce< Record<string, boolean>>(
-          (acc, group) => {
-            acc[group.id] = true;
-            return acc;
-          },
-          {},
-        ),
+        _groups.reduce<Record<string, boolean>>((acc, group) => {
+          acc[group.id] = true;
+          return acc;
+        }, {}),
       );
     } catch (e) {
       console.error(e);

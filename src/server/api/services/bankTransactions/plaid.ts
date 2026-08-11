@@ -213,8 +213,8 @@ export class PlaidService extends AbstractBankProvider {
   }
 
   private formatTransactions(transactions: Transaction[]): TransactionOutput {
-    const bookedTransactions = transactions.filter((t) => ! t.pending);
-    const pendingTransactions = transactions.filter((t) =>  t.pending);
+    const bookedTransactions = transactions.filter((t) => !t.pending);
+    const pendingTransactions = transactions.filter((t) => t.pending);
 
     return {
       transactions: {

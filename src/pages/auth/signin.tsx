@@ -121,7 +121,7 @@ const Home: NextPage<{
     const oauthProvider = oauthProviders[0];
     if (shouldAutoRedirect && oauthProvider && !showVerificationStep && !isLoadingProviders) {
       void signIn(oauthProvider.id, { callbackUrl }).catch(() => {
-        toast.error(t('errors.signin_error'));
+        toast.error(t('errors.signin_failed'));
       });
     }
   }, [

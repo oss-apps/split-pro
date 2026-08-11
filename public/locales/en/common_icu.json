@@ -154,10 +154,12 @@
     "notification_subscribe_failed": "Cannot subscribe to notifications",
     "expense_submission_failed": "An unexpected error occurred while submitting the expense.",
     "expense_deletion_failed": "An unexpected error occurred while deleting the expense.",
+    "expense_split_incomplete": "Adjust who owes this expense before saving.",
     "friend_deletion_failed": "Failed to delete friend",
     "saving_expense": "Error while saving expense",
     "setting_update_failed": "Failed to update setting",
     "signin_error": "An error occurred while signing in: {error}",
+    "signin_failed": "Sign-in failed. Please try again.",
     "signup_disabled": "Signup of new accounts is disabled on this instance",
     "something_went_wrong": "Something went wrong",
     "subscribe_error": "Cannot subscribe to notification",
@@ -206,6 +208,12 @@
         "warning": "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused"
       },
       "split_type_section": {
+        "direction": {
+          "no_money_flow": "no one else owes anything",
+          "owes_payer": "{debtor} owes {payer}",
+          "owes_you": "{debtor} owes you",
+          "you_owe": "you owe {payer}"
+        },
         "split_equally": "split equally",
         "split_equally_with_count": "split equally among {count, plural, one {# person} other {# people}}",
         "split_unequally": "split unequally",

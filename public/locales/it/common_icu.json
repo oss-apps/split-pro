@@ -154,10 +154,12 @@
     "notification_subscribe_failed": "Impossibile iscriversi alle notifiche",
     "expense_submission_failed": "Si è verificato un errore imprevisto durante l'invio della spesa.",
     "expense_deletion_failed": "Si è verificato un errore imprevisto durante l'eliminazione della spesa.",
+    "expense_split_incomplete": "Modifica chi deve pagare questa spesa prima di salvare.",
     "friend_deletion_failed": "Impossibile eliminare l'amico",
     "saving_expense": "Errore durante il salvataggio della spesa",
     "setting_update_failed": "Errore nell'aggiornamento dell'impostazione",
     "signin_error": "Si è verificato un errore durante l’accesso: {error}",
+    "signin_failed": "Accesso non riuscito. Riprova.",
     "signup_disabled": "La registrazione di nuovi account è disabilitata in questa istanza",
     "something_went_wrong": "Qualcosa è andato storto",
     "subscribe_error": "Impossibile attivare le notifiche",
@@ -206,6 +208,12 @@
         "warning": "Attenzione: non usare \"Invia invito\" se l'email non è valida. Usa invece \"Aggiungi a Split Pro\". Il tuo account verrà bloccato se questa funzione viene utilizzata in modo improprio"
       },
       "split_type_section": {
+        "direction": {
+          "no_money_flow": "nessun altro deve nulla",
+          "owes_payer": "{debtor} deve dei soldi a {payer}",
+          "owes_you": "{debtor} ti deve dei soldi",
+          "you_owe": "devi dei soldi a {payer}"
+        },
         "split_equally": "diviso equamente",
         "split_equally_with_count": "dividi equamente tra {count, plural, one {# persona} other {# persone}}",
         "split_unequally": "diviso non equamente",

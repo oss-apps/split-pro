@@ -64,6 +64,7 @@ export function generateSplitDescription(
     return splitEquallyText;
   }
 
+  // An undefined share is the initial state and still means the participant is selected.
   const selectedParticipants = participants.filter((p) => {
     const share = splitShares[p.id]?.[SplitType.EQUAL];
     return share === undefined || 0n !== share;
@@ -74,32 +75,38 @@ export function generateSplitDescription(
     return splitEquallyText;
   }
 
+  // Debt direction is only meaningful when exactly one participant owes the full amount.
   if (1 !== selectedParticipants.length) {
-    return `${splitEquallyText} (${selectedParticipants.length})`;
-  }
-
-  if (splitParticipant.id === paidBy.id) {
-    return t('expense_details.add_expense_details.split_type_section.direction.no_money_flow');
-  }
-
-  // Case 1: Paying for exactly one person
-  if (selectedParticipants.length === 1) {
-    const beneficiary = selectedParticipants[0];
-    return t('ui.expense.statements.paid_for_beneficiary', {
-      beneficiaryRole: beneficiary?.id === currentUser.id ? 'you' : 'other',
-      beneficiary: displayName(t, beneficiary as User),
-    });
-  }
-
-  // Case 2: Splitting with multiple people
-  if (selectedParticipants.length > 1) {
     return t('expense_details.add_expense_details.split_type_section.split_equally_with_count', {
       count: selectedParticipants.length,
     });
   }
 
-  // Fallback to default for all other cases
-  return t('expense_details.add_expense_details.split_type_section.split_equally');
+  // A payer splitting only with themselves does not create a balance with anyone else.
+  if (splitParticipant.id === paidBy.id) {
+    return t('expense_details.add_expense_details.split_type_section.direction.no_money_flow');
+  }
+
+  // Negative expenses reverse who paid and who owes.
+  const debtor = isNegative ? paidBy : splitParticipant;
+  const payer = isNegative ? splitParticipant : paidBy;
+
+  if (payer.id === currentUser.id) {
+    return t('expense_details.add_expense_details.split_type_section.direction.owes_you', {
+      debtor: displayName(t, debtor),
+    });
+  }
+
+  if (debtor.id === currentUser.id) {
+    return t('expense_details.add_expense_details.split_type_section.direction.you_owe', {
+      payer: displayName(t, payer),
+    });
+  }
+
+  return t('expense_details.add_expense_details.split_type_section.direction.owes_payer', {
+    debtor: displayName(t, debtor),
+    payer: displayName(t, payer),
+  });
 }
 
 export function getCurrencyName(t: TFunction, code: CurrencyCode, plural = false): string {

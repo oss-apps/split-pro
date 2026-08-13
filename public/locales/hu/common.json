@@ -163,6 +163,7 @@
     "import_failed": "Hiba a fájl importálása során",
     "invalid_cron_expression": "Érvénytelen cron kifejezés",
     "invalid_currency_code": "Érvénytelen pénznemkód {{code}}",
+    "invalid_split": "Mentés előtt állítsd be, hogy ki tartozik ezzel a költséggel.",
     "language_change_failed": "Hiba a nyelv módosításakor",
     "less_than": "A fájl mérete nem haladhatja meg a {{size}} MB-ot",
     "name_required": "Név megadása kötelező",
@@ -199,6 +200,12 @@
         "warning": "Figyelmeztetés: Ne használd a „meghívó küldése” funkciót, ha érvénytelen az e-mail cím. Helyette használd a „hozzáadás a SplitPro-hoz” funkciót. Fiókod blokkolásra kerül, ha ezt a funkciót nem rendeltetésszerűen használod"
       },
       "split_type_section": {
+        "direction": {
+          "no_money_flow": "Senki sem tartozik semmivel",
+          "owes_payer": "{{debtor}} tartozik neki: {{payer}}",
+          "owes_you": "{{debtor}} tartozik neked",
+          "you_owe": "Te tartozol neki: {{payer}}"
+        },
         "split_equally": "egyenlően elosztva",
         "split_unequally": "egyenlőtlenül oszlik meg",
         "types": {

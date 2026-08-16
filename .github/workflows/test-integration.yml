@@ -49,7 +49,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Prepare disposable database
-        run: pnpm exec prisma db push --accept-data-loss
+        run: pnpm exec prisma migrate deploy
 
       - name: Run integration tests
         run: pnpm test:integration

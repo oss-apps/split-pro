@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { expect, test } from './fixtures';
 
 test('shows the group balance and settlement controls', async ({ page }) => {
   await page.goto('/balances');

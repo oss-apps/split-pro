@@ -3,6 +3,8 @@ jest.mock('~/server/api/services/notificationService', () => ({
   sendGroupSimplifyDebtsToggleNotification: jest.fn().mockResolvedValue(undefined),
 }));
 jest.mock('~/server/auth', () => ({ getServerAuthSession: jest.fn() }));
+let mockNanoidSequence = 0;
+jest.mock('nanoid', () => ({ nanoid: () => `integration-public-id-${mockNanoidSequence++}` }));
 jest.mock('superjson', () => ({
   default: { serialize: (value: unknown) => value, deserialize: (value: unknown) => value },
 }));

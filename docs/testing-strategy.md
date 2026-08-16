@@ -14,8 +14,8 @@ requiring PostgreSQL; database and browser checks each provision their own dispo
 | One unit file        | `pnpm test src/tests/simplify.test.ts`                                    | The named file                                                      |
 | Integration tests    | `pnpm test:integration`                                                   | `src/tests/integration/**/*.{test,spec}.{ts,tsx}`                   |
 | One integration file | `pnpm test:integration src/tests/integration/expense.integration.test.ts` | The named file                                                      |
-| Chromium E2E         | `pnpm exec playwright test --project=chromium`                            | `tests/e2e/`, including setup dependency                            |
-| One E2E file         | `pnpm exec playwright test tests/e2e/group-expense.spec.ts`               | The named file                                                      |
+| Chromium E2E         | `pnpm test:e2e -- --project=chromium`                                     | `tests/e2e/`, including setup dependency                            |
+| One E2E file         | `pnpm test:e2e -- tests/e2e/group-expense.spec.ts`                        | The named file                                                      |
 | Production build     | `pnpm build --no-lint`                                                    | Next.js production build                                            |
 
 The pull-request `Check` workflow runs formatting, lint, types, unit/component tests, and the
@@ -31,7 +31,7 @@ other URLs before tests run. CI creates a new `splitpro_harness_test` service fo
 prepares it with:
 
 ```bash
-pnpm exec prisma db push --accept-data-loss
+pnpm exec prisma migrate deploy
 ```
 
 For local work, copy `.env.example`, use a dedicated container/database/port per worktree, and

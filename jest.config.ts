@@ -13,6 +13,7 @@ const createJestConfig = nextJest({
 
 const config: Config = {
   coverageProvider: 'v8',
+  cacheDirectory: '<rootDir>/node_modules/.cache/jest',
   moduleNameMapper: {
     '^~/(.*)$': '<rootDir>/src/$1',
   },

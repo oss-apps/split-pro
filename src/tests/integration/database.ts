@@ -1,7 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 
-import { db } from '~/server/db';
-
 const TEST_DATABASE_PATTERN = /_test(?:[/?]|$)/i;
 
 export const assertTestDatabase = (url = process.env.DATABASE_URL) => {
@@ -21,6 +19,8 @@ export const assertTestDatabase = (url = process.env.DATABASE_URL) => {
 };
 
 assertTestDatabase();
+
+const db = new PrismaClient({ datasourceUrl: process.env.DATABASE_URL });
 
 export const resetDatabase = async () => {
   assertTestDatabase();

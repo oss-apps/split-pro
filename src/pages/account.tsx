@@ -6,6 +6,7 @@ import {
   DownloadCloud,
   FileDown,
   HeartHandshakeIcon,
+  KeyRound,
   Languages,
   Star,
 } from 'lucide-react';
@@ -36,6 +37,7 @@ import {
 import { api } from '~/utils/api';
 import type { NextPageWithUser } from '~/types';
 import { DebugInfo } from '~/components/Account/DebugInfo';
+import { ApiKeys } from '~/components/Account/ApiKeys';
 import { useAppStore } from '~/store/appStore';
 
 const AccountPage: NextPageWithUser<{
@@ -171,6 +173,13 @@ const AccountPage: NextPageWithUser<{
             <DownloadCloud className="size-5 text-violet-500" />
             {t('account.import_from_splitwise')}
           </AccountButton>
+
+          <ApiKeys>
+            <AccountButton>
+              <KeyRound className="size-5 text-amber-500" />
+              API keys
+            </AccountButton>
+          </ApiKeys>
 
           <DebugInfo>
             <AccountButton>

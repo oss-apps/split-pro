@@ -20,6 +20,480 @@ import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { getUserMap } from './user';
 import { FriendBalance } from '~/components/Friend/FriendBalance';
+import { paginatedResult, paginationInput } from '~/server/api/pagination';
+
+export const getGroupExpensesProcedure = groupProcedure
+  .input(z.object({ groupId: z.number() }))
+  .query(async ({ input, ctx }) => {
+    const expenses = await ctx.db.expense.findMany({
+      where: {
+        groupId: input.groupId,
+        deletedBy: null,
+        OR: [
+          {
+            NOT: {
+              splitType: SplitType.CURRENCY_CONVERSION,
+            },
+          },
+          {
+            NOT: {
+              conversionToId: null,
+            },
+          },
+        ],
+      },
+      orderBy: {
+        expenseDate: 'desc',
+      },
+      include: {
+        expenseParticipants: true,
+        paidByUser: true,
+        deletedByUser: true,
+        conversionTo: true,
+      },
+    });
+
+    return expenses;
+  });
+
+const upsertExpenses = async (expenses: z.infer<typeof createExpenseSchema>[], userId: number) => {
+  const results = [];
+  for (const input of expenses) {
+    if (input.expenseId) {
+      await validateEditExpensePermission(input.expenseId, userId);
+    }
+    if (input.splitType === SplitType.CURRENCY_CONVERSION) {
+      throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
+    }
+
+    if (input.groupId !== null) {
+      const group = await db.group.findUnique({
+        where: { id: input.groupId },
+        select: { archivedAt: true },
+      });
+      if (!group) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group not found' });
+      }
+      if (group.archivedAt) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
+      }
+    }
+
+    try {
+      const expense = input.expenseId
+        ? await editExpense(input, userId)
+        : await createExpense(input, userId);
+
+      results.push(expense);
+    } catch (error) {
+      console.error(error);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to create expense',
+      });
+    }
+  }
+
+  return results;
+};
+
+export const addOrEditExpenseProcedure = protectedProcedure
+  .input(arrayify(createExpenseSchema))
+  .mutation(async ({ input: expenses, ctx }) => upsertExpenses(expenses, ctx.session.user.id));
+
+export const addOrEditExpenseApiProcedure = protectedProcedure
+  .input(z.array(createExpenseSchema))
+  .mutation(async ({ input: expenses, ctx }) => upsertExpenses(expenses, ctx.session.user.id));
+
+export const getBalancesProcedure = protectedProcedure.query(async ({ ctx }) => {
+  const rawBalances = await db.balanceView.findMany({
+    where: {
+      userId: ctx.session.user.id,
+      friendId: { notIn: ctx.session.user.hiddenFriendIds },
+    },
+    include: {
+      group: {
+        select: {
+          simplifyDebts: true,
+        },
+      },
+    },
+  });
+
+  const processedBalances = await Promise.all(
+    rawBalances.map(async ({ friendId, currency, amount, groupId, group }) => {
+      if (!group?.simplifyDebts || null === groupId) {
+        return { friendId, currency, amount };
+      }
+
+      const allGroupBalances = await db.balanceView.findMany({
+        where: { groupId, currency },
+      });
+
+      const simplified = simplifyDebts(allGroupBalances);
+      const simplifiedBalance = simplified.find(
+        (b) =>
+          b.userId === ctx.session.user.id && b.friendId === friendId && b.currency === currency,
+      );
+
+      return { friendId, currency, amount: simplifiedBalance?.amount ?? 0n };
+    }),
+  );
+
+  const friendIds = [...new Set([...processedBalances].map((b) => b.friendId))];
+  const userMap = await getUserMap(friendIds);
+
+  const aggregated = processedBalances
+    .filter((b) => 0n !== b.amount)
+    .reduce<Map<string, { friendId: number; currency: string; amount: bigint }>>(
+      (acc, { friendId, currency, amount }) => {
+        const key = `${friendId}-${currency}`;
+        const existing = acc.get(key);
+        if (existing) {
+          existing.amount += amount;
+        } else {
+          acc.set(key, { friendId, currency, amount });
+        }
+        return acc;
+      },
+      new Map(),
+    );
+
+  const balancesByFriend = [...aggregated.values()].reduce<
+    Record<number, { currency: string; amount: bigint }[]>
+  >((acc, { friendId, currency, amount }) => {
+    if (!acc[friendId]) {
+      acc[friendId] = [];
+    }
+    acc[friendId].push({ currency, amount });
+    return acc;
+  }, {});
+
+  friendIds.forEach((friendId) => {
+    if (!balancesByFriend[friendId]) {
+      balancesByFriend[friendId] = [];
+    }
+  });
+
+  const balances = Object.entries(balancesByFriend)
+    .map(([friendId, currencies]) => ({
+      friendId: Number(friendId),
+      currencies,
+      friend: userMap[Number(friendId)]!,
+      maxAmount: currencies.reduce(
+        (max, curr) => (BigMath.abs(curr.amount) > BigMath.abs(max) ? curr.amount : max),
+        0n,
+      ),
+    }))
+    .sort((a, b) => Number(BigMath.abs(b.maxAmount) - BigMath.abs(a.maxAmount)));
+
+  return { balances };
+});
+
+export const getAllExpensesProcedure = protectedProcedure.query(async ({ ctx }) => {
+  const expenses = await db.expenseParticipant.findMany({
+    where: {
+      userId: ctx.session.user.id,
+    },
+    orderBy: {
+      expense: {
+        createdAt: 'desc',
+      },
+    },
+    include: {
+      expense: {
+        include: {
+          paidByUser: {
+            select: {
+              name: true,
+              email: true,
+              image: true,
+              id: true,
+            },
+          },
+          deletedByUser: {
+            select: {
+              name: true,
+              email: true,
+              image: true,
+              id: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return expenses;
+});
+
+export const getExpensesWithFriendProcedure = protectedProcedure
+  .input(z.object({ friendId: z.number() }))
+  .query(async ({ input, ctx }) => {
+    const expenses = await db.expense.findMany({
+      where: {
+        AND: [
+          {
+            expenseParticipants: {
+              some: {
+                userId: input.friendId,
+                amount: {
+                  not: 0n,
+                },
+              },
+            },
+          },
+          {
+            expenseParticipants: {
+              some: {
+                userId: ctx.session.user.id,
+                amount: {
+                  not: 0n,
+                },
+              },
+            },
+          },
+          {
+            OR: [
+              {
+                paidBy: ctx.session.user.id,
+              },
+              {
+                paidBy: input.friendId,
+              },
+            ],
+          },
+          {
+            deletedBy: null,
+          },
+          {
+            OR: [
+              {
+                NOT: {
+                  splitType: SplitType.CURRENCY_CONVERSION,
+                },
+              },
+              {
+                NOT: {
+                  conversionToId: null,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      orderBy: {
+        expenseDate: 'desc',
+      },
+      include: {
+        expenseParticipants: {
+          where: {
+            OR: [
+              {
+                userId: ctx.session.user.id,
+              },
+              {
+                userId: input.friendId,
+              },
+            ],
+          },
+        },
+        paidByUser: true,
+        conversionTo: true,
+        group: {
+          select: {
+            id: true,
+            name: true,
+            simplifyDebts: true,
+          },
+        },
+      },
+    });
+
+    return expenses;
+  });
+
+export const getExpenseDetailsProcedure = protectedProcedure
+  .input(z.object({ expenseId: z.string() }))
+  .query(async ({ input }) => {
+    const expense = await db.expense.findUnique({
+      where: {
+        id: input.expenseId,
+      },
+      include: {
+        expenseParticipants: {
+          include: {
+            user: true,
+          },
+        },
+        expenseNotes: true,
+        addedByUser: true,
+        paidByUser: true,
+        deletedByUser: true,
+        updatedByUser: true,
+        group: true,
+        recurrence: {
+          include: {
+            job: {
+              select: {
+                schedule: true,
+                command: true,
+              },
+            },
+          },
+        },
+        conversionTo: {
+          include: {
+            expenseParticipants: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (expense && expense.groupId !== null) {
+      const missingGroupMembers = await db.group.findUnique({
+        where: {
+          id: expense.groupId,
+        },
+        include: {
+          groupUsers: {
+            include: {
+              user: true,
+            },
+            where: {
+              userId: {
+                notIn: expense.expenseParticipants.map((ep) => ep.userId),
+              },
+            },
+          },
+        },
+      });
+      missingGroupMembers?.groupUsers.forEach((gu) => {
+        expense.expenseParticipants.push({
+          userId: gu.user.id,
+          expenseId: expense.id,
+          user: gu.user,
+          amount: 0n,
+        });
+      });
+    }
+
+    if (expense?.recurrence?.job.schedule) {
+      expense.recurrence.job.schedule = expense.recurrence.job.schedule.replaceAll('$', 'L');
+    }
+
+    return expense;
+  });
+
+/* ── API-specific paginated variants (offset-based) ─────────────────────── */
+
+export const getAllExpensesApiProcedure = protectedProcedure
+  .input(paginationInput.optional())
+  .query(async ({ input, ctx }) => {
+    const limit = input?.limit ?? 20;
+    const offset = input?.offset ?? 0;
+    const where = { userId: ctx.session.user.id };
+
+    const [items, total] = await Promise.all([
+      db.expenseParticipant.findMany({
+        where,
+        orderBy: { expense: { createdAt: 'desc' } },
+        include: {
+          expense: {
+            include: {
+              paidByUser: { select: { name: true, email: true, image: true, id: true } },
+              deletedByUser: { select: { name: true, email: true, image: true, id: true } },
+            },
+          },
+        },
+        take: limit,
+        skip: offset,
+      }),
+      db.expenseParticipant.count({ where }),
+    ]);
+
+    return paginatedResult(items, total, input ?? undefined);
+  });
+
+export const getExpensesWithFriendApiProcedure = protectedProcedure
+  .input(z.object({ friendId: z.number() }).extend(paginationInput.shape))
+  .query(async ({ input, ctx }) => {
+    const limit = input.limit ?? 20;
+    const offset = input.offset ?? 0;
+    const where = {
+      AND: [
+        { expenseParticipants: { some: { userId: input.friendId, amount: { not: 0n } } } },
+        { expenseParticipants: { some: { userId: ctx.session.user.id, amount: { not: 0n } } } },
+        { OR: [{ paidBy: ctx.session.user.id }, { paidBy: input.friendId }] },
+        { deletedBy: null },
+        {
+          OR: [
+            { NOT: { splitType: SplitType.CURRENCY_CONVERSION } },
+            { NOT: { conversionToId: null } },
+          ],
+        },
+      ],
+    };
+
+    const [items, total] = await Promise.all([
+      db.expense.findMany({
+        where,
+        orderBy: { expenseDate: 'desc' },
+        include: {
+          expenseParticipants: {
+            where: {
+              OR: [{ userId: ctx.session.user.id }, { userId: input.friendId }],
+            },
+          },
+          paidByUser: true,
+          conversionTo: true,
+          group: { select: { id: true, name: true, simplifyDebts: true } },
+        },
+        take: limit,
+        skip: offset,
+      }),
+      db.expense.count({ where }),
+    ]);
+
+    return paginatedResult(items, total, input);
+  });
+
+export const getGroupExpensesApiProcedure = groupProcedure
+  .input(z.object({ groupId: z.number() }).extend(paginationInput.shape))
+  .query(async ({ input, ctx }) => {
+    const limit = input.limit ?? 20;
+    const offset = input.offset ?? 0;
+    const where = {
+      groupId: input.groupId,
+      deletedBy: null,
+      OR: [
+        { NOT: { splitType: SplitType.CURRENCY_CONVERSION } },
+        { NOT: { conversionToId: null } },
+      ],
+    };
+
+    const [items, total] = await Promise.all([
+      ctx.db.expense.findMany({
+        where,
+        orderBy: { expenseDate: 'desc' },
+        include: {
+          expenseParticipants: true,
+          paidByUser: true,
+          deletedByUser: true,
+          conversionTo: true,
+        },
+        take: limit,
+        skip: offset,
+      }),
+      ctx.db.expense.count({ where }),
+    ]);
+
+    return paginatedResult(items, total, input);
+  });
 
 export const expenseRouter = createTRPCRouter({
   getCumulatedBalances: protectedProcedure.query(async ({ ctx }) => {
@@ -42,135 +516,9 @@ export const expenseRouter = createTRPCRouter({
     return { youOwe, youGet };
   }),
 
-  getBalances: protectedProcedure.query(async ({ ctx }) => {
-    const rawBalances = await db.balanceView.findMany({
-      where: {
-        userId: ctx.session.user.id,
-        friendId: { notIn: ctx.session.user.hiddenFriendIds },
-      },
-      include: {
-        group: {
-          select: {
-            simplifyDebts: true,
-          },
-        },
-      },
-    });
+  getBalances: getBalancesProcedure,
 
-    const processedBalances = await Promise.all(
-      rawBalances.map(async ({ friendId, currency, amount, groupId, group }) => {
-        if (!group?.simplifyDebts || null === groupId) {
-          return { friendId, currency, amount };
-        }
-
-        const allGroupBalances = await db.balanceView.findMany({
-          where: { groupId, currency },
-        });
-
-        const simplified = simplifyDebts(allGroupBalances);
-        const simplifiedBalance = simplified.find(
-          (b) =>
-            b.userId === ctx.session.user.id && b.friendId === friendId && b.currency === currency,
-        );
-
-        return { friendId, currency, amount: simplifiedBalance?.amount ?? 0n };
-      }),
-    );
-
-    // Group by friendId and fetch user details
-    const friendIds = [...new Set([...processedBalances].map((b) => b.friendId))];
-    const userMap = await getUserMap(friendIds);
-
-    // Aggregate by (friendId, currency) since same pair can appear in multiple groups
-    const aggregated = processedBalances
-      .filter((b) => 0n !== b.amount)
-      .reduce<Map<string, { friendId: number; currency: string; amount: bigint }>>(
-        (acc, { friendId, currency, amount }) => {
-          const key = `${friendId}-${currency}`;
-          const existing = acc.get(key);
-          if (existing) {
-            existing.amount += amount;
-          } else {
-            acc.set(key, { friendId, currency, amount });
-          }
-          return acc;
-        },
-        new Map(),
-      );
-
-    const balancesByFriend = [...aggregated.values()].reduce<
-      Record<number, { currency: string; amount: bigint }[]>
-    >((acc, { friendId, currency, amount }) => {
-      if (!acc[friendId]) {
-        acc[friendId] = [];
-      }
-      acc[friendId].push({ currency, amount });
-      return acc;
-    }, {});
-
-    friendIds.forEach((friendId) => {
-      if (!balancesByFriend[friendId]) {
-        balancesByFriend[friendId] = [];
-      }
-    });
-
-    const balances = Object.entries(balancesByFriend)
-      .map(([friendId, currencies]) => ({
-        friendId: Number(friendId),
-        currencies,
-        friend: userMap[Number(friendId)]!,
-        maxAmount: currencies.reduce(
-          (max, curr) => (BigMath.abs(curr.amount) > BigMath.abs(max) ? curr.amount : max),
-          0n,
-        ),
-      }))
-      .sort((a, b) => Number(BigMath.abs(b.maxAmount) - BigMath.abs(a.maxAmount)));
-
-    return { balances };
-  }),
-
-  addOrEditExpense: protectedProcedure
-    .input(arrayify(createExpenseSchema))
-    .mutation(async ({ input: expenses, ctx }) => {
-      const results = [];
-      for (const input of expenses) {
-        if (input.expenseId) {
-          await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
-        }
-        if (input.splitType === SplitType.CURRENCY_CONVERSION) {
-          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
-        }
-
-        if (input.groupId !== null) {
-          const group = await db.group.findUnique({
-            where: { id: input.groupId },
-            select: { archivedAt: true },
-          });
-          if (!group) {
-            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group not found' });
-          }
-          if (group.archivedAt) {
-            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
-          }
-        }
-
-        try {
-          const expense = input.expenseId
-            ? await editExpense(input, ctx.session.user.id)
-            : await createExpense(input, ctx.session.user.id);
-
-          results.push(expense);
-        } catch (error) {
-          console.error(error);
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'Failed to create expense',
-          });
-        }
-      }
-
-      return results;
-    }),
+  addOrEditExpense: addOrEditExpenseProcedure,
 
   addOrEditCurrencyConversion: protectedProcedure
     .input(createCurrencyConversionSchema)
@@ -228,238 +576,13 @@ export const expenseRouter = createTRPCRouter({
       }
     }),
 
-  getExpensesWithFriend: protectedProcedure
-    .input(z.object({ friendId: z.number() }))
-    .query(async ({ input, ctx }) => {
-      const expenses = await db.expense.findMany({
-        where: {
-          AND: [
-            {
-              expenseParticipants: {
-                some: {
-                  userId: input.friendId,
-                  amount: {
-                    not: 0n,
-                  },
-                },
-              },
-            },
-            {
-              expenseParticipants: {
-                some: {
-                  userId: ctx.session.user.id,
-                  amount: {
-                    not: 0n,
-                  },
-                },
-              },
-            },
-            {
-              OR: [
-                {
-                  paidBy: ctx.session.user.id,
-                },
-                {
-                  paidBy: input.friendId,
-                },
-              ],
-            },
-            {
-              deletedBy: null,
-            },
-            {
-              OR: [
-                {
-                  NOT: {
-                    splitType: SplitType.CURRENCY_CONVERSION,
-                  },
-                },
-                {
-                  NOT: {
-                    conversionToId: null,
-                  },
-                },
-              ],
-            },
-          ],
-        },
-        orderBy: {
-          expenseDate: 'desc',
-        },
-        include: {
-          expenseParticipants: {
-            where: {
-              OR: [
-                {
-                  userId: ctx.session.user.id,
-                },
-                {
-                  userId: input.friendId,
-                },
-              ],
-            },
-          },
-          paidByUser: true,
-          conversionTo: true,
-          group: {
-            select: {
-              id: true,
-              name: true,
-              simplifyDebts: true,
-            },
-          },
-        },
-      });
+  getExpensesWithFriend: getExpensesWithFriendProcedure,
 
-      return expenses;
-    }),
+  getGroupExpenses: getGroupExpensesProcedure,
 
-  getGroupExpenses: groupProcedure
-    .input(z.object({ groupId: z.number() }))
-    .query(async ({ input, ctx }) => {
-      const expenses = await ctx.db.expense.findMany({
-        where: {
-          groupId: input.groupId,
-          deletedBy: null,
-          OR: [
-            {
-              NOT: {
-                splitType: SplitType.CURRENCY_CONVERSION,
-              },
-            },
-            {
-              NOT: {
-                conversionToId: null,
-              },
-            },
-          ],
-        },
-        orderBy: {
-          expenseDate: 'desc',
-        },
-        include: {
-          expenseParticipants: true,
-          paidByUser: true,
-          deletedByUser: true,
-          conversionTo: true,
-        },
-      });
+  getExpenseDetails: getExpenseDetailsProcedure,
 
-      return expenses;
-    }),
-
-  getExpenseDetails: protectedProcedure
-    .input(z.object({ expenseId: z.string() }))
-    .query(async ({ input }) => {
-      const expense = await db.expense.findUnique({
-        where: {
-          id: input.expenseId,
-        },
-        include: {
-          expenseParticipants: {
-            include: {
-              user: true,
-            },
-          },
-          expenseNotes: true,
-          addedByUser: true,
-          paidByUser: true,
-          deletedByUser: true,
-          updatedByUser: true,
-          group: true,
-          recurrence: {
-            include: {
-              job: {
-                select: {
-                  schedule: true,
-                  command: true,
-                },
-              },
-            },
-          },
-          conversionTo: {
-            include: {
-              expenseParticipants: {
-                include: {
-                  user: true,
-                },
-              },
-            },
-          },
-        },
-      });
-
-      if (expense && expense.groupId !== null) {
-        const missingGroupMembers = await db.group.findUnique({
-          where: {
-            id: expense.groupId,
-          },
-          include: {
-            groupUsers: {
-              include: {
-                user: true,
-              },
-              where: {
-                userId: {
-                  notIn: expense.expenseParticipants.map((ep) => ep.userId),
-                },
-              },
-            },
-          },
-        });
-        missingGroupMembers?.groupUsers.forEach((gu) => {
-          expense.expenseParticipants.push({
-            userId: gu.user.id,
-            expenseId: expense.id,
-            user: gu.user,
-            amount: 0n,
-          });
-        });
-      }
-
-      if (expense?.recurrence?.job.schedule) {
-        expense.recurrence.job.schedule = expense.recurrence.job.schedule.replaceAll('$', 'L');
-      }
-
-      return expense;
-    }),
-
-  getAllExpenses: protectedProcedure.query(async ({ ctx }) => {
-    const expenses = await db.expenseParticipant.findMany({
-      where: {
-        userId: ctx.session.user.id,
-      },
-      orderBy: {
-        expense: {
-          createdAt: 'desc',
-        },
-      },
-      include: {
-        expense: {
-          include: {
-            paidByUser: {
-              select: {
-                name: true,
-                email: true,
-                image: true,
-                id: true,
-              },
-            },
-            deletedByUser: {
-              select: {
-                name: true,
-                email: true,
-                image: true,
-                id: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    return expenses;
-  }),
+  getAllExpenses: getAllExpensesProcedure,
 
   getRecurringExpenses: protectedProcedure.query(async ({ ctx }) => {
     const recurrences = await db.expenseRecurrence.findMany({

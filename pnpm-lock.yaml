@@ -55,6 +55,9 @@ importers:
       '@trpc/next':
         specifier: ^11.2.0
         version: 11.8.0(@tanstack/react-query@5.90.12(react@19.2.1))(@trpc/client@11.8.0(@trpc/server@11.8.0(typescript@5.7.3))(typescript@5.7.3))(@trpc/react-query@11.8.0(@tanstack/react-query@5.90.12(react@19.2.1))(@trpc/client@11.8.0(@trpc/server@11.8.0(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.8.0(typescript@5.7.3))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(typescript@5.7.3))(@trpc/server@11.8.0(typescript@5.7.3))(next@15.5.18(@babel/core@7.28.3)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(typescript@5.7.3)
+      '@trpc/openapi':
+        specifier: 11.18.0-alpha
+        version: 11.18.0-alpha(@trpc/server@11.8.0(typescript@5.7.3))(typescript@5.7.3)(zod@3.25.76)
       '@trpc/react-query':
         specifier: ^11.2.0
         version: 11.8.0(@tanstack/react-query@5.90.12(react@19.2.1))(@trpc/client@11.8.0(@trpc/server@11.8.0(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.8.0(typescript@5.7.3))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(typescript@5.7.3)
@@ -2157,6 +2160,20 @@ packages:
       '@trpc/react-query':
         optional: true
 
+  '@trpc/openapi@11.18.0-alpha':
+    resolution: {integrity: sha512-BdtOEd8v5SIs5j0ZF5q4upR44yLM6t5N6o8+NX7qlBVXr/05yzoKJZC4b6z2z2nER70CDWfl49G68leiXjauHQ==}
+    hasBin: true
+    peerDependencies:
+      '@hey-api/openapi-ts': '>=0.94.5'
+      '@trpc/server': 11.18.0
+      typescript: '>=5.7.2'
+      zod: '>=4.0.0'
+    peerDependenciesMeta:
+      '@hey-api/openapi-ts':
+        optional: true
+      zod:
+        optional: true
+
   '@trpc/react-query@11.8.0':
     resolution: {integrity: sha512-zJG22PqhGUBq6ke58McGxRBGWGDTHlmsgpxp/rQx8iT2yi0Ja1H2/UcSsjZ/MG65DhCfpKvMVH0OVivTn9FWwA==}
     peerDependencies:
@@ -3635,6 +3652,9 @@ packages:
   onetime@7.0.0:
     resolution: {integrity: sha512-VXJjc87FScF88uafS3JllDgvAm+c/Slfz06lorj2uAY34rlUu0Nt+v8wreiImcrgAjjIHp1rXpTDlLOGw29WwQ==}
     engines: {node: '>=18'}
+
+  openapi-types@12.1.3:
+    resolution: {integrity: sha512-N4YtSYJqghVu4iek2ZUvcN/0aqH1kRDuNqzcycDxhOUpg7GdvLa2F3DgS6yBNhInhv2r/6I0Flkn7CqL8+nIcw==}
 
   openid-client@5.7.1:
     resolution: {integrity: sha512-jDBPgSVfTnkIh71Hg9pRvtJc6wTwqjRkN88+gCFtYWrlP4Yx2Dsrow8uPi3qLr/aeymPF3o2+dS+wOpglK04ew==}
@@ -6261,6 +6281,14 @@ snapshots:
       '@tanstack/react-query': 5.90.12(react@19.2.1)
       '@trpc/react-query': 11.8.0(@tanstack/react-query@5.90.12(react@19.2.1))(@trpc/client@11.8.0(@trpc/server@11.8.0(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.8.0(typescript@5.7.3))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(typescript@5.7.3)
 
+  '@trpc/openapi@11.18.0-alpha(@trpc/server@11.8.0(typescript@5.7.3))(typescript@5.7.3)(zod@3.25.76)':
+    dependencies:
+      '@trpc/server': 11.8.0(typescript@5.7.3)
+      openapi-types: 12.1.3
+      typescript: 5.7.3
+    optionalDependencies:
+      zod: 3.25.76
+
   '@trpc/react-query@11.8.0(@tanstack/react-query@5.90.12(react@19.2.1))(@trpc/client@11.8.0(@trpc/server@11.8.0(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.8.0(typescript@5.7.3))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(typescript@5.7.3)':
     dependencies:
       '@tanstack/react-query': 5.90.12(react@19.2.1)
@@ -7878,6 +7906,8 @@ snapshots:
   onetime@7.0.0:
     dependencies:
       mimic-function: 5.0.1
+
+  openapi-types@12.1.3: {}
 
   openid-client@5.7.1:
     dependencies:

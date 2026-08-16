@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build --no-lint",
+    "build": "pnpm gen:openapi && next build --no-lint",
     "just-build": "next build --no-lint",
+    "gen:openapi": "tsx scripts/generate-openapi.ts",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:dev": "prisma migrate dev",
@@ -37,6 +38,7 @@
     "@tanstack/react-query": "^5.79.2",
     "@trpc/client": "^11.2.0",
     "@trpc/next": "^11.2.0",
+    "@trpc/openapi": "11.18.0-alpha",
     "@trpc/react-query": "^11.2.0",
     "@trpc/server": "^11.2.0",
     "boring-avatars": "^1.10.1",

@@ -46,12 +46,24 @@ export const groupRouter = createTRPCRouter({
                 user: true,
               },
             },
+            groupDefaultSplit: true,
           },
         },
       },
     });
 
-    return groups;
+    return groups.map((groupUser) => ({
+      ...groupUser,
+      group: {
+        ...groupUser.group,
+        defaultSplit: groupUser.group.groupDefaultSplit
+          ? parseSerializedDefaultSplit(
+              groupUser.group.groupDefaultSplit.splitType,
+              groupUser.group.groupDefaultSplit.shares,
+            )
+          : null,
+      },
+    }));
   }),
 
   getAllGroupsWithBalances: protectedProcedure

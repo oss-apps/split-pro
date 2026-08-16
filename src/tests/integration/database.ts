@@ -40,6 +40,8 @@ export const resetDatabase = async () => {
     db.account.deleteMany(),
     db.user.deleteMany(),
   ]);
+  await db.$executeRawUnsafe('DELETE FROM cron.job_run_details');
+  await db.$executeRawUnsafe('DELETE FROM cron.job');
 };
 
 export const closeDatabase = async () => db.$disconnect();

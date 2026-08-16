@@ -176,4 +176,4 @@ We are grateful for the support of our sponsors.
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=oss-apps/split-pro&type=Date)](https://star-history.com/#oss-apps/split-pro&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=oss-apps/split-pro&type=Date)](https://star-history.dera.page/#oss-apps/split-pro&Date)

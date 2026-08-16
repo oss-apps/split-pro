@@ -27,6 +27,38 @@ This will start the PostgreSQL database and the Splitpro application containers.
 
 6. Access the Splitpro application by visiting `http://localhost:3000` in your web browser.
 
+## Rootless application deployment
+
+The image includes a non-root `node` user, but keeps the default Dockerfile user unchanged for
+compatibility. To run only the Splitpro application as that user, add `user: node` to the
+`splitpro` service in `docker/prod/compose.yml`:
+
+```yaml
+services:
+  splitpro:
+    user: node
+```
+
+You can use the numeric identity instead:
+
+```yaml
+services:
+  splitpro:
+    user: '1000:1000'
+```
+
+Receipts are stored in `/app/uploads`. The image prepares this directory for the `node` user, so
+new named volumes work without additional setup. If you use a bind mount, make sure the host
+directory is writable by UID/GID `1000:1000` before starting the application:
+
+```bash
+mkdir -p uploads
+chown -R 1000:1000 uploads
+```
+
+This runs the application process without root privileges. Running Docker itself in rootless mode
+is a separate host-level configuration.
+
 ### Minimal .env example
 
 ```bash

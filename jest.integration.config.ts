@@ -7,12 +7,15 @@ const createJestConfig = nextJest({
 
 const config: Config = {
   coverageProvider: 'v8',
+  cacheDirectory: '/tmp/splitpro-jest-cache',
+  cache: false,
   moduleNameMapper: {
     '^~/(.*)$': '<rootDir>/src/$1',
   },
   setupFilesAfterEnv: ['<rootDir>/src/tests/setup/integration.ts'],
   testEnvironment: 'node',
   testMatch: ['<rootDir>/src/tests/integration/**/*.{test,spec}.{ts,tsx}'],
+  maxWorkers: 1,
 };
 
 export default createJestConfig(config);

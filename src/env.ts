@@ -17,7 +17,12 @@ export const env = createEnv({
         'You forgot to change the default URL',
       ),
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-    TEST_MODE: z.boolean().default(false),
+    TEST_MODE: z
+      .boolean()
+      .default(false)
+      .refine((testMode) => !testMode || 'production' !== process.env.NODE_ENV, {
+        message: 'TEST_MODE cannot be enabled in production',
+      }),
     DOCKER_OUTPUT: z.boolean().default(false),
     NEXTAUTH_SECRET: 'production' === process.env.NODE_ENV ? z.string() : z.string().optional(),
     NEXTAUTH_URL: z.preprocess(

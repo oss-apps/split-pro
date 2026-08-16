@@ -1,0 +1,85 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "เกม",
+        "movies": "ภาพยนตร์",
+        "music": "ดนตรี",
+        "other": "ความบันเทิง",
+        "sports": "กีฬา"
+      },
+      "name": "ความบันเทิง"
+    },
+    "food": {
+      "items": {
+        "diningOut": "ทานข้าวนอกบ้าน",
+        "groceries": "ของกินของใช้",
+        "liquor": "สุรา",
+        "other": "อาหารและเครื่องดื่ม"
+      },
+      "name": "อาหารและเครื่องดื่ม"
+    },
+    "general": {
+      "items": {
+        "general": "ทั่วไป",
+        "other": "ทั่วไป"
+      },
+      "name": "ทั่วไป"
+    },
+    "home": {
+      "items": {
+        "electronics": "เครื่องใช้ไฟฟ้า",
+        "furniture": "เฟอร์นิเจอร์",
+        "maintenance": "ซ่อมบำรุง",
+        "mortgage": "ค่าจำนอง",
+        "other": "บ้าน",
+        "pets": "สัตว์เลี้ยง",
+        "rent": "ค่าเช่าบ้าน",
+        "services": "ค่าบริการ",
+        "supplies": "ของใช้ในบ้าน"
+      },
+      "name": "บ้าน"
+    },
+    "life": {
+      "items": {
+        "childcare": "ค่าดูแลเด็ก",
+        "clothing": "เครื่องนุ่งห่ม",
+        "education": "การศึกษา",
+        "gifts": "ของขวัญ",
+        "insurance": "ค่าประกัน",
+        "medical": "รักษาพยาบาล",
+        "other": "สุขภาพ",
+        "taxes": "ภาษี"
+      },
+      "name": "สุขภาพ"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "จักรยาน",
+        "bus": "รถประจำทาง",
+        "car": "รถยนต์",
+        "fuel": "ค่าน้ำมัน",
+        "hotel": "โรงแรม",
+        "other": "เดินทาง",
+        "parking": "ค่าจอดรถ",
+        "plane": "เครื่องบิน",
+        "taxi": "รถแท๊กซี่",
+        "train": "รถไฟ"
+      },
+      "name": "เดินทาง"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "ทำความสะอาด",
+        "electricity": "ไฟฟ้า",
+        "gas": "ก๊าซหุงต้ม",
+        "internet": "อินเตอร์เน็ต",
+        "other": "สาธารณูปโภค",
+        "phone": "โทรศัพท์",
+        "trash": "ขยะ",
+        "water": "น้ำ"
+      },
+      "name": "สาธารณูปโภค"
+    }
+  }
+}

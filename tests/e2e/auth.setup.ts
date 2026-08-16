@@ -8,7 +8,9 @@ const authDir = join(process.cwd(), 'playwright', '.auth');
 const email = `playwright-${Date.now()}-${randomBytes(4).toString('hex')}@example.test`;
 
 setup('create database-backed session', async () => {
-  const user = await db.user.create({ data: { email, name: 'Playwright Owner', preferredLanguage: 'en' } });
+  const user = await db.user.create({
+    data: { email, name: 'Playwright Owner', preferredLanguage: 'en' },
+  });
   const sessionToken = randomBytes(32).toString('hex');
   await db.session.create({
     data: { sessionToken, userId: user.id, expires: new Date(Date.now() + 86_400_000) },
@@ -18,7 +20,16 @@ setup('create database-backed session', async () => {
   await writeFile(
     join(authDir, 'user.json'),
     JSON.stringify({
-      cookies: [{ name: 'next-auth.session-token', value: sessionToken, domain: '127.0.0.1', path: '/', httpOnly: true, sameSite: 'Lax' }],
+      cookies: [
+        {
+          name: 'next-auth.session-token',
+          value: sessionToken,
+          domain: '127.0.0.1',
+          path: '/',
+          httpOnly: true,
+          sameSite: 'Lax',
+        },
+      ],
       origins: [],
     }),
   );

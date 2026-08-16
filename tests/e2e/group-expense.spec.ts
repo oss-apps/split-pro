@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { expect, test } from './fixtures';
 
 test('creates an isolated group and records an expense', async ({ page, uniqueName }) => {
   await page.goto('/groups');
@@ -10,7 +10,10 @@ test('creates an isolated group and records an expense', async ({ page, uniqueNa
   await page.getByRole('link', { name: /add expense/i }).click();
   await page.getByPlaceholder(/description/i).fill(`${uniqueName} expense`);
   await page.getByPlaceholder(/amount/i).fill('12.34');
-  await page.getByRole('button', { name: /^save$/i }).last().click();
+  await page
+    .getByRole('button', { name: /^save$/i })
+    .last()
+    .click();
   await expect(page).toHaveURL(/\/groups\/\d+\/expenses\//);
   await expect(page.getByText(`${uniqueName} expense`)).toBeVisible();
 });

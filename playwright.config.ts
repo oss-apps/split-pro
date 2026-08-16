@@ -1,14 +1,15 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const port = 3176;
-const databaseUrl = process.env.E2E_DATABASE_URL ?? 'postgresql://postgres:strong-password@localhost:5432/splitpro_test';
+const databaseUrl =
+  process.env.E2E_DATABASE_URL ??
+  'postgresql://postgres:strong-password@localhost:5432/splitpro_test';
 
 if (!databaseUrl.includes('_test')) {
   throw new Error('E2E_DATABASE_URL must point at a disposable *_test database');
 }
 
 process.env.DATABASE_URL = databaseUrl;
-process.env.NODE_ENV = 'test';
 process.env.TEST_MODE = '1';
 process.env.NEXTAUTH_SECRET ??= 'playwright-test-secret';
 process.env.NEXTAUTH_URL = `http://127.0.0.1:${port}`;

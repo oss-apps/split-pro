@@ -4,6 +4,7 @@ import { clsx } from 'clsx';
 import { CheckIcon, SendIcon } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'next-i18next';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '~/components/ui/button';
@@ -73,12 +74,13 @@ const AddMembers: React.FC<{
           onSuccess: () => {
             utils.group.getGroupDetails.invalidate({ groupId: group.id }).catch(console.error);
           },
+          onError: () => toast.error(t('errors.add_member_failed')),
         },
       );
       setOpen(false);
       setUserIds({});
     },
-    [addMembersMutation, group.id, utils],
+    [addMembersMutation, group.id, t, utils],
   );
 
   const isEmail = z.string().email().safeParse(inputValue);

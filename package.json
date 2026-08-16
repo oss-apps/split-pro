@@ -22,8 +22,11 @@
     "dx": "pnpm i && pnpm dx:up && pnpm db:dev",
     "dx:up": "docker compose -f docker/dev/compose.yml --env-file .env up -d",
     "dx:down": "docker compose -f docker/dev/compose.yml down",
-    "test": "jest",
+    "test": "jest --config jest.config.ts",
     "test:watch": "jest --watch",
+    "test:integration": "jest --config jest.integration.config.ts",
+    "test:integration:watch": "jest --config jest.integration.config.ts --watch",
+    "test:e2e": "PWTEST_CACHE_DIR=node_modules/.cache/playwright playwright test",
     "prepare": "husky"
   },
   "dependencies": {
@@ -79,9 +82,13 @@
   },
   "devDependencies": {
     "@faker-js/faker": "10.1.0",
+    "@playwright/test": "^1.55.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@tailwindcss/postcss": "^4.1.10",
     "@types/formidable": "^3.4.6",
-    "@types/jest": "^29.5.14",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.15.21",
     "@types/nodemailer": "^8.0.0",
     "@types/react": "19.2.1",

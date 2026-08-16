@@ -1,0 +1,69 @@
+name: E2E Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    name: Chromium E2E tests
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://splitpro:test-password@localhost:5432/splitpro_harness_test
+      E2E_DATABASE_URL: postgresql://splitpro:test-password@localhost:5432/splitpro_harness_test
+      SKIP_ENV_VALIDATION: '1'
+    services:
+      postgres:
+        image: ossapps/postgres:18.3-trixie
+        env:
+          POSTGRES_USER: splitpro
+          POSTGRES_PASSWORD: test-password
+          POSTGRES_DB: splitpro_harness_test
+        options: >-
+          --health-cmd "pg_isready -U splitpro -d splitpro_harness_test"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 15
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.16.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Prepare disposable database
+        run: pnpm exec prisma migrate deploy
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run Chromium E2E tests
+        run: pnpm test:e2e -- --project=chromium
+
+      - name: Upload Playwright artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          path: |
+            test-results/e2e
+            playwright-report
+          if-no-files-found: ignore

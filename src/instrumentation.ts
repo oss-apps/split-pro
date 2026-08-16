@@ -18,8 +18,10 @@ export async function register() {
 
     const { checkRecurrenceNotifications } =
       await import('./server/api/services/notificationService');
-    console.log('Starting recurrent expense notification checking...');
-    setTimeout(checkRecurrenceNotifications, 1000 * 10); // Start after 10 seconds
+    if (!env.TEST_MODE) {
+      console.log('Starting recurrent expense notification checking...');
+      setTimeout(checkRecurrenceNotifications, 1000 * 10); // Start after 10 seconds
+    }
   }
 
   if (process.env.NEXT_RUNTIME !== 'nodejs') {
@@ -27,7 +29,7 @@ export async function register() {
     return;
   }
 
-  if (env.CLEAR_CACHE_CRON_RULE && env.CACHE_RETENTION_INTERVAL) {
+  if (!env.TEST_MODE && env.CLEAR_CACHE_CRON_RULE && env.CACHE_RETENTION_INTERVAL) {
     // Create cron jobs
     console.log('Setting up cron jobs...');
 

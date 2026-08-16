@@ -134,6 +134,7 @@
     "email_required": "Email is required",
     "feedback_min_length": "Feedback should be at least 10 characters",
     "feedback_required": "Feedback is required",
+    "add_member_failed": "Failed to add member to the group",
     "group_name_update_failed": "Error in updating group name",
     "import_failed": "Error importing file",
     "invalid_currency_code": "Invalid currency code {{code}}",

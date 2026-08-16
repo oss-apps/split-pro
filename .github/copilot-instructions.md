@@ -258,3 +258,14 @@ library/API documentation. This means you should automatically use the Context7 
 tools to resolve library id and get library docs without me having to explicitly ask.
 
 Do not generate documentation or tests if not explicitly requested.
+
+## Testing Harness Rules
+
+- Keep fast checks independent from PostgreSQL integration and Chromium E2E jobs.
+- Select unit/component tests with `pnpm test`; select database tests with
+  `pnpm test:integration`; select browser tests with `pnpm exec playwright test --project=chromium`.
+- Integration and E2E commands may only use a disposable local database whose name ends in
+  `_test`. Never run reset, push, or destructive test setup against shared or production data.
+- Read `docs/testing-strategy.md` before changing test selection, CI workflows, or database setup.
+- When browser tests fail, inspect `test-results/e2e` and `playwright-report` artifacts before
+  changing application code.

@@ -1,0 +1,22 @@
+name: split-pro-test
+
+services:
+  postgres:
+    image: ossapps/postgres:18.3-trixie
+    container_name: splitpro-testing-harness-db
+    environment:
+      POSTGRES_USER: splitpro
+      POSTGRES_PASSWORD: test-password
+      POSTGRES_DB: splitpro_harness_test
+    command: >-
+      postgres
+      -c shared_preload_libraries=pg_cron
+      -c cron.database_name=splitpro_harness_test
+      -c cron.timezone=UTC
+    ports:
+      - '55439:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U splitpro -d splitpro_harness_test']
+      interval: 2s
+      timeout: 5s
+      retries: 15

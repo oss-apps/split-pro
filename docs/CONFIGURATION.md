@@ -13,6 +13,8 @@ This document lists SplitPro environment variables and how they are used. The au
 - `POSTGRES_PORT`: Database port.
 - `DATABASE_URL`: Full connection string used by the app.
 
+`POSTGRES_USER` may be a regular (non-superuser) role when `pg_cron` is preinstalled. See [docker/README.md](../docker/README.md).
+
 ### Authentication (NextAuth)
 
 - `NEXTAUTH_SECRET`: Secret used to sign tokens. Generate with `openssl rand -base64 32`.

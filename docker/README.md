@@ -47,7 +47,7 @@ There are of course other ways to run Splitpro with Docker. The above is the rec
 
 If you prefer a more minimal setup, you can run the Splitpro application in a standalone container and connect it to an external PostgreSQL database. In this case, you can pass the environment variables directly when running the container.
 
-Just make sure you install `pg_cron` if you want to use recurring transactions and currency/bank cache cleaning.
+Just make sure you install `pg_cron` if you want to use recurring transactions and currency/bank cache cleaning. If your database user is not a superuser, see the [External / managed PostgreSQL](#external--managed-postgresql-non-superuser) section below.
 
 ### Kubernetes
 
@@ -90,6 +90,33 @@ See [docs/AUTHENTICATION.md](../docs/AUTHENTICATION.md) for details.
 Recurring expenses require PostgreSQL with `pg_cron`. The example compose file already enables it. If you use another database image, you must enable the extension yourself.
 
 See [docs/RECURRING_TRANSACTIONS.md](../docs/RECURRING_TRANSACTIONS.md).
+
+### External / managed PostgreSQL (non-superuser)
+
+SplitPro does not require superuser access at runtime. A regular database role is sufficient, provided `pg_cron` is installed and configured by your database administrator beforehand.
+
+**One-time setup (run as superuser / DB admin):**
+
+```sql
+CREATE EXTENSION pg_cron;
+GRANT USAGE ON SCHEMA cron TO <app_user>;
+GRANT SELECT, REFERENCES ON cron.job TO <app_user>;
+GRANT SELECT ON cron.job_run_details TO <app_user>;
+```
+
+**Required PostgreSQL configuration** (`postgresql.conf`):
+
+```
+shared_preload_libraries = 'pg_cron'
+cron.database_name = '<your_splitpro_db>'
+cron.timezone = 'UTC'
+```
+
+Restart PostgreSQL after changing these settings.
+
+The migration that sets up recurring expenses uses `CREATE EXTENSION IF NOT EXISTS pg_cron`, which is a no-op when the extension is already installed — no superuser privileges are needed in that case. If the extension is missing and the app user is not a superuser, PostgreSQL will reject the `CREATE EXTENSION` call; ask your DB administrator to install it beforehand using the commands above.
+
+Jobs created by SplitPro run as the app user and are scoped to that user via `pg_cron`'s row-level security, so the app can only manage its own jobs.
 
 ## Receipt storage
 

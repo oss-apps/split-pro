@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
 import { simplifyDebts } from '~/lib/simplify';
+import { getDuplicateGroupMemberIds } from '~/lib/groupMembership';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { sendGroupSimplifyDebtsToggleNotification } from '~/server/api/services/notificationService';
 import { SplitType } from '@prisma/client';
@@ -46,12 +47,24 @@ export const groupRouter = createTRPCRouter({
                 user: true,
               },
             },
+            groupDefaultSplit: true,
           },
         },
       },
     });
 
-    return groups;
+    return groups.map((groupUser) => ({
+      ...groupUser,
+      group: {
+        ...groupUser.group,
+        defaultSplit: groupUser.group.groupDefaultSplit
+          ? parseSerializedDefaultSplit(
+              groupUser.group.groupDefaultSplit.splitType,
+              groupUser.group.groupDefaultSplit.shares,
+            )
+          : null,
+      },
+    }));
   }),
 
   getAllGroupsWithBalances: protectedProcedure
@@ -187,6 +200,25 @@ export const groupRouter = createTRPCRouter({
   addMembers: groupProcedure
     .input(z.object({ userIds: z.array(z.number()) }))
     .mutation(async ({ input, ctx }) => {
+      const existingMembers = await ctx.db.groupUser.findMany({
+        where: {
+          groupId: input.groupId,
+          userId: { in: input.userIds },
+        },
+        select: { userId: true },
+      });
+      const duplicateUserIds = getDuplicateGroupMemberIds(
+        existingMembers.map((member) => member.userId),
+        input.userIds,
+      );
+
+      if (duplicateUserIds.length > 0) {
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'One or more selected users are already members of this group',
+        });
+      }
+
       const groupUsers = await ctx.db.groupUser.createMany({
         data: input.userIds.map((userId) => ({
           groupId: input.groupId,

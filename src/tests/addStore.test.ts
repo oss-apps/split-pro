@@ -1187,3 +1187,25 @@ describe('useAddExpenseStore sign preservation on edit (#658)', () => {
     expect(state.amount).toBe(20001n);
   });
 });
+
+describe('useAddExpenseStore group default split (#720)', () => {
+  const { actions } = useAddExpenseStore.getState();
+
+  beforeEach(() => {
+    actions.resetState();
+    actions.setParticipants([user1, user2]);
+    actions.setAmount(10000n);
+  });
+
+  it('applies the selected group default split to its participants', () => {
+    actions.applySplitPreset(SplitType.SHARE, {
+      [user1.id]: 2n,
+      [user2.id]: 3n,
+    });
+
+    const state = useAddExpenseStore.getState();
+    expect(state.splitType).toBe(SplitType.SHARE);
+    expect(state.splitShares[user1.id]?.[SplitType.SHARE]).toBe(2n);
+    expect(state.splitShares[user2.id]?.[SplitType.SHARE]).toBe(3n);
+  });
+});

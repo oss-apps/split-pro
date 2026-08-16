@@ -8,10 +8,16 @@ import React, { useCallback } from 'react';
 import { z } from 'zod';
 
 import { useAddExpenseStore } from '~/store/addStore';
+import { deserializeDefaultSplit } from '~/lib/defaultSplit';
 import { api } from '~/utils/api';
 
 import { EntityAvatar } from '../ui/avatar';
 import { Button } from '../ui/button';
+
+type SelectableGroup = Group & {
+  groupUsers: (GroupUser & { user: User })[];
+  defaultSplit?: Parameters<typeof deserializeDefaultSplit>[0];
+};
 
 export const SelectUserOrGroup: React.FC<{
   enableSendingInvites: boolean;
@@ -20,8 +26,14 @@ export const SelectUserOrGroup: React.FC<{
   const nameOrEmail = useAddExpenseStore((s) => s.nameOrEmail);
   const participants = useAddExpenseStore((s) => s.participants);
   const group = useAddExpenseStore((s) => s.group);
-  const { addOrUpdateParticipant, removeParticipant, setNameOrEmail, setGroup, setParticipants } =
-    useAddExpenseStore((s) => s.actions);
+  const {
+    addOrUpdateParticipant,
+    applySplitPreset,
+    removeParticipant,
+    setNameOrEmail,
+    setGroup,
+    setParticipants,
+  } = useAddExpenseStore((s) => s.actions);
 
   const friendsQuery = api.user.getFriends.useQuery();
   const groupsQuery = api.group.getAllGroups.useQuery();
@@ -76,7 +88,7 @@ export const SelectUserOrGroup: React.FC<{
   );
 
   const onGroupSelect = useCallback(
-    (group: Group & { groupUsers: (GroupUser & { user: User })[] }) => {
+    (group: SelectableGroup) => {
       setGroup(group);
       const { currentUser } = useAddExpenseStore.getState();
       if (currentUser) {
@@ -85,9 +97,13 @@ export const SelectUserOrGroup: React.FC<{
           ...group.groupUsers.map((gu) => gu.user).filter((u) => u.id !== currentUser.id),
         ]);
       }
+      const parsedDefaultSplit = deserializeDefaultSplit(group.defaultSplit);
+      if (parsedDefaultSplit) {
+        applySplitPreset(parsedDefaultSplit.splitType, parsedDefaultSplit.shares);
+      }
       setNameOrEmail('');
     },
-    [setGroup, setParticipants, setNameOrEmail],
+    [applySplitPreset, setGroup, setParticipants, setNameOrEmail],
   );
 
   const handleAddEmailClickFalse = useCallback(() => onAddEmailClick(false), [onAddEmailClick]);

@@ -36,6 +36,14 @@ describe('getCurrencyHelpers', () => {
           expect(toUIString(value)).toBe('$0.07');
         });
 
+        it('should preserve a one-cent amount when formatted from input text', () => {
+          const { format, toSafeBigInt } = getCurrencyHelpers({ locale, currency });
+          const value = toSafeBigInt('0.01');
+
+          expect(format('0.01', { hideSymbol: true })).toBe('0.01');
+          expect(toUIString(value, false, true)).toBe('0.01');
+        });
+
         it.each([
           [12345n, '$123.45'],
           [-12345n, '-$123.45'],

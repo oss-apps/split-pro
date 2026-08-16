@@ -5,6 +5,7 @@ import { CheckIcon, SendIcon } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { z } from 'zod';
+import { toast } from 'sonner';
 
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
@@ -72,6 +73,9 @@ const AddMembers: React.FC<{
         {
           onSuccess: () => {
             utils.group.getGroupDetails.invalidate({ groupId: group.id }).catch(console.error);
+          },
+          onError: (error) => {
+            toast.error(error.message);
           },
         },
       );

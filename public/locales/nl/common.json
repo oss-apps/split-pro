@@ -163,6 +163,7 @@
     "import_failed": "Fout bij importeren bestand",
     "invalid_cron_expression": "Ongeldige cron-uitdrukking",
     "invalid_currency_code": "Ongeldige valutacode {{code}}",
+    "invalid_split": "Bepaal wie deze kosten moet betalen voordat je het opslaat.",
     "language_change_failed": "Fout bij taalwijziging",
     "less_than": "Bestand moet minder dan {{size}} MB zijn",
     "name_required": "Naam is vereist",
@@ -199,6 +200,12 @@
         "warning": "Waarschuwing: Gebruik de functie 'Uitnodiging versturen' niet als het e-mailadres ongeldig is. Gebruik in plaats daarvan 'Toevoegen aan SplitPro'. Je account wordt geblokkeerd als deze functie wordt misbruikt"
       },
       "split_type_section": {
+        "direction": {
+          "no_money_flow": "Niemand anders is iets verschuldigd",
+          "owes_payer": "{{debtor}} is {{payer}} verschuldigd",
+          "owes_you": "{{debtor}} is je geld verschuldigd",
+          "you_owe": "Je bent {{payer}} geld verschuldigd"
+        },
         "split_equally": "gelijk verdelen",
         "split_unequally": "ongelijk verdelen",
         "types": {

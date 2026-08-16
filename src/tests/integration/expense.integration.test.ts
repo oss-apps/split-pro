@@ -3,7 +3,6 @@ jest.mock('~/server/api/services/notificationService', () => ({
   sendGroupSimplifyDebtsToggleNotification: jest.fn().mockResolvedValue(undefined),
 }));
 jest.mock('~/server/auth', () => ({ getServerAuthSession: jest.fn() }));
-jest.mock('nanoid', () => ({ nanoid: () => 'integration-public-id' }));
 jest.mock('superjson', () => ({
   default: { serialize: (value: unknown) => value, deserialize: (value: unknown) => value },
 }));
@@ -42,10 +41,13 @@ describe('expense integration', () => {
     });
 
     expect(expense?.id).toBeDefined();
-    await expect(db.balanceView.findMany({ where: { groupId: null } })).resolves.toEqual(
+    const balances = await db.balanceView.findMany({ where: { groupId: null } });
+    expect(balances).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ userId: payer.id, friendId: participant.id, amount: 2_500n }),
+        expect.objectContaining({ userId: participant.id, friendId: payer.id, amount: -2_500n }),
       ]),
     );
+    expect(balances.reduce((total, balance) => total + balance.amount, 0n)).toBe(0n);
   });
 });

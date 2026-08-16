@@ -5,18 +5,18 @@ requiring PostgreSQL; database and browser checks each provision their own dispo
 
 ## Command matrix
 
-| Purpose | Exact command | Selection |
-| --- | --- | --- |
-| Formatting | `pnpm prettier --check .` | All supported files |
-| Lint | `pnpm lint` | Oxlint project sources |
-| Types | `pnpm tsgo --noEmit` | TypeScript project |
-| Unit/component tests | `pnpm test` | `src/**/*.{test,spec}.{ts,tsx}`, excluding `src/tests/integration/` |
-| One unit file | `pnpm test src/tests/simplify.test.ts` | The named file |
-| Integration tests | `pnpm test:integration` | `src/tests/integration/**/*.{test,spec}.{ts,tsx}` |
-| One integration file | `pnpm test:integration src/tests/integration/expense.integration.test.ts` | The named file |
-| Chromium E2E | `pnpm exec playwright test --project=chromium` | `tests/e2e/`, including setup dependency |
-| One E2E file | `pnpm exec playwright test tests/e2e/group-expense.spec.ts` | The named file |
-| Production build | `pnpm build --no-lint` | Next.js production build |
+| Purpose              | Exact command                                                             | Selection                                                           |
+| -------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Formatting           | `pnpm prettier --check .`                                                 | All supported files                                                 |
+| Lint                 | `pnpm lint`                                                               | Oxlint project sources                                              |
+| Types                | `pnpm tsgo --noEmit`                                                      | TypeScript project                                                  |
+| Unit/component tests | `pnpm test`                                                               | `src/**/*.{test,spec}.{ts,tsx}`, excluding `src/tests/integration/` |
+| One unit file        | `pnpm test src/tests/simplify.test.ts`                                    | The named file                                                      |
+| Integration tests    | `pnpm test:integration`                                                   | `src/tests/integration/**/*.{test,spec}.{ts,tsx}`                   |
+| One integration file | `pnpm test:integration src/tests/integration/expense.integration.test.ts` | The named file                                                      |
+| Chromium E2E         | `pnpm exec playwright test --project=chromium`                            | `tests/e2e/`, including setup dependency                            |
+| One E2E file         | `pnpm exec playwright test tests/e2e/group-expense.spec.ts`               | The named file                                                      |
+| Production build     | `pnpm build --no-lint`                                                    | Next.js production build                                            |
 
 The pull-request `Check` workflow runs formatting, lint, types, unit/component tests, and the
 build. `Integration Tests` and `E2E Tests` are separate jobs and do not depend on `Check` or on

@@ -348,7 +348,10 @@ export function calculateParticipantSplit(
 
     if (canSplitScreenClosed) {
       let penniesLeft = updatedParticipants.reduce((acc, p) => acc + (p.amount ?? 0n), 0n);
-      const participantsToPick = updatedParticipants.filter((p) => p.amount);
+      const participantsToPick =
+        splitType === SplitType.EQUAL
+          ? updatedParticipants.filter((p) => p.id !== paidBy?.id && 0n !== getSplitShare(p))
+          : updatedParticipants.filter((p) => p.amount);
       const seed =
         cyrb128(
           `${participantsToPick

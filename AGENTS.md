@@ -323,6 +323,33 @@ Husky runs on commit:
 
 Override with `git commit --no-verify` if needed.
 
+## Testing Harness Workflow
+
+Keep the fast checks (`pnpm prettier --check .`, `pnpm lint`, `pnpm tsgo --noEmit`,
+`pnpm test`, and `pnpm build --no-lint`) independent from the disposable database and
+browser jobs. CI runs PostgreSQL integration tests with `pnpm test:integration` and Chromium
+E2E tests with `pnpm exec playwright test --project=chromium` in separate jobs.
+
+### Test Selection
+
+- `pnpm test` selects `src/**/*.{test,spec}.{ts,tsx}` and excludes `src/tests/integration/`.
+- `pnpm test:integration` selects only `src/tests/integration/**/*.{test,spec}.{ts,tsx}`.
+- `pnpm exec playwright test --project=chromium` selects `tests/e2e/` through
+  `playwright.config.ts`; setup runs before the Chromium project.
+- Run one Jest file with `pnpm test src/tests/simplify.test.ts`, one integration file with
+  `pnpm test:integration src/tests/integration/expense.integration.test.ts`, or one browser
+  file with `pnpm exec playwright test tests/e2e/group-expense.spec.ts`.
+
+### Database Safety
+
+Integration and E2E databases must be local/disposable and end in `_test`. The integration
+harness refuses non-local or non-test URLs; never point these commands at development,
+staging, or production data. CI creates a fresh PostgreSQL service and may use
+`prisma db push --accept-data-loss` because that database is disposable. Local worktrees
+must use a separate PostgreSQL container, database name, and host port.
+
+See `docs/testing-strategy.md` for the complete command matrix and agent workflow.
+
 <!-- context7 -->
 
 Use the `ctx7` CLI to fetch current documentation whenever the user asks about a library, framework, SDK, API, CLI tool, or cloud service -- even well-known ones like React, Next.js, Prisma, Express, Tailwind, Django, or Spring Boot. This includes API syntax, configuration, version migration, library-specific debugging, setup instructions, and CLI tool usage. Use even when you think you know the answer -- your training data may not reflect recent changes. Prefer this over web search for library docs.

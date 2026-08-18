@@ -150,6 +150,7 @@
     "title": "Conversion monétaire"
   },
   "errors": {
+    "add_member_failed": "L'ajout d'un⋅e membre au groupe a échoué",
     "currency_conversion_error": "Une erreur est survenue lors de l'enregistrement de la conversion monétaire",
     "currency_conversion_failed": "Échec de la conversion des devises",
     "currency_conversion_malformed": "Les données de conversion de devise sont corrompues",
@@ -163,6 +164,7 @@
     "import_failed": "Une erreur est survenue lors de l'import du fichier",
     "invalid_cron_expression": "Expression cron invalide",
     "invalid_currency_code": "Le code de devise {{code}} est invalide",
+    "invalid_split": "Indique qui a payé cette dépense avant d'enregistrer.",
     "language_change_failed": "Le changement de langage a échoué",
     "less_than": "Le poids du fichier doit être inférieur à {{size}}Mo",
     "name_required": "Un nom est requis",
@@ -199,6 +201,12 @@
         "warning": "Attention : N'envoyez pas d'invitation à des adresses mail non enregistrées ici, utilisez plutôt la fonction « inviter sur SplitPro ». Votre compte sera bloqué si vous utilisez mal cette fonctionnalité"
       },
       "split_type_section": {
+        "direction": {
+          "no_money_flow": "Personne d'autre ne doit d'argent",
+          "owes_payer": "{{debtor}} doit cette somme à {{payer}}",
+          "owes_you": "{{debtor}} te doit",
+          "you_owe": "Ta dette envers {{payer}}"
+        },
         "split_equally": "partagé à parts égales",
         "split_unequally": "partagé inégalement",
         "types": {
@@ -411,7 +419,7 @@
         "deleted": "a supprimé",
         "get": "reçoit",
         "lent": "a avancé",
-        "owe": "doit",
+        "owe": "doit à",
         "paid": "a payé",
         "pay": "doit",
         "received": "a reçu"

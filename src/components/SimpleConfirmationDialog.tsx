@@ -14,35 +14,52 @@ import {
 } from './ui/alert-dialog';
 import { Button, type buttonVariants } from './ui/button';
 
+type SimpleConfirmationDialogProps = {
+  title: string;
+  onCancel?: () => void;
+  description: React.ReactNode;
+  hasPermission: boolean;
+  onConfirm: () => void | Promise<void>;
+  loading: boolean;
+  children?: React.ReactNode;
+} & VariantProps<typeof buttonVariants>;
+
+type ControlledSimpleConfirmationDialogProps = SimpleConfirmationDialogProps & {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
+
+type UncontrolledSimpleConfirmationDialogProps = SimpleConfirmationDialogProps & {
+  open?: never;
+  onOpenChange?: never;
+};
+
 export const SimpleConfirmationDialog: React.FC<
-  {
-    title: string;
-    open?: boolean;
-    onOpenChange?: (open: boolean) => void;
-    onCancel?: () => void;
-    description: React.ReactNode;
-    hasPermission: boolean;
-    onConfirm: () => void | Promise<void>;
-    loading: boolean;
-    children?: React.ReactNode;
-  } & VariantProps<typeof buttonVariants>
-> = ({
-  open: controlledOpen,
-  onOpenChange: controlledOnOpenChange,
-  onCancel,
-  title,
-  description,
-  hasPermission,
-  onConfirm,
-  loading,
-  variant,
-  children,
-}) => {
+  ControlledSimpleConfirmationDialogProps | UncontrolledSimpleConfirmationDialogProps
+> = (props) => {
+  const { onCancel, title, description, hasPermission, onConfirm, loading, variant, children } =
+    props;
   const { t } = useTranslation();
   const [internalOpen, setInternalOpen] = useState(false);
-  const isControlled = typeof controlledOpen === 'boolean';
+  const controlledOpen = 'open' in props ? props.open : undefined;
+  const controlledOnOpenChange = 'onOpenChange' in props ? props.onOpenChange : undefined;
+  const isControlled = 'boolean' === typeof controlledOpen;
   const open = isControlled ? controlledOpen : internalOpen;
-  const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
+  const setOpen = useCallback(
+    (nextOpen: boolean) => {
+      if (isControlled) {
+        if ('function' !== typeof controlledOnOpenChange) {
+          return;
+        }
+
+        controlledOnOpenChange(nextOpen);
+        return;
+      }
+
+      setInternalOpen(nextOpen);
+    },
+    [controlledOnOpenChange, isControlled],
+  );
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();

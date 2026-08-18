@@ -37,12 +37,10 @@ export const toUIDate = (
     }).format(date);
   }
 
-  const day = new Intl.DateTimeFormat(todayTranslation.usedLng, { day: '2-digit' }).format(date);
-  const monthName = new Intl.DateTimeFormat(todayTranslation.usedLng, { month: 'short' })
-    .format(date)
-    .replace('.', '');
-
-  return `${monthName} ${day}`;
+  return new Intl.DateTimeFormat(todayTranslation.usedLng, {
+    month: 'short',
+    day: '2-digit',
+  }).format(date);
 };
 
 export function generateSplitDescription(

@@ -139,6 +139,7 @@
     "email_required": "Email richiesta",
     "feedback_min_length": "Il feedback deve contenere almeno 10 caratteri",
     "feedback_required": "Il feedback è obbligatorio",
+    "add_member_failed": "Impossibile aggiungere il membro al gruppo",
     "group_name_update_failed": "Errore nell'aggiornamento del nome del gruppo",
     "import_failed": "Errore durante l'importazione del file",
     "invalid_currency_code": "Codice valuta {code} non valido",

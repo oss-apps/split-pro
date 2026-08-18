@@ -3,6 +3,7 @@ interface ParsedLocale {
   locale: Intl.Locale;
 }
 
+/** Parses a locale code, returning null when the code is invalid. */
 const parseLocale = (code: string): Intl.Locale | null => {
   try {
     return new Intl.Locale(code.replaceAll('_', '-'));
@@ -11,6 +12,7 @@ const parseLocale = (code: string): Intl.Locale | null => {
   }
 };
 
+/** Resolves a requested locale to the closest supported locale. */
 export const resolveSupportedLocale = (
   requestedLocale: string | undefined,
   supportedLocales: readonly string[],

@@ -450,7 +450,7 @@
     "description": "Imposta una ricorrenza automatica per questa spesa.",
     "cron_expression": "Espressione Cron",
     "time_of_day": "Ora del giorno",
-    "days_of_week": "Giorni della settima",
+    "days_of_week": "Giorni della settimana",
     "days_of_month": "Giorni del mese",
     "months": "Mesi",
     "last_day": "Ultimo giorno",

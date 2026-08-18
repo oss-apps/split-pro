@@ -67,7 +67,7 @@ export function generateSplitDescription(
   // An undefined share is the initial state and still means the participant is selected.
   const selectedParticipants = participants.filter((p) => {
     const share = splitShares[p.id]?.[SplitType.EQUAL];
-    return share === undefined || 0n !== share;
+    return undefined === share || 0n !== share;
   });
 
   const splitParticipant = selectedParticipants[0];

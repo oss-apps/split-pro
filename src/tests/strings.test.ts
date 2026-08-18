@@ -5,7 +5,7 @@ import { toUIDateParts } from '../utils/strings';
 const tFor = (locale: string) =>
   ((key: string) => ({ res: `today (${key})`, usedLng: locale })) as unknown as TFunction;
 
-const date = new Date('2026-07-05T12:00:00Z');
+const date = new Date(2026, 6, 5, 12);
 
 const supportedLocales = [
   'en',

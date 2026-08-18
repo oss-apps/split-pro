@@ -10,6 +10,7 @@ import {
   getCurrencyName as gCN,
   generateSplitDescription as gsd,
   toUIDate as tUD,
+  toUIDateParts as tUDP,
 } from '~/utils/strings';
 
 export const useTranslationWithUtils = (
@@ -18,6 +19,7 @@ export const useTranslationWithUtils = (
   displayName: typeof displayName;
   generateSplitDescription: typeof generateSplitDescription;
   toUIDate: typeof toUIDate;
+  toUIDateParts: typeof toUIDateParts;
   getCurrencyName: typeof getCurrencyName;
   getCurrencyHelpersCached: (currency: string) => CurrencyHelpersType;
 } => {
@@ -41,6 +43,11 @@ export const useTranslationWithUtils = (
 
   const toUIDate = useCallback(
     (...args: ParametersExceptTranslation<typeof tUD>): string => tUD(translation.t, ...args),
+    [translation.t],
+  );
+
+  const toUIDateParts = useCallback(
+    (...args: ParametersExceptTranslation<typeof tUDP>): string[] => tUDP(translation.t, ...args),
     [translation.t],
   );
 
@@ -68,6 +75,7 @@ export const useTranslationWithUtils = (
       displayName,
       generateSplitDescription,
       toUIDate,
+      toUIDateParts,
       getCurrencyName,
       getCurrencyHelpersCached,
     }),
@@ -76,6 +84,7 @@ export const useTranslationWithUtils = (
       displayName,
       generateSplitDescription,
       toUIDate,
+      toUIDateParts,
       getCurrencyName,
       getCurrencyHelpersCached,
     ],

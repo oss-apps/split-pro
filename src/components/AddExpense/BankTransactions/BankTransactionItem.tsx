@@ -14,7 +14,7 @@ export const BankTransactionItem: React.FC<{
   groupName: string;
   multipleTransactions: TransactionAddInputModel[];
 }> = ({ index, alreadyAdded, item, onTransactionRowClick, groupName, multipleTransactions }) => {
-  const { t, toUIDate } = useTranslationWithUtils();
+  const { t, toUIDateParts } = useTranslationWithUtils();
   const [isHovered, setIsHovered] = useState(false);
 
   const createCheckboxHandler = useCallback(() => {
@@ -84,13 +84,11 @@ export const BankTransactionItem: React.FC<{
         onClick={hasMultiple ? createCheckboxHandler : createClickHandler}
       >
         <div className="text-xs text-gray-500">
-          {toUIDate(new Date(item.bookingDate), { useToday: true })
-            .split(' ')
-            .map((d) => (
-              <div className="text-center" key={d}>
-                {d}
-              </div>
-            ))}
+          {toUIDateParts(new Date(item.bookingDate), { useToday: true }).map((part) => (
+            <div className="text-center" key={part}>
+              {part}
+            </div>
+          ))}
         </div>
         <div>
           <p

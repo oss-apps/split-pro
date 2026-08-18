@@ -20,6 +20,8 @@ export const displayName = (
   return user?.name ?? user?.email ?? '';
 };
 
+const SHORT_DATE_OPTIONS: Intl.DateTimeFormatOptions = { month: 'short', day: '2-digit' };
+
 export const toUIDate = (
   t: TFunction,
   date: Date,
@@ -37,10 +39,30 @@ export const toUIDate = (
     }).format(date);
   }
 
-  return new Intl.DateTimeFormat(todayTranslation.usedLng, {
-    month: 'short',
-    day: '2-digit',
-  }).format(date);
+  return new Intl.DateTimeFormat(todayTranslation.usedLng, SHORT_DATE_OPTIONS).format(date);
+};
+
+/**
+ * The month and the day of `toUIDate`'s short form as separate values, ordered the way the
+ * locale orders them, for renderings that put them on their own lines.
+ */
+export const toUIDateParts = (t: TFunction, date: Date, { useToday = false } = {}): string[] => {
+  const todayTranslation = t('ui.today', { returnDetails: true });
+
+  if (useToday && isToday(date)) {
+    return [todayTranslation.res];
+  }
+
+  const locale = todayTranslation.usedLng;
+  const fields = {
+    month: new Intl.DateTimeFormat(locale, { month: 'short' }).format(date),
+    day: new Intl.DateTimeFormat(locale, { day: '2-digit' }).format(date),
+  };
+
+  // The combined format only says which field comes first, each field is formatted alone
+  return new Intl.DateTimeFormat(locale, SHORT_DATE_OPTIONS)
+    .formatToParts(date)
+    .flatMap((part) => ('month' === part.type || 'day' === part.type ? [fields[part.type]] : []));
 };
 
 export function generateSplitDescription(

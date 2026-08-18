@@ -58,13 +58,13 @@
     "built_by": "Built by"
   },
   "hero": {
+    "image_alt": "SplitPro app preview",
     "add_expense_button": "Add Expense",
     "star_github_button": "Star us on github",
-    "subtitle_link": "open source",
-    "subtitle_part1": "An",
-    "subtitle_part2": "alternative to SplitWise",
+    "title_before_highlight": "Split expenses with your friends for",
     "title_highlight": "free",
-    "title_part1": "Split Expenses with your friends for"
+    "title_after_highlight": ".",
+    "subtitle": "An open source alternative to SplitWise."
   },
   "meta": {
     "description": "SplitPro: Split Expenses with your friends for free",

@@ -22,47 +22,38 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
 
   const userMap = useMemo(
     () =>
-      users.reduce(
-        (acc, user) => {
-          acc[user.id] = user;
-          return acc;
-        },
-        {} as Record<number, User>,
-      ),
+      users.reduce<Record<number, User>>((acc, user) => {
+        acc[user.id] = user;
+        return acc;
+      }, {}),
     [users],
   );
 
   const friendBalances = useMemo(
     () =>
-      groupBalances.reduce(
-        (acc, balance) => {
-          if (balance.userId === userId && 0 < BigMath.abs(balance.amount)) {
-            acc[balance.friendId] ??= {};
-            const friendBalance = acc[balance.friendId]!;
-            friendBalance[balance.currency] =
-              (friendBalance[balance.currency] ?? 0n) + balance.amount;
-          }
-          return acc;
-        },
-        {} as Record<number, Record<string, bigint>>,
-      ),
+      groupBalances.reduce<Record<number, Record<string, bigint>>>((acc, balance) => {
+        if (balance.userId === userId && 0 < BigMath.abs(balance.amount)) {
+          acc[balance.friendId] ??= {};
+          const friendBalance = acc[balance.friendId]!;
+          friendBalance[balance.currency] =
+            (friendBalance[balance.currency] ?? 0n) + balance.amount;
+        }
+        return acc;
+      }, {}),
     [groupBalances, userId],
   );
 
   const cumulatedBalances = useMemo(
     () =>
       Object.entries(
-        Object.values(friendBalances).reduce(
-          (acc, balances) => {
-            if (balances) {
-              Object.entries(balances).forEach(([currency, amount]) => {
-                acc[currency] = (acc[currency] ?? 0n) + amount;
-              });
-            }
-            return acc;
-          },
-          {} as Record<string, bigint>,
-        ),
+        Object.values(friendBalances).reduce<Record<string, bigint>>((acc, balances) => {
+          if (balances) {
+            Object.entries(balances).forEach(([currency, amount]) => {
+              acc[currency] = (acc[currency] ?? 0n) + amount;
+            });
+          }
+          return acc;
+        }, {}),
       ).map(([currency, amount]) => ({ currency, amount })),
     [friendBalances],
   );
@@ -80,10 +71,15 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
               <div key={friendId} className="text-sm text-gray-500">
                 {Object.entries(balances).map(([currency, amount]) => (
                   <div key={currency}>
-                    {0 < amount
-                      ? `${friend?.name} ${t('ui.expense.user.owe')} ${t('actors.you_dativus').toLowerCase()}`
-                      : `${t('actors.you')} ${t('ui.expense.you.owe')} ${friend?.name}`}{' '}
-                    {getCurrencyHelpersCached(currency).toUIString(amount)}
+                    {t(
+                      0 < amount
+                        ? 'balance_summary.friend_owes_you'
+                        : 'balance_summary.you_owe_friend',
+                      {
+                        friend: friend?.name,
+                        amount: getCurrencyHelpersCached(currency).toUIString(amount),
+                      },
+                    )}
                   </div>
                 ))}
               </div>
@@ -92,8 +88,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
 
         {2 < Object.keys(friendBalances).length ? (
           <div className="text-sm text-gray-500">
-            +{Object.keys(friendBalances).length - 2}{' '}
-            {Object.keys(friendBalances).length === 3 ? t('ui.balance') : t('ui.balances')}...
+            {t('balance_summary.more', { count: Object.keys(friendBalances).length - 2 })}
           </div>
         ) : null}
       </div>

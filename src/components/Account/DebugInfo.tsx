@@ -18,7 +18,7 @@ import { cn } from '~/lib/utils';
 import { Button } from '../ui/button';
 
 export const DebugInfo: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation('common_icu');
   const [newVersion, setNewVersion] = React.useState<string | null>(null);
   const sendTestPushNotification = api.user.sendTestPushNotification.useMutation();
 

@@ -105,7 +105,7 @@ const Home: NextPage<{
       } else if ('SessionRequired' === error) {
         return;
       } else {
-        toast.error(t('errors.signin_error') + error);
+        toast.error(t('errors.signin_error', { error }));
         console.error('Error during sign-in:', error);
       }
     }
@@ -121,7 +121,7 @@ const Home: NextPage<{
     const oauthProvider = oauthProviders[0];
     if (shouldAutoRedirect && oauthProvider && !showVerificationStep && !isLoadingProviders) {
       void signIn(oauthProvider.id, { callbackUrl }).catch(() => {
-        toast.error(t('errors.signin_error'));
+        toast.error(t('errors.signin_failed'));
       });
     }
   }, [
@@ -312,7 +312,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      ...(await customServerSideTranslations(context.locale, ['common'])),
+      ...(await customServerSideTranslations(context.locale, ['common_icu'])),
       error: typeof error === 'string' ? error : '',
       feedbackEmail: env.FEEDBACK_EMAIL ?? '',
       providers: Object.values(providers ?? {}),

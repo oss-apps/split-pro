@@ -74,7 +74,7 @@ SplitPro can display balances in a single currency, convert expense amounts, and
 
 ### 8) Recurring transactions
 
-Recurring expenses require a PostgreSQL database with the `pg_cron` extension. We publish a prebuilt Postgres image with `pg_cron`; example usage is in [docker/prod/compose.yml](docker/prod/compose.yml). If you use another database, you must enable the extension and adjust configuration. See [docs/RECURRING_TRANSACTIONS.md](docs/RECURRING_TRANSACTIONS.md).
+Recurring expenses require a PostgreSQL database with the `pg_cron` extension. We publish a prebuilt Postgres image with `pg_cron`; example usage is in [docker/prod/compose.yml](docker/prod/compose.yml). If you use another database, you must enable the extension and adjust configuration. A non-superuser database role is supported when `pg_cron` is preinstalled; see [docker/README.md](docker/README.md). See [docs/RECURRING_TRANSACTIONS.md](docs/RECURRING_TRANSACTIONS.md).
 
 ### 9) Bank transaction integration
 
@@ -176,4 +176,4 @@ We are grateful for the support of our sponsors.
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=oss-apps/split-pro&type=Date)](https://star-history.com/#oss-apps/split-pro&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=oss-apps/split-pro&type=Date)](https://star-history.dera.page/#oss-apps/split-pro&Date)

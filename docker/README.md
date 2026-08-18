@@ -27,6 +27,38 @@ This will start the PostgreSQL database and the Splitpro application containers.
 
 6. Access the Splitpro application by visiting `http://localhost:3000` in your web browser.
 
+## Rootless application deployment
+
+The image includes a non-root `node` user, but keeps the default Dockerfile user unchanged for
+compatibility. To run only the Splitpro application as that user, add `user: node` to the
+`splitpro` service in `docker/prod/compose.yml`:
+
+```yaml
+services:
+  splitpro:
+    user: node
+```
+
+You can use the numeric identity instead:
+
+```yaml
+services:
+  splitpro:
+    user: '1000:1000'
+```
+
+Receipts are stored in `/app/uploads`. The image prepares this directory for the `node` user, so
+new named volumes work without additional setup. If you use a bind mount, make sure the host
+directory is writable by UID/GID `1000:1000` before starting the application:
+
+```bash
+mkdir -p uploads
+chown -R 1000:1000 uploads
+```
+
+This runs the application process without root privileges. Running Docker itself in rootless mode
+is a separate host-level configuration.
+
 ### Minimal .env example
 
 ```bash
@@ -47,7 +79,7 @@ There are of course other ways to run Splitpro with Docker. The above is the rec
 
 If you prefer a more minimal setup, you can run the Splitpro application in a standalone container and connect it to an external PostgreSQL database. In this case, you can pass the environment variables directly when running the container.
 
-Just make sure you install `pg_cron` if you want to use recurring transactions and currency/bank cache cleaning.
+Just make sure you install `pg_cron` if you want to use recurring transactions and currency/bank cache cleaning. If your database user is not a superuser, see the [External / managed PostgreSQL](#external--managed-postgresql-non-superuser) section below.
 
 ### Kubernetes
 
@@ -90,6 +122,33 @@ See [docs/AUTHENTICATION.md](../docs/AUTHENTICATION.md) for details.
 Recurring expenses require PostgreSQL with `pg_cron`. The example compose file already enables it. If you use another database image, you must enable the extension yourself.
 
 See [docs/RECURRING_TRANSACTIONS.md](../docs/RECURRING_TRANSACTIONS.md).
+
+### External / managed PostgreSQL (non-superuser)
+
+SplitPro does not require superuser access at runtime. A regular database role is sufficient, provided `pg_cron` is installed and configured by your database administrator beforehand.
+
+**One-time setup (run as superuser / DB admin):**
+
+```sql
+CREATE EXTENSION pg_cron;
+GRANT USAGE ON SCHEMA cron TO <app_user>;
+GRANT SELECT, REFERENCES ON cron.job TO <app_user>;
+GRANT SELECT ON cron.job_run_details TO <app_user>;
+```
+
+**Required PostgreSQL configuration** (`postgresql.conf`):
+
+```
+shared_preload_libraries = 'pg_cron'
+cron.database_name = '<your_splitpro_db>'
+cron.timezone = 'UTC'
+```
+
+Restart PostgreSQL after changing these settings.
+
+The migration that sets up recurring expenses uses `CREATE EXTENSION IF NOT EXISTS pg_cron`, which is a no-op when the extension is already installed — no superuser privileges are needed in that case. If the extension is missing and the app user is not a superuser, PostgreSQL will reject the `CREATE EXTENSION` call; ask your DB administrator to install it beforehand using the commands above.
+
+Jobs created by SplitPro run as the app user and are scoped to that user via `pg_cron`'s row-level security, so the app can only manage its own jobs.
 
 ## Receipt storage
 

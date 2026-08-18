@@ -1,6 +1,6 @@
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { UserPlusIcon } from '@heroicons/react/24/solid';
-import { type Group, type GroupUser, type User } from '@prisma/client';
+import type { Group, GroupUser, SplitType, User } from '@prisma/client';
 import { SendIcon } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
@@ -9,9 +9,18 @@ import { z } from 'zod';
 
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
+import { deserializeDefaultSplit } from '~/lib/defaultSplit';
 
 import { EntityAvatar } from '../ui/avatar';
 import { Button } from '../ui/button';
+
+type SelectableGroup = Group & {
+  groupUsers: (GroupUser & { user: User })[];
+  defaultSplit: {
+    splitType: SplitType;
+    shares: Record<string, string>;
+  } | null;
+};
 
 export const SelectUserOrGroup: React.FC<{
   enableSendingInvites: boolean;
@@ -76,7 +85,7 @@ export const SelectUserOrGroup: React.FC<{
   );
 
   const onGroupSelect = useCallback(
-    (group: Group & { groupUsers: (GroupUser & { user: User })[] }) => {
+    (group: SelectableGroup) => {
       setGroup(group);
       const { currentUser } = useAddExpenseStore.getState();
       if (currentUser) {
@@ -84,6 +93,12 @@ export const SelectUserOrGroup: React.FC<{
           currentUser,
           ...group.groupUsers.map((gu) => gu.user).filter((u) => u.id !== currentUser.id),
         ]);
+      }
+      const parsedDefaultSplit = deserializeDefaultSplit(group.defaultSplit);
+      if (parsedDefaultSplit) {
+        useAddExpenseStore
+          .getState()
+          .actions.applySplitPreset(parsedDefaultSplit.splitType, parsedDefaultSplit.shares);
       }
       setNameOrEmail('');
     },

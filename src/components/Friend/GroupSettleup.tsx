@@ -40,10 +40,11 @@ export const GroupSettleUp: React.FC<{
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
   const utils = api.useUtils();
 
-  const sender = 0 > amount ? user : friend;
-  const receiver = 0 > amount ? friend : user;
-  const payerRole = sender.id === user.id ? 'you' : 'other';
-  const receiverRole = receiver.id === user.id ? 'you' : 'other';
+  const isUserPaying = 0 > _amount;
+  const sender = isUserPaying ? user : friend;
+  const receiver = isUserPaying ? friend : user;
+  const payerRole = sender.id === data?.user.id ? 'you' : 'other';
+  const receiverRole = receiver.id === data?.user.id ? 'you' : 'other';
   const paymentText =
     payerRole === 'you'
       ? t('ui.expense.statements.you_pay_user', { user: displayName(receiver) })

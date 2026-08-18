@@ -8,7 +8,7 @@ import { Poppins } from 'next/font/google';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Toaster } from 'sonner';
+import { Toaster, toast } from 'sonner';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { ThemeProvider } from 'next-themes';
 import { CurrencyHelpersProvider } from '~/contexts/CurrencyHelpersContext';
@@ -101,6 +101,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
 const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, pageProps }) => {
   const { status, data, update } = useSession({ required: true });
+  const { t } = useTranslation();
   const [showSpinner, setShowSpinner] = useState(false);
   const updateUser = api.user.updateUserDetail.useMutation();
   const router = useRouter();
@@ -151,14 +152,17 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
               },
             }),
           )
-          .catch(console.error);
+          .catch((error) => {
+            console.error(error);
+            toast.error(t('errors.language_change_failed'));
+          });
       } else if (resolvedLanguage !== router.locale) {
         router
           .push(router.asPath, router.asPath, { locale: resolvedLanguage, scroll: false })
           .catch(console.error);
       }
     }
-  }, [status, data?.user, setCurrency, router, updateUser, update]);
+  }, [status, data?.user, setCurrency, router, t, updateUser, update]);
 
   if ('loading' === status) {
     return (

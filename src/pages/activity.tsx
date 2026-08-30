@@ -1,19 +1,19 @@
 import { SplitType } from '@prisma/client';
+import { RefreshCcwDot, Search, X } from 'lucide-react';
 import { type User } from 'next-auth';
+import { type TFunction } from 'next-i18next';
 import Head from 'next/head';
 import Link from 'next/link';
+import React from 'react';
 import MainLayout from '~/components/Layout/MainLayout';
 import { EntityAvatar } from '~/components/ui/avatar';
+import { Button } from '~/components/ui/button';
+import { Input } from '~/components/ui/input';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { getCurrencyHelpers } from '~/utils/numbers';
-import { type TFunction } from 'next-i18next';
-import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { withI18nStaticProps } from '~/utils/i18n/server';
-import { RefreshCcwDot, Search, X } from 'lucide-react';
-import { Button } from '~/components/ui/button';
-import { Input } from '~/components/ui/input';
-import React from 'react';
 
 function getPaymentString(
   user: User,
@@ -69,8 +69,12 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
   const normalizedSearch = search.trim().toLowerCase();
 
   const filteredExpenses = React.useMemo(() => {
-    if (!expensesQuery.data) return expensesQuery.data;
-    if (!normalizedSearch) return expensesQuery.data;
+    if (!expensesQuery.data) {
+      return expensesQuery.data;
+    }
+    if (!normalizedSearch) {
+      return expensesQuery.data;
+    }
 
     return expensesQuery.data.filter((e) => {
       const haystack = [

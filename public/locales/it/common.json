@@ -404,6 +404,8 @@
     "expense_details": "Dettagli spesa",
     "in_group": "Nel gruppo",
     "no_activity": "Nessuna attività ancora",
+    "no_search_results": "Nessuna spesa corrisponde alla ricerca",
+    "search_expenses_placeholder": "Cerca spese...",
     "not_involved": "Non coinvolto",
     "not_set": "Non impostato",
     "on": "il",

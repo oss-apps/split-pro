@@ -15,6 +15,8 @@ This document lists SplitPro environment variables and how they are used. The au
 
 `POSTGRES_USER` may be a regular (non-superuser) role when `pg_cron` is preinstalled. See [docker/README.md](../docker/README.md).
 
+If your deployment sits behind a NAT/firewall/proxy that can silently drop idle TCP connections (leaving the pool with dead sockets that hang instead of erroring), add `connect_timeout` and `socket_timeout` (seconds) to `DATABASE_URL` so Prisma gives up on a stale connection instead of hanging indefinitely - e.g. `?connect_timeout=5&socket_timeout=5`. `/api/readyz`'s own query timeout only bounds queries that reach Postgres; it can't help if the socket itself is dead. See [docker/README.md#health-checks](../docker/README.md#health-checks) for `/api/healthz`/`/api/readyz` details and example probe configuration.
+
 ### Authentication (NextAuth)
 
 - `NEXTAUTH_SECRET`: Secret used to sign tokens. Generate with `openssl rand -base64 32`.

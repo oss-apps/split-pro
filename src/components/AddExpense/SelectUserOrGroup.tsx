@@ -12,6 +12,7 @@ import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { deserializeDefaultSplit } from '~/lib/defaultSplit';
 import { getInviteErrorToastKey, isInviteEmailSendFailed } from '~/lib/error/invite';
+import { peopleListEmptyReason } from '~/lib/peopleList';
 
 import { EntityAvatar } from '../ui/avatar';
 import { Button } from '../ui/button';
@@ -46,6 +47,13 @@ export const SelectUserOrGroup: React.FC<{
   const filteredFriends = friendsQuery.data?.filter((f) =>
     displayName(f).toLowerCase().includes(nameOrEmail.toLowerCase()),
   );
+
+  /* Both friends and groups populate this list, so either one counts as having contacts. */
+  const emptyReason = peopleListEmptyReason({
+    isLoading: friendsQuery.isPending || groupsQuery.isPending,
+    hasAnyContacts: 0 < (friendsQuery.data?.length ?? 0) || 0 < (groupsQuery.data?.length ?? 0),
+    isFiltering: '' !== nameOrEmail.trim(),
+  });
 
   const onAddEmailClick = useCallback(
     (invite = false) => {
@@ -250,13 +258,18 @@ export const SelectUserOrGroup: React.FC<{
         ) : null}
 
         {0 === filteredFriends?.length && 0 === filteredGroups?.length ? (
-          <div className="mt-[30%] flex flex-col items-center justify-center gap-20 transition-discrete starting:opacity-0">
+          <div className="mt-[30%] flex flex-col items-center justify-center gap-8 transition-discrete starting:opacity-0">
             <Image
               alt={t('expense_details.add_expense_details.select_user_or_group.empty_image_alt')}
               src="/empty_img.svg"
               width={250}
               height={250}
             />
+            {emptyReason ? (
+              <p className="text-center text-sm text-gray-400">
+                {t(`ui.people_list_empty.${emptyReason}`)}
+              </p>
+            ) : null}
           </div>
         ) : null}
       </div>

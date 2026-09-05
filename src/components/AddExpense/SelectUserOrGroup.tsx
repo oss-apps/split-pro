@@ -5,6 +5,7 @@ import { SendIcon } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 import React, { useCallback } from 'react';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { useAddExpenseStore } from '~/store/addStore';
@@ -56,6 +57,10 @@ export const SelectUserOrGroup: React.FC<{
               addOrUpdateParticipant(user);
               setNameOrEmail('');
             },
+            onError: () => {
+              removeParticipant(-1);
+              toast.error(t('errors.invite_email_failed'));
+            },
           },
         );
         addOrUpdateParticipant({
@@ -81,6 +86,7 @@ export const SelectUserOrGroup: React.FC<{
       addOrUpdateParticipant,
       setNameOrEmail,
       removeParticipant,
+      t,
     ],
   );
 

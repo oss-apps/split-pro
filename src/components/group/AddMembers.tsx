@@ -93,6 +93,10 @@ const AddMembers: React.FC<{
           onSuccess: (user) => {
             onSave({ ...userIds, [user.id]: true });
           },
+          onError: () => {
+            toast.error(t('errors.invite_email_failed'));
+            friendsQuery.refetch().catch(console.error);
+          },
         },
       );
     }

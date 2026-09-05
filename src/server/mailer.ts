@@ -61,14 +61,14 @@ export async function sendInviteEmail(email: string, name: string) {
 
   if ('development' === env.NODE_ENV) {
     console.log('Sending invite email', email, name);
-    return;
+    return true;
   }
 
   const subject = 'Invitation to SplitPro';
   const text = `Hey,\n\nYou have been invited to SplitPro by ${name}. It's a completely open source free alternative to splitwise. You can sign in to SplitPro by clicking the below URL:\n${env.NEXTAUTH_URL}\n\nThanks,\nSplitPro Team`;
   const html = `<p>Hey,</p> <p>You have been invited to SplitPro by ${name}. It's a completely open source free alternative to splitwise. You can sign in to SplitPro by clicking the below URL:</p><p><a href="${env.NEXTAUTH_URL}">Sign in to ${host}</a></p><br><p>Thanks,<br/>SplitPro Team</p>`;
 
-  await sendMail(email, subject, text, html);
+  return await sendMail(email, subject, text, html);
 }
 
 export async function sendFeedbackEmail(feedback: string, user: User) {

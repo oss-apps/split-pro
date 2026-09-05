@@ -73,8 +73,7 @@ export const userRouter = createTRPCRouter({
           },
         }));
 
-      // Only a just-created or not-yet-verified user should receive an invite
-      // Email -- skip re-sending to a friend who already has a verified account.
+      // Only a just-created or not-yet-verified friend should get an invite email.
       if (input.sendInviteEmail && !friend?.emailVerified) {
         if (!env.ENABLE_SENDING_INVITES) {
           throw new TRPCError({

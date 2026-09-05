@@ -73,22 +73,22 @@ export const userRouter = createTRPCRouter({
           },
         }));
 
-      if (input.sendInviteEmail) {
-        let sent = false;
-        try {
-          sent = await sendInviteEmail(input.email, session.user.name ?? session.user.email ?? '');
-        } catch (err) {
-          console.error('Error sending invite email', err);
-          const disabled = err instanceof Error && 'Sending invites is not enabled' === err.message;
+      // Only a just-created or not-yet-verified user should receive an invite
+      // Email -- skip re-sending to a friend who already has a verified account.
+      if (input.sendInviteEmail && !friend?.emailVerified) {
+        if (!env.ENABLE_SENDING_INVITES) {
           throw new TRPCError({
             code: 'INTERNAL_SERVER_ERROR',
-            message: disabled
-              ? 'Invite emails are disabled on this server.'
-              : 'Failed to send invite email. Check your SMTP configuration.',
+            message: 'Invite emails are disabled on this server.',
           });
         }
 
+        const sent = await sendInviteEmail(
+          input.email,
+          session.user.name ?? session.user.email ?? '',
+        );
         if (!sent) {
+          console.error('Error sending invite email to', input.email);
           throw new TRPCError({
             code: 'INTERNAL_SERVER_ERROR',
             message: 'Failed to send invite email. Check your SMTP configuration.',

@@ -95,7 +95,17 @@ const AddMembers: React.FC<{
           },
           onError: () => {
             toast.error(t('errors.invite_email_failed'));
-            friendsQuery.refetch().catch(console.error);
+            // The friend row was still created despite the email failing (see #722);
+            // Re-fetch it without retrying the email so it can still be added to the group.
+            addFriendMutation.mutate(
+              { email: inputValue.toLowerCase(), sendInviteEmail: false },
+              {
+                onSuccess: (user) => {
+                  onSave({ ...userIds, [user.id]: true });
+                },
+                onError: () => toast.error(t('errors.add_member_failed')),
+              },
+            );
           },
         },
       );

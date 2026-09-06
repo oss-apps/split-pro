@@ -132,6 +132,7 @@ export const SelectUserOrGroup: React.FC<{
     [setGroup, setParticipants, setNameOrEmail],
   );
 
+  const handleAddEmailClickTrue = useCallback(() => onAddEmailClick(true), [onAddEmailClick]);
   const handleAddEmailClickFalse = useCallback(() => onAddEmailClick(false), [onAddEmailClick]);
 
   if (group) {
@@ -176,7 +177,7 @@ export const SelectUserOrGroup: React.FC<{
               className="mt-4 text-cyan-500 hover:text-cyan-500"
               variant="outline"
               disabled={!isEmail.success}
-              onClick={handleAddEmailClickFalse}
+              onClick={handleAddEmailClickTrue}
             >
               <SendIcon className="mr-2 h-4 w-4" />
               {t('expense_details.add_expense_details.select_user_or_group.send_invite')}

@@ -43,6 +43,7 @@ model User {
   name                 String?
   email                String?              @unique
   emailVerified        DateTime?
+  lastInvitedAt        DateTime?
   image                String?
   currency             String               @default("USD")
   defaultCurrency      String?

@@ -60,6 +60,7 @@ export const UserInput: React.FC<{
         name: nameOrEmail,
         email: nameOrEmail,
         emailVerified: new Date(),
+        lastInvitedAt: null,
         image: null,
         currency: 'USD',
         defaultCurrency: null,

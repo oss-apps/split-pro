@@ -23,6 +23,7 @@ const createMockUser = (id: number, name: string, email: string): User => ({
   currency: 'USD',
   defaultCurrency: null,
   emailVerified: null,
+  lastInvitedAt: null,
   image: null,
   preferredLanguage: 'en',
   obapiProviderId: null,

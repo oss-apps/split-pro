@@ -57,9 +57,13 @@ export const SelectUserOrGroup: React.FC<{
               addOrUpdateParticipant(user);
               setNameOrEmail('');
             },
-            onError: () => {
+            onError: (err) => {
               removeParticipant(-1);
-              toast.error(t('errors.invite_email_failed'));
+              toast.error(
+                'INVITE_EMAIL_SEND_FAILED' === err.data?.appErrorCode
+                  ? t('errors.invite_email_failed')
+                  : t('errors.add_member_failed'),
+              );
             },
           },
         );
@@ -68,6 +72,7 @@ export const SelectUserOrGroup: React.FC<{
           name: nameOrEmail,
           email: nameOrEmail,
           emailVerified: new Date(),
+          lastInvitedAt: null,
           image: null,
           currency: 'USD',
           defaultCurrency: null,

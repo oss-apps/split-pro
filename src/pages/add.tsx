@@ -66,6 +66,7 @@ const AddPage: NextPageWithUser<{
       ...user,
       defaultCurrency: user.defaultCurrency ?? null,
       emailVerified: null,
+      lastInvitedAt: null,
       name: user.name ?? null,
       email: user.email ?? null,
       image: user.image ?? null,

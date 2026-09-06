@@ -87,25 +87,34 @@ const AddMembers: React.FC<{
 
   function onAddEmailClick(invite = false) {
     if (isEmail.success) {
+      const email = inputValue.toLowerCase();
+
       addFriendMutation.mutate(
-        { email: inputValue.toLowerCase(), sendInviteEmail: invite },
+        { email, sendInviteEmail: invite },
         {
           onSuccess: (user) => {
             onSave({ ...userIds, [user.id]: true });
           },
-          onError: () => {
-            toast.error(t('errors.invite_email_failed'));
-            // The friend row was still created despite the email failing (see #722);
-            // Re-fetch it without retrying the email so it can still be added to the group.
-            addFriendMutation.mutate(
-              { email: inputValue.toLowerCase(), sendInviteEmail: false },
-              {
-                onSuccess: (user) => {
-                  onSave({ ...userIds, [user.id]: true });
-                },
-                onError: () => toast.error(t('errors.add_member_failed')),
-              },
+          onError: (err) => {
+            const appErrorCode = err.data?.appErrorCode;
+            toast.error(
+              'INVITE_EMAIL_SEND_FAILED' === appErrorCode
+                ? t('errors.invite_email_failed')
+                : t('errors.add_member_failed'),
             );
+
+            // The friend row already exists whenever this router throws, so retry the group-add.
+            if (null != appErrorCode) {
+              addFriendMutation.mutate(
+                { email, sendInviteEmail: false },
+                {
+                  onSuccess: (user) => {
+                    onSave({ ...userIds, [user.id]: true });
+                  },
+                  onError: () => toast.error(t('errors.add_member_failed')),
+                },
+              );
+            }
           },
         },
       );

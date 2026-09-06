@@ -8,6 +8,5 @@ export class AppError extends Error {
   }
 }
 
-export function getAppErrorCode(cause: unknown): string | null {
-  return cause instanceof AppError ? cause.code : null;
-}
+export const getAppErrorCode = (cause: unknown): string | null =>
+  cause instanceof AppError ? cause.code : null;

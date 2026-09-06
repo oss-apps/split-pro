@@ -6,14 +6,12 @@ export const InviteErrorCode = {
 
 const inviteErrorCodes: string[] = Object.values(InviteErrorCode);
 
-export function isInviteErrorCode(appErrorCode: unknown): boolean {
-  return 'string' === typeof appErrorCode && inviteErrorCodes.includes(appErrorCode);
-}
+export const isInviteErrorCode = (appErrorCode: unknown): boolean =>
+  'string' === typeof appErrorCode && inviteErrorCodes.includes(appErrorCode);
 
-export function getInviteErrorToastKey(
+export const getInviteErrorToastKey = (
   appErrorCode: string | null | undefined,
-): 'errors.invite_email_failed' | 'errors.add_member_failed' {
-  return InviteErrorCode.INVITE_EMAIL_SEND_FAILED === appErrorCode
+): 'errors.invite_email_failed' | 'errors.add_member_failed' =>
+  InviteErrorCode.INVITE_EMAIL_SEND_FAILED === appErrorCode
     ? 'errors.invite_email_failed'
     : 'errors.add_member_failed';
-}

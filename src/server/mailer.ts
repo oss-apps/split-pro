@@ -8,14 +8,13 @@ import { sendToDiscord } from './service-notification';
 // oxlint-disable-next-line init-declarations
 let transporter: Transporter;
 
-function escapeHtml(value: string): string {
-  return value
+const escapeHtml = (value: string): string =>
+  value
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
-}
 
 export const mailServerConfig = {
   host: env.EMAIL_SERVER_HOST,

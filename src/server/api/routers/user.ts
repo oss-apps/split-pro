@@ -29,13 +29,13 @@ import {
 
 const INVITE_COOLDOWN_MS = 60_000;
 
-function throwInviteError(
+const throwInviteError = (
   code: 'PRECONDITION_FAILED' | 'TOO_MANY_REQUESTS' | 'INTERNAL_SERVER_ERROR',
   inviteErrorCode: (typeof InviteErrorCode)[keyof typeof InviteErrorCode],
   message: string,
-): never {
+): never => {
   throw new TRPCError({ code, message, cause: new AppError(inviteErrorCode, message) });
-}
+};
 
 export const userRouter = createTRPCRouter({
   me: protectedProcedure.query(({ ctx }) => ctx.session.user),
@@ -70,23 +70,18 @@ export const userRouter = createTRPCRouter({
   inviteFriend: protectedProcedure
     .input(z.object({ email: z.string(), sendInviteEmail: z.boolean().optional() }))
     .mutation(async ({ input, ctx: { session } }) => {
-      const friend = await db.user.findUnique({
-        where: {
+      // Upsert avoids a find-then-create race where two concurrent invites for the same brand-new email both miss the lookup and hit the unique constraint.
+      const user = await db.user.upsert({
+        where: { email: input.email },
+        update: {},
+        create: {
           email: input.email,
+          name: input.email.split('@')[0],
         },
       });
 
-      const user =
-        friend ??
-        (await db.user.create({
-          data: {
-            email: input.email,
-            name: input.email.split('@')[0],
-          },
-        }));
-
-      // Only a just-created or not-yet-verified friend should get an invite email.
-      if (input.sendInviteEmail && !friend?.emailVerified) {
+      // Only a just-created or not-yet-verified user should get an invite email.
+      if (input.sendInviteEmail && !user.emailVerified) {
         if (!env.ENABLE_SENDING_INVITES) {
           throwInviteError(
             'PRECONDITION_FAILED',
@@ -114,12 +109,13 @@ export const userRouter = createTRPCRouter({
           );
         }
 
-        const sent = await sendInviteEmail(
-          input.email,
-          session.user.name ?? session.user.email ?? '',
-        );
+        let sent = false;
+        try {
+          sent = await sendInviteEmail(input.email, session.user.name ?? session.user.email ?? '');
+        } catch (err) {
+          console.error('Error sending invite email to user', user.id, err);
+        }
         if (!sent) {
-          console.error('Error sending invite email to user', user.id);
           throwInviteError(
             'INTERNAL_SERVER_ERROR',
             InviteErrorCode.INVITE_EMAIL_SEND_FAILED,

@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { deserializeDefaultSplit } from '~/lib/defaultSplit';
+import { getInviteErrorToastKey } from '~/lib/inviteErrors';
 
 import { EntityAvatar } from '../ui/avatar';
 import { Button } from '../ui/button';
@@ -59,11 +60,7 @@ export const SelectUserOrGroup: React.FC<{
             },
             onError: (err) => {
               removeParticipant(-1);
-              toast.error(
-                'INVITE_EMAIL_SEND_FAILED' === err.data?.appErrorCode
-                  ? t('errors.invite_email_failed')
-                  : t('errors.add_member_failed'),
-              );
+              toast.error(t(getInviteErrorToastKey(err.data?.appErrorCode)));
             },
           },
         );

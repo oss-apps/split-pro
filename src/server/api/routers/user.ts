@@ -8,6 +8,7 @@ import {
   serializeDefaultSplit,
   toSortedFriendPair,
 } from '~/lib/defaultSplit';
+import { InviteErrorCode } from '~/lib/inviteErrors';
 import { simplifyDebts } from '~/lib/simplify';
 import { AppError } from '~/server/api/appError';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
@@ -27,6 +28,14 @@ import {
 } from '../services/splitService';
 
 const INVITE_COOLDOWN_MS = 60_000;
+
+function throwInviteError(
+  code: 'PRECONDITION_FAILED' | 'TOO_MANY_REQUESTS' | 'INTERNAL_SERVER_ERROR',
+  inviteErrorCode: (typeof InviteErrorCode)[keyof typeof InviteErrorCode],
+  message: string,
+): never {
+  throw new TRPCError({ code, message, cause: new AppError(inviteErrorCode, message) });
+}
 
 export const userRouter = createTRPCRouter({
   me: protectedProcedure.query(({ ctx }) => ctx.session.user),
@@ -79,11 +88,11 @@ export const userRouter = createTRPCRouter({
       // Only a just-created or not-yet-verified friend should get an invite email.
       if (input.sendInviteEmail && !friend?.emailVerified) {
         if (!env.ENABLE_SENDING_INVITES) {
-          throw new TRPCError({
-            code: 'PRECONDITION_FAILED',
-            message: 'Invite emails are disabled on this server.',
-            cause: new AppError('INVITES_DISABLED', 'Invite emails are disabled on this server.'),
-          });
+          throwInviteError(
+            'PRECONDITION_FAILED',
+            InviteErrorCode.INVITES_DISABLED,
+            'Invite emails are disabled on this server.',
+          );
         }
 
         // Claim the cooldown atomically, so concurrent requests can't both pass a read-then-write check.
@@ -98,14 +107,11 @@ export const userRouter = createTRPCRouter({
           data: { lastInvitedAt: new Date() },
         });
         if (0 === claim.count) {
-          throw new TRPCError({
-            code: 'TOO_MANY_REQUESTS',
-            message: 'Please wait before re-sending an invite to this address.',
-            cause: new AppError(
-              'INVITE_RATE_LIMITED',
-              'Please wait before re-sending an invite to this address.',
-            ),
-          });
+          throwInviteError(
+            'TOO_MANY_REQUESTS',
+            InviteErrorCode.INVITE_RATE_LIMITED,
+            'Please wait before re-sending an invite to this address.',
+          );
         }
 
         const sent = await sendInviteEmail(
@@ -114,14 +120,11 @@ export const userRouter = createTRPCRouter({
         );
         if (!sent) {
           console.error('Error sending invite email to user', user.id);
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'Failed to send invite email. Check your SMTP configuration.',
-            cause: new AppError(
-              'INVITE_EMAIL_SEND_FAILED',
-              'Failed to send invite email. Check your SMTP configuration.',
-            ),
-          });
+          throwInviteError(
+            'INTERNAL_SERVER_ERROR',
+            InviteErrorCode.INVITE_EMAIL_SEND_FAILED,
+            'Failed to send invite email. Check your SMTP configuration.',
+          );
         }
       }
 

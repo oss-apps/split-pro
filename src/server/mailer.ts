@@ -8,6 +8,15 @@ import { sendToDiscord } from './service-notification';
 // oxlint-disable-next-line init-declarations
 let transporter: Transporter;
 
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
 export const mailServerConfig = {
   host: env.EMAIL_SERVER_HOST,
   port: parseInt(env.EMAIL_SERVER_PORT ?? ''),
@@ -66,7 +75,7 @@ export async function sendInviteEmail(email: string, name: string) {
 
   const subject = 'Invitation to SplitPro';
   const text = `Hey,\n\nYou have been invited to SplitPro by ${name}. It's a completely open source free alternative to splitwise. You can sign in to SplitPro by clicking the below URL:\n${env.NEXTAUTH_URL}\n\nThanks,\nSplitPro Team`;
-  const html = `<p>Hey,</p> <p>You have been invited to SplitPro by ${name}. It's a completely open source free alternative to splitwise. You can sign in to SplitPro by clicking the below URL:</p><p><a href="${env.NEXTAUTH_URL}">Sign in to ${host}</a></p><br><p>Thanks,<br/>SplitPro Team</p>`;
+  const html = `<p>Hey,</p> <p>You have been invited to SplitPro by ${escapeHtml(name)}. It's a completely open source free alternative to splitwise. You can sign in to SplitPro by clicking the below URL:</p><p><a href="${env.NEXTAUTH_URL}">Sign in to ${host}</a></p><br><p>Thanks,<br/>SplitPro Team</p>`;
 
   return await sendMail(email, subject, text, html);
 }

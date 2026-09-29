@@ -47,6 +47,7 @@ export const CurrencyConversion: React.FC<{
   const [amountStr, setAmountStr] = useState('');
   const [rate, setRate] = useState('');
   const [targetAmountStr, setTargetAmountStr] = useState('');
+  const [open, setOpen] = useState(false);
   const preferredCurrency = useAddExpenseStore((state) => state.currency);
   const { setCurrency } = useAddExpenseStore((state) => state.actions);
   const [targetCurrency, setTargetCurrency] = useState<CurrencyCode>(preferredCurrency);
@@ -57,6 +58,7 @@ export const CurrencyConversion: React.FC<{
   );
 
   const { toUIString: toUITargetString } = getCurrencyHelpersCached(targetCurrency);
+  const amountValue = getAmountValue(amountStr);
 
   useEffect(() => {
     if (getCurrencyRate.isPending) {
@@ -95,11 +97,11 @@ export const CurrencyConversion: React.FC<{
     const targetAmount = currencyConversion({
       from: currency,
       to: targetCurrency,
-      amount: getAmountValue(amountStr) ?? 0n,
+      amount: amountValue ?? 0n,
       rate: Number(rate),
     });
     setTargetAmountStr(toUITargetString(targetAmount, false, true));
-  }, [amountStr, rate, getAmountValue, toUITargetString, currency, targetCurrency]);
+  }, [amountValue, rate, toUITargetString, currency, targetCurrency]);
 
   const onUpdateAmount = useCallback(
     ({ strValue }: { strValue?: string; bigIntValue?: bigint }) => {
@@ -162,7 +164,6 @@ export const CurrencyConversion: React.FC<{
         return;
       }
 
-      const amountValue = getAmountValue(amountStr);
       if (amountValue === null) {
         toast.error(t('errors.invalid_expression'));
         return;
@@ -174,12 +175,13 @@ export const CurrencyConversion: React.FC<{
         from: currency,
         to: targetCurrency,
       });
+      setOpen(false);
       toast.success(t('currency_conversion.success_toast'));
     } catch (error) {
       console.error(error);
       toast.error(t('errors.currency_conversion_error'));
     }
-  }, [onSubmit, targetCurrency, amountStr, rate, currency, getAmountValue, t]);
+  }, [onSubmit, targetCurrency, amountValue, rate, currency, t]);
 
   const ratePrecision = useMemo(() => {
     if (!rate) {
@@ -195,11 +197,15 @@ export const CurrencyConversion: React.FC<{
       title={t('currency_conversion.title')}
       className="h-[70vh]"
       actionTitle={t('actions.save')}
-      shouldCloseOnAction
+      open={open}
+      onOpenChange={setOpen}
+      shouldCloseOnAction={false}
       actionOnClick={onSave}
       actionDisabled={
         !isCurrencyCode(targetCurrency) ||
         !amountStr ||
+        null === amountValue ||
+        0n >= amountValue ||
         !rate ||
         Number(rate) <= 0 ||
         Number(amountStr) <= 0 ||

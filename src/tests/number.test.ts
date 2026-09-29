@@ -1,5 +1,14 @@
 // Filepath: /home/wiktor/kod/split-pro/src/utils/number.test.ts
 import { currencyConversion, getCurrencyHelpers } from '../utils/numbers';
+import { safeEvaluateExpression } from '../utils/expression';
+
+const evaluateExpression = (input: string) => {
+  const result = safeEvaluateExpression(input);
+  if (null === result) {
+    throw new Error(`Expected a valid expression: ${input}`);
+  }
+  return result;
+};
 
 describe('getCurrencyHelpers', () => {
   describe('toUIString', () => {
@@ -160,8 +169,9 @@ describe('getCurrencyHelpers', () => {
           currency: 'EUR',
         });
 
-        expect(expressionResultToBigInt('41.25')).toBe(4125n);
-        expect(expressionResultToBigInt('0.6666666667')).toBe(67n);
+        expect(expressionResultToBigInt(evaluateExpression('41.25'))).toBe(4125n);
+        expect(expressionResultToBigInt(evaluateExpression('0.6666666667'))).toBe(67n);
+        expect(expressionResultToBigInt(evaluateExpression('0.0050000000005+0'))).toBe(1n);
       });
     });
 
@@ -172,8 +182,8 @@ describe('getCurrencyHelpers', () => {
           currency: 'JPY',
         });
 
-        expect(expressionResultToBigInt('33.3333333333')).toBe(33n);
-        expect(expressionResultToBigInt('33.6666666667')).toBe(34n);
+        expect(expressionResultToBigInt(evaluateExpression('33.3333333333'))).toBe(33n);
+        expect(expressionResultToBigInt(evaluateExpression('33.6666666667'))).toBe(34n);
       });
     });
   });
@@ -221,6 +231,18 @@ describe('getCurrencyHelpers', () => {
         expect(sanitizeInput('860.1')).toBe('860');
         expect(sanitizeInput('1,234')).toBe('1234');
       });
+
+      describe('de-DE locale', () => {
+        const { sanitizeInput: sanitizeGermanInput } = getCurrencyHelpers({
+          locale: 'de-DE',
+          currency: 'JPY',
+        });
+
+        it('should discard alternative decimal input without joining its digits', () => {
+          expect(sanitizeGermanInput('5.5', false, true)).toBe('5');
+          expect(sanitizeGermanInput('1.234', false, true)).toBe('1234');
+        });
+      });
     });
 
     describe('sanitizeExpressionInput', () => {
@@ -232,6 +254,16 @@ describe('getCurrencyHelpers', () => {
       it('should discard fractional input before continuing an expression', () => {
         expect(sanitizeExpressionInput('860.5+2', false, true)).toBe('860+2');
         expect(sanitizeExpressionInput('1,234+2', false, true)).toBe('1234+2');
+      });
+
+      it('should distinguish German grouped input from fractional input', () => {
+        const { sanitizeExpressionInput: sanitizeGermanExpression } = getCurrencyHelpers({
+          locale: 'de-DE',
+          currency: 'JPY',
+        });
+
+        expect(sanitizeGermanExpression('5.5+2', false, true)).toBe('5+2');
+        expect(sanitizeGermanExpression('1.234+2', false, true)).toBe('1234+2');
       });
     });
 

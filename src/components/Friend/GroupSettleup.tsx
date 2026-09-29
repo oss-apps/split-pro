@@ -11,7 +11,7 @@ import { EntityAvatar } from '../ui/avatar';
 import { CurrencyInput } from '../ui/currency-input';
 import { AppDrawer } from '../ui/drawer';
 import { useSession } from 'next-auth/react';
-import { isExpression, safeEvaluateExpression } from '~/utils/expression';
+import { isExpression, isValidExpressionResult, safeEvaluateExpression } from '~/utils/expression';
 
 export const GroupSettleUp: React.FC<{
   amount: bigint;
@@ -25,6 +25,7 @@ export const GroupSettleUp: React.FC<{
   const { displayName, t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const [amount, setAmount] = useState<bigint>(BigMath.abs(_amount));
   const [amountStr, setAmountStr] = useState(getCurrencyHelpersCached(currency).toUIString(amount));
+  const [open, setOpen] = useState(false);
 
   const onCurrencyInputValueChange = React.useCallback(
     ({ strValue, bigIntValue }: { strValue?: string; bigIntValue?: bigint }) => {
@@ -45,28 +46,27 @@ export const GroupSettleUp: React.FC<{
   const receiver = 0 > _amount ? friend : user;
   const amountIsExpression = isExpression(amountStr);
   const evaluatedExpression = amountIsExpression ? safeEvaluateExpression(amountStr) : null;
-  const evaluatedExpressionAmount =
-    null !== evaluatedExpression && !evaluatedExpression.startsWith('-')
-      ? getCurrencyHelpersCached(currency).expressionResultToBigInt(evaluatedExpression)
-      : 0n;
+  const evaluatedExpressionAmount = isValidExpressionResult(evaluatedExpression)
+    ? getCurrencyHelpersCached(currency).expressionResultToBigInt(evaluatedExpression)
+    : 0n;
   const canSave = amountIsExpression ? 0n < evaluatedExpressionAmount : 0n < amount;
 
   const saveExpense = React.useCallback(() => {
     let finalAmount = amount;
     if (isExpression(amountStr)) {
       const evaluated = safeEvaluateExpression(amountStr);
-      if (evaluated === null) {
+      if (null === evaluated) {
         toast.error(t('errors.invalid_expression'));
         return;
       }
-      if (evaluated.startsWith('-')) {
+      if (0n > evaluated.numerator) {
         toast.error(t('errors.negative_settlement_amount'));
         return;
       }
       finalAmount = getCurrencyHelpersCached(currency).expressionResultToBigInt(evaluated);
     }
 
-    if (!finalAmount) {
+    if (0n === finalAmount) {
       return;
     }
 
@@ -92,6 +92,7 @@ export const GroupSettleUp: React.FC<{
       },
       {
         onSuccess: () => {
+          setOpen(false);
           utils.group.invalidate().catch(console.error);
         },
         onError: (error) => {
@@ -122,7 +123,9 @@ export const GroupSettleUp: React.FC<{
       actionOnClick={saveExpense}
       actionDisabled={!canSave}
       className="h-[70vh]"
-      shouldCloseOnAction
+      open={open}
+      onOpenChange={setOpen}
+      shouldCloseOnAction={false}
     >
       <div className="mt-10 flex flex-col items-center gap-6">
         <div className="flex flex-col items-center">

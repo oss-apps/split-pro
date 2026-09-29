@@ -296,7 +296,7 @@ export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ ex
         toast.error(t('errors.invalid_expression'));
         return;
       }
-      if (evaluated.startsWith('-')) {
+      if (0n > evaluated.numerator) {
         toast.error(t('errors.negative_settlement_amount'));
         return;
       }
@@ -370,7 +370,7 @@ export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ ex
       title={t('ui.settlement')}
       actionTitle={t('actions.save')}
       actionOnClick={saveExpense}
-      actionDisabled={!amount && !isExpression(amountStr)}
+      actionDisabled={0n === amount}
       className="h-[70vh]"
       shouldCloseOnAction={false}
     >

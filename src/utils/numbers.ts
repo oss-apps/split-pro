@@ -1,4 +1,5 @@
 import { CURRENCIES, type CurrencyCode, isCurrencyCode } from '~/lib/currency';
+import type { ExpressionResult } from '~/utils/expression';
 
 export const getCurrencyHelpers = ({
   locale = 'en-US',
@@ -44,18 +45,8 @@ export const getCurrencyHelpers = ({
     return parseToBigIntBeforeSubmit(stringNumber);
   };
 
-  const expressionResultToBigInt = (decimal: string): bigint => {
-    const negative = decimal.startsWith('-');
-    const unsignedDecimal = negative ? decimal.slice(1) : decimal;
-    const [integerPart = '0', fractionPart = ''] = unsignedDecimal.split('.');
-    const scale = 10n ** BigInt(fractionPart.length);
-    const value = BigMath.roundDiv(
-      BigInt(`${integerPart || '0'}${fractionPart}`) * decimalMultiplierN,
-      scale,
-    );
-
-    return negative ? -value : value;
-  };
+  const expressionResultToBigInt = ({ numerator, denominator }: ExpressionResult): bigint =>
+    BigMath.roundDiv(numerator * decimalMultiplierN, denominator);
 
   /* Parse sanitized string to number before submit */
   const parseToBigIntBeforeSubmit = (stringNumber: string | number | bigint): bigint => {
@@ -98,6 +89,20 @@ export const getCurrencyHelpers = ({
     return [integer, trimmedDecimals].join(decimalSeparator);
   };
 
+  const isGroupedThousandsSeparator = (input: string, index: number) => {
+    if (
+      0 !== decimalDigits ||
+      '' === thousandSeparator ||
+      input.slice(index, index + thousandSeparator.length) !== thousandSeparator
+    ) {
+      return false;
+    }
+
+    const previousDigits = input.slice(0, index).match(/\d+$/)?.[0] ?? '';
+    const followingDigits = input.slice(index + thousandSeparator.length).match(/^\d+/)?.[0] ?? '';
+    return 0 < previousDigits.length && previousDigits.length <= 3 && 3 === followingDigits.length;
+  };
+
   /* Sanitize input by allowing only digits, negative sign, and one decimal separator */
   const sanitizeInput = (input: string, signed = false, alternativeDecimal = false) => {
     let cleaned = '';
@@ -105,12 +110,12 @@ export const getCurrencyHelpers = ({
     let hasNegativeSign = false;
     let ignoreFraction = false;
 
-    `${input}`.split('').forEach((letter) => {
+    input.split('').forEach((letter, index) => {
       const isAlternativeDecimalSeparator =
         alternativeDecimal &&
         letter === alternativeDecimalSeparator &&
         !input.includes(decimalSeparator);
-      if (0 === decimalDigits && letter === thousandSeparator) {
+      if (isGroupedThousandsSeparator(input, index)) {
         return;
       }
       if (letter === decimalSeparator || isAlternativeDecimalSeparator) {
@@ -162,7 +167,7 @@ export const getCurrencyHelpers = ({
     let cleaned = '';
     let ignoreFraction = false;
 
-    input.split('').forEach((letter) => {
+    input.split('').forEach((letter, index) => {
       if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(letter)) {
         if (!ignoreFraction) {
           cleaned += letter;
@@ -171,7 +176,7 @@ export const getCurrencyHelpers = ({
       }
       const isAlternativeDecimalSeparator =
         alternativeDecimal && letter === alternativeDecimalSeparator;
-      if (0 === decimalDigits && letter === thousandSeparator) {
+      if (isGroupedThousandsSeparator(input, index)) {
         return;
       }
       if (letter === decimalSeparator || isAlternativeDecimalSeparator) {

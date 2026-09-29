@@ -315,7 +315,7 @@ export const AddOrEditExpensePage: React.FC<{
           disabled={
             addExpenseMutation.isPending ||
             null !== previousCurrencyRef.current ||
-            (!amount && !isExpression(amtStr)) ||
+            0n === amount ||
             '' === description ||
             isFileUploading ||
             !isExpenseSettled
@@ -398,7 +398,7 @@ export const AddOrEditExpensePage: React.FC<{
                       disabled={
                         addExpenseMutation.isPending ||
                         null !== previousCurrencyRef.current ||
-                        (!amount && !isExpression(amtStr)) ||
+                        0n === amount ||
                         '' === description ||
                         isFileUploading ||
                         !isExpenseSettled

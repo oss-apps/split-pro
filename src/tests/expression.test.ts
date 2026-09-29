@@ -1,4 +1,14 @@
-import { isExpression, isValidExpressionResult, safeEvaluateExpression } from '../utils/expression';
+import {
+  expressionResultToDecimal,
+  isExpression,
+  isValidExpressionResult,
+  safeEvaluateExpression,
+} from '../utils/expression';
+
+const evaluateToDecimal = (input: string) => {
+  const result = safeEvaluateExpression(input);
+  return null === result ? null : expressionResultToDecimal(result);
+};
 
 describe('isExpression', () => {
   it.each([
@@ -44,7 +54,7 @@ describe('safeEvaluateExpression', () => {
     ['9007199254740992+1', '9007199254740993'],
     ['999999999999999999999999+1', '1000000000000000000000000'],
   ])('should evaluate %p to %p', (input, expected) => {
-    expect(safeEvaluateExpression(input)).toBe(expected);
+    expect(evaluateToDecimal(input)).toBe(expected);
   });
 
   it.each([
@@ -63,20 +73,27 @@ describe('safeEvaluateExpression', () => {
   });
 
   it('should handle whitespace', () => {
-    expect(safeEvaluateExpression(' 30.5 + 10.75 ')).toBe('41.25');
+    expect(evaluateToDecimal(' 30.5 + 10.75 ')).toBe('41.25');
   });
 
   it('should handle operator precedence', () => {
-    expect(safeEvaluateExpression('2+3*4')).toBe('14');
-    expect(safeEvaluateExpression('2*3+4')).toBe('10');
-    expect(safeEvaluateExpression('2+3*4-1')).toBe('13');
-    expect(safeEvaluateExpression('20/5*2')).toBe('8');
+    expect(evaluateToDecimal('2+3*4')).toBe('14');
+    expect(evaluateToDecimal('2*3+4')).toBe('10');
+    expect(evaluateToDecimal('2+3*4-1')).toBe('13');
+    expect(evaluateToDecimal('20/5*2')).toBe('8');
   });
 
   it('should handle parentheses precedence', () => {
-    expect(safeEvaluateExpression('2*(3+4)')).toBe('14');
-    expect(safeEvaluateExpression('(2+3)*(4-1)')).toBe('15');
-    expect(safeEvaluateExpression('2+3*(4-1)')).toBe('11');
+    expect(evaluateToDecimal('2*(3+4)')).toBe('14');
+    expect(evaluateToDecimal('(2+3)*(4-1)')).toBe('15');
+    expect(evaluateToDecimal('2+3*(4-1)')).toBe('11');
+  });
+
+  it('preserves exact fractions for currency conversion', () => {
+    expect(safeEvaluateExpression('0.0050000000005+0')).toEqual({
+      numerator: 10000000001n,
+      denominator: 2000000000000n,
+    });
   });
 });
 
@@ -87,6 +104,11 @@ describe('isValidExpressionResult', () => {
     ['-5', true, true],
     [null, false, false],
   ])('should return %p for result %p with allowNegative=%p', (result, allowNegative, expected) => {
-    expect(isValidExpressionResult(result, allowNegative)).toBe(expected);
+    expect(
+      isValidExpressionResult(
+        null === result ? null : safeEvaluateExpression(result),
+        allowNegative,
+      ),
+    ).toBe(expected);
   });
 });

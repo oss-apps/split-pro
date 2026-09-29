@@ -431,6 +431,16 @@ const ParticipantRow = ({
     [onInputValidityChange, p.id, setSplitShare, splitType],
   );
 
+  useEffect(() => {
+    if (!isCurrency) {
+      return;
+    }
+
+    return () => {
+      onInputValidityChange(splitType, p.id, true);
+    };
+  }, [isCurrency, onInputValidityChange, p.id, splitType]);
+
   return (
     <div
       key={p.id}

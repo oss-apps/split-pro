@@ -32,7 +32,11 @@ const CurrencyInput: React.FC<
       onChange={(e) => {
         const rawValue = e.target.value;
         if (isExpression(rawValue)) {
-          const sanitized = sanitizeExpressionInput(rawValue, allowNegative, true);
+          const normalizedValue =
+            !isExpression(strValue) && rawValue.startsWith(strValue)
+              ? `${sanitizeInput(strValue, allowNegative)}${rawValue.slice(strValue.length)}`
+              : rawValue;
+          const sanitized = sanitizeExpressionInput(normalizedValue, allowNegative, true);
           const evaluated = safeEvaluateExpression(sanitized);
           const isValid = isValidExpressionResult(evaluated, allowNegative);
           const bigIntValue =

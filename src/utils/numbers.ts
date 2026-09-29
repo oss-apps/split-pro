@@ -34,6 +34,11 @@ export const getCurrencyHelpers = ({
   const alternativeDecimalSeparator = decimalSeparator === '.' ? ',' : '.';
   const literalSeparator =
     formatter.formatToParts(1.1).find(({ type }) => type === 'literal')?.value ?? '';
+  const groupingIntegerParts = formatter
+    .formatToParts(111111111111)
+    .filter(({ type }) => type === 'integer');
+  const primaryGroupSize = groupingIntegerParts.at(-1)?.value.length ?? 3;
+  const secondaryGroupSize = groupingIntegerParts.at(-2)?.value.length ?? primaryGroupSize;
   const decimalMultiplier = parseInt(`1${'0'.repeat(decimalDigits)}`, 10);
   const decimalMultiplierN = BigInt(decimalMultiplier);
 
@@ -99,8 +104,32 @@ export const getCurrencyHelpers = ({
     }
 
     const previousDigits = input.slice(0, index).match(/\d+$/)?.[0] ?? '';
-    const followingDigits = input.slice(index + thousandSeparator.length).match(/^\d+/)?.[0] ?? '';
-    return 0 < previousDigits.length && previousDigits.length <= 3 && 3 === followingDigits.length;
+    const operatorStart = Math.max(
+      ...['+', '-', '*', '/', '(', ')'].map((operator) => input.lastIndexOf(operator, index - 1)),
+    );
+    const operatorEndCandidates = ['+', '-', '*', '/', '(', ')']
+      .map((operator) => input.indexOf(operator, index + thousandSeparator.length))
+      .filter((operatorIndex) => -1 !== operatorIndex);
+    const operatorEnd =
+      0 === operatorEndCandidates.length ? input.length : Math.min(...operatorEndCandidates);
+    const numericToken = input
+      .slice(operatorStart + 1, operatorEnd)
+      .split('')
+      .filter((letter) => /\d/.test(letter) || letter === thousandSeparator)
+      .join('');
+    const groups = numericToken.split(thousandSeparator);
+    const firstGroup = groups[0] ?? '';
+    const middleGroups = groups.slice(1, -1);
+    const lastGroup = groups.at(-1) ?? '';
+
+    return (
+      1 < groups.length &&
+      0 < previousDigits.length &&
+      primaryGroupSize === lastGroup.length &&
+      middleGroups.every((group) => secondaryGroupSize === group.length) &&
+      0 < firstGroup.length &&
+      firstGroup.length <= secondaryGroupSize
+    );
   };
 
   /* Sanitize input by allowing only digits, negative sign, and one decimal separator */

@@ -243,6 +243,17 @@ describe('getCurrencyHelpers', () => {
           expect(sanitizeGermanInput('1.234', false, true)).toBe('1234');
         });
       });
+
+      describe('en-IN locale', () => {
+        const { sanitizeInput: sanitizeIndianInput } = getCurrencyHelpers({
+          locale: 'en-IN',
+          currency: 'JPY',
+        });
+
+        it('should preserve Indian grouping separators', () => {
+          expect(sanitizeIndianInput('12,34,567', false, true)).toBe('1234567');
+        });
+      });
     });
 
     describe('sanitizeExpressionInput', () => {
@@ -264,6 +275,15 @@ describe('getCurrencyHelpers', () => {
 
         expect(sanitizeGermanExpression('5.5+2', false, true)).toBe('5+2');
         expect(sanitizeGermanExpression('1.234+2', false, true)).toBe('1234+2');
+      });
+
+      it('should preserve Indian grouping separators in expressions', () => {
+        const { sanitizeExpressionInput: sanitizeIndianExpression } = getCurrencyHelpers({
+          locale: 'en-IN',
+          currency: 'JPY',
+        });
+
+        expect(sanitizeIndianExpression('12,34,567+2', false, true)).toBe('1234567+2');
       });
     });
 

@@ -92,6 +92,7 @@ const formatExpressionResult = ({ numerator, denominator }: ExpressionResult): s
   return `${sign}${integerPart}${fractionPart ? `.${fractionPart}` : ''}`;
 };
 
+/** Evaluates an arithmetic expression exactly, returning null for invalid input or division by zero. */
 export const safeEvaluateExpression = (input: string): ExpressionResult | null => {
   const normalized = input.replace(/\s/g, '').replaceAll(',', '.');
   if ('' === normalized) {

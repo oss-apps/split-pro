@@ -1,0 +1,86 @@
+{
+  "categories_list": {
+    "entertainment": {
+      "items": {
+        "games": "游戏",
+        "movies": "电影",
+        "music": "音乐",
+        "other": "娱乐",
+        "sports": "体育"
+      },
+      "name": "娱乐"
+    },
+    "food": {
+      "items": {
+        "diningOut": "堂食",
+        "groceries": "食材",
+        "liquor": "酒水",
+        "other": "其他"
+      },
+      "name": "餐饮"
+    },
+    "general": {
+      "items": {
+        "general": "通用",
+        "other": "其他"
+      },
+      "name": "通用"
+    },
+    "home": {
+      "items": {
+        "electronics": "电器",
+        "furniture": "家具",
+        "maintenance": "维修",
+        "mortgage": "房贷",
+        "other": "其他",
+        "pets": "宠物",
+        "rent": "房租",
+        "services": "家政",
+        "supplies": "日用"
+      },
+      "name": "居家"
+    },
+    "life": {
+      "items": {
+        "childcare": "育儿",
+        "clothing": "服饰",
+        "education": "教育",
+        "gifts": "礼物",
+        "insurance": "保险",
+        "medical": "医疗",
+        "other": "其他",
+        "taxes": "税费"
+      },
+      "name": "生活"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "单车",
+        "bus": "公交",
+        "car": "汽车",
+        "fuel": "加油",
+        "hotel": "住宿",
+        "other": "其他",
+        "parking": "停车",
+        "plane": "飞机",
+        "taxi": "出租车",
+        "train": "火车"
+      },
+      "name": "出行"
+    },
+    "utilities": {
+      "items": {
+        "cleaning": "保洁",
+        "electricity": "电费",
+        "gas": "燃气",
+        "internet": "宽带",
+        "other": "其他",
+        "phone": "话费",
+        "trash": "垃圾",
+        "water": "水费"
+      },
+      "name": "水电杂费"
+    }
+  },
+  "title": "分类"
+}

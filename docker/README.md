@@ -117,6 +117,45 @@ Splitpro uses NextAuth with email, OAuth, and OIDC providers. Configure at least
 
 See [docs/AUTHENTICATION.md](../docs/AUTHENTICATION.md) for details.
 
+## Health checks
+
+SplitPro exposes two unauthenticated HTTP endpoints for orchestrators/load balancers:
+
+- `GET /api/healthz` — Liveness check. Always returns `200 { "status": "ok" }` once the process
+  is up. Deliberately does not touch the database, so a database outage won't trigger a restart
+  loop across all replicas.
+- `GET /api/readyz` — Readiness check. Runs a bounded (3s) query against Postgres and returns
+  `200 { "status": "ok" }` if it succeeds, or `503 { "status": "error", ... }` otherwise. Use this
+  to gate traffic routing, not process restarts.
+
+`docker/prod/compose.yml` already wires up a `healthcheck` on the `splitpro` service using `/api/healthz`, the same way the `postgres` service uses `pg_isready`:
+
+```yaml
+services:
+  splitpro:
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://localhost:${PORT:-3000}/api/healthz']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+```
+
+Example Kubernetes probes:
+
+```yaml
+livenessProbe:
+  httpGet:
+    path: /api/healthz
+    port: 3000
+readinessProbe:
+  httpGet:
+    path: /api/readyz
+    port: 3000
+```
+
+See [docs/CONFIGURATION.md](../docs/CONFIGURATION.md) for the `connect_timeout`/`socket_timeout`
+`DATABASE_URL` options that complement `/api/readyz`'s own query timeout.
+
 ## Recurring transactions (pg_cron)
 
 Recurring expenses require PostgreSQL with `pg_cron`. The example compose file already enables it. If you use another database image, you must enable the extension yourself.

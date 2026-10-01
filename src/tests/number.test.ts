@@ -1,5 +1,14 @@
 // Filepath: /home/wiktor/kod/split-pro/src/utils/number.test.ts
 import { currencyConversion, getCurrencyHelpers } from '../utils/numbers';
+import { safeEvaluateExpression } from '../utils/expression';
+
+const evaluateExpression = (input: string) => {
+  const result = safeEvaluateExpression(input);
+  if (null === result) {
+    throw new Error(`Expected a valid expression: ${input}`);
+  }
+  return result;
+};
 
 describe('getCurrencyHelpers', () => {
   describe('toUIString', () => {
@@ -164,6 +173,33 @@ describe('getCurrencyHelpers', () => {
     });
   });
 
+  describe('expressionResultToBigInt', () => {
+    describe('two-decimal currencies', () => {
+      it('should convert canonical decimal results to the smallest currency unit', () => {
+        const { expressionResultToBigInt } = getCurrencyHelpers({
+          locale: 'de-DE',
+          currency: 'EUR',
+        });
+
+        expect(expressionResultToBigInt(evaluateExpression('41.25'))).toBe(4125n);
+        expect(expressionResultToBigInt(evaluateExpression('0.6666666667'))).toBe(67n);
+        expect(expressionResultToBigInt(evaluateExpression('0.0050000000005+0'))).toBe(1n);
+      });
+    });
+
+    describe('zero-decimal currencies', () => {
+      it('should round fractional results to the nearest currency unit', () => {
+        const { expressionResultToBigInt } = getCurrencyHelpers({
+          locale: 'en-US',
+          currency: 'JPY',
+        });
+
+        expect(expressionResultToBigInt(evaluateExpression('33.3333333333'))).toBe(33n);
+        expect(expressionResultToBigInt(evaluateExpression('33.6666666667'))).toBe(34n);
+      });
+    });
+  });
+
   describe('sanitizeInput', () => {
     const { sanitizeInput } = getCurrencyHelpers({
       locale: 'en-US',
@@ -192,6 +228,86 @@ describe('getCurrencyHelpers', () => {
       ['--123.45', '-123.45'],
     ])('should sanitize %p to %p with signed flag', (input, expected) => {
       expect(sanitizeInput(input, true)).toBe(expected);
+    });
+  });
+
+  describe('zero-decimal currencies', () => {
+    describe('sanitizeInput', () => {
+      const { sanitizeInput } = getCurrencyHelpers({
+        locale: 'en-US',
+        currency: 'HUF',
+      });
+
+      it('should discard fractional input instead of joining its digits', () => {
+        expect(sanitizeInput('860.')).toBe('860');
+        expect(sanitizeInput('860.1')).toBe('860');
+        expect(sanitizeInput('1,234')).toBe('1234');
+      });
+
+      describe('de-DE locale', () => {
+        const { sanitizeInput: sanitizeGermanInput } = getCurrencyHelpers({
+          locale: 'de-DE',
+          currency: 'JPY',
+        });
+
+        it('should discard alternative decimal input without joining its digits', () => {
+          expect(sanitizeGermanInput('5.5', false, true)).toBe('5');
+          expect(sanitizeGermanInput('1.234', false, true)).toBe('1234');
+        });
+      });
+
+      describe('en-IN locale', () => {
+        const { sanitizeInput: sanitizeIndianInput } = getCurrencyHelpers({
+          locale: 'en-IN',
+          currency: 'JPY',
+        });
+
+        it('should preserve Indian grouping separators', () => {
+          expect(sanitizeIndianInput('12,34,567', false, true)).toBe('1234567');
+        });
+      });
+    });
+
+    describe('sanitizeExpressionInput', () => {
+      const { sanitizeExpressionInput } = getCurrencyHelpers({
+        locale: 'en-US',
+        currency: 'HUF',
+      });
+
+      it('should discard fractional input before continuing an expression', () => {
+        expect(sanitizeExpressionInput('860.5+2', false, true)).toBe('860+2');
+        expect(sanitizeExpressionInput('1,234+2', false, true)).toBe('1234+2');
+      });
+
+      it('should distinguish German grouped input from fractional input', () => {
+        const { sanitizeExpressionInput: sanitizeGermanExpression } = getCurrencyHelpers({
+          locale: 'de-DE',
+          currency: 'JPY',
+        });
+
+        expect(sanitizeGermanExpression('5.5+2', false, true)).toBe('5+2');
+        expect(sanitizeGermanExpression('1.234+2', false, true)).toBe('1234+2');
+      });
+
+      it('should preserve Indian grouping separators in expressions', () => {
+        const { sanitizeExpressionInput: sanitizeIndianExpression } = getCurrencyHelpers({
+          locale: 'en-IN',
+          currency: 'JPY',
+        });
+
+        expect(sanitizeIndianExpression('12,34,567+2', false, true)).toBe('1234567+2');
+      });
+    });
+
+    describe('de-DE locale', () => {
+      const { parseToCleanString } = getCurrencyHelpers({
+        locale: 'de-DE',
+        currency: 'JPY',
+      });
+
+      it('should use the locale decimal separator for fractional input', () => {
+        expect(parseToCleanString('10,50')).toBe('10');
+      });
     });
   });
 
@@ -229,26 +345,30 @@ describe('getCurrencyHelpers', () => {
 });
 
 describe('currencyConversion', () => {
-  it('handles increasing decimal digit conversions', () => {
-    const from = 'JPY'; // 0 decimal digits
-    const to = 'USD';
-    const amount = 12345n; // 12345 JPY
-    const rate = 0.0073; // 1 JPY = 0.0073 USD
+  describe('when increasing decimal digits', () => {
+    it('converts and rounds the result to the target currency precision', () => {
+      const from = 'JPY'; // 0 decimal digits
+      const to = 'USD';
+      const amount = 12345n; // 12345 JPY
+      const rate = 0.0073; // 1 JPY = 0.0073 USD
 
-    const res = currencyConversion({ from, to, amount, rate });
+      const res = currencyConversion({ from, to, amount, rate });
 
-    // 12345 JPY * 0.0073 = 90.1185 USD -> rounded to 90.12 USD -> 9012 in bigint
-    expect(res).toBe(9012n);
+      // 12345 JPY * 0.0073 = 90.1185 USD -> rounded to 90.12 USD -> 9012 in bigint
+      expect(res).toBe(9012n);
+    });
   });
 
-  it('handles decreasing decimal digit conversions', () => {
-    const from = 'USD'; // 2 decimal digits
-    const to = 'JPY';
-    const amount = 9012n;
-    const rate = 1 / 0.0073;
+  describe('when decreasing decimal digits', () => {
+    it('converts and rounds the result to the target currency precision', () => {
+      const from = 'USD'; // 2 decimal digits
+      const to = 'JPY';
+      const amount = 9012n;
+      const rate = 1 / 0.0073;
 
-    const res = currencyConversion({ from, to, amount, rate });
+      const res = currencyConversion({ from, to, amount, rate });
 
-    expect(res).toBe(12345n);
+      expect(res).toBe(12345n);
+    });
   });
 });

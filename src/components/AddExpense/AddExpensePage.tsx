@@ -25,9 +25,10 @@ import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
 import { CurrencyInput } from '../ui/currency-input';
 import { CurrencyConversion } from '../Friend/CurrencyConversion';
-import { currencyConversion } from '~/utils/numbers';
+import { BigMath, currencyConversion } from '~/utils/numbers';
 import { CurrencyConversionIcon } from '../ui/categoryIcons';
 import { useSession } from 'next-auth/react';
+import { isExpression, safeEvaluateExpression } from '~/utils/expression';
 
 export const AddOrEditExpensePage: React.FC<{
   enableSendingInvites: boolean;
@@ -81,9 +82,17 @@ export const AddOrEditExpensePage: React.FC<{
         return;
       }
 
+      if (newCurrency === currency) {
+        return;
+      }
+
       updateProfile.mutate({ currency: newCurrency });
 
-      previousCurrencyRef.current = currency;
+      if (newCurrency === previousCurrencyRef.current) {
+        previousCurrencyRef.current = null;
+      } else if (previousCurrencyRef.current === null) {
+        previousCurrencyRef.current = currency;
+      }
       setCurrency(newCurrency);
     },
     [currency, setCurrency, updateProfile],
@@ -98,8 +107,8 @@ export const AddOrEditExpensePage: React.FC<{
       }
       if (bigIntValue !== undefined) {
         setAmount(bigIntValue);
+        previousCurrencyRef.current = null;
       }
-      previousCurrencyRef.current = null;
     },
     [setAmount, setAmountStr],
   );
@@ -109,6 +118,20 @@ export const AddOrEditExpensePage: React.FC<{
       return;
     }
 
+    let finalAmount = amount;
+    if (isExpression(amtStr)) {
+      const evaluated = safeEvaluateExpression(amtStr);
+      if (null === evaluated) {
+        toast.error(t('errors.invalid_expression'));
+        return;
+      }
+      const { expressionResultToBigInt } = getCurrencyHelpersCached(currency);
+      finalAmount = BigMath.abs(expressionResultToBigInt(evaluated));
+    }
+
+    if (0n === finalAmount) {
+      return;
+    }
     setMultipleTransactions([]);
     setIsTransactionLoading(false);
 
@@ -120,7 +143,7 @@ export const AddOrEditExpensePage: React.FC<{
           {
             name: description,
             currency,
-            amount: amount * sign,
+            amount: finalAmount * sign,
             groupId: group?.id ?? null,
             splitType,
             participants: participants.map((p) => ({
@@ -188,10 +211,12 @@ export const AddOrEditExpensePage: React.FC<{
       }
     }
   }, [
+    t,
     description,
     currency,
     isNegative,
     amount,
+    amtStr,
     participants,
     category,
     expenseDate,
@@ -209,6 +234,7 @@ export const AddOrEditExpensePage: React.FC<{
     multipleTransactions,
     setSingleTransaction,
     update,
+    getCurrencyHelpersCached,
   ]);
 
   const handleDescriptionChange = useCallback(
@@ -288,7 +314,8 @@ export const AddOrEditExpensePage: React.FC<{
           className="text-primary px-0"
           disabled={
             addExpenseMutation.isPending ||
-            !amount ||
+            null !== previousCurrencyRef.current ||
+            0n === amount ||
             '' === description ||
             isFileUploading ||
             !isExpenseSettled
@@ -370,7 +397,8 @@ export const AddOrEditExpensePage: React.FC<{
                       loading={addExpenseMutation.isPending || isFileUploading}
                       disabled={
                         addExpenseMutation.isPending ||
-                        !amount ||
+                        null !== previousCurrencyRef.current ||
+                        0n === amount ||
                         '' === description ||
                         isFileUploading ||
                         !isExpenseSettled

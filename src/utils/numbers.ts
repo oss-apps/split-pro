@@ -1,4 +1,5 @@
 import { CURRENCIES, type CurrencyCode, isCurrencyCode } from '~/lib/currency';
+import type { ExpressionResult } from '~/utils/expression';
 
 export const getCurrencyHelpers = ({
   locale = 'en-US',
@@ -22,10 +23,22 @@ export const getCurrencyHelpers = ({
   const thousandSeparator =
     formatter.formatToParts(11111111).find(({ type }) => type === 'group')?.value ?? '';
   const decimalSeparator =
-    formatter.formatToParts(1.1).find(({ type }) => type === 'decimal')?.value ?? '.';
+    new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: 1,
+      maximumFractionDigits: Math.max(1, decimalDigits),
+    })
+      .formatToParts(1.1)
+      .find(({ type }) => type === 'decimal')?.value ?? '.';
   const alternativeDecimalSeparator = decimalSeparator === '.' ? ',' : '.';
   const literalSeparator =
     formatter.formatToParts(1.1).find(({ type }) => type === 'literal')?.value ?? '';
+  const groupingIntegerParts = formatter
+    .formatToParts(111111111111)
+    .filter(({ type }) => type === 'integer');
+  const primaryGroupSize = groupingIntegerParts.at(-1)?.value.length ?? 3;
+  const secondaryGroupSize = groupingIntegerParts.at(-2)?.value.length ?? primaryGroupSize;
   const decimalMultiplier = parseInt(`1${'0'.repeat(decimalDigits)}`, 10);
   const decimalMultiplierN = BigInt(decimalMultiplier);
 
@@ -36,6 +49,9 @@ export const getCurrencyHelpers = ({
 
     return parseToBigIntBeforeSubmit(stringNumber);
   };
+
+  const expressionResultToBigInt = ({ numerator, denominator }: ExpressionResult): bigint =>
+    BigMath.roundDiv(numerator * decimalMultiplierN, denominator);
 
   /* Parse sanitized string to number before submit */
   const parseToBigIntBeforeSubmit = (stringNumber: string | number | bigint): bigint => {
@@ -78,29 +94,75 @@ export const getCurrencyHelpers = ({
     return [integer, trimmedDecimals].join(decimalSeparator);
   };
 
+  const isGroupedThousandsSeparator = (input: string, index: number) => {
+    if (
+      0 !== decimalDigits ||
+      '' === thousandSeparator ||
+      input.slice(index, index + thousandSeparator.length) !== thousandSeparator
+    ) {
+      return false;
+    }
+
+    const previousDigits = input.slice(0, index).match(/\d+$/)?.[0] ?? '';
+    const operatorStart = Math.max(
+      ...['+', '-', '*', '/', '(', ')'].map((operator) => input.lastIndexOf(operator, index - 1)),
+    );
+    const operatorEndCandidates = ['+', '-', '*', '/', '(', ')']
+      .map((operator) => input.indexOf(operator, index + thousandSeparator.length))
+      .filter((operatorIndex) => -1 !== operatorIndex);
+    const operatorEnd =
+      0 === operatorEndCandidates.length ? input.length : Math.min(...operatorEndCandidates);
+    const numericToken = input
+      .slice(operatorStart + 1, operatorEnd)
+      .split('')
+      .filter((letter) => /\d/.test(letter) || letter === thousandSeparator)
+      .join('');
+    const groups = numericToken.split(thousandSeparator);
+    const firstGroup = groups[0] ?? '';
+    const middleGroups = groups.slice(1, -1);
+    const lastGroup = groups.at(-1) ?? '';
+
+    return (
+      1 < groups.length &&
+      0 < previousDigits.length &&
+      primaryGroupSize === lastGroup.length &&
+      middleGroups.every((group) => secondaryGroupSize === group.length) &&
+      0 < firstGroup.length &&
+      firstGroup.length <= secondaryGroupSize
+    );
+  };
+
   /* Sanitize input by allowing only digits, negative sign, and one decimal separator */
   const sanitizeInput = (input: string, signed = false, alternativeDecimal = false) => {
     let cleaned = '';
     let hasDecimalSeparator = false;
     let hasNegativeSign = false;
+    let ignoreFraction = false;
 
-    `${input}`.split('').forEach((letter) => {
-      //Allowing only one separator
-      if (letter === decimalSeparator && !hasDecimalSeparator) {
-        cleaned += letter;
-        hasDecimalSeparator = true;
-        return;
-      }
-      if (
+    input.split('').forEach((letter, index) => {
+      const isAlternativeDecimalSeparator =
         alternativeDecimal &&
         letter === alternativeDecimalSeparator &&
-        !hasDecimalSeparator &&
-        !input.includes(decimalSeparator)
-      ) {
-        cleaned += decimalSeparator;
-        hasDecimalSeparator = true;
+        !input.includes(decimalSeparator);
+      if (isGroupedThousandsSeparator(input, index)) {
         return;
       }
+      if (letter === decimalSeparator || isAlternativeDecimalSeparator) {
+        if (0 === decimalDigits) {
+          ignoreFraction = true;
+          return;
+        }
+        if (!hasDecimalSeparator) {
+          cleaned += letter === decimalSeparator ? letter : decimalSeparator;
+          hasDecimalSeparator = true;
+        }
+        return;
+      }
+
+      if (ignoreFraction && ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(letter)) {
+        return;
+      }
+
       // When a user presses '-' sign, switch the sign of the number
       if (letter === '-' && !hasNegativeSign) {
         hasNegativeSign = true;
@@ -126,6 +188,39 @@ export const getCurrencyHelpers = ({
     if (hasDecimalSeparator) {
       return trimExceedingDecimals(cleaned);
     }
+
+    return cleaned;
+  };
+
+  const sanitizeExpressionInput = (input: string, _signed = false, alternativeDecimal = false) => {
+    let cleaned = '';
+    let ignoreFraction = false;
+
+    input.split('').forEach((letter, index) => {
+      if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(letter)) {
+        if (!ignoreFraction) {
+          cleaned += letter;
+        }
+        return;
+      }
+      const isAlternativeDecimalSeparator =
+        alternativeDecimal && letter === alternativeDecimalSeparator;
+      if (isGroupedThousandsSeparator(input, index)) {
+        return;
+      }
+      if (letter === decimalSeparator || isAlternativeDecimalSeparator) {
+        if (0 === decimalDigits) {
+          ignoreFraction = true;
+          return;
+        }
+        cleaned += letter === decimalSeparator ? letter : decimalSeparator;
+        return;
+      }
+      if (['+', '-', '*', '/', '(', ')'].includes(letter)) {
+        cleaned += letter;
+        ignoreFraction = false;
+      }
+    });
 
     return cleaned;
   };
@@ -236,7 +331,9 @@ export const getCurrencyHelpers = ({
     format,
     formatter,
     sanitizeInput,
+    sanitizeExpressionInput,
     toSafeBigInt,
+    expressionResultToBigInt,
   };
 };
 

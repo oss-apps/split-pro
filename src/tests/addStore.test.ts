@@ -590,6 +590,7 @@ describe('calculateParticipantSplit', () => {
       const totalAmount = result.participants.reduce((sum, p) => sum + (p.amount ?? 0n), 0n);
 
       expect(totalAmount).toBe(0n);
+      expect(result.participants.some((p) => -1n === p.amount)).toBe(true);
     });
   });
 });

@@ -1,0 +1,455 @@
+{
+  "account": {
+    "change_language": "更改语言",
+    "change_language_details": {
+      "messages": {
+        "language_changed": "语言已成功更改"
+      },
+      "no_language_found": "未找到语言。",
+      "placeholder": "选择语言",
+      "title": "选择语言"
+    },
+    "debug_info": "调试信息",
+    "debug_info_details": {
+      "copy_failed": "无法将调试信息复制到剪贴板",
+      "description": "提交支持请求时，请粘贴以下信息：",
+      "git": "Git",
+      "new_version_available": "有新版本可用：",
+      "send_test_notification": "发送测试通知",
+      "test_notification_failed": "无法发送测试通知",
+      "test_notification_sent": "测试通知已发送",
+      "title": "调试信息",
+      "user_agent": "UserAgent",
+      "version": "版本"
+    },
+    "default_balance_currency": "默认余额货币",
+    "download_app": "下载 App",
+    "download_app_details": {
+      "download_as_pwa": "你可以将 SplitPro 作为 PWA 添加到主屏幕。",
+      "title": "下载 App",
+      "using_android": "如果你使用的是 Android，请查看这个",
+      "using_ios": "如果你使用的是 iOS，请查看这个",
+      "video": "视频"
+    },
+    "download_splitpro_data": "下载 SplitPro 数据",
+    "edit_name": {
+      "apply_avatar": "设置头像",
+      "avatar_label": "头像",
+      "avatar_preview": "头像预览",
+      "placeholder": "输入姓名",
+      "remove_avatar": "移除头像",
+      "select_avatar": "选择图片",
+      "title": "编辑资料",
+      "zoom": "缩放"
+    },
+    "follow_on_x": "在 X 上关注我们",
+    "import_from_splitwise": "从 Splitwise 导入",
+    "import_from_splitwise_details": {
+      "choose_file": "选择文件",
+      "export_splitwise_data_button": "导出 Splitwise 数据",
+      "follow_to_export_splitwise_data": "点击此链接导出 Splitwise 数据",
+      "messages": {
+        "import_success": "导入成功"
+      },
+      "no_file_chosen": "未选择文件",
+      "note": "注意：目前仅支持导入好友和群组，不支持导入交易记录。我们正在努力完善此功能。"
+    },
+    "logout": "退出登录",
+    "messages": {
+      "submit_error": "资料更新失败",
+      "submit_success": "资料已更新"
+    },
+    "notifications": {
+      "disable_notification": "关闭通知",
+      "enable_notification": "开启通知",
+      "messages": {
+        "notification_granted": "你现在可以收到通知了"
+      }
+    },
+    "star_on_github": "在 GitHub 上给我们点个 Star",
+    "submit_feedback": "提交反馈",
+    "submit_feedback_details": {
+      "placeholder": "输入你的反馈",
+      "title": "提交反馈"
+    },
+    "support_us": "赞助我们",
+    "title": "账户",
+    "write_review": "写评价"
+  },
+  "actions": {
+    "add_expense": "添加支出",
+    "back": "返回",
+    "cancel": "取消",
+    "close": "关闭",
+    "confirm": "确认",
+    "connect": "连接",
+    "copy": "复制",
+    "create": "创建",
+    "edit_expense": "编辑支出",
+    "export": "导出",
+    "fetch": "获取",
+    "import": "导入",
+    "invite": "邀请",
+    "leave": "退出",
+    "next": "下一步",
+    "reconnect": "重新连接",
+    "save": "保存",
+    "settle_up": "结清",
+    "submit": "提交"
+  },
+  "actors": {
+    "all": "全部",
+    "friends": "好友",
+    "groups": "群组",
+    "members": "成员",
+    "owner": "所有者",
+    "you": "你",
+    "you_accusativus": "你",
+    "you_dativus": "你"
+  },
+  "auth": {
+    "continue_with": "使用 {{provider}} 继续",
+    "email_placeholder": "输入邮箱",
+    "no_providers_configured": "尚未配置身份验证方式",
+    "no_providers_instructions": "请至少配置一种身份验证方式后再登录。详见",
+    "otp_sent": "我们已向你的邮箱发送包含验证码的邮件。请查收邮件并点击其中的链接登录。",
+    "send_magic_link": "发送登录链接",
+    "sending": "发送中……",
+    "setup_instructions": "Docker 配置说明",
+    "trouble_logging_in": "登录遇到问题？请联系"
+  },
+  "balances": {
+    "default_split": {
+      "cleared": "已清除默认分摊方式",
+      "configure": "默认分摊",
+      "updated": "默认分摊方式已更新"
+    },
+    "user_preferences": {
+      "title": "偏好设置"
+    }
+  },
+  "bank_transactions": {
+    "choose_bank_provider": "选择银行服务商",
+    "no_bank_providers_found": "未找到银行服务商",
+    "plaid": {
+      "bank_connected_successfully": "银行账户已成功连接",
+      "bank_connection_cancelled": "已取消连接银行账户",
+      "bank_connection_failed": "连接银行账户失败"
+    },
+    "search_bank": "搜索银行",
+    "select_bank_provider": "选择银行服务商",
+    "to_bank": "至银行"
+  },
+  "currency_conversion": {
+    "amount_to_receive": "到账金额",
+    "description": "将金额换算为其他货币。",
+    "exchange_rate": "汇率",
+    "fetching_rate": "正在获取汇率……",
+    "rate": "汇率",
+    "success_toast": "货币换算已成功设置",
+    "title": "货币换算"
+  },
+  "errors": {
+    "add_member_failed": "添加群组成员失败",
+    "currency_conversion_error": "设置货币换算时出错",
+    "currency_conversion_failed": "货币换算失败",
+    "currency_conversion_malformed": "货币换算数据异常",
+    "email_invalid": "邮箱地址无效，请重新尝试登录。",
+    "email_required": "请输入邮箱",
+    "feedback_min_length": "反馈内容至少需要 10 个字符",
+    "feedback_required": "请输入反馈内容",
+    "group_balances_malformed": "群组余额数据异常，请报告问题或尝试重新计算余额。",
+    "group_name_update_failed": "更新群组名称时出错",
+    "image_compression_failed": "图片压缩失败，正在尝试上传原始文件",
+    "import_failed": "导入文件时出错",
+    "invalid_cron_expression": "无效的 Cron 表达式",
+    "invalid_currency_code": "无效的货币代码 {{code}}",
+    "invalid_split": "请调整这笔支出由谁承担后再保存。",
+    "language_change_failed": "更改语言时出错",
+    "less_than": "文件大小应小于 {{size}}MB",
+    "name_required": "请输入姓名",
+    "no_providers": "获取身份验证方式时出错，请检查后端日志。",
+    "notification_not_supported": "当前不支持通知功能",
+    "otp_invalid": "验证码无效",
+    "otp_required": "请输入验证码",
+    "recurrence_delete_failed": "删除定期设置失败",
+    "recurrence_update_failed": "更新定期设置失败",
+    "request_error": "请求通知权限时出错",
+    "saving_expense": "保存支出时出错",
+    "setting_update_failed": "更新设置失败",
+    "signin_error": "登录时发生错误： ",
+    "signup_disabled": "此实例已关闭新账户注册",
+    "something_went_wrong": "出了点问题",
+    "subscribe_error": "无法订阅通知",
+    "unsubscribe_error": "取消订阅通知时出错",
+    "upload_failed": "文件上传失败",
+    "uploading_error": "上传文件时出错",
+    "valid_email": "请输入有效的邮箱地址"
+  },
+  "expense_details": {
+    "add_expense": "添加支出",
+    "add_expense_details": {
+      "add_new_expense": "添加新支出",
+      "amount_placeholder": "输入金额",
+      "description_placeholder": "输入描述",
+      "pick_a_date": "选择日期",
+      "select_user_or_group": {
+        "add_to_split_pro": "添加到 SplitPro",
+        "note": "注意：由于垃圾信息问题，目前暂时无法发送邀请",
+        "only_one_group_time": "一次只能选择一个群组",
+        "send_invite": "向用户发送邀请",
+        "warning": "警告：如果邮箱地址无效，请勿使用“发送邀请”，请改用“添加到 SplitPro”。滥用此功能可能导致你的账户被封禁"
+      },
+      "split_type_section": {
+        "direction": {
+          "no_money_flow": "其他人无需承担",
+          "owes_payer": "{{debtor}} 欠 {{payer}}",
+          "owes_you": "{{debtor}} 欠你",
+          "you_owe": "你欠 {{payer}}"
+        },
+        "split_equally": "均分",
+        "split_unequally": "自定义分摊",
+        "types": {
+          "adjustment": {
+            "remaining_to_split_equally": "剩余部分均分",
+            "title": "调整"
+          },
+          "equal": {
+            "per_person": "每人",
+            "title": "均分"
+          },
+          "exact": {
+            "remaining": "剩余",
+            "title": "指定金额"
+          },
+          "percentage": {
+            "remaining": "剩余",
+            "title": "按比例"
+          },
+          "share": {
+            "shares": "份额",
+            "title": "按份额",
+            "total_shares": "总份额"
+          }
+        }
+      },
+      "sponsor_us": "赞助我们",
+      "upload_file": {
+        "messages": {
+          "upload_success": "文件上传成功"
+        }
+      },
+      "user_input": {
+        "add_more_friends": "搜索好友、群组或添加邮箱",
+        "cannot_change_group": "编辑时无法更改群组",
+        "remove_group": "按 Delete 键移除群组",
+        "search_friends": "搜索好友、群组或添加邮箱"
+      }
+    },
+    "already_added": "已添加",
+    "balance_list": {
+      "are_settled_up": "已结清",
+      "is_settled_up": "已结清",
+      "press_balance_info": "点击具体余额即可发起结算"
+    },
+    "bank_transactions": "银行交易记录",
+    "clear": "清除",
+    "delete_expense_details": {
+      "text": "此操作无法撤销，这笔支出将被永久删除。",
+      "title": "确定要删除这笔支出吗？"
+    },
+    "multiple_transactions": {
+      "add_all": "全部添加",
+      "add_one_by_one": "逐笔添加",
+      "description": "你选择了多笔交易记录。可以按当前的分摊设置一次性全部添加，也可以逐笔调整设置。",
+      "title": "添加多笔交易记录"
+    },
+    "no_transactions_yet": "暂无交易记录",
+    "pending": "待处理",
+    "submit_all": "全部提交",
+    "title": "添加支出",
+    "title_mobile": "添加"
+  },
+  "group_details": {
+    "add_members": "添加成员",
+    "copied": "已复制",
+    "create_group": {
+      "group_name_placeholder": "群组名称",
+      "title": "创建群组"
+    },
+    "group_info": {
+      "actions": "操作",
+      "archive_group": "归档群组",
+      "archive_group_details": {
+        "can_archive": "该群组将被归档，并从群组列表中隐藏。如有需要，你之后仍可访问该群组。",
+        "cant_archive": "该群组存在未结清余额，无法归档。请先结清所有余额。",
+        "title": "确定要归档此群组吗？"
+      },
+      "archived": "已归档",
+      "configure_default_split": "设置默认分摊方式",
+      "default_balance_currency": "默认余额货币",
+      "default_split": "默认分摊",
+      "delete_group": "删除群组",
+      "delete_group_details": {
+        "can_delete": "此操作无法撤销",
+        "cant_delete": "所有成员结清余额后才能删除群组",
+        "title": "确定要删除此群组吗？"
+      },
+      "edit_group": "编辑群组",
+      "group_created": "群组已创建",
+      "leave_group": "退出群组",
+      "leave_group_details": {
+        "can_leave": "此操作无法撤销",
+        "cant_leave": "你还有未结清余额，结清后才能退出群组",
+        "title": "确定要退出此群组吗？"
+      },
+      "members": "成员",
+      "recalculate_balances": "重新计算余额",
+      "recalculate_balances_details": {
+        "description": "如果余额与支出记录不一致，你可以重新计算余额。请注意，支出记录较多时，重新计算可能需要一些时间。群组外的余额不会受到影响。",
+        "title": "确定要重新计算余额吗？"
+      },
+      "remove_member_details": {
+        "can_remove": "你即将从群组中移除此成员",
+        "cant_remove": "该成员还有未结清余额，结清后才能将其移除",
+        "title": "确定要移除该成员吗？"
+      },
+      "simplify_debts": "简化欠款",
+      "title": "群组信息"
+    },
+    "group_statistics": {
+      "first_expense": "首次支出",
+      "title": "群组统计",
+      "total_expenses": "总支出"
+    },
+    "messages": {
+      "balances_recalculated": "余额已重新计算",
+      "default_balance_currency_cleared": "已清除默认余额货币",
+      "default_balance_currency_updated": "默认余额货币已更新",
+      "default_split_cleared": "已清除默认分摊方式",
+      "default_split_updated": "默认分摊方式已更新",
+      "group_archived": "群组已成功归档",
+      "group_name_updated": "群组信息已更新"
+    },
+    "no_members": {
+      "add_members": "添加成员",
+      "add_members_details": {
+        "add_to_split_pro": "添加到 SplitPro",
+        "note": "注意：目前无法发送邮件邀请",
+        "placeholder": "输入姓名或邮箱",
+        "send_invite": "向用户发送邀请",
+        "title": "添加成员",
+        "warning": "警告：如果邮箱地址无效，请勿使用“发送邀请”，请改用“添加到 SplitPro”。滥用此功能可能导致你的账户被封禁"
+      },
+      "invite_link": "邀请链接",
+      "no_members": "群组中还没有成员。"
+    },
+    "tabs": {
+      "balances": "余额",
+      "expenses": "支出"
+    },
+    "title": "群组未结清余额"
+  },
+  "invite_message": {
+    "in_splitpro": "在 SplitPro 中",
+    "join_to": "加入",
+    "text": "加入群组后，你可以添加和管理支出，并随时查看余额"
+  },
+  "meta": {
+    "application_name": "SplitPro",
+    "description": "和朋友一起分摊支出，完全免费",
+    "title": "SplitPro：和朋友一起分摊支出，完全免费"
+  },
+  "navigation": {
+    "account": "账户",
+    "activity": "动态",
+    "add": "添加",
+    "add_expense": "添加支出",
+    "balances": "余额",
+    "groups": "群组",
+    "recurring": "定期"
+  },
+  "recurrence": {
+    "cron_expression": "Cron 表达式",
+    "days_of_month": "日期",
+    "days_of_week": "星期",
+    "delete_description": "删除后将停止创建未来的定期支出。已经由此定期设置创建的支出不会被删除。",
+    "delete_title": "删除定期设置",
+    "derived_delete_warning": "这笔支出属于某个定期支出计划。删除后只会移除当前这笔支出，未来的定期支出仍会继续。",
+    "derived_edit_warning": "这笔支出属于某个定期支出计划。修改只会影响当前这笔支出。",
+    "description": "为这笔支出设置定期重复。",
+    "edit_confirmation_title": "编辑定期支出",
+    "edit_description": "修改后将更改未来支出的重复周期，已有支出不会受到影响。",
+    "edit_title": "编辑定期设置",
+    "empty": "暂无定期支出",
+    "expense_for_the_amount_of": "支出 {{name}}：{{amount}} {{currency}}",
+    "last_day": "最后一天",
+    "months": "月份",
+    "never": "未设置重复周期",
+    "recurring": "定期",
+    "schedule_type": {
+      "custom": "自定义",
+      "day": "每天",
+      "month": "每月",
+      "never": "从不",
+      "week": "每周",
+      "year": "每年"
+    },
+    "template_delete_warning": "这是一个定期支出模板。删除后将停止所有未来的定期支出。",
+    "template_edit_warning": "这是一个定期支出模板。修改后将应用于所有未来的定期支出。",
+    "time_of_day": "时间",
+    "title": "定期设置",
+    "view_recurring_page": "查看定期支出"
+  },
+  "ui": {
+    "added_by": "添加者",
+    "and": "和",
+    "balance": "余额",
+    "balances": "余额",
+    "delete": "删除",
+    "deleted_by": "删除者",
+    "edited_by": "编辑者",
+    "expense": {
+      "for": "用于",
+      "from": "来自",
+      "paid_by": "付款人",
+      "received_by": "收款人",
+      "to": "支付给",
+      "user": {
+        "deleted": "已删除",
+        "get": "应收",
+        "lent": "借出",
+        "owe": "欠",
+        "paid": "已支付",
+        "pay": "支付",
+        "received": "已收款"
+      },
+      "you": {
+        "deleted": "已删除",
+        "get": "应收",
+        "lent": "借出",
+        "owe": "欠",
+        "paid": "已支付",
+        "pay": "支付",
+        "received": "已收款"
+      }
+    },
+    "expense_details": "支出详情",
+    "in_group": "所在群组",
+    "no_activity": "暂无动态",
+    "not_involved": "未参与",
+    "not_set": "未设置",
+    "on": "于",
+    "or": "或",
+    "outstanding_balances": "未结清余额",
+    "select_balance": "选择余额",
+    "select_currency": "选择货币",
+    "settle_up_name": "结清",
+    "settled_up": "已结清",
+    "settlement": "结算",
+    "share_text": "试试 SplitPro——开源、免费的 Splitwise 替代方案",
+    "show_all_currencies": "显示所有货币",
+    "today": "今天",
+    "total_balance": "总余额"
+  }
+}

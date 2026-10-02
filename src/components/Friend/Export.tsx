@@ -36,7 +36,7 @@ export const Export: React.FC<ExportCSVProps> = ({
     'Settlement',
   ];
 
-  const { getCurrencyHelpersCached } = useTranslationWithUtils('common');
+  const { getCurrencyHelpersCached, t } = useTranslationWithUtils('common_icu');
 
   const exportToCSV = () => {
     const csvHeaders = headers.join(',');
@@ -87,7 +87,7 @@ export const Export: React.FC<ExportCSVProps> = ({
 
   return (
     <Button size="sm" variant="secondary" responsiveIcon onClick={exportToCSV} disabled={disabled}>
-      <Download className="h-4 w-4 text-white" size={20} /> Export
+      <Download className="h-4 w-4 text-white" size={20} /> {t('actions.export')}
     </Button>
   );
 };

@@ -199,7 +199,7 @@ export const CurrencyConversion: React.FC<{
                 </Button>
               </div>
               <CurrencyInput
-                aria-label="Amount"
+                aria-label={t('currency_conversion.amount_aria_label')}
                 currency={currency}
                 strValue={amountStr}
                 hideSymbol
@@ -223,7 +223,7 @@ export const CurrencyConversion: React.FC<{
                 )}
               </div>
               <CurrencyInput
-                aria-label="Converted Amount"
+                aria-label={t('currency_conversion.converted_amount_aria_label')}
                 currency={targetCurrency}
                 strValue={targetAmountStr}
                 onValueChange={onChangeTargetAmount}
@@ -238,7 +238,7 @@ export const CurrencyConversion: React.FC<{
                 <Label className="capitalize">{t('currency_conversion.rate')}</Label>
                 <div className="flex flex-col">
                   <Input
-                    aria-label="Rate"
+                    aria-label={t('currency_conversion.rate')}
                     type="number"
                     step={`0.${'0'.repeat(MAX_RATE_PRECISION - 1)}1`}
                     min={0}

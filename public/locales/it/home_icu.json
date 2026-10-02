@@ -1,12 +1,12 @@
 {
   "features": {
-    "bank_connection": {
-      "description": "Aggiungi spese più velocemente con un'integrazione alle API delle transazioni bancarie di GoCardless o Plaid",
-      "title": "Connessione bancaria"
-    },
     "currency_conversion": {
       "description": "Converti rapidamente tra diverse valute utilizzando tassi di cambio aggiornati o storici",
       "title": "Conversione Valuta"
+    },
+    "recurring_transactions": {
+      "description": "Configura spese ricorrenti automatiche per affitto, abbonamenti o altri costi condivisi ricorrenti",
+      "title": "Spese ricorrenti"
     },
     "debt_simplification": {
       "description": "Semplifica automaticamente i debiti di gruppo per ridurre il numero di transazioni necessarie tra amici",
@@ -19,6 +19,10 @@
     "i18": {
       "description": "Disponibile in più lingue per rendere la divisione delle spese accessibile in tutto il mondo",
       "title": "Internazionalizzazione"
+    },
+    "bank_connection": {
+      "title": "Connessione bancaria",
+      "description": "Aggiungi spese più velocemente con un'integrazione alle API delle transazioni bancarie di GoCardless o Plaid"
     },
     "import_splitwise": {
       "description": "Non devi migrare manualmente i saldi. Puoi importare utenti e gruppi da Splitwise",
@@ -40,10 +44,6 @@
       "description": "Ami le app mobile? Abbiamo pensato anche a te. Installala come PWA e non ti accorgerai della differenza!",
       "title": "Supporto PWA"
     },
-    "recurring_transactions": {
-      "description": "Configura spese ricorrenti automatiche per affitto, abbonamenti o altri costi condivisi ricorrenti",
-      "title": "Spese ricorrenti"
-    },
     "title": "Funzionalità",
     "unequal_split": {
       "description": "Opzioni di divisione avanzate. Per quote, percentuale o importi esatti.",
@@ -58,13 +58,13 @@
     "built_by": "Creato da"
   },
   "hero": {
+    "image_alt": "Anteprima dell'app SplitPro",
     "add_expense_button": "Aggiungi una spesa",
     "star_github_button": "Dacci una stella su github",
-    "subtitle_link": "open source",
-    "subtitle_part1": "Un'alternativa",
-    "subtitle_part2": "a SplitWise",
-    "title_highlight": "gratuitamente",
-    "title_part1": "Dividi le spese con i tuoi amici"
+    "title_before_highlight": "Dividi le spese con i tuoi amici",
+    "title_highlight": "gratis",
+    "title_after_highlight": ".",
+    "subtitle": "Un'alternativa open source a SplitWise."
   },
   "meta": {
     "description": "SplitPro: Dividi le spese con i tuoi amici gratuitamente",
@@ -72,7 +72,7 @@
   },
   "nav": {
     "app_name": "SplitPro",
-    "privacy": "Privacy",
+    "privacy": "Informativa sulla privacy",
     "terms": "Termini"
   }
 }

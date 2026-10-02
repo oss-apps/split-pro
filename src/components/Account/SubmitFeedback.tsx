@@ -36,10 +36,12 @@ export const SubmitFeedback: React.FC = () => {
       try {
         await submitFeedbackMutation.mutateAsync({ feedback: values.feedback });
         feedbackForm.reset();
-        toast.success(t('ui.messages.submit_success'), { duration: 1500 });
+        toast.success(t('account.submit_feedback_details.messages.submit_success'), {
+          duration: 1500,
+        });
       } catch (e) {
         console.info(e);
-        toast.error(t('ui.messages.submit_error'));
+        toast.error(t('account.submit_feedback_details.messages.submit_error'));
       }
       setFeedbackOpen(false);
     },

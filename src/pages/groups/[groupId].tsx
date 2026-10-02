@@ -596,7 +596,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      ...(await customServerSideTranslations(context.locale, ['common', 'currencies'])),
+      ...(await customServerSideTranslations(context.locale, ['common_icu', 'currencies'])),
       enableSendingInvites: env.ENABLE_SENDING_INVITES,
     },
   };

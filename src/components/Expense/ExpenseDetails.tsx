@@ -1,6 +1,7 @@
 import { SplitType } from '@prisma/client';
 import { isSameDay } from 'date-fns';
 import { type User as NextUser } from 'next-auth';
+import { useSession } from 'next-auth/react';
 
 import type { inferRouterOutputs } from '@trpc/server';
 import { ArrowRightIcon, Landmark, Merge, PencilIcon, Users } from 'lucide-react';
@@ -77,19 +78,28 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
             ) : null}
             {expense.updatedByUser ? (
               <p className="text-sm text-gray-500">
-                {t('ui.edited_by')} {displayName(expense.updatedByUser, user.id, 'dativus')}{' '}
-                {t('ui.on')} {toUIDate(expense.updatedAt, { year: true })}
+                {t('expense_metadata.edited_by', {
+                  actor: expense.updatedByUser.id === user.id ? 'you' : 'other',
+                  user: displayName(expense.updatedByUser),
+                  date: toUIDate(expense.updatedAt, { year: true }),
+                })}
               </p>
             ) : null}
             {expense.deletedByUser ? (
               <p className="text-negative text-sm">
-                {t('ui.deleted_by')} {displayName(expense.deletedByUser, user.id, 'dativus')}{' '}
-                {t('ui.on')} {toUIDate(expense.deletedAt ?? expense.createdAt, { year: true })}
+                {t('expense_metadata.deleted_by', {
+                  actor: expense.deletedByUser.id === user.id ? 'you' : 'other',
+                  user: displayName(expense.deletedByUser),
+                  date: toUIDate(expense.deletedAt ?? expense.createdAt, { year: true }),
+                })}
               </p>
             ) : (
               <p className="text-sm text-gray-500">
-                {t('ui.added_by')} {displayName(expense.addedByUser, user.id, 'dativus')}{' '}
-                {t('ui.on')} {toUIDate(expense.createdAt, { year: true })}
+                {t('expense_metadata.added_by', {
+                  actor: expense.addedByUser.id === user.id ? 'you' : 'other',
+                  user: displayName(expense.addedByUser),
+                  date: toUIDate(expense.createdAt, { year: true }),
+                })}
               </p>
             )}
             {expense.recurrence ? (
@@ -186,10 +196,13 @@ const ExpenseParticipantEntry: React.FC<{
           <span>{displayName(participant.user, userId)}</span>
         </Button>
       </Link>
-      <span className="text-gray-500">
-        {t(`ui.expense.${isCurrentUser ? 'you' : 'user'}.${isPositive ? 'get' : 'owe'}`)}
+      <span className={amountColorClass}>
+        {t(isPositive ? 'expense_participant.gets' : 'expense_participant.owes', {
+          actor: isCurrentUser ? 'you' : 'other',
+          person: displayName(participant.user),
+          amount: toUIString(participant.amount),
+        })}
       </span>
-      <span className={amountColorClass}>{toUIString(participant.amount)}</span>
     </div>
   );
 };
@@ -261,6 +274,7 @@ export const EditCurrencyConversion: React.FC<{ expense: ExpenseDetailsOutput }>
 
 export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ expense }) => {
   const { displayName, t, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { data: session } = useSession();
 
   const sender = expense.paidByUser;
   const receiver = expense.expenseParticipants.find((p) => p.userId !== expense.paidBy)?.user;
@@ -352,7 +366,12 @@ export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ ex
             <EntityAvatar entity={receiver} />
           </div>
           <p className="mt-2 text-center text-sm text-gray-400">
-            {displayName(sender)} {t('ui.expense.user.pay')} {displayName(receiver)}
+            {t('ui.transfer', {
+              senderRole: sender.id === session?.user.id ? 'you' : 'other',
+              receiverRole: receiver.id === session?.user.id ? 'you' : 'other',
+              sender: displayName(sender),
+              receiver: displayName(receiver),
+            })}
           </p>
           {expense.group ? (
             <p className="mt-1 text-center text-xs text-gray-500">{expense.group.name}</p>

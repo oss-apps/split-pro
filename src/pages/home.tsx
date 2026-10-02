@@ -49,10 +49,14 @@ const FeatureCard = ({
 );
 
 export default function Home() {
-  const { t } = useTranslation('home');
+  const { t } = useTranslation('home_icu');
 
   return (
     <>
+      <Head>
+        <title>{t('meta.title')}</title>
+        <meta name="description" content={t('meta.description')} />
+      </Head>
       <main className="min-h-screen">
         <nav className="sticky z-40 mx-auto flex max-w-5xl items-center justify-between px-4 py-4 lg:px-0 lg:py-5">
           <div className="flex items-center gap-2">
@@ -68,20 +72,19 @@ export default function Home() {
           <div>
             <div className="mb-32 text-center lg:mb-0 lg:h-[70vh] lg:text-left">
               <h1 className="max-w-3xl text-center text-2xl leading-loose font-semibold text-gray-100 lg:text-left lg:text-5xl lg:leading-16">
-                {t('hero.title_part1')}{' '}
-                <span className="text-primary font-bold">{t('hero.title_highlight')}</span>.
+                {t('hero.title_before_highlight')}{' '}
+                <span className="text-primary font-bold">{t('hero.title_highlight')}</span>
+                {t('hero.title_after_highlight')}
               </h1>
               <h2 className="mt-5 text-gray-300 lg:mt-8 lg:text-lg">
-                {t('hero.subtitle_part1')}{' '}
                 <a
                   className="text-primary hover:underline"
                   href="https://github.com/oss-apps/split-pro"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {t('hero.subtitle_link')}
-                </a>{' '}
-                {t('hero.subtitle_part2')}
+                  {t('hero.subtitle')}
+                </a>
               </h2>
               <div className="mt-10 flex flex-col gap-6 lg:flex-row">
                 <Link href="/auth/signin" className="mx-auto lg:mx-0">
@@ -255,18 +258,22 @@ export default function Home() {
   );
 }
 
-const MobileScreenShot = () => (
-  <BackgroundGradient>
-    <Image
-      src="/hero.webp"
-      className="bg-background rounded-[22px] border"
-      width={300}
-      height={550}
-      alt="hero"
-    />
-  </BackgroundGradient>
-);
+const MobileScreenShot = () => {
+  const { t } = useTranslation('home_icu');
+
+  return (
+    <BackgroundGradient>
+      <Image
+        src="/hero.webp"
+        className="bg-background rounded-[22px] border"
+        width={300}
+        height={550}
+        alt={t('hero.image_alt')}
+      />
+    </BackgroundGradient>
+  );
+};
 
 export const getServerSideProps: GetServerSideProps = async (context) => ({
-  props: await customServerSideTranslations(context.locale, ['home']),
+  props: await customServerSideTranslations(context.locale, ['home_icu']),
 });

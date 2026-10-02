@@ -62,7 +62,8 @@ function CurrencyPickerInner({
             {
               code: '__CLEAR__' as const,
               label:
-                t('ui.not_set', { ns: 'common' }) ?? t('expense_details.clear', { ns: 'common' }),
+                t('ui.not_set', { ns: 'common_icu' }) ??
+                t('expense_details.clear', { ns: 'common_icu' }),
               isClear: true,
             },
             ...items,

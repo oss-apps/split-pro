@@ -216,7 +216,7 @@ FriendPage.auth = true;
 
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
-    ...(await customServerSideTranslations(context.locale, ['common'])),
+    ...(await customServerSideTranslations(context.locale, ['common_icu'])),
   },
 });
 

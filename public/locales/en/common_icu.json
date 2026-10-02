@@ -43,8 +43,8 @@
     },
     "logout": "Logout",
     "messages": {
-      "submit_error": "Failed to update details",
-      "submit_success": "Details updated"
+      "update_error": "Failed to update details",
+      "update_success": "Details updated"
     },
     "notifications": {
       "disable_notification": "Disable notification",
@@ -56,6 +56,10 @@
     "star_on_github": "Star us on GitHub",
     "submit_feedback": "Submit feedback",
     "submit_feedback_details": {
+      "messages": {
+        "submit_error": "Failed to send feedback",
+        "submit_success": "Feedback sent"
+      },
       "placeholder": "Enter your feedback",
       "title": "Submit feedback"
     },
@@ -95,7 +99,8 @@
     "settle_up": "Settle up",
     "submit": "Submit",
     "reconnect": "Reconnect",
-    "connect": "Connect"
+    "connect": "Connect",
+    "remind_later": "Remind me later"
   },
   "actors": {
     "all": "All",
@@ -103,12 +108,10 @@
     "groups": "Groups",
     "members": "Members",
     "owner": "Owner",
-    "you": "You",
-    "you_accusativus": "You",
-    "you_dativus": "You"
+    "you": "You"
   },
   "auth": {
-    "continue_with": "Continue with {{provider}}",
+    "continue_with": "Continue with {provider}",
     "email_placeholder": "Enter your email",
     "no_providers_configured": "No authentication providers configured",
     "no_providers_instructions": "Please configure at least one authentication provider to sign in. See the",
@@ -119,6 +122,8 @@
     "trouble_logging_in": "Trouble logging in? Contact"
   },
   "currency_conversion": {
+    "amount_aria_label": "Amount",
+    "converted_amount_aria_label": "Converted amount",
     "amount_to_receive": "Amount to receive",
     "description": "Convert the amount to a different currency.",
     "exchange_rate": "Exchange rate",
@@ -137,19 +142,25 @@
     "add_member_failed": "Failed to add member to the group",
     "group_name_update_failed": "Error in updating group name",
     "import_failed": "Error importing file",
-    "invalid_currency_code": "Invalid currency code {{code}}",
-    "invalid_split": "Adjust who owes this expense before saving.",
+    "invalid_currency_code": "Invalid currency code {code}",
     "language_change_failed": "Error changing language",
-    "less_than": "File should be less than {{size}}MB",
+    "less_than": "File should be less than {size} MB",
     "image_compression_failed": "Image compression failed, trying to upload original file",
     "name_required": "Name is required",
     "notification_not_supported": "Notification is not supported",
     "otp_invalid": "Invalid OTP",
     "otp_required": "OTP is required",
     "request_error": "Error requesting notification",
+    "notification_request_failed": "Error requesting notification permission",
+    "notification_subscribe_failed": "Cannot subscribe to notifications",
+    "expense_submission_failed": "An unexpected error occurred while submitting the expense.",
+    "expense_deletion_failed": "An unexpected error occurred while deleting the expense.",
+    "expense_split_incomplete": "Adjust who owes this expense before saving.",
+    "friend_deletion_failed": "Failed to delete friend",
     "saving_expense": "Error while saving expense",
     "setting_update_failed": "Failed to update setting",
-    "signin_error": "An error occurred while signing in: ",
+    "signin_error": "An error occurred while signing in: {error}",
+    "signin_failed": "Sign-in failed. Please try again.",
     "signup_disabled": "Signup of new accounts is disabled on this instance",
     "something_went_wrong": "Something went wrong",
     "subscribe_error": "Cannot subscribe to notification",
@@ -177,6 +188,12 @@
     }
   },
   "expense_details": {
+    "receipt": {
+      "title": "Expense receipt",
+      "thumbnail_alt": "Expense receipt thumbnail",
+      "image_alt": "Expense receipt"
+    },
+    "empty_state_image_alt": "No expenses",
     "add_expense": "Add expense",
     "add_expense_details": {
       "add_new_expense": "Add new expense",
@@ -184,6 +201,7 @@
       "description_placeholder": "Enter description",
       "pick_a_date": "Pick a date",
       "select_user_or_group": {
+        "empty_image_alt": "No users found",
         "add_to_split_pro": "Add to Split Pro",
         "note": "Note: sending invite is disabled for now because of spam",
         "only_one_group_time": "You can have only one group at a time",
@@ -192,12 +210,13 @@
       },
       "split_type_section": {
         "direction": {
-          "no_money_flow": "No one else owes anything",
-          "owes_payer": "{{debtor}} owes {{payer}}",
-          "owes_you": "{{debtor}} owes you",
-          "you_owe": "You owe {{payer}}"
+          "no_money_flow": "no one else owes anything",
+          "owes_payer": "{debtor} owes {payer}",
+          "owes_you": "{debtor} owes you",
+          "you_owe": "you owe {payer}"
         },
         "split_equally": "split equally",
+        "split_equally_with_count": "split equally among {count, plural, one {# person} other {# people}}",
         "split_unequally": "split unequally",
         "types": {
           "adjustment": {
@@ -237,8 +256,9 @@
       }
     },
     "balance_list": {
-      "are_settled_up": "are settled up",
-      "is_settled_up": "is settled up",
+      "settled": "{actor, select, you {You are settled up} other {{person} is settled up}}",
+      "lent": "{actor, select, you {You lent} other {{person} lent}}",
+      "owes": "{actor, select, you {You owe} other {{person} owes}}",
       "press_balance_info": "Press on individual balance to initiate settlement"
     },
     "delete_expense_details": {
@@ -259,6 +279,13 @@
     "pending": "Pending",
     "no_transactions_yet": "No transactions yet",
     "already_added": "Already added"
+  },
+  "friend": {
+    "delete_confirmation": {
+      "title": "Are you absolutely sure?",
+      "description": "Do you really want to continue?",
+      "outstanding_balance": "You cannot remove a friend with outstanding balances. Settle up first."
+    }
   },
   "group_details": {
     "add_members": "Add members",
@@ -350,6 +377,48 @@
     "description": "Split Expenses with your friends for free",
     "title": "SplitPro: Split Expenses with your friends for free"
   },
+  "activity": {
+    "you_paid_for_expense": "You paid {amount} for {expense}",
+    "you_received_for_expense": "You received {amount} for {expense}",
+    "user_paid_for_expense": "{user} paid {amount} for {expense}",
+    "user_received_for_expense": "{user} received {amount} for {expense}",
+    "user_deleted_expense": "{actor, select, you {You deleted {expense}} other {{user} deleted {expense}}}",
+    "you_paid_amount": "You paid {amount}",
+    "you_received_amount": "You received {amount}"
+  },
+  "balance_summary": {
+    "friend_owes_you": "{friend} owes you {amount}",
+    "you_owe_friend": "You owe {friend} {amount}",
+    "more": "{count, plural, one {# more balance} other {# more balances}}"
+  },
+  "balance_list": {
+    "pays": "{payerRole, select, you {You pay {amount} to {receiver}} other {{payer} pays {amount} to {receiverRole, select, you {you} other {{receiver}}}}}",
+    "gets": "{receiverRole, select, you {You get {amount} from {payer}} other {{receiver} gets {amount} from {payerRole, select, you {you} other {{payer}}}}}"
+  },
+  "expense_participant": {
+    "gets": "{actor, select, you {You get {amount}} other {{person} gets {amount}}}",
+    "owes": "{actor, select, you {You owe {amount}} other {{person} owes {amount}}}"
+  },
+  "group": {
+    "invite_title": "Join {group} in SplitPro"
+  },
+  "bank_connection": {
+    "connect": "Connect to your bank",
+    "reconnect": "Reconnect to your bank"
+  },
+  "expense_metadata": {
+    "edited_by": "{actor, select, you {Edited by you on {date}} other {Edited by {user} on {date}}}",
+    "deleted_by": "{actor, select, you {Deleted by you on {date}} other {Deleted by {user} on {date}}}",
+    "added_by": "{actor, select, you {Added by you on {date}} other {Added by {user} on {date}}}"
+  },
+  "expense_list": {
+    "user_paid": "{actor, select, you {You paid {amount}} other {{user} paid {amount}}}",
+    "user_received": "{actor, select, you {You received {amount}} other {{user} received {amount}}}",
+    "you_lent": "You lent {amount}",
+    "you_owe": "You owe {amount}",
+    "settlement": "{payerRole, select, you {You paid {amount} to {receiver}} other {{receiverRole, select, you {{payer} paid you {amount}} other {{payer} paid {amount} to {receiver}}}}}",
+    "conversion_for_users": "Currency conversion for {payerRole, select, you {you} other {{payer}}} and {receiverRole, select, you {you} other {{receiver}}}"
+  },
   "balances": {
     "user_preferences": {
       "title": "Preferences"
@@ -369,7 +438,14 @@
     "balances": "Balances",
     "groups": "Groups"
   },
+  "notifications": {
+    "enable_title": "Enable notifications",
+    "enable_description": "Don't miss important events. Subscribe to receive notifications when expenses are added or updated.",
+    "permission_granted": "You will receive notifications now",
+    "subscribe": "Subscribe"
+  },
   "recurrence": {
+    "toggle_options": "Toggle recurring expense options",
     "title": "Recurrence",
     "description": "Set up automatic recurrence for this expense.",
     "cron_expression": "Cron Expression",
@@ -381,7 +457,7 @@
     "never": "No schedule configured",
     "empty": "No recurring expenses yet",
     "recurring": "Recurring",
-    "expense_for_the_amount_of": "Expense {{name}} for the amount of {{amount}} {{currency}}",
+    "expense_for_the_amount_of": "{name} is scheduled for {amount} {currency}",
     "delete_title": "Delete Recurrence",
     "delete_description": "This will stop future expense creation. Existing expenses created by this recurrence will not be deleted.",
     "edit_title": "Edit Recurrence",
@@ -413,6 +489,12 @@
       "for": "for",
       "from": "from",
       "paid_by": "Paid by",
+      "payer": {
+        "current_user": "You"
+      },
+      "recipient": {
+        "current_user": "You"
+      },
       "received_by": "Received by",
       "to": "to",
       "user": {
@@ -421,7 +503,6 @@
         "lent": "lent",
         "owe": "owes",
         "paid": "paid",
-        "pay": "pays",
         "received": "received"
       },
       "you": {
@@ -432,9 +513,31 @@
         "paid": "paid",
         "pay": "pay",
         "received": "received"
+      },
+      "statements": {
+        "you_lent": "You lent",
+        "you_owe": "You owe",
+        "you_lent_amount": "You lent {amount}",
+        "you_owe_amount": "You owe {amount}",
+        "you_paid_amount": "You paid {amount}",
+        "you_received_amount": "You received {amount}",
+        "you_pay_user": "You pay {user}",
+        "user_pays_you": "{user} pays you",
+        "friend_owes_you": "{friend} owes you",
+        "you_owe_friend": "You owe {friend}",
+        "paid_for_beneficiary": "{beneficiaryRole, select, you {This expense is only for you} other {You are splitting this expense with {beneficiary}}}",
+        "user_paid_amount": "{user} paid {amount}",
+        "user_received_amount": "{user} received {amount}",
+        "user_paid_amount_to_user": "{payer} paid {amount} to {receiver}",
+        "user_received_amount_from_user": "{payer} received {amount} from {receiver}",
+        "you_paid_amount_to_user": "You paid {amount} to {receiver}",
+        "you_received_amount_from_user": "You received {amount} from {payer}",
+        "for_users": "for {payer} and {receiver}",
+        "user_pays_user": "{payer} pays {receiver}"
       }
     },
     "expense_details": "Expense details",
+    "transfer": "{senderRole, select, you {You pay {receiver}} other {{receiverRole, select, you {{sender} pays you} other {{sender} pays {receiver}}}}}",
     "no_activity": "No activities yet",
     "not_involved": "Not involved",
     "not_set": "Not set",
@@ -450,6 +553,7 @@
     "share_text": "Check out SplitPro. It's an open source free alternative for Splitwise",
     "show_all_currencies": "Show all currencies",
     "today": "Today",
-    "in_group": "In group"
+    "in_group": "In group",
+    "remaining_balances": "{count, plural, =0 {No outstanding balances} one {# outstanding balance} other {# outstanding balances}}"
   }
 }

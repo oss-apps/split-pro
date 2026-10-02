@@ -31,9 +31,9 @@ function getPaymentString(
   } else if (isSettlement) {
     return (
       <div className={`${user.id === paidBy ? 'text-emerald-500' : 'text-orange-500'} text-sm`}>
-        {t('actors.you')}{' '}
-        {user.id === paidBy ? t('ui.expense.you.paid') : t('ui.expense.you.received')}{' '}
-        {toUIString(amount)}
+        {t(user.id === paidBy ? 'activity.you_paid_amount' : 'activity.you_received_amount', {
+          amount: toUIString(amount),
+        })}
       </div>
     );
   } else {
@@ -41,9 +41,14 @@ function getPaymentString(
       <div
         className={`${(user.id === paidBy) !== amount < 0n ? 'text-emerald-500' : 'text-orange-500'} text-sm`}
       >
-        {t(`actors.you`)}{' '}
-        {t(`ui.expense.you.${(user.id === paidBy) !== amount < 0n ? 'lent' : 'owe'}`)}{' '}
-        {toUIString(expenseUserAmt)}
+        {t(
+          (user.id === paidBy) !== amount < 0n
+            ? 'activity.you_paid_amount'
+            : 'activity.you_received_amount',
+          {
+            amount: toUIString(expenseUserAmt),
+          },
+        )}
       </div>
     );
   }
@@ -93,24 +98,28 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                 <div>
                   {e.expense.deletedByUser ? (
                     <p className="text-red-500 opacity-70">
-                      <span className="font-semibold">
-                        {displayName(e.expense.deletedByUser, user.id)}
-                      </span>{' '}
-                      {t(
-                        `ui.expense.${e.expense.deletedByUser.id === user.id ? 'you' : 'user'}.deleted`,
-                      )}{' '}
-                      <span className="font-semibold">{e.expense.name}</span>
+                      {t('activity.user_deleted_expense', {
+                        actor: e.expense.deletedByUser.id === user.id ? 'you' : 'other',
+                        user: displayName(e.expense.deletedByUser),
+                        expense: e.expense.name,
+                      })}
                     </p>
                   ) : (
                     <p className="text-gray-300">
-                      <span className="font-semibold text-gray-300">
-                        {displayName(e.expense.paidByUser, user.id)}
-                      </span>{' '}
                       {t(
-                        `ui.expense.${e.expense.paidByUser.id === user.id ? 'you' : 'user'}.${e.expense.amount > 0n ? 'paid' : 'received'}`,
-                      )}{' '}
-                      {toUIString(e.expense.amount)} {t('ui.expense.for')}{' '}
-                      <span className="font-semibold text-gray-300">{e.expense.name}</span>
+                        e.expense.paidByUser.id === user.id
+                          ? e.expense.amount > 0n
+                            ? 'activity.you_paid_for_expense'
+                            : 'activity.you_received_for_expense'
+                          : e.expense.amount > 0n
+                            ? 'activity.user_paid_for_expense'
+                            : 'activity.user_received_for_expense',
+                        {
+                          user: displayName(e.expense.paidByUser),
+                          amount: toUIString(e.expense.amount),
+                          expense: e.expense.name,
+                        },
+                      )}
                     </p>
                   )}
 
@@ -137,6 +146,6 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
 
 ActivityPage.auth = true;
 
-export const getStaticProps = withI18nStaticProps(['common']);
+export const getStaticProps = withI18nStaticProps(['common_icu']);
 
 export default ActivityPage;

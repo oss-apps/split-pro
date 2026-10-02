@@ -1,6 +1,4 @@
 import { type GetServerSideProps } from 'next';
-import { toast } from 'sonner';
-
 import { joinGroup } from '~/server/api/services/splitService';
 import { getServerAuthSession } from '~/server/auth';
 import type { NextPageWithUser } from '~/types';
@@ -25,7 +23,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   } else if (!groupId || Array.isArray(groupId)) {
-    toast.warning('Could not find group');
     return {
       redirect: {
         destination: '/groups',

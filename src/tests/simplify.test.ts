@@ -74,7 +74,7 @@ const getFullBalanceGraph = (edges: MinimalEdge[], userCount: number): GroupBala
   return arr;
 };
 
-// taken from https://www.geeksforgeeks.org/minimize-cash-flow-among-given-set-friends-borrowed-money/
+// Taken from https://www.geeksforgeeks.org/minimize-cash-flow-among-given-set-friends-borrowed-money/
 const smallGraph: GroupBalance[] = getFullBalanceGraph(
   [
     { userOne: 0, userTwo: 1, amount: 1000n },
@@ -96,7 +96,7 @@ const smallGraphResult: GroupBalance[] = getFullBalanceGraph(
   createdAt: smallGraph[idx]!.createdAt,
 }));
 
-// taken from https://medium.com/@mithunmk93/algorithm-behind-splitwises-debt-simplification-feature-8ac485e97688
+// Taken from https://medium.com/@mithunmk93/algorithm-behind-splitwises-debt-simplification-feature-8ac485e97688
 const largeGraph: GroupBalance[] = getFullBalanceGraph(
   [
     { userOne: 1, userTwo: 2, amount: 4000n },
@@ -185,13 +185,10 @@ describe('simplifyDebts', () => {
       {} as Record<number, bigint>,
     );
 
-    const userBalances = simplifyDebts(graph).reduce(
-      (acc, balance) => {
-        acc[balance.userId] = (acc[balance.userId] ?? 0n) + balance.amount;
-        return acc;
-      },
-      {} as Record<number, bigint>,
-    );
+    const userBalances = simplifyDebts(graph).reduce<Record<number, bigint>>((acc, balance) => {
+      acc[balance.userId] = (acc[balance.userId] ?? 0n) + balance.amount;
+      return acc;
+    }, {});
 
     expect(startingBalances).toEqual(userBalances);
   });

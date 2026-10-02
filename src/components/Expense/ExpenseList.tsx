@@ -2,6 +2,7 @@ import { SplitType } from '@prisma/client';
 import { type inferRouterOutputs } from '@trpc/server';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { toast } from 'sonner';
@@ -111,8 +112,11 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
         <div className="min-w-0 pe-1">
           <p className="truncate text-sm lg:text-base">{e.name}</p>
           <p className="truncate text-xs text-gray-500">
-            {displayName(e.paidByUser, userId)}{' '}
-            {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`)} {toUIString(e.amount)}
+            {t(e.amount < 0n ? 'expense_list.user_received' : 'expense_list.user_paid', {
+              actor: e.paidByUser.id === userId ? 'you' : 'other',
+              user: displayName(e.paidByUser),
+              amount: toUIString(e.amount),
+            })}
           </p>
         </div>
       </div>
@@ -120,12 +124,9 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
         {youPaid || 0n !== yourExpenseAmount ? (
           <>
             <div className={`text-right text-xs ${youPaid ? 'text-positive' : 'text-negative'}`}>
-              {t('actors.you')} {t(`ui.expense.you.${youPaid ? 'lent' : 'owe'}`)}
-            </div>
-            <div
-              className={`xs:max-w-full max-w-32 truncate text-right ${youPaid ? 'text-positive' : 'text-negative'}`}
-            >
-              {toUIString(yourExpenseAmount)}
+              {t(youPaid ? 'expense_list.you_lent' : 'expense_list.you_owe', {
+                amount: toUIString(yourExpenseAmount),
+              })}
             </div>
           </>
         ) : (
@@ -154,9 +155,13 @@ const Settlement: ExpenseComponent = ({ e, userId }) => {
       <SettleupIcon className="size-5 shrink-0 text-gray-400" />
       <div className="min-w-0">
         <p className="line-clamp-2 text-sm text-gray-400">
-          {displayName(e.paidByUser, userId)}{' '}
-          {t(`ui.expense.user.${e.amount < 0n ? 'received' : 'paid'}`)} {toUIString(e.amount)}{' '}
-          {t('ui.expense.to')} {displayName(userDetails.data, userId)}
+          {t('expense_list.settlement', {
+            payerRole: e.paidByUser.id === userId ? 'you' : 'other',
+            receiverRole: receiverId === userId ? 'you' : 'other',
+            payer: displayName(e.paidByUser),
+            amount: toUIString(e.amount),
+            receiver: displayName(userDetails.data),
+          })}
         </p>
       </div>
     </div>
@@ -192,16 +197,30 @@ const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
           }
         </p>
         <p className="truncate text-xs text-gray-500">
-          {t('ui.expense.for')} {displayName(e.paidByUser, userId)} {t('ui.and')}{' '}
-          {displayName(userDetails.data, userId)}
+          {t('expense_list.conversion_for_users', {
+            payerRole: e.paidByUser.id === userId ? 'you' : 'other',
+            receiverRole: receiverId === userId ? 'you' : 'other',
+            payer: displayName(e.paidByUser),
+            receiver: displayName(userDetails.data),
+          })}
         </p>
       </div>
     </div>
   );
 };
 
-const NoExpenses = () => (
-  <div className="mt-20 flex flex-col items-center justify-center">
-    <Image src="/add_expense.svg" alt="Empty" width={200} height={200} className="mb-4" />
-  </div>
-);
+const NoExpenses = () => {
+  const { t } = useTranslation();
+
+  return (
+    <div className="mt-20 flex flex-col items-center justify-center">
+      <Image
+        src="/add_expense.svg"
+        alt={t('expense_details.empty_state_image_alt')}
+        width={200}
+        height={200}
+        className="mb-4"
+      />
+    </div>
+  );
+};

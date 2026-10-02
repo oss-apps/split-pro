@@ -306,7 +306,7 @@ const SplitSection: React.FC<SplitSectionProps> = (props) => {
       </p>
       {!canSplitScreenClosed ? (
         <p role="alert" className="text-center text-xs text-red-500">
-          {t('errors.invalid_split')}
+          {t('errors.expense_split_incomplete')}
         </p>
       ) : null}
       {isBoolean && (

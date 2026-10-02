@@ -75,10 +75,10 @@ const AccountPage: NextPageWithUser<{
     async (values: { name: string; image?: string | null; defaultCurrency?: string | null }) => {
       try {
         await updateDetailsMutation.mutateAsync(values);
-        toast.success(t('account.messages.submit_success'), { duration: 1500 });
+        toast.success(t('account.messages.update_success'), { duration: 1500 });
         utils.user.me.refetch().catch(console.error);
       } catch (error) {
-        toast.error(t('account.messages.submit_error'));
+        toast.error(t('account.messages.update_error'));
 
         console.error(error);
       }
@@ -86,7 +86,10 @@ const AccountPage: NextPageWithUser<{
     [updateDetailsMutation, utils.user.me, t],
   );
 
-  const header = useMemo(() => <div className="text-3xl font-semibold">Account</div>, []);
+  const header = useMemo(
+    () => <div className="text-3xl font-semibold">{t('account.title')}</div>,
+    [t],
+  );
 
   const onSignOut = useCallback(async () => {
     await signOut({ redirect: false });
@@ -201,7 +204,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => ({
     feedbackPossible: Boolean(env.FEEDBACK_EMAIL),
     bankConnectionEnabled: Boolean(isBankConnectionConfigured()),
     bankConnection: whichBankConnectionConfigured(),
-    ...(await customServerSideTranslations(context.locale, ['common', 'currencies'])),
+    ...(await customServerSideTranslations(context.locale, ['common_icu', 'currencies'])),
     maxUploadFileSizeMB: env.UPLOAD_MAX_FILE_SIZE_MB,
   },
 });

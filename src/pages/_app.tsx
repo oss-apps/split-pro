@@ -8,7 +8,7 @@ import { Poppins } from 'next/font/google';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Toaster } from 'sonner';
+import { Toaster, toast } from 'sonner';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { ThemeProvider } from 'next-themes';
 import { CurrencyHelpersProvider } from '~/contexts/CurrencyHelpersContext';
@@ -16,6 +16,7 @@ import { useAddExpenseStore } from '~/store/addStore';
 import { useAppStore } from '~/store/appStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
+import { resolveSupportedLocale } from '~/utils/i18n/resolveLocale';
 
 import 'react-easy-crop/react-easy-crop.css';
 import '~/styles/globals.css';
@@ -100,6 +101,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
 const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, pageProps }) => {
   const { status, data, update } = useSession({ required: true });
+  const { t } = useTranslation();
   const [showSpinner, setShowSpinner] = useState(false);
   const updateUser = api.user.updateUserDetail.useMutation();
   const router = useRouter();
@@ -123,51 +125,44 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
 
   useEffect(() => {
     if ('authenticated' === status && data.user) {
-      if (!data.user.preferredLanguage) {
-        // If user has no preferred language, set it to the current locale
-        const currentLocale = router.locale ?? 'en';
+      const currentLocale = resolveSupportedLocale(
+        router.locale,
+        i18nConfig.i18n.locales,
+        i18nConfig.i18n.defaultLocale,
+      );
+      const preferredLanguage = data.user.preferredLanguage;
+      const resolvedLanguage = preferredLanguage
+        ? resolveSupportedLocale(
+            preferredLanguage,
+            i18nConfig.i18n.locales,
+            i18nConfig.i18n.defaultLocale,
+          )
+        : currentLocale;
 
-        data.user.preferredLanguage = currentLocale;
+      if (preferredLanguage !== resolvedLanguage) {
         updateUser
           .mutateAsync({
-            preferredLanguage: currentLocale,
+            preferredLanguage: resolvedLanguage,
           })
           .then(() =>
             update({
               user: {
                 ...data.user,
-                preferredLanguage: currentLocale,
+                preferredLanguage: resolvedLanguage,
               },
             }),
           )
-          .catch(console.error);
-      } else if (data.user.preferredLanguage === 'pt') {
-        // Fix for 'pt' preferred language to 'pt-PT'
-        data.user.preferredLanguage = 'pt-PT';
-        updateUser
-          .mutateAsync({
-            preferredLanguage: 'pt-PT',
-          })
-          .then(() =>
-            update({
-              user: {
-                ...data.user,
-                preferredLanguage: 'pt-PT',
-              },
-            }),
-          )
-          .catch(console.error);
-      } else if (data.user.preferredLanguage && data.user.preferredLanguage !== router.locale) {
-        // Set user's preferred language by changing the locale
+          .catch((error) => {
+            console.error(error);
+            toast.error(t('errors.language_change_failed'));
+          });
+      } else if (resolvedLanguage !== router.locale) {
         router
-          .push(router.asPath, router.asPath, {
-            locale: data.user.preferredLanguage,
-            scroll: false,
-          })
+          .push(router.asPath, router.asPath, { locale: resolvedLanguage, scroll: false })
           .catch(console.error);
       }
     }
-  }, [status, data?.user, setCurrency, router, updateUser, update]);
+  }, [status, data?.user, setCurrency, router, t, updateUser, update]);
 
   if ('loading' === status) {
     return (

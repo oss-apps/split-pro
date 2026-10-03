@@ -11,7 +11,7 @@ import { z } from 'zod';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { deserializeDefaultSplit } from '~/lib/defaultSplit';
-import { getInviteErrorToastKey, isInviteErrorCode } from '~/lib/inviteErrors';
+import { getInviteErrorToastKey, isInviteErrorCode } from '~/lib/error/invite';
 
 import { EntityAvatar } from '../ui/avatar';
 import { Button } from '../ui/button';
@@ -88,7 +88,6 @@ export const SelectUserOrGroup: React.FC<{
           name: nameOrEmail,
           email: nameOrEmail,
           emailVerified: new Date(),
-          lastInvitedAt: null,
           image: null,
           currency: 'USD',
           defaultCurrency: null,

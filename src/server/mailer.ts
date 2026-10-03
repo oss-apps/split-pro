@@ -2,19 +2,12 @@ import { type User } from 'next-auth';
 import nodemailer, { type Transporter } from 'nodemailer';
 
 import { env } from '~/env';
+import { escapeHtml } from '~/lib/utils';
 
 import { sendToDiscord } from './service-notification';
 
 // oxlint-disable-next-line init-declarations
 let transporter: Transporter;
-
-const escapeHtml = (value: string): string =>
-  value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
 
 export const mailServerConfig = {
   host: env.EMAIL_SERVER_HOST,

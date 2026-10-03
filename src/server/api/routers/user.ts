@@ -8,7 +8,8 @@ import {
   serializeDefaultSplit,
   toSortedFriendPair,
 } from '~/lib/defaultSplit';
-import { InviteErrorCode } from '~/lib/inviteErrors';
+import { claimInviteCooldown } from '~/lib/inviteCooldown';
+import { InviteErrorCode } from '~/lib/error/invite';
 import { simplifyDebts } from '~/lib/simplify';
 import { AppError } from '~/server/api/appError';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
@@ -26,8 +27,6 @@ import {
   importGroupFromSplitwise,
   importUserBalanceFromSplitWise,
 } from '../services/splitService';
-
-const INVITE_COOLDOWN_MS = 60_000;
 
 const throwInviteError = (
   code: 'PRECONDITION_FAILED' | 'TOO_MANY_REQUESTS' | 'INTERNAL_SERVER_ERROR',
@@ -90,18 +89,7 @@ export const userRouter = createTRPCRouter({
           );
         }
 
-        // Claim the cooldown atomically, so concurrent requests can't both pass a read-then-write check.
-        const claim = await db.user.updateMany({
-          where: {
-            id: user.id,
-            OR: [
-              { lastInvitedAt: null },
-              { lastInvitedAt: { lt: new Date(Date.now() - INVITE_COOLDOWN_MS) } },
-            ],
-          },
-          data: { lastInvitedAt: new Date() },
-        });
-        if (0 === claim.count) {
+        if (!claimInviteCooldown(user.id)) {
           throwInviteError(
             'TOO_MANY_REQUESTS',
             InviteErrorCode.INVITE_RATE_LIMITED,

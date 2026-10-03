@@ -9,7 +9,7 @@ import { z } from 'zod';
 
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
-import { getInviteErrorToastKey, isInviteErrorCode } from '~/lib/inviteErrors';
+import { getInviteErrorToastKey, isInviteErrorCode } from '~/lib/error/invite';
 import { api } from '~/utils/api';
 
 import { EntityAvatar } from '../ui/avatar';

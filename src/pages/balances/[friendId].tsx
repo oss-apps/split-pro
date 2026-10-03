@@ -97,7 +97,6 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                         {
                           ...user,
                           emailVerified: null,
-                          lastInvitedAt: null,
                           name: user.name ?? null,
                           email: user.email ?? null,
                           image: user.image ?? null,

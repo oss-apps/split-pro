@@ -1,4 +1,4 @@
-import { InviteErrorCode, getInviteErrorToastKey, isInviteErrorCode } from '~/lib/inviteErrors';
+import { InviteErrorCode, getInviteErrorToastKey, isInviteErrorCode } from '~/lib/error/invite';
 
 describe('isInviteErrorCode', () => {
   describe('when given a known InviteErrorCode value', () => {

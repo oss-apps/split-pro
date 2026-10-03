@@ -63,11 +63,13 @@ describe('sendInviteEmail', () => {
     it('escapes HTML special characters in the inviter name', async () => {
       mockSendMail.mockResolvedValue(mockSentMessageInfo);
 
-      await sendInviteEmail('friend@example.com', '<script>alert(1)</script>');
+      await sendInviteEmail('friend@example.com', `A&B <C> "D" 'E'`);
 
       const sentHtml = mockSendMail.mock.calls[0]?.[0]?.html;
-      expect(sentHtml).toEqual(expect.stringContaining('&lt;script&gt;'));
-      expect(sentHtml).not.toEqual(expect.stringContaining('<script>alert(1)</script>'));
+      expect(sentHtml).toEqual(
+        expect.stringContaining('A&amp;B &lt;C&gt; &quot;D&quot; &#39;E&#39;'),
+      );
+      expect(sentHtml).not.toEqual(expect.stringContaining(`A&B <C> "D" 'E'`));
     });
 
     it('does not alter or double-escape a plain alphanumeric name', async () => {

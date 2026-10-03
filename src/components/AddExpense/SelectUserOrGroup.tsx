@@ -5,11 +5,13 @@ import { SendIcon } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 import React, { useCallback } from 'react';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { deserializeDefaultSplit } from '~/lib/defaultSplit';
+import { getInviteErrorToastKey, isInviteEmailSendFailed } from '~/lib/error/invite';
 
 import { EntityAvatar } from '../ui/avatar';
 import { Button } from '../ui/button';
@@ -48,13 +50,36 @@ export const SelectUserOrGroup: React.FC<{
   const onAddEmailClick = useCallback(
     (invite = false) => {
       if (isEmail.success) {
+        const email = nameOrEmail;
+        const addParticipant = (user: User) => {
+          removeParticipant(-1);
+          addOrUpdateParticipant(user);
+          setNameOrEmail('');
+        };
+
         addFriendMutation.mutate(
-          { email: nameOrEmail, sendInviteEmail: invite },
+          { email, sendInviteEmail: invite },
           {
-            onSuccess: (user) => {
-              removeParticipant(-1);
-              addOrUpdateParticipant(user);
-              setNameOrEmail('');
+            onSuccess: addParticipant,
+            onError: (err) => {
+              const appErrorCode = err.data?.appErrorCode;
+              toast.error(t(getInviteErrorToastKey(appErrorCode)));
+
+              // The friend row already exists whenever this router throws, so retry the participant-add.
+              if (isInviteEmailSendFailed(appErrorCode)) {
+                addFriendMutation.mutate(
+                  { email, sendInviteEmail: false },
+                  {
+                    onSuccess: addParticipant,
+                    onError: () => {
+                      removeParticipant(-1);
+                      toast.error(t('errors.add_member_failed'));
+                    },
+                  },
+                );
+              } else {
+                removeParticipant(-1);
+              }
             },
           },
         );
@@ -81,6 +106,7 @@ export const SelectUserOrGroup: React.FC<{
       addOrUpdateParticipant,
       setNameOrEmail,
       removeParticipant,
+      t,
     ],
   );
 
@@ -105,6 +131,7 @@ export const SelectUserOrGroup: React.FC<{
     [setGroup, setParticipants, setNameOrEmail],
   );
 
+  const handleAddEmailClickTrue = useCallback(() => onAddEmailClick(true), [onAddEmailClick]);
   const handleAddEmailClickFalse = useCallback(() => onAddEmailClick(false), [onAddEmailClick]);
 
   if (group) {
@@ -149,7 +176,7 @@ export const SelectUserOrGroup: React.FC<{
               className="mt-4 text-cyan-500 hover:text-cyan-500"
               variant="outline"
               disabled={!isEmail.success}
-              onClick={handleAddEmailClickFalse}
+              onClick={handleAddEmailClickTrue}
             >
               <SendIcon className="mr-2 h-4 w-4" />
               {t('expense_details.add_expense_details.select_user_or_group.send_invite')}

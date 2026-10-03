@@ -13,6 +13,7 @@ import { type Session } from 'next-auth';
 import superjson from 'superjson';
 import { ZodError, z } from 'zod';
 
+import { getAppErrorCode } from '~/server/api/appError';
 import { getServerAuthSession } from '~/server/auth';
 import { db } from '~/server/db';
 
@@ -76,6 +77,7 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
       data: {
         ...shape.data,
         zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
+        appErrorCode: getAppErrorCode(error.cause),
       },
     };
   },
@@ -119,7 +121,7 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 
   return next({
     ctx: {
-      // infers the `session` as non-nullable
+      // Infers the `session` as non-nullable
       session: { ...ctx.session, user: ctx.session.user },
     },
   });

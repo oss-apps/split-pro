@@ -4,10 +4,8 @@ export const InviteErrorCode = {
   INVITE_EMAIL_SEND_FAILED: 'INVITE_EMAIL_SEND_FAILED',
 } as const;
 
-const inviteErrorCodes: string[] = Object.values(InviteErrorCode);
-
-export const isInviteErrorCode = (appErrorCode: unknown): boolean =>
-  'string' === typeof appErrorCode && inviteErrorCodes.includes(appErrorCode);
+export const isInviteEmailSendFailed = (appErrorCode: unknown): boolean =>
+  InviteErrorCode.INVITE_EMAIL_SEND_FAILED === appErrorCode;
 
 export const getInviteErrorToastKey = (
   appErrorCode: string | null | undefined,

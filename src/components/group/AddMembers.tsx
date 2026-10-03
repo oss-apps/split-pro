@@ -9,7 +9,7 @@ import { z } from 'zod';
 
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
-import { getInviteErrorToastKey, isInviteErrorCode } from '~/lib/error/invite';
+import { getInviteErrorToastKey, isInviteEmailSendFailed } from '~/lib/error/invite';
 import { api } from '~/utils/api';
 
 import { EntityAvatar } from '../ui/avatar';
@@ -100,7 +100,7 @@ const AddMembers: React.FC<{
             toast.error(t(getInviteErrorToastKey(appErrorCode)));
 
             // The friend row already exists whenever this router throws, so retry the group-add.
-            if (isInviteErrorCode(appErrorCode)) {
+            if (isInviteEmailSendFailed(appErrorCode)) {
               addFriendMutation.mutate(
                 { email, sendInviteEmail: false },
                 {

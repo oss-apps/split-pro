@@ -11,7 +11,7 @@ import { z } from 'zod';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { deserializeDefaultSplit } from '~/lib/defaultSplit';
-import { getInviteErrorToastKey, isInviteErrorCode } from '~/lib/error/invite';
+import { getInviteErrorToastKey, isInviteEmailSendFailed } from '~/lib/error/invite';
 
 import { EntityAvatar } from '../ui/avatar';
 import { Button } from '../ui/button';
@@ -66,7 +66,7 @@ export const SelectUserOrGroup: React.FC<{
               toast.error(t(getInviteErrorToastKey(appErrorCode)));
 
               // The friend row already exists whenever this router throws, so retry the participant-add.
-              if (isInviteErrorCode(appErrorCode)) {
+              if (isInviteEmailSendFailed(appErrorCode)) {
                 addFriendMutation.mutate(
                   { email, sendInviteEmail: false },
                   {

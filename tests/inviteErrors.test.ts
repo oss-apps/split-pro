@@ -1,19 +1,29 @@
-import { InviteErrorCode, getInviteErrorToastKey, isInviteErrorCode } from '~/lib/error/invite';
+import {
+  InviteErrorCode,
+  getInviteErrorToastKey,
+  isInviteEmailSendFailed,
+} from '~/lib/error/invite';
 
-describe('isInviteErrorCode', () => {
-  describe('when given a known InviteErrorCode value', () => {
-    it.each(Object.values(InviteErrorCode))('returns true for %s', (code) => {
-      expect(isInviteErrorCode(code)).toBe(true);
+describe('isInviteEmailSendFailed', () => {
+  describe('when given the delivery failure code', () => {
+    it('returns true', () => {
+      expect(isInviteEmailSendFailed(InviteErrorCode.INVITE_EMAIL_SEND_FAILED)).toBe(true);
     });
   });
 
-  describe('when given anything else', () => {
-    it.each([undefined, null, 123, {}, 'SOME_UNRELATED_CODE', ''])(
-      'returns false for %p',
-      (value) => {
-        expect(isInviteErrorCode(value)).toBe(false);
-      },
-    );
+  describe('when given another code', () => {
+    it.each([
+      InviteErrorCode.INVITES_DISABLED,
+      InviteErrorCode.INVITE_RATE_LIMITED,
+      undefined,
+      null,
+      123,
+      {},
+      'SOME_UNRELATED_CODE',
+      '',
+    ])('returns false for %p', (value) => {
+      expect(isInviteEmailSendFailed(value)).toBe(false);
+    });
   });
 });
 

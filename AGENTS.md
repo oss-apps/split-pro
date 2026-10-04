@@ -335,7 +335,7 @@ E2E tests with `pnpm exec playwright test --project=chromium` in separate jobs.
 - `pnpm test` selects `src/**/*.{test,spec}.{ts,tsx}` and excludes `src/tests/integration/`.
 - `pnpm test:integration` selects only `src/tests/integration/**/*.{test,spec}.{ts,tsx}`.
 - `pnpm exec playwright test --project=chromium` selects `tests/e2e/` through
-  `playwright.config.ts`; setup runs before the Chromium project.
+  `playwright.config.ts`; each test receives an isolated authenticated scenario.
 - Run one Jest file with `pnpm test src/tests/simplify.test.ts`, one integration file with
   `pnpm test:integration src/tests/integration/expense.integration.test.ts`, or one browser
   file with `pnpm exec playwright test tests/e2e/group-expense.spec.ts`.
@@ -344,9 +344,11 @@ E2E tests with `pnpm exec playwright test --project=chromium` in separate jobs.
 
 Integration and E2E databases must be local/disposable and end in `_test`. The integration
 harness refuses non-local or non-test URLs; never point these commands at development,
-staging, or production data. CI creates a fresh PostgreSQL service and may use
-`prisma db push --accept-data-loss` because that database is disposable. Local worktrees
-must use a separate PostgreSQL container, database name, and host port.
+staging, or production data. Prepare integration databases with `pnpm test:db:up` and browser
+databases with `pnpm test:e2e:db:up`; the shared launcher deploys migrations and configures
+pg_cron in native Nix PostgreSQL or Docker. Set `TEST_DATABASE_URL` and `E2E_DATABASE_URL`
+to distinct ports/clusters per suite and worktree. Stop them with the corresponding `:down`
+commands. Test database selection never falls back to application `DATABASE_URL`.
 
 See `docs/testing-strategy.md` for the complete command matrix and agent workflow.
 

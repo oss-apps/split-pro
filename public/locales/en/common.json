@@ -436,6 +436,8 @@
     },
     "expense_details": "Expense details",
     "no_activity": "No activities yet",
+    "no_search_results": "No expenses match your search",
+    "search_expenses_placeholder": "Search expenses...",
     "not_involved": "Not involved",
     "not_set": "Not set",
     "on": "on",

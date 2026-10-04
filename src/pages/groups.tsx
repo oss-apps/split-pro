@@ -42,10 +42,12 @@ const BalancePage: NextPageWithUser = () => {
   const actions = useMemo(
     () => (
       <CreateGroup>
-        <PlusIcon className="text-primary h-6 w-6" />
+        <Button variant="ghost" size="icon" aria-label={t('group_details.create_group.title')}>
+          <PlusIcon />
+        </Button>
       </CreateGroup>
     ),
-    [],
+    [t],
   );
 
   return (

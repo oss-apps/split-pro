@@ -18,7 +18,7 @@ SplitPro is a **Next.js PWA** expense-splitting app (Splitwise alternative). Cor
   - `toSafeBigInt(input)` - Parse user input to BigInt (multiplies by 100)
   - Access these via `CurrencyHelpersContext` in React components
 - `BigMath` utility (`src/utils/numbers.ts`) provides safe arithmetic: `abs`, `sign`, `min`, `max`, `roundDiv`
-- **Jest setup**: `BigInt.prototype.toJSON` is defined in `jest.config.ts` for JSON serialization
+- **Jest setup**: `jest.shared.ts` configures real SuperJSON/ESM transforms; monetary values remain BigInts
 
 ### 2. **Double-Entry Balance Accounting**
 Every expense creates **two balance records** (bidirectional):

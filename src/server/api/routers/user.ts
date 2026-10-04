@@ -89,7 +89,7 @@ export const userRouter = createTRPCRouter({
           );
         }
 
-        if (!claimInviteCooldown(user.id)) {
+        if (!claimInviteCooldown(user.id, session.user.id)) {
           throwInviteError(
             'TOO_MANY_REQUESTS',
             InviteErrorCode.INVITE_RATE_LIMITED,

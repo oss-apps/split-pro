@@ -1,22 +1,27 @@
 const INVITE_COOLDOWN_MS = 60_000;
-const lastInviteAtByUserId = new Map<number, number>();
+const lastInviteAtByUserPair = new Map<string, number>();
 let nextCleanupAt = 0;
 
-export const claimInviteCooldown = (userId: number, now = Date.now()): boolean => {
-  const lastInviteAt = lastInviteAtByUserId.get(userId);
+export const claimInviteCooldown = (
+  inviteeId: number,
+  inviterId: number,
+  now = Date.now(),
+): boolean => {
+  const userPair = `${inviteeId}:${inviterId}`;
+  const lastInviteAt = lastInviteAtByUserPair.get(userPair);
   if (undefined !== lastInviteAt && now - lastInviteAt < INVITE_COOLDOWN_MS) {
     return false;
   }
 
   if (now >= nextCleanupAt) {
-    lastInviteAtByUserId.forEach((inviteAt, id) => {
+    lastInviteAtByUserPair.forEach((inviteAt, pair) => {
       if (now - inviteAt >= INVITE_COOLDOWN_MS) {
-        lastInviteAtByUserId.delete(id);
+        lastInviteAtByUserPair.delete(pair);
       }
     });
     nextCleanupAt = now + INVITE_COOLDOWN_MS;
   }
 
-  lastInviteAtByUserId.set(userId, now);
+  lastInviteAtByUserPair.set(userPair, now);
   return true;
 };

@@ -17,6 +17,7 @@
     /* Bundled projects */
     "lib": ["dom", "dom.iterable", "ES2023", "WebWorker"],
     "noEmit": true,
+    "allowImportingTsExtensions": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "jsx": "preserve",
@@ -39,5 +40,5 @@
     "**/*.js",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "public"]
+  "exclude": ["node_modules", "public", "playwright-report", "test-results"]
 }

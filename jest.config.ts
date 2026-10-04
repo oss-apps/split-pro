@@ -1,26 +1,9 @@
-import type { Config } from 'jest';
-import nextJest from 'next/jest.js';
+import { configureJest } from './jest.shared.ts';
 
-// @ts-expect-error we are extending BigInt prototype for JSON serialization
-// oxlint-disable-next-line no-extend-native
-BigInt.prototype.toJSON = function toJSON() {
-  return this.toString();
-};
-
-const createJestConfig = nextJest({
-  dir: './',
-});
-
-const config: Config = {
-  coverageProvider: 'v8',
-  cacheDirectory: '<rootDir>/node_modules/.cache/jest',
-  moduleNameMapper: {
-    '^~/(.*)$': '<rootDir>/src/$1',
-  },
-  setupFilesAfterEnv: ['<rootDir>/src/tests/setup/component.ts'],
-  testEnvironment: 'jsdom',
-  testMatch: ['<rootDir>/src/**/*.{test,spec}.{ts,tsx}'],
-  testPathIgnorePatterns: ['<rootDir>/src/tests/integration/'],
-};
-
-export default createJestConfig(config);
+export default () =>
+  configureJest({
+    testEnvironment: 'node',
+    setupFilesAfterEnv: ['<rootDir>/src/tests/setup/unit.ts'],
+    testMatch: ['<rootDir>/src/**/*.{test,spec}.{ts,tsx}'],
+    testPathIgnorePatterns: ['<rootDir>/src/tests/integration/'],
+  });

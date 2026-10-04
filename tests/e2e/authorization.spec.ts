@@ -1,15 +1,22 @@
 import { expect, test } from './fixtures';
 
-test('redirects unauthenticated visitors to sign in', async ({ browser }) => {
-  const context = await browser.newContext({ storageState: { cookies: [], origins: [] } });
-  const page = await context.newPage();
-  await page.goto('/balances');
-  await expect(page).toHaveURL(/\/auth\/signin/);
-  await context.close();
+test('redirects unauthenticated visitors to sign in', async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ baseURL, storageState: { cookies: [], origins: [] } });
+  try {
+    const page = await context.newPage();
+    await page.goto('/en/balances');
+    await expect(page).toHaveURL(/\/auth\/signin/);
+  } finally {
+    await context.close();
+  }
 });
 
-test('keeps authenticated users on protected pages', async ({ page }) => {
-  await page.goto('/groups');
-  await expect(page).not.toHaveURL(/\/auth\/signin/);
-  await expect(page.getByRole('main')).toBeVisible();
+test('renders authenticated protected content from the isolated scenario', async ({
+  page,
+  scenario,
+}) => {
+  await page.goto('/en/groups');
+  await expect(page.getByText(scenario.group.name, { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Create a group', exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/\/groups$/);
 });

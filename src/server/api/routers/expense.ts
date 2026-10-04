@@ -134,24 +134,9 @@ export const expenseRouter = createTRPCRouter({
     .mutation(async ({ input: expenses, ctx }) => {
       const results = [];
       for (const input of expenses) {
-        if (input.expenseId) {
-          await validateEditExpensePermission(input.expenseId, ctx.session.user.id);
-        }
+        await validateExpenseWritePermission(input.expenseId, input.groupId, ctx.session.user.id);
         if (input.splitType === SplitType.CURRENCY_CONVERSION) {
           throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
-        }
-
-        if (input.groupId !== null) {
-          const group = await db.group.findUnique({
-            where: { id: input.groupId },
-            select: { archivedAt: true },
-          });
-          if (!group) {
-            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group not found' });
-          }
-          if (group.archivedAt) {
-            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
-          }
         }
 
         try {
@@ -176,6 +161,7 @@ export const expenseRouter = createTRPCRouter({
     .input(createCurrencyConversionSchema)
     .mutation(async ({ input, ctx }) => {
       const { amount, rate, from, to, senderId, receiverId, groupId, expenseId } = input;
+      await validateExpenseWritePermission(expenseId, groupId, ctx.session.user.id);
 
       if (!isCurrencyCode(from) || !isCurrencyCode(to)) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid currency code' });
@@ -350,7 +336,7 @@ export const expenseRouter = createTRPCRouter({
 
   getExpenseDetails: protectedProcedure
     .input(z.object({ expenseId: z.string() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const expense = await db.expense.findUnique({
         where: {
           id: input.expenseId,
@@ -388,6 +374,26 @@ export const expenseRouter = createTRPCRouter({
           },
         },
       });
+
+      if (
+        expense &&
+        expense.addedBy !== ctx.session.user.id &&
+        !expense.expenseParticipants.some(
+          (participant) => participant.userId === ctx.session.user.id,
+        )
+      ) {
+        const membership =
+          null === expense.groupId
+            ? null
+            : await db.groupUser.findUnique({
+                where: {
+                  groupId_userId: { groupId: expense.groupId, userId: ctx.session.user.id },
+                },
+              });
+        if (!membership) {
+          throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You cannot view this expense' });
+        }
+      }
 
       if (expense && expense.groupId !== null) {
         const missingGroupMembers = await db.group.findUnique({
@@ -564,19 +570,7 @@ export const expenseRouter = createTRPCRouter({
       if (!expense) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Expense not found' });
       }
-
-      if (expense.groupId !== null) {
-        const group = await db.group.findUnique({
-          where: { id: expense.groupId },
-          select: { archivedAt: true },
-        });
-        if (!group) {
-          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group not found' });
-        }
-        if (group.archivedAt) {
-          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
-        }
-      }
+      await validateExpenseWritePermission(input.expenseId, expense.groupId, ctx.session.user.id);
 
       await deleteExpense(input.expenseId, ctx.session.user.id);
     }),
@@ -639,11 +633,47 @@ const validateEditExpensePermission = async (expenseId: string, userId: number):
     db.expense.findUnique({ where: { id: expenseId }, select: { addedBy: true } }),
   ]);
 
-  if (!expenseParticipant && !addedBy?.addedBy) {
+  if (!expenseParticipant && userId !== addedBy?.addedBy) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
       message: 'You are not the participant of the expense',
     });
+  }
+};
+
+const validateExpenseWritePermission = async (
+  expenseId: string | undefined,
+  groupId: number | null,
+  userId: number,
+): Promise<void> => {
+  if (expenseId) {
+    await validateEditExpensePermission(expenseId, userId);
+    const expense = await db.expense.findUniqueOrThrow({
+      where: { id: expenseId },
+      select: { groupId: true },
+    });
+    if (expense.groupId !== groupId) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'Cannot move an expense to another group',
+      });
+    }
+  }
+  if (null === groupId) {
+    return;
+  }
+  const group = await db.group.findUnique({
+    where: { id: groupId },
+    select: { archivedAt: true, groupUsers: { where: { userId }, select: { userId: true } } },
+  });
+  if (!group) {
+    throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group not found' });
+  }
+  if (0 === group.groupUsers.length) {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Not a group member' });
+  }
+  if (group.archivedAt) {
+    throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
   }
 };
 

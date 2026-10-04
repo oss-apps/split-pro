@@ -1,34 +1,28 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const defaultPort = 3176;
-const databaseUrl =
-  process.env.E2E_DATABASE_URL ??
-  'postgresql://postgres:strong-password@localhost:5432/splitpro_test';
-const database = new URL(databaseUrl);
-const baseUrl = process.env.E2E_BASE_URL ?? `http://127.0.0.1:${defaultPort}`;
-const baseUrlDetails = new URL(baseUrl);
+import { getTestDatabaseUrl } from './src/tests/helpers/testDatabase';
+import { loadTestEnvironment } from './src/tests/helpers/environment';
 
-if (
-  !['localhost', '127.0.0.1', '::1'].includes(database.hostname) ||
-  !database.pathname.endsWith('_test')
-) {
-  throw new Error('E2E_DATABASE_URL must point at a local disposable *_test database');
-}
-if (!['localhost', '127.0.0.1', '::1'].includes(baseUrlDetails.hostname)) {
-  throw new Error('E2E_BASE_URL must point at a local test server');
+loadTestEnvironment();
+const baseURL = process.env.E2E_BASE_URL ?? 'http://127.0.0.1:3176';
+const url = new URL(baseURL);
+if ('http:' !== url.protocol || !['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)) {
+  throw new Error('E2E_BASE_URL must point at a local HTTP test server');
 }
 
-const port = Number(baseUrlDetails.port) || 80;
-
-process.env.DATABASE_URL = databaseUrl;
-process.env.TEST_MODE = '1';
-process.env.NEXTAUTH_SECRET ??= 'playwright-test-secret';
-process.env.NEXTAUTH_URL = baseUrl;
-process.env.NEXTAUTH_URL_INTERNAL = baseUrl;
-process.env.SKIP_ENV_VALIDATION = '1';
-process.env.ENABLE_SENDING_INVITES = '0';
-process.env.DISABLE_EMAIL_SIGNUP = '0';
-process.env.INVITE_ONLY = '0';
+const testEnvironment = {
+  DATABASE_URL: getTestDatabaseUrl('e2e'),
+  NODE_ENV: 'test',
+  TEST_MODE: '1',
+  NEXTAUTH_SECRET: 'playwright-test-secret',
+  NEXTAUTH_URL: baseURL,
+  NEXTAUTH_URL_INTERNAL: baseURL,
+  SKIP_ENV_VALIDATION: '1',
+  ENABLE_SENDING_INVITES: '0',
+  DISABLE_EMAIL_SIGNUP: '0',
+  INVITE_ONLY: '0',
+};
+Object.assign(process.env, testEnvironment);
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -37,39 +31,20 @@ export default defineConfig({
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: process.env.CI ? 'line' : 'list',
+  reporter: [[process.env.CI ? 'line' : 'list'], ['html', { open: 'never' }]],
   use: {
     ...devices['Desktop Chrome'],
-    baseURL: baseUrl,
-    trace: 'on-first-retry',
+    baseURL,
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
-    video: 'on-first-retry',
+    video: 'retain-on-failure',
   },
-  projects: [
-    { name: 'setup', testMatch: /.*\.setup\.ts/ },
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'], storageState: 'playwright/.auth/user.json' },
-      dependencies: ['setup'],
-    },
-  ],
+  projects: [{ name: 'chromium' }],
   webServer: {
-    command: `pnpm dev --port ${port}`,
-    url: baseUrl,
-    reuseExistingServer: !process.env.CI,
+    command: `pnpm dev --hostname ${url.hostname.replaceAll('[', '').replaceAll(']', '')} --port ${Number(url.port) || 80}`,
+    url: baseURL,
+    reuseExistingServer: false,
     timeout: 120_000,
-    env: {
-      ...process.env,
-      DATABASE_URL: databaseUrl,
-      NODE_ENV: 'test',
-      TEST_MODE: '1',
-      NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ?? 'playwright-test-secret',
-      NEXTAUTH_URL: baseUrl,
-      NEXTAUTH_URL_INTERNAL: baseUrl,
-      SKIP_ENV_VALIDATION: '1',
-      ENABLE_SENDING_INVITES: '0',
-      DISABLE_EMAIL_SIGNUP: '0',
-      INVITE_ONLY: '0',
-    },
+    env: testEnvironment,
   },
 });

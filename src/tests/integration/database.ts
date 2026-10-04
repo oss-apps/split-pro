@@ -1,49 +1,34 @@
 import { PrismaClient } from '@prisma/client';
 
-const TEST_DATABASE_PATTERN = /_test(?:[/?]|$)/i;
+import { assertTestDatabaseUrl, getTestDatabaseUrl } from '../helpers/testDatabase';
 
-export const assertTestDatabase = (url = process.env.DATABASE_URL) => {
-  if (!url) {
-    throw new Error('Integration tests require DATABASE_URL');
-  }
+const databaseUrl = getTestDatabaseUrl();
+assertTestDatabaseUrl(databaseUrl);
+const clientUrl = new URL(databaseUrl);
+// Keep the suite's advisory lock and all operations on one connection. A second
+// Integration process must fail rather than truncate another run's fixtures.
+clientUrl.searchParams.set('connection_limit', '1');
+export const db = new PrismaClient({ datasourceUrl: clientUrl.toString() });
 
-  const parsed = new URL(url);
-  if (!['localhost', '127.0.0.1', '::1'].includes(parsed.hostname)) {
-    throw new Error(`Refusing integration tests against non-local database: ${parsed.hostname}`);
-  }
-  if (!TEST_DATABASE_PATTERN.test(parsed.pathname)) {
-    throw new Error(
-      `Refusing integration tests against database without _test suffix: ${parsed.pathname}`,
-    );
+export const acquireDatabaseLock = async () => {
+  const [result] = await db.$queryRaw<
+    [{ locked: boolean }]
+  >`SELECT pg_try_advisory_lock(55439) AS locked`;
+  if (!result.locked) {
+    throw new Error('Another integration suite owns this database; use a separate test cluster');
   }
 };
-
-assertTestDatabase();
-
-const db = new PrismaClient({ datasourceUrl: process.env.DATABASE_URL });
 
 export const resetDatabase = async () => {
-  assertTestDatabase();
-  await db.$transaction([
-    db.expenseParticipant.deleteMany(),
-    db.expenseNote.deleteMany(),
-    db.expense.deleteMany(),
-    db.expenseRecurrence.deleteMany(),
-    db.groupDefaultSplit.deleteMany(),
-    db.groupUser.deleteMany(),
-    db.group.deleteMany(),
-    db.friendDefaultSplit.deleteMany(),
-    db.pushNotification.deleteMany(),
-    db.cachedBankData.deleteMany(),
-    db.cachedCurrencyRate.deleteMany(),
-    db.session.deleteMany(),
-    db.account.deleteMany(),
-    db.user.deleteMany(),
-  ]);
-  await db.$executeRawUnsafe('DELETE FROM cron.job_run_details');
-  await db.$executeRawUnsafe('DELETE FROM cron.job');
+  assertTestDatabaseUrl(databaseUrl);
+  // All application tables, including legacy balances and metadata. The migration
+  // Ledger and extension tables are deliberately outside this explicit list.
+  await db.$executeRawUnsafe(`TRUNCATE TABLE
+    "ExpenseParticipant", "ExpenseNote", "Expense", "ExpenseRecurrence",
+    "GroupDefaultSplit", "GroupUser", "Group", "FriendDefaultSplit",
+    "PushNotification", "CachedBankData", "CachedCurrencyRate", "Session",
+    "Account", "User", "VerificationToken", "Balance", "GroupBalance", "AppMetadata"
+    RESTART IDENTITY CASCADE`);
+  await db.$executeRaw`DELETE FROM cron.job_run_details`;
+  await db.$executeRaw`DELETE FROM cron.job`;
 };
-
-export const closeDatabase = async () => db.$disconnect();
-
-export const createTestClient = () => new PrismaClient({ datasourceUrl: process.env.DATABASE_URL });

@@ -2,13 +2,10 @@ import { useAddExpenseStore } from '~/store/addStore';
 import { useAppStore } from '~/store/appStore';
 import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
 
-const initialAddExpenseState = useAddExpenseStore.getState();
-const initialAppState = useAppStore.getState();
-const initialCurrencyPreferenceState = useCurrencyPreferenceStore.getState();
-
 export const resetStores = () => {
-  useAddExpenseStore.setState(initialAddExpenseState, true);
-  useAppStore.setState(initialAppState, true);
-  useCurrencyPreferenceStore.setState(initialCurrencyPreferenceState, true);
+  useAddExpenseStore.setState(useAddExpenseStore.getInitialState(), true);
+  useAppStore.setState(useAppStore.getInitialState(), true);
+  useCurrencyPreferenceStore.setState(useCurrencyPreferenceStore.getInitialState(), true);
   window.sessionStorage.clear();
+  window.localStorage.clear();
 };

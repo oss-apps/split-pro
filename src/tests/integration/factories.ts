@@ -1,49 +1,35 @@
-import { type Prisma, SplitType } from '@prisma/client';
+import {
+  createDatabaseGroup,
+  createDatabaseUser,
+  expenseInput,
+} from '../helpers/databaseFactories';
+import { db } from './database';
 
-import { db } from '~/server/db';
+export { expenseInput };
+export const testUser = (name = 'Test User') => createDatabaseUser(db, { name });
+export const testGroup = (ownerId: number, memberIds: number[] = []) =>
+  createDatabaseGroup(db, ownerId, memberIds);
 
-let sequence = 0;
-
-export const testUser = async (name = `Test User ${sequence}`) => {
-  const id = sequence++;
-  return db.user.create({
-    data: { name, email: `integration-${id}@splitpro.test`, currency: 'USD' },
-  });
-};
-
-export const testGroup = async (userId: number, name = `Test Group ${sequence++}`) =>
-  db.group.create({
-    data: {
-      name,
-      publicId: `integration-group-${sequence++}`,
-      userId,
-      groupUsers: { create: { userId } },
-    },
-  });
-
-export const testExpense = async (input: {
-  paidBy: number;
-  participantId: number;
-  groupId?: number | null;
-  amount?: bigint;
-  name?: string;
-}) => {
-  const amount = input.amount ?? 1_000n;
-  const data: Prisma.ExpenseCreateInput = {
-    name: input.name ?? `Test Expense ${sequence++}`,
-    category: 'Other',
-    amount,
-    currency: 'USD',
-    splitType: SplitType.EQUAL,
-    addedByUser: { connect: { id: input.paidBy } },
-    paidByUser: { connect: { id: input.paidBy } },
-    ...(input.groupId ? { group: { connect: { id: input.groupId } } } : {}),
-    expenseParticipants: {
-      create: [
-        { userId: input.paidBy, amount },
-        { userId: input.participantId, amount: -amount },
-      ],
-    },
+export const testScenario = async () => {
+  const owner = await testUser('Owner');
+  const member = await testUser('Member');
+  const outsider = await testUser('Outsider');
+  const group = await testGroup(owner.id, [member.id]);
+  return {
+    owner,
+    member,
+    outsider,
+    group,
+    input: expenseInput(owner.id, member.id, { groupId: group.id }),
   };
-  return db.expense.create({ data });
 };
+
+export const accountingSnapshot = async () => ({
+  expenses: await db.expense.findMany({ orderBy: { id: 'asc' } }),
+  participants: await db.expenseParticipant.findMany({
+    orderBy: [{ expenseId: 'asc' }, { userId: 'asc' }],
+  }),
+  balances: await db.balanceView.findMany({
+    orderBy: [{ groupId: 'asc' }, { currency: 'asc' }, { userId: 'asc' }, { friendId: 'asc' }],
+  }),
+});

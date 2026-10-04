@@ -1,45 +1,51 @@
-jest.mock('~/server/api/services/notificationService', () => ({
-  sendExpensePushNotification: jest.fn().mockResolvedValue(undefined),
-}));
-jest.mock('~/server/auth', () => ({ getServerAuthSession: jest.fn() }));
-jest.mock('nanoid', () => ({ nanoid: () => 'integration-public-id' }));
-jest.mock('superjson', () => ({
-  default: { serialize: (value: unknown) => value, deserialize: (value: unknown) => value },
-}));
-jest.mock('~/server/db', () => {
-  const { PrismaClient } = require('@prisma/client') as typeof import('@prisma/client');
-  return { db: new PrismaClient({ datasourceUrl: process.env.DATABASE_URL }) };
-});
-
-import { SplitType } from '@prisma/client';
-
-import { db } from '~/server/db';
-import { resetDatabase } from './database';
-import { testUser } from './factories';
+import { db } from './database';
+import { testScenario } from './factories';
 import { callerFor } from './trpc';
 
-describe('recurrence integration', () => {
-  beforeEach(() => resetDatabase());
-
-  it('creates a pg_cron-backed recurrence with an expense', async () => {
-    const user = await testUser();
-    const caller = callerFor(user.id);
-    const [expense] = await caller.expense.addOrEditExpense({
-      paidBy: user.id,
-      name: 'Recurring expense',
-      category: 'Other',
-      amount: 500n,
-      groupId: null,
-      splitType: SplitType.EQUAL,
-      currency: 'USD',
-      participants: [{ userId: user.id, amount: 500n }],
-      cronExpression: '0 0 * * *',
+describe('recurrence lifecycle', () => {
+  it('duplicates participants and balances, edits the schedule, and stops only when the template is deleted', async () => {
+    const { owner, member, input, group } = await testScenario();
+    const caller = callerFor(owner.id);
+    const [template] = await caller.expense.addOrEditExpense({
+      ...input,
+      cronExpression: '0 0 1 1 *',
     });
-
-    const recurrence = await db.expenseRecurrence.findFirst({
-      include: { job: true, expense: true },
+    const recurrence = await db.expenseRecurrence.findFirstOrThrow({ include: { job: true } });
+    expect(recurrence.job.schedule).toBe('0 0 1 1 *');
+    const [duplicate] = await db.$queryRaw<[{ id: string }]>`
+      SELECT duplicate_expense_with_participants(${template!.id}::uuid)::text AS id
+    `;
+    expect(
+      await db.expense.findUnique({
+        where: { id: duplicate.id },
+        include: { expenseParticipants: true },
+      }),
+    ).toMatchObject({
+      amount: input.amount,
+      recurrenceId: recurrence.id,
+      expenseParticipants: expect.arrayContaining([
+        expect.objectContaining({ userId: owner.id, amount: 1000n }),
+        expect.objectContaining({ userId: member.id, amount: -1000n }),
+      ]),
     });
-    expect(recurrence?.expense[0]?.id).toBe(expense?.id);
-    expect(recurrence?.job.schedule).toBe('0 0 * * *');
+    expect(
+      await db.balanceView.findFirst({ where: { userId: owner.id, groupId: group.id } }),
+    ).toMatchObject({ amount: 2000n });
+    await caller.expense.addOrEditExpense({
+      ...input,
+      expenseId: template!.id,
+      cronExpression: '0 12 1 1 *',
+    });
+    expect(await db.job.findUnique({ where: { jobid: recurrence.jobId } })).toMatchObject({
+      schedule: '0 12 1 1 *',
+    });
+    await caller.expense.deleteExpense({ expenseId: duplicate.id });
+    expect(await db.job.count()).toBe(1);
+    expect(
+      await db.balanceView.findFirst({ where: { userId: owner.id, groupId: group.id } }),
+    ).toMatchObject({ amount: 1000n });
+    await caller.expense.deleteExpense({ expenseId: template!.id });
+    expect(await db.job.count()).toBe(0);
+    expect(await db.expenseRecurrence.count()).toBe(0);
   });
 });

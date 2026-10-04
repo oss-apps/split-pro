@@ -58,6 +58,31 @@
               p.cacert
               p.stdenv.cc.cc.lib
               p.zlib
+              p.glib
+              p.nss
+              p.nspr
+              p.dbus
+              p.atk
+              p.at-spi2-atk
+              p.cups
+              p.libdrm
+              p.expat
+              p.libxkbcommon
+              p.xorg.libX11
+              p.xorg.libXcomposite
+              p.xorg.libXdamage
+              p.xorg.libXext
+              p.xorg.libXfixes
+              p.xorg.libXrandr
+              p.xorg.libxcb
+              p.mesa
+              p.libgbm
+              p.udev
+              p.pango
+              p.cairo
+              p.alsa-lib
+              p.fontconfig
+              p.freetype
               p.bash
               p.coreutils
               p.findutils
@@ -98,6 +123,7 @@
               pkgs.git
               pkgs.openssl
               pkgs.nixfmt-rfc-style
+              pkgs.dejavu_fonts
             ];
             SPLITPRO_NATIVE_POSTGRES = "1";
             shellHook = ''

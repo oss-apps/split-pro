@@ -1,42 +1,27 @@
+/** @jest-environment jsdom */
+
 import { screen } from '@testing-library/react';
 import React from 'react';
 
 import { renderWithProviders } from '~/tests/helpers/render';
 import { createMockRouter } from '~/tests/helpers/router';
-import { resetStores } from '~/tests/helpers/resetStores';
+import MainLayout from './MainLayout';
 
-const mockRouter = createMockRouter({ pathname: '/groups/7' });
-jest.mock('next/router', () => ({ useRouter: () => mockRouter }));
-jest.mock('next-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) =>
-      ({
-        'meta.application_name': 'SplitPro',
-        'navigation.balances': 'Balances',
-        'navigation.groups': 'Groups',
-        'navigation.add_expense': 'Add Expense',
-        'navigation.add': 'Add',
-        'navigation.activity': 'Activity',
-        'navigation.account': 'Account',
-      })[key] ?? key,
-    ready: true,
-    i18n: { language: 'en' },
-  }),
-}));
-
-const { default: MainLayout } = require('./MainLayout') as typeof import('./MainLayout');
-
-it('renders navigation links and marks the active section', () => {
+it('marks the active navigation section for nested routes', () => {
   renderWithProviders(
     <MainLayout title="Overview">
       <p>Content</p>
     </MainLayout>,
+    {
+      router: createMockRouter({ pathname: '/groups/[groupId]', asPath: '/groups/7' }),
+    },
   );
-
-  expect(screen.getAllByRole('link', { name: 'Groups' }).length).toBeGreaterThan(0);
-  expect(screen.getAllByRole('link', { name: 'Balances' }).length).toBeGreaterThan(0);
   expect(screen.getByText('Content')).toBeInTheDocument();
-  expect(screen.getAllByRole('link', { name: 'Groups' })[0]).toHaveAttribute('href', '/groups');
+  screen.getAllByRole('link', { name: 'Groups' }).forEach((link) => {
+    expect(link).toHaveAttribute('href', '/groups');
+    expect(link.querySelector('span')).toHaveClass('text-cyan-500');
+  });
+  screen.getAllByRole('link', { name: 'Balances' }).forEach((link) => {
+    expect(link.querySelector('span')).not.toHaveClass('text-cyan-500');
+  });
 });
-
-afterEach(resetStores);

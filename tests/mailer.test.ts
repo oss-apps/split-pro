@@ -89,6 +89,13 @@ describe('sendInviteEmail', () => {
       await expect(sendInviteEmail('friend@example.com', 'Alice')).resolves.toBe(false);
       expect(mockSendToDiscord).toHaveBeenCalledTimes(1);
     });
+
+    it('resolves false when reporting the SMTP failure to Discord also fails', async () => {
+      mockSendMail.mockRejectedValue(new Error('connect ECONNREFUSED'));
+      mockSendToDiscord.mockRejectedValue(new Error('Discord unavailable'));
+
+      await expect(sendInviteEmail('friend@example.com', 'Alice')).resolves.toBe(false);
+    });
   });
 
   describe('in development mode', () => {

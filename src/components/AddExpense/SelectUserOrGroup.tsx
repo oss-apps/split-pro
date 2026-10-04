@@ -51,10 +51,20 @@ export const SelectUserOrGroup: React.FC<{
     (invite = false) => {
       if (isEmail.success) {
         const email = nameOrEmail;
+        const removePendingParticipant = () => {
+          const pendingParticipant = useAddExpenseStore
+            .getState()
+            .participants.find((participant) => -1 === participant.id);
+          if (email === pendingParticipant?.email) {
+            removeParticipant(-1);
+          }
+        };
         const addParticipant = (user: User) => {
-          removeParticipant(-1);
+          removePendingParticipant();
           addOrUpdateParticipant(user);
-          setNameOrEmail('');
+          if (email === useAddExpenseStore.getState().nameOrEmail) {
+            setNameOrEmail('');
+          }
         };
 
         addFriendMutation.mutate(
@@ -72,13 +82,13 @@ export const SelectUserOrGroup: React.FC<{
                   {
                     onSuccess: addParticipant,
                     onError: () => {
-                      removeParticipant(-1);
+                      removePendingParticipant();
                       toast.error(t('errors.add_member_failed'));
                     },
                   },
                 );
               } else {
-                removeParticipant(-1);
+                removePendingParticipant();
               }
             },
           },

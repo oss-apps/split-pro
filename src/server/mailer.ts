@@ -111,13 +111,17 @@ async function sendMail(
     }
   } catch (error) {
     console.log('Error sending email', error);
-    await sendToDiscord(
-      `Error sending email: ${
-        error instanceof Error
-          ? `error.message: ${error.message}\nerror.stack: ${error.stack}`
-          : 'Unknown error'
-      }`,
-    );
+    await Promise.resolve(
+      sendToDiscord(
+        `Error sending email: ${
+          error instanceof Error
+            ? `error.message: ${error.message}\nerror.stack: ${error.stack}`
+            : 'Unknown error'
+        }`,
+      ),
+    ).catch((notificationError: unknown) => {
+      console.error('Failed to report email error to Discord', notificationError);
+    });
   }
 
   return false;

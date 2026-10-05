@@ -52,6 +52,20 @@ describe('sendInviteEmail', () => {
     (env as { ENABLE_SENDING_INVITES: boolean }).ENABLE_SENDING_INVITES = true;
   });
 
+  it('creates the SMTP transport with bounded timeouts', async () => {
+    mockSendMail.mockResolvedValue(mockSentMessageInfo);
+
+    await sendInviteEmail('friend@example.com', 'Alice');
+
+    expect(mockCreateTransport).toHaveBeenCalledWith(
+      expect.objectContaining({
+        connectionTimeout: 10_000,
+        greetingTimeout: 10_000,
+        socketTimeout: 30_000,
+      }),
+    );
+  });
+
   describe('when the send succeeds', () => {
     it('resolves true when the email actually sends', async () => {
       mockSendMail.mockResolvedValue(mockSentMessageInfo);

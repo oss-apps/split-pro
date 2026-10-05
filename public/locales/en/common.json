@@ -129,6 +129,8 @@
   },
   "errors": {
     "currency_conversion_error": "Error while setting currency conversion",
+    "invalid_expression": "Invalid expression",
+    "negative_settlement_amount": "Settlement amount cannot be negative",
     "email_invalid": "Email is invalid, please try the signin flow again.",
     "no_providers": "Error when fetching authentication providers. Please check backend logs.",
     "email_required": "Email is required",

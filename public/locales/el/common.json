@@ -99,7 +99,7 @@
     "you_dativus": "Εσύ"
   },
   "auth": {
-    "continue_with": "Συνέχεια με {{provider}}"
+    "continue_with": "Συνέχεια με {provider}"
   },
   "expense_details": {
     "add_expense": "Προσθήκη εξόδου",

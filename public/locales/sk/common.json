@@ -97,7 +97,7 @@
     "you_dativus": "Tebe"
   },
   "auth": {
-    "continue_with": "Pokračuj s {{provider}}",
+    "continue_with": "Pokračuj s {provider}",
     "email_placeholder": "Zadaj svoj e-mail",
     "no_providers_configured": "Nie sú nakonfigurovaný žiadny poskytovatelia overovania",
     "no_providers_instructions": "Prosím nakonfigurujte si aspoň jedného poskytovateľa overovania na prihlásenie. Pozrite si",
@@ -140,7 +140,7 @@
     "group_name_update_failed": "Chyba pri zmene mena skupiny",
     "import_failed": "Chyba pri importe súboru",
     "invalid_cron_expression": "Neplatná cron výraz",
-    "invalid_currency_code": "Neplatný kód meny {{code}}",
+    "invalid_currency_code": "Neplatný kód meny {code}",
     "language_change_failed": "Chyba pri zmene jazyka",
     "less_than": "Súbor by mal byť menší ako",
     "name_required": "Meno je povinné",
@@ -344,7 +344,7 @@
     "edit_description": "Týmto sa zmení rozvrh budúcich výdavkov. Existujúce výdavky sa neupravia.",
     "edit_title": "Upraviť opakovanie",
     "empty": "Zatiaľ nie sú žiadne opakujúce sa výdavky",
-    "expense_for_the_amount_of": "Výdavok {{name}} vo výške {{amount}} {{currency}}",
+    "expense_for_the_amount_of": "Výdavok {name} vo výške {amount} {currency}",
     "last_day": "Posledný deň",
     "months": "Mesiace",
     "never": "Nie je nakonfigurovaný žiadny plán",

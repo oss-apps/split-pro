@@ -97,7 +97,7 @@
     "you_dativus": "Vám"
   },
   "auth": {
-    "continue_with": "Pokračovat s {{provider}}",
+    "continue_with": "Pokračovat s {provider}",
     "email_placeholder": "Zadejte váš email",
     "no_providers_configured": "Není nastaven žádný poskytovatel přihlášení",
     "no_providers_instructions": "Abyste se mohli přihlásit, nastavte prosím alespoň jednoho poskytovatele přihlášení. Pro více informací se podívejte na",
@@ -140,7 +140,7 @@
     "group_name_update_failed": "Chyba při aktualizaci jména skupiny",
     "import_failed": "Chyba při importování souboru",
     "invalid_cron_expression": "Neplatný cron výraz",
-    "invalid_currency_code": "Neplatný kód měny {{code}}",
+    "invalid_currency_code": "Neplatný kód měny {code}",
     "language_change_failed": "Chyba při změně jazyka",
     "less_than": "Soubor by měl být menší než",
     "name_required": "Musí být zadáno jméno",
@@ -344,7 +344,7 @@
     "edit_description": "Toto změní rozvrh pro budoucí výdaje. Existující výdaje upraveny nebudou.",
     "edit_title": "Upravit opakování",
     "empty": "Žádné výdaje zatím nejsou opakované",
-    "expense_for_the_amount_of": "Výdaj {{name}} za {{amount}} {{currency}}",
+    "expense_for_the_amount_of": "Výdaj {name} za {amount} {currency}",
     "last_day": "Poslední den",
     "months": "Měsíce",
     "never": "Není nastaven žádný plán",

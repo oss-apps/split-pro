@@ -108,7 +108,7 @@
     "you_dativus": "Jou"
   },
   "auth": {
-    "continue_with": "Doorgaan met {{provider}}",
+    "continue_with": "Doorgaan met {provider}",
     "email_placeholder": "Voer je e-mailadres in",
     "no_providers_configured": "Geen authenticatieproviders geconfigureerd",
     "no_providers_instructions": "Configureer ten minste één authenticatieprovider om in te loggen. Zie de",
@@ -162,10 +162,10 @@
     "image_compression_failed": "Afbeeldingscompressie mislukt, origineel bestand wordt geüpload",
     "import_failed": "Fout bij importeren bestand",
     "invalid_cron_expression": "Ongeldige cron-uitdrukking",
-    "invalid_currency_code": "Ongeldige valutacode {{code}}",
+    "invalid_currency_code": "Ongeldige valutacode {code}",
     "invalid_split": "Bepaal wie deze kosten moet betalen voordat je het opslaat.",
     "language_change_failed": "Fout bij taalwijziging",
-    "less_than": "Bestand moet minder dan {{size}} MB zijn",
+    "less_than": "Bestand moet minder dan {size} MB zijn",
     "name_required": "Naam is vereist",
     "no_providers": "Fout bij het ophalen van authenticatieproviders. Controleer de backend-logbestanden.",
     "notification_not_supported": "Notificaties worden niet ondersteund",
@@ -202,9 +202,9 @@
       "split_type_section": {
         "direction": {
           "no_money_flow": "Niemand anders is iets verschuldigd",
-          "owes_payer": "{{debtor}} is {{payer}} verschuldigd",
-          "owes_you": "{{debtor}} is je geld verschuldigd",
-          "you_owe": "Je bent {{payer}} geld verschuldigd"
+          "owes_payer": "{debtor} is {payer} verschuldigd",
+          "owes_you": "{debtor} is je geld verschuldigd",
+          "you_owe": "Je bent {payer} geld verschuldigd"
         },
         "split_equally": "gelijk verdelen",
         "split_unequally": "ongelijk verdelen",
@@ -381,7 +381,7 @@
     "edit_description": "Dit zal de planning voor toekomstige uitgaven veranderen. Bestaande uitgaven blijven ongewijzigd.",
     "edit_title": "Herhaling bewerken",
     "empty": "Nog geen terugkerende uitgaven",
-    "expense_for_the_amount_of": "Uitgave {{name}} voor het bedrag van {{amount}} {{currency}}",
+    "expense_for_the_amount_of": "Uitgave {name} voor het bedrag van {amount} {currency}",
     "last_day": "Laatste dag",
     "months": "Maanden",
     "never": "Geen planning ingesteld",

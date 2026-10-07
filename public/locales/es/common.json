@@ -97,7 +97,7 @@
     "you_dativus": "A ti"
   },
   "auth": {
-    "continue_with": "Continuar con {{provider}}",
+    "continue_with": "Continuar con {provider}",
     "email_placeholder": "Introduce tu correo electrónico",
     "no_providers_configured": "No hay proveedores de autenticación configurados",
     "no_providers_instructions": "Configure al menos un provedor de autenticación para iniciar sesión. Consulte las",
@@ -140,7 +140,7 @@
     "group_name_update_failed": "Error al actualizar el nombre del grupo",
     "import_failed": "Error al importar el archivo",
     "invalid_cron_expression": "Expresión \"cron\" inválida",
-    "invalid_currency_code": "Código de moneda inválido {{code}}",
+    "invalid_currency_code": "Código de moneda inválido {code}",
     "language_change_failed": "Error al cambiar de idioma",
     "less_than": "El archivo debe ser menor que",
     "name_required": "El nombre es obligatorio",
@@ -344,7 +344,7 @@
     "edit_description": "Esto modificará la programación de futuros gastos. Los gastos existentes no serán modificados.",
     "edit_title": "Editar Recurrencia",
     "empty": "Sin gastos recurrentes",
-    "expense_for_the_amount_of": "Gasto {{name}} por la cantidad de {{amount}} {{currency}}",
+    "expense_for_the_amount_of": "Gasto {name} por la cantidad de {amount} {currency}",
     "last_day": "Último día",
     "months": "Meses",
     "never": "Sin recurrencia",

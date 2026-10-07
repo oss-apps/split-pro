@@ -108,7 +108,7 @@
     "you_dativus": "You"
   },
   "auth": {
-    "continue_with": "Continue with {{provider}}",
+    "continue_with": "Continue with {provider}",
     "email_placeholder": "Enter your email",
     "no_providers_configured": "No authentication providers configured",
     "no_providers_instructions": "Please configure at least one authentication provider to sign in. See the",
@@ -137,10 +137,10 @@
     "add_member_failed": "Failed to add member to the group",
     "group_name_update_failed": "Error in updating group name",
     "import_failed": "Error importing file",
-    "invalid_currency_code": "Invalid currency code {{code}}",
+    "invalid_currency_code": "Invalid currency code {code}",
     "invalid_split": "Adjust who owes this expense before saving.",
     "language_change_failed": "Error changing language",
-    "less_than": "File should be less than {{size}}MB",
+    "less_than": "File should be less than {size}MB",
     "image_compression_failed": "Image compression failed, trying to upload original file",
     "name_required": "Name is required",
     "notification_not_supported": "Notification is not supported",
@@ -193,9 +193,9 @@
       "split_type_section": {
         "direction": {
           "no_money_flow": "No one else owes anything",
-          "owes_payer": "{{debtor}} owes {{payer}}",
-          "owes_you": "{{debtor}} owes you",
-          "you_owe": "You owe {{payer}}"
+          "owes_payer": "{debtor} owes {payer}",
+          "owes_you": "{debtor} owes you",
+          "you_owe": "You owe {payer}"
         },
         "split_equally": "split equally",
         "split_unequally": "split unequally",
@@ -381,7 +381,7 @@
     "never": "No schedule configured",
     "empty": "No recurring expenses yet",
     "recurring": "Recurring",
-    "expense_for_the_amount_of": "Expense {{name}} for the amount of {{amount}} {{currency}}",
+    "expense_for_the_amount_of": "Expense {name} for the amount of {amount} {currency}",
     "delete_title": "Delete Recurrence",
     "delete_description": "This will stop future expense creation. Existing expenses created by this recurrence will not be deleted.",
     "edit_title": "Edit Recurrence",

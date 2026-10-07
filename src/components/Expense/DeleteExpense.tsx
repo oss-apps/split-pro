@@ -38,16 +38,15 @@ export const DeleteExpense: React.FC<DeleteExpenseProps> = ({ expenseId, recurre
       await deleteExpenseMutation.mutateAsync({ expenseId });
     } catch (error) {
       if (error instanceof Error) {
-        console.error(error);
-        toast.error(t('errors.expense_deletion_failed'));
+        toast.error(`Error: ${error.message}`);
       } else {
         console.error('Unexpected error:', error);
-        toast.error(t('errors.expense_deletion_failed'));
+        toast.error('An unexpected error occurred while deleting the expense.');
       }
       return;
     }
     router.back();
-  }, [expenseId, deleteExpenseMutation, router, t]);
+  }, [expenseId, deleteExpenseMutation, router]);
 
   const description = useMemo(() => {
     if (!isPartOfRecurrence) {

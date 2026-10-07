@@ -25,7 +25,7 @@ export const useTranslationWithUtils = (
     namespaces = [namespaces];
   }
   if (!namespaces || namespaces.length === 0) {
-    namespaces = ['common_icu'];
+    namespaces = ['common'];
   }
   const translation = useTranslation(namespaces);
 

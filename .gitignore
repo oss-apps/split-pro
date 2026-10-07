@@ -27,7 +27,6 @@ next-env.d.ts
 .DS_Store
 *.pem
 .idea
-.opencode
 
 # debug
 npm-debug.log*

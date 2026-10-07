@@ -12,9 +12,10 @@ export const displayName = (
   t: TFunction,
   user?: Partial<User> | null,
   currentUserId?: number,
+  useCase?: 'dativus' | 'accusativus',
 ): string => {
   if (currentUserId === user?.id) {
-    return t('actors.you');
+    return t(`actors.you${useCase ? `_${useCase}` : ''}`);
   }
   return user?.name ?? user?.email ?? '';
 };
@@ -64,10 +65,9 @@ export function generateSplitDescription(
     return splitEquallyText;
   }
 
-  // An undefined share is the initial state and still means the participant is selected.
   const selectedParticipants = participants.filter((p) => {
     const share = splitShares[p.id]?.[SplitType.EQUAL];
-    return undefined === share || 0n !== share;
+    return share === undefined || 0n !== share;
   });
 
   const splitParticipant = selectedParticipants[0];
@@ -75,37 +75,34 @@ export function generateSplitDescription(
     return splitEquallyText;
   }
 
-  // Debt direction is only meaningful when exactly one participant owes the full amount.
   if (1 !== selectedParticipants.length) {
-    return t('expense_details.add_expense_details.split_type_section.split_equally_with_count', {
-      count: selectedParticipants.length,
-    });
+    return `${splitEquallyText} (${selectedParticipants.length})`;
   }
 
-  // A payer splitting only with themselves does not create a balance with anyone else.
   if (splitParticipant.id === paidBy.id) {
     return t('expense_details.add_expense_details.split_type_section.direction.no_money_flow');
   }
 
-  // Negative expenses reverse who paid and who owes.
   const debtor = isNegative ? paidBy : splitParticipant;
   const payer = isNegative ? splitParticipant : paidBy;
+  const debtorName = displayName(t, debtor, currentUser.id);
+  const payerName = displayName(t, payer, currentUser.id);
 
   if (payer.id === currentUser.id) {
     return t('expense_details.add_expense_details.split_type_section.direction.owes_you', {
-      debtor: displayName(t, debtor),
+      debtor: debtorName,
     });
   }
 
   if (debtor.id === currentUser.id) {
     return t('expense_details.add_expense_details.split_type_section.direction.you_owe', {
-      payer: displayName(t, payer),
+      payer: payerName,
     });
   }
 
   return t('expense_details.add_expense_details.split_type_section.direction.owes_payer', {
-    debtor: displayName(t, debtor),
-    payer: displayName(t, payer),
+    debtor: debtorName,
+    payer: payerName,
   });
 }
 

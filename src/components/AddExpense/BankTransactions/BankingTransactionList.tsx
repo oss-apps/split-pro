@@ -113,7 +113,7 @@ export const BankingTransactionList: React.FC<{
         setMultipleTransactions(
           isInMultipleTransactions
             ? multipleTransactions.filter((cItem) => cItem.transactionId !== item.transactionId)
-            : [...multipleTransactions, transactionData],
+            : [...multipleTransactions, transactionData as TransactionAddInputModel],
         );
       } else {
         if (alreadyAdded(item.transactionId)) {
@@ -128,9 +128,9 @@ export const BankingTransactionList: React.FC<{
   );
 
   const setOpenClose = useCallback(
-    (isOpen: boolean) => {
-      setOpen(isOpen);
-      if (!isOpen) {
+    (open: boolean) => {
+      setOpen(open);
+      if (!open) {
         setMultipleTransactions([]);
       }
     },

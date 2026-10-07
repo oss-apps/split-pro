@@ -84,7 +84,6 @@ export const EditRecurrenceDialog: React.FC<EditRecurrenceDialogProps> = ({
 
       <SimpleConfirmationDialog
         open={confirmOpen}
-        onOpenChange={setConfirmOpen}
         title={t('recurrence.edit_title')}
         description={t('recurrence.edit_description')}
         onConfirm={handleConfirm}

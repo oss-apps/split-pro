@@ -1,6 +1,5 @@
 import { Bell } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'next-i18next';
 import { toast } from 'sonner';
 
 import { useAppStore } from '~/store/appStore';
@@ -34,7 +33,6 @@ const NOTIFICATION_DISMISSED_TIME = 'notification_dismissed_time';
 const NOTIFICATION_DISMISSED_TIME_THRESHOLD = 1000 * 60 * 60 * 24 * 30; // 14 days
 
 export const NotificationModal: React.FC = () => {
-  const { t } = useTranslation();
   const updatePushSubscription = api.user.updatePushNotification.useMutation();
   const webPushPublicKey = useAppStore((s) => s.webPushPublicKey);
 
@@ -42,7 +40,7 @@ export const NotificationModal: React.FC = () => {
 
   useEffect(() => {
     if ('undefined' !== typeof window && 'serviceWorker' in navigator) {
-      // Run only in browser
+      // run only in browser
       navigator.serviceWorker.ready
         .then((reg) => {
           reg.pushManager
@@ -68,7 +66,7 @@ export const NotificationModal: React.FC = () => {
     try {
       const result = await Notification.requestPermission();
       if ('granted' === result) {
-        toast.success(t('notifications.permission_granted'));
+        toast.success('You will receive notifications now');
         navigator.serviceWorker.ready
           .then(async (reg) => {
             if (!webPushPublicKey) {
@@ -82,13 +80,13 @@ export const NotificationModal: React.FC = () => {
             updatePushSubscription.mutate({ subscription: JSON.stringify(sub) });
           })
           .catch((e) => {
-            toast.error(t('errors.notification_subscribe_failed'));
+            toast.error('Cannot subscribe to notification');
             console.error(e);
           });
         setModalOpen(false);
       }
     } catch (e) {
-      toast.error(t('errors.notification_request_failed'));
+      toast.error('Error requesting notification');
       console.error(e);
     }
   }
@@ -106,14 +104,16 @@ export const NotificationModal: React.FC = () => {
     <AlertDialog open={modalOpen}>
       <AlertDialogContent className="rounded-lg">
         <AlertDialogHeader>
-          <AlertDialogTitle>{t('notifications.enable_title')}</AlertDialogTitle>
-          <AlertDialogDescription>{t('notifications.enable_description')}</AlertDialogDescription>
+          <AlertDialogTitle>Enable notifications</AlertDialogTitle>
+          <AlertDialogDescription>
+            Don&apos;t miss on important events. Subscribe to get notification for added expenses
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={remindLater}>{t('actions.remind_later')}</AlertDialogCancel>
+          <AlertDialogCancel onClick={remindLater}>Remind later</AlertDialogCancel>
           <AlertDialogAction onClick={onRequestNotification}>
             <Bell className="mr-1 h-4" />
-            {t('notifications.subscribe')}
+            Subscribe
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

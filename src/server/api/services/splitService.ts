@@ -330,8 +330,26 @@ export async function getCompleteFriendsDetails(userId: number) {
     },
   });
 
-  const friends = viewBalances.reduce<
-    Record<
+  const friends = viewBalances.reduce(
+    (acc, balance) => {
+      const { friendId } = balance;
+      acc[friendId] ??= {
+        balances: [],
+        id: friendId,
+        email: balance.friend.email,
+        name: balance.friend.name,
+      };
+
+      if (0n !== balance.amount) {
+        acc[friendId]?.balances.push({
+          currency: balance.currency,
+          amount: balance.amount,
+        });
+      }
+
+      return acc;
+    },
+    {} as Record<
       number,
       {
         id: number;
@@ -339,25 +357,8 @@ export async function getCompleteFriendsDetails(userId: number) {
         name?: string | null;
         balances: { currency: string; amount: bigint }[];
       }
-    >
-  >((acc, balance) => {
-    const { friendId } = balance;
-    acc[friendId] ??= {
-      balances: [],
-      id: friendId,
-      email: balance.friend.email,
-      name: balance.friend.name,
-    };
-
-    if (0n !== balance.amount) {
-      acc[friendId]?.balances.push({
-        currency: balance.currency,
-        amount: balance.amount,
-      });
-    }
-
-    return acc;
-  }, {});
+    >,
+  );
 
   return friends;
 }
@@ -388,13 +389,16 @@ export async function importUserBalanceFromSplitWise(
 
   const users = await createUsersFromSplitwise(splitWiseUsers);
 
-  const userMap = users.reduce<Record<string, User>>((acc, user) => {
-    if (user.email) {
-      acc[user.email] = user;
-    }
+  const userMap = users.reduce(
+    (acc, user) => {
+      if (user.email) {
+        acc[user.email] = user;
+      }
 
-    return acc;
-  }, {});
+      return acc;
+    },
+    {} as Record<string, User>,
+  );
 
   const currencyHelperCache: Record<string, ReturnType<typeof getCurrencyHelpers>['toSafeBigInt']> =
     {};
@@ -499,13 +503,16 @@ export async function importGroupFromSplitwise(
 
   const users = await createUsersFromSplitwise(Object.values(splitwiseUserMap));
 
-  const userMap = users.reduce<Record<string, User>>((acc, user) => {
-    if (user.email) {
-      acc[user.email] = user;
-    }
+  const userMap = users.reduce(
+    (acc, user) => {
+      if (user.email) {
+        acc[user.email] = user;
+      }
 
-    return acc;
-  }, {});
+      return acc;
+    },
+    {} as Record<string, User>,
+  );
 
   const missingGroups = await Promise.all(
     splitWiseGroups.map(async (group) => {

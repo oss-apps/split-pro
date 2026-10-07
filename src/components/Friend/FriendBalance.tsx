@@ -27,7 +27,7 @@ export const FriendBalance: React.FC<{
         <div
           className={clsx('text-right text-xs', isPositive ? 'text-green-500' : 'text-orange-600')}
         >
-          {t(`ui.expense.statements.${isPositive ? 'you_lent' : 'you_owe'}`)}
+          {t('actors.you')} {isPositive ? t('ui.expense.you.lent') : t('ui.expense.you.owe')}
         </div>
         <div className={`${isPositive ? 'text-green-500' : 'text-orange-600'} flex text-right`}>
           {toUIString(balance.amount)}

@@ -10,7 +10,7 @@ const migrationsPath = `${process.cwd()}/prisma/migrations`;
 export async function runDbMigrations() {
   console.info(`Running DB migrations for "${env.NODE_ENV}"`);
 
-  // Check if any migrations have been applied
+  // check if any migrations have been applied
   const migrationsTable: ({ exists: boolean } | undefined)[] = await db.$queryRaw`
     SELECT EXISTS(
       SELECT * 
@@ -59,7 +59,7 @@ export async function runDbMigrations() {
 
   let totalMigrationsApplied = 0;
   for (const localMigrationName of localMigrations) {
-    // Find local migration in all DB migrations
+    // find local migration in all DB migrations
     const existingMigration = dbMigrations.find(
       (migration) => migration.migration_name === localMigrationName,
     );
@@ -77,7 +77,7 @@ export async function runDbMigrations() {
         'utf8',
       );
 
-      // ExecuteRawUnsafe cannot insert multiple commands into a prepared statement
+      // executeRawUnsafe cannot insert multiple commands into a prepared statement
       const migrationStatements = migrationContents
         .split(';\n\n')
         .map((stmt) => stmt.trim() + ';')

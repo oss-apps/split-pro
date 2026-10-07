@@ -1,5 +1,4 @@
 import { Trash2 } from 'lucide-react';
-import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { toast } from 'sonner';
@@ -13,7 +12,6 @@ export const DeleteFriend: React.FC<{
   friendId: number;
   disabled: boolean;
 }> = ({ friendId, disabled }) => {
-  const { t } = useTranslation();
   const router = useRouter();
 
   const deleteFriendMutation = api.user.deleteFriend.useMutation();
@@ -24,7 +22,7 @@ export const DeleteFriend: React.FC<{
       await deleteFriendMutation.mutateAsync({ friendId });
     } catch (e) {
       console.error('Failed to delete friend', e);
-      toast.error(t('errors.friend_deletion_failed'));
+      toast.error('Failed to delete user');
       return;
     }
     utils.expense.getBalances.invalidate().catch(console.error);
@@ -34,11 +32,11 @@ export const DeleteFriend: React.FC<{
 
   return (
     <SimpleConfirmationDialog
-      title={disabled ? '' : t('friend.delete_confirmation.title')}
+      title={disabled ? '' : 'Are you absolutely sure?'}
       description={
         disabled
-          ? t('friend.delete_confirmation.outstanding_balance')
-          : t('friend.delete_confirmation.description')
+          ? "Can't remove friend with outstanding balances. Settle up first"
+          : 'Do you really want to continue'
       }
       hasPermission={!disabled}
       onConfirm={onDeleteFriend}

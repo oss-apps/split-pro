@@ -1,0 +1,77 @@
+{
+  "features": {
+    "bank_connection": {
+      "description": "Přidávejte výdaje rychleji díky integraci s API GoCardless nebo Plaid pro transakce na bankovním účtu",
+      "title": "Propojení s Bankou"
+    },
+    "currency_conversion": {
+      "description": "Rychlý převod mezi měnami pomocí současných nebo historických směnných kurzů",
+      "title": "Převod Měny"
+    },
+    "debt_simplification": {
+      "description": "Automaticky zjednodušte skupinové dluhy, abyste snížili počet potřebných transakcí mezi přáteli",
+      "title": "Zjednodušení Dluhu"
+    },
+    "groups_and_friends": {
+      "description": "Můžete vytvořit více skupin nebo přidat zůstatek napřímo. Všechno bude konsolidováno",
+      "title": "Skupiny a Přátelé"
+    },
+    "i18": {
+      "description": "Dostupné ve více jazycích, aby bylo dělení výdajů dostupné po celém světě",
+      "title": "Internacionalizace"
+    },
+    "import_splitwise": {
+      "description": "Nemusíte migrovat zůstatky manuálně. Můžete importovat uživatele a skupiny ze splitwise",
+      "title": "Import ze splitwise"
+    },
+    "multiple_currencies": {
+      "description": "Potřebujete pro jednoho uživatele přidat výdaje ve více měnách? Žádný problém!",
+      "title": "Více měn"
+    },
+    "open_source": {
+      "description": "Což dost snižuje šanci na obrácení k temné straně. Snadné hostování na vlastním serveru",
+      "title": "Open source"
+    },
+    "push_notifications": {
+      "description": "Nikdy nezmeškejte důležitá upozornění. Budete upozornění vždy, když někdo přidá výdaj nebo vyrovná účty",
+      "title": "Push notifikace"
+    },
+    "pwa_support": {
+      "description": "Milujete mobilní aplikace? Tak to jste u nás správně. Nainstalujte si SplitPro jako PWA a nepoznáte rozdíl!",
+      "title": "Podpora PWA"
+    },
+    "recurring_transactions": {
+      "description": "Nastavit automatické opakující se výdaje za nájem, předplatné nebo jakékoliv jiné pravidelné sdílené náklady",
+      "title": "Opakující se Transakce"
+    },
+    "title": "Vlastnosti",
+    "unequal_split": {
+      "description": "Pokročilé možnosti dělení. Podle podílů, procent nebo přesných částek.",
+      "title": "Nerovnoměrné dělení"
+    },
+    "upload_receipts": {
+      "description": "K výdajům můžete rovnou nahrát i účtenky",
+      "title": "Nahrajte účtenky"
+    }
+  },
+  "footer": {
+    "built_by": "Vytvořeno"
+  },
+  "hero": {
+    "add_expense_button": "Přidat výdaj",
+    "star_github_button": "Dejte nám hvězdu na githubu",
+    "subtitle_link": "open source",
+    "subtitle_part2": "alternative ke SplitWise",
+    "title_highlight": "zdarma",
+    "title_part1": "Rozdělte si výdaje s přáteli"
+  },
+  "meta": {
+    "description": "SplitPro: Rozdělte si zdarma výdaje s přáteli",
+    "title": "SplitPro: Rozdělte si zdarma výdaje se svými přáteli"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "privacy": "Soukromí",
+    "terms": "Podmínky"
+  }
+}

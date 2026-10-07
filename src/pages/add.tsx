@@ -287,10 +287,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => ({
     enableSendingInvites: Boolean(env.ENABLE_SENDING_INVITES),
     bankConnectionEnabled: isBankConnectionConfigured(),
     maxUploadFileSizeMB: env.UPLOAD_MAX_FILE_SIZE_MB,
-    ...(await customServerSideTranslations(context.locale, [
-      'common_icu',
-      'categories',
-      'currencies',
-    ])),
+    ...(await customServerSideTranslations(context.locale, ['common', 'categories', 'currencies'])),
   },
 });

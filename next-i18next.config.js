@@ -3,16 +3,40 @@ import ICUModule from 'i18next-icu/cjs';
 
 const ICU = ICUModule.default ?? ICUModule;
 
+/** @param {string} lng */
+const parseLngForICU = (lng) =>
+  'default' === lng ? 'en' : 'ca@valencia' === lng ? 'ca-ES-valencia' : lng;
+
 /** @type {import('next-i18next').UserConfig} */
 const config = {
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en', 'it'],
+    defaultLocale: 'default',
+    locales: [
+      'default',
+      'en',
+      'de',
+      'fr',
+      'it',
+      'cs',
+      'nl',
+      'pl',
+      'pt-PT',
+      'pt-BR',
+      'sv',
+      'es',
+      'es-MX',
+      'es-AR',
+      'id',
+      'hu',
+    ],
     localeDetection: false,
   },
-  defaultNS: 'common_icu',
   fallbackLng: 'en',
   localePath: './public/locales',
+  i18nFormat: {
+    // Keep the existing route and Weblate locale codes while ICU uses valid BCP 47 tags.
+    parseLngForICU,
+  },
   onPreInitI18next: (i18n) => {
     i18n.use(ICU);
   },

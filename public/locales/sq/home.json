@@ -1,0 +1,8 @@
+{
+  "features": {
+    "currency_conversion": {
+      "description": "Konvertim i shpejtë midis valutave, duke perdorur kurs këmbimi të përditësuar ose kurs historik",
+      "title": "Kursi Këmbimit"
+    }
+  }
+}

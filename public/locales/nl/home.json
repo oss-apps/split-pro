@@ -1,0 +1,78 @@
+{
+  "features": {
+    "bank_connection": {
+      "description": "Voeg uitgaven sneller toe via een integratie met de api voor bankrekeningtransacties van GoCardless of Plaid",
+      "title": "Bank connectie"
+    },
+    "currency_conversion": {
+      "description": "Zet snel om tussen verschillende valuta met behulp van actuele of historische wisselkoersen",
+      "title": "Valutaomrekening"
+    },
+    "debt_simplification": {
+      "description": "Vereenvoudig automatisch groepsuitgaven om het aantal verrichtingen tussen vrienden te verminderen",
+      "title": "Vereenvoudig schulden"
+    },
+    "groups_and_friends": {
+      "description": "Kan meerdere groepen creëren of meteen een saldo toevoegen. Alles wordt samengevoegd",
+      "title": "Groepen en Vrienden"
+    },
+    "i18": {
+      "description": "Beschikbaar in meerdere talen zodat het delen van onkosten wereldwijd mogelijk is",
+      "title": "Internationalisering"
+    },
+    "import_splitwise": {
+      "description": "Saldos hoeven niet handmatig gemigreerd te worden. Je kan gebruikers en groepen importeren van Splitwise",
+      "title": "Importeren van Splitwise"
+    },
+    "multiple_currencies": {
+      "description": "Meerdere valuta aan dezelfde gebruiker toevoegen? Geen probleem!",
+      "title": "Meerdere valuta"
+    },
+    "open_source": {
+      "description": "Wat het moeilijk maakt om slecht te worden. Gemakkelijk zelf te hosten",
+      "title": "Open source"
+    },
+    "push_notifications": {
+      "description": "Mis nooit belangrijke notificaties. Krijg bericht zodra iemand een uitgave toevoegt of zijn schuld aflost",
+      "title": "Pushbericht"
+    },
+    "pwa_support": {
+      "description": "Hou je van mobiele apps? We steunen je hierin. Installeer het als een PWA en je merkt geen verschil!",
+      "title": "PWA ondersteuning"
+    },
+    "recurring_transactions": {
+      "description": "Stel automatisch terugkerende kosten in voor huur, abonnementen, of andere regelmatig gedeelde kosten",
+      "title": "Terugkerende transacties"
+    },
+    "title": "Functies",
+    "unequal_split": {
+      "description": "Geavanceerde deelopties. Per deel, percentage of exacte bedragen.",
+      "title": "Oneven Verdeling"
+    },
+    "upload_receipts": {
+      "description": "Upload ontvangstbewijzen samen met de uitgave",
+      "title": "Upload Ontvangstbewijzen"
+    }
+  },
+  "footer": {
+    "built_by": "Gemaakt door"
+  },
+  "hero": {
+    "add_expense_button": "Voeg Uitgave Toe",
+    "star_github_button": "Volg ons op github",
+    "subtitle_link": "open source",
+    "subtitle_part1": "Een",
+    "subtitle_part2": "alternatief voor SplitWise",
+    "title_highlight": "gratis",
+    "title_part1": "Deel uitgaven met je vrienden"
+  },
+  "meta": {
+    "description": "SplitPro: Deel uitgaven gratis met je vrienden",
+    "title": "SplitPro: Deel uitgaven gratis met je vrienden"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "privacy": "Privacy",
+    "terms": "Voorwaarden"
+  }
+}

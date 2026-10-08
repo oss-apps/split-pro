@@ -1,0 +1,78 @@
+{
+  "features": {
+    "bank_connection": {
+      "description": "通过集成 GoCardless 或 Plaid 银行账户交易记录 API，更快地添加支出",
+      "title": "银行连接"
+    },
+    "currency_conversion": {
+      "description": "使用实时或历史汇率，在不同货币之间快速换算",
+      "title": "货币换算"
+    },
+    "debt_simplification": {
+      "description": "自动简化群组欠款，减少好友间转账的次数",
+      "title": "欠款简化"
+    },
+    "groups_and_friends": {
+      "description": "可以创建多个群组，也可以直接记录余额，所有支出都会统一合并计算",
+      "title": "群组与好友"
+    },
+    "i18": {
+      "description": "支持多种语言，让全球用户都能轻松分摊支出",
+      "title": "国际化"
+    },
+    "import_splitwise": {
+      "description": "无需手动迁移余额。你可以从 Splitwise 导入用户和群组",
+      "title": "从 Splitwise 导入"
+    },
+    "multiple_currencies": {
+      "description": "需要为同一用户添加不同货币的支出？没问题！",
+      "title": "多种货币"
+    },
+    "open_source": {
+      "description": "不易作恶。易于自托管",
+      "title": "开源"
+    },
+    "push_notifications": {
+      "description": "不错过重要通知。有人添加支出或完成结清时，都会及时收到提醒",
+      "title": "推送通知"
+    },
+    "pwa_support": {
+      "description": "喜欢移动应用？我们也准备好了。将其作为 PWA 安装，体验与原生应用无异！",
+      "title": "支持 PWA"
+    },
+    "recurring_transactions": {
+      "description": "为房租、订阅等定期分摊的支出设置自动重复",
+      "title": "定期支出"
+    },
+    "title": "功能特性",
+    "unequal_split": {
+      "description": "高级分摊选项。支持按份额、按比例或指定金额分摊。",
+      "title": "自定义分摊"
+    },
+    "upload_receipts": {
+      "description": "添加支出时一并上传收据",
+      "title": "上传收据"
+    }
+  },
+  "footer": {
+    "built_by": "开发者："
+  },
+  "hero": {
+    "add_expense_button": "添加支出",
+    "star_github_button": "在 GitHub 上给我们点个 Star",
+    "subtitle_link": "开源的",
+    "subtitle_part1": "一个",
+    "subtitle_part2": "SplitWise 替代方案",
+    "title_highlight": "免费",
+    "title_part1": "和朋友一起分摊支出，完全"
+  },
+  "meta": {
+    "description": "SplitPro：和朋友一起分摊支出，完全免费",
+    "title": "SplitPro：和朋友一起分摊支出，完全免费"
+  },
+  "nav": {
+    "app_name": "SplitPro",
+    "privacy": "隐私",
+    "terms": "条款"
+  }
+}

@@ -150,6 +150,7 @@
     "title": "Valutaomvandling"
   },
   "errors": {
+    "add_member_failed": "Misslyckades med att lägga till medlem till grupp",
     "currency_conversion_error": "Fel vid valutaomvandling",
     "currency_conversion_failed": "Misslyckades med att konvertera valutor",
     "currency_conversion_malformed": "Valutakonverteringsdata är felaktig",
@@ -163,6 +164,7 @@
     "import_failed": "Fel vid import",
     "invalid_cron_expression": "Ogiltigt cron‑uttryck",
     "invalid_currency_code": "Ogiltig valutakod {{code}}",
+    "invalid_split": "Justera vem som står för denna utgift innan du sparar.",
     "language_change_failed": "Fel vid ändring av språk",
     "less_than": "Filen ska vara mindre än {{size}}MB",
     "name_required": "Namn krävs",
@@ -199,6 +201,12 @@
         "warning": "Varning: Skicka inte en inbjudan om det är ogiltig e-postadress. Använd istället lägg till i SplitPro. Ditt konto kommer att blockeras om denna funktion används felaktigt"
       },
       "split_type_section": {
+        "direction": {
+          "no_money_flow": "Ingen annan är skyldig något",
+          "owes_payer": "{{debtor}} är skyldig {{payer}}",
+          "owes_you": "{{debtor}} är skyldig dig",
+          "you_owe": "Du är skyldig {{payer}}"
+        },
         "split_equally": "dela lika",
         "split_unequally": "dela ojämnt",
         "types": {

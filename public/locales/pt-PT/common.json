@@ -12,14 +12,14 @@
     "debug_info": "Info de Depuração",
     "debug_info_details": {
       "copy_failed": "Falha ao copiar informação de depuração para a área de transferência",
-      "description": "Inclua a informação abaixo ao criar um pedido de suporte:",
+      "description": "Inclui a informação abaixo ao criar um pedido de suporte:",
       "git": "Git",
       "new_version_available": "Nova versão disponível:",
       "send_test_notification": "Enviar notificação de teste",
       "test_notification_failed": "Não foi possível enviar a notificação de teste",
       "test_notification_sent": "Notificação de teste enviada",
       "title": "Informação de Depuração",
-      "user_agent": "UserAgent",
+      "user_agent": "User.Agent",
       "version": "Versão"
     },
     "default_balance_currency": "Moeda de saldo padrão",
@@ -38,8 +38,8 @@
       "avatar_preview": "Prévia do avatar",
       "placeholder": "Inserir nome",
       "remove_avatar": "Remover avatar",
-      "select_avatar": "Selecione a imagem",
-      "title": "Editar pormenores",
+      "select_avatar": "Seleciona a imagem",
+      "title": "Editar detalhes",
       "zoom": "Zoom"
     },
     "follow_on_x": "Segue-nos no X",
@@ -49,24 +49,24 @@
       "export_splitwise_data_button": "Exportar dados do Splitwise",
       "follow_to_export_splitwise_data": "Acede a este link para exportar os dados do Splitwise",
       "messages": {
-        "import_success": "Importar com sucesso"
+        "import_success": "Importação bem sucedida"
       },
-      "no_file_chosen": "Ficheiro não selecionado",
-      "note": "Nota: Ainda só temos suporte a importar amigos e grupos. A transações não serão importadas. Estamos a trabalhar nisso."
+      "no_file_chosen": "Nenhum ficheiro selecionado",
+      "note": "Nota: Ainda só suportamos importar amigos e grupos. A transações não serão importadas. Estamos a trabalhar nisso."
     },
     "logout": "Terminar Sessão",
     "messages": {
-      "submit_error": "Não foi possível atualizar os pormenores",
-      "submit_success": "Pormenor atualizado"
+      "submit_error": "Não foi possível atualizar os detalhes",
+      "submit_success": "Detalhes atualizados"
     },
     "notifications": {
       "disable_notification": "Desativar notificações",
       "enable_notification": "Ativar notificações",
       "messages": {
-        "notification_granted": "Irás receber notificações agora"
+        "notification_granted": "Passarás a receber notificações"
       }
     },
-    "star_on_github": "Visita-nos no GitHub",
+    "star_on_github": "Marca-nos com estrela no GitHub",
     "submit_feedback": "Submeter feedback",
     "submit_feedback_details": {
       "placeholder": "Insere o teu feedback",
@@ -93,7 +93,7 @@
     "leave": "Sair",
     "next": "Próxima",
     "reconnect": "Reconectar",
-    "save": "Salvar",
+    "save": "Guardar",
     "settle_up": "Acertar contas",
     "submit": "Submeter"
   },
@@ -142,14 +142,15 @@
   },
   "currency_conversion": {
     "amount_to_receive": "Valor a receber",
-    "description": "Converta o valor para uma moeda diferente.",
+    "description": "Converte o valor para uma moeda diferente.",
     "exchange_rate": "Taxa de câmbio",
-    "fetching_rate": "Buscando taxa...",
+    "fetching_rate": "A buscar taxa...",
     "rate": "Taxa",
     "success_toast": "Conversão de moeda definida com sucesso",
     "title": "Conversão de moeda"
   },
   "errors": {
+    "add_member_failed": "Não foi possível adicionar membro ao grupo",
     "amount_required": "",
     "currency_conversion_error": "Erro ao definir conversão de moeda",
     "currency_conversion_failed": "Falha ao converter moedas",
@@ -164,10 +165,11 @@
     "import_failed": "Error ao importar ficheiro",
     "invalid_cron_expression": "Expressão \"cron\" inválida",
     "invalid_currency_code": "Código {{code}} de moeda inválido",
+    "invalid_split": "Define quem deve esta despesa antes de guardar.",
     "language_change_failed": "Erro ao alterar idioma",
     "less_than": "O ficheiro deve ter menos que {{size}}MB",
     "name_required": "O nome é obrigatório",
-    "no_providers": "Ocorreu um erro ao transferir os fornecedores de autenticação. Por favor consulte os logs do backend.",
+    "no_providers": "Ocorreu um erro ao transferir os fornecedores de autenticação. Por favor consulta os logs do backend.",
     "notification_not_supported": "Notificação não suportada",
     "otp_invalid": "OTP inválido",
     "otp_required": "OTP é obrigatório",
@@ -201,6 +203,12 @@
         "warning": "Atenção: Não envie um convite se o e-mail for inválido. Use a opção de adicionar ao Split Pro em vez disso. O uso indevido dos convites resultará no bloqueio da sua conta"
       },
       "split_type_section": {
+        "direction": {
+          "no_money_flow": "Mais ninguém deve nada",
+          "owes_payer": "{{debtor}} deve a {{payer}}",
+          "owes_you": "{{debtor}} deve-te",
+          "you_owe": "Tu deves a {{payer}}"
+        },
         "split_equally": "dividir igualmente",
         "split_unequally": "dividir desigualmente",
         "types": {

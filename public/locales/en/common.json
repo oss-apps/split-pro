@@ -184,11 +184,11 @@
       "description_placeholder": "Enter description",
       "pick_a_date": "Pick a date",
       "select_user_or_group": {
-        "add_to_split_pro": "Add to Split Pro",
+        "add_to_split_pro": "Add to Expense",
         "note": "Note: sending invite is disabled for now because of spam",
         "only_one_group_time": "You can have only one group at a time",
         "send_invite": "Send invite to user",
-        "warning": "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused"
+        "warning": "Warning: Don't use send invite if it's invalid email. Use add to expense instead. Your account will be blocked if this feature is misused"
       },
       "split_type_section": {
         "direction": {
@@ -324,12 +324,12 @@
     "no_members": {
       "add_members": "Add members",
       "add_members_details": {
-        "add_to_split_pro": "Add to Split Pro",
+        "add_to_split_pro": "Add to Group",
         "note": "Note: sending email invites is disabled",
         "placeholder": "Enter name or email",
         "send_invite": "Send invite to user",
         "title": "Add members",
-        "warning": "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused"
+        "warning": "Warning: Don't use send invite if it's invalid email. Use add to group instead. Your account will be blocked if this feature is misused"
       },
       "invite_link": "Invite link",
       "no_members": "No members in the group yet."
@@ -441,6 +441,11 @@
     "on": "on",
     "or": "or",
     "outstanding_balances": "Outstanding balances",
+    "people_list_empty": {
+      "no_contacts": "You have not shared expenses with anyone",
+      "no_matches": "No one matches that name",
+      "all_added": "Everyone you share expenses with is already in this group"
+    },
     "total_balance": "Total balance",
     "select_currency": "Select currency",
     "select_balance": "Select balance",

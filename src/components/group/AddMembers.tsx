@@ -9,6 +9,7 @@ import { z } from 'zod';
 
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
+import { peopleListEmptyReason } from '~/lib/peopleList';
 import { api } from '~/utils/api';
 
 import { EntityAvatar } from '../ui/avatar';
@@ -44,6 +45,15 @@ const AddMembers: React.FC<{
       !groupUserMap[friend.id] &&
       (friend.name ?? friend.email)?.toLowerCase().includes(inputValue.toLowerCase()),
   );
+
+  /* Says why the list is blank instead of rendering nothing, which reads as a broken dialog. */
+  const emptyReason = filteredUsers?.length
+    ? null
+    : peopleListEmptyReason({
+        isLoading: friendsQuery.isPending,
+        hasAnyContacts: 0 < (friendsQuery.data?.length ?? 0),
+        isFiltering: '' !== inputValue.trim(),
+      });
 
   function onUserSelect(userId: number) {
     setUserIds((prev) => ({ ...prev, [userId]: !prev[userId] }));
@@ -160,6 +170,11 @@ const AddMembers: React.FC<{
         </div>
       </div>
       <div className="mt-4 flex flex-col gap-4">
+        {emptyReason ? (
+          <p className="text-center text-sm text-gray-400">
+            {t(`ui.people_list_empty.${emptyReason}`)}
+          </p>
+        ) : null}
         {filteredUsers?.map((friend) => (
           <Button
             variant="ghost"

@@ -99,7 +99,7 @@ Bank integration allows you to load transactions from providers like Plaid and c
 
 ## Versions
 
-SplitPro is for self hosting. To get the most recent features, build an image from source. Stabilized changes (GitHub releases) are available as Docker images on DockerHub and GHCR. The old community instance at https://splitpro.app is no longer maintained and is stuck at version `1.3.4`.
+SplitPro is for self hosting. To get the most recent features, build an image from source. Stabilized changes (GitHub releases) are available as Docker images on DockerHub and GHCR. The hosted instance at https://splitpro.app is managed in [oss-apps/split-pro-cloud](https://github.com/oss-apps/split-pro-cloud).
 
 ## Why
 

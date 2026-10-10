@@ -1,5 +1,6 @@
 const INVITE_COOLDOWN_MS = 60_000;
-const lastInviteAtByUserPair = new Map<string, number>();
+type InviteCooldownKey = `${number}:${number}`;
+const lastInviteAtByUserPair = new Map<InviteCooldownKey, number>();
 let nextCleanupAt = 0;
 
 export const claimInviteCooldown = (
@@ -7,7 +8,7 @@ export const claimInviteCooldown = (
   inviterId: number,
   now = Date.now(),
 ): boolean => {
-  const userPair = `${inviteeId}:${inviterId}`;
+  const userPair: InviteCooldownKey = `${inviteeId}:${inviterId}`;
   const lastInviteAt = lastInviteAtByUserPair.get(userPair);
   if (undefined !== lastInviteAt && now - lastInviteAt < INVITE_COOLDOWN_MS) {
     return false;

@@ -150,6 +150,7 @@
     "title": "Pénznemváltás"
   },
   "errors": {
+    "add_member_failed": "Nem sikerült hozzáadni a tagot a csoporthoz",
     "currency_conversion_error": "Hiba a pénznemátváltás beállításakor",
     "currency_conversion_failed": "Nem sikerült átváltani a pénznemet",
     "currency_conversion_malformed": "A pénznemátváltási adatok hibásak",

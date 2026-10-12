@@ -27,12 +27,16 @@ describe('generateSplitShares percentage seed data', () => {
     'never exceeds 100%% for %i participants even with maximum draws',
     (count) => {
       mockRandomInt.mockImplementation((options) => {
-        if ('object' !== typeof options) {
+        if (
+          'object' !== typeof options ||
+          'number' !== typeof options.min ||
+          'number' !== typeof options.max
+        ) {
           throw new Error('Expected explicit random bounds');
         }
         expect(options.min).toBeGreaterThanOrEqual(0);
         expect(options.max).toBeGreaterThanOrEqual(options.min);
-        return options.max!;
+        return options.max;
       });
       const participants = Array.from({ length: count }, (_, id) => ({ id }));
       const shares = generateSplitShares(SplitType.PERCENTAGE, participants);

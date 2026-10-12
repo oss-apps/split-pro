@@ -9,6 +9,7 @@ import { z } from 'zod';
 
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
+import { getInviteErrorToastKey, isInviteEmailSendFailed } from '~/lib/error/invite';
 import { api } from '~/utils/api';
 
 import { EntityAvatar } from '../ui/avatar';
@@ -87,11 +88,27 @@ const AddMembers: React.FC<{
 
   function onAddEmailClick(invite = false) {
     if (isEmail.success) {
+      const email = inputValue.toLowerCase();
+      const addUserToGroup = (user: { id: number }) => onSave({ ...userIds, [user.id]: true });
+
       addFriendMutation.mutate(
-        { email: inputValue.toLowerCase(), sendInviteEmail: invite },
+        { email, sendInviteEmail: invite },
         {
-          onSuccess: (user) => {
-            onSave({ ...userIds, [user.id]: true });
+          onSuccess: addUserToGroup,
+          onError: (err) => {
+            const appErrorCode = err.data?.appErrorCode;
+            toast.error(t(getInviteErrorToastKey(appErrorCode)));
+
+            // The friend row already exists whenever this router throws, so retry the group-add.
+            if (isInviteEmailSendFailed(appErrorCode)) {
+              addFriendMutation.mutate(
+                { email, sendInviteEmail: false },
+                {
+                  onSuccess: addUserToGroup,
+                  onError: () => toast.error(t('errors.add_member_failed')),
+                },
+              );
+            }
           },
         },
       );

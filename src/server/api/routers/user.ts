@@ -8,7 +8,10 @@ import {
   serializeDefaultSplit,
   toSortedFriendPair,
 } from '~/lib/defaultSplit';
+import { claimInviteCooldown } from '~/lib/inviteCooldown';
+import { InviteErrorCode } from '~/lib/error/invite';
 import { simplifyDebts } from '~/lib/simplify';
+import { AppError } from '~/server/api/appError';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
@@ -24,6 +27,14 @@ import {
   importGroupFromSplitwise,
   importUserBalanceFromSplitWise,
 } from '../services/splitService';
+
+const throwInviteError = (
+  code: 'PRECONDITION_FAILED' | 'TOO_MANY_REQUESTS' | 'INTERNAL_SERVER_ERROR',
+  inviteErrorCode: (typeof InviteErrorCode)[keyof typeof InviteErrorCode],
+  message: string,
+): never => {
+  throw new TRPCError({ code, message, cause: new AppError(inviteErrorCode, message) });
+};
 
 export const userRouter = createTRPCRouter({
   me: protectedProcedure.query(({ ctx }) => ctx.session.user),
@@ -58,27 +69,47 @@ export const userRouter = createTRPCRouter({
   inviteFriend: protectedProcedure
     .input(z.object({ email: z.string(), sendInviteEmail: z.boolean().optional() }))
     .mutation(async ({ input, ctx: { session } }) => {
-      const friend = await db.user.findUnique({
-        where: {
-          email: input.email,
-        },
-      });
-
-      if (friend) {
-        return friend;
-      }
-
-      const user = await db.user.create({
-        data: {
+      // Upsert avoids a find-then-create race where two concurrent invites for the same brand-new email both miss the lookup and hit the unique constraint.
+      const user = await db.user.upsert({
+        where: { email: input.email },
+        update: {},
+        create: {
           email: input.email,
           name: input.email.split('@')[0],
         },
       });
 
-      if (input.sendInviteEmail) {
-        sendInviteEmail(input.email, session.user.name ?? session.user.email ?? '').catch((err) => {
-          console.error('Error sending invite email', err);
-        });
+      // Only a just-created or not-yet-verified user should get an invite email.
+      if (input.sendInviteEmail && !user.emailVerified) {
+        if (!env.ENABLE_SENDING_INVITES) {
+          throwInviteError(
+            'PRECONDITION_FAILED',
+            InviteErrorCode.INVITES_DISABLED,
+            'Invite emails are disabled on this server.',
+          );
+        }
+
+        if (!claimInviteCooldown(user.id, session.user.id)) {
+          throwInviteError(
+            'TOO_MANY_REQUESTS',
+            InviteErrorCode.INVITE_RATE_LIMITED,
+            'Please wait before re-sending an invite to this address.',
+          );
+        }
+
+        let sent = false;
+        try {
+          sent = await sendInviteEmail(input.email, session.user.name ?? session.user.email ?? '');
+        } catch (err) {
+          console.error('Error sending invite email to user', user.id, err);
+        }
+        if (!sent) {
+          throwInviteError(
+            'INTERNAL_SERVER_ERROR',
+            InviteErrorCode.INVITE_EMAIL_SEND_FAILED,
+            'Failed to send invite email. Check your SMTP configuration.',
+          );
+        }
       }
 
       return user;

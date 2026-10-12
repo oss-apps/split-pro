@@ -162,7 +162,8 @@
     "invalid_cron_expression": "Invalid cron expression",
     "currency_conversion_failed": "Failed to convert currencies",
     "recurrence_delete_failed": "Failed to delete recurrence",
-    "recurrence_update_failed": "Failed to update recurrence"
+    "recurrence_update_failed": "Failed to update recurrence",
+    "invite_email_failed": "Failed to send invite email. Check the SMTP configuration."
   },
   "bank_transactions": {
     "choose_bank_provider": "Choose bank provider",

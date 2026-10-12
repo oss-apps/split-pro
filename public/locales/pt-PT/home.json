@@ -1,7 +1,7 @@
 {
   "features": {
     "bank_connection": {
-      "description": "Adicione despesas mais depressa com integração com a API de transações bancárias da GoCardless ou da Plaid",
+      "description": "Adiciona despesas mais depressa com integração com a API de transações bancárias da GoCardless ou da Plaid",
       "title": "Ligação a Banco"
     },
     "currency_conversion": {

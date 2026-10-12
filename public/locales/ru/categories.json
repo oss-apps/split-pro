@@ -1,6 +1,13 @@
 {
   "categories_list": {
     "entertainment": {
+      "items": {
+        "games": "Игры",
+        "movies": "Фильмы",
+        "music": "Музыка",
+        "other": "Развлечения",
+        "sports": "Спорт"
+      },
       "name": "Развлечения"
     },
     "food": {
@@ -8,6 +15,26 @@
         "diningOut": "Питание вне дома",
         "groceries": "Продукты",
         "liquor": "Алкоголь"
+      }
+    },
+    "home": {
+      "items": {
+        "rent": "Аренда"
+      },
+      "name": "Дом"
+    },
+    "travel": {
+      "items": {
+        "bicycle": "Велосипед",
+        "car": "Машина",
+        "fuel": "Топливо",
+        "parking": "Парковка"
+      }
+    },
+    "utilities": {
+      "items": {
+        "internet": "Интернет",
+        "water": "Вода"
       }
     }
   }

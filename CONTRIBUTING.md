@@ -61,6 +61,68 @@ The development branch is <code>main</code>. All pull requests should be made ag
 - PostgreSQL
 - pnpm (recommended)
 
+### Development with Nix and direnv (Linux)
+
+The flake supports x86_64 and aarch64 Linux, including NixOS. It provides Node.js 22,
+pnpm 10.11.0, PostgreSQL 18 with `pg_cron`, Git, OpenSSL, and `nixfmt`.
+Node and pnpm run in an FHS runtime so the project's native npm dependencies
+(including Prisma, Next.js, oxlint, and `tsgo`) work without patching `node_modules`.
+The runtime requires unprivileged user namespaces, as used by Bubblewrap.
+
+1. Install Nix with the `nix-command` and `flakes` experimental features enabled.
+   Install direnv and [hook it into your shell](https://direnv.net/docs/hook.html).
+   For example, add `eval "$(direnv hook bash)"` to your Bash configuration.
+   nix-direnv is recommended for caching, but regular direnv also works.
+2. Run `direnv allow` in the repository. Alternatively, run `nix develop` for an
+   interactive shell, or `nix develop --command pnpm test` for a single command.
+3. Copy `.env.example` to `.env` and use a localhost database URL. The native
+   database reads `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, and
+   `POSTGRES_PORT` from `.env`; exported variables take precedence. For example:
+
+   ```dotenv
+   POSTGRES_USER=postgres
+   POSTGRES_PASSWORD=strong-password
+   POSTGRES_DB=splitpro
+   POSTGRES_PORT=5432
+   DATABASE_URL="postgresql://postgres:strong-password@localhost:5432/splitpro"
+   NEXTAUTH_URL="http://localhost:3000"
+   ```
+
+   Configure a NextAuth provider as described below if you need to sign in.
+
+4. Run `pnpm dx` to install dependencies, start PostgreSQL, and apply migrations.
+   On a fresh database, run `pnpm db:seed` for sample data, then `pnpm dev`.
+   `pnpm d` combines setup and starting the development server.
+
+Inside the Nix shell, `pnpm dx:up` starts native PostgreSQL and creates the database
+and `pg_cron` extension if needed. `pnpm dx:down` stops it while retaining data.
+The server listens on IPv4 loopback and uses password authentication for TCP.
+Data, its private Unix socket, and logs live in `.direnv/postgres/`; the server
+continues running when you leave the shell. Stop it explicitly when finished.
+Outside the Nix shell, these commands use the existing Docker Compose setup.
+
+Each checkout/worktree has its own database directory. Use a unique
+`POSTGRES_PORT`, database name, and matching `DATABASE_URL` for simultaneous
+checkouts, plus distinct NextAuth URLs and development server ports. Stop an
+existing instance before changing database settings. User credentials are set
+during initialization; changing them later requires updating the database role.
+
+The usual commands work in the shell:
+
+```bash
+pnpm generate
+pnpm db:dev
+pnpm db:studio
+pnpm prettier --check .
+pnpm lint
+pnpm tsgo --noEmit
+pnpm test
+pnpm build
+```
+
+Format the flake with `nixfmt flake.nix`. `flake.lock` pins the Nix dependencies;
+update them intentionally with `nix flake update`.
+
 ### Install Dependencies
 
 ```bash

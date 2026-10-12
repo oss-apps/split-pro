@@ -36,6 +36,11 @@ services:
       - PORT=${PORT:-3000}
       # - HOSTNAME=0.0.0.0 # Uncomment this, to have the server listen on all network interfaces. Needed when you want to connect to split-pro via docker internal networks, e.g. for reverse proxy setups.
     env_file: .env
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://localhost:${PORT:-3000}/api/healthz']
+      interval: 30s
+      timeout: 5s
+      retries: 3
     depends_on:
       postgres:
         condition: service_healthy

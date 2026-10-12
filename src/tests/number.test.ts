@@ -70,6 +70,18 @@ describe('getCurrencyHelpers', () => {
           expect(toUIString(value)).toBe(expected);
         });
       });
+
+      describe('NZD', () => {
+        const { toSafeBigInt, toUIString } = getCurrencyHelpers({
+          locale: 'en-NZ',
+          currency: 'NZD',
+        });
+
+        it('preserves one cent when parsing and displaying an amount', () => {
+          expect(toSafeBigInt('0.01')).toBe(1n);
+          expect(toUIString(1n, false, true)).toBe('0.01');
+        });
+      });
     });
 
     describe('bg-BG locale', () => {

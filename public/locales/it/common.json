@@ -155,7 +155,7 @@
     "request_error": "Errore durante la richiesta delle notifiche",
     "saving_expense": "Errore durante il salvataggio della spesa",
     "setting_update_failed": "Errore nell'aggiornamento dell'impostazione",
-    "signin_error": "Si è verificato un errore durante l'accesso: ",
+    "signin_error": "Si è verificato un errore durante l'accesso: {error}",
     "signup_disabled": "La registrazione di nuovi account è disabilitata in questa istanza",
     "something_went_wrong": "Qualcosa è andato storto",
     "subscribe_error": "Impossibile attivare le notifiche",

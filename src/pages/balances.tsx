@@ -86,12 +86,12 @@ const BalancePage: NextPageWithUser = ({ user }) => {
           ) : (
             <>
               <CumulatedBalanceDisplay
-                prefix={`${t('actors.you')} ${t('ui.expense.you.owe')}`}
+                prefix={t('ui.expense.statements.you_owe')}
                 cumulatedBalances={cumulatedQuery.data?.youOwe}
                 currencies={allNonZeroCurrencies}
               />
               <CumulatedBalanceDisplay
-                prefix={`${t('actors.you')} ${t('ui.expense.you.lent')}`}
+                prefix={t('ui.expense.statements.you_lent')}
                 cumulatedBalances={cumulatedQuery.data?.youGet}
                 currencies={allNonZeroCurrencies}
               />

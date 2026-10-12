@@ -175,7 +175,7 @@
     "request_error": "Gagal meminta notifikasi",
     "saving_expense": "Gagal saat menyimpan pengeluaran",
     "setting_update_failed": "Gagal memperbarui pengaturan",
-    "signin_error": "Terjadi kesalahan saat masuk: ",
+    "signin_error": "Terjadi kesalahan saat masuk: {error}",
     "signup_disabled": "Pendaftaran akun baru dinonaktifkan pada instansi ini",
     "something_went_wrong": "Ada yang salah",
     "subscribe_error": "Tidak dapat berlangganan notifikasi",

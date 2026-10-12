@@ -154,7 +154,7 @@
     "request_error": "Error al solicitar notificaciones",
     "saving_expense": "Error al guardar el gasto",
     "setting_update_failed": "Error al actualizar la configuración",
-    "signin_error": "Ocurrió un error al iniciar sesión: ",
+    "signin_error": "Ocurrió un error al iniciar sesión: {error}",
     "signup_disabled": "El registro de nuevas cuentas está deshabilitado en esta instancia",
     "something_went_wrong": "Algo salió mal",
     "subscribe_error": "No se puede suscribir a las notificaciones",

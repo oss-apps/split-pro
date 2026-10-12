@@ -12,10 +12,9 @@ export const displayName = (
   t: TFunction,
   user?: Partial<User> | null,
   currentUserId?: number,
-  useCase?: 'dativus' | 'accusativus',
 ): string => {
   if (currentUserId === user?.id) {
-    return t(`actors.you${useCase ? `_${useCase}` : ''}`);
+    return t('actors.you');
   }
   return user?.name ?? user?.email ?? '';
 };
@@ -76,7 +75,9 @@ export function generateSplitDescription(
   }
 
   if (1 !== selectedParticipants.length) {
-    return `${splitEquallyText} (${selectedParticipants.length})`;
+    return t('expense_details.add_expense_details.split_type_section.split_equally_with_count', {
+      count: selectedParticipants.length,
+    });
   }
 
   if (splitParticipant.id === paidBy.id) {

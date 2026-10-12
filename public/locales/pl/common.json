@@ -178,7 +178,7 @@
     "request_error": "Błąd podczas żądania powiadomienia",
     "saving_expense": "Błąd podczas zapisywania wydatku",
     "setting_update_failed": "Nie udało się zaktualizować ustawienia",
-    "signin_error": "Wystąpił błąd podczas logowania: ",
+    "signin_error": "Wystąpił błąd podczas logowania: {error}",
     "signup_disabled": "Rejestracja nowych kont jest wyłączona w tej instancji",
     "something_went_wrong": "Coś poszło nie tak",
     "subscribe_error": "Nie można zasubskrybować powiadomień",

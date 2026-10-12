@@ -9,6 +9,7 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { SimpleConfirmationDialog } from '~/components/SimpleConfirmationDialog';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
+import type { CurrencyHelpersType } from '~/contexts/CurrencyHelpersContext';
 import { useIntlCronParser } from '~/hooks/useIntlCronParser';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { cronFromBackend } from '~/lib/cron';
@@ -22,7 +23,7 @@ interface RecurringExpenseItemProps {
   item: RecurringExpense;
   onDelete: (recurrenceId: number) => Promise<void>;
   isDeleting: boolean;
-  toUIString: (amount: bigint) => string;
+  toUIString: CurrencyHelpersType['toUIString'];
   toUIDate: (date: Date) => string;
   cronParser: (cron: string) => string;
   i18nReady: boolean;
@@ -37,7 +38,7 @@ const RecurringExpenseItem: React.FC<RecurringExpenseItemProps> = ({
   cronParser,
   i18nReady,
 }) => {
-  const { t } = useTranslationWithUtils();
+  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
 
   const schedule = useMemo(() => {
     try {
@@ -61,8 +62,11 @@ const RecurringExpenseItem: React.FC<RecurringExpenseItemProps> = ({
           <p className="font-semibold">
             {t('recurrence.expense_for_the_amount_of', {
               name: item.expense.name,
-              amount: toUIString(item.expense.amount),
-              currency: item.expense.currency,
+              amount: toUIString(item.expense.amount, false, true),
+              currency:
+                getCurrencyHelpersCached(item.expense.currency)
+                  .formatter.formatToParts(0)
+                  .find(({ type }) => 'currency' === type)?.value ?? '',
             })}
           </p>
           <p className="text-primary text-sm">

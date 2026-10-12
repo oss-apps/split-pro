@@ -176,7 +176,7 @@
     "request_error": "Hiba az értesítés kérése során",
     "saving_expense": "Hiba a költség mentése közben",
     "setting_update_failed": "Nem sikerült frissíteni a beállítást",
-    "signin_error": "Hiba történt bejelentkezés közben: ",
+    "signin_error": "Hiba történt bejelentkezés közben: {error}",
     "signup_disabled": "Új fiókok regisztrációja ebben az esetben le van tiltva",
     "something_went_wrong": "Valami hiba történt",
     "subscribe_error": "Nem lehet feliratkozni az értesítésekre",

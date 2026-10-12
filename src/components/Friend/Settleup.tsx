@@ -162,8 +162,8 @@ export const SettleUp: React.FC<
             </div>
             <p className="mt-2 text-center text-sm text-gray-400">
               {isCurrentUserPaying
-                ? `${t('actors.you')} ${t('ui.expense.you.pay')} ${displayName(friend)}`
-                : `${displayName(friend)} ${t('ui.expense.user.pay')} ${t('actors.you')}`}
+                ? t('ui.expense.statements.you_pay_user', { user: displayName(friend) })
+                : t('ui.expense.statements.user_pays_you', { user: displayName(friend) })}
             </p>
             {balanceToSettle.groupName ? (
               <p className="mt-1 text-center text-xs text-gray-500">{balanceToSettle.groupName}</p>

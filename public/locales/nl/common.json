@@ -176,7 +176,7 @@
     "request_error": "Fout bij ophalen notificatie",
     "saving_expense": "Fout tijdens het opslaan van de uitgave",
     "setting_update_failed": "Instelling bijwerken mislukt",
-    "signin_error": "Een fout deed zich voor bij het inloggen: ",
+    "signin_error": "Een fout deed zich voor bij het inloggen: {error}",
     "signup_disabled": "Het registreren van nieuwe accounts is uitgeschakeld op deze instantie",
     "something_went_wrong": "Er is iets misgegaan",
     "subscribe_error": "Aanmelden voor meldingen niet mogelijk",

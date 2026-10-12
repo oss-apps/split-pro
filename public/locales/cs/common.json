@@ -153,7 +153,7 @@
     "request_error": "Chyba při požadavku na notifikace",
     "saving_expense": "Chyba při ukládání výdaje",
     "setting_update_failed": "Nastavení se nepodařilo aktualizovat",
-    "signin_error": "Při přihlašování došlo k chybě: ",
+    "signin_error": "Při přihlašování došlo k chybě: {error}",
     "signup_disabled": "Registrace nových účtů je v této instanci zakázána",
     "something_went_wrong": "Něco se pokazilo",
     "subscribe_error": "Nelze se přihlásit k odběru oznámení",

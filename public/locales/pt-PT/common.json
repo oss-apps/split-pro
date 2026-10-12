@@ -178,7 +178,7 @@
     "request_error": "Erro requisitando notificação",
     "saving_expense": "Erro ao salvar despesa",
     "setting_update_failed": "Falha ao atualizar a configuração",
-    "signin_error": "Ocorreu um erro durante a autenticação: ",
+    "signin_error": "Ocorreu um erro durante a autenticação: {error}",
     "signup_disabled": "Criação de novas contas encontra-se desativo para esta instância",
     "something_went_wrong": "Algo deu errado",
     "subscribe_error": "Não foi possivel subscrever notificações",
@@ -205,9 +205,9 @@
       "split_type_section": {
         "direction": {
           "no_money_flow": "Mais ninguém deve nada",
-          "owes_payer": "{{debtor}} deve a {{payer}}",
-          "owes_you": "{{debtor}} deve-te",
-          "you_owe": "Tu deves a {{payer}}"
+          "owes_payer": "{debtor} deve a {payer}",
+          "owes_you": "{debtor} deve-te",
+          "you_owe": "Tu deves a {payer}"
         },
         "split_equally": "dividir igualmente",
         "split_unequally": "dividir desigualmente",

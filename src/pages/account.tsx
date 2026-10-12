@@ -86,7 +86,10 @@ const AccountPage: NextPageWithUser<{
     [updateDetailsMutation, utils.user.me, t],
   );
 
-  const header = useMemo(() => <div className="text-3xl font-semibold">Account</div>, []);
+  const header = useMemo(
+    () => <div className="text-3xl font-semibold">{t('account.title')}</div>,
+    [t],
+  );
 
   const onSignOut = useCallback(async () => {
     await signOut({ redirect: false });

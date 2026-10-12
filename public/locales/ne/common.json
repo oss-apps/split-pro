@@ -173,7 +173,7 @@
     "request_error": "अनुरोधमा त्रुटि",
     "saving_expense": "खर्च बचत गर्दा त्रुटि",
     "setting_update_failed": "सेटिङ अपडेट गर्न असफल",
-    "signin_error": "साइन इन गर्दा त्रुटि ",
+    "signin_error": "साइन इन गर्दा त्रुटि {error}",
     "signup_disabled": "साइन अप असक्षम गरिएको छ",
     "something_went_wrong": "केही गलत भयो",
     "subscribe_error": "सबस्क्राइब गर्दा त्रुटि",

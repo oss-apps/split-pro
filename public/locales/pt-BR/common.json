@@ -175,7 +175,7 @@
     "request_error": "Erro ao solicitar notificação",
     "saving_expense": "Erro ao salvar despesa",
     "setting_update_failed": "Falha ao atualizar configuração",
-    "signin_error": "Erro ao fazer login: ",
+    "signin_error": "Erro ao fazer login: {error}",
     "signup_disabled": "Esta instância não permite criação de novas contas",
     "something_went_wrong": "Algo deu errado",
     "subscribe_error": "Não foi possível inscrever-se nas notificações",

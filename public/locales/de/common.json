@@ -178,7 +178,7 @@
     "request_error": "Fehler bei der Anfrage der Benachrichtigung",
     "saving_expense": "Fehler beim Speichern der Ausgabe",
     "setting_update_failed": "Einstellung konnte nicht aktualisiert werden",
-    "signin_error": "Beim Anmelden ist ein Fehler aufgetreten: ",
+    "signin_error": "Beim Anmelden ist ein Fehler aufgetreten: {error}",
     "signup_disabled": "Neuanmeldung ist in dieser Instanz deaktiviert",
     "something_went_wrong": "Etwas ist schiefgelaufen",
     "subscribe_error": "Fehler beim Abonnieren der Benachrichtigung",

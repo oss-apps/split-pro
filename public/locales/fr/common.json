@@ -177,7 +177,7 @@
     "request_error": "Une erreur est survenue lors du chargement des notifications",
     "saving_expense": "Un erreur est survenue lors de l'enregistrement de la dépense",
     "setting_update_failed": "Une erreur est survenue lors de la mise à jour des paramètres",
-    "signin_error": "Une erreur est survenue lors de la connexion : ",
+    "signin_error": "Une erreur est survenue lors de la connexion : {error}",
     "signup_disabled": "L'inscription de nouveaux comptes est désactivée sur cette instance",
     "something_went_wrong": "Une erreur est survenue",
     "subscribe_error": "Une erreur est survenue lors de l'abonnement aux notifications",
@@ -203,9 +203,9 @@
       "split_type_section": {
         "direction": {
           "no_money_flow": "Personne d'autre ne doit d'argent",
-          "owes_payer": "{{debtor}} doit cette somme à {{payer}}",
-          "owes_you": "{{debtor}} te doit",
-          "you_owe": "Ta dette envers {{payer}}"
+          "owes_payer": "{debtor} doit cette somme à {payer}",
+          "owes_you": "{debtor} te doit",
+          "you_owe": "Ta dette envers {payer}"
         },
         "split_equally": "partagé à parts égales",
         "split_unequally": "partagé inégalement",

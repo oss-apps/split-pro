@@ -153,7 +153,7 @@
     "request_error": "Chyba pri vyžiadaní upozornenia",
     "saving_expense": "Chyba pri ukladaní výdavku",
     "setting_update_failed": "Zlyhala zmena nastavení",
-    "signin_error": "Nastala chyba počas prihlasovania: ",
+    "signin_error": "Nastala chyba počas prihlasovania: {error}",
     "signup_disabled": "Registrácia nových uživateľov je zakázaná",
     "something_went_wrong": "Niečo sa pokazilo",
     "subscribe_error": "Nedá sa prihlásiť na odber upozornení",

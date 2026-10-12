@@ -9,7 +9,6 @@ import MainLayout from '~/components/Layout/MainLayout';
 import { SimpleConfirmationDialog } from '~/components/SimpleConfirmationDialog';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
-import type { CurrencyHelpersType } from '~/contexts/CurrencyHelpersContext';
 import { useIntlCronParser } from '~/hooks/useIntlCronParser';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { cronFromBackend } from '~/lib/cron';
@@ -23,7 +22,6 @@ interface RecurringExpenseItemProps {
   item: RecurringExpense;
   onDelete: (recurrenceId: number) => Promise<void>;
   isDeleting: boolean;
-  toUIString: CurrencyHelpersType['toUIString'];
   toUIDate: (date: Date) => string;
   cronParser: (cron: string) => string;
   i18nReady: boolean;
@@ -33,12 +31,12 @@ const RecurringExpenseItem: React.FC<RecurringExpenseItemProps> = ({
   item,
   onDelete,
   isDeleting,
-  toUIString,
   toUIDate,
   cronParser,
   i18nReady,
 }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { toUIString, formatter } = getCurrencyHelpersCached(item.expense.currency);
 
   const schedule = useMemo(() => {
     try {
@@ -64,9 +62,7 @@ const RecurringExpenseItem: React.FC<RecurringExpenseItemProps> = ({
               name: item.expense.name,
               amount: toUIString(item.expense.amount, false, true),
               currency:
-                getCurrencyHelpersCached(item.expense.currency)
-                  .formatter.formatToParts(0)
-                  .find(({ type }) => 'currency' === type)?.value ?? '',
+                formatter.formatToParts(0).find(({ type }) => 'currency' === type)?.value ?? '',
             })}
           </p>
           <p className="text-primary text-sm">
@@ -101,17 +97,13 @@ const RecurringExpenseItem: React.FC<RecurringExpenseItemProps> = ({
 };
 
 const RecurringPage: NextPageWithUser = () => {
-  const { t, toUIDate, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { t, toUIDate } = useTranslationWithUtils();
 
   const recurringExpensesQuery = api.expense.getRecurringExpenses.useQuery();
   const deleteRecurrenceMutation = api.expense.deleteRecurrence.useMutation();
   const apiUtils = api.useUtils();
 
   const { cronParser, i18nReady } = useIntlCronParser();
-
-  const { toUIString } = getCurrencyHelpersCached(
-    recurringExpensesQuery.data?.[0]?.expense.currency ?? 'USD',
-  );
 
   const handleDelete = useCallback(
     async (recurrenceId: number) => {
@@ -155,7 +147,6 @@ const RecurringPage: NextPageWithUser = () => {
               item={e}
               onDelete={handleDelete}
               isDeleting={deleteRecurrenceMutation.isPending}
-              toUIString={toUIString}
               toUIDate={toUIDate}
               cronParser={cronParser}
               i18nReady={i18nReady}

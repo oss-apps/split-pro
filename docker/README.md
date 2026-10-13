@@ -169,7 +169,7 @@ SplitPro does not require superuser access at runtime. A regular database role i
 **One-time setup (run as superuser / DB admin):**
 
 ```sql
-CREATE EXTENSION pg_cron;
+CREATE EXTENSION IF NOT EXISTS pg_cron;
 GRANT USAGE ON SCHEMA cron TO <app_user>;
 GRANT SELECT, REFERENCES ON cron.job TO <app_user>;
 GRANT SELECT ON cron.job_run_details TO <app_user>;

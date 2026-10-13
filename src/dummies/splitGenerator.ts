@@ -50,11 +50,12 @@ const generatePercentageShares = (participants: ParticipantId[]): SplitShares =>
     }; // 100%
   }
 
-  // Generate random percentages for first n-1 participants
-  const percentages = participants.slice(0, -1).map(() => faker.number.int({ min: 1, max: 99 }));
-
-  const totalPercentage = percentages.reduce((sum, p) => sum + p, 0);
-  const lastParticipantPercentage = Math.max(0, 100 - totalPercentage);
+  let remainingPercentage = 100;
+  const percentages = participants.slice(0, -1).map(() => {
+    const percentage = faker.number.int({ min: 0, max: Math.min(99, remainingPercentage) });
+    remainingPercentage -= percentage;
+    return percentage;
+  });
 
   // Convert percentages to the format used (0-10000)
   const shares: SplitShares = {};
@@ -66,7 +67,7 @@ const generatePercentageShares = (participants: ParticipantId[]): SplitShares =>
   });
   shares[participants[participants.length - 1]!.id] = {
     ...initSplitShares(),
-    [SplitType.PERCENTAGE]: BigInt(lastParticipantPercentage * 100),
+    [SplitType.PERCENTAGE]: BigInt(remainingPercentage * 100),
   };
 
   return shares;

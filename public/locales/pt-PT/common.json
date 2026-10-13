@@ -108,7 +108,7 @@
     "you_dativus": "Tu"
   },
   "auth": {
-    "continue_with": "Continuar com {{provider}}",
+    "continue_with": "Continuar com {provider}",
     "email_placeholder": "Inserir email",
     "no_providers_configured": "Nenhum fornecedor de autenticação configurado",
     "no_providers_instructions": "Por favor, configura pelo menos um fornecedor de autenticação para iniciar sessão. Consulta as",
@@ -164,10 +164,10 @@
     "image_compression_failed": "A compressão da imagem falhou. Tentar a enviar o ficheiro original",
     "import_failed": "Error ao importar ficheiro",
     "invalid_cron_expression": "Expressão \"cron\" inválida",
-    "invalid_currency_code": "Código {{code}} de moeda inválido",
+    "invalid_currency_code": "Código {code} de moeda inválido",
     "invalid_split": "Define quem deve esta despesa antes de guardar.",
     "language_change_failed": "Erro ao alterar idioma",
-    "less_than": "O ficheiro deve ter menos que {{size}}MB",
+    "less_than": "O ficheiro deve ter menos que {size}MB",
     "name_required": "O nome é obrigatório",
     "no_providers": "Ocorreu um erro ao transferir os fornecedores de autenticação. Por favor consulta os logs do backend.",
     "notification_not_supported": "Notificação não suportada",
@@ -178,7 +178,7 @@
     "request_error": "Erro requisitando notificação",
     "saving_expense": "Erro ao salvar despesa",
     "setting_update_failed": "Falha ao atualizar a configuração",
-    "signin_error": "Ocorreu um erro durante a autenticação: ",
+    "signin_error": "Ocorreu um erro durante a autenticação: {error}",
     "signup_disabled": "Criação de novas contas encontra-se desativo para esta instância",
     "something_went_wrong": "Algo deu errado",
     "subscribe_error": "Não foi possivel subscrever notificações",
@@ -205,9 +205,9 @@
       "split_type_section": {
         "direction": {
           "no_money_flow": "Mais ninguém deve nada",
-          "owes_payer": "{{debtor}} deve a {{payer}}",
-          "owes_you": "{{debtor}} deve-te",
-          "you_owe": "Tu deves a {{payer}}"
+          "owes_payer": "{debtor} deve a {payer}",
+          "owes_you": "{debtor} deve-te",
+          "you_owe": "Tu deves a {payer}"
         },
         "split_equally": "dividir igualmente",
         "split_unequally": "dividir desigualmente",
@@ -386,7 +386,7 @@
     "edit_description": "Isto vai mudar a programação das despesas futuras. As despesas existentes não serão modificadas.",
     "edit_title": "Editar Recorrência",
     "empty": "Nenhuma despesa recorrente ainda",
-    "expense_for_the_amount_of": "Despesa {{name}} pelo valor de {{amount}} {{currency}}",
+    "expense_for_the_amount_of": "Despesa {name} pelo valor de {amount} {currency}",
     "last_day": "Último dia",
     "months": "Meses",
     "never": "Nenhum pagamento recorrente configurado",

@@ -108,7 +108,7 @@
     "you_dativus": "Toi"
   },
   "auth": {
-    "continue_with": "Continuer avec {{provider}}",
+    "continue_with": "Continuer avec {provider}",
     "email_placeholder": "Ton adresse mail",
     "no_providers_configured": "Aucun fournisseur d'authentification configuré",
     "no_providers_instructions": "Veuillez configurer au moins un fournisseur d'authentification pour vous connecter. Voir les",
@@ -163,10 +163,10 @@
     "image_compression_failed": "Échec de compression de l'image, tentative d'envoi de l'image originale",
     "import_failed": "Une erreur est survenue lors de l'import du fichier",
     "invalid_cron_expression": "Expression cron invalide",
-    "invalid_currency_code": "Le code de devise {{code}} est invalide",
+    "invalid_currency_code": "Le code de devise {code} est invalide",
     "invalid_split": "Indique qui a payé cette dépense avant d'enregistrer.",
     "language_change_failed": "Le changement de langage a échoué",
-    "less_than": "Le poids du fichier doit être inférieur à {{size}}Mo",
+    "less_than": "Le poids du fichier doit être inférieur à {size}Mo",
     "name_required": "Un nom est requis",
     "no_providers": "Une erreur est survenue lors du chargement des fournisseurs d'authentification. Vérifiez les logs du backend sur le serveur.",
     "notification_not_supported": "Notification non supportée",
@@ -177,7 +177,7 @@
     "request_error": "Une erreur est survenue lors du chargement des notifications",
     "saving_expense": "Un erreur est survenue lors de l'enregistrement de la dépense",
     "setting_update_failed": "Une erreur est survenue lors de la mise à jour des paramètres",
-    "signin_error": "Une erreur est survenue lors de la connexion : ",
+    "signin_error": "Une erreur est survenue lors de la connexion : {error}",
     "signup_disabled": "L'inscription de nouveaux comptes est désactivée sur cette instance",
     "something_went_wrong": "Une erreur est survenue",
     "subscribe_error": "Une erreur est survenue lors de l'abonnement aux notifications",
@@ -203,9 +203,9 @@
       "split_type_section": {
         "direction": {
           "no_money_flow": "Personne d'autre ne doit d'argent",
-          "owes_payer": "{{debtor}} doit cette somme à {{payer}}",
-          "owes_you": "{{debtor}} te doit",
-          "you_owe": "Ta dette envers {{payer}}"
+          "owes_payer": "{debtor} doit cette somme à {payer}",
+          "owes_you": "{debtor} te doit",
+          "you_owe": "Ta dette envers {payer}"
         },
         "split_equally": "partagé à parts égales",
         "split_unequally": "partagé inégalement",
@@ -382,7 +382,7 @@
     "edit_description": "Ceci changera la programmation des futures dépenses sur ce modèle, mais les dépenses déjà créées ne seront pas modifiées.",
     "edit_title": "Modifier la récurrence",
     "empty": "Aucune dépense récurrente pour l'instant",
-    "expense_for_the_amount_of": "Dépense {{name}} pour un montant de {{amount}}{{currency}}",
+    "expense_for_the_amount_of": "Dépense {name} pour un montant de {amount}{currency}",
     "last_day": "Dernier jour",
     "months": "Mois",
     "never": "Aucun programme planifié",

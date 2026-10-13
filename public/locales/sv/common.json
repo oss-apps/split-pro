@@ -108,7 +108,7 @@
     "you_dativus": "Dig"
   },
   "auth": {
-    "continue_with": "Fortsätt med {{provider}}",
+    "continue_with": "Fortsätt med {provider}",
     "email_placeholder": "Ange din email",
     "no_providers_configured": "Inga autentiseringsleverantörer konfigurerade",
     "no_providers_instructions": "Vänligen konfigurera minst en autentiseringsleverantör för att logga in. Se",
@@ -163,10 +163,10 @@
     "image_compression_failed": "Bildkomprimering misslyckades, försöker ladda upp originalfilen",
     "import_failed": "Fel vid import",
     "invalid_cron_expression": "Ogiltigt cron‑uttryck",
-    "invalid_currency_code": "Ogiltig valutakod {{code}}",
+    "invalid_currency_code": "Ogiltig valutakod {code}",
     "invalid_split": "Justera vem som står för denna utgift innan du sparar.",
     "language_change_failed": "Fel vid ändring av språk",
-    "less_than": "Filen ska vara mindre än {{size}}MB",
+    "less_than": "Filen ska vara mindre än {size}MB",
     "name_required": "Namn krävs",
     "no_providers": "Fel vid hämtning av autentiseringsleverantörer. Kontrollera serverloggarna.",
     "notification_not_supported": "Notifikationer stöds inte",
@@ -177,7 +177,7 @@
     "request_error": "Fel vid begäran om notifikationer",
     "saving_expense": "Fel vid sparande av utgift",
     "setting_update_failed": "Misslyckades med att uppdatera inställning",
-    "signin_error": "Ett fel uppstod vid inloggning: ",
+    "signin_error": "Ett fel uppstod vid inloggning: {error}",
     "signup_disabled": "Registrering av nya konton är inaktiverat",
     "something_went_wrong": "Något gick fel",
     "subscribe_error": "Kan inte prenumerera på notifikationer",
@@ -203,9 +203,9 @@
       "split_type_section": {
         "direction": {
           "no_money_flow": "Ingen annan är skyldig något",
-          "owes_payer": "{{debtor}} är skyldig {{payer}}",
-          "owes_you": "{{debtor}} är skyldig dig",
-          "you_owe": "Du är skyldig {{payer}}"
+          "owes_payer": "{debtor} är skyldig {payer}",
+          "owes_you": "{debtor} är skyldig dig",
+          "you_owe": "Du är skyldig {payer}"
         },
         "split_equally": "dela lika",
         "split_unequally": "dela ojämnt",
@@ -382,7 +382,7 @@
     "edit_description": "Detta kommer att ändra schemat för framtida utgifter. Befintliga utgifter kommer inte att ändras.",
     "edit_title": "Redigera återkommande händelse",
     "empty": "Inga återkommande utgifter",
-    "expense_for_the_amount_of": "Utgift {{name}} på beloppet {{amount}} {{currency}}",
+    "expense_for_the_amount_of": "Utgift {name} på beloppet {amount} {currency}",
     "last_day": "Sista dagen",
     "months": "Månader",
     "never": "Ingen schemaläggning är inställd",

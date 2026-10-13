@@ -184,7 +184,7 @@ export const AddOrEditExpensePage: React.FC<{
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error('An unexpected error occurred while submitting the expense.');
+        toast.error(t('errors.expense_submission_failed'));
       }
     }
   }, [
@@ -208,6 +208,7 @@ export const AddOrEditExpensePage: React.FC<{
     cronExpression,
     multipleTransactions,
     setSingleTransaction,
+    t,
     update,
   ]);
 
@@ -336,7 +337,9 @@ export const AddOrEditExpensePage: React.FC<{
                       className="text-primary h-8 max-w-full min-w-0 justify-start px-1.5 py-0 text-base sm:max-w-none"
                     >
                       <span className="max-w-full truncate">
-                        {displayName(paidBy, currentUser?.id, 'dativus')}
+                        {paidBy?.id === currentUser?.id
+                          ? t(`ui.expense.${isNegative ? 'recipient' : 'payer'}.current_user`)
+                          : displayName(paidBy)}
                       </span>
                     </Button>
                   </PayerSelectionForm>
@@ -395,7 +398,7 @@ export const AddOrEditExpensePage: React.FC<{
                       'size-6',
                     )}
                   />
-                  <span className="sr-only">Toggle recurring expense options</span>
+                  <span className="sr-only">{t('recurrence.toggle_options')}</span>
                 </Button>
               </RecurrenceInput>
             )}

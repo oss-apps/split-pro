@@ -1,5 +1,7 @@
 # Obsolete translation keys
 
+Remove in part 2 of the PR
+
 Mark these keys as obsolete in Weblate. Remove them from all catalogs after
 release; older app versions may still use them.
 

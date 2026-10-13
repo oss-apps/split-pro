@@ -85,12 +85,38 @@ export const SplitExpenseForm: React.FC<
   const { setSplitType } = useAddExpenseStore((s) => s.actions);
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
   const splitScreenOpen = useAddExpenseStore((s) => s.splitScreenOpen);
+  const [invalidSplitInputs, setInvalidSplitInputs] = React.useState<Record<string, true>>({});
 
   const { setSplitScreenOpen } = useAddExpenseStore((s) => s.actions);
+
+  const onInputValidityChange = useCallback(
+    (inputSplitType: SplitType, userId: number, isValid: boolean) => {
+      const key = `${inputSplitType}:${userId}`;
+      setInvalidSplitInputs((current) => {
+        if (isValid) {
+          if (!current[key]) {
+            return current;
+          }
+          const next = { ...current };
+          delete next[key];
+          return next;
+        }
+
+        if (current[key]) {
+          return current;
+        }
+        return { ...current, [key]: true };
+      });
+    },
+    [],
+  );
 
   const handleOpenChange = useCallback(
     (open: boolean) => {
       setSplitScreenOpen(open);
+      if (!open) {
+        setInvalidSplitInputs({});
+      }
       onOpenChange?.(open);
     },
     [onOpenChange, setSplitScreenOpen],
@@ -115,6 +141,9 @@ export const SplitExpenseForm: React.FC<
   const activeSplitType = splitProps.some((props) => props.splitType === splitType)
     ? splitType
     : (splitProps[0]?.splitType ?? SplitType.EQUAL);
+  const hasInvalidSplitInput = Object.keys(invalidSplitInputs).some((key) =>
+    key.startsWith(`${activeSplitType}:`),
+  );
 
   useEffect(() => {
     if (activeSplitType !== splitType) {
@@ -131,10 +160,10 @@ export const SplitExpenseForm: React.FC<
       )}
       className="h-[85vh] lg:h-[70vh]"
       shouldCloseOnAction
-      dismissible={canSplitScreenClosed}
+      dismissible={canSplitScreenClosed && !hasInvalidSplitInput}
       actionTitle={t('actions.save')}
       actionOnClick={onSave}
-      actionDisabled={!canSplitScreenClosed}
+      actionDisabled={!canSplitScreenClosed || hasInvalidSplitInput}
       open={splitScreenOpen}
       onOpenChange={handleOpenChange}
     >
@@ -148,7 +177,7 @@ export const SplitExpenseForm: React.FC<
         </TabsList>
         {splitProps.map((props) => (
           <TabsContent key={props.splitType} value={props.splitType}>
-            <SplitSection {...props} />
+            <SplitSection {...props} onInputValidityChange={onInputValidityChange} />
           </TabsContent>
         ))}
       </Tabs>
@@ -244,7 +273,11 @@ const getSplitProps = (t: TFunction): SplitSectionProps[] => [
   },
 ];
 
-const SplitSection: React.FC<SplitSectionProps> = (props) => {
+const SplitSection: React.FC<
+  SplitSectionProps & {
+    onInputValidityChange: (splitType: SplitType, userId: number, isValid: boolean) => void;
+  }
+> = (props) => {
   const participants = useAddExpenseStore((s) => s.participants);
   const totalShares = useAddExpenseStore((s) =>
     s.participants.reduce(
@@ -343,6 +376,7 @@ const ParticipantRow = ({
   currency,
   onToggleBoolean,
   onChangeInput,
+  onInputValidityChange,
   splitType,
   fmtShareText,
   step,
@@ -352,6 +386,7 @@ const ParticipantRow = ({
   currency: CurrencyCode;
   onToggleBoolean: (userId: number) => void;
   onChangeInput: (e: ChangeEvent<HTMLInputElement>, userId: number) => void;
+  onInputValidityChange: (splitType: SplitType, userId: number, isValid: boolean) => void;
 } & SplitSectionProps) => {
   const { setSplitShare } = useAddExpenseStore((s) => s.actions);
   const onClick = useCallback(() => {
@@ -374,16 +409,37 @@ const ParticipantRow = ({
   );
 
   const onCurrencyInputValueChange = React.useCallback(
-    ({ strValue, bigIntValue }: { strValue?: string; bigIntValue?: bigint }) => {
+    ({
+      strValue,
+      bigIntValue,
+      isValid,
+    }: {
+      strValue?: string;
+      bigIntValue?: bigint;
+      isValid?: boolean;
+    }) => {
       if (strValue !== undefined) {
         setShareStr(strValue);
       }
       if (bigIntValue !== undefined) {
         setSplitShare(splitType, p.id, bigIntValue);
       }
+      if (isValid !== undefined) {
+        onInputValidityChange(splitType, p.id, isValid);
+      }
     },
-    [p.id, setSplitShare, splitType],
+    [onInputValidityChange, p.id, setSplitShare, splitType],
   );
+
+  useEffect(() => {
+    if (!isCurrency) {
+      return;
+    }
+
+    return () => {
+      onInputValidityChange(splitType, p.id, true);
+    };
+  }, [isCurrency, onInputValidityChange, p.id, splitType]);
 
   return (
     <div

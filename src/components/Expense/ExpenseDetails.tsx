@@ -27,6 +27,7 @@ import { AppDrawer } from '../ui/drawer';
 import { Separator } from '../ui/separator';
 import { Receipt } from './Receipt';
 import { DateSelector } from '../AddExpense/DateSelector';
+import { isExpression, safeEvaluateExpression } from '~/utils/expression';
 
 type ExpenseDetailsOutput = NonNullable<inferRouterOutputs<ExpenseRouter>['getExpenseDetails']>;
 
@@ -270,6 +271,7 @@ export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ ex
   const [amountStr, setAmountStr] = useState<string>(
     getCurrencyHelpersCached(expense.currency).toUIString(BigMath.abs(expense.amount)),
   );
+  const [open, setOpen] = useState(false);
 
   const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
   const apiUtils = api.useUtils();
@@ -287,7 +289,21 @@ export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ ex
   );
 
   const saveExpense = useCallback(() => {
-    if (!amount || !sender || !receiver) {
+    let finalAmount = amount;
+    if (isExpression(amountStr)) {
+      const evaluated = safeEvaluateExpression(amountStr);
+      if (null === evaluated) {
+        toast.error(t('errors.invalid_expression'));
+        return;
+      }
+      if (0n > evaluated.numerator) {
+        toast.error(t('errors.negative_settlement_amount'));
+        return;
+      }
+      finalAmount = getCurrencyHelpersCached(expense.currency).expressionResultToBigInt(evaluated);
+    }
+
+    if (0n === finalAmount || !sender || !receiver) {
       return;
     }
 
@@ -296,16 +312,16 @@ export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ ex
         expenseId: expense.id,
         name: t('ui.settle_up_name'),
         currency: expense.currency,
-        amount,
+        amount: finalAmount,
         splitType: SplitType.SETTLEMENT,
         participants: [
           {
             userId: sender.id,
-            amount,
+            amount: finalAmount,
           },
           {
             userId: receiver.id,
-            amount: -amount,
+            amount: -finalAmount,
           },
         ],
         paidBy: sender.id,
@@ -315,6 +331,7 @@ export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ ex
       },
       {
         onSuccess: () => {
+          setOpen(false);
           apiUtils.invalidate().catch(console.error);
         },
         onError: (error) => {
@@ -323,7 +340,18 @@ export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ ex
         },
       },
     );
-  }, [amount, sender, receiver, expense, addExpenseMutation, expenseDate, apiUtils, t]);
+  }, [
+    amount,
+    amountStr,
+    sender,
+    receiver,
+    expense,
+    addExpenseMutation,
+    expenseDate,
+    apiUtils,
+    t,
+    getCurrencyHelpersCached,
+  ]);
 
   if (!sender || !receiver) {
     return null;
@@ -336,13 +364,15 @@ export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ ex
           <PencilIcon className="mr-1 h-4 w-4" />
         </Button>
       }
+      open={open}
+      onOpenChange={setOpen}
       leftAction={t('actions.back')}
       title={t('ui.settlement')}
       actionTitle={t('actions.save')}
       actionOnClick={saveExpense}
-      actionDisabled={!amount}
+      actionDisabled={0n === amount}
       className="h-[70vh]"
-      shouldCloseOnAction
+      shouldCloseOnAction={false}
     >
       <div className="mt-10 flex flex-col items-center gap-6">
         <div className="flex flex-col items-center">

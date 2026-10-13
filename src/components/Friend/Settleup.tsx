@@ -15,6 +15,7 @@ import { Button } from '../ui/button';
 import { CurrencyInput } from '../ui/currency-input';
 import { AppDrawer } from '../ui/drawer';
 import { FriendBalance } from './FriendBalance';
+import { isExpression, isValidExpressionResult, safeEvaluateExpression } from '~/utils/expression';
 
 export const SettleUp: React.FC<
   React.PropsWithChildren<{
@@ -47,8 +48,17 @@ export const SettleUp: React.FC<
   const [amountStr, setAmountStr] = useState<string>(
     getCurrencyHelpersCached(balanceToSettle?.currency ?? '').toUIString(amount),
   );
+  const [open, setOpen] = useState(false);
 
   const isCurrentUserPaying = 0 > (balanceToSettle?.amount ?? 0);
+  const amountIsExpression = isExpression(amountStr);
+  const evaluatedExpression = amountIsExpression ? safeEvaluateExpression(amountStr) : null;
+  const evaluatedExpressionAmount = isValidExpressionResult(evaluatedExpression)
+    ? getCurrencyHelpersCached(balanceToSettle?.currency ?? 'USD').expressionResultToBigInt(
+        evaluatedExpression,
+      )
+    : 0n;
+  const canSave = amountIsExpression ? 0n < evaluatedExpressionAmount : 0n < amount;
 
   function onSelectBalance(balance: MinimalBalance) {
     setBalanceToSettle(balance);
@@ -62,7 +72,23 @@ export const SettleUp: React.FC<
   const utils = api.useUtils();
 
   const saveExpense = React.useCallback(() => {
-    if (!balanceToSettle || !amount || !currentUser) {
+    let finalAmount = amount;
+    if (isExpression(amountStr)) {
+      const evaluated = safeEvaluateExpression(amountStr);
+      if (null === evaluated) {
+        toast.error(t('errors.invalid_expression'));
+        return;
+      }
+      if (0n > evaluated.numerator) {
+        toast.error(t('errors.negative_settlement_amount'));
+        return;
+      }
+      finalAmount = getCurrencyHelpersCached(
+        balanceToSettle?.currency ?? 'USD',
+      ).expressionResultToBigInt(evaluated);
+    }
+
+    if (!balanceToSettle || 0n === finalAmount || !currentUser) {
       return;
     }
 
@@ -70,16 +96,16 @@ export const SettleUp: React.FC<
       {
         name: t('ui.settle_up_name'),
         currency: balanceToSettle.currency,
-        amount,
+        amount: finalAmount,
         splitType: SplitType.SETTLEMENT,
         participants: [
           {
             userId: currentUser.id,
-            amount: isCurrentUserPaying ? amount : -amount,
+            amount: isCurrentUserPaying ? finalAmount : -finalAmount,
           },
           {
             userId: friend.id,
-            amount: isCurrentUserPaying ? -amount : amount,
+            amount: isCurrentUserPaying ? -finalAmount : finalAmount,
           },
         ],
         paidBy: isCurrentUserPaying ? currentUser.id : friend.id,
@@ -88,6 +114,7 @@ export const SettleUp: React.FC<
       },
       {
         onSuccess: () => {
+          setOpen(false);
           utils.user.invalidate().catch(console.error);
           utils.expense.invalidate().catch(console.error);
         },
@@ -100,12 +127,14 @@ export const SettleUp: React.FC<
   }, [
     balanceToSettle,
     amount,
+    amountStr,
     currentUser,
     isCurrentUserPaying,
     friend,
     addExpenseMutation,
     utils,
     t,
+    getCurrencyHelpersCached,
   ]);
 
   const onCurrencyInputValueChange = React.useCallback(
@@ -136,9 +165,11 @@ export const SettleUp: React.FC<
       title={balanceToSettle ? t('ui.settle_up_name') : t('ui.select_balance')}
       className="h-[70vh]"
       actionTitle={t('actions.save')}
-      actionDisabled={!balanceToSettle || !amount}
+      actionDisabled={!balanceToSettle || !canSave}
       actionOnClick={saveExpense}
-      shouldCloseOnAction
+      open={open}
+      onOpenChange={setOpen}
+      shouldCloseOnAction={false}
     >
       {!balanceToSettle ? (
         <div>

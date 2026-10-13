@@ -11,6 +11,7 @@ import { EntityAvatar } from '../ui/avatar';
 import { CurrencyInput } from '../ui/currency-input';
 import { AppDrawer } from '../ui/drawer';
 import { useSession } from 'next-auth/react';
+import { isExpression, isValidExpressionResult, safeEvaluateExpression } from '~/utils/expression';
 
 export const GroupSettleUp: React.FC<{
   amount: bigint;
@@ -24,6 +25,7 @@ export const GroupSettleUp: React.FC<{
   const { displayName, t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const [amount, setAmount] = useState<bigint>(BigMath.abs(_amount));
   const [amountStr, setAmountStr] = useState(getCurrencyHelpersCached(currency).toUIString(amount));
+  const [open, setOpen] = useState(false);
 
   const onCurrencyInputValueChange = React.useCallback(
     ({ strValue, bigIntValue }: { strValue?: string; bigIntValue?: bigint }) => {
@@ -42,9 +44,29 @@ export const GroupSettleUp: React.FC<{
 
   const sender = 0 > _amount ? user : friend;
   const receiver = 0 > _amount ? friend : user;
+  const amountIsExpression = isExpression(amountStr);
+  const evaluatedExpression = amountIsExpression ? safeEvaluateExpression(amountStr) : null;
+  const evaluatedExpressionAmount = isValidExpressionResult(evaluatedExpression)
+    ? getCurrencyHelpersCached(currency).expressionResultToBigInt(evaluatedExpression)
+    : 0n;
+  const canSave = amountIsExpression ? 0n < evaluatedExpressionAmount : 0n < amount;
 
   const saveExpense = React.useCallback(() => {
-    if (!amount) {
+    let finalAmount = amount;
+    if (isExpression(amountStr)) {
+      const evaluated = safeEvaluateExpression(amountStr);
+      if (null === evaluated) {
+        toast.error(t('errors.invalid_expression'));
+        return;
+      }
+      if (0n > evaluated.numerator) {
+        toast.error(t('errors.negative_settlement_amount'));
+        return;
+      }
+      finalAmount = getCurrencyHelpersCached(currency).expressionResultToBigInt(evaluated);
+    }
+
+    if (0n === finalAmount) {
       return;
     }
 
@@ -52,17 +74,17 @@ export const GroupSettleUp: React.FC<{
       {
         name: t('ui.settle_up_name'),
         currency: currency,
-        amount,
+        amount: finalAmount,
         splitType: SplitType.SETTLEMENT,
         groupId,
         participants: [
           {
             userId: sender.id,
-            amount,
+            amount: finalAmount,
           },
           {
             userId: receiver.id,
-            amount: -amount,
+            amount: -finalAmount,
           },
         ],
         paidBy: sender.id,
@@ -70,6 +92,7 @@ export const GroupSettleUp: React.FC<{
       },
       {
         onSuccess: () => {
+          setOpen(false);
           utils.group.invalidate().catch(console.error);
         },
         onError: (error) => {
@@ -78,7 +101,18 @@ export const GroupSettleUp: React.FC<{
         },
       },
     );
-  }, [sender, receiver, amount, utils, addExpenseMutation, currency, groupId, t]);
+  }, [
+    sender,
+    receiver,
+    amount,
+    amountStr,
+    utils,
+    addExpenseMutation,
+    currency,
+    groupId,
+    t,
+    getCurrencyHelpersCached,
+  ]);
 
   return (
     <AppDrawer
@@ -87,9 +121,11 @@ export const GroupSettleUp: React.FC<{
       title={t('ui.settlement')}
       actionTitle={t('actions.save')}
       actionOnClick={saveExpense}
-      actionDisabled={!amount}
+      actionDisabled={!canSave}
       className="h-[70vh]"
-      shouldCloseOnAction
+      open={open}
+      onOpenChange={setOpen}
+      shouldCloseOnAction={false}
     >
       <div className="mt-10 flex flex-col items-center gap-6">
         <div className="flex flex-col items-center">

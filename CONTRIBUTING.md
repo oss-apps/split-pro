@@ -101,6 +101,10 @@ Data, its private Unix socket, and logs live in `.direnv/postgres/`; the server
 continues running when you leave the shell. Stop it explicitly when finished.
 Outside the Nix shell, these commands use the existing Docker Compose setup.
 
+Bare `psql` in the Nix shell connects to this checkout's database using its private
+Unix socket. The shell sets `PGHOST`, `PGPORT`, `PGUSER`, and `PGDATABASE` from the
+local development settings; explicit `PG*` overrides and `psql` arguments still work.
+
 Each checkout/worktree has its own database directory. Use a unique
 `POSTGRES_PORT`, database name, and matching `DATABASE_URL` for simultaneous
 checkouts, plus distinct NextAuth URLs and development server ports. Stop an

@@ -103,6 +103,13 @@
             shellHook = ''
               export SPLITPRO_ROOT="$PWD"
               export NEXT_TELEMETRY_DISABLED=1
+              # libpq defaults should point at this checkout, just like dx:up.
+              # Node reads .env as data and preserves exported overrides.
+              export PGHOST="''${PGHOST:-$SPLITPRO_ROOT/.direnv/postgres}"
+              PGPORT="$(node --env-file-if-exists=.env -p 'process.env.PGPORT ?? process.env.POSTGRES_PORT ?? "5432"')"
+              PGUSER="$(node --env-file-if-exists=.env -p 'process.env.PGUSER ?? process.env.POSTGRES_USER ?? "postgres"')"
+              PGDATABASE="$(node --env-file-if-exists=.env -p 'process.env.PGDATABASE ?? process.env.POSTGRES_DB ?? "splitpro"')"
+              export PGPORT PGUSER PGDATABASE
             '';
           };
         }

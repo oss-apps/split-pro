@@ -4,6 +4,7 @@ import { create } from 'zustand';
 
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { type CurrencyCode } from '~/lib/currency';
+import { recoverShareWeights } from '~/lib/shareSplit';
 import type { TransactionAddInputModel } from '~/types';
 import { shuffleArray } from '~/utils/array';
 import { BigMath } from '~/utils/numbers';
@@ -418,22 +419,13 @@ export function calculateSplitShareBasedOnAmount(
       break;
 
     case SplitType.SHARE:
-      const amounts = participants
-        .filter(({ amount }) => Boolean(amount))
-        .map((p) =>
-          p.id === paidBy?.id ? BigMath.abs(amount - p.amount!) : BigMath.abs(p.amount!),
-        )
-        .filter((s) => s !== 0n);
+      const costs = participants.map((p) =>
+        p.id === paidBy?.id ? BigMath.abs(amount - (p.amount ?? 0n)) : BigMath.abs(p.amount ?? 0n),
+      );
+      const shares = 0n === amount ? costs.map(() => 0n) : recoverShareWeights(costs);
 
-      const gcdValue = amounts.length > 1 ? amounts.reduce((a, b) => BigMath.gcd(a, b)) : 1n;
-
-      participants.forEach((p) => {
-        splitShares[p.id]![splitType] =
-          0n === amount
-            ? 0n
-            : ((p.id === paidBy?.id ? BigMath.abs(amount - p.amount!) : BigMath.abs(p.amount!)) *
-                100n) /
-              gcdValue;
+      participants.forEach((p, index) => {
+        splitShares[p.id]![splitType] = shares[index];
       });
 
       break;

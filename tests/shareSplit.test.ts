@@ -1,4 +1,4 @@
-import { recoverShareWeights } from './shareSplit';
+import { recoverShareWeights } from '~/lib/shareSplit';
 
 describe('recoverShareWeights', () => {
   it('finds a rounded ratio even when no penny-subtracted variant has that exact ratio', () => {

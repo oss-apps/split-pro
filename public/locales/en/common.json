@@ -175,7 +175,8 @@
     "expense_submission_failed": "An unexpected error occurred while submitting the expense.",
     "expense_deletion_failed": "An unexpected error occurred while deleting the expense.",
     "friend_deletion_failed": "Failed to delete friend",
-    "signin_failed": "Sign-in failed. Please try again."
+    "signin_failed": "Sign-in failed. Please try again.",
+    "invite_email_failed": "Failed to send invite email. Check the SMTP configuration."
   },
   "bank_transactions": {
     "choose_bank_provider": "Choose bank provider",

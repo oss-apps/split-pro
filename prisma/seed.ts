@@ -9,8 +9,23 @@ import { settleBalances } from './seedSettlement';
 const prisma = new PrismaClient();
 
 async function createUsers() {
-  await prisma.user.createMany({
-    data: dummyData.users,
+  await prisma.$transaction(async (tx) => {
+    await tx.user.createMany({
+      data: dummyData.users,
+    });
+
+    // Explicit seed IDs do not advance PostgreSQL's auto-increment sequence.
+    // Keep subsequent signups above both seeded IDs and previously allocated IDs.
+    await tx.$executeRaw`
+      SELECT setval(
+        pg_get_serial_sequence('public."User"', 'id'),
+        GREATEST(
+          (SELECT MAX("id") FROM "public"."User"),
+          (SELECT last_value FROM "public"."User_id_seq")
+        ),
+        true
+      )
+    `;
   });
 
   console.log('Finished creating users');

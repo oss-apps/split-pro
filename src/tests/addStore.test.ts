@@ -661,6 +661,64 @@ describe('calculateSplitShareBasedOnAmount', () => {
       expect(splitShares[user2.id]![SplitType.PERCENTAGE]).toBe(0n);
       expect(splitShares[user3.id]![SplitType.PERCENTAGE]).toBe(0n);
     });
+
+    it('should distribute rounding remainders so percentages sum up to 100%', () => {
+      const participants = createParticipants([user1, user2, user3], [2n, -1n, -1n]);
+      const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        splitShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(3n, participants, SplitType.PERCENTAGE, splitShares, user1);
+
+      expect(splitShares[user1.id]![SplitType.PERCENTAGE]).toBe(3334n);
+      expect(splitShares[user2.id]![SplitType.PERCENTAGE]).toBe(3333n);
+      expect(splitShares[user3.id]![SplitType.PERCENTAGE]).toBe(3333n);
+    });
+
+    it('should keep a 70/30 split of a zero-decimal currency amount saveable after editing', () => {
+      const participants = createParticipants([user1, user2]);
+      const splitShares = createSplitShares(participants, SplitType.PERCENTAGE, [7000n, 3000n]);
+
+      const splitResult = calculateParticipantSplit({
+        amount: 333n,
+        participants,
+        splitType: SplitType.PERCENTAGE,
+        splitShares,
+        paidBy: user1,
+        expenseDate: new Date('2024-01-01'),
+        isNegative: false,
+      });
+
+      const reversedShares: Record<number, Record<SplitType, bigint | undefined>> = {};
+      participants.forEach((p) => {
+        reversedShares[p.id] = initSplitShares();
+      });
+
+      calculateSplitShareBasedOnAmount(
+        333n,
+        splitResult.participants,
+        SplitType.PERCENTAGE,
+        reversedShares,
+        user1,
+      );
+
+      const totalPercentage =
+        (reversedShares[user1.id]![SplitType.PERCENTAGE] ?? 0n) +
+        (reversedShares[user2.id]![SplitType.PERCENTAGE] ?? 0n);
+      expect(totalPercentage).toBe(10000n);
+
+      const editResult = calculateParticipantSplit({
+        amount: 333n,
+        participants: splitResult.participants,
+        splitType: SplitType.PERCENTAGE,
+        splitShares: reversedShares,
+        paidBy: user1,
+        expenseDate: new Date('2024-01-01'),
+        isNegative: false,
+      });
+      expect(editResult.canSplitScreenClosed).toBe(true);
+    });
   });
 
   describe('SplitType.SHARE', () => {

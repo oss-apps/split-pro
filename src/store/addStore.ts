@@ -406,13 +406,35 @@ export function calculateSplitShareBasedOnAmount(
       break;
 
     case SplitType.PERCENTAGE:
-      participants.forEach((p) => {
-        splitShares[p.id]![splitType] =
-          0n === amount
-            ? 0n
-            : paidBy?.id !== p.id
-              ? (BigMath.abs(p.amount ?? 0n) * 10000n) / amount
-              : (BigMath.abs(amount - (p.amount ?? 0n)) * 10000n) / amount;
+      if (0n === amount) {
+        participants.forEach((p) => {
+          splitShares[p.id]![splitType] = 0n;
+        });
+        break;
+      }
+
+      // Largest remainder method, so rounded percentages still sum up to 100%
+      const percentageParts = participants.map((p) => {
+        const owed =
+          paidBy?.id !== p.id
+            ? BigMath.abs(p.amount ?? 0n)
+            : BigMath.abs(amount - (p.amount ?? 0n));
+        return { id: p.id, share: (owed * 10000n) / amount, remainder: (owed * 10000n) % amount };
+      });
+      let percentageLeft = 10000n - percentageParts.reduce((acc, { share }) => acc + share, 0n);
+
+      percentageParts
+        .filter(({ remainder }) => 0n < remainder)
+        .toSorted((a, b) => (b.remainder > a.remainder ? 1 : b.remainder < a.remainder ? -1 : 0))
+        .forEach((part) => {
+          if (0n < percentageLeft) {
+            part.share += 1n;
+            percentageLeft -= 1n;
+          }
+        });
+
+      percentageParts.forEach(({ id, share }) => {
+        splitShares[id]![splitType] = share;
       });
 
       break;

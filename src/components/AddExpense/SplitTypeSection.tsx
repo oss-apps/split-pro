@@ -283,12 +283,22 @@ const SplitSection: React.FC<SplitSectionProps> = (props) => {
     (e: ChangeEvent<HTMLInputElement>, userId: number) => {
       const { value } = e.target;
 
+      if (value === undefined || '' === value) {
+        setSplitShare(splitType, userId, 0n);
+        return;
+      }
+
+      if (isCurrency) {
+        setSplitShare(splitType, userId, BigMath.abs(toSafeBigInt(value)));
+        return;
+      }
+
+      // Percentages and shares are stored in hundredths, regardless of the currency decimals
+      const parsed = parseFloat(value);
       setSplitShare(
         splitType,
         userId,
-        value === undefined || '' === value
-          ? 0n
-          : BigMath.abs(toSafeBigInt(isCurrency ? value : parseFloat(value))),
+        Number.isNaN(parsed) ? 0n : BigMath.abs(BigInt(Math.round(parsed * 100))),
       );
     },
     [setSplitShare, splitType, toSafeBigInt, isCurrency],

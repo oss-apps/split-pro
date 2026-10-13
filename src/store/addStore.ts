@@ -4,7 +4,7 @@ import { create } from 'zustand';
 
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { type CurrencyCode } from '~/lib/currency';
-import { recoverShareWeights } from '~/lib/shareSplit';
+import { recoverPercentageWeights, recoverShareWeights } from '~/lib/shareSplit';
 import type { TransactionAddInputModel } from '~/types';
 import { shuffleArray } from '~/utils/array';
 import { BigMath } from '~/utils/numbers';
@@ -305,7 +305,7 @@ export function calculateParticipantSplit(
         amount: ((getSplitShare(p) ?? 0n) * amount) / 10000n,
       }));
       canSplitScreenClosed =
-        0 === 100 - participants.reduce((acc, p) => acc + Number(getSplitShare(p) ?? 0n) / 100, 0);
+        10000n === participants.reduce((acc, p) => acc + (getSplitShare(p) ?? 0n), 0n);
       break;
     case SplitType.SHARE:
       const totalShare = participants.reduce((acc, p) => acc + Number(getSplitShare(p) ?? 0n), 0);
@@ -407,22 +407,16 @@ export function calculateSplitShareBasedOnAmount(
       break;
 
     case SplitType.PERCENTAGE:
-      participants.forEach((p) => {
-        splitShares[p.id]![splitType] =
-          0n === amount
-            ? 0n
-            : paidBy?.id !== p.id
-              ? (BigMath.abs(p.amount ?? 0n) * 10000n) / amount
-              : (BigMath.abs(amount - (p.amount ?? 0n)) * 10000n) / amount;
-      });
-
-      break;
-
     case SplitType.SHARE:
       const costs = participants.map((p) =>
         p.id === paidBy?.id ? BigMath.abs(amount - (p.amount ?? 0n)) : BigMath.abs(p.amount ?? 0n),
       );
-      const shares = 0n === amount ? costs.map(() => 0n) : recoverShareWeights(costs);
+      const shares =
+        0n === amount
+          ? costs.map(() => 0n)
+          : SplitType.PERCENTAGE === splitType
+            ? recoverPercentageWeights(costs)
+            : recoverShareWeights(costs);
 
       participants.forEach((p, index) => {
         splitShares[p.id]![splitType] = shares[index];

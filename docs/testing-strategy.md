@@ -72,7 +72,8 @@ removes disposable volumes; native teardown stops the server and preserves state
   are no shared authentication files or setup dependency. Cookies follow the configured host.
   The transport test checks BigInt/Date serialization through the actual Next.js API endpoint.
 
-`pnpm test` selects `src/**/*.{test,spec}.{ts,tsx}` except `src/tests/integration/`.
+`pnpm test` selects `src/**/*.{test,spec}.{ts,tsx}` and `tests/**/*.{test,spec}.{ts,tsx}`,
+except `src/tests/integration/` and `tests/e2e/`.
 `pnpm test:integration` selects that integration directory only. Playwright selects `tests/e2e/`.
 Failures retain traces, screenshots, videos, and the HTML report even when local retries are
 disabled. CI uploads `test-results/e2e` and `playwright-report` on failure and always stops its

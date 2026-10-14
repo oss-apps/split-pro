@@ -664,6 +664,86 @@ describe('calculateSplitShareBasedOnAmount', () => {
   });
 
   describe('SplitType.SHARE', () => {
+    it.each([
+      {
+        scenario: 'the payer received the penny',
+        amount: 7793n,
+        balances: [4675n, -4675n],
+        shares: [200n, 300n],
+      },
+      {
+        scenario: 'the other participant received the penny',
+        amount: 7793n,
+        balances: [4676n, -4676n],
+        shares: [200n, 300n],
+      },
+      {
+        scenario: 'two participants received pennies',
+        amount: 12002n,
+        balances: [6001n, -3001n, -3000n],
+        shares: [200n, 100n, 100n],
+      },
+      {
+        scenario: 'a participant has no share',
+        amount: 7793n,
+        balances: [4675n, -4675n, 0n],
+        shares: [200n, 300n, 0n],
+      },
+      {
+        scenario: 'the payer has no share',
+        amount: 7793n,
+        balances: [7793n, -3118n, -4675n],
+        shares: [0n, 200n, 300n],
+      },
+      {
+        scenario: 'the payer has a zero net balance',
+        amount: 7793n,
+        balances: [0n, 0n],
+        shares: [100n, 0n],
+      },
+      {
+        scenario: 'penny-sized costs must remain positive',
+        amount: 2n,
+        balances: [1n, -1n],
+        shares: [100n, 100n],
+      },
+    ])('recovers a simple ratio when $scenario (#727)', ({ amount, balances, shares }) => {
+      const participants = createParticipants(
+        [user1, user2, user3].slice(0, balances.length),
+        balances,
+      );
+      const splitShares = createSplitShares(participants, SplitType.SHARE, []);
+
+      calculateSplitShareBasedOnAmount(amount, participants, SplitType.SHARE, splitShares, user1);
+
+      expect(
+        participants.map((participant) => splitShares[participant.id]?.[SplitType.SHARE]),
+      ).toEqual(shares);
+      expect(participants.map((participant) => participant.amount)).toEqual(balances);
+    });
+
+    it('falls back to the exact ratio for a large search (#727)', () => {
+      const costs = Array.from({ length: 1000 }, (_, index) => 1000000000000n + BigInt(index));
+      const participants = createParticipants(
+        costs.map((_, index) =>
+          createMockUser(index + 1, `User ${index}`, `user${index}@example.com`),
+        ),
+        costs.map((cost) => -cost),
+      );
+      const splitShares = createSplitShares(participants, SplitType.SHARE, []);
+
+      calculateSplitShareBasedOnAmount(
+        costs.reduce((sum, cost) => sum + cost, 0n),
+        participants,
+        SplitType.SHARE,
+        splitShares,
+      );
+
+      expect(
+        participants.map((participant) => splitShares[participant.id]?.[SplitType.SHARE]),
+      ).toEqual(costs.map((cost) => cost * 100n));
+    });
+
     it('should calculate share values based on participant amounts', () => {
       const participants = createParticipants([user1, user2, user3], [-6000n, -3000n, -3000n]);
       const splitShares: Record<number, Record<SplitType, bigint | undefined>> = {};
@@ -1137,6 +1217,93 @@ describe('Function Reversibility Tests', () => {
       expect(reversedShares[user1.id]![SplitType.EQUAL]).toBe(0n);
       expect(reversedShares[user2.id]![SplitType.EQUAL]).toBe(0n);
       expect(reversedShares[user3.id]![SplitType.EQUAL]).toBe(0n);
+    });
+  });
+});
+
+describe('useAddExpenseStore share preservation on reopen (#727)', () => {
+  const { actions } = useAddExpenseStore.getState();
+
+  beforeEach(() => {
+    actions.resetState();
+  });
+
+  it.each([
+    {
+      scenario: 'an evenly divisible 2:3 split',
+      amount: 10000n,
+      shares: [200n, 300n],
+      expectedShares: [200n, 300n],
+    },
+    {
+      scenario: 'the reported 77.93 expense split 2:3',
+      amount: 7793n,
+      shares: [200n, 300n],
+      expectedShares: [200n, 300n],
+    },
+    {
+      scenario: 'a 2:3 split requiring penny rounding',
+      amount: 10001n,
+      shares: [200n, 300n],
+      expectedShares: [200n, 300n],
+    },
+    {
+      scenario: 'a non-reduced 4:6 split',
+      amount: 10000n,
+      shares: [400n, 600n],
+      expectedShares: [200n, 300n],
+    },
+  ])('recovers $scenario on reopen', ({ amount, shares, expectedShares }) => {
+    actions.setCurrentUser(user1);
+    actions.setParticipants(createParticipants([user1, user2]));
+    actions.setExpenseDate(new Date('2024-01-01'));
+    actions.setAmount(amount);
+    actions.setSplitType(SplitType.SHARE);
+    [user1, user2].forEach((user, index) => {
+      actions.setSplitShare(SplitType.SHARE, user.id, shares[index] ?? 0n);
+    });
+
+    // Saving sends only monetary balances, not the entered share counts.
+    const state = useAddExpenseStore.getState();
+    const savedExpense = {
+      amount: state.amount,
+      splitType: state.splitType,
+      expenseDate: state.expenseDate,
+      participants: state.participants.map((participant) => ({
+        userId: participant.id,
+        amount: participant.amount!,
+      })),
+    };
+    expect(
+      savedExpense.participants.reduce((sum, participant) => sum + participant.amount, 0n),
+    ).toBe(0n);
+
+    // Leaving the page clears the draft. Reload in the same order as pages/add.tsx.
+    actions.resetState();
+    actions.setPaidBy(user1);
+    actions.setAmount(savedExpense.amount);
+    actions.setParticipants(
+      createParticipants(
+        savedExpense.participants.map(
+          (participant) => [user1, user2].find((user) => user.id === participant.userId)!,
+        ),
+        savedExpense.participants.map((participant) => participant.amount),
+      ),
+      savedExpense.splitType,
+    );
+    actions.setExpenseDate(savedExpense.expenseDate);
+
+    // Saving and reopening again should not cause the recovered ratio to drift.
+    Array.from({ length: 3 }).forEach(() => {
+      const reopened = useAddExpenseStore.getState();
+      expect(
+        reopened.participants.reduce((sum, participant) => sum + participant.amount!, 0n),
+      ).toBe(0n);
+      // SHARE inputs use hundredths: 200n and 300n display as 2 and 3 shares.
+      expect(
+        [user1, user2].map((user) => reopened.splitShares[user.id]?.[SplitType.SHARE]),
+      ).toEqual(expectedShares);
+      actions.setParticipants(reopened.participants, reopened.splitType);
     });
   });
 });

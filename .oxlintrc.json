@@ -47,7 +47,12 @@
     "max-statements": "off",
     "jsx-max-depth": "off",
     "no-nodejs-modules": "off",
-    "no-implicit-coercion": "off"
+    "no-implicit-coercion": "off",
+    "react/function-component-definition": ["warn", {
+      "namedComponents": "arrow-function",
+      "unnamedComponents": "arrow-function"
+    }],
+    "one-var": "allow"
   },
   "overrides": [
     {

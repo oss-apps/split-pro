@@ -46,4 +46,4 @@ jobs:
       #   run: pnpm db:verify-seed-hash
 
       - name: Run build
-        run: pnpm build --no-lint
+        run: pnpm build

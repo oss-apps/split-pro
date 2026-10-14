@@ -41,7 +41,8 @@
     "**/*.jsx",
     "**/*.cjs",
     "**/*.js",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules", "public", "playwright-report", "test-results"]
 }

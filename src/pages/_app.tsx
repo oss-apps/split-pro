@@ -1,4 +1,5 @@
 import i18nConfig from '@/next-i18next.config.js';
+import { SerwistProvider } from '@serwist/turbopack/react';
 import { clsx } from 'clsx';
 import { type Session } from 'next-auth';
 import { SessionProvider, useSession } from 'next-auth/react';
@@ -82,18 +83,20 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <meta property="og:url" content={baseUrl} />
         <meta property="og:image" content={`${baseUrl}/og_banner.png`} />
       </Head>
-      <SessionProvider session={session}>
-        <CurrencyHelpersProvider>
-          <ThemeProvider attribute="class" defaultTheme="dark">
-            <Toaster toastOptions={toastOptions} />
-            {(Component as NextPageWithUser).auth ? (
-              <Auth pageProps={pageProps} Page={Component as NextPageWithUser} />
-            ) : (
-              <Component {...pageProps} />
-            )}{' '}
-          </ThemeProvider>
-        </CurrencyHelpersProvider>
-      </SessionProvider>
+      <SerwistProvider swUrl="/serwist/sw.js">
+        <SessionProvider session={session}>
+          <CurrencyHelpersProvider>
+            <ThemeProvider attribute="class" defaultTheme="dark">
+              <Toaster toastOptions={toastOptions} />
+              {(Component as NextPageWithUser).auth ? (
+                <Auth pageProps={pageProps} Page={Component as NextPageWithUser} />
+              ) : (
+                <Component {...pageProps} />
+              )}{' '}
+            </ThemeProvider>
+          </CurrencyHelpersProvider>
+        </SessionProvider>
+      </SerwistProvider>
     </main>
   );
 };

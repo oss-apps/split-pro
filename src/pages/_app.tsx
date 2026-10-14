@@ -13,7 +13,6 @@ import { Toaster } from 'sonner';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { ThemeProvider } from 'next-themes';
 import { CurrencyHelpersProvider } from '~/contexts/CurrencyHelpersContext';
-import { useAddExpenseStore } from '~/store/addStore';
 import { useAppStore } from '~/store/appStore';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
@@ -107,7 +106,6 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
   const updateUser = api.user.updateUserDetail.useMutation();
   const router = useRouter();
 
-  const { setCurrency } = useAddExpenseStore((s) => s.actions);
   const { setWebPushPublicKey } = useAppStore((s) => s.actions);
 
   const { data: webPushPublicKey } = api.user.getWebPushPublicKey.useQuery();
@@ -130,7 +128,6 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
         // If user has no preferred language, set it to the current locale
         const currentLocale = router.locale ?? 'en';
 
-        data.user.preferredLanguage = currentLocale;
         updateUser
           .mutateAsync({
             preferredLanguage: currentLocale,
@@ -146,7 +143,6 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
           .catch(console.error);
       } else if (data.user.preferredLanguage === 'pt') {
         // Fix for 'pt' preferred language to 'pt-PT'
-        data.user.preferredLanguage = 'pt-PT';
         updateUser
           .mutateAsync({
             preferredLanguage: 'pt-PT',
@@ -170,7 +166,7 @@ const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, page
           .catch(console.error);
       }
     }
-  }, [status, data?.user, setCurrency, router, updateUser, update]);
+  }, [status, data?.user, router, updateUser, update]);
 
   if ('loading' === status) {
     return (

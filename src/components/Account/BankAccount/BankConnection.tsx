@@ -33,7 +33,7 @@ export const BankConnection: React.FC<BankConnectionProps> = ({
         return res.authLink;
       }
     }
-  }, [connectToBank, userQuery.data?.bankingId, bankConnection]);
+  }, [connectToBank, userQuery.data, bankConnection]);
 
   const fetchUser = useCallback(() => {
     userQuery.refetch().catch(console.error);

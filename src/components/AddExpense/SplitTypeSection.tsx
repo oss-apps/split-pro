@@ -258,7 +258,7 @@ const SplitSection: React.FC<SplitSectionProps> = (props) => {
   );
   const currency = useAddExpenseStore((s) => s.currency);
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
-  const { toUIString, toSafeBigInt } = getCurrencyHelpersCached(currency);
+  const { toUIString } = getCurrencyHelpersCached(currency);
   const amount = useAddExpenseStore((s) => s.amount);
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
   const splitShares = useAddExpenseStore((s) => s.splitShares);
@@ -288,10 +288,14 @@ const SplitSection: React.FC<SplitSectionProps> = (props) => {
         userId,
         value === undefined || '' === value
           ? 0n
-          : BigMath.abs(toSafeBigInt(isCurrency ? value : parseFloat(value))),
+          : BigMath.abs(
+              getCurrencyHelpersCached(currency).toSafeBigInt(
+                isCurrency ? value : parseFloat(value),
+              ),
+            ),
       );
     },
-    [setSplitShare, splitType, toSafeBigInt, isCurrency],
+    [setSplitShare, splitType, getCurrencyHelpersCached, currency, isCurrency],
   );
 
   return (

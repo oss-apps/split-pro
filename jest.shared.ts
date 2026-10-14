@@ -5,7 +5,11 @@ export const configureJest = async (config: Config): Promise<Config> => {
   const resolved = await nextJest({ dir: './' })({
     coverageProvider: 'v8',
     cacheDirectory: '<rootDir>/node_modules/.cache/jest',
-    moduleNameMapper: { '^~/(.*)$': '<rootDir>/src/$1' },
+    moduleNameMapper: {
+      '^~/(.*)$': '<rootDir>/src/$1',
+      '^next-i18next$': '<rootDir>/src/utils/i18n/pages.ts',
+      '^next-i18next/serverSideTranslations$': '<rootDir>/src/utils/i18n/serverSideTranslations.ts',
+    },
     clearMocks: true,
     ...config,
   })();

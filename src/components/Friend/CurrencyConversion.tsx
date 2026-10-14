@@ -1,4 +1,4 @@
-import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { api } from '~/utils/api';
 import { MAX_RATE_PRECISION, currencyConversion, getRatePrecision } from '~/utils/numbers';
@@ -31,13 +31,19 @@ export const CurrencyConversion: React.FC<{
 
   const { toUIString, toSafeBigInt } = getCurrencyHelpersCached(currency);
 
-  const [amountStr, setAmountStr] = useState('');
-  const [rate, setRate] = useState('');
-  const [targetAmountStr, setTargetAmountStr] = useState('');
+  const [amountStr, setAmountStr] = useState(() => toUIString(amount, false, true));
+  const [rate, setRate] = useState(() =>
+    editingRate ? editingRate.toFixed(getRatePrecision(editingRate)) : '',
+  );
   const preferredCurrency = useAddExpenseStore((state) => state.currency);
   const { setCurrency } = useAddExpenseStore((state) => state.actions);
-  const [targetCurrency, setTargetCurrency] = useState<CurrencyCode>(preferredCurrency);
-  const [rateDate, setRateDate] = useState<Date>(new Date());
+  const [targetCurrency, setTargetCurrency] = useState<CurrencyCode>(() =>
+    editingTargetCurrency && isCurrencyCode(editingTargetCurrency)
+      ? editingTargetCurrency
+      : preferredCurrency,
+  );
+  const [rateDate, setRateDate] = useState<Date>(() => new Date());
+  const [dateDisabledAfter] = useState<Date>(() => new Date());
   const getCurrencyRate = api.expense.getCurrencyRate.useQuery(
     { from: currency, to: targetCurrency, date: rateDate },
     { enabled: currency !== targetCurrency },
@@ -45,14 +51,21 @@ export const CurrencyConversion: React.FC<{
 
   const { toUIString: toUITargetString } = getCurrencyHelpersCached(targetCurrency);
 
-  useEffect(() => {
-    if (getCurrencyRate.isPending) {
-      setRate('');
-      setTargetAmountStr('');
-    }
-  }, [getCurrencyRate.isPending]);
-
-  useEffect(() => {
+  const [previousInputs, setPreviousInputs] = useState({
+    amount,
+    editingRate,
+    editingTargetCurrency,
+    currency,
+    toUIString,
+  });
+  if (
+    previousInputs.amount !== amount ||
+    previousInputs.editingRate !== editingRate ||
+    previousInputs.editingTargetCurrency !== editingTargetCurrency ||
+    previousInputs.currency !== currency ||
+    previousInputs.toUIString !== toUIString
+  ) {
+    setPreviousInputs({ amount, editingRate, editingTargetCurrency, currency, toUIString });
     setAmountStr(toUIString(amount, false, true));
     if (editingRate) {
       const precision = getRatePrecision(editingRate);
@@ -63,30 +76,39 @@ export const CurrencyConversion: React.FC<{
     if (editingTargetCurrency && isCurrencyCode(editingTargetCurrency)) {
       setTargetCurrency(editingTargetCurrency);
     }
-  }, [amount, editingRate, editingTargetCurrency, toUIString]);
+  }
 
-  useEffect(() => {
+  const [previousPending, setPreviousPending] = useState(getCurrencyRate.isPending);
+  if (previousPending !== getCurrencyRate.isPending) {
+    setPreviousPending(getCurrencyRate.isPending);
+    if (getCurrencyRate.isPending) {
+      setRate('');
+    }
+  }
+
+  const [previousRateData, setPreviousRateData] = useState<typeof getCurrencyRate.data>(undefined);
+  if (previousRateData !== getCurrencyRate.data) {
+    setPreviousRateData(getCurrencyRate.data);
     if (getCurrencyRate.data?.rate) {
       const precision = getRatePrecision(getCurrencyRate.data.rate);
       setRate(getCurrencyRate.data.rate.toFixed(precision));
     }
-  }, [getCurrencyRate.data]);
+  }
 
-  const dateDisabled = useMemo(() => ({ after: new Date() }), []);
+  const dateDisabled = useMemo(() => ({ after: dateDisabledAfter }), [dateDisabledAfter]);
 
-  useEffect(() => {
+  const targetAmountStr = useMemo(() => {
     if (!isCurrencyCode(currency) || !isCurrencyCode(targetCurrency)) {
-      return;
+      return '';
     }
-
     const targetAmount = currencyConversion({
       from: currency,
       to: targetCurrency,
       amount: toSafeBigInt(amountStr),
       rate: Number(rate),
     });
-    setTargetAmountStr(toUITargetString(targetAmount, false, true));
-  }, [amountStr, rate, toSafeBigInt, toUITargetString, currency, targetCurrency]);
+    return toUITargetString(targetAmount, false, true);
+  }, [currency, targetCurrency, toSafeBigInt, amountStr, rate, toUITargetString]);
 
   const onUpdateAmount = useCallback(
     ({ strValue }: { strValue?: string; bigIntValue?: bigint }) => {
@@ -129,7 +151,7 @@ export const CurrencyConversion: React.FC<{
 
   const onChangeTargetAmount = useCallback(
     ({ bigIntValue }: { strValue?: string; bigIntValue?: bigint }) => {
-      if (bigIntValue && isCurrencyCode(currency)) {
+      if (bigIntValue !== undefined && isCurrencyCode(currency)) {
         const amount = currencyConversion({
           amount: bigIntValue ?? 0n,
           rate: 1 / Number(rate),

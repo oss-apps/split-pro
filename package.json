@@ -63,7 +63,7 @@
     "intl-messageformat": "^10.7.18",
     "lucide-react": "^0.544.0",
     "nanoid": "^5.0.6",
-    "next": "15.5.18",
+    "next": "16.4.1",
     "next-auth": "^4.24.14",
     "next-i18next": "^15.4.3",
     "next-themes": "^0.4.6",
@@ -71,9 +71,9 @@
     "nordigen-node": "^1.4.1",
     "plaid": "^38.1.0",
     "radix-ui": "^1.4.2",
-    "react": "19.2.1",
+    "react": "19.3.1",
     "react-day-picker": "^9.7.0",
-    "react-dom": "19.2.1",
+    "react-dom": "19.3.1",
     "react-easy-crop": "^5.5.7",
     "react-hook-form": "^7.50.1",
     "react-i18next": "^15.5.3",
@@ -97,8 +97,8 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^22.15.21",
     "@types/nodemailer": "^8.0.0",
-    "@types/react": "19.2.1",
-    "@types/react-dom": "19.2.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "@types/web-push": "^3.6.3",
     "@typescript/native-preview": "7.0.0-dev.20251016.1",
     "husky": "^9.1.7",
@@ -149,7 +149,9 @@
       "ajv@>=7.0.0-alpha.0 <8.18.0": ">=8.18.0",
       "effect@<3.20.0": ">=3.20.0",
       "picomatch@<2.3.2": ">=2.3.2",
-      "serialize-javascript@<7.0.5": ">=7.0.5"
+      "serialize-javascript@<7.0.5": ">=7.0.5",
+      "@types/react": "19.3.0",
+      "@types/react-dom": "19.3.0"
     }
   }
 }

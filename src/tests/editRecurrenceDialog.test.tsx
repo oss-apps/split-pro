@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 

@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import nodemailer, { type Transporter } from 'nodemailer';
 
 import { env } from '~/env';
 import { sendToDiscord } from '~/server/service-notification';
@@ -22,6 +22,7 @@ jest.mock('nodemailer', () => {
   const sendMail = jest.fn();
   return {
     __esModule: true,
+    mockSendMail: sendMail,
     default: { createTransport: jest.fn(() => ({ sendMail })) },
   };
 });
@@ -31,9 +32,9 @@ jest.mock('~/server/service-notification', () => ({
 }));
 
 const mockCreateTransport = jest.mocked(nodemailer.createTransport);
-const mockSendMail = jest.mocked(
-  mockCreateTransport({} as Parameters<typeof nodemailer.createTransport>[0]).sendMail,
-);
+const { mockSendMail } = jest.requireMock<{
+  mockSendMail: jest.MockedFunction<Transporter['sendMail']>;
+}>('nodemailer');
 const mockSendToDiscord = jest.mocked(sendToDiscord);
 
 const mockSentMessageInfo = {

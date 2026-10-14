@@ -30,6 +30,7 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const groupForm = useForm<CreateGroupFormValues>({
     resolver: zodResolver(groupSchema(t)),
+    defaultValues: { name: '' },
   });
 
   const router = useRouter();

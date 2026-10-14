@@ -37,6 +37,7 @@ declare module 'next-auth' {
     };
   }
 
+  // @ts-ignore
   interface User {
     id: number;
     name: string;

@@ -5,6 +5,7 @@
       "messages": {
         "language_changed": "Lingua cambiata con successo"
       },
+      "no_language_found": "Nessuna lingua trovata.",
       "placeholder": "Seleziona una lingua",
       "title": "Seleziona una lingua"
     },
@@ -14,10 +15,14 @@
       "description": "Incolla le informazioni qui sotto quando crei una richiesta di assistenza:",
       "git": "Git",
       "new_version_available": "È disponibile una nuova versione:",
+      "send_test_notification": "Invia notifica di test",
+      "test_notification_failed": "Impossibile inviare la notifica di test",
+      "test_notification_sent": "Notifica di test inviata",
       "title": "Informazioni di Debug",
       "user_agent": "UserAgent",
       "version": "Versione"
     },
+    "default_balance_currency": "Valuta predefinita del saldo",
     "download_app": "Scarica l'app",
     "download_app_details": {
       "download_as_pwa": "Puoi scaricare SplitPro come PWA sulla tua home screen.",
@@ -28,8 +33,14 @@
     },
     "download_splitpro_data": "Scarica i dati di SplitPro",
     "edit_name": {
+      "apply_avatar": "Applica avatar",
+      "avatar_label": "Foto del profilo",
+      "avatar_preview": "Anteprima avatar",
       "placeholder": "Inserisci il nome",
-      "title": "Modifica nome"
+      "remove_avatar": "Rimuovi avatar",
+      "select_avatar": "Seleziona l'immagine",
+      "title": "Modifica nome",
+      "zoom": "Zoom"
     },
     "follow_on_x": "Seguici su X",
     "import_from_splitwise": "Importa da Splitwise",
@@ -46,11 +57,11 @@
     "logout": "Esci",
     "messages": {
       "submit_error": "Invio del feedback fallito",
-      "submit_success": "Feedback inviato"
+      "submit_success": "Dettagli aggiornati"
     },
     "notifications": {
       "disable_notification": "Disabilita notifiche",
-      "enable_notification": "Abilita notifiche",
+      "enable_notification": "Abilita notifica",
       "messages": {
         "notification_granted": "Riceverai ora le notifiche"
       }
@@ -58,6 +69,10 @@
     "star_on_github": "Dacci una stella su GitHub",
     "submit_feedback": "Invia feedback",
     "submit_feedback_details": {
+      "messages": {
+        "submit_error": "Salvataggio fallito",
+        "submit_success": "Feedback inviato"
+      },
       "placeholder": "Inserisci il tuo feedback",
       "title": "Invia feedback"
     },
@@ -82,9 +97,19 @@
     "leave": "Abbandona",
     "next": "Avanti",
     "reconnect": "Riconnettiti",
+    "remind_later": "Ricordamelo più tardi",
     "save": "Salva",
     "settle_up": "Regola",
     "submit": "Invia"
+  },
+  "activity": {
+    "user_deleted_expense": "{actor, select, you {Hai eliminato {expense}} other {{user} ha eliminato {expense}}}",
+    "user_paid_for_expense": "{user} ha pagato {amount} per {expense}",
+    "user_received_for_expense": "{user} ha ricevuto {amount} per {expense}",
+    "you_paid_amount": "Hai pagato {amount}",
+    "you_paid_for_expense": "Hai pagato {amount} per {expense}",
+    "you_received_amount": "Hai ricevuto {amount}",
+    "you_received_for_expense": "Hai ricevuto {amount} per {expense}"
   },
   "actors": {
     "all": "Tutti",
@@ -109,6 +134,25 @@
     "submit": "Invia",
     "trouble_logging_in": "Problemi ad accedere? Contatta"
   },
+  "balance_list": {
+    "gets": "{receiverRole, select, you {Hai ricevuto {amount} da {payer}} other {{receiver} ha ricevuto {amount} da {payerRole, select, you {te} other {{payer}}}}}",
+    "pays": "{payerRole, select, you {Hai pagato {amount} a {receiver}} other {{payer} ha pagato {amount} a {receiverRole, select, you {te} other {{receiver}}}}}"
+  },
+  "balance_summary": {
+    "friend_owes_you": "{friend} ti deve {amount}",
+    "more": "{count, plural, one {# altro saldo} other {# altri saldi}}",
+    "you_owe_friend": "Devi {amount} a {friend}"
+  },
+  "balances": {
+    "default_split": {
+      "cleared": "Divisione predefinita rimossa",
+      "configure": "Divisione predefinita",
+      "updated": "Divisione predefinita aggiornata"
+    },
+    "user_preferences": {
+      "title": "Preferenze"
+    }
+  },
   "bank_transactions": {
     "choose_bank_provider": "Scegli il fornitore bancario",
     "no_bank_providers_found": "Nessun fornitore bancario trovato",
@@ -122,7 +166,9 @@
     "to_bank": "alla banca"
   },
   "currency_conversion": {
+    "amount_aria_label": "Importo",
     "amount_to_receive": "Importo da ricevere",
+    "converted_amount_aria_label": "Importo convertito",
     "description": "Converti l'importo in una valuta diversa.",
     "exchange_rate": "Tasso di cambio",
     "fetching_rate": "Recupero tasso...",
@@ -131,23 +177,32 @@
     "title": "Conversione valuta"
   },
   "errors": {
+    "add_member_failed": "Impossibile aggiungere il membro al gruppo",
     "currency_conversion_error": "Errore durante l'impostazione della conversione valuta",
     "currency_conversion_failed": "Impossibile convertire le valute",
     "currency_conversion_malformed": "I dati relativi alla conversione valutaria sono errati",
     "email_invalid": "L'e-mail non è valida, si prega di riprovare l'accesso.",
     "email_required": "Email richiesta",
+    "expense_deletion_failed": "Si è verificato un errore imprevisto durante l'eliminazione della spesa.",
+    "expense_submission_failed": "Si è verificato un errore imprevisto durante l'invio della spesa.",
     "feedback_min_length": "Il feedback deve contenere almeno 10 caratteri",
     "feedback_required": "Il feedback è obbligatorio",
+    "friend_deletion_failed": "Impossibile eliminare l'amico",
     "group_balances_malformed": "I dati relativi ai saldi di gruppo sono errati, segnalare il problema o provare a ricalcolarli.",
     "group_name_update_failed": "Errore nell'aggiornamento del nome del gruppo",
+    "image_compression_failed": "Compressione dell'immagine non riuscita, provo a caricare il file originale",
     "import_failed": "Errore durante l'importazione del file",
     "invalid_cron_expression": "Espressione cron non valida",
     "invalid_currency_code": "Codice valuta {code} non valido",
+    "invalid_split": "Prima di salvare, specifica chi deve sostenere questa spesa.",
+    "invite_email_failed": "Impossibile inviare l'e-mail di invito. Verificare la configurazione SMTP.",
     "language_change_failed": "Errore nel cambiare lingua",
-    "less_than": "Il file deve essere più piccolo di",
+    "less_than": "Il file deve essere più piccolo di {size}MB",
     "name_required": "Il nome è obbligatorio",
     "no_providers": "Errore durante lo scaricamento dei provider di autenticazione. Per favore controllare i log backend.",
     "notification_not_supported": "Le notifiche non sono supportate",
+    "notification_request_failed": "Errore durante la richiesta di autorizzazione alle notifiche",
+    "notification_subscribe_failed": "Impossibile iscriversi alle notifiche",
     "otp_invalid": "OTP non valido",
     "otp_required": "OTP richiesto",
     "recurrence_delete_failed": "Impossibile eliminare la ricorrenza",
@@ -156,6 +211,7 @@
     "saving_expense": "Errore durante il salvataggio della spesa",
     "setting_update_failed": "Errore nell'aggiornamento dell'impostazione",
     "signin_error": "Si è verificato un errore durante l'accesso: {error}",
+    "signin_failed": "Accesso non riuscito. Riprova.",
     "signup_disabled": "La registrazione di nuovi account è disabilitata in questa istanza",
     "something_went_wrong": "Qualcosa è andato storto",
     "subscribe_error": "Impossibile attivare le notifiche",
@@ -174,13 +230,21 @@
       "pick_a_date": "Scegli una data",
       "select_user_or_group": {
         "add_to_split_pro": "Aggiungi a Split Pro",
+        "empty_image_alt": "Nessun utente trovato",
         "note": "Nota: l'invio di inviti è disabilitato per ora a causa dello spam",
         "only_one_group_time": "Puoi operare su un solo gruppo alla volta",
         "send_invite": "Invia invito all'utente",
         "warning": "Attenzione: non usare \"Invia invito\" se l'email non è valida. Usa invece \"Aggiungi a Split Pro\". Il tuo account verrà bloccato se questa funzione viene utilizzata in modo improprio"
       },
       "split_type_section": {
+        "direction": {
+          "no_money_flow": "Nessun altro deve nulla",
+          "owes_payer": "{debtor} deve a {payer}",
+          "owes_you": "{debtor} ti deve",
+          "you_owe": "Devi a {payer}"
+        },
         "split_equally": "diviso equamente",
+        "split_equally_with_count": "diviso equamente tra {count, plural, one {# persona} other {# persone}}",
         "split_unequally": "diviso non equamente",
         "types": {
           "adjustment": {
@@ -223,7 +287,10 @@
     "balance_list": {
       "are_settled_up": "siete pari",
       "is_settled_up": "è pari",
-      "press_balance_info": "Premi sul saldo individuale per avviare il regolamento"
+      "lent": "{actor, select, you {Hai prestato} other {{person} ha prestato}}",
+      "owes": "{actor, select, you {Devi} other {{person} deve}}",
+      "press_balance_info": "Premi sul saldo individuale per avviare il regolamento",
+      "settled": "{actor, select, you {Hai saldato tutti i conti} other {{person} ha saldato tutti i conti}}"
     },
     "bank_transactions": "Transazioni bancarie",
     "clear": "Pulisci",
@@ -231,6 +298,7 @@
       "text": "Questa azione non può essere annullata. La spesa verrà eliminata definitivamente.",
       "title": "Sei sicuro di voler eliminare questa spesa?"
     },
+    "empty_state_image_alt": "Nessuna spesa",
     "multiple_transactions": {
       "add_all": "Aggiungi tutto",
       "add_one_by_one": "Aggiungi uno alla volta",
@@ -239,9 +307,38 @@
     },
     "no_transactions_yet": "Nessuna transazione ancora",
     "pending": "In sospeso",
+    "receipt": {
+      "image_alt": "Ricevuta",
+      "thumbnail_alt": "Miniatura ricevuta",
+      "title": "Ricevuta"
+    },
     "submit_all": "Invia tutto",
     "title": "Aggiungi spesa",
     "title_mobile": "Aggiungi"
+  },
+  "expense_list": {
+    "conversion_for_users": "Conversione di valuta per {payerRole, select, you {te} other {{payer}}} e {receiverRole, select, you {te} other {{receiver}}}",
+    "settlement": "{payerRole, select, you {Hai pagato {amount} a {receiver}} other {{receiverRole, select, you {{payer} ti ha pagato {amount}} other {{payer} ha pagato {amount} a {receiver}}}}}",
+    "user_paid": "{actor, select, you {Hai pagato {amount}} other {{user} ha pagato {amount}}}",
+    "user_received": "{actor, select, you {Hai ricevuto {amount}} other {{user} ha ricevuto {amount}}}"
+  },
+  "expense_metadata": {
+    "added_by": "{actor, select, you {Aggiunta da te il {date}} other {Aggiunta da {user} il {date}}}",
+    "deleted_by": "{actor, select, you {Eliminata da te il {date}} other {Eliminata da {user} il {date}}}",
+    "edited_by": "{actor, select, you {Modificato da te il {date}} other {Modificato da {user} il {date}}}"
+  },
+  "expense_participant": {
+    "gets": "{actor, select, you {<person/> hai ricevuto <amount/>} other {<person/> ha ricevuto <amount/>}}",
+    "owes": "{actor, select, you {<person/> devi <amount/>} other {<person/> deve <amount/>}}",
+    "paid": "<person/> ha pagato <amount/>",
+    "received": "<person/> ha ricevuto <amount/>"
+  },
+  "friend": {
+    "delete_confirmation": {
+      "description": "Vuoi davvero continuare?",
+      "outstanding_balance": "Non è possibile rimuovere un amico che ha dei conti in sospeso. Regola prima il conto.",
+      "title": "Ne sei assolutamente sicuro?"
+    }
   },
   "group_details": {
     "add_members": "Aggiungi membri",
@@ -259,12 +356,16 @@
         "title": "Sei sicuro di voler archiviare questo gruppo?"
       },
       "archived": "Archiviato",
+      "configure_default_split": "Configura la divisione predefinita",
+      "default_balance_currency": "Valuta predefinita del saldo",
+      "default_split": "Divisione predefinita",
       "delete_group": "Elimina gruppo",
       "delete_group_details": {
         "can_delete": "L'azione non sarà reversibile",
         "cant_delete": "Non è possibile eliminare il gruppo finché tutti non saldano il saldo",
         "title": "Sei assolutamente sicuro?"
       },
+      "edit_group": "Modifica gruppo",
       "group_created": "Creazione gruppo",
       "leave_group": "Abbandona gruppo",
       "leave_group_details": {
@@ -293,6 +394,10 @@
     },
     "messages": {
       "balances_recalculated": "Saldi ricalcolati con successo",
+      "default_balance_currency_cleared": "Valuta predefinita del saldo rimossa",
+      "default_balance_currency_updated": "Valuta predefinita del saldo aggiornata",
+      "default_split_cleared": "Divisione predefinita azzerata",
+      "default_split_updated": "Divisione predefinita aggiornata",
       "group_archived": "Gruppo archiviato con successo",
       "group_name_updated": "Nome del gruppo aggiornato"
     },
@@ -336,6 +441,12 @@
     "groups": "Gruppi",
     "recurring": "Ricorrente"
   },
+  "notifications": {
+    "enable_description": "Non perderti gli eventi importanti. Iscriviti per ricevere notifiche quando vengono aggiunte o aggiornate delle spese.",
+    "enable_title": "Abilita notifiche",
+    "permission_granted": "Da ora in poi riceverai delle notifiche",
+    "subscribe": "Iscriviti"
+  },
   "recurrence": {
     "cron_expression": "Espressione Cron",
     "days_of_month": "Giorni del mese",
@@ -366,6 +477,7 @@
     "template_edit_warning": "Questa è una spesa ricorrente modello. Le modifiche si applicheranno a tutte le future spese ricorrenti.",
     "time_of_day": "Ora del giorno",
     "title": "Ricorrenza",
+    "toggle_options": "Attiva/disattiva le opzioni per le spese ricorrenti",
     "view_recurring_page": "Visualizza pagina ricorrenze"
   },
   "ui": {
@@ -380,7 +492,22 @@
       "for": "per",
       "from": "da",
       "paid_by": "Pagato da",
+      "payer": {
+        "current_user": "Tu"
+      },
       "received_by": "Ricevuto da",
+      "recipient": {
+        "current_user": "Tu"
+      },
+      "statements": {
+        "user_pays_user": "{payer} paga {receiver}",
+        "user_pays_you": "{user} ti ha pagato",
+        "you_lent": "Hai prestato",
+        "you_lent_amount": "Hai prestato {amount}",
+        "you_owe": "Devi",
+        "you_owe_amount": "Devi {amount}",
+        "you_pay_user": "Hai pagato {user}"
+      },
       "to": "a",
       "user": {
         "deleted": "ha eliminato",
@@ -417,6 +544,7 @@
     "share_text": "Dai un'occhiata a SplitPro. È un'alternativa gratuita e open source a Splitwise",
     "show_all_currencies": "Mostra tutte le valute",
     "today": "Oggi",
-    "total_balance": "Saldo totale"
+    "total_balance": "Saldo totale",
+    "transfer": "{senderRole, select, you {Paghi {receiver}} other {{receiverRole, select, you {{sender} ti paga} other {{sender} paga {receiver}}}}}"
   }
 }

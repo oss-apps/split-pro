@@ -31,9 +31,7 @@ jest.mock('~/server/service-notification', () => ({
 }));
 
 const mockCreateTransport = jest.mocked(nodemailer.createTransport);
-const mockSendMail = jest.mocked(
-  mockCreateTransport({} as Parameters<typeof nodemailer.createTransport>[0]).sendMail,
-);
+const mockSendMail = jest.mocked(mockCreateTransport.mock.results[0]?.value.sendMail);
 const mockSendToDiscord = jest.mocked(sendToDiscord);
 
 const mockSentMessageInfo = {

@@ -36,7 +36,7 @@
                 --add-flags "$out/lib/pnpm/bin/pnpx.cjs"
             '';
           };
-          # npm downloads standard Linux binaries (Prisma, SWC, tsgo, oxlint, etc.).
+          # npm downloads standard Linux binaries (Prisma, SWC, tsc, oxlint, etc.).
           # Run Node commands in an FHS environment instead of modifying node_modules
           # or substituting a different version of Prisma's engines.
           runtime = pkgs.buildFHSEnv {

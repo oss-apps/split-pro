@@ -66,7 +66,7 @@ The development branch is <code>main</code>. All pull requests should be made ag
 The flake supports x86_64 and aarch64 Linux, including NixOS. It provides Node.js 22,
 pnpm 10.11.0, PostgreSQL 18 with `pg_cron`, Git, OpenSSL, and `nixfmt`.
 Node and pnpm run in an FHS runtime so the project's native npm dependencies
-(including Prisma, Next.js, oxlint, and `tsgo`) work without patching `node_modules`.
+(including Prisma, Next.js, oxlint, and `tsc`) work without patching `node_modules`.
 The runtime requires unprivileged user namespaces, as used by Bubblewrap.
 
 1. Install Nix with the `nix-command` and `flakes` experimental features enabled.
@@ -119,7 +119,7 @@ pnpm db:dev
 pnpm db:studio
 pnpm prettier --check .
 pnpm lint
-pnpm tsgo --noEmit
+pnpm tsc --noEmit
 pnpm test
 pnpm build
 ```

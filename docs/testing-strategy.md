@@ -10,7 +10,7 @@ PostgreSQL with the same launcher used locally.
 | ---------------------------- | ------------------------------------------------------------------------- |
 | Formatting                   | `pnpm prettier --check .`                                                 |
 | Lint                         | `pnpm lint`                                                               |
-| Types                        | `pnpm tsgo --noEmit`                                                      |
+| Types                        | `pnpm tsc --noEmit`                                                       |
 | Unit/component tests         | `pnpm test`                                                               |
 | One unit file                | `pnpm test src/tests/simplify.test.ts`                                    |
 | Prepare integration database | `pnpm test:db:up`                                                         |

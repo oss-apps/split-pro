@@ -51,7 +51,7 @@ pnpm test -- -t "test name pattern"    # Run tests matching pattern
 pnpm lint                    # Run oxlint with type-aware checking
 pnpm prettier --write .      # Format all files
 pnpm prettier --check .      # Check formatting without changes
-pnpm tsgo --noEmit           # Type check (used in pre-commit)
+pnpm tsc --noEmit           # Type check (used in pre-commit)
 ```
 
 ### Building
@@ -64,7 +64,7 @@ pnpm build         # Build for production
 
 1. `pnpm prettier --check .` - Format check
 2. `pnpm lint` - Linting
-3. `pnpm tsgo --noEmit` - Type checking
+3. `pnpm tsc --noEmit` - Type checking
 4. `pnpm test` - Unit tests
 5. `pnpm build --no-lint` - Build verification
 
@@ -319,13 +319,13 @@ Husky runs on commit:
 1. Prettier formatting
 2. oxlint with auto-fix
 3. Prisma format (for .prisma files)
-4. Type checking with tsgo
+4. Type checking with tsc
 
 Override with `git commit --no-verify` if needed.
 
 ## Testing Harness Workflow
 
-Keep the fast checks (`pnpm prettier --check .`, `pnpm lint`, `pnpm tsgo --noEmit`,
+Keep the fast checks (`pnpm prettier --check .`, `pnpm lint`, `pnpm tsc --noEmit`,
 `pnpm test`, and `pnpm build --no-lint`) independent from the disposable database and
 browser jobs. CI runs PostgreSQL integration tests with `pnpm test:integration` and Chromium
 E2E tests with `pnpm exec playwright test --project=chromium` in separate jobs.

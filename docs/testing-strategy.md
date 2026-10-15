@@ -27,6 +27,59 @@ PostgreSQL with the same launcher used locally.
 Pass arguments directly to pnpm scripts: an extra `--` is forwarded to Playwright and stops
 option parsing. `pnpm test:e2e --list` lists tests without starting a server.
 
+## Production Docker Compose tests
+
+```bash
+pnpm test:docker                  # Build this checkout and run smoke checks
+pnpm test:docker --e2e            # Also run the existing Chromium suite against the image
+pnpm test:docker --image ossapps/splitpro:latest
+pnpm test:docker --timeout 300    # Allow slower container startup (seconds per startup)
+```
+
+Smoke-only runs also work without local Node dependencies:
+`bash scripts/test-production-compose.sh`. Both forms work inside or outside `nix develop`.
+Install Docker with Compose 2.24.4+ and curl, and ensure the current user can access a running
+Docker daemon. E2E additionally requires `pnpm install --frozen-lockfile` and Chromium installed
+with `pnpm exec playwright install chromium` (CI uses `--with-deps`).
+
+Both repository images are built: the app's `Dockerfile` and `docker/postgres/Dockerfile`.
+PostgreSQL build arguments are derived from the production Compose image tag, so the test
+uses its configured version rather than the database Dockerfile's default arguments.
+`--image` replaces only the app build with a pulled image; the database is still built locally.
+
+The script layers `docker/test/production.override.yml` over the actual production Compose
+file. It uses generated configuration, unique project/container names, fresh named volumes,
+and dynamic loopback-only ports. It does not load the checkout's `.env` into the stack or
+inherit application/Compose environment overrides. Production Compose explicitly binds the
+app to `0.0.0.0` and probes IPv4 loopback so health checks and published ports reach the app.
+Docker connection settings are preserved. No development database is used.
+
+Checks cover production health checks, HTTP liveness/readiness, the sign-in page and a
+referenced static asset, all bundled SQL migration records, application schema-version
+initialization, and `pg_cron` installation/configuration. The script writes database and upload
+sentinels, removes and recreates both containers with the same volumes, then checks health,
+migrations, and persistence again. The image's normal startup applies migrations; the harness
+does not pre-apply them. The generated OAuth configuration is a placeholder; external provider
+login is not exercised.
+
+With `--e2e`, the script points Playwright at the production server and exposes only this
+stack's disposable `_test` database on a loopback port for the existing scenario/session
+fixtures. `E2E_EXTERNAL_SERVER=1` skips Playwright's development server and requires explicit
+`E2E_BASE_URL` and `E2E_DATABASE_URL`. The production container keeps normal environment
+validation and does not enable `TEST_MODE`. Use images from the same revision as the checkout
+for E2E, since fixtures depend on its database schema and API; smoke-only mode can test other
+published releases.
+
+Containers, networks, volumes, temporary configuration, and locally built image tags are
+removed on exit, including failures and interrupt/termination signals. Logs and health-state
+diagnostics remain in `test-results/production-compose/<unique-project>/`. Browser failures
+also retain the existing Playwright artifacts. Parallel smoke runs use separate resources;
+run E2E in separate worktrees to avoid sharing Playwright output directories.
+
+The **Production Compose Tests** workflow runs smoke checks and Chromium E2E on pull requests
+and pushes to `main`. Manual dispatch accepts an optional image and an E2E toggle. Failure
+artifacts include Compose logs, container health states, and Playwright reports/traces.
+
 ## Local databases and worktrees
 
 The launchers create separate PostgreSQL instances with `pg_cron` preloaded and its database

@@ -523,7 +523,7 @@ export async function importGroupFromSplitwise(
     .filter((g) => null !== g)
     .map((group) => {
       const groupmembers = group.members.map((member) => ({
-        userId: userMap[member.email.toString()]!.id,
+        userId: userMap[member.email]!.id,
       }));
 
       return db.group.create({

@@ -1,6 +1,5 @@
 import { defaultCache } from '@serwist/turbopack/worker';
-import type { PrecacheEntry, SerwistGlobalConfig } from 'serwist';
-import { Serwist } from 'serwist';
+import { type PrecacheEntry, Serwist, type SerwistGlobalConfig } from 'serwist';
 
 import { type PushMessage } from '~/types';
 

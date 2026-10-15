@@ -216,7 +216,7 @@ export const AddOrEditExpensePage: React.FC<{
 
   const handleDescriptionChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setDescription(e.target.value.toString() ?? '');
+      setDescription(e.target.value ?? '');
     },
     [setDescription],
   );

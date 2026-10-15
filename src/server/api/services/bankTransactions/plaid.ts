@@ -1,15 +1,12 @@
 import { TRPCError } from '@trpc/server';
 import { format, subDays } from 'date-fns';
-import {
-  Configuration,
-  CountryCode,
-  PlaidApi,
-  PlaidEnvironments,
-  Products,
-  type Transaction,
-} from 'plaid';
+import { Configuration, PlaidApi, PlaidEnvironments, Products, type Transaction } from 'plaid';
 import { env } from '~/env';
 import { db } from '~/server/db';
+import {
+  parseCachedTransactionOutput,
+  parsePlaidCountryCodes,
+} from '~/server/api/services/bankTransactions/parsers';
 import type { TransactionOutput, TransactionOutputItem } from '~/types/bank.types';
 
 abstract class AbstractBankProvider {
@@ -91,7 +88,7 @@ export class PlaidService extends AbstractBankProvider {
 
       const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
       if (cachedData.lastFetched > twentyFourHoursAgo) {
-        return JSON.parse(cachedData.data) as TransactionOutput;
+        return parseCachedTransactionOutput(cachedData.data);
       }
     }
 
@@ -140,9 +137,7 @@ export class PlaidService extends AbstractBankProvider {
       },
       client_name: 'Split Pro',
       products: [Products.Transactions],
-      country_codes: env.PLAID_COUNTRY_CODES
-        ? (env.PLAID_COUNTRY_CODES.split(',') as CountryCode[])
-        : [CountryCode.Us],
+      country_codes: parsePlaidCountryCodes(env.PLAID_COUNTRY_CODES),
       language: preferredLanguage?.toLowerCase() ?? PLAID_CONSTANTS.DEFAULT_LANGUAGE,
     });
 
@@ -179,9 +174,7 @@ export class PlaidService extends AbstractBankProvider {
 
   async getInstitutions() {
     const response = await this.client.institutionsGet({
-      country_codes: env.PLAID_COUNTRY_CODES
-        ? (env.PLAID_COUNTRY_CODES.split(',') as CountryCode[])
-        : [CountryCode.Us],
+      country_codes: parsePlaidCountryCodes(env.PLAID_COUNTRY_CODES),
       count: 500,
       offset: 0,
     });

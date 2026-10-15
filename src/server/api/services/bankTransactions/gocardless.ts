@@ -5,6 +5,7 @@ import { format, subDays } from 'date-fns';
 import NordigenClient, { type Transaction } from 'nordigen-node';
 import { env } from '~/env';
 import { db } from '~/server/db';
+import { parseCachedTransactionOutput } from '~/server/api/services/bankTransactions/parsers';
 import type { TransactionOutput, TransactionOutputItem } from '~/types/bank.types';
 
 abstract class AbstractBankProvider {
@@ -78,7 +79,7 @@ export class GoCardlessService extends AbstractBankProvider {
 
       const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
       if (cachedData.lastFetched > twentyFourHoursAgo) {
-        return JSON.parse(cachedData.data) as TransactionOutput;
+        return parseCachedTransactionOutput(cachedData.data);
       }
     }
 

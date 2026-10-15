@@ -69,7 +69,7 @@
     "next-auth": "^4.24.15",
     "next-i18next": "^16.3.1",
     "next-themes": "^0.4.6",
-    "nodemailer": "^10.0.6",
+    "nodemailer": "^10.1.1",
     "nordigen-node": "^1.4.1",
     "plaid": "^38.1.0",
     "radix-ui": "^1.4.2",
@@ -104,8 +104,8 @@
     "babel-plugin-react-compiler": "^1.0.0",
     "esbuild": "^0.25.12",
     "husky": "^9.1.7",
-    "jest": "30.3.0",
-    "jest-environment-jsdom": "30.3.0",
+    "jest": "30.5.2",
+    "jest-environment-jsdom": "30.5.2",
     "jiti": "^2.5.1",
     "lint-staged": "^16.4.0",
     "oxlint": "1.88.0",
@@ -137,7 +137,8 @@
       "esbuild",
       "prisma",
       "sharp",
-      "unrs-resolver"
+      "unrs-resolver",
+      "@parcel/watcher"
     ]
   }
 }

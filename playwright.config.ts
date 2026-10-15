@@ -5,10 +5,6 @@ import { loadTestEnvironment } from './src/tests/helpers/environment';
 
 loadTestEnvironment();
 const baseURL = process.env.E2E_BASE_URL ?? 'http://127.0.0.1:3176';
-const serverMode = process.env.E2E_SERVER_MODE ?? 'development';
-if (!['development', 'production'].includes(serverMode)) {
-  throw new Error('E2E_SERVER_MODE must be development or production');
-}
 const url = new URL(baseURL);
 if ('http:' !== url.protocol || !['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)) {
   throw new Error('E2E_BASE_URL must point at a local HTTP test server');
@@ -45,13 +41,10 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium' }],
   webServer: {
-    command: `pnpm exec next ${'production' === serverMode ? 'start' : 'dev'} --hostname ${url.hostname.replaceAll('[', '').replaceAll(']', '')} --port ${Number(url.port) || 80}`,
+    command: `pnpm dev --hostname ${url.hostname.replaceAll('[', '').replaceAll(']', '')} --port ${Number(url.port) || 80}`,
     url: baseURL,
     reuseExistingServer: false,
     timeout: 120_000,
-    env: {
-      ...testEnvironment,
-      NODE_ENV: 'production' === serverMode ? 'production' : 'test',
-    },
+    env: testEnvironment,
   },
 });

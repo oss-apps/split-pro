@@ -27,11 +27,6 @@ PostgreSQL with the same launcher used locally.
 Pass arguments directly to pnpm scripts: an extra `--` is forwarded to Playwright and stops
 option parsing. `pnpm test:e2e --list` lists tests without starting a server.
 
-To test the compiler-transformed production application, first run `pnpm build`, then
-`E2E_SERVER_MODE=production pnpm test:e2e --project=chromium`. This uses the same disposable
-database and isolated scenarios but starts `next start` instead of the development server.
-Rebuild after application changes. Development mode remains the default.
-
 ## Local databases and worktrees
 
 The launchers create separate PostgreSQL instances with `pg_cron` preloaded and its database

@@ -62,16 +62,27 @@ pnpm test
 pnpm build
 ```
 
-To exercise compiler-transformed production UI against a disposable browser database:
+Run browser scenarios against the development server and a disposable browser database:
 
 ```bash
 pnpm test:e2e:db:up
-E2E_SERVER_MODE=production pnpm test:e2e --project=chromium
+pnpm test:e2e --project=chromium
 pnpm test:e2e:db:down
 ```
 
-Production browser mode uses the already-built application and the same isolated test
-scenarios as development mode. Rebuild after application changes before running it.
-The default remains development mode. The dependency-update-era development run currently
-fails on missing icon-module factories; production mode passes the existing scenarios.
-That development regression remains a separate issue and is not attributed to this migration.
+During migration verification, seven browser scenarios passed against a production build
+using a temporary production-server configuration. The standard development-server run
+failed on missing icon-module factories introduced during the dependency updates. The
+production-server option was subsequently removed.
+
+The missing factories match the Next.js 16.4 Pages Router development graph regression
+tracked in [Next.js #99789](https://github.com/vercel/next.js/issues/99789). Next.js is pinned
+to **16.3.8**, the preceding stable minor release, and all seven standard development-server
+scenarios pass with that version. React Compiler, Serwist, and the existing icon imports
+remain enabled. [The upstream graph fix](https://github.com/vercel/next.js/pull/98823) is
+available in canary releases; revisit the pin when a fixed stable release is published.
+
+The downgrade keeps Next.js's image optimizer on `sharp@0.35.5`, which includes the fix
+for [GHSA-2464-fhr4-w9xw](https://github.com/vercel/next.js/security/advisories/GHSA-2464-fhr4-w9xw).
+The application has no Server Actions or `use cache` functions. Reassess the downgrade
+before adopting those features because the 16.3 release line lacks the related 16.4.1 fixes.

@@ -1,5 +1,6 @@
 import { SplitType } from '@prisma/client';
 import { isCurrencyCode } from '~/lib/currency';
+import { SubscriptionEndpointSchema } from '~/types/notifications';
 import { type PushMessage } from '~/types';
 
 import { db } from '~/server/db';
@@ -8,15 +9,12 @@ import { getCurrencyHelpers } from '~/utils/numbers';
 
 export const getSubscriptionEndpoint = (subscription: string) => {
   try {
-    const parsed = JSON.parse(subscription) as { endpoint?: string };
-    if ('string' === typeof parsed.endpoint && '' !== parsed.endpoint) {
-      return parsed.endpoint;
-    }
+    const parsed: unknown = JSON.parse(subscription);
+    const validated = SubscriptionEndpointSchema.safeParse(parsed);
+    return validated.success ? validated.data.endpoint : null;
   } catch {
     return null;
   }
-
-  return null;
 };
 
 const removeStalePushSubscriptions = async (

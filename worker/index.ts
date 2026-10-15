@@ -1,7 +1,7 @@
 import { defaultCache } from '@serwist/turbopack/worker';
 import { type PrecacheEntry, Serwist, type SerwistGlobalConfig } from 'serwist';
 
-import { type PushMessage } from '~/types';
+import { getNotificationUrl, parsePushMessageJson } from '~/types/notifications';
 
 // This declares the value of `injectionPoint` to TypeScript.
 // `injectionPoint` is the string that will be replaced by the
@@ -25,7 +25,13 @@ const serwist = new Serwist({
 });
 
 self.addEventListener('push', (event) => {
-  const { title, message, data } = JSON.parse(event?.data?.text() ?? '{}') as PushMessage;
+  const result = parsePushMessageJson(event?.data?.text() ?? '{}');
+  if (!result?.success) {
+    console.warn('Ignoring invalid push notification payload');
+    return;
+  }
+
+  const { title, message, data } = result.data;
   event.waitUntil(
     self.registration.showNotification(title, {
       body: message,
@@ -41,8 +47,7 @@ self.addEventListener('notificationclick', (event) => {
     (async () => {
       const clientList = await self.clients.matchAll({ type: 'window' });
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const url = (event.notification.data?.url as string) ?? '/';
+      const url = getNotificationUrl(event.notification.data);
 
       const matchingClient = clientList.find((client) => client.focused) ?? clientList[0];
 

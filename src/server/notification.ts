@@ -2,6 +2,7 @@
 import webpush from 'web-push';
 
 import { env } from '~/env';
+import { PushMessageSchema, PushSubscriptionSchema } from '~/types/notifications';
 import { type PushMessage } from '~/types';
 
 if (env.WEB_PUSH_EMAIL && env.WEB_PUSH_PUBLIC_KEY && env.WEB_PUSH_PRIVATE_KEY) {
@@ -14,8 +15,21 @@ if (env.WEB_PUSH_EMAIL && env.WEB_PUSH_PUBLIC_KEY && env.WEB_PUSH_PRIVATE_KEY) {
 
 export async function pushNotification(subscription: string, message: PushMessage) {
   try {
-    const subscriptionData = JSON.parse(subscription) as webpush.PushSubscription;
-    const response = await webpush.sendNotification(subscriptionData, JSON.stringify(message));
+    const parsedSubscription: unknown = JSON.parse(subscription);
+    const validatedSubscription = PushSubscriptionSchema.safeParse(parsedSubscription);
+    if (!validatedSubscription.success) {
+      throw new Error('Invalid push subscription');
+    }
+
+    const validatedMessage = PushMessageSchema.safeParse(message);
+    if (!validatedMessage.success) {
+      throw new Error('Invalid push message');
+    }
+
+    const response = await webpush.sendNotification(
+      validatedSubscription.data,
+      JSON.stringify(validatedMessage.data),
+    );
     console.log('Push notification response', response);
     return { ok: true } as const;
   } catch (error) {

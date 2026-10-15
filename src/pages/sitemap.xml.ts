@@ -54,7 +54,9 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   };
 };
 
-export default function Sitemap() {
+const Sitemap = () => {
   // This page is only used to generate the sitemap.xml
   return null;
-}
+};
+
+export default Sitemap;

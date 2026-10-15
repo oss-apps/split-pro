@@ -7,7 +7,7 @@ import { GeneralPicker } from '../GeneralPicker';
 import { Button } from '../ui/button';
 import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
 
-function CurrencyPickerInner({
+const CurrencyPickerInner = ({
   className,
   currentCurrency,
   onCurrencyPick,
@@ -17,7 +17,7 @@ function CurrencyPickerInner({
   currentCurrency?: CurrencyCode | null;
   onCurrencyPick: (currency: CurrencyCode | null) => void;
   allowClear?: boolean;
-}) {
+}) => {
   const { t, getCurrencyName } = useTranslationWithUtils(['currencies']);
   const { recentCurrencies, addToRecentCurrencies } = useCurrencyPreferenceStore();
 
@@ -126,6 +126,6 @@ function CurrencyPickerInner({
       render={renderCurrencyItem}
     />
   );
-}
+};
 
 export const CurrencyPicker = memo(CurrencyPickerInner);

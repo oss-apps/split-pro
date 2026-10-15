@@ -14,7 +14,7 @@ import {
 
 export const useTranslationWithUtils = (
   namespaces?: string[] | string,
-): ReturnType<typeof useTranslation> & {
+): Pick<ReturnType<typeof useTranslation>, 't' | 'i18n' | 'ready'> & {
   displayName: typeof displayName;
   generateSplitDescription: typeof generateSplitDescription;
   toUIDate: typeof toUIDate;
@@ -61,10 +61,11 @@ export const useTranslationWithUtils = (
     [context, translation.i18n.language],
   );
 
-  // @ts-ignore
   return useMemo(
     () => ({
-      ...translation,
+      t: translation.t,
+      i18n: translation.i18n,
+      ready: translation.ready,
       displayName,
       generateSplitDescription,
       toUIDate,

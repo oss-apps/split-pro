@@ -69,14 +69,14 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
     await groupForm.handleSubmit(onGroupSubmit)();
   }, [groupForm, onGroupSubmit]);
 
-  const field = useCallback(
-    ({ field }: any) => (
+  const renderField = useCallback(
+    ({ field: formField }: any) => (
       <FormItem className="w-full">
         <FormControl>
           <Input
             placeholder={t('group_details.create_group.group_name_placeholder')}
             className="w-full py-2 text-lg"
-            {...field}
+            {...formField}
           />
         </FormControl>
         <FormMessage />
@@ -110,7 +110,7 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
               className="mt-4 flex w-full items-start gap-4"
             >
               <Avatar size={50} name={groupName} variant="bauhaus" colors={avatarColors} />
-              <FormField control={groupForm.control} name="name" render={field} />
+              <FormField control={groupForm.control} name="name" render={renderField} />
             </form>
           </Form>
         </div>

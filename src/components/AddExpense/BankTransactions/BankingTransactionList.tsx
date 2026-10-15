@@ -128,9 +128,9 @@ export const BankingTransactionList: React.FC<{
   );
 
   const setOpenClose = useCallback(
-    (open: boolean) => {
-      setOpen(open);
-      if (!open) {
+    (nextOpen: boolean) => {
+      setOpen(nextOpen);
+      if (!nextOpen) {
         setMultipleTransactions([]);
       }
     },

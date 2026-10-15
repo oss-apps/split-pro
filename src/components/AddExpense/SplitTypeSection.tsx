@@ -140,8 +140,8 @@ export const SplitExpenseForm: React.FC<
     >
       <Tabs value={activeSplitType} className="mx-auto mt-5 w-full" onValueChange={onTabChange}>
         <TabsList className="w-full justify-between">
-          {splitProps.map(({ splitType, iconComponent: Icon }) => (
-            <TabsTrigger key={splitType} value={splitType} className="text-xs">
+          {splitProps.map(({ splitType: itemSplitType, iconComponent: Icon }) => (
+            <TabsTrigger key={itemSplitType} value={itemSplitType} className="text-xs">
               <Icon className="h-5 w-5" />
             </TabsTrigger>
           ))}

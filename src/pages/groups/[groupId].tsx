@@ -242,23 +242,23 @@ const BalancePage: NextPageWithUser<{
                       ) : (
                         isAdmin &&
                         (() => {
-                          const canLeave = !groupDetailQuery.data?.groupBalances.find(
+                          const canLeaveMember = !groupDetailQuery.data?.groupBalances.find(
                             (b) => 0n !== b.amount && b.userId === groupUser.userId,
                           );
 
                           return (
                             <SimpleConfirmationDialog
                               title={
-                                canLeave
+                                canLeaveMember
                                   ? t('group_details.group_info.remove_member_details.title')
                                   : ''
                               }
                               description={
-                                canLeave
+                                canLeaveMember
                                   ? t('group_details.group_info.remove_member_details.can_remove')
                                   : t('group_details.group_info.remove_member_details.cant_remove')
                               }
-                              hasPermission={canLeave}
+                              hasPermission={canLeaveMember}
                               onConfirm={() => onGroupLeave(groupUser.userId)}
                               loading={leaveGroupMutation.isPending}
                               variant="destructive"

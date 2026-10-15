@@ -1,6 +1,6 @@
 import type { BalanceView, User } from '@prisma/client';
 import { clsx } from 'clsx';
-import { type ComponentProps, Fragment, useCallback, useMemo } from 'react';
+import { type ComponentProps, Fragment, useMemo } from 'react';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { api } from '~/utils/api';
 import { BigMath } from '~/utils/numbers';

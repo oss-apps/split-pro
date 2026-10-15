@@ -166,7 +166,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             </div>
             {usersWithBalance.length ? (
               <div className="mt-4 flex flex-col gap-3">
-                {usersWithBalance.map((user, index) => (
+                {usersWithBalance.map((user, userIndex) => (
                   <div key={user.id} className="">
                     <div key={user.id} className="flex items-center justify-between gap-4">
                       <div className="flex shrink-0 items-center gap-2">
@@ -198,7 +198,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                       </div>
                     </div>
                     <div className="mt-3">
-                      {index !== usersWithBalance.length - 1 ? <Separator /> : null}
+                      {userIndex !== usersWithBalance.length - 1 ? <Separator /> : null}
                     </div>
                   </div>
                 ))}

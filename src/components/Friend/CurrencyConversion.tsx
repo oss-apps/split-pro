@@ -137,14 +137,14 @@ export const CurrencyConversion: React.FC<{
   }, []);
 
   const onChangeTargetCurrency = useCallback(
-    (currency: CurrencyCode | null) => {
-      if (!currency) {
+    (nextCurrency: CurrencyCode | null) => {
+      if (!nextCurrency) {
         return;
       }
 
       setRate('');
-      setTargetCurrency(currency);
-      setCurrency(currency);
+      setTargetCurrency(nextCurrency);
+      setCurrency(nextCurrency);
     },
     [setCurrency],
   );
@@ -152,13 +152,13 @@ export const CurrencyConversion: React.FC<{
   const onChangeTargetAmount = useCallback(
     ({ bigIntValue }: { strValue?: string; bigIntValue?: bigint }) => {
       if (bigIntValue !== undefined && isCurrencyCode(currency)) {
-        const amount = currencyConversion({
+        const convertedAmount = currencyConversion({
           amount: bigIntValue ?? 0n,
           rate: 1 / Number(rate),
           from: targetCurrency,
           to: currency,
         });
-        setAmountStr(toUIString(amount, false, true));
+        setAmountStr(toUIString(convertedAmount, false, true));
       }
     },
     [rate, toUIString, targetCurrency, currency],

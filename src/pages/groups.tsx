@@ -21,7 +21,7 @@ import { isCurrencyCode } from '~/lib/currency';
 // Helper to transform balances object to array format
 function transformBalances(balances: Record<string, bigint>) {
   return Object.entries(balances)
-    .filter(([_, amount]) => 0n !== amount)
+    .filter(([, amount]) => 0n !== amount)
     .map(([currency, amount]) => ({ currency, amount }));
 }
 

@@ -236,11 +236,15 @@ export const UpdateName: React.FC<{
     setCroppedAreaPixels(null);
   }, [detailForm, imageSrc]);
 
-  const field = useCallback(
-    ({ field }: any) => (
+  const renderField = useCallback(
+    ({ field: formField }: any) => (
       <FormItem className="w-full">
         <FormControl>
-          <Input className="text-lg" placeholder={t('account.edit_name.placeholder')} {...field} />
+          <Input
+            className="text-lg"
+            placeholder={t('account.edit_name.placeholder')}
+            {...formField}
+          />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -323,7 +327,7 @@ export const UpdateName: React.FC<{
               </div>
             </div>
           )}
-          <FormField control={detailForm.control} name="name" render={field} />
+          <FormField control={detailForm.control} name="name" render={renderField} />
           <div className="flex justify-between space-y-2">
             <Label className="text-md">{t('account.default_balance_currency')}</Label>
             {(() => {

@@ -21,29 +21,29 @@ export const UploadFile: React.FC = () => {
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       const { files } = event.target;
 
-      let file = files?.[0];
+      let selectedFile = files?.[0];
 
-      if (!file) {
+      if (!selectedFile) {
         return;
       }
 
       try {
         try {
-          file = await prepareImageForUpload(file, maxUploadFileSizeMB);
+          selectedFile = await prepareImageForUpload(selectedFile, maxUploadFileSizeMB);
         } catch (error) {
           console.error('Compression failed:', error);
           toast.error(t('errors.image_compression_failed'));
         }
 
-        if (!validateUploadSize(file, maxUploadFileSizeMB)) {
+        if (!validateUploadSize(selectedFile, maxUploadFileSizeMB)) {
           toast.error(t('errors.less_than', { size: maxUploadFileSizeMB }));
           return;
         }
 
-        setFile(file);
+        setFile(selectedFile);
         setFileUploading(true);
 
-        const key = await uploadImage(file);
+        const key = await uploadImage(selectedFile);
 
         toast.success(t('expense_details.add_expense_details.upload_file.messages.upload_success'));
         setFileKey(key);

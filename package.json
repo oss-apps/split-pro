@@ -110,7 +110,7 @@
     "lint-staged": "^16.4.0",
     "oxlint": "1.88.0",
     "oxlint-tsgolint": "7.0.2004",
-    "postcss": "^8.5.14",
+    "postcss": "^8.5.23",
     "prettier": "^3.2.4",
     "prettier-plugin-tailwindcss": "^0.6.12",
     "prisma": "^7.10.1",

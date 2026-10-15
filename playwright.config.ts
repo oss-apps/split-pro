@@ -3,7 +3,13 @@ import { defineConfig, devices } from '@playwright/test';
 import { getTestDatabaseUrl } from './src/tests/helpers/testDatabase';
 import { loadTestEnvironment } from './src/tests/helpers/environment';
 
-loadTestEnvironment();
+const externalServer = '1' === process.env.E2E_EXTERNAL_SERVER;
+if (!externalServer) {
+  loadTestEnvironment();
+}
+if (externalServer && (!process.env.E2E_BASE_URL || !process.env.E2E_DATABASE_URL)) {
+  throw new Error('External E2E requires explicit E2E_BASE_URL and E2E_DATABASE_URL');
+}
 const baseURL = process.env.E2E_BASE_URL ?? 'http://127.0.0.1:3176';
 const url = new URL(baseURL);
 if ('http:' !== url.protocol || !['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)) {
@@ -40,11 +46,13 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
   projects: [{ name: 'chromium' }],
-  webServer: {
-    command: `pnpm dev --hostname ${url.hostname.replaceAll('[', '').replaceAll(']', '')} --port ${Number(url.port) || 80}`,
-    url: baseURL,
-    reuseExistingServer: false,
-    timeout: 120_000,
-    env: testEnvironment,
-  },
+  webServer: externalServer
+    ? undefined
+    : {
+        command: `pnpm dev --hostname ${url.hostname.replaceAll('[', '').replaceAll(']', '')} --port ${Number(url.port) || 80}`,
+        url: baseURL,
+        reuseExistingServer: false,
+        timeout: 120_000,
+        env: testEnvironment,
+      },
 });

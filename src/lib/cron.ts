@@ -145,6 +145,6 @@ const addMonth = (month: any[], mon: number) => {
  * The command format is: SELECT duplicate_expense_with_participants('UUID'::UUID);
  */
 export const extractTemplateExpenseId = (command: string): string | null => {
-  const match = command.match(/duplicate_expense_with_participants\('([0-9a-f-]{36})'::UUID\)/i);
+  const match = /duplicate_expense_with_participants\('([0-9a-f-]{36})'::UUID\)/i.exec(command);
   return match?.[1] ?? null;
 };

@@ -2,6 +2,7 @@ import { withSerwist } from '@serwist/turbopack';
 import i18nConfig from './next-i18next.config.js';
 import { fileURLToPath } from 'node:url';
 import { createJiti } from 'jiti';
+
 const jiti = createJiti(fileURLToPath(import.meta.url));
 
 /** @type {typeof import('./src/utils/env')} */

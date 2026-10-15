@@ -112,7 +112,7 @@ export const generateGroupExpense = (group: DummyGroupInfo, expenseDate: Date) =
   const category = selectCategoryByGroupType(group.type);
 
   // Generate expense name
-  const name = generateExpenseName(category as any);
+  const name = generateExpenseName(category);
 
   // Generate amount in group's currency
   const amount =
@@ -195,7 +195,7 @@ export const generateDirectExpense = (participants: DummyUserInfo[]) => {
   const category = faker.helpers.arrayElement(DIRECT_EXPENSE_CATEGORIES);
 
   // Generate expense name
-  const name = generateExpenseName(category as any);
+  const name = generateExpenseName(category);
 
   // Use currency of payer (or first participant)
   const currency = payer.currency;
@@ -308,9 +308,7 @@ export const generateAllExpenses = (users: DummyUserInfo[], groups: DummyGroupIn
   // Generate direct expenses
   const directExpenses = generateDirectExpenses(users, groups);
 
-  return [...groupExpenses, ...directExpenses].map((expense, idx) =>
-    Object.assign({}, expense, { idx }),
-  );
+  return [...groupExpenses, ...directExpenses].map((expense, idx) => ({ ...expense, idx }));
 };
 
 export type DummyExpenseInfo = ReturnType<typeof generateAllExpenses>[number];
@@ -338,9 +336,10 @@ export const generateExpenseEdits = (expenses: DummyExpenseInfo[]) =>
     .map((expense) => {
       const editType = selectEditType();
 
-      const expenseEdit = Object.assign({}, expense, {
+      const expenseEdit = {
+        ...expense,
         updatedBy: selectPayer(expense.participants, expense.addedBy),
-      });
+      };
 
       switch (editType) {
         case 'splitType':
@@ -392,11 +391,10 @@ export const generateExpenseEdits = (expenses: DummyExpenseInfo[]) =>
 export const generateExpensesToDelete = (expenses: DummyExpenseInfo[]) =>
   expenses
     .filter(() => faker.datatype.boolean({ probability: 0.1 }))
-    .map((expense) =>
-      Object.assign({}, expense, {
-        deletedBy: selectPayer(expense.participants, expense.addedBy),
-      }),
-    );
+    .map((expense) => ({
+      ...expense,
+      deletedBy: selectPayer(expense.participants, expense.addedBy),
+    }));
 
 export const generatePairsToSettle = (
   expenses: DummyExpenseInfo[],

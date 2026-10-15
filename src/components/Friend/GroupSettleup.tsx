@@ -63,7 +63,7 @@ export const GroupSettleUp: React.FC<{
     addExpenseMutation.mutate(
       {
         name: t('ui.settle_up_name'),
-        currency: currency,
+        currency,
         amount,
         splitType: SplitType.SETTLEMENT,
         groupId,

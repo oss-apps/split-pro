@@ -429,7 +429,7 @@ export async function importUserBalanceFromSplitWise(
               create: [
                 {
                   userId: currentUserId,
-                  amount: amount,
+                  amount,
                 },
                 {
                   userId: dbUser.id,

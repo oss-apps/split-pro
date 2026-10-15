@@ -24,7 +24,7 @@ const serwist = new Serwist({
   runtimeCaching: defaultCache,
 });
 
-self.addEventListener('push', function (event) {
+self.addEventListener('push', (event) => {
   const { title, message, data } = JSON.parse(event?.data?.text() ?? '{}') as PushMessage;
   event.waitUntil(
     self.registration.showNotification(title, {
@@ -35,7 +35,7 @@ self.addEventListener('push', function (event) {
   );
 });
 
-self.addEventListener('notificationclick', function (event) {
+self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
     (async () => {

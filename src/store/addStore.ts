@@ -111,7 +111,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
             ...(state.splitShares[userId] ?? initSplitShares()),
             [splitType]: share,
           },
-        } as SplitShares;
+        };
 
         return calculateParticipantSplit({ ...state, splitShares });
       }),

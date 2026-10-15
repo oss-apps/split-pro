@@ -330,21 +330,19 @@ export const UpdateName: React.FC<{
           <FormField control={detailForm.control} name="name" render={renderField} />
           <div className="flex justify-between space-y-2">
             <Label className="text-md">{t('account.default_balance_currency')}</Label>
-            {(() => {
-              return (
-                <CurrencyPicker
-                  currentCurrency={
-                    watchedDefaultCurrency && isCurrencyCode(watchedDefaultCurrency)
-                      ? parseCurrencyCode(watchedDefaultCurrency)
-                      : null
-                  }
-                  allowClear
-                  onCurrencyPick={(currency) => {
-                    detailForm.setValue('defaultCurrency', currency, { shouldDirty: true });
-                  }}
-                />
-              );
-            })()}
+            {(() => (
+              <CurrencyPicker
+                currentCurrency={
+                  watchedDefaultCurrency && isCurrencyCode(watchedDefaultCurrency)
+                    ? parseCurrencyCode(watchedDefaultCurrency)
+                    : null
+                }
+                allowClear
+                onCurrencyPick={(currency) => {
+                  detailForm.setValue('defaultCurrency', currency, { shouldDirty: true });
+                }}
+              />
+            ))()}
           </div>
         </form>
       </Form>

@@ -84,7 +84,7 @@ export const getCurrencyHelpers = ({
     let hasDecimalSeparator = false;
     let hasNegativeSign = false;
 
-    `${input}`.split('').forEach((letter) => {
+    input.split('').forEach((letter) => {
       //Allowing only one separator
       if (letter === decimalSeparator && !hasDecimalSeparator) {
         cleaned += letter;

@@ -5,9 +5,9 @@
   },
   "categories": {
     "correctness": "error",
-    "suspicious": "off",
-    "style": "off",
-    "perf": "off"
+    "suspicious": "warn",
+    "style": "warn",
+    "perf": "warn"
   },
   "plugins": ["nextjs", "react", "react-perf", "typescript", "import", "oxc"],
   "rules": {

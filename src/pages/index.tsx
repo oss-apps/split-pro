@@ -2,10 +2,7 @@ import { type GetServerSideProps } from 'next';
 
 import { env } from '~/env';
 
-const Index = () => {
-  return null;
-};
-
+const Index = () => null;
 export default Index;
 
 export const getServerSideProps: GetServerSideProps = async () => ({

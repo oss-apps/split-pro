@@ -80,6 +80,6 @@ export const PlaidLink: React.FC<PlaidLinkProps> = ({ onConnect, onSuccess, chil
 
   return React.cloneElement(children, {
     onClick: open,
-    disabled: !ready || isLoading || (children.props as ButtonProps).disabled,
+    disabled: !ready || isLoading || children.props.disabled,
   } as Partial<ButtonProps>);
 };

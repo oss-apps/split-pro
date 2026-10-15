@@ -145,7 +145,7 @@ export class GoCardlessService extends AbstractBankProvider {
 
     const init = await this.client.initSession({
       redirectUrl: env.NEXTAUTH_URL,
-      institutionId: institutionId,
+      institutionId,
       referenceId: this.generateRandomId(),
       user_language: preferredLanguage?.toUpperCase() ?? GOCARDLESS_CONSTANTS.DEFAULT_LANGUAGE,
       redirect_immediate: false,

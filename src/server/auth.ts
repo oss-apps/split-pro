@@ -93,7 +93,7 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
 
       return originalLinkAccount(sanitised);
     },
-  } as Adapter;
+  };
 };
 
 /**

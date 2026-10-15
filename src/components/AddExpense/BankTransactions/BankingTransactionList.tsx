@@ -113,7 +113,7 @@ export const BankingTransactionList: React.FC<{
         setMultipleTransactions(
           isInMultipleTransactions
             ? multipleTransactions.filter((cItem) => cItem.transactionId !== item.transactionId)
-            : [...multipleTransactions, transactionData as TransactionAddInputModel],
+            : [...multipleTransactions, transactionData],
         );
       } else {
         if (alreadyAdded(item.transactionId)) {

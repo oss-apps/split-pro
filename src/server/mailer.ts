@@ -1,4 +1,4 @@
-import nodemailer, { type Transporter } from 'nodemailer';
+import { type Transporter, createTransport } from 'nodemailer';
 
 import { env } from '~/env';
 import { escapeHtml } from '~/lib/utils';
@@ -34,7 +34,7 @@ const getTransporter = () => {
     socketTimeout: 30_000,
   };
 
-  transporter = nodemailer.createTransport(transport);
+  transporter = createTransport(transport);
   return transporter;
 };
 

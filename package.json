@@ -89,7 +89,7 @@
     "zustand": "^4.5.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "10.1.0",
+    "@faker-js/faker": "10.5.0",
     "@playwright/test": "^1.55.0",
     "@tailwindcss/postcss": "^4.1.10",
     "@testing-library/jest-dom": "^6.9.1",

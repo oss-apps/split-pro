@@ -96,13 +96,6 @@ export const SplitExpenseForm: React.FC<
     [onOpenChange, setSplitScreenOpen],
   );
 
-  const onTabChange = useCallback(
-    (value: string) => {
-      setSplitType(value as SplitType);
-    },
-    [setSplitType],
-  );
-
   const splitProps = useMemo(() => {
     const allSplitProps = getSplitProps(t);
     if (!allowedSplitTypes || 0 === allowedSplitTypes.length) {
@@ -111,6 +104,16 @@ export const SplitExpenseForm: React.FC<
 
     return allSplitProps.filter((props) => allowedSplitTypes.includes(props.splitType));
   }, [allowedSplitTypes, t]);
+
+  const onTabChange = useCallback(
+    (value: string) => {
+      const selectedSplitType = splitProps.find((props) => props.splitType === value)?.splitType;
+      if (selectedSplitType) {
+        setSplitType(selectedSplitType);
+      }
+    },
+    [setSplitType, splitProps],
+  );
 
   const activeSplitType = splitProps.some((props) => props.splitType === splitType)
     ? splitType

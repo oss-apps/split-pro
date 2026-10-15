@@ -4,7 +4,7 @@ import { clsx } from 'clsx';
 import { type Session } from 'next-auth';
 import { SessionProvider, useSession } from 'next-auth/react';
 import { appWithTranslation, useTranslation } from 'next-i18next';
-import { type AppType } from 'next/app';
+import { type AppProps } from 'next/app';
 import { Poppins } from 'next/font/google';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -14,7 +14,6 @@ import { LoadingSpinner } from '~/components/ui/spinner';
 import { ThemeProvider } from 'next-themes';
 import { CurrencyHelpersProvider } from '~/contexts/CurrencyHelpersContext';
 import { useAppStore } from '~/store/appStore';
-import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 
 import 'react-easy-crop/react-easy-crop.css';
@@ -23,10 +22,10 @@ import '~/styles/globals.css';
 const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });
 const toastOptions = { duration: 1500 };
 
-const MyApp: AppType<{ session: Session | null }> = ({
-  Component,
-  pageProps: { session, ...pageProps },
-}) => {
+type PageWithAuth = AppProps['Component'] & { auth?: boolean };
+type AppPropsWithAuth = AppProps<{ session: Session | null }> & { Component: PageWithAuth };
+
+const MyApp = ({ Component, pageProps: { session, ...pageProps } }: AppPropsWithAuth) => {
   const { t, ready } = useTranslation();
 
   if (!ready) {
@@ -87,8 +86,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
           <CurrencyHelpersProvider>
             <ThemeProvider attribute="class" defaultTheme="dark">
               <Toaster toastOptions={toastOptions} />
-              {(Component as NextPageWithUser).auth ? (
-                <Auth pageProps={pageProps} Page={Component as NextPageWithUser} />
+              {Component.auth ? (
+                <Auth pageProps={pageProps} Page={Component} />
               ) : (
                 <Component {...pageProps} />
               )}{' '}
@@ -100,7 +99,10 @@ const MyApp: AppType<{ session: Session | null }> = ({
   );
 };
 
-const Auth: React.FC<{ Page: NextPageWithUser; pageProps: any }> = ({ Page, pageProps }) => {
+const Auth: React.FC<{ Page: PageWithAuth; pageProps: AppProps['pageProps'] }> = ({
+  Page,
+  pageProps,
+}) => {
   const { status, data, update } = useSession({ required: true });
   const [showSpinner, setShowSpinner] = useState(false);
   const updateUser = api.user.updateUserDetail.useMutation();

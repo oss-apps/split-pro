@@ -83,51 +83,46 @@ export async function createExpense(
     jobId = schedule;
   }
 
-  const operations = [];
-
-  // Create expense operation
-  operations.push(
-    db.expense.create({
-      data: {
-        ...(expenseId && { id: expenseId }),
-        groupId,
-        paidBy,
-        name,
-        category,
-        amount,
-        splitType,
-        currency,
-        expenseParticipants: {
-          create: nonZeroParticipants,
-        },
-        fileKey,
-        addedBy: currentUserId,
-        expenseDate,
-        transactionId,
-        conversionFrom,
+  const createExpenseOperation = db.expense.create({
+    data: {
+      ...(expenseId && { id: expenseId }),
+      groupId,
+      paidBy,
+      name,
+      category,
+      amount,
+      splitType,
+      currency,
+      expenseParticipants: {
+        create: nonZeroParticipants,
       },
-    }),
-  );
-
-  // Link recurrence to expense if we created a cron job
-  if (expenseId && jobId) {
-    operations.push(
-      db.expenseRecurrence.create({
-        data: {
-          expense: {
-            connect: { id: expenseId },
-          },
-          job: {
-            connect: { jobid: jobId },
-          },
-        },
-      }),
-    );
-  }
+      fileKey,
+      addedBy: currentUserId,
+      expenseDate,
+      transactionId,
+      conversionFrom,
+    },
+  });
 
   try {
-    const results = await db.$transaction(operations);
-    const createdExpense = results[0] as Awaited<ReturnType<typeof db.expense.create>>;
+    const [createdExpense] = await db.$transaction([
+      createExpenseOperation,
+      // Link recurrence to expense if we created a cron job
+      ...(expenseId && jobId
+        ? [
+            db.expenseRecurrence.create({
+              data: {
+                expense: {
+                  connect: { id: expenseId },
+                },
+                job: {
+                  connect: { jobid: jobId },
+                },
+              },
+            }),
+          ]
+        : []),
+    ]);
     if (!createdExpense) {
       throw new Error('Expense creation failed');
     }

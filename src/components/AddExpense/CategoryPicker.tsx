@@ -1,4 +1,4 @@
-import { CATEGORIES, type CategoryItem } from '~/lib/category';
+import { CATEGORIES } from '~/lib/category';
 import { useMemo } from 'react';
 import { useTranslation } from 'next-i18next';
 
@@ -37,9 +37,7 @@ export const CategoryPicker: React.FC<{
                   onClick={() => onCategoryPick('other' === key ? categoryName : key)}
                 >
                   <span className="block flex-shrink-0 text-2xl">
-                    <CategoryIcon
-                      category={(key === 'other' ? categoryName : key) as CategoryItem}
-                    />
+                    <CategoryIcon category={key === 'other' ? categoryName : key} />
                   </span>
                   <span className="block text-xs text-wrap">
                     {t(`categories_list.${categoryName}.items.${key}`, { ns: 'categories' })}

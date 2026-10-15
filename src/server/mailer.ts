@@ -1,4 +1,3 @@
-import { type User } from 'next-auth';
 import nodemailer, { type Transporter } from 'nodemailer';
 
 import { env } from '~/env';
@@ -75,7 +74,10 @@ export async function sendInviteEmail(email: string, name: string) {
   return await sendMail(email, subject, text, html);
 }
 
-export async function sendFeedbackEmail(feedback: string, user: User) {
+export async function sendFeedbackEmail(
+  feedback: string,
+  user: { name?: string | null; email?: string | null },
+) {
   console.log('Received feedback from: ', user.email, 'Feedback: ', feedback);
 
   if (!env.FEEDBACK_EMAIL) {

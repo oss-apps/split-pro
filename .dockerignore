@@ -2,6 +2,11 @@
 .github
 docker
 .next
+.next-docs
+.direnv
+.worktrees
+test-results
+playwright-report
 
 node_modules
 .pnp

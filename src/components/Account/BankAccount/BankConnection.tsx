@@ -21,7 +21,7 @@ export const BankConnection: React.FC<BankConnectionProps> = ({
   const onConnectToBank = useCallback(async () => {
     if (bankConnection === 'GOCARDLESS') {
       if (!userQuery.data?.bankingId) {
-        return;
+        return undefined;
       }
       const res = await connectToBank.mutateAsync(userQuery.data.bankingId).catch(console.error);
       if (res?.authLink) {
@@ -33,7 +33,9 @@ export const BankConnection: React.FC<BankConnectionProps> = ({
         return res.authLink;
       }
     }
-  }, [connectToBank, userQuery.data?.bankingId, bankConnection]);
+
+    return undefined;
+  }, [connectToBank, userQuery.data, bankConnection]);
 
   const fetchUser = useCallback(() => {
     userQuery.refetch().catch(console.error);

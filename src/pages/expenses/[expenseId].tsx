@@ -19,14 +19,18 @@ import { extractTemplateExpenseId } from '~/lib/cron';
 import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
+import { isStringQueryParam } from '~/utils/queryParams';
 
 const ExpensesPage: NextPageWithUser = ({ user }) => {
   const { t } = useTranslation();
   const router = useRouter();
-  const expenseId = router.query.expenseId as string;
+  const expenseId = isStringQueryParam(router.query.expenseId) ? router.query.expenseId : '';
   const keepAdding = !!router.query.keepAdding;
 
-  const expenseQuery = api.expense.getExpenseDetails.useQuery({ expenseId });
+  const expenseQuery = api.expense.getExpenseDetails.useQuery(
+    { expenseId },
+    { enabled: router.isReady && Boolean(expenseId) },
+  );
 
   const recurrence = expenseQuery.data?.recurrence;
   const isTemplate = useMemo(

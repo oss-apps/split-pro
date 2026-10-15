@@ -1,0 +1,67 @@
+name: Production Compose Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      image:
+        description: 'Optional published image to test instead of building this checkout'
+        required: false
+        type: string
+      e2e:
+        description: 'Also run Chromium E2E tests'
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  production-compose:
+    name: Production image smoke and Chromium E2E tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.16.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        if: github.event_name != 'workflow_dispatch' || inputs.e2e
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Test production Compose stack
+        env:
+          TEST_IMAGE: ${{ inputs.image }}
+          RUN_E2E: ${{ github.event_name != 'workflow_dispatch' || inputs.e2e }}
+        run: |
+          args=()
+          if [[ -n "$TEST_IMAGE" ]]; then args+=(--image "$TEST_IMAGE"); fi
+          if [[ "$RUN_E2E" == true ]]; then args+=(--e2e); fi
+          pnpm test:docker "${args[@]}"
+
+      - name: Upload production Compose and Playwright diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-compose-artifacts
+          path: |
+            test-results/production-compose
+            test-results/e2e
+            playwright-report
+          if-no-files-found: ignore

@@ -1,4 +1,4 @@
-import { SiGithub, SiX } from '@icons-pack/react-simple-icons';
+import { SiGithub } from '@icons-pack/react-simple-icons';
 import {
   BadgeInfo,
   CreditCard,
@@ -202,7 +202,7 @@ AccountPage.auth = true;
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
     feedbackPossible: Boolean(env.FEEDBACK_EMAIL),
-    bankConnectionEnabled: Boolean(isBankConnectionConfigured()),
+    bankConnectionEnabled: isBankConnectionConfigured(),
     bankConnection: whichBankConnectionConfigured(),
     ...(await customServerSideTranslations(context.locale, ['common', 'currencies'])),
     maxUploadFileSizeMB: env.UPLOAD_MAX_FILE_SIZE_MB,

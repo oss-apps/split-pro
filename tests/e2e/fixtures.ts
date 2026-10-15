@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { type Group, PrismaClient, type User } from '@prisma/client';
 import { test as base, expect } from '@playwright/test';
 
+import { createDatabaseAdapter } from '~/server/databaseAdapter';
 import {
   createDatabaseExpense,
   createDatabaseGroup,
@@ -26,7 +27,7 @@ interface WorkerFixtures {
 export const test = base.extend<Fixtures, WorkerFixtures>({
   db: [
     async ({ browserName: _browserName }, use) => {
-      const db = new PrismaClient({ datasourceUrl: getTestDatabaseUrl('e2e') });
+      const db = new PrismaClient({ adapter: createDatabaseAdapter(getTestDatabaseUrl('e2e')) });
       try {
         await use(db);
       } finally {

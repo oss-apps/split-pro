@@ -227,16 +227,16 @@ export const EditCurrencyConversion: React.FC<{ expense: ExpenseDetailsOutput }>
   const { setCurrency } = useAddExpenseStore((s) => s.actions);
   const { t } = useTranslationWithUtils();
 
-  if (!expense.conversionTo) {
+  const addOrEditCurrencyConversionMutation = api.expense.addOrEditCurrencyConversion.useMutation();
+  const apiUtils = api.useUtils();
+
+  const hasConversionTo = Boolean(expense.conversionTo);
+  if (!hasConversionTo) {
     toast.error(t('errors.currency_conversion_malformed'));
     console.error(
       'Malformed currency conversion data: no conversionTo present, please report this issue.',
     );
-    return null;
   }
-
-  const addOrEditCurrencyConversionMutation = api.expense.addOrEditCurrencyConversion.useMutation();
-  const apiUtils = api.useUtils();
 
   const onClick = useCallback(() => {
     if (expense.conversionTo && isCurrencyCode(expense.conversionTo.currency)) {
@@ -247,12 +247,11 @@ export const EditCurrencyConversion: React.FC<{ expense: ExpenseDetailsOutput }>
   const sender = expense.paidByUser;
   const receiver = expense.expenseParticipants.find((p) => p.userId !== expense.paidBy)?.user;
 
-  if (!sender || !receiver || !isCurrencyCode(expense.currency)) {
-    return null;
-  }
-
   const onSubmit: ComponentProps<typeof CurrencyConversion>['onSubmit'] = useCallback(
     async (data) => {
+      if (!sender || !receiver) {
+        return;
+      }
       await addOrEditCurrencyConversionMutation.mutateAsync({
         ...data,
         senderId: sender.id,
@@ -262,15 +261,12 @@ export const EditCurrencyConversion: React.FC<{ expense: ExpenseDetailsOutput }>
       });
       await apiUtils.invalidate();
     },
-    [
-      addOrEditCurrencyConversionMutation,
-      sender.id,
-      receiver.id,
-      expense.groupId,
-      expense.id,
-      apiUtils,
-    ],
+    [addOrEditCurrencyConversionMutation, sender, receiver, expense.groupId, expense.id, apiUtils],
   );
+
+  if (!hasConversionTo || !sender || !receiver || !isCurrencyCode(expense.currency)) {
+    return null;
+  }
 
   return (
     <CurrencyConversion

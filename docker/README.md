@@ -27,6 +27,28 @@ This will start the PostgreSQL database and the Splitpro application containers.
 
 6. Access the Splitpro application by visiting `http://localhost:3000` in your web browser.
 
+### Test the production deployment
+
+From a repository checkout, run:
+
+```bash
+pnpm test:docker                             # Build and smoke-test this checkout
+pnpm test:docker --e2e                       # Also run Chromium E2E against the production image
+pnpm test:docker --image ossapps/splitpro:latest
+```
+
+Smoke checks need only Bash, curl, Docker, and Compose 2.24.4+; without pnpm, use
+`bash scripts/test-production-compose.sh`. The harness uses the production Compose file with
+an isolation override, disposable volumes, generated configuration, and loopback-only ports.
+It builds both repository Dockerfiles, matching the database version from production Compose.
+`--image` selects a published application image while still building the database image locally.
+It checks health/readiness, migrations, static assets, `pg_cron`, and persistence after container
+recreation, then tears down the test stack. Diagnostics remain under
+`test-results/production-compose/`. The production Compose CI workflow also runs Chromium E2E.
+
+See [Testing strategy](../docs/testing-strategy.md#production-docker-compose-tests) for E2E
+requirements, image compatibility, cleanup, and CI options.
+
 ## Rootless application deployment
 
 The image includes a non-root `node` user, but keeps the default Dockerfile user unchanged for
@@ -134,7 +156,7 @@ SplitPro exposes two unauthenticated HTTP endpoints for orchestrators/load balan
 services:
   splitpro:
     healthcheck:
-      test: ['CMD', 'wget', '--spider', '-q', 'http://localhost:${PORT:-3000}/api/healthz']
+      test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1:${PORT:-3000}/api/healthz']
       interval: 30s
       timeout: 5s
       retries: 3

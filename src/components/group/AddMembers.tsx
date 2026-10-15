@@ -51,11 +51,11 @@ const AddMembers: React.FC<{
   }
 
   const onSave = useCallback(
-    (userIds: Record<number, boolean>) => {
+    (selectedUserIds: Record<number, boolean>) => {
       const users = [];
 
-      for (const userId of Object.keys(userIds)) {
-        if (userIds[parseInt(userId)]) {
+      for (const userId of Object.keys(selectedUserIds)) {
+        if (selectedUserIds[parseInt(userId)]) {
           users.push(parseInt(userId));
         }
       }

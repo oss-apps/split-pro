@@ -49,10 +49,10 @@ export const NotificationModal: React.FC = () => {
             .getSubscription()
             .then((sub) => {
               if (!sub) {
-                const _notificationTime = localStorage.getItem(NOTIFICATION_DISMISSED_TIME);
+                const notificationTime = localStorage.getItem(NOTIFICATION_DISMISSED_TIME);
                 if (
-                  !_notificationTime ||
-                  Date.now() - parseInt(_notificationTime) > NOTIFICATION_DISMISSED_TIME_THRESHOLD
+                  !notificationTime ||
+                  Date.now() - parseInt(notificationTime) > NOTIFICATION_DISMISSED_TIME_THRESHOLD
                 ) {
                   setModalOpen(true);
                 }

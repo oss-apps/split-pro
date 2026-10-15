@@ -1,6 +1,6 @@
 import { configureJest } from './jest.shared.ts';
 
-export default () =>
+const jestConfig = () =>
   configureJest({
     testEnvironment: 'node',
     setupFilesAfterEnv: ['<rootDir>/src/tests/setup/unit.ts'],
@@ -10,3 +10,5 @@ export default () =>
     ],
     testPathIgnorePatterns: ['<rootDir>/src/tests/integration/', '<rootDir>/tests/e2e/'],
   });
+
+export default jestConfig;

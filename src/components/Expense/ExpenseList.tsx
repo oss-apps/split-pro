@@ -31,29 +31,21 @@ export const ExpenseList: React.FC<{
   isGroup?: boolean;
   isLoading?: boolean;
 }> = ({ userId, isGroup = false, expenses = [], contactId, isLoading }) => {
+  const { i18n } = useTranslationWithUtils();
+
   if (!isLoading && expenses.length === 0) {
     return <NoExpenses />;
   }
 
-  const { i18n } = useTranslationWithUtils();
-
-  let lastDate: Date | null = null;
-
   return (
     <div className="flex flex-col gap-3">
-      {expenses.map((e) => {
+      {expenses.map((e, index) => {
         const currentDate = e.expenseDate;
-        let isFirstOfMonth = false;
-
-        if (
-          lastDate === null ||
-          currentDate.getMonth() !== lastDate.getMonth() ||
-          currentDate.getFullYear() !== lastDate.getFullYear()
-        ) {
-          isFirstOfMonth = true;
-        }
-
-        lastDate = currentDate;
+        const previousDate = expenses[index - 1]?.expenseDate;
+        const isFirstOfMonth =
+          !previousDate ||
+          currentDate.getMonth() !== previousDate.getMonth() ||
+          currentDate.getFullYear() !== previousDate.getFullYear();
 
         const isSettlement = e.splitType === SplitType.SETTLEMENT;
         const isCurrencyConversion = e.splitType === SplitType.CURRENCY_CONVERSION;
@@ -174,6 +166,12 @@ const Settlement: ExpenseComponent = ({ e, userId }) => {
 const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
   const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
 
+  const receiverId = e.expenseParticipants.find((p) => p.userId !== e.paidBy)?.userId;
+  const userDetails = api.user.getUserDetails.useQuery(
+    { userId: receiverId ?? 0 },
+    { enabled: Boolean(e.conversionTo && receiverId) },
+  );
+
   if (!e.conversionTo) {
     toast.error(t('errors.currency_conversion_malformed'));
     console.error(
@@ -181,9 +179,6 @@ const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
     );
     return null;
   }
-
-  const receiverId = e.expenseParticipants.find((p) => p.userId !== e.paidBy)?.userId;
-  const userDetails = api.user.getUserDetails.useQuery({ userId: receiverId! });
 
   return (
     <div className="flex min-w-0 items-center gap-4">

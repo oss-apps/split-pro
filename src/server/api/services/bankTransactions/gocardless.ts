@@ -5,6 +5,7 @@ import { format, subDays } from 'date-fns';
 import NordigenClient, { type Transaction } from 'nordigen-node';
 import { env } from '~/env';
 import { db } from '~/server/db';
+import { parseCachedTransactionOutput } from '~/server/api/services/bankTransactions/parsers';
 import type { TransactionOutput, TransactionOutputItem } from '~/types/bank.types';
 
 abstract class AbstractBankProvider {
@@ -57,7 +58,7 @@ export class GoCardlessService extends AbstractBankProvider {
 
   async getTransactions(userId: number, requisitionId?: string) {
     if (!requisitionId) {
-      return;
+      return undefined;
     }
 
     await this.client.generateToken();
@@ -78,7 +79,7 @@ export class GoCardlessService extends AbstractBankProvider {
 
       const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
       if (cachedData.lastFetched > twentyFourHoursAgo) {
-        return JSON.parse(cachedData.data) as TransactionOutput;
+        return parseCachedTransactionOutput(cachedData.data);
       }
     }
 
@@ -93,6 +94,8 @@ export class GoCardlessService extends AbstractBankProvider {
 
       const account = this.client.account(accountId ?? '');
 
+      // Preserve provider pacing and the existing account request/result order.
+      // oxlint-disable-next-line no-await-in-loop
       const transactions = await account.getTransactions(this.returnTransactionFilters());
 
       if (!transactions) {
@@ -136,14 +139,14 @@ export class GoCardlessService extends AbstractBankProvider {
 
   async connectToBank(institutionId?: string, preferredLanguage?: string) {
     if (!institutionId) {
-      return;
+      return undefined;
     }
 
     await this.client.generateToken();
 
     const init = await this.client.initSession({
       redirectUrl: env.NEXTAUTH_URL,
-      institutionId: institutionId,
+      institutionId,
       referenceId: this.generateRandomId(),
       user_language: preferredLanguage?.toUpperCase() ?? GOCARDLESS_CONSTANTS.DEFAULT_LANGUAGE,
       redirect_immediate: false,

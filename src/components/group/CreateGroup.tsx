@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
 import React, { useCallback, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { type TFunction, useTranslation } from 'next-i18next';
 import { z } from 'zod';
 
@@ -32,6 +32,7 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
     resolver: zodResolver(groupSchema(t)),
     defaultValues: { name: '' },
   });
+  const groupName = useWatch({ control: groupForm.control, name: 'name' });
 
   const router = useRouter();
 
@@ -68,14 +69,14 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
     await groupForm.handleSubmit(onGroupSubmit)();
   }, [groupForm, onGroupSubmit]);
 
-  const field = useCallback(
-    ({ field }: any) => (
+  const renderField = useCallback(
+    ({ field: formField }: any) => (
       <FormItem className="w-full">
         <FormControl>
           <Input
             placeholder={t('group_details.create_group.group_name_placeholder')}
             className="w-full py-2 text-lg"
-            {...field}
+            {...formField}
           />
         </FormControl>
         <FormMessage />
@@ -108,13 +109,8 @@ export const CreateGroup: React.FC<{ children: React.ReactNode }> = ({ children 
               onSubmit={groupForm.handleSubmit(onGroupSubmit)}
               className="mt-4 flex w-full items-start gap-4"
             >
-              <Avatar
-                size={50}
-                name={groupForm.watch('name')}
-                variant="bauhaus"
-                colors={avatarColors}
-              />
-              <FormField control={groupForm.control} name="name" render={field} />
+              <Avatar size={50} name={groupName} variant="bauhaus" colors={avatarColors} />
+              <FormField control={groupForm.control} name="name" render={renderField} />
             </form>
           </Form>
         </div>

@@ -111,7 +111,7 @@ export const useAddExpenseStore = create<AddExpenseState>()((set) => ({
             ...(state.splitShares[userId] ?? initSplitShares()),
             [splitType]: share,
           },
-        } as SplitShares;
+        };
 
         return calculateParticipantSplit({ ...state, splitShares });
       }),
@@ -437,7 +437,7 @@ export function calculateSplitShareBasedOnAmount(
     case SplitType.ADJUSTMENT:
       const minAmount = BigMath.min(
         ...participants
-          .filter(({ amount }) => 0n !== amount)
+          .filter(({ amount: participantAmount }) => 0n !== participantAmount)
           .map((p) =>
             p.id === paidBy?.id
               ? BigMath.abs(amount - (p.amount ?? 0n))

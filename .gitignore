@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+.swc/
 
 # testing
 /coverage
@@ -67,3 +68,5 @@ SEED_STATISTICS.md
 # Agents
 .worktrees/
 docs/superpowers/
+# next-agents-md
+.next-docs/

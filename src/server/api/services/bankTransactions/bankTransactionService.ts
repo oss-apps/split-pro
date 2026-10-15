@@ -40,7 +40,7 @@ export class BankTransactionService {
 
   async getTransactions(userId: number, token?: string): Promise<TransactionOutput | undefined> {
     if (!this.provider) {
-      return;
+      return undefined;
     }
 
     return this.provider?.getTransactions(userId, token);
@@ -51,7 +51,7 @@ export class BankTransactionService {
     preferredLanguage?: string,
   ): Promise<{ institutionId: string; authLink: string } | undefined> {
     if (!this.provider) {
-      return;
+      return undefined;
     }
 
     const res = this.provider?.connectToBank(id, preferredLanguage);

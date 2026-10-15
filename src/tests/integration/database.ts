@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
+import { createDatabaseAdapter } from '~/server/databaseAdapter';
+
 import { assertTestDatabaseUrl, getTestDatabaseUrl } from '../helpers/testDatabase';
 
 const databaseUrl = getTestDatabaseUrl();
@@ -8,7 +10,7 @@ const clientUrl = new URL(databaseUrl);
 // Keep the suite's advisory lock and all operations on one connection. A second
 // Integration process must fail rather than truncate another run's fixtures.
 clientUrl.searchParams.set('connection_limit', '1');
-export const db = new PrismaClient({ datasourceUrl: clientUrl.toString() });
+export const db = new PrismaClient({ adapter: createDatabaseAdapter(clientUrl.toString()) });
 
 export const acquireDatabaseLock = async () => {
   const [result] = await db.$queryRaw<

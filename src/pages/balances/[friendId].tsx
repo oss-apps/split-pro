@@ -26,20 +26,20 @@ const FriendPage: NextPageWithUser = ({ user }) => {
   const router = useRouter();
   const { friendId } = router.query;
 
-  const _friendId = parseInt(Array.isArray(friendId) ? (friendId[0] ?? '') : (friendId ?? ''));
+  const parsedFriendId = parseInt(Array.isArray(friendId) ? (friendId[0] ?? '') : (friendId ?? ''));
 
   const friendQuery = api.user.getFriend.useQuery(
-    { friendId: _friendId },
-    { enabled: Boolean(_friendId) },
+    { friendId: parsedFriendId },
+    { enabled: Boolean(parsedFriendId) },
   );
 
   const expenses = api.expense.getExpensesWithFriend.useQuery(
-    { friendId: _friendId },
-    { enabled: Boolean(_friendId) },
+    { friendId: parsedFriendId },
+    { enabled: Boolean(parsedFriendId) },
   );
   const balances = api.user.getBalancesWithFriend.useQuery(
-    { friendId: _friendId },
-    { enabled: Boolean(_friendId) },
+    { friendId: parsedFriendId },
+    { enabled: Boolean(parsedFriendId) },
   );
   const upsertFriendDefaultSplitMutation = api.user.upsertFriendDefaultSplit.useMutation();
   const clearFriendDefaultSplitMutation = api.user.clearFriendDefaultSplit.useMutation();
@@ -79,7 +79,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
         }
         actions={
           <div className="flex items-center gap-2">
-            <DeleteFriend friendId={_friendId} disabled={!(0 === balances.data?.length)} />
+            <DeleteFriend friendId={parsedFriendId} disabled={!(0 === balances.data?.length)} />
             <AppDrawer
               title={t('balances.user_preferences.title')}
               trigger={
@@ -201,7 +201,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
             </div>
             <ExpenseList
               expenses={expenses.data}
-              contactId={_friendId}
+              contactId={parsedFriendId}
               isLoading={expenses.isPending}
               userId={user.id}
             />

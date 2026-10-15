@@ -3,7 +3,7 @@ import { DownloadCloud } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'next-i18next';
 import MainLayout from '~/components/Layout/MainLayout';
@@ -15,6 +15,7 @@ import { LoadingSpinner } from '~/components/ui/spinner';
 import { type NextPageWithUser, type SplitwiseGroup, type SplitwiseUser } from '~/types';
 import { api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
+import { parseSplitwiseImport } from '~/utils/splitwiseImport';
 
 const ImportSpliwisePage: NextPageWithUser = () => {
   const { t } = useTranslation();
@@ -23,6 +24,9 @@ const ImportSpliwisePage: NextPageWithUser = () => {
   const [selectedUsers, setSelectedUsers] = useState<Record<string, boolean>>({});
   const [selectedGroups, setSelectedGroups] = useState<Record<string, boolean>>({});
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isParsing, setIsParsing] = useState(false);
+  const [hasValidPreview, setHasValidPreview] = useState(false);
+  const latestReadId = useRef(0);
 
   const router = useRouter();
 
@@ -36,51 +40,56 @@ const ImportSpliwisePage: NextPageWithUser = () => {
     }
 
     setUploadedFile(file);
+    setIsParsing(true);
+    setHasValidPreview(false);
+    setUsersWithBalance([]);
+    setGroups([]);
+    setSelectedUsers({});
+    setSelectedGroups({});
+    const readId = ++latestReadId.current;
 
     try {
-      const json = JSON.parse(await file.text()) as Record<string, unknown>;
-      const friendsWithOutStandingBalance: SplitwiseUser[] = [];
-      for (const friend of json.friends as Record<string, unknown>[]) {
-        const balance = friend.balance as { currency_code: string; amount: string }[];
-        if (balance.length && 'confirmed' === friend.registration_status) {
-          friendsWithOutStandingBalance.push(friend as unknown as SplitwiseUser);
-        }
+      const json: unknown = JSON.parse(await file.text());
+      const preview = parseSplitwiseImport(json);
+      if (readId !== latestReadId.current) {
+        return;
       }
 
-      setUsersWithBalance(friendsWithOutStandingBalance);
+      setUsersWithBalance(preview.usersWithBalance);
       setSelectedUsers(
-        friendsWithOutStandingBalance.reduce(
-          (acc, user) => {
-            acc[user.id] = true;
-            return acc;
-          },
-          {} as Record<string, boolean>,
-        ),
+        preview.usersWithBalance.reduce<Record<string, boolean>>((acc, user) => {
+          acc[user.id] = true;
+          return acc;
+        }, {}),
       );
-
-      const _groups = (json.groups as SplitwiseGroup[]).filter(
-        (g) => 0 < g.members.length && 0 !== g.id,
-      );
-
-      setGroups(_groups);
+      setGroups(preview.groups);
       setSelectedGroups(
-        _groups.reduce(
-          (acc, group) => {
-            acc[group.id] = true;
-            return acc;
-          },
-          {} as Record<string, boolean>,
-        ),
+        preview.groups.reduce<Record<string, boolean>>((acc, group) => {
+          acc[group.id] = true;
+          return acc;
+        }, {}),
       );
+      setHasValidPreview(true);
     } catch (e) {
+      if (readId !== latestReadId.current) {
+        return;
+      }
       console.error(e);
       toast.error(t('errors.import_failed'));
+    } finally {
+      if (readId === latestReadId.current) {
+        setIsParsing(false);
+      }
     }
   };
 
   const importMutation = api.user.importUsersFromSplitWise.useMutation();
 
   function onImport() {
+    if (isParsing || !hasValidPreview) {
+      return;
+    }
+
     importMutation.mutate(
       {
         usersWithBalance: usersWithBalance.filter((user) => selectedUsers[user.id]),
@@ -117,7 +126,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
               variant="ghost"
               className="text-primary px-0 py-0"
               size="sm"
-              disabled={importMutation.isPending || !uploadedFile}
+              disabled={importMutation.isPending || isParsing || !hasValidPreview}
             >
               {t('actions.import')}
             </Button>
@@ -148,7 +157,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
           </label>
           <Button
             onClick={onImport}
-            disabled={!uploadedFile || importMutation.isPending}
+            disabled={isParsing || !hasValidPreview || importMutation.isPending}
             className="w-[100px]"
             size="sm"
           >
@@ -166,7 +175,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
             </div>
             {usersWithBalance.length ? (
               <div className="mt-4 flex flex-col gap-3">
-                {usersWithBalance.map((user, index) => (
+                {usersWithBalance.map((user, userIndex) => (
                   <div key={user.id} className="">
                     <div key={user.id} className="flex items-center justify-between gap-4">
                       <div className="flex shrink-0 items-center gap-2">
@@ -198,7 +207,7 @@ const ImportSpliwisePage: NextPageWithUser = () => {
                       </div>
                     </div>
                     <div className="mt-3">
-                      {index !== usersWithBalance.length - 1 ? <Separator /> : null}
+                      {userIndex !== usersWithBalance.length - 1 ? <Separator /> : null}
                     </div>
                   </div>
                 ))}

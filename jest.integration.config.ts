@@ -6,10 +6,12 @@ loadTestEnvironment();
 process.env.DATABASE_URL = getTestDatabaseUrl();
 process.env.SKIP_ENV_VALIDATION = '1';
 
-export default () =>
+const integrationJestConfig = () =>
   configureJest({
     setupFilesAfterEnv: ['<rootDir>/src/tests/setup/integration.ts'],
     testEnvironment: 'node',
     testMatch: ['<rootDir>/src/tests/integration/**/*.{test,spec}.{ts,tsx}'],
     maxWorkers: 1,
   });
+
+export default integrationJestConfig;

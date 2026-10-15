@@ -48,7 +48,7 @@ const FeatureCard = ({
   </div>
 );
 
-export default function Home() {
+const Home = () => {
   const { t } = useTranslation('home');
 
   return (
@@ -256,7 +256,9 @@ export default function Home() {
       </main>
     </>
   );
-}
+};
+
+export default Home;
 
 const MobileScreenShot = () => {
   const { t } = useTranslation('home');

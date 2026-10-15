@@ -15,11 +15,10 @@ import {
 } from '~/types/expense.types';
 import { createExpense, deleteExpense, editExpense } from '../services/splitService';
 import { currencyRateProvider } from '../services/currencyRateService';
-import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
+import { isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { getUserMap } from './user';
-import { FriendBalance } from '~/components/Friend/FriendBalance';
 
 export const expenseRouter = createTRPCRouter({
   getCumulatedBalances: protectedProcedure.query(async ({ ctx }) => {
@@ -30,14 +29,18 @@ export const expenseRouter = createTRPCRouter({
       orderBy: { _sum: { amount: 'desc' } },
     });
 
+    // oxlint-disable no-underscore-dangle -- Prisma's generated aggregate API uses the `_sum` field name.
     const youOwe = cumulatedBalances
       .filter((b) => b._sum.amount && 0 > b._sum.amount)
       .map((b) => ({ currency: b.currency, amount: b._sum.amount! }))
       .reverse();
+    // oxlint-enable no-underscore-dangle
 
+    // oxlint-disable no-underscore-dangle -- Prisma's generated aggregate API uses the `_sum` field name.
     const youGet = cumulatedBalances
       .filter((b) => b._sum.amount && 0 < b._sum.amount)
       .map((b) => ({ currency: b.currency, amount: b._sum.amount! }));
+    // oxlint-enable no-underscore-dangle
 
     return { youOwe, youGet };
   }),
@@ -133,6 +136,8 @@ export const expenseRouter = createTRPCRouter({
     .input(arrayify(createExpenseSchema))
     .mutation(async ({ input: expenses, ctx }) => {
       const results = [];
+      // Expense writes must preserve input order and stop on the first validation/write failure.
+      // oxlint-disable no-await-in-loop
       for (const input of expenses) {
         await validateExpenseWritePermission(input.expenseId, input.groupId, ctx.session.user.id);
         if (input.splitType === SplitType.CURRENCY_CONVERSION) {
@@ -153,6 +158,7 @@ export const expenseRouter = createTRPCRouter({
           });
         }
       }
+      // oxlint-enable no-await-in-loop
 
       return results;
     }),
@@ -179,7 +185,7 @@ export const expenseRouter = createTRPCRouter({
         splitType: SplitType.CURRENCY_CONVERSION,
         category: DEFAULT_CATEGORY,
         participants: [
-          { userId: senderId, amount: amount },
+          { userId: senderId, amount },
           { userId: receiverId, amount: -amount },
         ],
         groupId,
@@ -592,19 +598,20 @@ export const expenseRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { from, to, date } = input;
 
-      if (from.length === 0) {
+      const firstFrom = from[0];
+      if (undefined === firstFrom) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Missing from currency code' });
       }
 
-      if (!from.every(isCurrencyCode) || !isCurrencyCode(to)) {
+      if (!isCurrencyCode(firstFrom) || !from.every(isCurrencyCode) || !isCurrencyCode(to)) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid currency code' });
       }
 
       const rates = new Map<string, number>();
 
       // Get the first rate to precache rates for the target currency
-      const rate = await currencyRateProvider.getCurrencyRate(from[0] as CurrencyCode, to, date);
-      rates.set(from[0]!, rate);
+      const rate = await currencyRateProvider.getCurrencyRate(firstFrom, to, date);
+      rates.set(firstFrom, rate);
 
       if (from.length > 1) {
         // Fetch rates for remaining currencies and return as map
@@ -625,8 +632,8 @@ const validateEditExpensePermission = async (expenseId: string, userId: number):
     db.expenseParticipant.findUnique({
       where: {
         expenseId_userId: {
-          expenseId: expenseId,
-          userId: userId,
+          expenseId,
+          userId,
         },
       },
     }),

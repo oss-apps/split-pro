@@ -2,13 +2,13 @@ import { type NextRequest, NextResponse } from 'next/server';
 
 const PUBLIC_FILE = /\.(.*)$/;
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   if (
     req.nextUrl.pathname.startsWith('/_next') ||
     req.nextUrl.pathname.includes('/api/') ||
     PUBLIC_FILE.test(req.nextUrl.pathname)
   ) {
-    return;
+    return undefined;
   }
 
   if (req.nextUrl.pathname.startsWith('/pt')) {
@@ -24,4 +24,6 @@ export function middleware(req: NextRequest) {
       new URL(`/${locale}${req.nextUrl.pathname}${req.nextUrl.search}`, req.url),
     );
   }
+
+  return undefined;
 }

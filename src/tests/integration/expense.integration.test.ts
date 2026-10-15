@@ -5,6 +5,33 @@ import { accountingSnapshot, testScenario } from './factories';
 import { callerFor } from './trpc';
 
 describe('expense lifecycle', () => {
+  it('preserves amounts beyond Number.MAX_SAFE_INTEGER in joined relations and balance views', async () => {
+    const { owner, member, group, input } = await testScenario();
+    const debt = 9_007_199_254_740_993n;
+    const [expense] = await callerFor(owner.id).expense.addOrEditExpense({
+      ...input,
+      amount: debt * 2n,
+      participants: [
+        { userId: owner.id, amount: debt },
+        { userId: member.id, amount: -debt },
+      ],
+    });
+
+    const stored = await db.expense.findUniqueOrThrow({
+      where: { id: expense!.id },
+      relationLoadStrategy: 'join',
+      include: { expenseParticipants: { orderBy: { userId: 'asc' } } },
+    });
+    expect(stored.amount).toBe(debt * 2n);
+    expect(stored.expenseParticipants.map(({ amount }) => amount)).toEqual([debt, -debt]);
+    expect(
+      await db.balanceView.findMany({ where: { groupId: group.id }, orderBy: { userId: 'asc' } }),
+    ).toEqual([
+      expect.objectContaining({ userId: owner.id, amount: debt }),
+      expect.objectContaining({ userId: member.id, amount: -debt }),
+    ]);
+  });
+
   it('creates, edits and soft-deletes an expense with exact bidirectional balances', async () => {
     const { owner, member, group, input } = await testScenario();
     const caller = callerFor(owner.id);

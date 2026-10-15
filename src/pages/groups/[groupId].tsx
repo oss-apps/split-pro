@@ -44,19 +44,31 @@ import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
+import { isStringQueryParam } from '~/utils/queryParams';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
 }> = ({ user, enableSendingInvites }) => {
   const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const router = useRouter();
-  const groupId = parseInt(router.query.groupId as string);
+  const groupId = isStringQueryParam(router.query.groupId)
+    ? parseInt(router.query.groupId)
+    : Number.NaN;
 
   const setGroupDefaultCurrency = useCurrencyPreferenceStore((s) => s.setGroupDefaultCurrency);
 
-  const groupDetailQuery = api.group.getGroupDetails.useQuery({ groupId });
-  const groupTotalQuery = api.group.getGroupTotals.useQuery({ groupId });
-  const expensesQuery = api.expense.getGroupExpenses.useQuery({ groupId });
+  const groupDetailQuery = api.group.getGroupDetails.useQuery(
+    { groupId },
+    { enabled: router.isReady && Boolean(groupId) },
+  );
+  const groupTotalQuery = api.group.getGroupTotals.useQuery(
+    { groupId },
+    { enabled: router.isReady && Boolean(groupId) },
+  );
+  const expensesQuery = api.expense.getGroupExpenses.useQuery(
+    { groupId },
+    { enabled: router.isReady && Boolean(groupId) },
+  );
   const deleteGroupMutation = api.group.delete.useMutation();
   const leaveGroupMutation = api.group.leaveGroup.useMutation();
   const toggleArchiveMutation = api.group.toggleArchive.useMutation();
@@ -171,6 +183,7 @@ const BalancePage: NextPageWithUser<{
                   {t('group_details.group_statistics.total_expenses')}
                 </p>
                 <div className="mt-2 flex flex-wrap gap-1">
+                  {/* oxlint-disable no-underscore-dangle -- Prisma's generated aggregate API uses the `_sum` field name. */}
                   {groupTotalQuery.data?.map((total, index, arr) =>
                     null != total._sum.amount ? (
                       <Fragment key={total.currency}>
@@ -181,6 +194,7 @@ const BalancePage: NextPageWithUser<{
                       </Fragment>
                     ) : null,
                   )}
+                  {/* oxlint-enable no-underscore-dangle */}
                 </div>
                 {expensesQuery?.data && expensesQuery.data[expensesQuery.data.length - 1] && (
                   <div className="mt-8">
@@ -242,23 +256,23 @@ const BalancePage: NextPageWithUser<{
                       ) : (
                         isAdmin &&
                         (() => {
-                          const canLeave = !groupDetailQuery.data?.groupBalances.find(
+                          const canLeaveMember = !groupDetailQuery.data?.groupBalances.find(
                             (b) => 0n !== b.amount && b.userId === groupUser.userId,
                           );
 
                           return (
                             <SimpleConfirmationDialog
                               title={
-                                canLeave
+                                canLeaveMember
                                   ? t('group_details.group_info.remove_member_details.title')
                                   : ''
                               }
                               description={
-                                canLeave
+                                canLeaveMember
                                   ? t('group_details.group_info.remove_member_details.can_remove')
                                   : t('group_details.group_info.remove_member_details.cant_remove')
                               }
-                              hasPermission={canLeave}
+                              hasPermission={canLeaveMember}
                               onConfirm={() => onGroupLeave(groupUser.userId)}
                               loading={leaveGroupMutation.isPending}
                               variant="destructive"

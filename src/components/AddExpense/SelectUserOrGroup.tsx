@@ -121,16 +121,16 @@ export const SelectUserOrGroup: React.FC<{
   );
 
   const onGroupSelect = useCallback(
-    (group: SelectableGroup) => {
-      setGroup(group);
+    (selectedGroup: SelectableGroup) => {
+      setGroup(selectedGroup);
       const { currentUser } = useAddExpenseStore.getState();
       if (currentUser) {
         setParticipants([
           currentUser,
-          ...group.groupUsers.map((gu) => gu.user).filter((u) => u.id !== currentUser.id),
+          ...selectedGroup.groupUsers.map((gu) => gu.user).filter((u) => u.id !== currentUser.id),
         ]);
       }
-      const parsedDefaultSplit = deserializeDefaultSplit(group.defaultSplit);
+      const parsedDefaultSplit = deserializeDefaultSplit(selectedGroup.defaultSplit);
       if (parsedDefaultSplit) {
         useAddExpenseStore
           .getState()

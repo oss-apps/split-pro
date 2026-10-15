@@ -2,9 +2,8 @@ import { type GetServerSideProps } from 'next';
 
 import { env } from '~/env';
 
-export default function Index() {
-  return null;
-}
+const Index = () => null;
+export default Index;
 
 export const getServerSideProps: GetServerSideProps = async () => ({
   redirect: {

@@ -1,6 +1,6 @@
 import type { BalanceView, User } from '@prisma/client';
 import { clsx } from 'clsx';
-import { type ComponentProps, Fragment, useCallback, useMemo } from 'react';
+import { type ComponentProps, Fragment, useMemo } from 'react';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { api } from '~/utils/api';
 import { BigMath } from '~/utils/numbers';
@@ -11,7 +11,6 @@ import { GroupSettleUp } from '../Friend/GroupSettleup';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { Button } from '../ui/button';
 import { CurrencyConversionIcon, SettleupIcon } from '../ui/categoryIcons';
-import { toast } from 'sonner';
 
 interface UserWithBalance {
   user: User;
@@ -35,32 +34,26 @@ export const BalanceList: React.FC<{
       return acc;
     }, {});
     groupBalances
-      .filter(
-        ({ amount, userId, friendId }) =>
-          0 < BigMath.abs(amount) && userId !== friendId && res[userId] && res[friendId],
+      .filter(({ amount, userId, friendId }) =>
+        Boolean(0 < BigMath.abs(amount) && userId !== friendId && res[userId] && res[friendId]),
       )
       .forEach((balance) => {
-        if (!res[balance.userId]) {
-          res[balance.userId] = {
-            user: users.find((u) => u.id === balance.userId) ?? ({} as User),
-            balances: {},
-            total: {},
-          };
-          console.error('BalanceList: userId not found in users list', balance.userId);
-          toast.error(t('errors.group_balances_malformed'));
+        const userBalance = res[balance.userId];
+        if (!userBalance) {
+          return;
         }
-        if (!res[balance.userId]!.balances[balance.friendId]) {
-          res[balance.userId]!.balances[balance.friendId] = {};
+        if (!userBalance.balances[balance.friendId]) {
+          userBalance.balances[balance.friendId] = {};
         }
-        const friendBalance = res[balance.userId]!.balances[balance.friendId]!;
+        const friendBalance = userBalance.balances[balance.friendId]!;
         friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0n) + balance.amount;
 
-        res[balance.userId]!.total[balance.currency] =
-          (res[balance.userId]!.total[balance.currency] ?? 0n) + balance.amount;
+        userBalance.total[balance.currency] =
+          (userBalance.total[balance.currency] ?? 0n) + balance.amount;
       });
 
     return res;
-  }, [groupBalances, users, t]);
+  }, [groupBalances, users]);
 
   return (
     <Accordion type="multiple">
@@ -112,7 +105,11 @@ export const BalanceList: React.FC<{
             </AccordionTrigger>
             <AccordionContent>
               {Object.entries(balances).map(([friendId, perFriendBalances]) => {
-                const friend = userMap[Number(friendId)]!.user;
+                const friendBalance = userMap[Number(friendId)];
+                if (!friendBalance) {
+                  return null;
+                }
+                const friend = friendBalance.user;
 
                 return (
                   <Fragment key={friendId}>

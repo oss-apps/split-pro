@@ -8,26 +8,29 @@
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "isolatedModules": true,
-
     /* Strictness */
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "checkJs": true,
-
     /* Bundled projects */
     "lib": ["dom", "dom.iterable", "ES2023", "WebWorker"],
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "jsx": "preserve",
-    "plugins": [{ "name": "next" }],
+    "jsx": "react-jsx",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "incremental": true,
-
     /* Path Aliases */
     "paths": {
       "~/*": ["./src/*"],
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "next-i18next": ["./src/utils/i18n/pages.ts"],
+      "next-i18next/serverSideTranslations": ["./src/utils/i18n/serverSideTranslations.ts"]
     }
   },
   "include": [
@@ -38,7 +41,8 @@
     "**/*.jsx",
     "**/*.cjs",
     "**/*.js",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules", "public", "playwright-report", "test-results"]
 }

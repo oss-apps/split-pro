@@ -81,21 +81,20 @@ const AddBankTransactions: React.FC<{
 
         const { participants: tempParticipants } = calculateParticipantSplit({
           amount: tempExpense.amount,
-          expenseDate: tempExpense.expenseDate as Date,
-          participants: participants,
+          expenseDate: tempItem.date,
+          participants,
           splitType: tempExpense.splitType,
           splitShares,
           paidBy,
           isNegative: false,
         });
 
-        return {
-          ...tempExpense,
+        return Object.assign(tempExpense, {
           participants: tempParticipants.map((p) => ({
             userId: p.id,
             amount: p.amount ?? 0n,
           })),
-        };
+        });
       }) as CreateExpense[];
 
     await addExpenseMutation.mutateAsync(expenses, {

@@ -126,6 +126,9 @@
   },
   "packageManager": "pnpm@10.11.0",
   "pnpm": {
+    "overrides": {
+      "axios": "1.20.0"
+    },
     "onlyBuiltDependencies": [
       "@prisma/client",
       "@prisma/engines",

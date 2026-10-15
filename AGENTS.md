@@ -24,7 +24,7 @@ pnpm dx:down       # Stop Docker containers
   - start dedicated db container, for example:
     - `docker run -d --name <unique-container-name> -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=strong-password -e POSTGRES_DB=<worktree-db> -p <worktree-port>:5432 ossapps/postgres:17.7-trixie postgres -c shared_preload_libraries=pg_cron -c cron.database_name=<worktree-db> -c cron.timezone=UTC`
   - enable pg_cron extension once: `psql "postgresql://postgres:strong-password@localhost:<worktree-port>/<worktree-db>" -c "CREATE EXTENSION IF NOT EXISTS pg_cron;"`
-  - initialize schema and data: `pnpm exec prisma migrate reset --force --skip-seed && pnpm db:seed`
+  - initialize schema and data: `pnpm exec prisma migrate reset --force && pnpm generate && pnpm db:seed`
 
 ### Database
 

@@ -195,7 +195,10 @@ pnpm build
 
 There is an extensive seed data generation script, which handles the creation of tens of users, groups and thousands of expenses with various categories, names, split types etc.
 You can use it for development and it is strongly advised, when reporting issues to point to the seeded user/group/expense as the data creation
-is deterministic. If the database was not seeded automatically, you can run `pnpm prisma migrate reset` to get back to the pure seeded state.
+is deterministic. To return a disposable development database to the pure seeded state, run
+`pnpm prisma migrate reset` followed by `pnpm generate && pnpm db:seed`. Prisma 7 no longer
+generates the client or seeds automatically after migration commands; `pnpm db:dev` generates
+the client, and a new development database needs an explicit `pnpm db:seed`.
 There is also a markdown report being generated on each run and you can see it in the project root directory. It features some useful statistic
 like the most connected accounts, which you can log into to have a populated app.
 

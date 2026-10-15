@@ -183,6 +183,7 @@ const BalancePage: NextPageWithUser<{
                   {t('group_details.group_statistics.total_expenses')}
                 </p>
                 <div className="mt-2 flex flex-wrap gap-1">
+                  {/* oxlint-disable no-underscore-dangle -- Prisma's generated aggregate API uses the `_sum` field name. */}
                   {groupTotalQuery.data?.map((total, index, arr) =>
                     null != total._sum.amount ? (
                       <Fragment key={total.currency}>
@@ -193,6 +194,7 @@ const BalancePage: NextPageWithUser<{
                       </Fragment>
                     ) : null,
                   )}
+                  {/* oxlint-enable no-underscore-dangle */}
                 </div>
                 {expensesQuery?.data && expensesQuery.data[expensesQuery.data.length - 1] && (
                   <div className="mt-8">

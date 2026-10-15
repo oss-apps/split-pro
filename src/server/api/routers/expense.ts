@@ -29,14 +29,18 @@ export const expenseRouter = createTRPCRouter({
       orderBy: { _sum: { amount: 'desc' } },
     });
 
+    // oxlint-disable no-underscore-dangle -- Prisma's generated aggregate API uses the `_sum` field name.
     const youOwe = cumulatedBalances
       .filter((b) => b._sum.amount && 0 > b._sum.amount)
       .map((b) => ({ currency: b.currency, amount: b._sum.amount! }))
       .reverse();
+    // oxlint-enable no-underscore-dangle
 
+    // oxlint-disable no-underscore-dangle -- Prisma's generated aggregate API uses the `_sum` field name.
     const youGet = cumulatedBalances
       .filter((b) => b._sum.amount && 0 < b._sum.amount)
       .map((b) => ({ currency: b.currency, amount: b._sum.amount! }));
+    // oxlint-enable no-underscore-dangle
 
     return { youOwe, youGet };
   }),

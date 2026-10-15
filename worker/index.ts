@@ -16,6 +16,7 @@ declare global {
 declare const self: ServiceWorkerGlobalScope;
 
 const serwist = new Serwist({
+  // oxlint-disable-next-line no-underscore-dangle -- Serwist replaces this declared manifest field during its build step.
   precacheEntries: self.__SW_MANIFEST,
   skipWaiting: true,
   clientsClaim: true,

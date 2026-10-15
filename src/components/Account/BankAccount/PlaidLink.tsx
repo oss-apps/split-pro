@@ -39,6 +39,7 @@ const usePlaidLinkHook = (
   }, [linkToken, onConnect]);
 
   return {
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- react-plaid-link types this SDK callback as Function; its documented callback accepts no arguments here.
     open: open as () => void,
     ready,
   };

@@ -18,21 +18,21 @@
     "no-shadow": "warn",
     "no-await-in-loop": "warn",
     "oxc/no-map-spread": "warn",
-    "react_perf/jsx-no-new-function-as-prop": "off",
-    "react_perf/jsx-no-new-object-as-prop": "off",
-    "react_perf/jsx-no-new-array-as-prop": "off",
-    "no-magic-numbers": "off",
+    "react_perf/jsx-no-new-function-as-prop": "allow",
+    "react_perf/jsx-no-new-object-as-prop": "allow",
+    "react_perf/jsx-no-new-array-as-prop": "allow",
+    "no-magic-numbers": "allow",
     "no-anonymous-default-export": ["warn", { "allowCallExpression": true }],
-    "no-ternary": "off",
-    "consistent-type-specifier-style": "off",
-    "sort-keys": "off",
-    "exports-last": "off",
+    "no-ternary": "allow",
+    "consistent-type-specifier-style": "allow",
+    "sort-keys": "allow",
+    "exports-last": "allow",
     "no-unused-vars": "warn",
-    "no-unassigned-import": "off",
-    "consistent-indexed-object-style": "off",
-    "max-params": "off",
-    "group-exports": "off",
-    "func-style": "off",
+    "no-unassigned-import": "allow",
+    "consistent-indexed-object-style": "allow",
+    "max-params": "allow",
+    "group-exports": "allow",
+    "func-style": "allow",
     "sort-imports": [
       "error",
       {
@@ -43,21 +43,21 @@
         "allowSeparatedGroups": true
       }
     ],
-    "prefer-default-export": "off",
-    "yoda": "off",
-    "new-cap": "off",
-    "no-named-export": "off",
-    "id-length": "off",
-    "react_perf/jsx-no-jsx-as-prop": "off",
-    "no-nested-ternary": "off",
-    "typescript/no-confusing-void-expression": "off",
+    "prefer-default-export": "allow",
+    "yoda": "allow",
+    "new-cap": "allow",
+    "no-named-export": "allow",
+    "id-length": "allow",
+    "react_perf/jsx-no-jsx-as-prop": "allow",
+    "no-nested-ternary": "allow",
+    "typescript/no-confusing-void-expression": "allow",
     "typescript/no-misused-spread": "warn",
-    "func-names": "off",
-    "prefer-destructuring": "off",
-    "max-statements": "off",
-    "jsx-max-depth": "off",
-    "no-nodejs-modules": "off",
-    "no-implicit-coercion": "off",
+    "func-names": "allow",
+    "prefer-destructuring": "allow",
+    "max-statements": "allow",
+    "jsx-max-depth": "allow",
+    "no-nodejs-modules": "allow",
+    "no-implicit-coercion": "allow",
     "react/function-component-definition": [
       "warn",
       {
@@ -76,7 +76,7 @@
     {
       "files": ["**/*.jsx", "**/*.tsx"],
       "rules": {
-        "react-in-jsx-scope": "off",
+        "react-in-jsx-scope": "allow",
         "no-console": ["warn", { "allow": ["info", "warn", "error", "debug", "trace"] }]
       }
     },
@@ -89,10 +89,11 @@
         "src/dummies/**"
       ],
       "rules": {
-        "typescript/no-unsafe-type-assertion": "off",
-        "typescript/no-unsafe-enum-comparison": "off",
-        "oxc/no-map-spread": "off",
-        "import/first": "off"
+        "typescript/no-unsafe-type-assertion": "allow",
+        "typescript/no-unsafe-enum-comparison": "allow",
+        "oxc/no-map-spread": "allow",
+        "import/first": "allow",
+        "react/jsx-no-constructed-context-values": "allow"
       }
     }
   ],

@@ -241,7 +241,7 @@ export const generateDirectExpense = (participants: DummyUserInfo[]) => {
  * @param groups - Array of all groups
  * @returns Array of generated expenses
  */
-export const generateDirectExpenses = (users: DummyUserInfo[], groups: DummyGroupInfo[]) => {
+export const generateDirectExpenses = (users: DummyUserInfo[], _groups: DummyGroupInfo[]) => {
   // Build graph of users in same groups
   const userConnections = new Map<DummyUserInfo, Set<DummyUserInfo>>();
 
@@ -308,10 +308,9 @@ export const generateAllExpenses = (users: DummyUserInfo[], groups: DummyGroupIn
   // Generate direct expenses
   const directExpenses = generateDirectExpenses(users, groups);
 
-  return [...groupExpenses, ...directExpenses].map((expense, idx) => ({
-    ...expense,
-    idx,
-  }));
+  return [...groupExpenses, ...directExpenses].map((expense, idx) =>
+    Object.assign({}, expense, { idx }),
+  );
 };
 
 export type DummyExpenseInfo = ReturnType<typeof generateAllExpenses>[number];
@@ -339,10 +338,9 @@ export const generateExpenseEdits = (expenses: DummyExpenseInfo[]) =>
     .map((expense) => {
       const editType = selectEditType();
 
-      const expenseEdit = {
-        ...expense,
+      const expenseEdit = Object.assign({}, expense, {
         updatedBy: selectPayer(expense.participants, expense.addedBy),
-      };
+      });
 
       switch (editType) {
         case 'splitType':
@@ -394,10 +392,11 @@ export const generateExpenseEdits = (expenses: DummyExpenseInfo[]) =>
 export const generateExpensesToDelete = (expenses: DummyExpenseInfo[]) =>
   expenses
     .filter(() => faker.datatype.boolean({ probability: 0.1 }))
-    .map((expense) => ({
-      ...expense,
-      deletedBy: selectPayer(expense.participants, expense.addedBy),
-    }));
+    .map((expense) =>
+      Object.assign({}, expense, {
+        deletedBy: selectPayer(expense.participants, expense.addedBy),
+      }),
+    );
 
 export const generatePairsToSettle = (
   expenses: DummyExpenseInfo[],

@@ -437,7 +437,7 @@ export function calculateSplitShareBasedOnAmount(
     case SplitType.ADJUSTMENT:
       const minAmount = BigMath.min(
         ...participants
-          .filter(({ amount }) => 0n !== amount)
+          .filter(({ amount: participantAmount }) => 0n !== participantAmount)
           .map((p) =>
             p.id === paidBy?.id
               ? BigMath.abs(amount - (p.amount ?? 0n))

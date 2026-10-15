@@ -89,13 +89,12 @@ const AddBankTransactions: React.FC<{
           isNegative: false,
         });
 
-        return {
-          ...tempExpense,
+        return Object.assign({}, tempExpense, {
           participants: tempParticipants.map((p) => ({
             userId: p.id,
             amount: p.amount ?? 0n,
           })),
-        };
+        });
       }) as CreateExpense[];
 
     await addExpenseMutation.mutateAsync(expenses, {

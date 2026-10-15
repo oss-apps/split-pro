@@ -3,12 +3,13 @@ import { addHours } from 'date-fns';
 import rawRealGraph from './mock/example_group_balances.json';
 import { simplifyDebts } from '~/lib/simplify';
 
-const realGraph = rawRealGraph.map(({ amount, updatedAt, ...rest }) => ({
-  ...rest,
-  amount: BigInt(amount),
-  updatedAt: new Date(updatedAt),
-  createdAt: new Date(updatedAt),
-}));
+const realGraph = rawRealGraph.map(({ amount, updatedAt, ...rest }) =>
+  Object.assign({}, rest, {
+    amount: BigInt(amount),
+    updatedAt: new Date(updatedAt),
+    createdAt: new Date(updatedAt),
+  }),
+);
 
 interface MinimalEdge {
   userOne: number;
@@ -90,11 +91,12 @@ const smallGraphResult: GroupBalance[] = getFullBalanceGraph(
     { userOne: 2, userTwo: 0, amount: -3000n },
   ],
   3,
-).map((resultBalance, idx) => ({
-  ...resultBalance,
-  updatedAt: smallGraph[idx]!.updatedAt,
-  createdAt: smallGraph[idx]!.createdAt,
-}));
+).map((resultBalance, idx) =>
+  Object.assign({}, resultBalance, {
+    updatedAt: smallGraph[idx]!.updatedAt,
+    createdAt: smallGraph[idx]!.createdAt,
+  }),
+);
 
 // taken from https://medium.com/@mithunmk93/algorithm-behind-splitwises-debt-simplification-feature-8ac485e97688
 const largeGraph: GroupBalance[] = getFullBalanceGraph(

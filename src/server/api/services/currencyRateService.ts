@@ -33,8 +33,8 @@ abstract class CurrencyRateProvider {
     const data = await this.fetchRates(from, to, date);
 
     await Promise.all(
-      Object.entries(data.rates).map(([to, rate]) =>
-        this.upsertCache(data.base as CurrencyCode, to as CurrencyCode, date, rate),
+      Object.entries(data.rates).map(([targetCurrency, rate]) =>
+        this.upsertCache(data.base as CurrencyCode, targetCurrency as CurrencyCode, date, rate),
       ),
     );
 

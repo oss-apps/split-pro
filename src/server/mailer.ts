@@ -95,10 +95,10 @@ async function sendMail(
   html: string,
   replyTo?: string,
 ) {
-  const transporter = getTransporter();
+  const mailTransporter = getTransporter();
   try {
-    if (transporter) {
-      await transporter.sendMail({
+    if (mailTransporter) {
+      await mailTransporter.sendMail({
         to: email,
         from: env.FROM_EMAIL,
         subject,

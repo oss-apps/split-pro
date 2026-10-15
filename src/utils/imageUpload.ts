@@ -1,6 +1,6 @@
 import imageCompression from 'browser-image-compression';
 
-import { env } from '~/env';
+import '~/env';
 
 const compressImage = async (file: File, maxSizeMB: number) => {
   if (!file.type.startsWith('image/')) {

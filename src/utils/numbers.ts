@@ -220,7 +220,7 @@ export const getCurrencyHelpers = ({
       sign +
       parts
         .filter(({ type }) => !hideSymbol || type !== 'currency')
-        .map(({ value }) => value)
+        .map(({ value: partValue }) => partValue)
         .join('')
     );
   };

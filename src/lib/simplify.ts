@@ -50,7 +50,7 @@ function simplifyDebtsForSingleCurrency(
 
         const balance =
           groupBalances.find(
-            (balance) => balance.userId === nodes[source] && balance.friendId === nodes[sink],
+            (candidate) => candidate.userId === nodes[source] && candidate.friendId === nodes[sink],
           ) ?? {};
 
         res.push({

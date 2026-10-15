@@ -8,8 +8,8 @@ const config = {
   // Format prisma.schema files
   '*.prisma': ['pnpm prisma format'],
 
-  // Type check TypeScript files (optional - can be slow)
-  // '*.{ts,tsx}': () => 'tsc --noEmit',
+  // Type check TypeScript files
+  '*.{ts,tsx}': () => 'tsc --noEmit',
 };
 
 export default config;

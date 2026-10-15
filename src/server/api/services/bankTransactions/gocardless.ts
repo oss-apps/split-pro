@@ -57,7 +57,7 @@ export class GoCardlessService extends AbstractBankProvider {
 
   async getTransactions(userId: number, requisitionId?: string) {
     if (!requisitionId) {
-      return;
+      return undefined;
     }
 
     await this.client.generateToken();
@@ -138,7 +138,7 @@ export class GoCardlessService extends AbstractBankProvider {
 
   async connectToBank(institutionId?: string, preferredLanguage?: string) {
     if (!institutionId) {
-      return;
+      return undefined;
     }
 
     await this.client.generateToken();

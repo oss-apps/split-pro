@@ -74,7 +74,7 @@ export class PlaidService extends AbstractBankProvider {
 
   async getTransactions(userId: number, accessToken?: string) {
     if (!accessToken) {
-      return;
+      return undefined;
     }
 
     const cachedData = await db.cachedBankData.findUnique({

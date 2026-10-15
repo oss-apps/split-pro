@@ -24,7 +24,7 @@ const getTransporter = () => {
   }
 
   if (!mailServerConfig.host) {
-    return;
+    return undefined;
   }
 
   const transport = {

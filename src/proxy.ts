@@ -8,7 +8,7 @@ export function proxy(req: NextRequest) {
     req.nextUrl.pathname.includes('/api/') ||
     PUBLIC_FILE.test(req.nextUrl.pathname)
   ) {
-    return;
+    return undefined;
   }
 
   if (req.nextUrl.pathname.startsWith('/pt')) {
@@ -24,4 +24,6 @@ export function proxy(req: NextRequest) {
       new URL(`/${locale}${req.nextUrl.pathname}${req.nextUrl.search}`, req.url),
     );
   }
+
+  return undefined;
 }

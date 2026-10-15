@@ -85,6 +85,8 @@ abstract class CurrencyRateProvider {
       void this.upsertCache(from, to, date, rate);
       return rate;
     }
+
+    return undefined;
   }
 
   private upsertCache(from: CurrencyCode, to: CurrencyCode, date: Date, rate: number) {

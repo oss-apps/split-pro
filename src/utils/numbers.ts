@@ -7,12 +7,12 @@ export const getCurrencyHelpers = ({
   locale?: string;
   currency?: string;
 }) => {
-  currency = isCurrencyCode(currency) ? currency : 'USD';
-  const { decimalDigits } = CURRENCIES[currency as CurrencyCode];
+  const normalizedCurrency = isCurrencyCode(currency) ? currency : 'USD';
+  const { decimalDigits } = CURRENCIES[normalizedCurrency];
 
   const formatter = new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency,
+    currency: normalizedCurrency,
     minimumFractionDigits: 0,
     maximumFractionDigits: decimalDigits,
   });

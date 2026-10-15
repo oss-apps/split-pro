@@ -15,7 +15,7 @@ import {
 } from '~/types/expense.types';
 import { createExpense, deleteExpense, editExpense } from '../services/splitService';
 import { currencyRateProvider } from '../services/currencyRateService';
-import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
+import { isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { getUserMap } from './user';
@@ -594,19 +594,20 @@ export const expenseRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { from, to, date } = input;
 
-      if (from.length === 0) {
+      const firstFrom = from[0];
+      if (undefined === firstFrom) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Missing from currency code' });
       }
 
-      if (!from.every(isCurrencyCode) || !isCurrencyCode(to)) {
+      if (!isCurrencyCode(firstFrom) || !from.every(isCurrencyCode) || !isCurrencyCode(to)) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid currency code' });
       }
 
       const rates = new Map<string, number>();
 
       // Get the first rate to precache rates for the target currency
-      const rate = await currencyRateProvider.getCurrencyRate(from[0] as CurrencyCode, to, date);
-      rates.set(from[0]!, rate);
+      const rate = await currencyRateProvider.getCurrencyRate(firstFrom, to, date);
+      rates.set(firstFrom, rate);
 
       if (from.length > 1) {
         // Fetch rates for remaining currencies and return as map

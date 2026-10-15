@@ -216,7 +216,13 @@ router.push('/path').catch(console.error);
 ### React Patterns
 
 - Functional components with TypeScript interfaces
-- `useCallback` for memoized callbacks, `useMemo` for computed values
+- Prefer straightforward components and colocated event handlers. React Compiler handles
+  routine memoization in compiled components; use `useMemo`, `useCallback`, or `React.memo`
+  when profiling or an explicit identity requirement justifies them.
+- Confirm compiler optimization before removing existing manual memoization. The stable
+  compiler currently skips some functions containing BigInt literals; preserve their
+  memoization and monetary arithmetic. See `docs/react-compiler-migration.md`.
+- Avoid handler factories or component extractions solely to prevent inline JSX allocations.
 - Zustand for global state, tRPC/React Query for server state
 - `cn()` utility for conditional Tailwind classes
 - Use `as const` and `satisfies` for fixed arrays/objects

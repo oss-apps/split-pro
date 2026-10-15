@@ -5,12 +5,22 @@
   },
   "categories": {
     "correctness": "error",
-    "suspicious": "warn",
-    "style": "warn",
-    "perf": "warn"
+    "suspicious": "off",
+    "style": "off",
+    "perf": "off"
   },
   "plugins": ["nextjs", "react", "react-perf", "typescript", "import", "oxc"],
   "rules": {
+    "react/hooks": "error",
+    "react/exhaustive-effect-dependencies": "warn",
+    "typescript/no-unsafe-type-assertion": "warn",
+    "typescript/no-unsafe-enum-comparison": "warn",
+    "no-shadow": "warn",
+    "no-await-in-loop": "warn",
+    "oxc/no-map-spread": "warn",
+    "react_perf/jsx-no-new-function-as-prop": "off",
+    "react_perf/jsx-no-new-object-as-prop": "off",
+    "react_perf/jsx-no-new-array-as-prop": "off",
     "no-magic-numbers": "off",
     "no-anonymous-default-export": ["warn", { "allowCallExpression": true }],
     "no-ternary": "off",
@@ -48,10 +58,13 @@
     "jsx-max-depth": "off",
     "no-nodejs-modules": "off",
     "no-implicit-coercion": "off",
-    "react/function-component-definition": ["warn", {
-      "namedComponents": "arrow-function",
-      "unnamedComponents": "arrow-function"
-    }],
+    "react/function-component-definition": [
+      "warn",
+      {
+        "namedComponents": "arrow-function",
+        "unnamedComponents": "arrow-function"
+      }
+    ],
     "one-var": "allow"
   },
   "overrides": [

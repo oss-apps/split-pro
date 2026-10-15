@@ -173,15 +173,7 @@ const AddPage: NextPageWithUser<{
       }
       useAddExpenseStore.setState({ showFriends: false });
     }
-  }, [
-    _friendId,
-    friendId,
-    friendQuery.isPending,
-    friendQuery.data,
-    currentUser,
-    setParticipants,
-    applySplitPreset,
-  ]);
+  }, [_friendId, friendId, friendQuery.data, currentUser, setParticipants, applySplitPreset]);
 
   useEffect(() => {
     if (!_expenseId || !expenseQuery.data) {
@@ -235,16 +227,7 @@ const AddPage: NextPageWithUser<{
     }
   }, [
     _expenseId,
-    _friendId,
-    _groupId,
-    friendId,
     expenseQuery.data,
-    groupId,
-    friendQuery.data,
-    friendQuery.isPending,
-    groupQuery.data,
-    groupQuery.isPending,
-    currentUser,
     setAmount,
     setAmountStr,
     setCategory,

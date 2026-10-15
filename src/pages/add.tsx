@@ -81,49 +81,49 @@ const AddPage: NextPageWithUser<{
     }
   }, [setCurrentUser, setCurrency, groupId, router.isReady, user]);
 
-  const _groupId = isStringQueryParam(groupId) ? parseInt(groupId) : Number.NaN;
-  const _friendId = isStringQueryParam(friendId) ? parseInt(friendId) : Number.NaN;
-  const _expenseId = isStringQueryParam(expenseId) ? expenseId : '';
+  const parsedGroupId = isStringQueryParam(groupId) ? parseInt(groupId) : Number.NaN;
+  const parsedFriendId = isStringQueryParam(friendId) ? parseInt(friendId) : Number.NaN;
+  const parsedExpenseId = isStringQueryParam(expenseId) ? expenseId : '';
   const groupQuery = api.group.getGroupDetails.useQuery(
-    { groupId: _groupId },
+    { groupId: parsedGroupId },
     {
-      enabled: router.isReady && Boolean(_groupId) && !_expenseId,
+      enabled: router.isReady && Boolean(parsedGroupId) && !parsedExpenseId,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
     },
   );
 
   const friendQuery = api.user.getFriend.useQuery(
-    { friendId: _friendId },
+    { friendId: parsedFriendId },
     {
-      enabled: router.isReady && Boolean(_friendId) && !_expenseId,
+      enabled: router.isReady && Boolean(parsedFriendId) && !parsedExpenseId,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
     },
   );
 
   const expenseQuery = api.expense.getExpenseDetails.useQuery(
-    { expenseId: _expenseId },
+    { expenseId: parsedExpenseId },
     {
-      enabled: router.isReady && Boolean(_expenseId),
+      enabled: router.isReady && Boolean(parsedExpenseId),
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
     },
   );
 
   useEffect(() => {
-    if (!groupId || !_groupId) {
+    if (!groupId || !parsedGroupId) {
       initializedGroupIdRef.current = null;
       return;
     }
 
-    if (initializedGroupIdRef.current === _groupId) {
+    if (initializedGroupIdRef.current === parsedGroupId) {
       return;
     }
 
     // Set group
     if (groupId && !groupQuery.isPending && groupQuery.data && currentUser) {
-      initializedGroupIdRef.current = _groupId;
+      initializedGroupIdRef.current = parsedGroupId;
       setGroup(groupQuery.data);
 
       setParticipants([
@@ -144,7 +144,7 @@ const AddPage: NextPageWithUser<{
       useAddExpenseStore.setState({ showFriends: false });
     }
   }, [
-    _groupId,
+    parsedGroupId,
     groupId,
     groupQuery.isPending,
     groupQuery.data,
@@ -156,17 +156,17 @@ const AddPage: NextPageWithUser<{
   ]);
 
   useEffect(() => {
-    if (!friendId || !_friendId) {
+    if (!friendId || !parsedFriendId) {
       initializedFriendIdRef.current = null;
       return;
     }
 
-    if (initializedFriendIdRef.current === _friendId) {
+    if (initializedFriendIdRef.current === parsedFriendId) {
       return;
     }
 
     if (friendId && currentUser && friendQuery.data) {
-      initializedFriendIdRef.current = _friendId;
+      initializedFriendIdRef.current = parsedFriendId;
       setParticipants([currentUser, friendQuery.data]);
       const parsedDefaultSplit = deserializeDefaultSplit(friendQuery.data.defaultSplit);
       if (parsedDefaultSplit) {
@@ -174,19 +174,19 @@ const AddPage: NextPageWithUser<{
       }
       useAddExpenseStore.setState({ showFriends: false });
     }
-  }, [_friendId, friendId, friendQuery.data, currentUser, setParticipants, applySplitPreset]);
+  }, [parsedFriendId, friendId, friendQuery.data, currentUser, setParticipants, applySplitPreset]);
 
   useEffect(() => {
-    if (!_expenseId || !expenseQuery.data) {
+    if (!parsedExpenseId || !expenseQuery.data) {
       initializedExpenseIdRef.current = null;
       return;
     }
 
-    if (initializedExpenseIdRef.current === _expenseId) {
+    if (initializedExpenseIdRef.current === parsedExpenseId) {
       return;
     }
 
-    initializedExpenseIdRef.current = _expenseId;
+    initializedExpenseIdRef.current = parsedExpenseId;
 
     if (expenseQuery.data.group) {
       setGroup(expenseQuery.data.group);
@@ -227,7 +227,7 @@ const AddPage: NextPageWithUser<{
       setFileKey(expenseQuery.data.fileKey);
     }
   }, [
-    _expenseId,
+    parsedExpenseId,
     expenseQuery.data,
     setAmount,
     setAmountStr,
@@ -247,13 +247,13 @@ const AddPage: NextPageWithUser<{
   return (
     <>
       <Head>
-        <title>{_expenseId ? t('actions.edit_expense') : t('actions.add_expense')}</title>
+        <title>{parsedExpenseId ? t('actions.edit_expense') : t('actions.add_expense')}</title>
       </Head>
       <MainLayout hideAppBar>
-        {currentUser && (!_expenseId || expenseQuery.data) && (
+        {currentUser && (!parsedExpenseId || expenseQuery.data) && (
           <AddOrEditExpensePage
             enableSendingInvites={enableSendingInvites}
-            expenseId={_expenseId}
+            expenseId={parsedExpenseId}
             bankConnectionEnabled={bankConnectionEnabled}
           />
         )}

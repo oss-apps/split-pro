@@ -93,6 +93,8 @@ export class GoCardlessService extends AbstractBankProvider {
 
       const account = this.client.account(accountId ?? '');
 
+      // Preserve provider pacing and the existing account request/result order.
+      // oxlint-disable-next-line no-await-in-loop
       const transactions = await account.getTransactions(this.returnTransactionFilters());
 
       if (!transactions) {

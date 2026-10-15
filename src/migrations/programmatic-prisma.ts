@@ -83,6 +83,8 @@ export async function runDbMigrations() {
         .map((stmt) => stmt.trim() + ';')
         .filter((stmt) => stmt.length > 0);
 
+      // Prisma migrations and their transactions must remain ordered and stop on first failure.
+      // oxlint-disable no-await-in-loop
       const ops = [
         ...migrationStatements.map((stmt) => db.$executeRawUnsafe(stmt)),
         db.$executeRawUnsafe(`
@@ -109,6 +111,7 @@ export async function runDbMigrations() {
       ];
 
       await db.$transaction(ops);
+      // oxlint-enable no-await-in-loop
 
       console.info(`Migration ${localMigrationName} applied successfully`);
 

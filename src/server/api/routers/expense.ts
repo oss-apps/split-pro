@@ -19,7 +19,6 @@ import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { getUserMap } from './user';
-import { FriendBalance } from '~/components/Friend/FriendBalance';
 
 export const expenseRouter = createTRPCRouter({
   getCumulatedBalances: protectedProcedure.query(async ({ ctx }) => {
@@ -133,6 +132,8 @@ export const expenseRouter = createTRPCRouter({
     .input(arrayify(createExpenseSchema))
     .mutation(async ({ input: expenses, ctx }) => {
       const results = [];
+      // Expense writes must preserve input order and stop on the first validation/write failure.
+      // oxlint-disable no-await-in-loop
       for (const input of expenses) {
         await validateExpenseWritePermission(input.expenseId, input.groupId, ctx.session.user.id);
         if (input.splitType === SplitType.CURRENCY_CONVERSION) {
@@ -153,6 +154,7 @@ export const expenseRouter = createTRPCRouter({
           });
         }
       }
+      // oxlint-enable no-await-in-loop
 
       return results;
     }),

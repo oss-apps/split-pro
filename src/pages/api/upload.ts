@@ -38,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     maxFileSize: env.UPLOAD_MAX_FILE_SIZE_MB * 1024 * 1024,
   });
 
-  let uploadedFile: File | undefined;
+  let uploadedFile: File | undefined = undefined;
 
   try {
     const [, files] = await form.parse(req);

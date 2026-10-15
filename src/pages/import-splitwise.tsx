@@ -55,13 +55,13 @@ const ImportSpliwisePage: NextPageWithUser = () => {
         }, {}),
       );
 
-      const _groups = (json.groups as SplitwiseGroup[]).filter(
+      const groups = (json.groups as SplitwiseGroup[]).filter(
         (g) => 0 < g.members.length && 0 !== g.id,
       );
 
-      setGroups(_groups);
+      setGroups(groups);
       setSelectedGroups(
-        _groups.reduce<Record<string, boolean>>((acc, group) => {
+        groups.reduce<Record<string, boolean>>((acc, group) => {
           acc[group.id] = true;
           return acc;
         }, {}),

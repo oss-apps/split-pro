@@ -1,5 +1,4 @@
-import type { PrismaClient } from '@prisma/client';
-import { SplitType } from '@prisma/client';
+import { type PrismaClient, SplitType } from '@prisma/client';
 
 import { type SettleupCandidate } from '~/dummies/expenseGenerator';
 import { createExpense } from '~/server/api/services/splitService';

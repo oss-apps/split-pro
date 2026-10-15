@@ -55,7 +55,7 @@ export const sendPushNotificationToUsers = async (userIds: number[], pushData: P
   const pushResults = await Promise.all(
     subscriptions.map(async (s) => {
       const result = await pushNotification(s.subscription, pushData);
-      return { ...result, userId: s.userId, endpoint: s.endpoint };
+      return Object.assign(result, { userId: s.userId, endpoint: s.endpoint });
     }),
   );
 

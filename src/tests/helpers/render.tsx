@@ -5,7 +5,7 @@ import { SessionContext } from 'next-auth/react';
 import { RouterContext } from 'next/dist/shared/lib/router-context.shared-runtime';
 import type { NextRouter } from 'next/router';
 import { ThemeProvider } from 'next-themes';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { CurrencyHelpersProvider } from '~/contexts/CurrencyHelpersContext';
 import { createTestQueryClient } from './queryClient';
@@ -26,9 +26,14 @@ export const renderWithProviders = (ui: React.ReactElement, options: AppRenderOp
     ...renderOptions
   } = options;
   const queryClient = createTestQueryClient();
+  const mockSession = useMemo(
+    () => createMockSession(session, sessionLoading),
+    [session, sessionLoading],
+  );
+
   const Wrapper = ({ children }: React.PropsWithChildren) => (
     <RouterContext.Provider value={router}>
-      <SessionContext.Provider value={createMockSession(session, sessionLoading)}>
+      <SessionContext.Provider value={mockSession}>
         <QueryClientProvider client={queryClient}>
           <CurrencyHelpersProvider>
             <ThemeProvider attribute="class" defaultTheme="dark">

@@ -44,19 +44,31 @@ import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
+import { isStringQueryParam } from '~/utils/queryParams';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
 }> = ({ user, enableSendingInvites }) => {
   const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const router = useRouter();
-  const groupId = parseInt(router.query.groupId as string);
+  const groupId = isStringQueryParam(router.query.groupId)
+    ? parseInt(router.query.groupId)
+    : Number.NaN;
 
   const setGroupDefaultCurrency = useCurrencyPreferenceStore((s) => s.setGroupDefaultCurrency);
 
-  const groupDetailQuery = api.group.getGroupDetails.useQuery({ groupId });
-  const groupTotalQuery = api.group.getGroupTotals.useQuery({ groupId });
-  const expensesQuery = api.expense.getGroupExpenses.useQuery({ groupId });
+  const groupDetailQuery = api.group.getGroupDetails.useQuery(
+    { groupId },
+    { enabled: router.isReady && Boolean(groupId) },
+  );
+  const groupTotalQuery = api.group.getGroupTotals.useQuery(
+    { groupId },
+    { enabled: router.isReady && Boolean(groupId) },
+  );
+  const expensesQuery = api.expense.getGroupExpenses.useQuery(
+    { groupId },
+    { enabled: router.isReady && Boolean(groupId) },
+  );
   const deleteGroupMutation = api.group.delete.useMutation();
   const leaveGroupMutation = api.group.leaveGroup.useMutation();
   const toggleArchiveMutation = api.group.toggleArchive.useMutation();

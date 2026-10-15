@@ -28,6 +28,7 @@ import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { currencyConversion } from '~/utils/numbers';
 import { CurrencyConversionIcon } from '../ui/categoryIcons';
 import { useSession } from 'next-auth/react';
+import { isStringQueryParam } from '~/utils/queryParams';
 
 export const AddOrEditExpensePage: React.FC<{
   enableSendingInvites: boolean;
@@ -155,10 +156,10 @@ export const AddOrEditExpensePage: React.FC<{
 
                 const { friendId, groupId } = router.query;
 
-                if (friendId && !groupId) {
-                  navPromise = () => router.push(`/balances/${friendId as string}/expenses/${id}`);
-                } else if (groupId) {
-                  navPromise = () => router.push(`/groups/${groupId as string}/expenses/${id}`);
+                if (isStringQueryParam(friendId) && friendId && !groupId) {
+                  navPromise = () => router.push(`/balances/${friendId}/expenses/${id}`);
+                } else if (isStringQueryParam(groupId) && groupId) {
+                  navPromise = () => router.push(`/groups/${groupId}/expenses/${id}`);
                 } else {
                   navPromise = () => router.push(`/expenses/${id}?keepAdding=1`);
                 }

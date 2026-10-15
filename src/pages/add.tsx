@@ -16,6 +16,7 @@ import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { toast } from 'sonner';
 import { deserializeDefaultSplit } from '~/lib/defaultSplit';
 import { useAppStore } from '~/store/appStore';
+import { isStringQueryParam } from '~/utils/queryParams';
 
 const AddPage: NextPageWithUser<{
   enableSendingInvites: boolean;
@@ -80,13 +81,13 @@ const AddPage: NextPageWithUser<{
     }
   }, [setCurrentUser, setCurrency, groupId, router.isReady, user]);
 
-  const _groupId = parseInt(groupId as string);
-  const _friendId = parseInt(friendId as string);
-  const _expenseId = expenseId as string;
+  const _groupId = isStringQueryParam(groupId) ? parseInt(groupId) : Number.NaN;
+  const _friendId = isStringQueryParam(friendId) ? parseInt(friendId) : Number.NaN;
+  const _expenseId = isStringQueryParam(expenseId) ? expenseId : '';
   const groupQuery = api.group.getGroupDetails.useQuery(
     { groupId: _groupId },
     {
-      enabled: Boolean(_groupId) && !_expenseId,
+      enabled: router.isReady && Boolean(_groupId) && !_expenseId,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
     },
@@ -95,7 +96,7 @@ const AddPage: NextPageWithUser<{
   const friendQuery = api.user.getFriend.useQuery(
     { friendId: _friendId },
     {
-      enabled: Boolean(_friendId) && !_expenseId,
+      enabled: router.isReady && Boolean(_friendId) && !_expenseId,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
     },
@@ -104,7 +105,7 @@ const AddPage: NextPageWithUser<{
   const expenseQuery = api.expense.getExpenseDetails.useQuery(
     { expenseId: _expenseId },
     {
-      enabled: Boolean(_expenseId),
+      enabled: router.isReady && Boolean(_expenseId),
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
     },

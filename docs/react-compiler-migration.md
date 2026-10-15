@@ -38,17 +38,18 @@ optimization. This is an automatic compiler fallback, not a correctness-rule sup
 Do not change monetary values to floating-point numbers or rewrite BigInt arithmetic to
 make the compiler accept them. Re-audit these functions when upgrading the compiler.
 
-## Lint warning ratchet
+## Lint policy
 
-`pnpm lint` runs Oxlint and checks `.oxlint-baseline.json`. Errors always fail. Existing
-warning debt is budgeted by the full diagnostic rule code and repository-relative file.
-New rule/file combinations or increased warning counts fail; decreases are reported so
-the baseline can be reduced explicitly. Normal lint runs never update the baseline.
+`pnpm lint` runs Oxlint directly. Errors fail the command; warnings are reported without
+failing it while the remaining findings are reviewed. There is no warning baseline or
+zero-warning enforcement yet.
 
-Use `pnpm lint:raw` for the complete underlying Oxlint diagnostic output. Broad style,
-performance, and suspicious categories are disabled in favor of explicitly selected rules,
-while correctness and type-aware checking remain enabled. The baseline is accepted debt,
-not a claim that every warning is harmless.
+Broad style, performance, and suspicious categories are disabled in favor of explicitly
+selected rules, while correctness and type-aware checking remain enabled. Test files and
+test-only helpers disable `typescript/no-unsafe-type-assertion` and
+`typescript/no-unsafe-enum-comparison` to allow partial fixtures, mock casts, and deliberate
+invalid inputs. Other lint rules and normal TypeScript checking still apply to tests;
+production code retains both rules.
 
 ## Verification
 

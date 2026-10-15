@@ -248,6 +248,7 @@ function getProviders() {
         // A record that has an id, a name, an email, and an image.
         //
         // To work around this, we case to unknown and then `User`.
+        // oxlint-disable-next-line typescript/no-unsafe-type-assertion
         return {
           id: profile.sub,
           name: profile.name,

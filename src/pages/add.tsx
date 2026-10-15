@@ -253,7 +253,7 @@ const AddPage: NextPageWithUser<{
           <AddOrEditExpensePage
             enableSendingInvites={enableSendingInvites}
             expenseId={_expenseId}
-            bankConnectionEnabled={Boolean(bankConnectionEnabled)}
+            bankConnectionEnabled={bankConnectionEnabled}
           />
         )}
       </MainLayout>
@@ -267,7 +267,7 @@ export default AddPage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
-    enableSendingInvites: Boolean(env.ENABLE_SENDING_INVITES),
+    enableSendingInvites: env.ENABLE_SENDING_INVITES,
     bankConnectionEnabled: isBankConnectionConfigured(),
     maxUploadFileSizeMB: env.UPLOAD_MAX_FILE_SIZE_MB,
     ...(await customServerSideTranslations(context.locale, ['common', 'categories', 'currencies'])),

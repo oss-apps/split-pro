@@ -2,85 +2,85 @@
   "categories_list": {
     "entertainment": {
       "items": {
-        "games": "",
-        "movies": "",
-        "music": "",
-        "other": "",
-        "sports": ""
+        "games": "खेल",
+        "movies": "फ़िल्में",
+        "music": "संगीत",
+        "other": "मनोरंजन",
+        "sports": "रमत गमत"
       },
-      "name": ""
+      "name": "मनोरंजन"
     },
     "food": {
       "items": {
-        "diningOut": "",
-        "groceries": "",
-        "liquor": "",
-        "other": ""
+        "diningOut": "बाहर का खाना",
+        "groceries": "किराना",
+        "liquor": "शराब",
+        "other": "खाना पिना"
       },
-      "name": ""
+      "name": "खाना पिना"
     },
     "general": {
       "items": {
-        "general": "",
-        "other": ""
+        "general": "सामान्य",
+        "other": "सामान्य"
       },
-      "name": ""
+      "name": "सामान्य"
     },
     "home": {
       "items": {
-        "electronics": "",
-        "furniture": "",
-        "maintenance": "",
-        "mortgage": "",
-        "other": "",
-        "pets": "",
-        "rent": "",
-        "services": "",
-        "supplies": ""
+        "electronics": "इलेक्ट्रानिक्स",
+        "furniture": "फर्नीचर",
+        "maintenance": "मरम्मत",
+        "mortgage": "उधारी",
+        "other": "घर",
+        "pets": "पालतू जानवर",
+        "rent": "किराया",
+        "services": "सेवा",
+        "supplies": "सामान"
       },
-      "name": ""
+      "name": "घर"
     },
     "life": {
       "items": {
-        "childcare": "",
-        "clothing": "",
-        "education": "",
-        "gifts": "",
-        "insurance": "",
-        "medical": "",
-        "other": "",
-        "taxes": ""
+        "childcare": "बाल घर",
+        "clothing": "कपड़े",
+        "education": "शिक्षा",
+        "gifts": "उपहार",
+        "insurance": "बीमा",
+        "medical": "चिकित्सा",
+        "other": "जीवन",
+        "taxes": "कर"
       },
-      "name": ""
+      "name": "जीवन"
     },
     "travel": {
       "items": {
-        "bicycle": "",
-        "bus": "",
-        "car": "",
-        "fuel": "",
-        "hotel": "",
-        "other": "",
-        "parking": "",
-        "plane": "",
-        "taxi": "",
-        "train": ""
+        "bicycle": "साइकिल",
+        "bus": "बस",
+        "car": "गाडी",
+        "fuel": "ईंधन",
+        "hotel": "होटल",
+        "other": "यात्रा",
+        "parking": "पार्किंग",
+        "plane": "हवाई जहाज",
+        "taxi": "टैक्सी",
+        "train": "रेलगाड़ी"
       },
-      "name": ""
+      "name": "यात्रा"
     },
     "utilities": {
       "items": {
-        "cleaning": "",
-        "electricity": "",
-        "gas": "",
-        "internet": "",
-        "other": "",
-        "phone": "",
-        "trash": "",
-        "water": ""
+        "cleaning": "सफाई",
+        "electricity": "बिजली",
+        "gas": "गैस",
+        "internet": "इंटरनेट",
+        "other": "सुविधाये",
+        "phone": "फ़ोन",
+        "trash": "कुडा",
+        "water": "पानी"
       },
-      "name": ""
+      "name": "सुविधाये"
     }
   },
-  "title": ""
+  "title": "श्रेणियाँ"
 }

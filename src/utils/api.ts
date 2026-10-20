@@ -10,6 +10,7 @@ import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server';
 import superjson from 'superjson';
 
 import { type AppRouter } from '~/server/api/root';
+import { BALANCE_TIME_ZONE_HEADER } from '~/lib/balanceDate';
 
 export const getBaseUrl = () => {
   if ('undefined' !== typeof window) {
@@ -38,6 +39,9 @@ export const api = createTRPCNext<AppRouter>({
         }),
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
+          headers: () => ({
+            [BALANCE_TIME_ZONE_HEADER]: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          }),
           transformer: superjson,
         }),
       ],

@@ -17,6 +17,7 @@ import { ZodError, z } from 'zod';
 import { getAppErrorCode } from '~/server/api/appError';
 import { getServerAuthSession } from '~/server/auth';
 import { db } from '~/server/db';
+import { BALANCE_TIME_ZONE_HEADER, getBalanceDay } from '~/lib/balanceDate';
 
 /**
  * 1. CONTEXT
@@ -29,6 +30,8 @@ import { db } from '~/server/db';
 export interface CreateContextOptions {
   session: Session | null;
   db?: PrismaClient;
+  timeZone?: string;
+  now?: Date;
 }
 
 /**
@@ -44,6 +47,7 @@ export interface CreateContextOptions {
 export const createInnerTRPCContext = (opts: CreateContextOptions) => ({
   session: opts.session,
   db: opts.db ?? db,
+  balanceDay: getBalanceDay(opts.timeZone, opts.now),
 });
 
 /**
@@ -60,6 +64,10 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   return createInnerTRPCContext({
     session,
+    timeZone:
+      'string' === typeof req.headers[BALANCE_TIME_ZONE_HEADER]
+        ? req.headers[BALANCE_TIME_ZONE_HEADER]
+        : undefined,
   });
 };
 

@@ -198,6 +198,7 @@ model Expense {
 
   @@index([groupId])
   @@index([paidBy])
+  // The partial live-expense date index is maintained by SQL migrations.
   @@schema("public")
 }
 
@@ -209,6 +210,7 @@ model ExpenseParticipant {
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([expenseId, userId])
+  @@index([userId, expenseId, amount])
   @@schema("public")
 }
 
@@ -328,6 +330,21 @@ view BalanceView {
   user   User   @relation("UserBalanceView", fields: [userId], references: [id], onDelete: Cascade)
   friend User   @relation("FriendBalanceView", fields: [friendId], references: [id], onDelete: Cascade)
   group  Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@schema("public")
+}
+
+/// Directed live expense contributions; filter expenseDate before grouping.
+view BalanceEntryView {
+  expenseId   String   @db.Uuid
+  userId      Int
+  friendId    Int
+  groupId     Int?
+  currency    String
+  amount      BigInt
+  expenseDate DateTime
+  createdAt   DateTime
+  updatedAt   DateTime
 
   @@schema("public")
 }

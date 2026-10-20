@@ -64,6 +64,7 @@ certificates
 .vscode
 
 SEED_STATISTICS.md
+/scripts/seeded-balance-baseline.json
 
 # Agents
 .worktrees/

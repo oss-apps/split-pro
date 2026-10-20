@@ -1,7 +1,6 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-import { simplifyDebts } from '~/lib/simplify';
 import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { BigMath, currencyConversion } from '~/utils/numbers';
@@ -19,118 +18,98 @@ import { isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { getUserMap } from './user';
+import {
+  balanceDateRangeSchema,
+  getBalanceDateRange,
+  getBalances,
+  getUserBalances,
+} from '../services/balanceService';
 
 export const expenseRouter = createTRPCRouter({
-  getCumulatedBalances: protectedProcedure.query(async ({ ctx }) => {
-    const cumulatedBalances = await db.balanceView.groupBy({
-      by: ['currency'],
-      _sum: { amount: true },
-      where: { userId: ctx.session.user.id, amount: { not: 0 } },
-      orderBy: { _sum: { amount: 'desc' } },
-    });
+  getCumulatedBalances: protectedProcedure
+    .input(balanceDateRangeSchema.optional())
+    .query(async ({ ctx, input }) => {
+      const balances = await getBalances(ctx.db, {
+        ...getBalanceDateRange(ctx.balanceDay.toDateExclusive, input),
+        where: { userId: ctx.session.user.id },
+      });
+      const totals = new Map<string, bigint>();
+      balances.forEach(({ currency, amount }) =>
+        totals.set(currency, (totals.get(currency) ?? 0n) + amount),
+      );
+      const cumulatedBalances = [...totals]
+        .map(([currency, amount]) => ({ currency, amount }))
+        .sort((a, b) => (a.amount > b.amount ? -1 : a.amount < b.amount ? 1 : 0));
 
-    // oxlint-disable no-underscore-dangle -- Prisma's generated aggregate API uses the `_sum` field name.
-    const youOwe = cumulatedBalances
-      .filter((b) => b._sum.amount && 0 > b._sum.amount)
-      .map((b) => ({ currency: b.currency, amount: b._sum.amount! }))
-      .reverse();
-    // oxlint-enable no-underscore-dangle
+      const youOwe = cumulatedBalances.filter((b) => 0n > b.amount).reverse();
+      const youGet = cumulatedBalances.filter((b) => 0n < b.amount);
 
-    // oxlint-disable no-underscore-dangle -- Prisma's generated aggregate API uses the `_sum` field name.
-    const youGet = cumulatedBalances
-      .filter((b) => b._sum.amount && 0 < b._sum.amount)
-      .map((b) => ({ currency: b.currency, amount: b._sum.amount! }));
-    // oxlint-enable no-underscore-dangle
+      return { youOwe, youGet };
+    }),
 
-    return { youOwe, youGet };
-  }),
-
-  getBalances: protectedProcedure.query(async ({ ctx }) => {
-    const rawBalances = await db.balanceView.findMany({
-      where: {
-        userId: ctx.session.user.id,
-        friendId: { notIn: ctx.session.user.hiddenFriendIds },
-      },
-      include: {
-        group: {
-          select: {
-            simplifyDebts: true,
-          },
-        },
-      },
-    });
-
-    const processedBalances = await Promise.all(
-      rawBalances.map(async ({ friendId, currency, amount, groupId, group }) => {
-        if (!group?.simplifyDebts || null === groupId) {
-          return { friendId, currency, amount };
-        }
-
-        const allGroupBalances = await db.balanceView.findMany({
-          where: { groupId, currency },
-        });
-
-        const simplified = simplifyDebts(allGroupBalances);
-        const simplifiedBalance = simplified.find(
-          (b) =>
-            b.userId === ctx.session.user.id && b.friendId === friendId && b.currency === currency,
-        );
-
-        return { friendId, currency, amount: simplifiedBalance?.amount ?? 0n };
-      }),
-    );
-
-    // Group by friendId and fetch user details
-    const friendIds = [...new Set([...processedBalances].map((b) => b.friendId))];
-    const userMap = await getUserMap(friendIds);
-
-    // Aggregate by (friendId, currency) since same pair can appear in multiple groups
-    const aggregated = processedBalances
-      .filter((b) => 0n !== b.amount)
-      .reduce<Map<string, { friendId: number; currency: string; amount: bigint }>>(
-        (acc, { friendId, currency, amount }) => {
-          const key = `${friendId}-${currency}`;
-          const existing = acc.get(key);
-          if (existing) {
-            existing.amount += amount;
-          } else {
-            acc.set(key, { friendId, currency, amount });
-          }
-          return acc;
-        },
-        new Map(),
+  getBalances: protectedProcedure
+    .input(balanceDateRangeSchema.optional())
+    .query(async ({ ctx, input }) => {
+      const userBalances = await getUserBalances(
+        ctx.db,
+        ctx.session.user.id,
+        getBalanceDateRange(ctx.balanceDay.toDateExclusive, input),
+      );
+      const processedBalances = userBalances.filter(
+        (row) => !ctx.session.user.hiddenFriendIds.includes(row.friendId),
       );
 
-    const balancesByFriend = [...aggregated.values()].reduce<
-      Record<number, { currency: string; amount: bigint }[]>
-    >((acc, { friendId, currency, amount }) => {
-      if (!acc[friendId]) {
-        acc[friendId] = [];
-      }
-      acc[friendId].push({ currency, amount });
-      return acc;
-    }, {});
+      // Group by friendId and fetch user details
+      const friendIds = [...new Set([...processedBalances].map((b) => b.friendId))];
+      const userMap = await getUserMap(friendIds);
 
-    friendIds.forEach((friendId) => {
-      if (!balancesByFriend[friendId]) {
-        balancesByFriend[friendId] = [];
-      }
-    });
+      // Aggregate by (friendId, currency) since same pair can appear in multiple groups
+      const aggregated = processedBalances
+        .filter((b) => 0n !== b.amount)
+        .reduce<Map<string, { friendId: number; currency: string; amount: bigint }>>(
+          (acc, { friendId, currency, amount }) => {
+            const key = `${friendId}-${currency}`;
+            const existing = acc.get(key);
+            if (existing) {
+              existing.amount += amount;
+            } else {
+              acc.set(key, { friendId, currency, amount });
+            }
+            return acc;
+          },
+          new Map(),
+        );
 
-    const balances = Object.entries(balancesByFriend)
-      .map(([friendId, currencies]) => ({
-        friendId: Number(friendId),
-        currencies,
-        friend: userMap[Number(friendId)]!,
-        maxAmount: currencies.reduce(
-          (max, curr) => (BigMath.abs(curr.amount) > BigMath.abs(max) ? curr.amount : max),
-          0n,
-        ),
-      }))
-      .sort((a, b) => Number(BigMath.abs(b.maxAmount) - BigMath.abs(a.maxAmount)));
+      const balancesByFriend = [...aggregated.values()].reduce<
+        Record<number, { currency: string; amount: bigint }[]>
+      >((acc, { friendId, currency, amount }) => {
+        if (!acc[friendId]) {
+          acc[friendId] = [];
+        }
+        acc[friendId].push({ currency, amount });
+        return acc;
+      }, {});
 
-    return { balances };
-  }),
+      friendIds.forEach((friendId) => {
+        if (!balancesByFriend[friendId]) {
+          balancesByFriend[friendId] = [];
+        }
+      });
+
+      const balances = Object.entries(balancesByFriend)
+        .map(([friendId, currencies]) => ({
+          friendId: Number(friendId),
+          currencies,
+          friend: userMap[Number(friendId)]!,
+          maxAmount: currencies.reduce(
+            (max, curr) => (BigMath.abs(curr.amount) > BigMath.abs(max) ? curr.amount : max),
+            0n,
+          ),
+        }))
+        .sort((a, b) => Number(BigMath.abs(b.maxAmount) - BigMath.abs(a.maxAmount)));
+
+      return { balances };
+    }),
 
   addOrEditExpense: protectedProcedure
     .input(arrayify(createExpenseSchema))

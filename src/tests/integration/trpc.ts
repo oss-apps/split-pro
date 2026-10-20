@@ -16,7 +16,11 @@ export const sessionFor = (userId: number): Session => ({
   expires: '2099-01-01T00:00:00.000Z',
 });
 
-export const callerFor = (userId: number | null) =>
+export const callerFor = (userId: number | null, options: { timeZone?: string; now?: Date } = {}) =>
   appRouter.createCaller(
-    createInnerTRPCContext({ session: null === userId ? null : sessionFor(userId), db }),
+    createInnerTRPCContext({
+      session: null === userId ? null : sessionFor(userId),
+      db,
+      ...options,
+    }),
   );

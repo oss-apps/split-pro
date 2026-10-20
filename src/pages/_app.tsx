@@ -15,6 +15,7 @@ import { ThemeProvider } from 'next-themes';
 import { CurrencyHelpersProvider } from '~/contexts/CurrencyHelpersContext';
 import { useAppStore } from '~/store/appStore';
 import { api } from '~/utils/api';
+import { useBalanceDateRefresh } from '~/hooks/useBalanceDateRefresh';
 
 import 'react-easy-crop/react-easy-crop.css';
 import '~/styles/globals.css';
@@ -27,6 +28,7 @@ type AppPropsWithAuth = AppProps<{ session: Session | null }> & { Component: Pag
 
 const MyApp = ({ Component, pageProps: { session, ...pageProps } }: AppPropsWithAuth) => {
   const { t, ready } = useTranslation();
+  useBalanceDateRefresh();
 
   if (!ready) {
     return (

@@ -12,6 +12,11 @@ import {
   parseSerializedDefaultSplit,
   serializeDefaultSplit,
 } from '~/lib/defaultSplit';
+import {
+  balanceDateRangeSchema,
+  getBalanceDateRange,
+  getBalances,
+} from '../services/balanceService';
 
 export const groupRouter = createTRPCRouter({
   create: protectedProcedure
@@ -68,9 +73,10 @@ export const groupRouter = createTRPCRouter({
   }),
 
   getAllGroupsWithBalances: protectedProcedure
-    .input(z.object({ getArchived: z.boolean() }).optional())
+    .input(z.object({ getArchived: z.boolean() }).merge(balanceDateRangeSchema).optional())
     .query(async ({ ctx, input }) => {
-      const groups = await ctx.db.groupUser.findMany({
+      const range = getBalanceDateRange(ctx.balanceDay.toDateExclusive, input);
+      const memberships = await ctx.db.groupUser.findMany({
         where: {
           userId: ctx.session.user.id,
           group: {
@@ -80,10 +86,6 @@ export const groupRouter = createTRPCRouter({
         include: {
           group: {
             include: {
-              groupBalances: {
-                where: { userId: ctx.session.user.id },
-              },
-              // We can sort by group balance view instead
               expenses: {
                 orderBy: {
                   createdAt: 'desc',
@@ -94,6 +96,24 @@ export const groupRouter = createTRPCRouter({
           },
         },
       });
+
+      const groupBalances =
+        0 === memberships.length
+          ? []
+          : await getBalances(ctx.db, {
+              ...range,
+              where: {
+                userId: ctx.session.user.id,
+                groupId: { in: memberships.map((row) => row.groupId) },
+              },
+            });
+      const groups = memberships.map((membership) => ({
+        userId: membership.userId,
+        groupId: membership.groupId,
+        group: Object.assign(membership.group, {
+          groupBalances: groupBalances.filter((row) => row.groupId === membership.groupId),
+        }),
+      }));
 
       const sortedGroupsByLatestExpense = groups.sort((a, b) => {
         const aDate = a.group.expenses[0]?.createdAt ?? new Date(0);
@@ -139,7 +159,7 @@ export const groupRouter = createTRPCRouter({
       return group;
     }),
 
-  getGroupDetails: groupProcedure.query(async ({ input, ctx }) => {
+  getGroupDetails: groupProcedure.input(balanceDateRangeSchema).query(async ({ input, ctx }) => {
     const group = await ctx.db.group.findUnique({
       where: {
         id: input.groupId,
@@ -150,7 +170,6 @@ export const groupRouter = createTRPCRouter({
             user: true,
           },
         },
-        groupBalances: true,
         groupDefaultSplit: true,
       },
     });
@@ -159,9 +178,10 @@ export const groupRouter = createTRPCRouter({
       return group;
     }
 
-    if (group.simplifyDebts) {
-      group.groupBalances = simplifyDebts(group.groupBalances);
-    }
+    const groupBalances = await getBalances(ctx.db, {
+      ...getBalanceDateRange(ctx.balanceDay.toDateExclusive, input),
+      where: { groupId: group.id },
+    });
 
     const defaultSplit =
       group.groupDefaultSplit &&
@@ -172,6 +192,7 @@ export const groupRouter = createTRPCRouter({
 
     return {
       ...group,
+      groupBalances: group.simplifyDebts ? simplifyDebts(groupBalances) : groupBalances,
       defaultSplit,
     };
   }),

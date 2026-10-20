@@ -56,6 +56,26 @@ describe('cron timezone conversions', () => {
     expect(cronToBackend('0 0 L * *')).toBe('0 0 $ * *');
   });
 
+  describe('last-day recurrences without a timezone-induced date change', () => {
+    it.each([
+      { offset: -120, backend: '0 10 $ * *' },
+      { offset: 120, backend: '0 14 $ * *' },
+    ])('preserves month-end when saving with offset $offset', ({ offset, backend }) => {
+      mockTimezoneOffset(offset);
+
+      expect(cronToBackend('0 12 L * *')).toBe(backend);
+    });
+
+    it.each([
+      { offset: -120, backend: '0 10 $ * *' },
+      { offset: 120, backend: '0 14 $ * *' },
+    ])('preserves month-end when reopening with offset $offset', ({ offset, backend }) => {
+      mockTimezoneOffset(offset);
+
+      expect(cronFromBackend(backend)).toBe('0 12 L * *');
+    });
+  });
+
   it('round-trips frontend to backend and back', () => {
     mockTimezoneOffset(60);
     const expression = '15 5 * * 1';

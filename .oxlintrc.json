@@ -1,24 +1,38 @@
 {
+  "options": {
+    "typeAware": true,
+    "typeCheck": true
+  },
   "categories": {
     "correctness": "error",
-    "suspicious": "warn",
-    "style": "warn",
-    "perf": "warn"
+    "suspicious": "error",
+    "style": "error",
+    "perf": "error"
   },
   "plugins": ["nextjs", "react", "react-perf", "typescript", "import", "oxc"],
   "rules": {
-    "no-magic-numbers": "off",
+    "react/hooks": "error",
+    "react/exhaustive-effect-dependencies": "warn",
+    "typescript/no-unsafe-type-assertion": "warn",
+    "typescript/no-unsafe-enum-comparison": "warn",
+    "no-shadow": "warn",
+    "no-await-in-loop": "warn",
+    "oxc/no-map-spread": "warn",
+    "react_perf/jsx-no-new-function-as-prop": "allow",
+    "react_perf/jsx-no-new-object-as-prop": "allow",
+    "react_perf/jsx-no-new-array-as-prop": "allow",
+    "no-magic-numbers": "allow",
     "no-anonymous-default-export": ["warn", { "allowCallExpression": true }],
-    "no-ternary": "off",
-    "consistent-type-specifier-style": "off",
-    "sort-keys": "off",
-    "exports-last": "off",
+    "no-ternary": "allow",
+    "consistent-type-specifier-style": "allow",
+    "sort-keys": "allow",
+    "exports-last": "allow",
     "no-unused-vars": "warn",
-    "no-unassigned-import": "off",
-    "consistent-indexed-object-style": "off",
-    "max-params": "off",
-    "group-exports": "off",
-    "func-style": "off",
+    "no-unassigned-import": "allow",
+    "consistent-indexed-object-style": "allow",
+    "max-params": "allow",
+    "group-exports": "allow",
+    "func-style": "allow",
     "sort-imports": [
       "error",
       {
@@ -29,28 +43,57 @@
         "allowSeparatedGroups": true
       }
     ],
-    "prefer-default-export": "off",
-    "yoda": "off",
-    "new-cap": "off",
-    "no-named-export": "off",
-    "id-length": "off",
-    "react_perf/jsx-no-jsx-as-prop": "off",
-    "no-nested-ternary": "off",
-    "typescript/no-confusing-void-expression": "off",
+    "prefer-default-export": "allow",
+    "yoda": "allow",
+    "new-cap": "allow",
+    "no-named-export": "allow",
+    "id-length": "allow",
+    "react_perf/jsx-no-jsx-as-prop": "allow",
+    "no-nested-ternary": "allow",
+    "typescript/no-confusing-void-expression": "allow",
     "typescript/no-misused-spread": "warn",
-    "func-names": "off",
-    "prefer-destructuring": "off",
-    "max-statements": "off",
-    "jsx-max-depth": "off",
-    "no-nodejs-modules": "off",
-    "no-implicit-coercion": "off"
+    "func-names": "allow",
+    "prefer-destructuring": "allow",
+    "max-statements": "allow",
+    "jsx-max-depth": "allow",
+    "no-nodejs-modules": "allow",
+    "no-implicit-coercion": "allow",
+    "react/function-component-definition": [
+      "warn",
+      {
+        "namedComponents": "arrow-function",
+        "unnamedComponents": "arrow-function"
+      }
+    ],
+    "react/jsx-props-no-spreading": "allow",
+    "one-var": "allow",
+    "no-continue": "allow",
+    "react/hook-use-state": "allow",
+    "react/no-object-type-as-default-prop": "allow",
+    "prefer-named-capture-group": "allow"
   },
   "overrides": [
     {
       "files": ["**/*.jsx", "**/*.tsx"],
       "rules": {
-        "react-in-jsx-scope": "off",
+        "react-in-jsx-scope": "allow",
         "no-console": ["warn", { "allow": ["info", "warn", "error", "debug", "trace"] }]
+      }
+    },
+    {
+      "files": [
+        "**/*.test.{ts,tsx}",
+        "**/*.spec.{ts,tsx}",
+        "src/tests/**",
+        "tests/**",
+        "src/dummies/**"
+      ],
+      "rules": {
+        "typescript/no-unsafe-type-assertion": "allow",
+        "typescript/no-unsafe-enum-comparison": "allow",
+        "oxc/no-map-spread": "allow",
+        "import/first": "allow",
+        "react/jsx-no-constructed-context-values": "allow"
       }
     }
   ],

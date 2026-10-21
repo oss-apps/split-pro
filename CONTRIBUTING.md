@@ -66,7 +66,7 @@ The development branch is <code>main</code>. All pull requests should be made ag
 The flake supports x86_64 and aarch64 Linux, including NixOS. It provides Node.js 22,
 pnpm 10.11.0, PostgreSQL 18 with `pg_cron`, Git, OpenSSL, and `nixfmt`.
 Node and pnpm run in an FHS runtime so the project's native npm dependencies
-(including Prisma, Next.js, oxlint, and `tsgo`) work without patching `node_modules`.
+(including Prisma, Next.js, oxlint, and `tsc`) work without patching `node_modules`.
 The runtime requires unprivileged user namespaces, as used by Bubblewrap.
 
 1. Install Nix with the `nix-command` and `flakes` experimental features enabled.
@@ -119,7 +119,7 @@ pnpm db:dev
 pnpm db:studio
 pnpm prettier --check .
 pnpm lint
-pnpm tsgo --noEmit
+pnpm tsc --noEmit
 pnpm test
 pnpm build
 ```
@@ -195,7 +195,10 @@ pnpm build
 
 There is an extensive seed data generation script, which handles the creation of tens of users, groups and thousands of expenses with various categories, names, split types etc.
 You can use it for development and it is strongly advised, when reporting issues to point to the seeded user/group/expense as the data creation
-is deterministic. If the database was not seeded automatically, you can run `pnpm prisma migrate reset` to get back to the pure seeded state.
+is deterministic. To return a disposable development database to the pure seeded state, run
+`pnpm prisma migrate reset` followed by `pnpm generate && pnpm db:seed`. Prisma 7 no longer
+generates the client or seeds automatically after migration commands; `pnpm db:dev` generates
+the client, and a new development database needs an explicit `pnpm db:seed`.
 There is also a markdown report being generated on each run and you can see it in the project root directory. It features some useful statistic
 like the most connected accounts, which you can log into to have a populated app.
 

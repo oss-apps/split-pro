@@ -1,11 +1,11 @@
-import { type PushMessage } from '~/types';
-import { defaultCache } from '@serwist/next/worker';
-import type { PrecacheEntry, SerwistGlobalConfig } from 'serwist';
-import { Serwist } from 'serwist';
+import { defaultCache } from '@serwist/turbopack/worker';
+import { type PrecacheEntry, Serwist, type SerwistGlobalConfig } from 'serwist';
+
+import { getNotificationUrl, parsePushMessageJson } from '~/types/notifications';
 
 // This declares the value of `injectionPoint` to TypeScript.
 // `injectionPoint` is the string that will be replaced by the
-// actual precache manifest. By default, this string is set to
+// Actual precache manifest. By default, this string is set to
 // `"self.__SW_MANIFEST"`.
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
@@ -16,6 +16,7 @@ declare global {
 declare const self: ServiceWorkerGlobalScope;
 
 const serwist = new Serwist({
+  // oxlint-disable-next-line no-underscore-dangle -- Serwist replaces this declared manifest field during its build step.
   precacheEntries: self.__SW_MANIFEST,
   skipWaiting: true,
   clientsClaim: true,
@@ -23,8 +24,14 @@ const serwist = new Serwist({
   runtimeCaching: defaultCache,
 });
 
-self.addEventListener('push', function (event) {
-  const { title, message, data } = JSON.parse(event?.data?.text() ?? '{}') as PushMessage;
+self.addEventListener('push', (event) => {
+  const result = parsePushMessageJson(event?.data?.text() ?? '{}');
+  if (!result?.success) {
+    console.warn('Ignoring invalid push notification payload');
+    return;
+  }
+
+  const { title, message, data } = result.data;
   event.waitUntil(
     self.registration.showNotification(title, {
       body: message,
@@ -34,14 +41,13 @@ self.addEventListener('push', function (event) {
   );
 });
 
-self.addEventListener('notificationclick', function (event) {
+self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
     (async () => {
       const clientList = await self.clients.matchAll({ type: 'window' });
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const url = (event.notification.data?.url as string) ?? '/';
+      const url = getNotificationUrl(event.notification.data);
 
       const matchingClient = clientList.find((client) => client.focused) ?? clientList[0];
 

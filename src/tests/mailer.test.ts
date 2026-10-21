@@ -1,4 +1,5 @@
-import nodemailer from 'nodemailer';
+import { type SendMailOptions, type SentMessageInfo, createTransport } from 'nodemailer';
+import EmailProvider from 'next-auth/providers/email';
 
 import { env } from '~/env';
 import { sendToDiscord } from '~/server/service-notification';
@@ -20,9 +21,11 @@ jest.mock('~/env', () => ({
 
 jest.mock('nodemailer', () => {
   const sendMail = jest.fn();
+  const createTransportMock = jest.fn(() => ({ sendMail }));
   return {
     __esModule: true,
-    default: { createTransport: jest.fn(() => ({ sendMail })) },
+    mockSendMail: sendMail,
+    createTransport: createTransportMock,
   };
 });
 
@@ -30,10 +33,10 @@ jest.mock('~/server/service-notification', () => ({
   sendToDiscord: jest.fn(),
 }));
 
-const mockCreateTransport = jest.mocked(nodemailer.createTransport);
-const mockSendMail = jest.mocked(
-  mockCreateTransport({} as Parameters<typeof nodemailer.createTransport>[0]).sendMail,
-);
+const mockCreateTransport = jest.mocked(createTransport);
+const { mockSendMail } = jest.requireMock<{
+  mockSendMail: jest.Mock<Promise<SentMessageInfo>, [SendMailOptions]>;
+}>('nodemailer');
 const mockSendToDiscord = jest.mocked(sendToDiscord);
 
 const mockSentMessageInfo = {
@@ -130,5 +133,37 @@ describe('sendInviteEmail', () => {
         'Sending invites is not enabled',
       );
     });
+  });
+});
+
+describe('NextAuth email provider Nodemailer compatibility', () => {
+  it('uses Nodemailer createTransport and sendMail for verification requests', async () => {
+    const server = {
+      host: 'smtp.example.com',
+      port: 587,
+      auth: { user: 'user', pass: 'pass' },
+    };
+    const provider = EmailProvider({ from: 'noreply@example.com', server });
+    provider.server = server;
+    provider.from = 'noreply@example.com';
+    mockSendMail.mockResolvedValue(mockSentMessageInfo);
+
+    await provider.sendVerificationRequest({
+      identifier: 'friend@example.com',
+      url: 'https://splitpro.example.com/verify?token=test',
+      expires: new Date('2030-01-01T00:00:00.000Z'),
+      provider,
+      token: 'test',
+      theme: {},
+    });
+
+    expect(mockCreateTransport).toHaveBeenCalledWith(server);
+    expect(mockSendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: 'friend@example.com',
+        from: 'noreply@example.com',
+        subject: 'Sign in to splitpro.example.com',
+      }),
+    );
   });
 });

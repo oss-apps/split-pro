@@ -4,9 +4,13 @@
 /node_modules
 /.pnp
 .pnp.js
+.swc/
 
 # testing
 /coverage
+/test-results
+/playwright-report/
+/playwright/.auth
 
 # database
 /prisma/db.sqlite
@@ -64,3 +68,5 @@ SEED_STATISTICS.md
 # Agents
 .worktrees/
 docs/superpowers/
+# next-agents-md
+.next-docs/

@@ -112,7 +112,7 @@ export const generateGroupExpense = (group: DummyGroupInfo, expenseDate: Date) =
   const category = selectCategoryByGroupType(group.type);
 
   // Generate expense name
-  const name = generateExpenseName(category as any);
+  const name = generateExpenseName(category);
 
   // Generate amount in group's currency
   const amount =
@@ -195,7 +195,7 @@ export const generateDirectExpense = (participants: DummyUserInfo[]) => {
   const category = faker.helpers.arrayElement(DIRECT_EXPENSE_CATEGORIES);
 
   // Generate expense name
-  const name = generateExpenseName(category as any);
+  const name = generateExpenseName(category);
 
   // Use currency of payer (or first participant)
   const currency = payer.currency;
@@ -241,7 +241,7 @@ export const generateDirectExpense = (participants: DummyUserInfo[]) => {
  * @param groups - Array of all groups
  * @returns Array of generated expenses
  */
-export const generateDirectExpenses = (users: DummyUserInfo[], groups: DummyGroupInfo[]) => {
+export const generateDirectExpenses = (users: DummyUserInfo[], _groups: DummyGroupInfo[]) => {
   // Build graph of users in same groups
   const userConnections = new Map<DummyUserInfo, Set<DummyUserInfo>>();
 
@@ -308,10 +308,7 @@ export const generateAllExpenses = (users: DummyUserInfo[], groups: DummyGroupIn
   // Generate direct expenses
   const directExpenses = generateDirectExpenses(users, groups);
 
-  return [...groupExpenses, ...directExpenses].map((expense, idx) => ({
-    ...expense,
-    idx,
-  }));
+  return [...groupExpenses, ...directExpenses].map((expense, idx) => ({ ...expense, idx }));
 };
 
 export type DummyExpenseInfo = ReturnType<typeof generateAllExpenses>[number];

@@ -837,7 +837,7 @@ export const CURRENCIES = {
 export type CurrencyCode = keyof typeof CURRENCIES;
 
 export const isCurrencyCode = (value?: string | null): value is CurrencyCode =>
-  !!value && value in CURRENCIES;
+  !!value && Object.hasOwn(CURRENCIES, value);
 
 export const parseCurrencyCode = (code: string): CurrencyCode =>
   isCurrencyCode(code) ? code : 'USD';

@@ -7,12 +7,12 @@ export const getCurrencyHelpers = ({
   locale?: string;
   currency?: string;
 }) => {
-  currency = isCurrencyCode(currency) ? currency : 'USD';
-  const { decimalDigits } = CURRENCIES[currency as CurrencyCode];
+  const normalizedCurrency = isCurrencyCode(currency) ? currency : 'USD';
+  const { decimalDigits } = CURRENCIES[normalizedCurrency];
 
   const formatter = new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency,
+    currency: normalizedCurrency,
     minimumFractionDigits: 0,
     maximumFractionDigits: decimalDigits,
   });
@@ -84,7 +84,7 @@ export const getCurrencyHelpers = ({
     let hasDecimalSeparator = false;
     let hasNegativeSign = false;
 
-    `${input}`.split('').forEach((letter) => {
+    input.split('').forEach((letter) => {
       //Allowing only one separator
       if (letter === decimalSeparator && !hasDecimalSeparator) {
         cleaned += letter;
@@ -220,7 +220,7 @@ export const getCurrencyHelpers = ({
       sign +
       parts
         .filter(({ type }) => !hideSymbol || type !== 'currency')
-        .map(({ value }) => value)
+        .map(({ value: partValue }) => partValue)
         .join('')
     );
   };

@@ -96,13 +96,6 @@ export const SplitExpenseForm: React.FC<
     [onOpenChange, setSplitScreenOpen],
   );
 
-  const onTabChange = useCallback(
-    (value: string) => {
-      setSplitType(value as SplitType);
-    },
-    [setSplitType],
-  );
-
   const splitProps = useMemo(() => {
     const allSplitProps = getSplitProps(t);
     if (!allowedSplitTypes || 0 === allowedSplitTypes.length) {
@@ -111,6 +104,16 @@ export const SplitExpenseForm: React.FC<
 
     return allSplitProps.filter((props) => allowedSplitTypes.includes(props.splitType));
   }, [allowedSplitTypes, t]);
+
+  const onTabChange = useCallback(
+    (value: string) => {
+      const selectedSplitType = splitProps.find((props) => props.splitType === value)?.splitType;
+      if (selectedSplitType) {
+        setSplitType(selectedSplitType);
+      }
+    },
+    [setSplitType, splitProps],
+  );
 
   const activeSplitType = splitProps.some((props) => props.splitType === splitType)
     ? splitType
@@ -140,8 +143,8 @@ export const SplitExpenseForm: React.FC<
     >
       <Tabs value={activeSplitType} className="mx-auto mt-5 w-full" onValueChange={onTabChange}>
         <TabsList className="w-full justify-between">
-          {splitProps.map(({ splitType, iconComponent: Icon }) => (
-            <TabsTrigger key={splitType} value={splitType} className="text-xs">
+          {splitProps.map(({ splitType: itemSplitType, iconComponent: Icon }) => (
+            <TabsTrigger key={itemSplitType} value={itemSplitType} className="text-xs">
               <Icon className="h-5 w-5" />
             </TabsTrigger>
           ))}
@@ -258,7 +261,7 @@ const SplitSection: React.FC<SplitSectionProps> = (props) => {
   );
   const currency = useAddExpenseStore((s) => s.currency);
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
-  const { toUIString, toSafeBigInt } = getCurrencyHelpersCached(currency);
+  const { toUIString } = getCurrencyHelpersCached(currency);
   const amount = useAddExpenseStore((s) => s.amount);
   const canSplitScreenClosed = useAddExpenseStore((s) => s.canSplitScreenClosed);
   const splitShares = useAddExpenseStore((s) => s.splitShares);
@@ -288,10 +291,14 @@ const SplitSection: React.FC<SplitSectionProps> = (props) => {
         userId,
         value === undefined || '' === value
           ? 0n
-          : BigMath.abs(toSafeBigInt(isCurrency ? value : parseFloat(value))),
+          : BigMath.abs(
+              getCurrencyHelpersCached(currency).toSafeBigInt(
+                isCurrency ? value : parseFloat(value),
+              ),
+            ),
       );
     },
-    [setSplitShare, splitType, toSafeBigInt, isCurrency],
+    [setSplitShare, splitType, getCurrencyHelpersCached, currency, isCurrency],
   );
 
   return (

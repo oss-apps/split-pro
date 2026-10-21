@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Camera, Pencil, X } from 'lucide-react';
 import Cropper, { type Area } from 'react-easy-crop';
 import React, { useCallback, useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { type TFunction, useTranslation } from 'next-i18next';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -111,6 +111,9 @@ export const UpdateName: React.FC<{
       defaultCurrency,
     },
   });
+  const watchedName = useWatch({ control: detailForm.control, name: 'name' });
+  const watchedImage = useWatch({ control: detailForm.control, name: 'image' });
+  const watchedDefaultCurrency = useWatch({ control: detailForm.control, name: 'defaultCurrency' });
 
   React.useEffect(() => {
     detailForm.reset({
@@ -233,11 +236,15 @@ export const UpdateName: React.FC<{
     setCroppedAreaPixels(null);
   }, [detailForm, imageSrc]);
 
-  const field = useCallback(
-    ({ field }: any) => (
+  const renderField = useCallback(
+    ({ field: formField }: any) => (
       <FormItem className="w-full">
         <FormControl>
-          <Input className="text-lg" placeholder={t('account.edit_name.placeholder')} {...field} />
+          <Input
+            className="text-lg"
+            placeholder={t('account.edit_name.placeholder')}
+            {...formField}
+          />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -263,8 +270,8 @@ export const UpdateName: React.FC<{
             <div className="flex w-full items-center justify-around px-16">
               <EntityAvatar
                 entity={{
-                  name: detailForm.watch('name'),
-                  image: detailForm.watch('image'),
+                  name: watchedName,
+                  image: watchedImage,
                 }}
                 size={80}
               />
@@ -283,7 +290,7 @@ export const UpdateName: React.FC<{
                 <Button
                   variant="ghost"
                   size="icon"
-                  disabled={detailForm.watch('image') === null}
+                  disabled={watchedImage === null}
                   onClick={handleClearImage}
                 >
                   <X className="size-5" />
@@ -320,26 +327,22 @@ export const UpdateName: React.FC<{
               </div>
             </div>
           )}
-          <FormField control={detailForm.control} name="name" render={field} />
+          <FormField control={detailForm.control} name="name" render={renderField} />
           <div className="flex justify-between space-y-2">
             <Label className="text-md">{t('account.default_balance_currency')}</Label>
-            {(() => {
-              const defaultCurrency = detailForm.watch('defaultCurrency');
-
-              return (
-                <CurrencyPicker
-                  currentCurrency={
-                    defaultCurrency && isCurrencyCode(defaultCurrency)
-                      ? parseCurrencyCode(defaultCurrency)
-                      : null
-                  }
-                  allowClear
-                  onCurrencyPick={(currency) => {
-                    detailForm.setValue('defaultCurrency', currency, { shouldDirty: true });
-                  }}
-                />
-              );
-            })()}
+            {(() => (
+              <CurrencyPicker
+                currentCurrency={
+                  watchedDefaultCurrency && isCurrencyCode(watchedDefaultCurrency)
+                    ? parseCurrencyCode(watchedDefaultCurrency)
+                    : null
+                }
+                allowClear
+                onCurrencyPick={(currency) => {
+                  detailForm.setValue('defaultCurrency', currency, { shouldDirty: true });
+                }}
+              />
+            ))()}
           </div>
         </form>
       </Form>

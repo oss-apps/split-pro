@@ -1,3 +1,4 @@
+// oxlint-disable typescript/method-signature-style -- Preserve the external package's declared method signatures in this local type shim.
 declare module 'nordigen-node' {
   interface Transaction {
     transactionId: string;
@@ -84,3 +85,4 @@ declare module 'nordigen-node' {
     };
   }
 }
+// oxlint-enable typescript/method-signature-style

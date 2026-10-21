@@ -1,5 +1,4 @@
 import { TRPCError } from '@trpc/server';
-import { type User } from 'next-auth';
 import { z } from 'zod';
 
 import { env } from '~/env';
@@ -214,7 +213,7 @@ export const userRouter = createTRPCRouter({
   submitFeedback: protectedProcedure
     .input(z.object({ feedback: z.string().min(10) }))
     .mutation(async ({ input, ctx }) => {
-      await sendFeedbackEmail(input.feedback, ctx.session.user as User);
+      await sendFeedbackEmail(input.feedback, ctx.session.user);
     }),
 
   getFriend: protectedProcedure

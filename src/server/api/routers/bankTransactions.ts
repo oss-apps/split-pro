@@ -88,5 +88,7 @@ export const bankTransactionsRouter = createTRPCRouter({
 
         return res;
       }
+
+      return undefined;
     }),
 });

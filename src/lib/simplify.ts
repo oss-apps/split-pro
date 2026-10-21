@@ -50,7 +50,7 @@ function simplifyDebtsForSingleCurrency(
 
         const balance =
           groupBalances.find(
-            (balance) => balance.userId === nodes[source] && balance.friendId === nodes[sink],
+            (candidate) => candidate.userId === nodes[source] && candidate.friendId === nodes[sink],
           ) ?? {};
 
         res.push({
@@ -78,7 +78,7 @@ function simplifyDebtsForSingleCurrency(
   return result;
 }
 
-// based on https://www.geeksforgeeks.org/minimize-cash-flow-among-given-set-friends-borrowed-money/
+// Based on https://www.geeksforgeeks.org/minimize-cash-flow-among-given-set-friends-borrowed-money/
 const minCashFlow = (graph: bigint[][]): bigint[][] => {
   const n = graph.length;
 

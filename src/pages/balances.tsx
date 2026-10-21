@@ -75,7 +75,7 @@ const BalancePage: NextPageWithUser = ({ user }) => {
         <div className="mx-4 flex items-stretch justify-between gap-4">
           {selectedCurrency && isCurrencyCode(selectedCurrency) ? (
             <CumulatedBalanceDisplay
-              prefix={`${t('ui.total_balance')}`}
+              prefix={t('ui.total_balance')}
               cumulatedBalances={[
                 cumulatedQuery.data?.youOwe ?? [],
                 cumulatedQuery.data?.youGet ?? [],

@@ -21,7 +21,7 @@ import { isCurrencyCode } from '~/lib/currency';
 // Helper to transform balances object to array format
 function transformBalances(balances: Record<string, bigint>) {
   return Object.entries(balances)
-    .filter(([_, amount]) => 0n !== amount)
+    .filter(([, amount]) => 0n !== amount)
     .map(([currency, amount]) => ({ currency, amount }));
 }
 
@@ -42,10 +42,12 @@ const BalancePage: NextPageWithUser = () => {
   const actions = useMemo(
     () => (
       <CreateGroup>
-        <PlusIcon className="text-primary h-6 w-6" />
+        <Button variant="ghost" size="icon" aria-label={t('group_details.create_group.title')}>
+          <PlusIcon />
+        </Button>
       </CreateGroup>
     ),
-    [],
+    [t],
   );
 
   return (

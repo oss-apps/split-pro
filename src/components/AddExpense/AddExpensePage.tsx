@@ -28,6 +28,7 @@ import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { currencyConversion } from '~/utils/numbers';
 import { CurrencyConversionIcon } from '../ui/categoryIcons';
 import { useSession } from 'next-auth/react';
+import { isStringQueryParam } from '~/utils/queryParams';
 
 export const AddOrEditExpensePage: React.FC<{
   enableSendingInvites: boolean;
@@ -54,6 +55,7 @@ export const AddOrEditExpensePage: React.FC<{
   const transactionId = useAddExpenseStore((s) => s.transactionId);
   const cronExpression = useAddExpenseStore((s) => s.cronExpression);
   const multipleTransactions = useAddExpenseStore((s) => s.multipleTransactions);
+  const [previousCurrency, setPreviousCurrency] = React.useState<CurrencyCode | null>(null);
 
   const { t, displayName, generateSplitDescription, getCurrencyHelpersCached } =
     useTranslationWithUtils();
@@ -83,7 +85,7 @@ export const AddOrEditExpensePage: React.FC<{
 
       updateProfile.mutate({ currency: newCurrency });
 
-      previousCurrencyRef.current = currency;
+      setPreviousCurrency(currency);
       setCurrency(newCurrency);
     },
     [currency, setCurrency, updateProfile],
@@ -99,7 +101,7 @@ export const AddOrEditExpensePage: React.FC<{
       if (bigIntValue !== undefined) {
         setAmount(bigIntValue);
       }
-      previousCurrencyRef.current = null;
+      setPreviousCurrency(null);
     },
     [setAmount, setAmountStr],
   );
@@ -154,10 +156,10 @@ export const AddOrEditExpensePage: React.FC<{
 
                 const { friendId, groupId } = router.query;
 
-                if (friendId && !groupId) {
-                  navPromise = () => router.push(`/balances/${friendId as string}/expenses/${id}`);
-                } else if (groupId) {
-                  navPromise = () => router.push(`/groups/${groupId as string}/expenses/${id}`);
+                if (isStringQueryParam(friendId) && friendId && !groupId) {
+                  navPromise = () => router.push(`/balances/${friendId}/expenses/${id}`);
+                } else if (isStringQueryParam(groupId) && groupId) {
+                  navPromise = () => router.push(`/groups/${groupId}/expenses/${id}`);
                 } else {
                   navPromise = () => router.push(`/expenses/${id}?keepAdding=1`);
                 }
@@ -214,7 +216,7 @@ export const AddOrEditExpensePage: React.FC<{
 
   const handleDescriptionChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setDescription(e.target.value.toString() ?? '');
+      setDescription(e.target.value ?? '');
     },
     [setDescription],
   );
@@ -224,11 +226,9 @@ export const AddOrEditExpensePage: React.FC<{
     setMultipleTransactions([]);
   }, [resetState, setMultipleTransactions]);
 
-  const previousCurrencyRef = React.useRef<CurrencyCode | null>(null);
-
   const onConvertAmount: React.ComponentProps<typeof CurrencyConversion>['onSubmit'] = useCallback(
     ({ amount: absAmount, rate }) => {
-      if (!previousCurrencyRef.current) {
+      if (!previousCurrency) {
         return;
       }
 
@@ -237,23 +237,18 @@ export const AddOrEditExpensePage: React.FC<{
         currencyConversion({
           amount: absAmount,
           rate,
-          from: previousCurrencyRef.current,
+          from: previousCurrency,
           to: currency,
         });
       setAmount(targetAmount);
       setAmountStr(getCurrencyHelpersCached(currency).toUIString(targetAmount, false, true));
-      previousCurrencyRef.current = null;
+      setPreviousCurrency(null);
     },
-    [setAmount, setAmountStr, currency, getCurrencyHelpersCached],
+    [setAmount, setAmountStr, currency, getCurrencyHelpersCached, previousCurrency],
   );
 
   const currencyConversionComponent = React.useMemo(() => {
-    if (
-      currency === previousCurrencyRef.current ||
-      previousCurrencyRef.current === null ||
-      !amount ||
-      0n === amount
-    ) {
+    if (currency === previousCurrency || previousCurrency === null || !amount || 0n === amount) {
       return null;
     }
 
@@ -261,7 +256,7 @@ export const AddOrEditExpensePage: React.FC<{
       <CurrencyConversion
         onSubmit={onConvertAmount}
         amount={amount}
-        currency={previousCurrencyRef.current}
+        currency={previousCurrency}
         editingTargetCurrency={currency}
       >
         <Button size="icon" variant="secondary" className="size-8">
@@ -269,7 +264,7 @@ export const AddOrEditExpensePage: React.FC<{
         </Button>
       </CurrencyConversion>
     );
-  }, [amount, currency, onConvertAmount]);
+  }, [amount, currency, onConvertAmount, previousCurrency]);
 
   const onBackButtonPress = useCallback(() => {
     router.back();

@@ -90,7 +90,7 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
     }
   }, [clearPreference, entityId, sessionPreference]);
 
-  const currentDate = useMemo(() => new Date(), []);
+  const [currentDate] = useState(() => new Date());
 
   const ratesQuery = api.expense.getBatchCurrencyRates.useQuery(
     {

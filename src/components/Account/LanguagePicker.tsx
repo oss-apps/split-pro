@@ -11,7 +11,7 @@ export const LanguagePicker: React.FC<PropsWithChildren> = ({ children }) => {
   const { i18n, t } = useTranslation();
   const updateUser = api.user.updateUserDetail.useMutation();
 
-  const supportedLanguages = useMemo(getSupportedLanguages, []);
+  const supportedLanguages = useMemo(() => getSupportedLanguages(), []);
 
   const onSelect = useCallback(
     async (currentValue: string) => {

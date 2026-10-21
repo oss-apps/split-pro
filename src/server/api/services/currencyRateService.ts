@@ -1,6 +1,6 @@
 import { format, getISODay, isToday, subDays } from 'date-fns';
 import { env } from '~/env';
-import type { CurrencyCode } from '~/lib/currency';
+import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
 import { db } from '~/server/db';
 
 export interface RateResponse {
@@ -32,10 +32,18 @@ abstract class CurrencyRateProvider {
 
     const data = await this.fetchRates(from, to, date);
 
+    if (!isCurrencyCode(data.base)) {
+      throw new Error(`Unsupported base currency: ${data.base}`);
+    }
+    const baseCurrency = data.base;
+
     await Promise.all(
-      Object.entries(data.rates).map(([to, rate]) =>
-        this.upsertCache(data.base as CurrencyCode, to as CurrencyCode, date, rate),
-      ),
+      Object.entries(data.rates).flatMap(([targetCurrency, rate]) => {
+        if (!isCurrencyCode(targetCurrency)) {
+          return [];
+        }
+        return [this.upsertCache(baseCurrency, targetCurrency, date, rate)];
+      }),
     );
 
     const res = await this.checkCache(from, to, date);
@@ -77,6 +85,8 @@ abstract class CurrencyRateProvider {
       void this.upsertCache(from, to, date, rate);
       return rate;
     }
+
+    return undefined;
   }
 
   private upsertCache(from: CurrencyCode, to: CurrencyCode, date: Date, rate: number) {

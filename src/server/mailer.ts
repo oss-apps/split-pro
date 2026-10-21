@@ -1,5 +1,4 @@
-import { type User } from 'next-auth';
-import nodemailer, { type Transporter } from 'nodemailer';
+import { type Transporter, createTransport } from 'nodemailer';
 
 import { env } from '~/env';
 import { escapeHtml } from '~/lib/utils';
@@ -24,7 +23,7 @@ const getTransporter = () => {
   }
 
   if (!mailServerConfig.host) {
-    return;
+    return undefined;
   }
 
   const transport = {
@@ -35,7 +34,7 @@ const getTransporter = () => {
     socketTimeout: 30_000,
   };
 
-  transporter = nodemailer.createTransport(transport);
+  transporter = createTransport(transport);
   return transporter;
 };
 
@@ -75,7 +74,10 @@ export async function sendInviteEmail(email: string, name: string) {
   return await sendMail(email, subject, text, html);
 }
 
-export async function sendFeedbackEmail(feedback: string, user: User) {
+export async function sendFeedbackEmail(
+  feedback: string,
+  user: { name?: string | null; email?: string | null },
+) {
   console.log('Received feedback from: ', user.email, 'Feedback: ', feedback);
 
   if (!env.FEEDBACK_EMAIL) {
@@ -95,10 +97,10 @@ async function sendMail(
   html: string,
   replyTo?: string,
 ) {
-  const transporter = getTransporter();
+  const mailTransporter = getTransporter();
   try {
-    if (transporter) {
-      await transporter.sendMail({
+    if (mailTransporter) {
+      await mailTransporter.sendMail({
         to: email,
         from: env.FROM_EMAIL,
         subject,

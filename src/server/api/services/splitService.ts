@@ -84,51 +84,46 @@ export async function createExpense(
     jobId = schedule;
   }
 
-  const operations = [];
-
-  // Create expense operation
-  operations.push(
-    db.expense.create({
-      data: {
-        ...(expenseId && { id: expenseId }),
-        groupId,
-        paidBy,
-        name,
-        category,
-        amount,
-        splitType,
-        currency,
-        expenseParticipants: {
-          create: nonZeroParticipants,
-        },
-        fileKey,
-        addedBy: currentUserId,
-        expenseDate,
-        transactionId,
-        conversionFrom,
+  const createExpenseOperation = db.expense.create({
+    data: {
+      ...(expenseId && { id: expenseId }),
+      groupId,
+      paidBy,
+      name,
+      category,
+      amount,
+      splitType,
+      currency,
+      expenseParticipants: {
+        create: nonZeroParticipants,
       },
-    }),
-  );
-
-  // Link recurrence to expense if we created a cron job
-  if (expenseId && jobId) {
-    operations.push(
-      db.expenseRecurrence.create({
-        data: {
-          expense: {
-            connect: { id: expenseId },
-          },
-          job: {
-            connect: { jobid: jobId },
-          },
-        },
-      }),
-    );
-  }
+      fileKey,
+      addedBy: currentUserId,
+      expenseDate,
+      transactionId,
+      conversionFrom,
+    },
+  });
 
   try {
-    const results = await db.$transaction(operations);
-    const createdExpense = results[0] as Awaited<ReturnType<typeof db.expense.create>>;
+    const [createdExpense] = await db.$transaction([
+      createExpenseOperation,
+      // Link recurrence to expense if we created a cron job
+      ...(expenseId && jobId
+        ? [
+            db.expenseRecurrence.create({
+              data: {
+                expense: {
+                  connect: { id: expenseId },
+                },
+                job: {
+                  connect: { jobid: jobId },
+                },
+              },
+            }),
+          ]
+        : []),
+    ]);
     if (!createdExpense) {
       throw new Error('Expense creation failed');
     }
@@ -138,7 +133,7 @@ export async function createExpense(
   } catch (error) {
     // If we created a cron job but transaction failed, clean up the cron job
     if (expenseId) {
-      await db.$executeRaw`SELECT cron.unschedule(${`expense_recurring_${expenseId}`})`;
+      await db.$executeRaw`SELECT cron.unschedule(${expenseId})`;
     }
     throw error;
   }
@@ -403,26 +398,8 @@ export async function getCompleteFriendsDetails(userId: number) {
     },
   });
 
-  const friends = viewBalances.reduce(
-    (acc, balance) => {
-      const { friendId } = balance;
-      acc[friendId] ??= {
-        balances: [],
-        id: friendId,
-        email: balance.friend.email,
-        name: balance.friend.name,
-      };
-
-      if (0n !== balance.amount) {
-        acc[friendId]?.balances.push({
-          currency: balance.currency,
-          amount: balance.amount,
-        });
-      }
-
-      return acc;
-    },
-    {} as Record<
+  const friends = viewBalances.reduce<
+    Record<
       number,
       {
         id: number;
@@ -430,8 +407,25 @@ export async function getCompleteFriendsDetails(userId: number) {
         name?: string | null;
         balances: { currency: string; amount: bigint }[];
       }
-    >,
-  );
+    >
+  >((acc, balance) => {
+    const { friendId } = balance;
+    acc[friendId] ??= {
+      balances: [],
+      id: friendId,
+      email: balance.friend.email,
+      name: balance.friend.name,
+    };
+
+    if (0n !== balance.amount) {
+      acc[friendId]?.balances.push({
+        currency: balance.currency,
+        amount: balance.amount,
+      });
+    }
+
+    return acc;
+  }, {});
 
   return friends;
 }
@@ -462,16 +456,13 @@ export async function importUserBalanceFromSplitWise(
 
   const users = await createUsersFromSplitwise(splitWiseUsers);
 
-  const userMap = users.reduce(
-    (acc, user) => {
-      if (user.email) {
-        acc[user.email] = user;
-      }
+  const userMap = users.reduce<Record<string, User>>((acc, user) => {
+    if (user.email) {
+      acc[user.email] = user;
+    }
 
-      return acc;
-    },
-    {} as Record<string, User>,
-  );
+    return acc;
+  }, {});
 
   const currencyHelperCache: Record<string, ReturnType<typeof getCurrencyHelpers>['toSafeBigInt']> =
     {};
@@ -506,7 +497,7 @@ export async function importUserBalanceFromSplitWise(
               create: [
                 {
                   userId: currentUserId,
-                  amount: amount,
+                  amount,
                 },
                 {
                   userId: dbUser.id,
@@ -576,16 +567,13 @@ export async function importGroupFromSplitwise(
 
   const users = await createUsersFromSplitwise(Object.values(splitwiseUserMap));
 
-  const userMap = users.reduce(
-    (acc, user) => {
-      if (user.email) {
-        acc[user.email] = user;
-      }
+  const userMap = users.reduce<Record<string, User>>((acc, user) => {
+    if (user.email) {
+      acc[user.email] = user;
+    }
 
-      return acc;
-    },
-    {} as Record<string, User>,
-  );
+    return acc;
+  }, {});
 
   const missingGroups = await Promise.all(
     splitWiseGroups.map(async (group) => {
@@ -603,7 +591,7 @@ export async function importGroupFromSplitwise(
     .filter((g) => null !== g)
     .map((group) => {
       const groupmembers = group.members.map((member) => ({
-        userId: userMap[member.email.toString()]!.id,
+        userId: userMap[member.email]!.id,
       }));
 
       return db.group.create({

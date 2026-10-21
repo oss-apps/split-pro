@@ -299,6 +299,7 @@ describe('ICU migration', () => {
 
   it.each(['en', 'fr', 'default'])('loads serializable SSR resources for %s', async (locale) => {
     const props = await serverSideTranslations(locale, ['common', 'home'], config);
+    // oxlint-disable-next-line no-underscore-dangle -- next-i18next exposes SSR resources under this fixed property name.
     const state = props._nextI18Next!;
     expect(state.initialLocale).toBe(locale);
     expect(state.userConfig).toBeNull();

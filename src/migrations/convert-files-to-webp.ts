@@ -81,6 +81,8 @@ async function processUserDirectory(
 
   for (const file of files) {
     const filePath = path.join(userDir, file);
+    // Process one file at a time to limit image/file resource use.
+    // oxlint-disable-next-line no-await-in-loop
     const stat = await fs.stat(filePath);
 
     if (stat.isDirectory()) {
@@ -89,6 +91,8 @@ async function processUserDirectory(
     }
 
     try {
+      // Conversion may destructively delete originals; preserve sequential stop-on-error behavior.
+      // oxlint-disable-next-line no-await-in-loop
       const result = await processFile(filePath, userDir, file);
       if (result) {
         convertedFiles.push(result);
@@ -111,6 +115,8 @@ async function updateDatabaseFileKeys(convertedFiles: { oldKey: string; newKey: 
     }
 
     try {
+      // Update one file key at a time and stop the migration on the first failed lookup.
+      // oxlint-disable-next-line no-await-in-loop
       const expenses = await db.expense.findMany({
         where: { fileKey: oldKey },
         select: { id: true },
@@ -122,6 +128,8 @@ async function updateDatabaseFileKeys(convertedFiles: { oldKey: string; newKey: 
       }
 
       for (const expense of expenses) {
+        // Preserve per-record write order and abort on the first failed update.
+        // oxlint-disable-next-line no-await-in-loop
         await db.expense.update({
           where: { id: expense.id },
           data: { fileKey: newKey },
@@ -150,6 +158,8 @@ export async function convertExistingFilesToWebP(): Promise<void> {
   const userDirs: string[] = [];
   for (const entry of entries) {
     const fullPath = path.join(UPLOAD_DIR, entry);
+    // Inspect entries serially to limit concurrent filesystem work during migration.
+    // oxlint-disable-next-line no-await-in-loop
     const stat = await fs.stat(fullPath);
     if (stat.isDirectory()) {
       userDirs.push(entry);
@@ -169,6 +179,8 @@ export async function convertExistingFilesToWebP(): Promise<void> {
 
   for (const userDirName of userDirs) {
     const userDir = path.join(UPLOAD_DIR, userDirName);
+    // User directories contain destructive conversions; retain order and stop on failure.
+    // oxlint-disable-next-line no-await-in-loop
     const convertedFiles = await processUserDirectory(userDir);
     allConvertedFiles.push(...convertedFiles);
   }

@@ -232,6 +232,7 @@ export const expenseRouter = createTRPCRouter({
       if (!expenseId) {
         res = await createExpense(conversionTo, ctx.session.user.id, conversionFrom);
       } else {
+        await validateEditExpensePermission(expenseId, ctx.session.user.id);
         await assertExpenseGroupReassignment(
           expenseId,
           conversionFrom.groupId,
@@ -661,7 +662,7 @@ const validateEditExpensePermission = async (expenseId: string, userId: number):
     db.expense.findUnique({ where: { id: expenseId }, select: { addedBy: true } }),
   ]);
 
-  if (!expenseParticipant && !addedBy?.addedBy) {
+  if (!expenseParticipant && userId !== addedBy?.addedBy) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
       message: 'You are not the participant of the expense',

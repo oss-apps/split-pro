@@ -13,7 +13,12 @@ import {
   getBatchCurrencyRatesSchema,
   getCurrencyRateSchema,
 } from '~/types/expense.types';
-import { createExpense, deleteExpense, editExpense } from '../services/splitService';
+import {
+  assertExpenseGroupReassignment,
+  createExpense,
+  deleteExpense,
+  editExpense,
+} from '../services/splitService';
 import { currencyRateProvider } from '../services/currencyRateService';
 import { isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
@@ -144,6 +149,16 @@ export const expenseRouter = createTRPCRouter({
           throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
         }
 
+        if (input.expenseId) {
+          await assertExpenseGroupReassignment(
+            input.expenseId,
+            input.groupId,
+            ctx.session.user.id,
+            input.paidBy,
+            input.participants.map((participant) => participant.userId),
+          );
+        }
+
         try {
           const expense = input.expenseId
             ? await editExpense(input, ctx.session.user.id)
@@ -209,6 +224,13 @@ export const expenseRouter = createTRPCRouter({
       if (!expenseId) {
         res = await createExpense(conversionTo, ctx.session.user.id, conversionFrom);
       } else {
+        await assertExpenseGroupReassignment(
+          expenseId,
+          conversionFrom.groupId,
+          ctx.session.user.id,
+          conversionFrom.paidBy,
+          conversionFrom.participants.map((participant) => participant.userId),
+        );
         res = await editExpense(conversionFrom, ctx.session.user.id, conversionTo);
       }
 
@@ -659,7 +681,8 @@ const validateExpenseWritePermission = async (
       where: { id: expenseId },
       select: { groupId: true },
     });
-    if (expense.groupId !== groupId) {
+    // An ungrouped expense may be assigned to a group; a grouped expense keeps its group.
+    if (null !== expense.groupId && expense.groupId !== groupId) {
       throw new TRPCError({
         code: 'BAD_REQUEST',
         message: 'Cannot move an expense to another group',

@@ -1,4 +1,5 @@
 import { SplitType, type User } from '@prisma/client';
+import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 
 import { db } from '~/server/db';
@@ -192,10 +193,81 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
   sendExpensePushNotification(expenseId).catch(console.error);
 }
 
+export async function assertExpenseGroupReassignment(
+  expenseId: string,
+  groupId: number | null,
+  actorUserId: number,
+  paidBy: number,
+  participantUserIds: number[],
+) {
+  const expense = await db.expense.findUnique({
+    where: { id: expenseId },
+    select: { groupId: true },
+  });
+
+  if (!expense) {
+    throw new TRPCError({ code: 'BAD_REQUEST', message: 'Expense not found' });
+  }
+
+  const storedGroupId = expense.groupId;
+
+  if (null !== storedGroupId) {
+    if (storedGroupId !== groupId) {
+      throw new TRPCError({ code: 'BAD_REQUEST', message: 'Cannot change group while editing' });
+    }
+
+    return;
+  }
+
+  if (null === groupId) {
+    return;
+  }
+
+  const group = await db.group.findUnique({
+    where: { id: groupId },
+    select: { archivedAt: true },
+  });
+
+  if (!group) {
+    throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group not found' });
+  }
+
+  if (group.archivedAt) {
+    throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
+  }
+
+  const members = await db.groupUser.findMany({
+    where: {
+      groupId,
+      userId: {
+        in: [actorUserId, paidBy, ...participantUserIds],
+      },
+    },
+    select: { userId: true },
+  });
+  const memberIds = new Set(members.map((member) => member.userId));
+
+  if (!memberIds.has(actorUserId)) {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Not a group member' });
+  }
+
+  if (!memberIds.has(paidBy)) {
+    throw new TRPCError({ code: 'BAD_REQUEST', message: 'Payer is not a member of the group' });
+  }
+
+  if (participantUserIds.some((userId) => !memberIds.has(userId))) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Participant is not a member of the group',
+    });
+  }
+}
+
 export async function editExpense(
   {
     expenseId,
     paidBy,
+    groupId,
     name,
     category,
     amount,
@@ -253,6 +325,7 @@ export async function editExpense(
       where: { id: expenseId },
       data: {
         paidBy,
+        groupId,
         name,
         category,
         amount,

@@ -69,6 +69,10 @@
     "star_on_github": "Adj csillagot a GitHubon",
     "submit_feedback": "Visszajelzés küldése",
     "submit_feedback_details": {
+      "messages": {
+        "submit_error": "A visszajelzés elküldése sikertelen",
+        "submit_success": "Visszajelzés elküldve"
+      },
       "placeholder": "Írd be a visszajelzésed",
       "title": "Visszajelzés küldése"
     },
@@ -87,15 +91,25 @@
     "create": "Létrehozás",
     "edit_expense": "Költség szerkesztése",
     "export": "Exportálás",
-    "fetch": "Lehívás",
+    "fetch": "Lekérés",
     "import": "Importálás",
     "invite": "Meghívás",
     "leave": "Kilépés",
     "next": "Következő",
     "reconnect": "Újracsatlakozás",
+    "remind_later": "Emlékeztessen később",
     "save": "Mentés",
     "settle_up": "Kiegyenlítés",
     "submit": "Küldés"
+  },
+  "activity": {
+    "user_deleted_expense": "{actor, select, you {Törölted a következőt: {expense}} other {{user} törölte a következőt: {expense}}}",
+    "user_paid_for_expense": "{user} kifizetett {amount} összeget erre: {expense}",
+    "user_received_for_expense": "{user} kapott {amount} összeget erre: {expense}",
+    "you_paid_amount": "Fizettél {amount}",
+    "you_paid_for_expense": "Kifizettél {amount} összeget erre: {expense}",
+    "you_received_amount": "Kaptál {amount}",
+    "you_received_for_expense": "Kaptál {amount} összeget erre: {expense}"
   },
   "actors": {
     "all": "Mind",
@@ -113,10 +127,19 @@
     "no_providers_configured": "Nincsenek konfigurált hitelesítési szolgáltatók",
     "no_providers_instructions": "Kérjük, konfigurálj legalább egy hitelesítési szolgáltatót a bejelentkezéshez. Lásd a",
     "otp_sent": "Elküldtünk egy e-mailt az OTP-vel. Kérjük, ellenőrizd a beérkező leveleidet, és kattints az e-mailben található linkre a bejelentkezéshez.",
-    "send_magic_link": "Magic Link küldése",
+    "send_magic_link": "Magic link küldése",
     "sending": "Küldés...",
     "setup_instructions": "Docker beállítási utasítások",
     "trouble_logging_in": "Problémád van a bejelentkezéssel? Lépj kapcsolatba"
+  },
+  "balance_list": {
+    "gets": "{receiverRole, select, you {Kapsz {amount} összeget tőle: {payer}} other {{receiver} kap {amount} összeget tőle: {payerRole, select, you {tőled} other {{payer}}}}}",
+    "pays": "{payerRole, select, you {Fizetsz {amount} összeget neki: {receiver}} other {{payer} fizet {amount} összeget neki: {receiverRole, select, you {neked} other {{receiver}}}}}"
+  },
+  "balance_summary": {
+    "friend_owes_you": "{friend} tartozik neked {amount}",
+    "more": "{count, plural, one {# további egyenleg} other {# további egyenleg}}",
+    "you_owe_friend": "Tartozol {friend} részére {amount}"
   },
   "balances": {
     "default_split": {
@@ -141,7 +164,9 @@
     "to_bank": "bankba"
   },
   "currency_conversion": {
+    "amount_aria_label": "Összeg",
     "amount_to_receive": "Esedékes összeg",
+    "converted_amount_aria_label": "Átváltott összeg",
     "description": "Váltsd át az összeget egy másik pénznemre.",
     "exchange_rate": "Átváltási árfolyam",
     "fetching_rate": "Árfolyam lekérése...",
@@ -156,8 +181,11 @@
     "currency_conversion_malformed": "A pénznemátváltási adatok hibásak",
     "email_invalid": "Az e-mail cím érvénytelen, kérjük, próbáld újra a bejelentkezési folyamatot.",
     "email_required": "E-mail cím megadása kötelező",
+    "expense_deletion_failed": "Váratlan hiba történt a kiadás törlése során.",
+    "expense_submission_failed": "Váratlan hiba történt a kiadás beküldése során.",
     "feedback_min_length": "A visszajelzésnek legalább 10 karakterből kell állnia",
     "feedback_required": "Visszajelzés szükséges",
+    "friend_deletion_failed": "A barát törlése sikertelen",
     "group_balances_malformed": "A csoportegyenlegek adatai hibásak, kérjük, jelentsd a problémát, vagy próbáld meg az újraszámolást.",
     "group_name_update_failed": "Hiba a csoport nevének frissítésekor",
     "image_compression_failed": "A képtömörítés sikertelen, eredeti fájl feltöltése",
@@ -165,11 +193,14 @@
     "invalid_cron_expression": "Érvénytelen cron kifejezés",
     "invalid_currency_code": "Érvénytelen pénznemkód {code}",
     "invalid_split": "Mentés előtt állítsd be, hogy ki tartozik ezzel a költséggel.",
+    "invite_email_failed": "A meghívó e-mail elküldése sikertelen. Ellenőrizd az SMTP-beállításokat.",
     "language_change_failed": "Hiba a nyelv módosításakor",
     "less_than": "A fájl mérete nem haladhatja meg a {size} MB-ot",
     "name_required": "Név megadása kötelező",
     "no_providers": "Hiba történt a hitelesítési szolgáltatók lekérésekor. Kérjük, ellenőrizd a háttérnaplókat.",
     "notification_not_supported": "Az értesítések nem támogatottak",
+    "notification_request_failed": "Az értesítési jogosultság kérése sikertelen",
+    "notification_subscribe_failed": "Az értesítésekre való feliratkozás sikertelen",
     "otp_invalid": "Érvénytelen OTP",
     "otp_required": "OTP megadása kötelező",
     "recurrence_delete_failed": "Nem sikerült törölni az ismétlődést",
@@ -178,6 +209,7 @@
     "saving_expense": "Hiba a költség mentése közben",
     "setting_update_failed": "Nem sikerült frissíteni a beállítást",
     "signin_error": "Hiba történt bejelentkezés közben: {error}",
+    "signin_failed": "A bejelentkezés sikertelen. Kérlek, próbáld újra.",
     "signup_disabled": "Új fiókok regisztrációja ebben az esetben le van tiltva",
     "something_went_wrong": "Valami hiba történt",
     "subscribe_error": "Nem lehet feliratkozni az értesítésekre",
@@ -195,6 +227,7 @@
       "pick_a_date": "Válassz egy dátumot",
       "select_user_or_group": {
         "add_to_split_pro": "Hozzáadás a SplitPro-hoz",
+        "empty_image_alt": "Nem találhatók felhasználók",
         "note": "Megjegyzés: a meghívó küldése jelenleg le van tiltva a spam miatt",
         "only_one_group_time": "Egyszerre csak egy csoportod lehet",
         "send_invite": "Meghívó küldése felhasználónak",
@@ -208,6 +241,7 @@
           "you_owe": "Te tartozol neki: {payer}"
         },
         "split_equally": "egyenlően elosztva",
+        "split_equally_with_count": "egyenlő elosztás {count, plural, one {# személy} other {# személy}} között",
         "split_unequally": "egyenlőtlenül oszlik meg",
         "types": {
           "adjustment": {
@@ -250,7 +284,10 @@
     "balance_list": {
       "are_settled_up": "kiegyenlítve",
       "is_settled_up": "kiegyenlítve",
-      "press_balance_info": "Nyomj az egyéni egyenlegre az elszámolás indításához"
+      "lent": "{actor, select, you {Kölcsönadtál} other {{person} kölcsönadott}}",
+      "owes": "{actor, select, you {Tartozol} other {{person} tartozik}}",
+      "press_balance_info": "Nyomj az egyéni egyenlegre az elszámolás indításához",
+      "settled": "{actor, select, you {Minden számlád rendezve van} other {{person} elszámolt}}"
     },
     "bank_transactions": "Banki tranzakciók",
     "clear": "Kiürítés",
@@ -258,6 +295,7 @@
       "text": "Ez a művelet nem vonható vissza. Ezzel véglegesen törlöd a költséget.",
       "title": "Teljesen biztos vagy benne?"
     },
+    "empty_state_image_alt": "Nincsenek kiadások",
     "multiple_transactions": {
       "add_all": "Összes hozzáadása",
       "add_one_by_one": "Hozzáadás egyenként",
@@ -266,9 +304,38 @@
     },
     "no_transactions_yet": "Még nincsenek tranzakciók",
     "pending": "Függőben",
+    "receipt": {
+      "image_alt": "Kiadási bizonylat",
+      "thumbnail_alt": "Kiadási bizonylat bélyegképe",
+      "title": "Kiadási bizonylat"
+    },
     "submit_all": "Összes beküldése",
     "title": "Költség hozzáadása",
     "title_mobile": "Hozzáadás"
+  },
+  "expense_list": {
+    "conversion_for_users": "Pénznemváltás: {payerRole, select, you {tőled} other {{payer}}} és {receiverRole, select, you {neked} other {{receiver}}}",
+    "settlement": "{payerRole, select, you {Fizettél {amount} neki: {receiver}} other {{receiverRole, select, you {{payer} fizetett neked {amount}} other {{payer} fizetett {amount} neki: {receiver}}}}}",
+    "user_paid": "{actor, select, you {Fizettél {amount}} other {{user} fizetett {amount}}}",
+    "user_received": "{actor, select, you {Kaptál {amount}} other {{user} kapott {amount}}}"
+  },
+  "expense_metadata": {
+    "added_by": "{actor, select, you {Hozzáadtad ekkor: {date}} other {{user} hozzáadta ekkor: {date}}}",
+    "deleted_by": "{actor, select, you {Törölted ekkor: {date}} other {{user} törölte ekkor: {date}}}",
+    "edited_by": "{actor, select, you {Szerkesztetted ekkor: {date}} other {{user} szerkesztette ekkor: {date}}}"
+  },
+  "expense_participant": {
+    "gets": "{actor, select, you {<person/> kapsz <amount/>} other {<person/> kap <amount/>}}",
+    "owes": "{actor, select, you {<person/> tartozol <amount/>} other {<person/> tartozik <amount/>}}",
+    "paid": "<person/> fizetett <amount/>",
+    "received": "<person/> kapott <amount/>"
+  },
+  "friend": {
+    "delete_confirmation": {
+      "description": "Valóban folytatni szeretnéd?",
+      "outstanding_balance": "Nem törölhetsz olyan barátot, akivel rendezetlen egyenleged van. Előbb számoljatok el.",
+      "title": "Teljesen biztos vagy benne?"
+    }
   },
   "group_details": {
     "add_members": "Tagok hozzáadása",
@@ -369,6 +436,12 @@
     "groups": "Csoportok",
     "recurring": "Ismétlés"
   },
+  "notifications": {
+    "enable_description": "Ne maradj le a fontos eseményekről. Iratkozz fel, hogy értesítést kapj, ha új kiadást adnak hozzá, vagy ha egy meglévő frissül.",
+    "enable_title": "Értesítések engedélyezése",
+    "permission_granted": "Mostantól értesítéseket fogsz kapni",
+    "subscribe": "Feliratkozás"
+  },
   "recurrence": {
     "cron_expression": "Cron kifejezés",
     "days_of_month": "A hónap napjai",
@@ -399,6 +472,7 @@
     "template_edit_warning": "Ez egy ismétlődő költségsablon. A változtatások minden jövőbeli ismétlődő költségre vonatkoznak.",
     "time_of_day": "Napszak",
     "title": "Ismétlődés",
+    "toggle_options": "Ismétlődő kiadás opcióinak ki-/bekapcsolása",
     "view_recurring_page": "Ismétlés oldal megtekintése"
   },
   "ui": {
@@ -413,7 +487,22 @@
       "for": "itt",
       "from": "tőle",
       "paid_by": "Fizette",
+      "payer": {
+        "current_user": "Te"
+      },
       "received_by": "Megkapta",
+      "recipient": {
+        "current_user": "Te"
+      },
+      "statements": {
+        "user_pays_user": "{payer} fizet neki: {receiver}",
+        "user_pays_you": "{user} fizet neked",
+        "you_lent": "Adtál",
+        "you_lent_amount": "Adtál {amount}",
+        "you_owe": "Tartozol",
+        "you_owe_amount": "Tartozol {amount}",
+        "you_pay_user": "Fizetsz neki: {user}"
+      },
       "to": "neki",
       "user": {
         "deleted": "törölte",
@@ -450,6 +539,7 @@
     "share_text": "Nézd meg a SplitPro-t. Ez egy nyílt forráskódú, ingyenes alternatívája a Splitwise-nak",
     "show_all_currencies": "Összes pénznem megjelenítése",
     "today": "Ma",
-    "total_balance": "Összes egyenleg"
+    "total_balance": "Összes egyenleg",
+    "transfer": "{senderRole, select, you {Fizetsz neki: {receiver}} other {{receiverRole, select, you {{sender} fizet neked} other {{sender} fizet neki: {receiver}}}}}"
   }
 }

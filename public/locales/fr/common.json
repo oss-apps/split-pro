@@ -69,6 +69,10 @@
     "star_on_github": "Soutenir sur GitHub",
     "submit_feedback": "Faire un feedback",
     "submit_feedback_details": {
+      "messages": {
+        "submit_error": "Impossible d'envoyer le feedback",
+        "submit_success": "Feedback envoyé"
+      },
       "placeholder": "Faire des retours sur l'appli",
       "title": "Faire un feedback"
     },
@@ -93,9 +97,19 @@
     "leave": "Quitter",
     "next": "Suivant",
     "reconnect": "Se reconnecter",
+    "remind_later": "Me le rappeler plus tard",
     "save": "Enregistrer",
     "settle_up": "Rembourser",
     "submit": "Valider"
+  },
+  "activity": {
+    "user_deleted_expense": "{actor, select, you {Tu as supprimé {expense}} other {{user} a supprimé {expense}}}",
+    "user_paid_for_expense": "{user} a payé {amount} pour {expense}",
+    "user_received_for_expense": "{user} a reçu {amount} pour {expense}",
+    "you_paid_amount": "Tu as payé {amount}",
+    "you_paid_for_expense": "Tu as payé {amount} pour {expense}",
+    "you_received_amount": "Tu as reçu {amount}",
+    "you_received_for_expense": "Tu as reçu {amount} pour {expense}"
   },
   "actors": {
     "all": "Toustes",
@@ -117,6 +131,15 @@
     "sending": "Envoi en cours…",
     "setup_instructions": "instructions de configuration Docker",
     "trouble_logging_in": "Un problème pour te connecter ? Contact"
+  },
+  "balance_list": {
+    "gets": "{receiverRole, select, you {Tu reçois {amount} de {payer}} other {{receiver} reçoit {amount} de {payerRole, select, you {toi} other {{payer}}}}}",
+    "pays": "{payerRole, select, you {Tu paie {amount} à {receiver}} other {{payer} paie {amount} à {receiverRole, select, you {toi} other {{receiver}}}}}"
+  },
+  "balance_summary": {
+    "friend_owes_you": "{friend} te doit {amount}",
+    "more": "{count, plural, one {# solde supplémentaire} other {# soldes supplémentaires}}",
+    "you_owe_friend": "Tu dois {amount} à {friend}"
   },
   "balances": {
     "default_split": {
@@ -141,7 +164,9 @@
     "to_bank": "à la banque"
   },
   "currency_conversion": {
+    "amount_aria_label": "Montant",
     "amount_to_receive": "Montant à recevoir",
+    "converted_amount_aria_label": "Montant converti",
     "description": "Convertir le montant vers une autre devise.",
     "exchange_rate": "Taux de change",
     "fetching_rate": "Récupération du taux de change…",
@@ -156,8 +181,11 @@
     "currency_conversion_malformed": "Les données de conversion de devise sont corrompues",
     "email_invalid": "Cette adresse mail est invalide, merci de recommencer le processus de connexion.",
     "email_required": "L'adresse mail est requise",
+    "expense_deletion_failed": "Une erreur inattendue s'est produite lors de la suppression de la dépense.",
+    "expense_submission_failed": "Une erreur inattendue s'est produite lors de l'enregistrement de la dépense.",
     "feedback_min_length": "Le texte doit faire au moins 10 caractères",
     "feedback_required": "Fournis des informations",
+    "friend_deletion_failed": "Impossible de supprimer l'ami",
     "group_balances_malformed": "Les données des soldes de groupe sont erronées, merci d'essayer de relancer leur calcul ou de reporter une erreur sinon.",
     "group_name_update_failed": "Une erreur est survenue lors de la mise à jour du nom du groupe",
     "image_compression_failed": "Échec de compression de l'image, tentative d'envoi de l'image originale",
@@ -165,11 +193,14 @@
     "invalid_cron_expression": "Expression cron invalide",
     "invalid_currency_code": "Le code de devise {code} est invalide",
     "invalid_split": "Indique qui a payé cette dépense avant d'enregistrer.",
+    "invite_email_failed": "Impossible d'envoyer le mail d'invitation. Vérifie la configuration du SMTP.",
     "language_change_failed": "Le changement de langage a échoué",
     "less_than": "Le poids du fichier doit être inférieur à {size}Mo",
     "name_required": "Un nom est requis",
     "no_providers": "Une erreur est survenue lors du chargement des fournisseurs d'authentification. Vérifiez les logs du backend sur le serveur.",
     "notification_not_supported": "Notification non supportée",
+    "notification_request_failed": "Erreur lors de la demande de permission pour les notifications",
+    "notification_subscribe_failed": "Impossible de s'inscrire aux notifications",
     "otp_invalid": "Code OTP invalide",
     "otp_required": "Le code OTP est requis",
     "recurrence_delete_failed": "Une erreur est survenue lors de la suppression de la récurrence",
@@ -178,6 +209,7 @@
     "saving_expense": "Un erreur est survenue lors de l'enregistrement de la dépense",
     "setting_update_failed": "Une erreur est survenue lors de la mise à jour des paramètres",
     "signin_error": "Une erreur est survenue lors de la connexion : {error}",
+    "signin_failed": "Connexion impossible. Réessaies.",
     "signup_disabled": "L'inscription de nouveaux comptes est désactivée sur cette instance",
     "something_went_wrong": "Une erreur est survenue",
     "subscribe_error": "Une erreur est survenue lors de l'abonnement aux notifications",
@@ -195,6 +227,7 @@
       "pick_a_date": "Choisir une date",
       "select_user_or_group": {
         "add_to_split_pro": "Inviter sur SplitPro",
+        "empty_image_alt": "Aucun utilisateur trouvé",
         "note": "Note : l'envoi de mails d'invitation est désactivé pour le moment pour éviter le spam",
         "only_one_group_time": "Une dépense ne peut concerner qu'un seul groupe à la fois",
         "send_invite": "Envoyer une invitation",
@@ -208,6 +241,7 @@
           "you_owe": "Ta dette envers {payer}"
         },
         "split_equally": "partagé à parts égales",
+        "split_equally_with_count": "partagé équitablement entre {count, plural, one {# personne} other {# personnes}}",
         "split_unequally": "partagé inégalement",
         "types": {
           "adjustment": {
@@ -250,7 +284,10 @@
     "balance_list": {
       "are_settled_up": "es quitte",
       "is_settled_up": "est quitte",
-      "press_balance_info": "Clique sur un solde pour effectuer un règlement"
+      "lent": "{actor, select, you {Tu as prêté} other {{person} a prêté}}",
+      "owes": "{actor, select, you {Tu dois} other {{person} doit}}",
+      "press_balance_info": "Clique sur un solde pour effectuer un règlement",
+      "settled": "{actor, select, you {Tu es quitte} other {{person} est quitte}}"
     },
     "bank_transactions": "Transactions bancaires",
     "clear": "Effacer",
@@ -258,6 +295,7 @@
       "text": "Cette action n'est pas réversible. Ceci supprimera définitivement ta dépense.",
       "title": "Confirmer la suppression définitive ?"
     },
+    "empty_state_image_alt": "Pas de dépense",
     "multiple_transactions": {
       "add_all": "Tout ajouter",
       "add_one_by_one": "Ajuster par transaction",
@@ -266,9 +304,38 @@
     },
     "no_transactions_yet": "Aucune transaction pour l'instant",
     "pending": "En attente",
+    "receipt": {
+      "image_alt": "Reçu de la dépense",
+      "thumbnail_alt": "Aperçu du reçu de la dépense",
+      "title": "Reçu de la dépense"
+    },
     "submit_all": "Tout enregistrer",
     "title": "Nouvelle dépense",
     "title_mobile": "Ajouter"
+  },
+  "expense_list": {
+    "conversion_for_users": "Conversion monétaire pour {payerRole, select, you {toi} other {{payer}}} et {receiverRole, select, you {toi} other {{receiver}}}",
+    "settlement": "{payerRole, select, you {Tu as payé {amount} à {receiver}} other {{receiverRole, select, you {{payer} t'a payé {amount}} other {{payer} a payé {amount} à {receiver}}}}}",
+    "user_paid": "{actor, select, you {Tu as payé {amount}} other {{user} a payé {amount}}}",
+    "user_received": "{actor, select, you {Tu as reçu {amount}} other {{user} a reçu {amount}}}"
+  },
+  "expense_metadata": {
+    "added_by": "{actor, select, you {Ajouté par toi le {date}} other {Ajouté par {user} le {date}}}",
+    "deleted_by": "{actor, select, you {Supprimé par toi le {date}} other {Supprimé par {user} le {date}}}",
+    "edited_by": "{actor, select, you {Édité par toi le {date}} other {Édité par {user} le {date}}}"
+  },
+  "expense_participant": {
+    "gets": "{actor, select, you {<person/> reçois <amount/>} other {<person/> reçoit <amount/>}}",
+    "owes": "{actor, select, you {<person/> dois <amount/>} other {<person/> doit <amount/>}}",
+    "paid": "<person/> payé <amount/>",
+    "received": "<person/> reçu <amount/>"
+  },
+  "friend": {
+    "delete_confirmation": {
+      "description": "Veux-tu vraiment continuer ?",
+      "outstanding_balance": "Tu ne peux pas supprimer un ami avec des soldes en attente. Règle-les d'abord.",
+      "title": "Es-tu vraiment sûr ?"
+    }
   },
   "group_details": {
     "add_members": "Ajouter des membres",
@@ -369,6 +436,12 @@
     "groups": "Groupes",
     "recurring": "Récurrences"
   },
+  "notifications": {
+    "enable_description": "Ne loupe rien. Active les notifications pour savoir quand des dépenses sont ajoutées ou mises à jour.",
+    "enable_title": "Activer les notifications",
+    "permission_granted": "Tu vas recevoir une notification maintenant",
+    "subscribe": "S'abonner"
+  },
   "recurrence": {
     "cron_expression": "Expression « cron »",
     "days_of_month": "Jours dans le mois",
@@ -399,6 +472,7 @@
     "template_edit_warning": "Ceci est un modèle de dépense récurrente. Les paramètres seront appliqués à toutes les futures dépenses récurrentes.",
     "time_of_day": "Heure journalière",
     "title": "Récurrence",
+    "toggle_options": "Activer/désactiver les options de dépenses récurrentes",
     "view_recurring_page": "Afficher cette récurrence"
   },
   "ui": {
@@ -413,7 +487,22 @@
       "for": "pour",
       "from": "de",
       "paid_by": "Payé par",
+      "payer": {
+        "current_user": "Tu"
+      },
       "received_by": "Reçu par",
+      "recipient": {
+        "current_user": "Tu"
+      },
+      "statements": {
+        "user_pays_user": "{payer} paie {receiver}",
+        "user_pays_you": "{user} te paie",
+        "you_lent": "Tu as prêté",
+        "you_lent_amount": "Tu as prêté {amount}",
+        "you_owe": "Tu dois",
+        "you_owe_amount": "Tu dois {amount}",
+        "you_pay_user": "Tu paies {user}"
+      },
       "to": "à",
       "user": {
         "deleted": "a supprimé",
@@ -450,6 +539,7 @@
     "share_text": "Jette un œil à SplitPro : c'est une alternative open source et gratuite à Splitwise",
     "show_all_currencies": "Montrer toutes les devises",
     "today": "Aujourd'hui",
-    "total_balance": "Solde global"
+    "total_balance": "Solde global",
+    "transfer": "{senderRole, select, you {Tu paies {receiver}} other {{receiverRole, select, you {{sender} te paie} other {{sender} paie {receiver}}}}}"
   }
 }

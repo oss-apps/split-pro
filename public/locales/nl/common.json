@@ -69,6 +69,10 @@
     "star_on_github": "Volg ons op GitHub",
     "submit_feedback": "Feedback indienen",
     "submit_feedback_details": {
+      "messages": {
+        "submit_error": "Feedback verzenden mislukt",
+        "submit_success": "Feedback verzonden"
+      },
       "placeholder": "Vul jouw feedback in",
       "title": "Feedback indienen"
     },
@@ -93,9 +97,19 @@
     "leave": "Verlaten",
     "next": "Volgende",
     "reconnect": "Opnieuw verbinden",
+    "remind_later": "Herinner me later",
     "save": "Opslaan",
     "settle_up": "Vereffenen",
     "submit": "Indienen"
+  },
+  "activity": {
+    "user_deleted_expense": "{actor, select, you {Je verwijderde {expense}} other {{user} verwijderde {expense}}}",
+    "user_paid_for_expense": "{user} betaalde {amount} voor {expense}",
+    "user_received_for_expense": "{user} ontving {amount} voor {expense}",
+    "you_paid_amount": "Je betaalde {amount}",
+    "you_paid_for_expense": "Je betaalde {amount} voor {expense}",
+    "you_received_amount": "Je ontving {amount}",
+    "you_received_for_expense": "Je ontving {amount} voor {expense}"
   },
   "actors": {
     "all": "Alle",
@@ -117,6 +131,15 @@
     "sending": "Verzenden...",
     "setup_instructions": "Docker installatie-instructies",
     "trouble_logging_in": "Problemen met inloggen? Neem contact op"
+  },
+  "balance_list": {
+    "gets": "{receiverRole, select, you {Je krijgt {amount} van {payer}} other {{receiver} krijgt {amount} van {payerRole, select, you {jou} other {{payer}}}}}",
+    "pays": "{payerRole, select, you {Je betaalt {amount} aan {receiver}} other {{payer} betaalt {amount} aan {receiverRole, select, you {jou} other {{receiver}}}}}"
+  },
+  "balance_summary": {
+    "friend_owes_you": "{friend} is je {amount} verschuldigd",
+    "more": "{count, plural, one {nog # saldo} other {nog # saldo's}}",
+    "you_owe_friend": "Je bent {friend} {amount} verschuldigd"
   },
   "balances": {
     "default_split": {
@@ -141,7 +164,9 @@
     "to_bank": "naar bank"
   },
   "currency_conversion": {
+    "amount_aria_label": "Hoeveelheid",
     "amount_to_receive": "Bedrag te ontvangen",
+    "converted_amount_aria_label": "Omgezette hoeveelheid",
     "description": "Converteer het bedrag naar een andere munteenheid.",
     "exchange_rate": "Wisselkoers",
     "fetching_rate": "Wisselkoers ophalen...",
@@ -150,13 +175,17 @@
     "title": "Valutaconversie"
   },
   "errors": {
+    "add_member_failed": "Lid aan groep toevoegen mislukt",
     "currency_conversion_error": "Fout bij het instellen van de valutaconversie",
     "currency_conversion_failed": "Het omrekenen van valuta mislukt",
     "currency_conversion_malformed": "De gegevens voor de valutaconversie zijn onjuist",
     "email_invalid": "E-mailadres is ongeldig, probeer het inlogproces opnieuw.",
     "email_required": "E-mailadres is vereist",
+    "expense_deletion_failed": "Er is een onverwachte fout opgetreden bij het verwijderen van de uitgave.",
+    "expense_submission_failed": "Er is een onverwachte fout opgetreden bij het opslaan van de uitgave.",
     "feedback_min_length": "Feedback moet ten minste 10 tekens hebben",
     "feedback_required": "Feedback is vereist",
+    "friend_deletion_failed": "Vriend verwijderen mislukt",
     "group_balances_malformed": "De gegevens van de groepssaldo's zijn onjuist. Meld dit als een probleem of probeer de berekening opnieuw uit te voeren.",
     "group_name_update_failed": "Fout bij het bijwerken van de groepsnaam",
     "image_compression_failed": "Afbeeldingscompressie mislukt, origineel bestand wordt geüpload",
@@ -164,11 +193,14 @@
     "invalid_cron_expression": "Ongeldige cron-uitdrukking",
     "invalid_currency_code": "Ongeldige valutacode {code}",
     "invalid_split": "Bepaal wie deze kosten moet betalen voordat je het opslaat.",
+    "invite_email_failed": "Uitnodigingsmail versturen mislukt. Controleer de SMTP-configuratie.",
     "language_change_failed": "Fout bij taalwijziging",
     "less_than": "Bestand moet minder dan {size} MB zijn",
     "name_required": "Naam is vereist",
     "no_providers": "Fout bij het ophalen van authenticatieproviders. Controleer de backend-logbestanden.",
     "notification_not_supported": "Notificaties worden niet ondersteund",
+    "notification_request_failed": "Fout bij het aanvragen van toestemming voor notificaties",
+    "notification_subscribe_failed": "Aanmelden voor notificaties niet mogelijk",
     "otp_invalid": "Ongeldige OTP",
     "otp_required": "OTP is vereist",
     "recurrence_delete_failed": "Het verwijderen van de terugkerende betaling is mislukt",
@@ -177,6 +209,7 @@
     "saving_expense": "Fout tijdens het opslaan van de uitgave",
     "setting_update_failed": "Instelling bijwerken mislukt",
     "signin_error": "Een fout deed zich voor bij het inloggen: {error}",
+    "signin_failed": "Inloggen mislukt. Probeer het opnieuw.",
     "signup_disabled": "Het registreren van nieuwe accounts is uitgeschakeld op deze instantie",
     "something_went_wrong": "Er is iets misgegaan",
     "subscribe_error": "Aanmelden voor meldingen niet mogelijk",
@@ -194,6 +227,7 @@
       "pick_a_date": "Kies een datum",
       "select_user_or_group": {
         "add_to_split_pro": "Toevoegen aan SplitPro",
+        "empty_image_alt": "Geen gebruikers gevonden",
         "note": "Info: uitnodigingen versturen is voorlopig uitgeschakeld omwille van spam",
         "only_one_group_time": "Je kunt maar één groep tegelijk hebben",
         "send_invite": "Uitnodiging naar gebruiker versturen",
@@ -207,6 +241,7 @@
           "you_owe": "Je bent {payer} geld verschuldigd"
         },
         "split_equally": "gelijk verdelen",
+        "split_equally_with_count": "gelijk verdeeld over {count, plural, one {# persoon} other {# personen}}",
         "split_unequally": "ongelijk verdelen",
         "types": {
           "adjustment": {
@@ -249,7 +284,10 @@
     "balance_list": {
       "are_settled_up": "zijn verrekend",
       "is_settled_up": "is verrekend",
-      "press_balance_info": "Klik op de individuele balans om de afrekening te starten"
+      "lent": "{actor, select, you {Je hebt uitgeleend} other {{person} heeft uitgeleend}}",
+      "owes": "{actor, select, you {Je bent verschuldigd} other {{person} is verschuldigd}}",
+      "press_balance_info": "Klik op de individuele balans om de afrekening te starten",
+      "settled": "{actor, select, you {Je bent vereffend} other {{person} is vereffend}}"
     },
     "bank_transactions": "Banktransacties",
     "clear": "Wissen",
@@ -257,6 +295,7 @@
       "text": "Deze actie kan niet ongedaan worden gemaakt. De uitgave wordt definitief verwijderd.",
       "title": "Ben je absoluut zeker?"
     },
+    "empty_state_image_alt": "Geen uitgaven",
     "multiple_transactions": {
       "add_all": "Alles toevoegen",
       "add_one_by_one": "Één per één toevoegen",
@@ -265,9 +304,38 @@
     },
     "no_transactions_yet": "Nog geen transacties",
     "pending": "In behandeling",
+    "receipt": {
+      "image_alt": "Kasticket van de uitgave",
+      "thumbnail_alt": "Miniatuur van het kasticket",
+      "title": "Kasticket van de uitgave"
+    },
     "submit_all": "Alles indienen",
     "title": "Uitgave toevoegen",
     "title_mobile": "Toevoegen"
+  },
+  "expense_list": {
+    "conversion_for_users": "Valutaconversie voor {payerRole, select, you {jou} other {{payer}}} en {receiverRole, select, you {jou} other {{receiver}}}",
+    "settlement": "{payerRole, select, you {Je betaalde {amount} aan {receiver}} other {{receiverRole, select, you {{payer} betaalde jou {amount}} other {{payer} betaalde {amount} aan {receiver}}}}}",
+    "user_paid": "{actor, select, you {Je betaalde {amount}} other {{user} betaalde {amount}}}",
+    "user_received": "{actor, select, you {Je ontving {amount}} other {{user} ontving {amount}}}"
+  },
+  "expense_metadata": {
+    "added_by": "{actor, select, you {Toegevoegd door jou op {date}} other {Toegevoegd door {user} op {date}}}",
+    "deleted_by": "{actor, select, you {Verwijderd door jou op {date}} other {Verwijderd door {user} op {date}}}",
+    "edited_by": "{actor, select, you {Aangepast door jou op {date}} other {Aangepast door {user} op {date}}}"
+  },
+  "expense_participant": {
+    "gets": "{actor, select, you {<person/> krijgt <amount/>} other {<person/> krijgt <amount/>}}",
+    "owes": "{actor, select, you {<person/> bent <amount/> verschuldigd} other {<person/> is <amount/> verschuldigd}}",
+    "paid": "<person/> betaalde <amount/>",
+    "received": "<person/> ontving <amount/>"
+  },
+  "friend": {
+    "delete_confirmation": {
+      "description": "Wil je echt doorgaan?",
+      "outstanding_balance": "Je kunt geen vriend verwijderen met openstaande saldo's. Vereffen eerst.",
+      "title": "Ben je absoluut zeker?"
+    }
   },
   "group_details": {
     "add_members": "Leden toevoegen",
@@ -368,6 +436,12 @@
     "groups": "Groepen",
     "recurring": "Terugkerend"
   },
+  "notifications": {
+    "enable_description": "Mis geen belangrijke gebeurtenissen. Schrijf je in om notificaties te ontvangen wanneer uitgaven worden toegevoegd of bijgewerkt.",
+    "enable_title": "Notificaties inschakelen",
+    "permission_granted": "Je zal vanaf nu notificaties ontvangen",
+    "subscribe": "Inschrijven"
+  },
   "recurrence": {
     "cron_expression": "Cron-uitdrukking",
     "days_of_month": "Dagen van de maand",
@@ -398,6 +472,7 @@
     "template_edit_warning": "Dit is een sjabloon voor terugkerende uitgaven. Wijzigingen worden toegepast op alle toekomstige terugkerende uitgaven.",
     "time_of_day": "Tijdstip",
     "title": "Herhaling",
+    "toggle_options": "Opties voor terugkerende uitgave tonen/verbergen",
     "view_recurring_page": "Terugkerende uitgaven bekijken"
   },
   "ui": {
@@ -412,7 +487,22 @@
       "for": "voor",
       "from": "van",
       "paid_by": "Betaald door",
+      "payer": {
+        "current_user": "Jij"
+      },
       "received_by": "Ontvangen door",
+      "recipient": {
+        "current_user": "Jou"
+      },
+      "statements": {
+        "user_pays_user": "{payer} betaalt {receiver}",
+        "user_pays_you": "{user} betaalt jou",
+        "you_lent": "Je hebt uitgeleend",
+        "you_lent_amount": "Je hebt {amount} uitgeleend",
+        "you_owe": "Je bent verschuldigd",
+        "you_owe_amount": "Je bent {amount} verschuldigd",
+        "you_pay_user": "Je betaalt {user}"
+      },
       "to": "aan",
       "user": {
         "deleted": "verwijderde",
@@ -449,6 +539,7 @@
     "share_text": "Bekijk SplitPro. Het is een gratis open source alternatief voor Splitwise",
     "show_all_currencies": "Alle munteenheden tonen",
     "today": "Vandaag",
-    "total_balance": "Totaal saldo"
+    "total_balance": "Totaal saldo",
+    "transfer": "{senderRole, select, you {Je betaalt {receiver}} other {{receiverRole, select, you {{sender} betaalt jou} other {{sender} betaalt {receiver}}}}}"
   }
 }

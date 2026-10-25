@@ -14,16 +14,17 @@ import {
   groupProcedure,
   protectedProcedure,
 } from '~/server/api/trpc';
+import { paginationInput as apiPaginationInput, paginatedResult } from '~/server/api/pagination';
 import { db } from '~/server/db';
-import { BigMath, currencyConversion } from '~/utils/numbers';
-
 import {
+  type CreateExpense,
   arrayify,
   createCurrencyConversionSchema,
   createExpenseSchema,
   getBatchCurrencyRatesSchema,
   getCurrencyRateSchema,
 } from '~/types/expense.types';
+import { BigMath, currencyConversion } from '~/utils/numbers';
 import { createExpense, deleteExpense, editExpense } from '../services/splitService';
 import { currencyRateProvider } from '../services/currencyRateService';
 import { isCurrencyCode } from '~/lib/currency';
@@ -31,7 +32,104 @@ import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { getUserMap } from './user';
 
-export const expenseRouter = createTRPCRouter({
+/**
+ * Shared write path for creating/editing expenses, used by both the app
+ * router's `addOrEditExpense` and the public API variant. Re-run permission
+ * checks per expense and stop on the first failure.
+ */
+const upsertExpenses = async (expenses: CreateExpense[], userId: number) => {
+  const results = [];
+  // Expense writes must preserve input order and stop on the first validation/write failure.
+  // oxlint-disable no-await-in-loop
+  for (const input of expenses) {
+    await validateExpenseWritePermission(input.expenseId, input.groupId, userId);
+    if (input.splitType === SplitType.CURRENCY_CONVERSION) {
+      throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
+    }
+
+    try {
+      const expense = input.expenseId
+        ? await editExpense(input, userId)
+        : await createExpense(input, userId);
+
+      results.push(expense);
+    } catch (error) {
+      console.error(error);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to create expense',
+      });
+    }
+  }
+  // oxlint-enable no-await-in-loop
+
+  return results;
+};
+
+/** Where-clause shared by the app and paginated API group expense listings. */
+const groupExpensesWhere = (groupId: number) => ({
+  groupId,
+  deletedBy: null,
+  OR: [
+    {
+      NOT: {
+        splitType: SplitType.CURRENCY_CONVERSION,
+      },
+    },
+    {
+      NOT: {
+        conversionToId: null,
+      },
+    },
+  ],
+});
+
+/** Where-clause shared by the app and paginated API friend expense listings. */
+const expensesWithFriendWhere = (userId: number, friendId: number) => ({
+  AND: [
+    {
+      expenseParticipants: {
+        some: {
+          userId: friendId,
+          amount: { not: 0n },
+        },
+      },
+    },
+    {
+      expenseParticipants: {
+        some: {
+          userId,
+          amount: { not: 0n },
+        },
+      },
+    },
+    {
+      OR: [{ paidBy: userId }, { paidBy: friendId }],
+    },
+    { deletedBy: null },
+    {
+      OR: [
+        {
+          NOT: {
+            splitType: SplitType.CURRENCY_CONVERSION,
+          },
+        },
+        {
+          NOT: {
+            conversionToId: null,
+          },
+        },
+      ],
+    },
+  ],
+});
+
+/**
+ * Method record for `expenseRouter`, exported so the public API router
+ * (`~/server/api/apiRouter`) can mount a curated subset of the same procedures
+ * without duplicating them.
+ */
+export const expenseMethods = {
   getRecurrencePreview: protectedProcedure
     .input(z.object({ cronExpression: z.string().transform(cronToBackend) }))
     .query(async ({ input }) => {
@@ -125,34 +223,7 @@ export const expenseRouter = createTRPCRouter({
 
   addOrEditExpense: protectedProcedure
     .input(arrayify(createExpenseSchema))
-    .mutation(async ({ input: expenses, ctx }) => {
-      const results = [];
-      // Expense writes must preserve input order and stop on the first validation/write failure.
-      // oxlint-disable no-await-in-loop
-      for (const input of expenses) {
-        await validateExpenseWritePermission(input.expenseId, input.groupId, ctx.session.user.id);
-        if (input.splitType === SplitType.CURRENCY_CONVERSION) {
-          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
-        }
-
-        try {
-          const expense = input.expenseId
-            ? await editExpense(input, ctx.session.user.id)
-            : await createExpense(input, ctx.session.user.id);
-
-          results.push(expense);
-        } catch (error) {
-          console.error(error);
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'Failed to create expense',
-          });
-        }
-      }
-      // oxlint-enable no-await-in-loop
-
-      return results;
-    }),
+    .mutation(async ({ input: expenses, ctx }) => upsertExpenses(expenses, ctx.session.user.id)),
 
   addOrEditCurrencyConversion: protectedProcedure
     .input(createCurrencyConversionSchema)
@@ -218,55 +289,7 @@ export const expenseRouter = createTRPCRouter({
         take: input.limit + 1,
         where: {
           ...beforeCursor(input.cursor, 'expenseDate'),
-          AND: [
-            {
-              expenseParticipants: {
-                some: {
-                  userId: input.friendId,
-                  amount: {
-                    not: 0n,
-                  },
-                },
-              },
-            },
-            {
-              expenseParticipants: {
-                some: {
-                  userId: ctx.session.user.id,
-                  amount: {
-                    not: 0n,
-                  },
-                },
-              },
-            },
-            {
-              OR: [
-                {
-                  paidBy: ctx.session.user.id,
-                },
-                {
-                  paidBy: input.friendId,
-                },
-              ],
-            },
-            {
-              deletedBy: null,
-            },
-            {
-              OR: [
-                {
-                  NOT: {
-                    splitType: SplitType.CURRENCY_CONVERSION,
-                  },
-                },
-                {
-                  NOT: {
-                    conversionToId: null,
-                  },
-                },
-              ],
-            },
-          ],
+          ...expensesWithFriendWhere(ctx.session.user.id, input.friendId),
         },
         orderBy: [{ expenseDate: 'desc' }, { id: 'desc' }],
         include: {
@@ -307,20 +330,7 @@ export const expenseRouter = createTRPCRouter({
         take: input.limit + 1,
         where: {
           AND: [beforeCursor(input.cursor, 'expenseDate')],
-          groupId: input.groupId,
-          deletedBy: null,
-          OR: [
-            {
-              NOT: {
-                splitType: SplitType.CURRENCY_CONVERSION,
-              },
-            },
-            {
-              NOT: {
-                conversionToId: null,
-              },
-            },
-          ],
+          ...groupExpensesWhere(input.groupId),
         },
         orderBy: [{ expenseDate: 'desc' }, { id: 'desc' }],
         include: {
@@ -628,7 +638,9 @@ export const expenseRouter = createTRPCRouter({
 
       return { rates };
     }),
-});
+};
+
+export const expenseRouter = createTRPCRouter(expenseMethods);
 
 const validateEditExpensePermission = async (expenseId: string, userId: number): Promise<void> => {
   const [expenseParticipant, addedBy] = await Promise.all([
@@ -686,5 +698,142 @@ const validateExpenseWritePermission = async (
     throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
   }
 };
+
+/**
+ * JSON has no BigInt or Date type, so the public API additionally accepts
+ * plain JSON numbers (and numeric strings, for amounts beyond
+ * `Number.MAX_SAFE_INTEGER`) and coerces them before validation by the shared
+ * `createExpenseSchema` rules.
+ */
+const apiAmountSchema = z
+  .union([z.bigint(), z.number().int().safe(), z.string().regex(/^-?\d+$/)])
+  .transform((value) => BigInt(value));
+
+const apiDateSchema = z
+  .union([z.date(), z.string().datetime({ offset: true })])
+  .transform((value) => new Date(value));
+
+const apiCreateExpenseSchema = createExpenseSchema.extend({
+  amount: apiAmountSchema,
+  participants: z.array(z.object({ userId: z.number(), amount: apiAmountSchema })),
+  expenseDate: apiDateSchema.optional(),
+});
+
+/**
+ * API-only variant of `addOrEditExpense` mounted in the public API router.
+ * Accepts a JSON array body (plain JSON or a superjson envelope) and runs the
+ * exact same write path and permission checks as the app procedure.
+ */
+export const addOrEditExpenseApiProcedure = protectedProcedure
+  .input(z.array(apiCreateExpenseSchema))
+  .mutation(async ({ input: expenses, ctx }) => upsertExpenses(expenses, ctx.session.user.id));
+
+/**
+ * API-only variant of `getGroupExpenses` with offset pagination. Keeps the
+ * `groupProcedure` membership check.
+ */
+export const getGroupExpensesApiProcedure = groupProcedure
+  .input(z.object({ groupId: z.number() }).extend(apiPaginationInput.shape))
+  .query(async ({ input, ctx }) => {
+    const where = groupExpensesWhere(input.groupId);
+
+    const [items, total] = await Promise.all([
+      ctx.db.expense.findMany({
+        where,
+        orderBy: { expenseDate: 'desc' },
+        include: {
+          expenseParticipants: true,
+          paidByUser: true,
+          deletedByUser: true,
+          conversionTo: true,
+        },
+        take: input.limit,
+        skip: input.offset,
+      }),
+      ctx.db.expense.count({ where }),
+    ]);
+
+    return paginatedResult(items, total, input);
+  });
+
+/**
+ * API-only variant of `getExpensesWithFriend` with offset pagination.
+ */
+export const getExpensesWithFriendApiProcedure = protectedProcedure
+  .input(z.object({ friendId: z.number() }).extend(apiPaginationInput.shape))
+  .query(async ({ input, ctx }) => {
+    const where = expensesWithFriendWhere(ctx.session.user.id, input.friendId);
+
+    const [items, total] = await Promise.all([
+      db.expense.findMany({
+        where,
+        orderBy: { expenseDate: 'desc' },
+        include: {
+          expenseParticipants: {
+            where: {
+              OR: [{ userId: ctx.session.user.id }, { userId: input.friendId }],
+            },
+          },
+          paidByUser: true,
+          conversionTo: true,
+          group: {
+            select: {
+              id: true,
+              name: true,
+              simplifyDebts: true,
+            },
+          },
+        },
+        take: input.limit,
+        skip: input.offset,
+      }),
+      db.expense.count({ where }),
+    ]);
+
+    return paginatedResult(items, total, input);
+  });
+
+/**
+ * API-only variant of `getAllExpenses` with offset pagination.
+ */
+export const getAllExpensesApiProcedure = protectedProcedure
+  .input(apiPaginationInput.default({}))
+  .query(async ({ input, ctx }) => {
+    const where = { userId: ctx.session.user.id };
+
+    const [items, total] = await Promise.all([
+      db.expenseParticipant.findMany({
+        where,
+        orderBy: { expense: { createdAt: 'desc' as const } },
+        include: {
+          expense: {
+            include: {
+              paidByUser: {
+                select: {
+                  name: true,
+                  email: true,
+                  image: true,
+                  id: true,
+                },
+              },
+              deletedByUser: {
+                select: {
+                  name: true,
+                  email: true,
+                  image: true,
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+        take: input.limit,
+        skip: input.offset,
+      }),
+      db.expenseParticipant.count({ where }),
+    ]);
+
+    return paginatedResult(items, total, input);
+  });
 
 export type ExpenseRouter = typeof expenseRouter;

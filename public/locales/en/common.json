@@ -30,6 +30,27 @@
       "title": "Edit details"
     },
     "follow_on_x": "Follow us on X",
+    "api_keys": {
+      "title": "API keys",
+      "description": "Use API keys to access the SplitPro API. Send the key as",
+      "docs_prefix": "Documentation is at",
+      "copy_now_notice": "Copy your key now — it won't be shown again.",
+      "name_label": "New key name",
+      "name_placeholder": "e.g. Actual Budget",
+      "expires_label": "Expires (optional)",
+      "create": "Create",
+      "last_used": "used {date}",
+      "never_used": "never used",
+      "expires_on": "expires {date}",
+      "empty": "No API keys yet.",
+      "messages": {
+        "name_required": "Please enter a name for the key",
+        "create_failed": "Failed to create API key",
+        "revoke_failed": "Failed to revoke API key",
+        "copied": "Copied to clipboard",
+        "copy_failed": "Failed to copy"
+      }
+    },
     "import_from_splitwise": "Import from Splitwise",
     "import_from_splitwise_details": {
       "choose_file": "Choose file",

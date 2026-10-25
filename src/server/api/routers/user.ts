@@ -12,6 +12,8 @@ import { claimInviteCooldown } from '~/lib/inviteCooldown';
 import { InviteErrorCode } from '~/lib/error/invite';
 import { getUserBalances } from '~/server/api/services/balanceQuery';
 import { AppError } from '~/server/api/appError';
+import { generateApiKey } from '~/server/api/apiKey';
+import { paginatedResult, paginationInput } from '~/server/api/pagination';
 import { balanceProcedure, createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { deleteAccount } from '~/server/api/services/deleteAccount';
@@ -55,7 +57,14 @@ const throwInviteError = (
   throw new TRPCError({ code, message, cause: new AppError(inviteErrorCode, message) });
 };
 
-export const userRouter = createTRPCRouter({
+const MAX_API_KEYS_PER_USER = 10;
+
+/**
+ * Method record for `userRouter`, exported so the public API router
+ * (`~/server/api/apiRouter`) can mount a curated subset of the same procedures
+ * without duplicating them.
+ */
+export const userMethods = {
   deleteAccount: protectedProcedure.mutation(async ({ ctx }) => {
     await deleteAccount(ctx.db, ctx.session.user.id);
   }),
@@ -420,7 +429,91 @@ export const userRouter = createTRPCRouter({
     }),
 
   getWebPushPublicKey: protectedProcedure.query(() => env.WEB_PUSH_PUBLIC_KEY ?? ''),
-});
+
+  listApiKeys: protectedProcedure.query(async ({ ctx }) =>
+    db.apiKey.findMany({
+      where: { userId: ctx.session.user.id },
+      select: {
+        id: true,
+        name: true,
+        partialKey: true,
+        lastUsedAt: true,
+        expiresAt: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    }),
+  ),
+
+  createApiKey: protectedProcedure
+    .input(
+      z.object({ name: z.string().min(1).max(100), expiresAt: z.date().nullable().optional() }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const keyCount = await db.apiKey.count({ where: { userId: ctx.session.user.id } });
+      if (keyCount >= MAX_API_KEYS_PER_USER) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `You can have at most ${MAX_API_KEYS_PER_USER} API keys`,
+        });
+      }
+
+      const { key, hashedKey, partialKey } = generateApiKey();
+
+      const apiKey = await db.apiKey.create({
+        data: {
+          userId: ctx.session.user.id,
+          name: input.name,
+          hashedKey,
+          partialKey,
+          expiresAt: input.expiresAt ?? null,
+        },
+        select: { id: true, name: true, partialKey: true, expiresAt: true, createdAt: true },
+      });
+
+      // `key` is the plaintext value, returned exactly once and never stored.
+      return { ...apiKey, key };
+    }),
+
+  revokeApiKey: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { count } = await db.apiKey.deleteMany({
+        where: { id: input.id, userId: ctx.session.user.id },
+      });
+
+      if (0 === count) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'API key not found' });
+      }
+
+      return { success: true };
+    }),
+};
+
+export const userRouter = createTRPCRouter(userMethods);
+
+/**
+ * API-only variant of `getOwnExpenses` with offset pagination, mounted in the
+ * public API router instead of the app router.
+ */
+export const getOwnExpensesApiProcedure = protectedProcedure
+  .input(paginationInput.default({}))
+  .query(async ({ input, ctx }) => {
+    const where = { paidBy: ctx.session.user.id, deletedBy: null };
+
+    const [items, total] = await Promise.all([
+      db.expense.findMany({
+        where,
+        orderBy: { expenseDate: 'desc' },
+        include: { group: true },
+        take: input.limit,
+        skip: input.offset,
+      }),
+      db.expense.count({ where }),
+    ]);
+
+    return paginatedResult(items, total, input);
+  });
 
 export const getUserMap = async (userIds: number[], database: Pick<PrismaClient, 'user'> = db) => {
   const users = await database.user.findMany({

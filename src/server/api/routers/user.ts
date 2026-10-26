@@ -504,7 +504,10 @@ export const getOwnExpensesApiProcedure = protectedProcedure
     const [items, total] = await Promise.all([
       db.expense.findMany({
         where,
-        orderBy: { expenseDate: 'desc' },
+        // Tie-break with `id`: `expenseDate` is not unique and Postgres may return
+        // Tied rows in an arbitrary order between queries, breaking pagination
+        // For clients walking pages.
+        orderBy: [{ expenseDate: 'desc' }, { id: 'desc' }],
         include: { group: true },
         take: input.limit,
         skip: input.offset,

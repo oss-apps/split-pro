@@ -740,7 +740,7 @@ export const getGroupExpensesApiProcedure = groupProcedure
     const [items, total] = await Promise.all([
       ctx.db.expense.findMany({
         where,
-        orderBy: { expenseDate: 'desc' },
+        orderBy: [{ expenseDate: 'desc' }, { id: 'desc' }],
         include: {
           expenseParticipants: true,
           paidByUser: true,
@@ -767,7 +767,10 @@ export const getExpensesWithFriendApiProcedure = protectedProcedure
     const [items, total] = await Promise.all([
       db.expense.findMany({
         where,
-        orderBy: { expenseDate: 'desc' },
+        // Tie-break with `id`: `expenseDate` is not unique and Postgres may return
+        // Tied rows in an arbitrary order between queries, breaking pagination
+        // For clients walking pages.
+        orderBy: [{ expenseDate: 'desc' }, { id: 'desc' }],
         include: {
           expenseParticipants: {
             where: {
@@ -804,7 +807,14 @@ export const getAllExpensesApiProcedure = protectedProcedure
     const [items, total] = await Promise.all([
       db.expenseParticipant.findMany({
         where,
-        orderBy: { expense: { createdAt: 'desc' as const } },
+        // Tie-break on the composite primary key: rows sharing an expense
+        // Have identical `expenseId`, so both halves are needed for a stable
+        // Order across queries.
+        orderBy: [
+          { expense: { createdAt: 'desc' as const } },
+          { expenseId: 'desc' as const },
+          { userId: 'desc' as const },
+        ],
         include: {
           expense: {
             include: {

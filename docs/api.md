@@ -72,10 +72,15 @@ curl -H "Authorization: Bearer spro_…" \
 curl -X POST -H "Authorization: Bearer spro_…" -H "Content-Type: application/json" \
   -d '[{"name":"Lunch","currency":"EUR","groupId":null,"amount":4200,"paidBy":1,
         "category":"general","splitType":"EQUAL",
-        "participants":[{"userId":1,"amount":4200},{"userId":2,"amount":4200}],
+        "participants":[{"userId":1,"amount":2100},{"userId":2,"amount":-2100}],
         "expenseDate":"2026-10-25T12:00:00Z"}]' \
   'https://splitpro.example.com/api/v1/expense.addOrEditExpense'
 ```
+
+Note the participant amounts follow the app's stored sign convention: the
+payer's entry is `amount − their share` (positive), every other participant's
+entry is their negated share. The example above is a `4200` expense split
+equally between user 1 (payer) and user 2, so each share is `2100`.
 
 ## Maintenance (for developers)
 

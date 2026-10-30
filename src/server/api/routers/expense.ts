@@ -144,16 +144,19 @@ export const expenseRouter = createTRPCRouter({
       // Expense writes must preserve input order and stop on the first validation/write failure.
       // oxlint-disable no-await-in-loop
       for (const input of expenses) {
-        await validateExpenseWritePermission(input.expenseId, input.groupId, ctx.session.user.id);
+        const storedGroupId = await validateExpenseWritePermission(
+          input.expenseId,
+          input.groupId,
+          ctx.session.user.id,
+        );
         if (input.splitType === SplitType.CURRENCY_CONVERSION) {
           throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
         }
 
         if (input.expenseId) {
           await assertExpenseGroupReassignment(
-            input.expenseId,
+            storedGroupId,
             input.groupId,
-            ctx.session.user.id,
             input.paidBy,
             input.participants.map((participant) => participant.userId),
           );
@@ -182,7 +185,11 @@ export const expenseRouter = createTRPCRouter({
     .input(createCurrencyConversionSchema)
     .mutation(async ({ input, ctx }) => {
       const { amount, rate, from, to, senderId, receiverId, groupId, expenseId } = input;
-      await validateExpenseWritePermission(expenseId, groupId, ctx.session.user.id);
+      const storedGroupId = await validateExpenseWritePermission(
+        expenseId,
+        groupId,
+        ctx.session.user.id,
+      );
 
       if (!isCurrencyCode(from) || !isCurrencyCode(to)) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid currency code' });
@@ -225,9 +232,8 @@ export const expenseRouter = createTRPCRouter({
         res = await createExpense(conversionTo, ctx.session.user.id, conversionFrom);
       } else {
         await assertExpenseGroupReassignment(
-          expenseId,
+          storedGroupId,
           conversionFrom.groupId,
-          ctx.session.user.id,
           conversionFrom.paidBy,
           conversionFrom.participants.map((participant) => participant.userId),
         );
@@ -670,11 +676,16 @@ const validateEditExpensePermission = async (expenseId: string, userId: number):
   }
 };
 
+/**
+ * Checks that the user may write the expense into `groupId` and returns the expense's stored
+ * group (null for a new or ungrouped expense).
+ */
 const validateExpenseWritePermission = async (
   expenseId: string | undefined,
   groupId: number | null,
   userId: number,
-): Promise<void> => {
+): Promise<number | null> => {
+  let storedGroupId: number | null = null;
   if (expenseId) {
     await validateEditExpensePermission(expenseId, userId);
     const expense = await db.expense.findUniqueOrThrow({
@@ -688,9 +699,10 @@ const validateExpenseWritePermission = async (
         message: 'Cannot move an expense to another group',
       });
     }
+    storedGroupId = expense.groupId;
   }
   if (null === groupId) {
-    return;
+    return storedGroupId;
   }
   const group = await db.group.findUnique({
     where: { id: groupId },
@@ -705,6 +717,7 @@ const validateExpenseWritePermission = async (
   if (group.archivedAt) {
     throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
   }
+  return storedGroupId;
 };
 
 export type ExpenseRouter = typeof expenseRouter;

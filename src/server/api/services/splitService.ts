@@ -193,63 +193,31 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
   sendExpensePushNotification(expenseId).catch(console.error);
 }
 
+/**
+ * Checks the payer and participants when an ungrouped expense is assigned to a group. Callers run
+ * validateExpenseWritePermission first, which already rejects changing a grouped expense's group
+ * and checks that the target group exists, is not archived and has the actor as a member.
+ */
 export async function assertExpenseGroupReassignment(
-  expenseId: string,
+  storedGroupId: number | null,
   groupId: number | null,
-  actorUserId: number,
   paidBy: number,
   participantUserIds: number[],
 ) {
-  const expense = await db.expense.findUnique({
-    where: { id: expenseId },
-    select: { groupId: true },
-  });
-
-  if (!expense) {
-    throw new TRPCError({ code: 'BAD_REQUEST', message: 'Expense not found' });
-  }
-
-  const storedGroupId = expense.groupId;
-
-  if (null !== storedGroupId) {
-    if (storedGroupId !== groupId) {
-      throw new TRPCError({ code: 'BAD_REQUEST', message: 'Cannot change group while editing' });
-    }
-
+  if (null !== storedGroupId || null === groupId) {
     return;
-  }
-
-  if (null === groupId) {
-    return;
-  }
-
-  const group = await db.group.findUnique({
-    where: { id: groupId },
-    select: { archivedAt: true },
-  });
-
-  if (!group) {
-    throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group not found' });
-  }
-
-  if (group.archivedAt) {
-    throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
   }
 
   const members = await db.groupUser.findMany({
     where: {
       groupId,
       userId: {
-        in: [actorUserId, paidBy, ...participantUserIds],
+        in: [paidBy, ...participantUserIds],
       },
     },
     select: { userId: true },
   });
   const memberIds = new Set(members.map((member) => member.userId));
-
-  if (!memberIds.has(actorUserId)) {
-    throw new TRPCError({ code: 'FORBIDDEN', message: 'Not a group member' });
-  }
 
   if (!memberIds.has(paidBy)) {
     throw new TRPCError({ code: 'BAD_REQUEST', message: 'Payer is not a member of the group' });

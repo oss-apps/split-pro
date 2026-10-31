@@ -270,6 +270,13 @@ export async function editExpense(
     throw new Error('Expense not found');
   }
 
+  if (expense.conversionToId && !conversionToParams) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Currency conversions must be edited together',
+    });
+  }
+
   // Determine if this is a template or derived expense
   const templateId = expense.recurrence?.job?.command
     ? extractTemplateExpenseId(expense.recurrence.job.command)
@@ -318,7 +325,11 @@ export async function editExpense(
 
     operations.push(
       db.expense.update({
-        where: { id: expense.conversionToId },
+        // The target can be grouped on its own, so it gets the same write-time check.
+        where: {
+          id: expense.conversionToId,
+          OR: [{ groupId: null }, { groupId: toExpenseData.groupId }],
+        },
         data: {
           ...toExpenseData,
           expenseParticipants: {

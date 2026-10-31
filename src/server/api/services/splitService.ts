@@ -1,4 +1,4 @@
-import { SplitType, type User } from '@prisma/client';
+import { Prisma, SplitType, type User } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 
@@ -290,7 +290,8 @@ export async function editExpense(
   // Update expense with new details and create new participants
   operations.push(
     db.expense.update({
-      where: { id: expenseId },
+      // Write-time check: a concurrent edit may have grouped the expense after validation.
+      where: { id: expenseId, OR: [{ groupId: null }, { groupId }] },
       data: {
         paidBy,
         groupId,
@@ -351,7 +352,17 @@ export async function editExpense(
   }
   // For derived expenses, cronExpression is ignored entirely
 
-  await db.$transaction(operations);
+  try {
+    await db.$transaction(operations);
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && 'P2025' === error.code) {
+      throw new TRPCError({
+        code: 'CONFLICT',
+        message: 'This expense was changed by someone else. Reload it and try again.',
+      });
+    }
+    throw error;
+  }
   sendExpensePushNotification(expenseId).catch(console.error);
   return { id: expenseId }; // Return the updated expense
 }

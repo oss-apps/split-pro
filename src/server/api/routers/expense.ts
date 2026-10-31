@@ -169,6 +169,9 @@ export const expenseRouter = createTRPCRouter({
 
           results.push(expense);
         } catch (error) {
+          if (error instanceof TRPCError) {
+            throw error;
+          }
           console.error(error);
           throw new TRPCError({
             code: 'INTERNAL_SERVER_ERROR',

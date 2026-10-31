@@ -1,3 +1,5 @@
+import { editExpense } from '~/server/api/services/splitService';
+
 import { db } from './database';
 import { accountingSnapshot, expenseInput, testGroup, testScenario, testUser } from './factories';
 import { callerFor } from './trpc';
@@ -114,6 +116,27 @@ describe('assigning an ungrouped expense to a group', () => {
       expect(await accountingSnapshot()).toEqual(before);
     },
   );
+
+  it('rejects an edit that a concurrent group assignment got to first', async () => {
+    const { owner, member, group } = await testScenario();
+    const otherGroup = await testGroup(owner.id, [member.id]);
+    const caller = callerFor(owner.id);
+    const input = expenseInput(owner.id, member.id);
+    const [expense] = await caller.expense.addOrEditExpense(input);
+    await caller.expense.addOrEditExpense({ ...input, expenseId: expense!.id, groupId: group.id });
+    const before = await accountingSnapshot();
+
+    // Calling editExpense directly stands in for an edit that passed validation
+    // While the expense was still ungrouped.
+    await expect(
+      editExpense({ ...input, expenseId: expense!.id, groupId: otherGroup.id }, owner.id),
+    ).rejects.toMatchObject({ code: 'CONFLICT' });
+
+    expect(await db.expense.findUnique({ where: { id: expense!.id } })).toMatchObject({
+      groupId: group.id,
+    });
+    expect(await accountingSnapshot()).toEqual(before);
+  });
 
   it('rejects assigning an expense to an archived group', async () => {
     const { owner, member, group } = await testScenario();

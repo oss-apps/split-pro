@@ -50,6 +50,22 @@ describe('assigning an ungrouped expense to a group', () => {
     expect(
       (await db.expense.findMany({ select: { groupId: true } })).map(({ groupId }) => groupId),
     ).toEqual([group.id, group.id]);
+    expect(await callerFor(owner.id).expense.getGroupExpenses({ groupId: group.id })).toEqual([
+      expect.objectContaining({
+        id: expense.id,
+        groupId: group.id,
+        conversionTo: expect.objectContaining({ groupId: group.id }),
+      }),
+    ]);
+    expect(
+      (
+        await db.balanceView.findMany({
+          where: { groupId: group.id },
+          select: { currency: true },
+          orderBy: { currency: 'asc' },
+        })
+      ).map(({ currency }) => currency),
+    ).toEqual(['EUR', 'EUR', 'USD', 'USD']);
   });
 
   it('rejects a caller who neither added nor participates in the expense', async () => {
@@ -136,6 +152,35 @@ describe('assigning an ungrouped expense to a group', () => {
       groupId: group.id,
     });
     expect(await accountingSnapshot()).toEqual(before);
+  });
+
+  it('returns the conflict to a caller whose edit lost the group assignment', async () => {
+    const { owner, member, group } = await testScenario();
+    const otherGroup = await testGroup(owner.id, [member.id]);
+    const caller = callerFor(owner.id);
+    const input = expenseInput(owner.id, member.id);
+    const [expense] = await caller.expense.addOrEditExpense(input);
+    const readStoredGroup = db.expense.findUniqueOrThrow.bind(db.expense);
+    const validationRead = jest.spyOn(db.expense, 'findUniqueOrThrow');
+    // The first edit lands just after the second one read the expense as ungrouped.
+    validationRead.mockImplementationOnce((async (args: Parameters<typeof readStoredGroup>[0]) => {
+      const stored = await readStoredGroup(args);
+      await db.expense.update({ where: { id: expense!.id }, data: { groupId: group.id } });
+      return stored;
+    }) as unknown as typeof db.expense.findUniqueOrThrow);
+
+    await expect(
+      caller.expense.addOrEditExpense({
+        ...input,
+        expenseId: expense!.id,
+        groupId: otherGroup.id,
+      }),
+    ).rejects.toMatchObject({ code: 'CONFLICT' });
+    validationRead.mockRestore();
+
+    expect(await db.expense.findUnique({ where: { id: expense!.id } })).toMatchObject({
+      groupId: group.id,
+    });
   });
 
   it('rejects assigning an expense to an archived group', async () => {

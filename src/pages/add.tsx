@@ -66,6 +66,7 @@ const AddPage: NextPageWithUser<{
     setCurrentUser({
       ...user,
       defaultCurrency: user.defaultCurrency ?? null,
+      deletedAt: null,
       emailVerified: null,
       name: user.name ?? null,
       email: user.email ?? null,

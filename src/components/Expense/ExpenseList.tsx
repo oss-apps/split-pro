@@ -15,8 +15,8 @@ import { Separator } from '../ui/separator';
 import { BalanceDateContext } from '~/contexts/BalanceDateContext';
 
 type ExpensesOutput =
-  | inferRouterOutputs<ExpenseRouter>['getGroupExpenses']
-  | inferRouterOutputs<ExpenseRouter>['getExpensesWithFriend'];
+  | inferRouterOutputs<ExpenseRouter>['getGroupExpenses']['items']
+  | inferRouterOutputs<ExpenseRouter>['getExpensesWithFriend']['items'];
 
 type SingleExpenseOutput = ExpensesOutput[number];
 

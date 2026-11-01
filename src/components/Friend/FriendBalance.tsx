@@ -10,7 +10,7 @@ export const FriendBalance: React.FC<{
   balance: MinimalBalance;
   groupName?: string | null;
 }> = ({ user, balance, groupName }) => {
-  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { t, displayName, getCurrencyHelpersCached } = useTranslationWithUtils();
   const { toUIString } = getCurrencyHelpersCached(balance.currency);
   const isPositive = 0 < balance.amount;
 
@@ -19,7 +19,7 @@ export const FriendBalance: React.FC<{
       <div className="flex items-center gap-3">
         <EntityAvatar entity={user} size={30} />
         <div>
-          <div className="text-foreground">{user.name}</div>
+          <div className="text-foreground">{displayName(user)}</div>
           {groupName ? <div className="text-xs text-gray-500">{groupName}</div> : null}
         </div>
       </div>

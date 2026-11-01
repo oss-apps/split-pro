@@ -151,6 +151,18 @@ export const groupRouter = createTRPCRouter({
         id: input.groupId,
       },
       include: {
+        expenses: {
+          where: {
+            deletedBy: null,
+            OR: [
+              { splitType: { not: SplitType.CURRENCY_CONVERSION } },
+              { conversionToId: { not: null } },
+            ],
+          },
+          orderBy: [{ expenseDate: 'asc' }, { id: 'asc' }],
+          take: 1,
+          select: { createdAt: true },
+        },
         groupUsers: {
           include: {
             user: true,

@@ -18,7 +18,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
   users = [],
   groupId,
 }) => {
-  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { t, displayName, getCurrencyHelpersCached } = useTranslationWithUtils();
 
   const userMap = useMemo(
     () =>
@@ -76,7 +76,7 @@ const GroupMyBalance: React.FC<GroupMyBalanceProps> = ({
                         ? 'balance_summary.friend_owes_you'
                         : 'balance_summary.you_owe_friend',
                       {
-                        friend: friend?.name ?? '',
+                        friend: displayName(friend),
                         amount: getCurrencyHelpersCached(currency).toUIString(amount),
                       },
                     )}

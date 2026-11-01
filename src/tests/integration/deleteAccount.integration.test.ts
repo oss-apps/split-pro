@@ -112,8 +112,8 @@ describe('account deletion', () => {
       expenseId: expense!.id,
     });
     expect(history?.paidByUser.name).toBe('Deleted user');
-    const activity = await callerFor(member.id).expense.getAllExpenses();
-    expect(activity[0]?.expense.paidByUser.deletedAt).toEqual(expect.any(Date));
+    const activity = await callerFor(member.id).expense.getAllExpenses({});
+    expect(activity.items[0]?.expense.paidByUser.deletedAt).toEqual(expect.any(Date));
     const replacement = await createDatabaseUser(db, { email: owner.email });
     expect(replacement.id).not.toBe(owner.id);
     expect(await db.groupUser.count({ where: { userId: replacement.id } })).toBe(0);

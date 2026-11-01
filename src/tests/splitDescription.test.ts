@@ -14,6 +14,7 @@ const user = (id: number, name: string): User => ({
   email: `qa${id}@example.com`,
   currency: 'EUR',
   defaultCurrency: null,
+  deletedAt: null,
   emailVerified: null,
   image: null,
   preferredLanguage: 'en',

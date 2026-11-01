@@ -97,6 +97,7 @@ export const SelectUserOrGroup: React.FC<{
           id: -1,
           name: nameOrEmail,
           email: nameOrEmail,
+          deletedAt: null,
           emailVerified: new Date(),
           image: null,
           currency: 'USD',

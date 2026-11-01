@@ -96,6 +96,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                       participants={[
                         {
                           ...user,
+                          deletedAt: null,
                           emailVerified: null,
                           name: user.name ?? null,
                           email: user.email ?? null,

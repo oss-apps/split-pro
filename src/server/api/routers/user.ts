@@ -13,6 +13,7 @@ import { simplifyDebts } from '~/lib/simplify';
 import { AppError } from '~/server/api/appError';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
+import { deleteAccount } from '~/server/api/services/deleteAccount';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
 import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
 
@@ -36,6 +37,10 @@ const throwInviteError = (
 };
 
 export const userRouter = createTRPCRouter({
+  deleteAccount: protectedProcedure.mutation(async ({ ctx }) => {
+    await deleteAccount(ctx.db, ctx.session.user.id);
+  }),
+
   me: protectedProcedure.query(({ ctx }) => ctx.session.user),
 
   getFriends: protectedProcedure.query(async ({ ctx }) => {

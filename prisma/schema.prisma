@@ -42,6 +42,7 @@ model User {
   name                 String?
   email                String?              @unique
   emailVerified        DateTime?
+  deletedAt            DateTime?
   image                String?
   currency             String               @default("USD")
   defaultCurrency      String?

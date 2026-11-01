@@ -22,6 +22,7 @@ const createMockUser = (id: number, name: string, email: string): User => ({
   email,
   currency: 'USD',
   defaultCurrency: null,
+  deletedAt: null,
   emailVerified: null,
   image: null,
   preferredLanguage: 'en',

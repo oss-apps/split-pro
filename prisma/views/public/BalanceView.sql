@@ -29,6 +29,15 @@ WITH "BaseBalance" AS (
     (
       (ep."userId" <> e."paidBy")
       AND (e."deletedAt" IS NULL)
+      -- No setting (or an explicit null cutoff encoded as '') preserves total balances.
+      -- Expense dates are stored as UTC timestamps without time zone.
+      AND COALESCE(
+        e."expenseDate" < (
+          NULLIF(current_setting('app.balance_cutoff', true), '')::timestamptz
+          AT TIME ZONE 'UTC'
+        ),
+        true
+      )
     )
   GROUP BY
     CASE

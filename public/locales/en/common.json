@@ -110,6 +110,7 @@
     "remind_later": "Remind me later"
   },
   "actors": {
+    "deleted_user": "Deleted user",
     "all": "All",
     "friends": "Friends",
     "groups": "Groups",

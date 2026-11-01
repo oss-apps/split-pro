@@ -452,6 +452,7 @@ export const expenseRouter = createTRPCRouter({
             paidByUser: {
               select: {
                 name: true,
+                deletedAt: true,
                 email: true,
                 image: true,
                 id: true,
@@ -460,6 +461,7 @@ export const expenseRouter = createTRPCRouter({
             deletedByUser: {
               select: {
                 name: true,
+                deletedAt: true,
                 email: true,
                 image: true,
                 id: true,
@@ -493,6 +495,7 @@ export const expenseRouter = createTRPCRouter({
             addedByUser: {
               select: {
                 name: true,
+                deletedAt: true,
                 email: true,
                 image: true,
                 id: true,

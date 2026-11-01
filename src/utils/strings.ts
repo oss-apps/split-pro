@@ -13,7 +13,10 @@ export const displayName = (
   user?: Partial<User> | null,
   currentUserId?: number,
 ): string => {
-  if (currentUserId === user?.id) {
+  if (user?.deletedAt) {
+    return t('actors.deleted_user');
+  }
+  if (undefined !== currentUserId && currentUserId === user?.id) {
     return t('actors.you');
   }
   return user?.name ?? user?.email ?? '';

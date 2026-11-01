@@ -2,12 +2,12 @@ import { CheckIcon } from '@heroicons/react/24/outline';
 import { UserPlusIcon } from '@heroicons/react/24/solid';
 import type { Group, GroupUser, SplitType, User } from '@prisma/client';
 import { SendIcon } from 'lucide-react';
-import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 import React, { useCallback } from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { deserializeDefaultSplit } from '~/lib/defaultSplit';
@@ -27,7 +27,7 @@ type SelectableGroup = Group & {
 export const SelectUserOrGroup: React.FC<{
   enableSendingInvites: boolean;
 }> = ({ enableSendingInvites }) => {
-  const { t } = useTranslation();
+  const { t, displayName } = useTranslationWithUtils();
   const nameOrEmail = useAddExpenseStore((s) => s.nameOrEmail);
   const participants = useAddExpenseStore((s) => s.participants);
   const group = useAddExpenseStore((s) => s.group);
@@ -44,7 +44,7 @@ export const SelectUserOrGroup: React.FC<{
     g.group.name.toLowerCase().includes(nameOrEmail.toLowerCase()),
   );
   const filteredFriends = friendsQuery.data?.filter((f) =>
-    (f.name ?? f.email)?.toLowerCase().includes(nameOrEmail.toLowerCase()),
+    displayName(f).toLowerCase().includes(nameOrEmail.toLowerCase()),
   );
 
   const onAddEmailClick = useCallback(
@@ -216,7 +216,7 @@ export const SelectUserOrGroup: React.FC<{
               >
                 <div className="flex min-w-0 items-center gap-4">
                   <EntityAvatar entity={f} size={35} />
-                  <div className="truncate">{f.name ?? f.email}</div>
+                  <div className="truncate">{displayName(f)}</div>
                 </div>
                 {participants.some((p) => p.id === f.id) ? (
                   <div>

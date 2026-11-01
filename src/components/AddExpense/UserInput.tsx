@@ -1,7 +1,7 @@
-import { useTranslation } from 'next-i18next';
 import Router from 'next/router';
 import { z } from 'zod';
 
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 
@@ -10,7 +10,7 @@ import { EntityAvatar } from '../ui/avatar';
 export const UserInput: React.FC<{
   isEditing?: boolean;
 }> = ({ isEditing }) => {
-  const { t } = useTranslation();
+  const { t, displayName } = useTranslationWithUtils();
   const {
     setNameOrEmail,
     removeLastParticipant,
@@ -87,7 +87,7 @@ export const UserInput: React.FC<{
               className="flex max-w-40 items-center gap-2 rounded-full bg-slate-800 p-0.5 pr-4"
             >
               <EntityAvatar entity={p} size={30} />
-              <p className="truncate text-xs">{p.name ?? p.email}</p>
+              <p className="truncate text-xs">{displayName(p)}</p>
             </div>
           ) : null,
         )

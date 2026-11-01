@@ -14,8 +14,8 @@ import { api } from '~/utils/api';
 import { Separator } from '../ui/separator';
 
 type ExpensesOutput =
-  | inferRouterOutputs<ExpenseRouter>['getGroupExpenses']
-  | inferRouterOutputs<ExpenseRouter>['getExpensesWithFriend'];
+  | inferRouterOutputs<ExpenseRouter>['getGroupExpenses']['items']
+  | inferRouterOutputs<ExpenseRouter>['getExpensesWithFriend']['items'];
 
 type SingleExpenseOutput = ExpensesOutput[number];
 

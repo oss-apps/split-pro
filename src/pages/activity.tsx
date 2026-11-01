@@ -2,6 +2,8 @@ import { SplitType } from '@prisma/client';
 import { type User } from 'next-auth';
 import Head from 'next/head';
 import Link from 'next/link';
+import { InfiniteScroll } from '~/components/InfiniteScroll';
+import { flattenPages, nextPageParam } from '~/utils/pagination';
 import MainLayout from '~/components/Layout/MainLayout';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { type NextPageWithUser } from '~/types';
@@ -56,7 +58,11 @@ function getPaymentString(
 
 const ActivityPage: NextPageWithUser = ({ user }) => {
   const { displayName, t, toUIDate, i18n } = useTranslationWithUtils();
-  const expensesQuery = api.expense.getAllExpenses.useQuery();
+  const expensesQuery = api.expense.getAllExpenses.useInfiniteQuery(
+    {},
+    { getNextPageParam: nextPageParam },
+  );
+  const expenseItems = flattenPages(expensesQuery.data);
 
   const actions = React.useMemo(
     () => (
@@ -81,10 +87,10 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
         loading={expensesQuery.isPending}
       >
         <div className="flex flex-col gap-4">
-          {!expensesQuery.data?.length ? (
+          {!expensesQuery.isError && !expenseItems.length ? (
             <div className="mt-[30vh] text-center text-gray-400">{t('ui.no_activity')}</div>
           ) : null}
-          {expensesQuery.data?.map((e) => {
+          {expenseItems.map((e) => {
             const { toUIString } = getCurrencyHelpers({
               locale: i18n.language,
               currency: e.expense.currency,
@@ -138,6 +144,16 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
               </Link>
             );
           })}
+          <InfiniteScroll
+            hasNextPage={expensesQuery.hasNextPage}
+            isFetching={expensesQuery.isFetching}
+            isError={expensesQuery.isError}
+            onLoadMore={
+              expensesQuery.isError && !expensesQuery.isFetchNextPageError
+                ? expensesQuery.refetch
+                : expensesQuery.fetchNextPage
+            }
+          />
         </div>
       </MainLayout>
     </>

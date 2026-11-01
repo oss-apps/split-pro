@@ -29,7 +29,7 @@ describe('balance isolation and simplification', () => {
       await db.balanceView.findFirst({ where: { userId: owner.id, groupId: otherGroup.id } }),
     ).toMatchObject({ amount: 1000n });
     expect(
-      (await caller.expense.getGroupExpenses({ groupId: group.id })).map(
+      (await caller.expense.getGroupExpenses({ groupId: group.id })).items.map(
         (expense) => expense.currency,
       ),
     ).toEqual(['EUR']);

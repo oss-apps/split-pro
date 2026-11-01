@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { toast } from 'sonner';
+import { InfiniteScroll } from '~/components/InfiniteScroll';
+import { collectPages, flattenPages, nextPageParam } from '~/utils/pagination';
 import { DefaultSplitSettings } from '~/components/DefaultSplit/DefaultSplitSettings';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
 import { DeleteFriend } from '~/components/Friend/DeleteFriend';
@@ -33,10 +35,12 @@ const FriendPage: NextPageWithUser = ({ user }) => {
     { enabled: Boolean(parsedFriendId) },
   );
 
-  const expenses = api.expense.getExpensesWithFriend.useQuery(
+  const expenses = api.expense.getExpensesWithFriend.useInfiniteQuery(
     { friendId: parsedFriendId },
-    { enabled: Boolean(parsedFriendId) },
+    { getNextPageParam: nextPageParam, enabled: Boolean(parsedFriendId) },
   );
+  const expenseItems = flattenPages(expenses.data);
+  const utils = api.useUtils();
   const balances = api.user.getBalancesWithFriend.useQuery(
     { friendId: parsedFriendId },
     { enabled: Boolean(parsedFriendId) },
@@ -192,19 +196,36 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 </Button>
               </Link>
               <Export
-                expenses={expenses.data}
+                loadExpenses={() =>
+                  collectPages((cursor) =>
+                    utils.client.expense.getExpensesWithFriend.query({
+                      friendId: parsedFriendId,
+                      cursor,
+                    }),
+                  )
+                }
                 fileName={`expenses_with_${displayName(friendQuery.data)}`}
                 currentUserId={user.id}
                 friendName={displayName(friendQuery.data) ?? ''}
                 friendId={friendQuery.data?.id ?? ''}
-                disabled={!expenses.data || 0 === expenses.data.length}
+                disabled={0 === expenseItems.length}
               />
             </div>
             <ExpenseList
-              expenses={expenses.data}
+              expenses={expenseItems}
               contactId={parsedFriendId}
-              isLoading={expenses.isPending}
+              isLoading={expenses.isPending || expenses.isError}
               userId={user.id}
+            />
+            <InfiniteScroll
+              hasNextPage={expenses.hasNextPage}
+              isFetching={expenses.isFetching}
+              isError={expenses.isError}
+              onLoadMore={
+                expenses.isError && !expenses.isFetchNextPageError
+                  ? expenses.refetch
+                  : expenses.fetchNextPage
+              }
             />
           </div>
         )}

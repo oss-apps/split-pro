@@ -549,5 +549,11 @@
     "enable_description": "Don't miss important events. Subscribe to receive notifications when expenses are added or updated.",
     "permission_granted": "You will receive notifications now",
     "subscribe": "Subscribe"
+  },
+  "pagination": {
+    "load_more": "Load more",
+    "loading": "Loading expenses",
+    "retry": "Try again",
+    "error": "Could not load expenses. Please try again."
   }
 }

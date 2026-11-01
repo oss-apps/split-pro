@@ -19,6 +19,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { InfiniteScroll } from '~/components/InfiniteScroll';
+import { flattenPages, nextPageParam } from '~/utils/pagination';
 import { BalanceList } from '~/components/Expense/BalanceList';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
 import AddMembers from '~/components/group/AddMembers';
@@ -65,10 +67,11 @@ const BalancePage: NextPageWithUser<{
     { groupId },
     { enabled: router.isReady && Boolean(groupId) },
   );
-  const expensesQuery = api.expense.getGroupExpenses.useQuery(
+  const expensesQuery = api.expense.getGroupExpenses.useInfiniteQuery(
     { groupId },
-    { enabled: router.isReady && Boolean(groupId) },
+    { getNextPageParam: nextPageParam, enabled: router.isReady && Boolean(groupId) },
   );
+  const expenseItems = flattenPages(expensesQuery.data);
   const deleteGroupMutation = api.group.delete.useMutation();
   const leaveGroupMutation = api.group.leaveGroup.useMutation();
   const toggleArchiveMutation = api.group.toggleArchive.useMutation();
@@ -196,13 +199,13 @@ const BalancePage: NextPageWithUser<{
                   )}
                   {/* oxlint-enable no-underscore-dangle */}
                 </div>
-                {expensesQuery?.data && expensesQuery.data[expensesQuery.data.length - 1] && (
+                {groupDetailQuery.data?.expenses[0] && (
                   <div className="mt-8">
                     <p className="font-semibold">
                       {t('group_details.group_statistics.first_expense')}
                     </p>
                     <p>
-                      {toUIDate(expensesQuery.data[expensesQuery.data.length - 1]!.createdAt, {
+                      {toUIDate(groupDetailQuery.data.expenses[0].createdAt, {
                         year: true,
                       })}
                     </p>
@@ -507,7 +510,9 @@ const BalancePage: NextPageWithUser<{
         }
         loading={groupDetailQuery.isPending}
       >
-        {1 === groupDetailQuery.data?.groupUsers.length && !expensesQuery.data?.length ? (
+        {1 === groupDetailQuery.data?.groupUsers.length &&
+        !expensesQuery.isError &&
+        !expenseItems.length ? (
           <div className="h-[85vh]">
             <NoMembers group={groupDetailQuery.data} enableSendingInvites={enableSendingInvites} />
           </div>
@@ -568,10 +573,20 @@ const BalancePage: NextPageWithUser<{
               <TabsContent value="expenses">
                 <ExpenseList
                   userId={user.id}
-                  expenses={expensesQuery.data}
+                  expenses={expenseItems}
                   contactId={groupId}
-                  isLoading={expensesQuery.isPending}
+                  isLoading={expensesQuery.isPending || expensesQuery.isError}
                   isGroup
+                />
+                <InfiniteScroll
+                  hasNextPage={expensesQuery.hasNextPage}
+                  isFetching={expensesQuery.isFetching}
+                  isError={expensesQuery.isError}
+                  onLoadMore={
+                    expensesQuery.isError && !expensesQuery.isFetchNextPageError
+                      ? expensesQuery.refetch
+                      : expensesQuery.fetchNextPage
+                  }
                 />
               </TabsContent>
               <TabsContent value="balances">

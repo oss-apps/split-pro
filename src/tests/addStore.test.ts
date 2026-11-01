@@ -8,6 +8,7 @@ import {
   initSplitShares,
   useAddExpenseStore,
 } from '~/store/addStore';
+import { shuffleArray } from '~/utils/array';
 import { getCurrencyHelpers } from '~/utils/numbers';
 
 // Mock dependencies
@@ -1354,5 +1355,69 @@ describe('useAddExpenseStore sign preservation on edit (#658)', () => {
     expect(state.amountStr).toBe('200.01');
     expect(state.isNegative).toBe(false);
     expect(state.amount).toBe(20001n);
+  });
+});
+
+describe('editing percentage expenses (#764)', () => {
+  const { actions } = useAddExpenseStore.getState();
+
+  beforeEach(() => {
+    actions.resetState();
+    // Exercise the seeded penny allocation used when creating and reopening expenses.
+    jest.mocked(shuffleArray).mockImplementation(jest.requireActual('~/utils/array').shuffleArray);
+  });
+  afterEach(() => {
+    actions.resetState();
+    jest.mocked(shuffleArray).mockImplementation(() => undefined);
+  });
+
+  it.each([
+    { amount: 1100n, label: '11.00' },
+    { amount: 11n, label: '0.11 (fractional-cent shares)' },
+  ])('allows reopening and correcting a 70/30 split of $label', ({ amount }) => {
+    const participants = createParticipants([user1, user2]);
+    const created = calculateParticipantSplit({
+      amount,
+      participants,
+      splitType: SplitType.PERCENTAGE,
+      splitShares: createSplitShares(participants, SplitType.PERCENTAGE, [7000n, 3000n]),
+      paidBy: user1,
+      expenseDate: new Date('2024-01-01'),
+      isNegative: false,
+    });
+    expect(created.canSplitScreenClosed).toBe(true);
+    const savedBalances = created.participants.map((participant) => participant.amount);
+
+    // Editing reconstructs percentages from the persisted monetary balances.
+    useAddExpenseStore.setState({
+      amount,
+      paidBy: user1,
+      expenseDate: created.expenseDate,
+    });
+    actions.setParticipants(created.participants, SplitType.PERCENTAGE);
+
+    const reopened = useAddExpenseStore.getState();
+    expect(reopened.canSplitScreenClosed).toBe(true);
+    expect(
+      reopened.participants.reduce(
+        (total, participant) => total + (reopened.splitShares[participant.id]?.PERCENTAGE ?? 0n),
+        0n,
+      ),
+    ).toBe(10000n);
+
+    // Re-enter the original percentages using the same actions as the split form.
+    actions.setSplitShare(SplitType.PERCENTAGE, user1.id, 7000n);
+    actions.setSplitShare(SplitType.PERCENTAGE, user2.id, 3000n);
+    const corrected = useAddExpenseStore.getState();
+    expect(corrected.canSplitScreenClosed).toBe(true);
+    expect(corrected.splitShares[user1.id]?.PERCENTAGE).toBe(7000n);
+    expect(corrected.splitShares[user2.id]?.PERCENTAGE).toBe(3000n);
+    expect(corrected.participants.map((participant) => participant.amount)).toEqual(savedBalances);
+
+    actions.setParticipants(corrected.participants, SplitType.PERCENTAGE);
+    expect(useAddExpenseStore.getState().canSplitScreenClosed).toBe(true);
+    expect(
+      useAddExpenseStore.getState().participants.map((participant) => participant.amount),
+    ).toEqual(savedBalances);
   });
 });

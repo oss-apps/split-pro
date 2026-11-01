@@ -54,8 +54,10 @@ describe('opt-in current balances', () => {
         expect.objectContaining({ userId: member.id, amount: -amount }),
       ]),
     );
-    expect(await caller.expense.getGroupExpenses({ groupId: group.id })).toHaveLength(3);
-    expect(await caller.expense.getExpensesWithFriend({ friendId: member.id })).toHaveLength(3);
+    expect((await caller.expense.getGroupExpenses({ groupId: group.id })).items).toHaveLength(3);
+    expect(
+      (await caller.expense.getExpensesWithFriend({ friendId: member.id })).items,
+    ).toHaveLength(3);
     // Display queries must not leave their cutoff on the pooled connection.
     expect(await db.balanceView.findFirst({ where: { userId: owner.id } })).toMatchObject({
       amount: 3000n,

@@ -2,7 +2,12 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { simplifyDebts } from '~/lib/simplify';
-import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
+import {
+  balanceProcedure,
+  createTRPCRouter,
+  groupProcedure,
+  protectedProcedure,
+} from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { BigMath, currencyConversion } from '~/utils/numbers';
 
@@ -21,8 +26,8 @@ import { DEFAULT_CATEGORY } from '~/lib/category';
 import { getUserMap } from './user';
 
 export const expenseRouter = createTRPCRouter({
-  getCumulatedBalances: protectedProcedure.query(async ({ ctx }) => {
-    const cumulatedBalances = await db.balanceView.groupBy({
+  getCumulatedBalances: balanceProcedure.query(async ({ ctx }) => {
+    const cumulatedBalances = await ctx.db.balanceView.groupBy({
       by: ['currency'],
       _sum: { amount: true },
       where: { userId: ctx.session.user.id, amount: { not: 0 } },
@@ -45,8 +50,8 @@ export const expenseRouter = createTRPCRouter({
     return { youOwe, youGet };
   }),
 
-  getBalances: protectedProcedure.query(async ({ ctx }) => {
-    const rawBalances = await db.balanceView.findMany({
+  getBalances: balanceProcedure.query(async ({ ctx }) => {
+    const rawBalances = await ctx.db.balanceView.findMany({
       where: {
         userId: ctx.session.user.id,
         friendId: { notIn: ctx.session.user.hiddenFriendIds },
@@ -66,7 +71,7 @@ export const expenseRouter = createTRPCRouter({
           return { friendId, currency, amount };
         }
 
-        const allGroupBalances = await db.balanceView.findMany({
+        const allGroupBalances = await ctx.db.balanceView.findMany({
           where: { groupId, currency },
         });
 
@@ -82,7 +87,7 @@ export const expenseRouter = createTRPCRouter({
 
     // Group by friendId and fetch user details
     const friendIds = [...new Set([...processedBalances].map((b) => b.friendId))];
-    const userMap = await getUserMap(friendIds);
+    const userMap = await getUserMap(friendIds, ctx.db);
 
     // Aggregate by (friendId, currency) since same pair can appear in multiple groups
     const aggregated = processedBalances

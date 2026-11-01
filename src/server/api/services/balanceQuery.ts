@@ -1,3 +1,4 @@
+import { TZDate } from '@date-fns/tz';
 import { type Prisma, type PrismaClient } from '@prisma/client';
 
 /**
@@ -16,4 +17,17 @@ export const withBalanceCutoff = <T>(
     await tx.$queryRaw`SELECT set_config('app.balance_cutoff', ${cutoffIso}, true)`;
     return query(tx);
   });
+};
+
+/** Calendar midnight in the browser's time zone, including daylight-saving transitions. */
+export const withCurrentBalances = <T>(
+  db: PrismaClient,
+  timeZone: string,
+  query: (tx: Prisma.TransactionClient) => Promise<T>,
+  now = new Date(),
+): Promise<T> => {
+  // Intl accepts browser aliases that a PostgreSQL installation may not recognize.
+  const cutoff = new TZDate(now, timeZone);
+  cutoff.setHours(24, 0, 0, 0);
+  return withBalanceCutoff(db, cutoff, query);
 };

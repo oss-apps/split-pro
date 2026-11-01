@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server';
+import { type PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 
 import { env } from '~/env';
@@ -11,7 +12,7 @@ import { claimInviteCooldown } from '~/lib/inviteCooldown';
 import { InviteErrorCode } from '~/lib/error/invite';
 import { simplifyDebts } from '~/lib/simplify';
 import { AppError } from '~/server/api/appError';
-import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import { balanceProcedure, createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
 import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
@@ -37,6 +38,10 @@ const throwInviteError = (
 
 export const userRouter = createTRPCRouter({
   me: protectedProcedure.query(({ ctx }) => ctx.session.user),
+
+  getBalanceSettings: protectedProcedure.query(() => ({
+    excludeFutureExpenses: env.EXCLUDE_FUTURE_EXPENSES,
+  })),
 
   getFriends: protectedProcedure.query(async ({ ctx }) => {
     const friends = await db.balanceView.findMany({
@@ -114,10 +119,10 @@ export const userRouter = createTRPCRouter({
       return user;
     }),
 
-  getBalancesWithFriend: protectedProcedure
+  getBalancesWithFriend: balanceProcedure
     .input(z.object({ friendId: z.number() }))
     .query(async ({ input, ctx }) => {
-      const rawBalances = await db.balanceView.findMany({
+      const rawBalances = await ctx.db.balanceView.findMany({
         where: {
           userId: ctx.session.user.id,
           friendId: input.friendId,
@@ -147,7 +152,7 @@ export const userRouter = createTRPCRouter({
           }
 
           // For simplifyDebts groups, fetch all group balances and simplify
-          const allGroupBalances = await db.balanceView.findMany({
+          const allGroupBalances = await ctx.db.balanceView.findMany({
             where: { groupId, currency },
           });
 
@@ -451,8 +456,8 @@ export const userRouter = createTRPCRouter({
   getWebPushPublicKey: protectedProcedure.query(() => env.WEB_PUSH_PUBLIC_KEY ?? ''),
 });
 
-export const getUserMap = async (userIds: number[]) => {
-  const users = await db.user.findMany({
+export const getUserMap = async (userIds: number[], database: Pick<PrismaClient, 'user'> = db) => {
+  const users = await database.user.findMany({
     where: {
       id: { in: userIds },
     },

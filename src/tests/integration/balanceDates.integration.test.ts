@@ -1,4 +1,4 @@
-import { getBalances } from '~/server/api/services/balanceService';
+import { withBalanceDateRange } from '~/server/api/services/balanceService';
 
 import { db } from './database';
 import { expenseInput, testScenario } from './factories';
@@ -7,6 +7,24 @@ import { callerFor } from './trpc';
 const now = new Date('2025-03-09T12:00:00Z');
 
 describe('date-aware balances (#604)', () => {
+  it('clears date bounds after both commit and rollback on a reused connection', async () => {
+    const { owner, member, group } = await testScenario();
+    await callerFor(owner.id).expense.addOrEditExpense(
+      expenseInput(owner.id, member.id, { groupId: group.id, expenseDate: new Date('2025-04-01') }),
+    );
+    const read = (client: Pick<typeof db, 'balanceView'>) =>
+      client.balanceView.findMany({ where: { userId: owner.id } });
+    expect(await withBalanceDateRange(db, now, undefined, read)).toEqual([]);
+    expect((await read(db))[0]?.amount).toBe(1000n);
+    await expect(
+      withBalanceDateRange(db, now, undefined, async (tx) => {
+        expect(await read(tx)).toEqual([]);
+        throw new Error('abort scoped read');
+      }),
+    ).rejects.toThrow('abort scoped read');
+    expect((await read(db))[0]?.amount).toBe(1000n);
+  });
+
   it('keeps Prisma aggregation exact above the JavaScript safe integer range', async () => {
     const { owner, member, group } = await testScenario();
     const viewer = callerFor(owner.id, { now });
@@ -35,7 +53,8 @@ describe('date-aware balances (#604)', () => {
       1000n,
     );
     expect(
-      (await getBalances(db, { where: { groupId: group.id, userId: owner.id } }))[0]?.amount,
+      (await db.balanceView.findMany({ where: { groupId: group.id, userId: owner.id } }))[0]
+        ?.amount,
     ).toBe(0n);
     await viewer.expense.addOrEditCurrencyConversion({
       amount: 1000n,
@@ -112,7 +131,8 @@ describe('date-aware balances (#604)', () => {
       4000n,
     );
     expect(
-      (await getBalances(db, { where: { groupId: group.id, userId: owner.id } }))[0]?.amount,
+      (await db.balanceView.findMany({ where: { groupId: group.id, userId: owner.id } }))[0]
+        ?.amount,
     ).toBe(4000n);
     await expect(
       viewer.expense.getBalances({ fromDate: now, toDateExclusive: now }),
@@ -176,10 +196,9 @@ describe('date-aware balances (#604)', () => {
     );
     expect(
       (
-        await getBalances(db, {
-          where: { userId: owner.id },
-          toDateExclusive: new Date('2025-03-10'),
-        })
+        await withBalanceDateRange(db, new Date('2025-03-10'), undefined, (tx) =>
+          tx.balanceView.findMany({ where: { userId: owner.id } }),
+        )
       )[0]?.amount,
     ).toBe(0n);
     expect(await viewer.user.getBalancesWithFriend({ friendId: member.id })).toEqual([]);

@@ -29,6 +29,8 @@ WITH "BaseBalance" AS (
     (
       (ep."userId" <> e."paidBy")
       AND (e."deletedAt" IS NULL)
+      AND (e."expenseDate" >= COALESCE(NULLIF(current_setting('splitpro.balance_from', true), '')::timestamptz AT TIME ZONE 'UTC', '-infinity'::timestamp))
+      AND (e."expenseDate" < COALESCE(NULLIF(current_setting('splitpro.balance_to', true), '')::timestamptz AT TIME ZONE 'UTC', 'infinity'::timestamp))
     )
   GROUP BY
     CASE

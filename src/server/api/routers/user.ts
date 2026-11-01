@@ -9,17 +9,13 @@ import {
 } from '~/lib/defaultSplit';
 import { claimInviteCooldown } from '~/lib/inviteCooldown';
 import { InviteErrorCode } from '~/lib/error/invite';
+import { simplifyDebts } from '~/lib/simplify';
 import { AppError } from '~/server/api/appError';
-import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import { balanceDateMiddleware, createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
 import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
 
-import {
-  balanceDateRangeSchema,
-  getBalanceDateRange,
-  getUserBalances,
-} from '../services/balanceService';
 import {
   getSubscriptionEndpoint,
   sendPushNotificationToUsers,
@@ -30,6 +26,8 @@ import {
   importGroupFromSplitwise,
   importUserBalanceFromSplitWise,
 } from '../services/splitService';
+
+import { balanceDateRangeSchema } from '../services/balanceService';
 
 const throwInviteError = (
   code: 'PRECONDITION_FAILED' | 'TOO_MANY_REQUESTS' | 'INTERNAL_SERVER_ERROR',
@@ -120,21 +118,69 @@ export const userRouter = createTRPCRouter({
 
   getBalancesWithFriend: protectedProcedure
     .input(z.object({ friendId: z.number() }).merge(balanceDateRangeSchema))
+    .use(balanceDateMiddleware)
     .query(async ({ input, ctx }) => {
-      const balances = await getUserBalances(
-        ctx.db,
-        ctx.session.user.id,
-        getBalanceDateRange(ctx.balanceDay.toDateExclusive, input),
+      const rawBalances = await ctx.db.balanceView.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          OR: [{ friendId: input.friendId }, { group: { simplifyDebts: true } }],
+        },
+        include: {
+          group: {
+            select: {
+              name: true,
+              simplifyDebts: true,
+            },
+          },
+        },
+      });
+
+      const simplifiedGroups = new Set<string>();
+      const processedBalances = await Promise.all(
+        rawBalances.map(async ({ groupId, currency, amount, group }) => {
+          // For non-simplifyDebts groups and non-group balances, use raw balance
+          if (!group?.simplifyDebts || null === groupId) {
+            return {
+              friendId: input.friendId,
+              currency,
+              amount,
+              groupId,
+              groupName: group?.name ?? null,
+            };
+          }
+
+          const key = `${groupId}-${currency}`;
+          if (simplifiedGroups.has(key)) {
+            return null;
+          }
+          simplifiedGroups.add(key);
+          // For simplifyDebts groups, fetch all group balances and simplify
+          const allGroupBalances = await ctx.db.balanceView.findMany({
+            where: { groupId, currency },
+          });
+
+          const simplified = simplifyDebts(allGroupBalances);
+
+          const simplifiedBalance = simplified.find(
+            (b) =>
+              b.userId === ctx.session.user.id &&
+              b.friendId === input.friendId &&
+              b.currency === currency,
+          );
+
+          return {
+            friendId: input.friendId,
+            currency,
+            amount: simplifiedBalance?.amount ?? 0n,
+            groupId,
+            groupName: group.name,
+          };
+        }),
       );
-      return balances
-        .filter((row) => row.friendId === input.friendId && 0n !== row.amount)
-        .map(({ friendId, currency, amount, groupId, group }) => ({
-          friendId,
-          currency,
-          amount,
-          groupId,
-          groupName: group?.name ?? null,
-        }));
+
+      return processedBalances.filter(
+        (b): b is NonNullable<typeof b> => null !== b && 0n !== b.amount,
+      );
     }),
 
   updateUserDetail: protectedProcedure
@@ -415,8 +461,8 @@ export const userRouter = createTRPCRouter({
   getWebPushPublicKey: protectedProcedure.query(() => env.WEB_PUSH_PUBLIC_KEY ?? ''),
 });
 
-export const getUserMap = async (userIds: number[]) => {
-  const users = await db.user.findMany({
+export const getUserMap = async (userIds: number[], client: Pick<typeof db, 'user'> = db) => {
+  const users = await client.user.findMany({
     where: {
       id: { in: userIds },
     },

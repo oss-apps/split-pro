@@ -14,6 +14,8 @@ import { type Session } from 'next-auth';
 import superjson from 'superjson';
 import { ZodError, z } from 'zod';
 
+import { balanceDateRangeSchema, withBalanceDateRange } from './services/balanceService';
+
 import { getAppErrorCode } from '~/server/api/appError';
 import { getServerAuthSession } from '~/server/auth';
 import { db } from '~/server/db';
@@ -155,3 +157,21 @@ export const groupProcedure = protectedProcedure
 
     return next({ ctx: { ...ctx } });
   });
+
+/** Apply date bounds only to balance reads, preserving unbounded mutation guards. */
+export const balanceDateMiddleware = t.middleware(({ ctx, input, next }) =>
+  withBalanceDateRange(
+    ctx.db,
+    ctx.balanceDay.toDateExclusive,
+    balanceDateRangeSchema.optional().parse(input),
+    (tx) => next({ ctx: { db: tx } }),
+  ),
+);
+
+export const balanceProcedure = protectedProcedure
+  .input(balanceDateRangeSchema.optional())
+  .use(balanceDateMiddleware);
+
+export const groupBalanceProcedure = groupProcedure
+  .input(balanceDateRangeSchema)
+  .use(balanceDateMiddleware);

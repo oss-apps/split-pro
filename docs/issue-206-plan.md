@@ -74,7 +74,7 @@ implementation. The issue now explicitly covers self-hosted instances.
   Before implementation verification, provision the dedicated development DB
   using the repository worktree instructions and initialize pg_cron/schema/seed.
 - Integration and E2E suites must use separate local disposable databases ending
-  in _test, on distinct ports, with explicit TEST_DATABASE_URL/E2E_DATABASE_URL.
+  in \_test, on distinct ports, with explicit TEST_DATABASE_URL/E2E_DATABASE_URL.
 - Run formatting, lint, type checking, unit tests, and production build independently
   of the database/browser suites, then targeted integration and Chromium E2E tests.
 - During implementation, fetch current library documentation before relying on

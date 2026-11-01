@@ -18,6 +18,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { AccountButton } from '~/components/Account/AccountButton';
 import { DownloadAppDrawer } from '~/components/Account/DownloadAppDrawer';
+import { DeleteAccount } from '~/components/Account/DeleteAccount';
 import { LanguagePicker } from '~/components/Account/LanguagePicker';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
@@ -191,6 +192,9 @@ const AccountPage: NextPageWithUser<{
           >
             {t('account.logout')}
           </Button>
+        </div>
+        <div className="mt-6 flex justify-center">
+          <DeleteAccount />
         </div>
       </MainLayout>
     </>

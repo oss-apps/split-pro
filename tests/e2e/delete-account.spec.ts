@@ -44,12 +44,18 @@ test('deletes the account, revokes other sessions, and preserves history for ano
     ],
   });
   await page.goto('/en/account');
+  await page.evaluate(async (email) => {
+    const cache = await caches.open('apis');
+    await cache.put('/api/trpc/user.me', new Response(JSON.stringify({ email })));
+  }, scenario.owner.email);
+  expect(await page.evaluate(() => caches.has('apis'))).toBe(true);
   await page.getByRole('button', { name: 'Delete account', exact: true }).click();
   await page
     .getByRole('alertdialog')
     .getByRole('button', { name: 'Permanently delete account' })
     .click();
   await expect(page).toHaveURL(/\/auth\/signin/);
+  expect(await page.evaluate(() => caches.has('apis'))).toBe(false);
   expect(
     (await page.context().cookies()).some((cookie) => 'next-auth.session-token' === cookie.name),
   ).toBe(false);
@@ -98,4 +104,33 @@ test('deletes the account, revokes other sessions, and preserves history for ano
   } finally {
     await memberContext.close();
   }
+});
+
+['unavailable', 'failure'].forEach((cacheState) => {
+  test(`still signs out when Cache Storage is ${cacheState}`, async ({ page, scenario, db }) => {
+    await page.goto('/en/account');
+    await page.evaluate((state) => {
+      if ('unavailable' === state) {
+        Reflect.deleteProperty(window, 'caches');
+        return;
+      }
+      Object.defineProperty(window, 'caches', {
+        configurable: true,
+        value: { delete: () => Promise.reject(new Error('Cache Storage unavailable')) },
+      });
+    }, cacheState);
+    if ('unavailable' === cacheState) {
+      expect(await page.evaluate(() => 'caches' in window)).toBe(false);
+    }
+    await page.getByRole('button', { name: 'Delete account', exact: true }).click();
+    await page
+      .getByRole('alertdialog')
+      .getByRole('button', { name: 'Permanently delete account' })
+      .click();
+    await expect(page).toHaveURL(/\/auth\/signin/);
+    expect(await db.session.count({ where: { userId: scenario.owner.id } })).toBe(0);
+    expect(await db.user.findUniqueOrThrow({ where: { id: scenario.owner.id } })).toMatchObject({
+      deletedAt: expect.any(Date),
+    });
+  });
 });

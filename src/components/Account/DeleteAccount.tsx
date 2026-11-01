@@ -42,9 +42,17 @@ export const DeleteAccount = () => {
     try {
       await signOut({ redirect: false });
     } finally {
-      // A full navigation also discards query caches and in-memory expense drafts.
-      // The server has already revoked every session, even if signOut fails.
-      window.location.replace('/auth/signin');
+      try {
+        if ('caches' in window) {
+          await window.caches.delete('apis');
+        }
+      } catch (error) {
+        console.error('Failed to clear cached API responses after account deletion', error);
+      } finally {
+        // A full navigation also discards query caches and in-memory expense drafts.
+        // The server has already revoked every session, even if cleanup fails.
+        window.location.replace('/auth/signin');
+      }
     }
   };
 

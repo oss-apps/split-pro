@@ -57,6 +57,10 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
 
   return {
     ...prismaAdapter,
+    deleteSession: async (sessionToken) => {
+      // Account deletion already revokes sessions before the browser signs out.
+      await db.session.deleteMany({ where: { sessionToken } });
+    },
     getSessionAndUser: async (sessionToken) => {
       const result = await prismaAdapter.getSessionAndUser?.(sessionToken);
       if (!result) {

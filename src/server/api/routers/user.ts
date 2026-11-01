@@ -194,6 +194,7 @@ export const userRouter = createTRPCRouter({
       const user = await db.user.update({
         where: {
           id: ctx.session.user.id,
+          deletedAt: null,
         },
         data: {
           ...input,

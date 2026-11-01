@@ -6,6 +6,35 @@ import { accountingSnapshot, testGroup, testScenario, testUser } from './factori
 import { callerFor } from './trpc';
 
 describe('account deletion', () => {
+  it.each([false, true])(
+    'removes local avatars only when no shared record uses them (shared=%s)',
+    async (shared) => {
+      const { owner, group } = await testScenario();
+      const key = `${owner.id}/${randomUUID()}.webp`;
+      const avatar = path.join(process.cwd(), 'uploads', key);
+      const thumbnail = avatar.replace('.webp', '-thumb.webp');
+      await mkdir(path.dirname(avatar), { recursive: true });
+      await writeFile(avatar, 'avatar');
+      await writeFile(thumbnail, 'thumbnail');
+      try {
+        await db.user.update({ where: { id: owner.id }, data: { image: key } });
+        if (shared) {
+          await db.group.update({ where: { id: group.id }, data: { image: key } });
+        }
+        await callerFor(owner.id).user.deleteAccount();
+        if (shared) {
+          expect(await readFile(avatar, 'utf8')).toBe('avatar');
+          expect(await readFile(thumbnail, 'utf8')).toBe('thumbnail');
+        } else {
+          await expect(readFile(avatar)).rejects.toMatchObject({ code: 'ENOENT' });
+          await expect(readFile(thumbnail)).rejects.toMatchObject({ code: 'ENOENT' });
+        }
+      } finally {
+        await Promise.all([rm(avatar, { force: true }), rm(thumbnail, { force: true })]);
+      }
+    },
+  );
+
   it('clears identity and credentials while preserving shared history and outstanding debt', async () => {
     const { owner, member, group, input } = await testScenario();
     const [expense] = await callerFor(owner.id).expense.addOrEditExpense(input);
@@ -186,3 +215,6 @@ describe('account deletion', () => {
     expect(await db.user.count({ where: { deletedAt: { not: null }, email: null } })).toBe(2);
   });
 });
+import { randomUUID } from 'node:crypto';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import path from 'node:path';

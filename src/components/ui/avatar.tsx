@@ -50,6 +50,7 @@ const DEFAULT_AVATAR_COLORS = ['#80C7B7', '#D9C27E', '#F4B088', '#FFA5AA', '#9D9
 
 const EntityAvatar: React.FC<{
   entity?: {
+    id?: number;
     name?: string | null;
     image?: string | null;
     email?: string | null;
@@ -59,6 +60,8 @@ const EntityAvatar: React.FC<{
 }> = ({ entity, size }) => {
   const { t } = useTranslation();
   const name = displayName(t, entity);
+  const avatarSeed =
+    entity?.deletedAt && undefined !== entity.id ? `deleted-user-${entity.id}` : name;
   const avatarSize = React.useMemo(
     () => ({
       width: size ?? 40,
@@ -73,7 +76,8 @@ const EntityAvatar: React.FC<{
       <AvatarFallback>
         <BoringAvatar
           size={size}
-          name={name}
+          name={avatarSeed}
+          aria-label={name}
           variant="beam"
           // colors={['#ADDFD3', '#EAE3D0', '#DBC4B6', '#FFA5AA', '#EFD5C4']}
           // colors={['#565175', '#538A95', '#67B79E', '#FFB727', '#E4491C']}

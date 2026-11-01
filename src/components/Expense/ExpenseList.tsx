@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useContext } from 'react';
 import { toast } from 'sonner';
 import { CategoryIcon, CurrencyConversionIcon, SettleupIcon } from '~/components/ui/categoryIcons';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
@@ -12,6 +12,7 @@ import { cn } from '~/lib/utils';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { api } from '~/utils/api';
 import { Separator } from '../ui/separator';
+import { BalanceDateContext } from '~/contexts/BalanceDateContext';
 
 type ExpensesOutput =
   | inferRouterOutputs<ExpenseRouter>['getGroupExpenses']
@@ -31,7 +32,8 @@ export const ExpenseList: React.FC<{
   isGroup?: boolean;
   isLoading?: boolean;
 }> = ({ userId, isGroup = false, expenses = [], contactId, isLoading }) => {
-  const { i18n } = useTranslationWithUtils();
+  const { i18n, t } = useTranslationWithUtils();
+  const cutoff = useContext(BalanceDateContext);
 
   if (!isLoading && expenses.length === 0) {
     return <NoExpenses />;
@@ -49,6 +51,7 @@ export const ExpenseList: React.FC<{
 
         const isSettlement = e.splitType === SplitType.SETTLEMENT;
         const isCurrencyConversion = e.splitType === SplitType.CURRENCY_CONVERSION;
+        const isFuture = null !== cutoff && e.expenseDate.getTime() >= cutoff;
 
         return (
           <React.Fragment key={e.id}>
@@ -65,8 +68,14 @@ export const ExpenseList: React.FC<{
             )}
             <Link
               href={`/${isGroup ? 'groups' : 'balances'}/${contactId}/expenses/${e.id}`}
-              className={cn('flex items-center justify-between', isFirstOfMonth ? 'pb-2' : 'py-2')}
+              className={cn(
+                'flex items-center justify-between',
+                isFirstOfMonth ? 'pb-2' : 'py-2',
+                isFuture && 'opacity-50 grayscale',
+              )}
+              title={isFuture ? t('expense_list.future_expense') : undefined}
             >
+              {isFuture && <span className="sr-only">{t('expense_list.future_expense')}</span>}
               {isSettlement && <Settlement e={e} userId={userId} />}
               {isCurrencyConversion && <CurrencyConversion e={e} userId={userId} />}
               {!isSettlement && !isCurrencyConversion && <Expense e={e} userId={userId} />}

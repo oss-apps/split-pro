@@ -1,11 +1,11 @@
 // copied from: https://github.com/vpfaiz/cron-builder-ui/
-import { format } from 'date-fns';
 import { type TFunction, useTranslation } from 'next-i18next';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { useIntlCronParser } from '~/hooks/useIntlCronParser';
 
-import { Input } from './input';
+import { RecurrencePreview } from '../Expense/RecurrencePreview';
+
 import { Label } from './label';
 import { NativeSelect, NativeSelectOption } from './native-select';
 import { ToggleGroup, ToggleGroupItem } from './toggle-group';
@@ -35,7 +35,7 @@ interface ParsedCron {
   values: {
     minutes?: number[];
     hours?: number[];
-    daysOfMonth?: number[];
+    daysOfMonth?: Array<number | 'L'>;
     months?: number[];
     daysOfWeek?: number[];
     custom?: string;
@@ -49,7 +49,6 @@ const SCHEDULE_TYPES = (t: TFunction) =>
     { value: 'week', label: t('recurrence.schedule_type.week') },
     { value: 'month', label: t('recurrence.schedule_type.month') },
     { value: 'year', label: t('recurrence.schedule_type.year') },
-    { value: 'custom', label: t('recurrence.schedule_type.custom') },
   ] as const;
 
 type ScheduleType = ReturnType<typeof SCHEDULE_TYPES>[number];
@@ -74,18 +73,11 @@ interface ScheduleFieldsProps {
   renderDaysOfWeekSelect: () => React.ReactNode;
   renderMonthsSelect: () => React.ReactNode;
   renderDaysOfMonthSelect: () => React.ReactNode;
-  renderTimeInput: () => React.ReactNode;
 }
 
 const ScheduleFields = React.memo<ScheduleFieldsProps>(
-  ({
-    scheduleType,
-    renderDaysOfWeekSelect,
-    renderMonthsSelect,
-    renderDaysOfMonthSelect,
-    renderTimeInput,
-  }) => {
-    const outputs = [renderTimeInput];
+  ({ scheduleType, renderDaysOfWeekSelect, renderMonthsSelect, renderDaysOfMonthSelect }) => {
+    const outputs: Array<() => React.ReactNode> = [];
 
     if ('never' === scheduleType) {
       return null;
@@ -160,7 +152,15 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
           values: {
             minutes: parseNumbers(min),
             hours: parseNumbers(hour),
-            daysOfMonth: parseNumbers(dom),
+            daysOfMonth: dom === 'L' ? ['L'] : parseNumbers(dom),
+          },
+        };
+      } else if (dom !== '*' && month !== '*' && dow === '*') {
+        return {
+          type: 'year',
+          values: {
+            daysOfMonth: dom === 'L' ? ['L'] : parseNumbers(dom),
+            months: parseNumbers(month),
           },
         };
       } else {
@@ -175,8 +175,6 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
   const initialParsed = parseCronExpression(defaultSchedule);
 
   const [scheduleType, setScheduleType] = useState(initialParsed.type);
-  const [minutes, setMinutes] = useState<number[]>(initialParsed.values.minutes || [0]);
-  const [hours, setHours] = useState<number[]>(initialParsed.values.hours || [0]);
   const [daysOfMonth, setDaysOfMonth] = useState<Array<number | 'L'>>(
     initialParsed.values.daysOfMonth || [1],
   );
@@ -190,8 +188,6 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
   const { cronParser } = useIntlCronParser();
 
   function loadDefaults() {
-    setMinutes([0]);
-    setHours([0]);
     setDaysOfMonth([1]);
     setMonths([1]);
     setDaysOfWeek([0]);
@@ -204,14 +200,12 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
     const cleanMonths = (months || []).filter((v) => v !== undefined && v !== null);
     const cleanDaysOfMonth = (daysOfMonth || []).filter((v) => v !== undefined && v !== null);
     const cleanDaysOfWeek = (daysOfWeek || []).filter((v) => v !== undefined && v !== null);
-    const cleanHours = (hours || []).filter((v) => v !== undefined && v !== null);
-    const cleanMinutes = (minutes || []).filter((v) => v !== undefined && v !== null);
 
     const monthsCSV = cleanMonths.length === 12 ? '*' : cleanMonths.join(',');
     const domCSV = cleanDaysOfMonth.length === 31 ? '*' : cleanDaysOfMonth.join(',');
     const dowCSV = cleanDaysOfWeek.length === 7 ? '*' : cleanDaysOfWeek.join(',');
-    const hoursCSV = cleanHours.length === 24 ? '*' : cleanHours.join(',');
-    const minutesCSV = cleanMinutes.length === 60 ? '*' : cleanMinutes.join(',');
+    const hoursCSV = '0';
+    const minutesCSV = '0';
 
     switch (scheduleType) {
       case 'day':
@@ -227,7 +221,7 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
         expression = `${minutesCSV} ${hoursCSV} ${domCSV} ${monthsCSV} *`;
         break;
       case 'custom':
-        expression = custom || '';
+        expression = custom ? `0 0 ${custom.trim().split(/\s+/).slice(-3).join(' ')}` : '';
         break;
       default:
         expression = '';
@@ -240,7 +234,7 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
       setCronExpression('');
       onChange('');
     }
-  }, [scheduleType, minutes, hours, daysOfMonth, months, daysOfWeek, custom]);
+  }, [scheduleType, daysOfMonth, months, daysOfWeek, custom]);
 
   const handleMonthToggle = useCallback((monthIndex: number | string) => {
     const monthNum = (typeof monthIndex === 'number' ? monthIndex : parseInt(monthIndex, 10)) + 1;
@@ -309,34 +303,6 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
     </div>
   );
 
-  const renderTimeInput = () => {
-    const [value, setValue] = useState(
-      format(new Date().setHours(hours[0] || 0, minutes[0] || 0), 'HH:mm'),
-    );
-
-    return (
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="time-picker" className="px-1 text-xs">
-          {t('recurrence.time_of_day')}
-        </Label>
-        <Input
-          type="time"
-          id="time-picker"
-          value={value}
-          onChange={(e) => {
-            const date = e.target.valueAsDate;
-            setValue(e.target.value);
-            if (date) {
-              setHours([date.getUTCHours()]);
-              setMinutes([date.getUTCMinutes()]);
-            }
-          }}
-          className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-        />
-      </div>
-    );
-  };
-
   // Render Cron expression builder UI
   return (
     <div className={`flex flex-grow flex-col ${className || ''}`}>
@@ -377,12 +343,12 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
                   type="text"
                   id="custom-schedule"
                   name="schedule"
-                  value={custom}
+                  value={custom.trim().split(/\s+/).slice(-3).join(' ')}
                   onChange={(event) => {
                     setCustom(event.target.value);
                   }}
                   className="border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-[50%] rounded-md border px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none"
-                  placeholder="0 0 * * 0"
+                  placeholder="* * 0"
                 />
               </div>
             ) : (
@@ -391,21 +357,17 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
                 renderDaysOfWeekSelect={renderDaysOfWeekSelect}
                 renderMonthsSelect={renderMonthsSelect}
                 renderDaysOfMonthSelect={renderDaysOfMonthSelect}
-                renderTimeInput={renderTimeInput}
               />
             )}
 
-            <div className="h-19">
+            <div aria-live="polite">
               {(() => {
                 const cronString = getCronText(cronParser, cronExpression);
                 if (cronString.status)
                   return (
-                    <p className="bg-card text-card-foreground overflow-clip rounded-sm p-3">
-                      {cronString.value}{' '}
-                      <span className="bg-accent text-accent-foreground rounded-sm p-1 px-2 font-mono">
-                        cron({cronExpression})
-                      </span>
-                    </p>
+                    <div className="bg-card text-card-foreground rounded-sm p-3">
+                      <RecurrencePreview schedule={cronExpression} />
+                    </div>
                   );
                 else
                   return (

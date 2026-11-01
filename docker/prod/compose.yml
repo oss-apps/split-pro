@@ -19,7 +19,7 @@ services:
       postgres
       -c shared_preload_libraries=pg_cron
       -c cron.database_name=${POSTGRES_DB:-splitpro}
-      -c cron.timezone=UTC
+      -c cron.timezone=${RECURRENCE_TIME_ZONE:-UTC}
     # ports:
     #   - "5432:5432"
     env_file: .env
@@ -35,6 +35,8 @@ services:
     environment:
       - PORT=${PORT:-3000}
       - HOSTNAME=0.0.0.0
+      # Execution time in PostgreSQL's cron.timezone; applied to expense jobs at startup.
+      - RECURRENCE_TIME=${RECURRENCE_TIME:-00:00}
     env_file: .env
     healthcheck:
       test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1:${PORT:-3000}/api/healthz']

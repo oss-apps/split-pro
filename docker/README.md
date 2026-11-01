@@ -182,7 +182,31 @@ See [docs/CONFIGURATION.md](../docs/CONFIGURATION.md) for the `connect_timeout`/
 
 Recurring expenses require PostgreSQL with `pg_cron`. The example compose file already enables it. If you use another database image, you must enable the extension yourself.
 
-See [docs/RECURRING_TRANSACTIONS.md](../docs/RECURRING_TRANSACTIONS.md).
+Production Compose supports these optional `.env` settings:
+
+```dotenv
+RECURRENCE_TIME="06:35"
+RECURRENCE_TIME_ZONE="Europe/Warsaw"
+```
+
+`RECURRENCE_TIME` defaults to `00:00` and is passed to the app. The PostgreSQL service
+uses `RECURRENCE_TIME_ZONE` for `cron.timezone`, defaulting to UTC. Users choose calendar
+days and see the next scheduled run converted to their browser's time zone, including
+any date or daylight-saving offset change. The instance schedule is shown underneath.
+
+Apply a time change with `docker compose up -d --force-recreate splitpro`. For a zone
+change, use `docker compose up -d --force-recreate postgres splitpro`. Run these from
+the directory containing the production Compose file and `.env`. On startup, the app
+updates existing expense jobs to the configured execution time. A plain container
+restart does not apply changed environment variables. Use the same setting for every
+app replica sharing a database.
+
+Changing the zone also affects cache cleanup jobs; changing `RECURRENCE_TIME` only
+affects expense recurrences. For an external database, configure `cron.timezone` on
+PostgreSQL itself; `RECURRENCE_TIME_ZONE` only configures the bundled Compose service.
+
+See [docs/RECURRING_TRANSACTIONS.md](../docs/RECURRING_TRANSACTIONS.md) for examples,
+calendar behavior, startup reconciliation and upgrade guidance.
 
 ### External / managed PostgreSQL (non-superuser)
 
@@ -193,7 +217,7 @@ SplitPro does not require superuser access at runtime. A regular database role i
 ```sql
 CREATE EXTENSION IF NOT EXISTS pg_cron;
 GRANT USAGE ON SCHEMA cron TO <app_user>;
-GRANT SELECT, REFERENCES ON cron.job TO <app_user>;
+GRANT SELECT, UPDATE, REFERENCES ON cron.job TO <app_user>;
 GRANT SELECT ON cron.job_run_details TO <app_user>;
 ```
 
@@ -205,11 +229,11 @@ cron.database_name = '<your_splitpro_db>'
 cron.timezone = 'UTC'
 ```
 
-Restart PostgreSQL after changing these settings.
+UTC is the default; choose another IANA zone in `cron.timezone` if needed. Restart PostgreSQL after changing these settings.
 
 The migration that sets up recurring expenses uses `CREATE EXTENSION IF NOT EXISTS pg_cron`, which is a no-op when the extension is already installed — no superuser privileges are needed in that case. If the extension is missing and the app user is not a superuser, PostgreSQL will reject the `CREATE EXTENSION` call; ask your DB administrator to install it beforehand using the commands above.
 
-Jobs created by SplitPro run as the app user and are scoped to that user via `pg_cron`'s row-level security, so the app can only manage its own jobs.
+Jobs created by SplitPro run as the app user and are scoped to that user via `pg_cron`'s row-level security, so the app can only manage its own jobs. The `UPDATE` grant on `cron.job` is required for schedule migration and the row locks used by startup reconciliation.
 
 ## Receipt storage
 

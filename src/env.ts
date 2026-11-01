@@ -36,6 +36,10 @@ export const env = createEnv({
       (str) => process.env.VERCEL_URL ?? str,
       process.env.VERCEL ? z.string() : z.string().url(),
     ),
+    RECURRENCE_TIME: z
+      .string()
+      .regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'RECURRENCE_TIME must use HH:mm (00:00–23:59)')
+      .default('00:00'),
     CLEAR_CACHE_CRON_RULE: z.string().optional(),
     CACHE_RETENTION_INTERVAL: z.string().optional(),
     ENABLE_SENDING_INVITES: z.boolean(),
@@ -108,6 +112,7 @@ export const env = createEnv({
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     NEXTAUTH_URL_INTERNAL: process.env.NEXTAUTH_URL_INTERNAL ?? process.env.NEXTAUTH_URL,
+    RECURRENCE_TIME: process.env.RECURRENCE_TIME,
     CLEAR_CACHE_CRON_RULE: process.env.CLEAR_CACHE_CRON_RULE ?? '0 2 * * 0',
     CACHE_RETENTION_INTERVAL: process.env.CACHE_RETENTION_INTERVAL ?? '2 days',
     ENABLE_SENDING_INVITES: parseEnvBoolean(process.env.ENABLE_SENDING_INVITES),

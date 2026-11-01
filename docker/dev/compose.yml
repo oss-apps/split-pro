@@ -16,7 +16,7 @@ services:
       postgres
       -c shared_preload_libraries=pg_cron
       -c cron.database_name=${POSTGRES_DB:-splitpro}
-      -c cron.timezone=UTC
+      -c cron.timezone=${RECURRENCE_TIME_ZONE:-UTC}
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
       interval: 10s

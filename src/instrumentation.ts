@@ -13,6 +13,13 @@ export async function register() {
     const { runMigrations } = await import('./migrations');
     await runMigrations();
 
+    if (!env.TEST_MODE) {
+      const { reconcileRecurrenceSchedules } =
+        await import('./server/api/services/recurrenceScheduleService');
+      const updatedSchedules = await reconcileRecurrenceSchedules();
+      console.info(`Updated ${updatedSchedules} recurrence schedules to ${env.RECURRENCE_TIME}`);
+    }
+
     const { validateAuthEnv } = await import('./server/auth');
     validateAuthEnv();
 

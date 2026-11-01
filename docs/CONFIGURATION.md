@@ -34,7 +34,7 @@ If SplitPro connects to an external/managed PostgreSQL instance, make sure your 
    ```sql
    CREATE EXTENSION IF NOT EXISTS pg_cron;
    GRANT USAGE ON SCHEMA cron TO <app_user>;
-   GRANT SELECT, REFERENCES ON cron.job TO <app_user>;
+   GRANT SELECT, UPDATE, REFERENCES ON cron.job TO <app_user>;
    GRANT SELECT ON cron.job_run_details TO <app_user>;
    ```
 
@@ -47,7 +47,9 @@ If SplitPro connects to an external/managed PostgreSQL instance, make sure your 
    SELECT extname FROM pg_extension WHERE extname = 'pg_cron';
    ```
 
-SplitPro can then run with a regular (non-superuser) `POSTGRES_USER`.
+SplitPro can then run with a regular (non-superuser) `POSTGRES_USER`. The `UPDATE`
+permission on `cron.job` is needed for schedule migration and the row locks used by
+startup reconciliation. pg_cron's row-level security scopes jobs to their owner.
 
 If your deployment sits behind a NAT/firewall/proxy that can silently drop idle TCP connections (leaving the pool with dead sockets that hang instead of erroring), add `connect_timeout` and `socket_timeout` (seconds) to `DATABASE_URL` so Prisma gives up on a stale connection instead of hanging indefinitely - e.g. `?connect_timeout=5&socket_timeout=5`. `/api/readyz`'s own query timeout only bounds queries that reach Postgres; it can't help if the socket itself is dead. See [docker/README.md#health-checks](../docker/README.md#health-checks) for `/api/healthz`/`/api/readyz` details and example probe configuration.
 
@@ -68,12 +70,40 @@ At least one provider must be configured. SplitPro does not support username/pas
 
 ## Optional variables
 
+### Recurring expenses (pg_cron)
+
+| Variable               | Default | Description                                                                                                         |
+| ---------------------- | ------- | ------------------------------------------------------------------------------------------------------------------- |
+| `RECURRENCE_TIME`      | `00:00` | Execution time for all expense recurrences in database `cron.timezone`. Requires 24-hour `HH:mm` (`00:00`–`23:59`). |
+| `RECURRENCE_TIME_ZONE` | `UTC`   | Docker Compose setting for PostgreSQL's `cron.timezone`. Use an IANA zone such as `Europe/Warsaw`.                  |
+
+The UI shows the next scheduled execution in the browser's local date/time and zone,
+with the instance schedule underneath. Calendar fields remain in the instance zone;
+the browser display accounts for date changes and daylight saving at that occurrence.
+
+On app startup, instrumentation reconciles existing expense job times after data
+migrations. New and edited rules use the same execution time. Recreate the app after
+changing `RECURRENCE_TIME`; recreate PostgreSQL and the app after changing the zone.
+Use `docker compose up -d --force-recreate splitpro` or
+`docker compose up -d --force-recreate postgres splitpro` from your deployment directory.
+Use identical settings across application replicas sharing a database.
+
+For external PostgreSQL, configure `cron.timezone` on the database itself and restart
+it. `RECURRENCE_TIME_ZONE` on the app does not configure an external database. UTC in
+the prerequisite example is the default, and can be replaced with your chosen zone.
+
+See [Recurring transactions](RECURRING_TRANSACTIONS.md) for calendar semantics,
+examples, browser-local previews and migration behavior.
+
 ### Cache cleanup (pg_cron)
 
-- `CLEAR_CACHE_CRON_RULE`: Cron rule for cache cleanup jobs (UTC).
+- `CLEAR_CACHE_CRON_RULE`: Cron rule for cache cleanup jobs in database `cron.timezone` (UTC by default).
 - `CACHE_RETENTION_INTERVAL`: Postgres interval string that defines how long cached data can remain unused.
 
-`pg_cron` does not support cron ranges or lists. See https://github.com/citusdata/pg_cron#what-is-pg_cron for details.
+Changing `RECURRENCE_TIME` does not change cache cleanup jobs. Changing
+`cron.timezone` affects every pg_cron job, so review cache cleanup schedules when
+changing it. Standard cron ranges, lists and steps are supported; see the
+[pg_cron documentation](https://github.com/citusdata/pg_cron#cron-syntax).
 
 ### SMTP (email provider)
 

@@ -32,6 +32,7 @@ jest.mock('~/utils/api', () => ({
   api: {
     expense: {
       getRecurringExpenses: { useQuery: () => ({ data: mockRecurrences, isPending: false }) },
+      getRecurrencePreview: { useQuery: () => ({ data: undefined, isError: false }) },
       deleteRecurrence: { useMutation: () => ({ isPending: false }) },
     },
     useUtils: () => ({ expense: { getRecurringExpenses: {} } }),

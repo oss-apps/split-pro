@@ -3,10 +3,10 @@ import { type Group, type GroupUser } from '@prisma/client';
 import { clsx } from 'clsx';
 import { CheckIcon, SendIcon } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
-import { useTranslation } from 'next-i18next';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
 import { getInviteErrorToastKey, isInviteEmailSendFailed } from '~/lib/error/invite';
@@ -20,7 +20,7 @@ const AddMembers: React.FC<{
   group: (Group & { groupUsers: GroupUser[] }) | null | undefined;
   children: React.ReactNode;
 }> = ({ group, children, enableSendingInvites }) => {
-  const { t } = useTranslation();
+  const { t, displayName } = useTranslationWithUtils();
   const [open, setOpen] = useState(false);
   const [userIds, setUserIds] = useState<Record<number, boolean>>({});
   const [inputValue, setInputValue] = useState('');
@@ -43,7 +43,7 @@ const AddMembers: React.FC<{
   const filteredUsers = friendsQuery.data?.filter(
     (friend) =>
       !groupUserMap[friend.id] &&
-      (friend.name ?? friend.email)?.toLowerCase().includes(inputValue.toLowerCase()),
+      displayName(friend).toLowerCase().includes(inputValue.toLowerCase()),
   );
 
   function onUserSelect(userId: number) {
@@ -186,7 +186,7 @@ const AddMembers: React.FC<{
           >
             <div className={clsx('flex items-center gap-2 rounded-md py-1.5')}>
               <EntityAvatar entity={friend} />
-              <p>{friend.name ?? friend.email}</p>
+              <p>{displayName(friend)}</p>
             </div>
             <div>{userIds[friend.id] ? <CheckIcon className="text-primary h-4 w-4" /> : null}</div>
           </Button>

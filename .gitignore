@@ -66,6 +66,7 @@ certificates
 SEED_STATISTICS.md
 
 # Agents
+.agent-notes/
 .worktrees/
 docs/superpowers/
 # next-agents-md

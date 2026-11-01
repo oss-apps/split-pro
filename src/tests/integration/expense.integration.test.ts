@@ -56,7 +56,7 @@ describe('expense lifecycle', () => {
     expect(await db.expenseParticipant.count({ where: { expenseId: expense!.id } })).toBe(2);
     await caller.expense.deleteExpense({ expenseId: expense!.id });
     expect((await balances()).every((balance) => 0n === balance.amount)).toBe(true);
-    expect(await caller.expense.getGroupExpenses({ groupId: group.id })).toEqual([]);
+    expect((await caller.expense.getGroupExpenses({ groupId: group.id })).items).toEqual([]);
     expect(await db.expense.findUnique({ where: { id: expense!.id } })).toMatchObject({
       deletedBy: owner.id,
       deletedAt: expect.any(Date),

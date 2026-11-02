@@ -10,7 +10,7 @@ import {
 } from '~/lib/defaultSplit';
 import { claimInviteCooldown } from '~/lib/inviteCooldown';
 import { InviteErrorCode } from '~/lib/error/invite';
-import { simplifyDebts } from '~/lib/simplify';
+import { getUserBalances } from '~/server/api/services/balanceQuery';
 import { AppError } from '~/server/api/appError';
 import { balanceProcedure, createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
@@ -127,60 +127,16 @@ export const userRouter = createTRPCRouter({
   getBalancesWithFriend: balanceProcedure
     .input(z.object({ friendId: z.number() }))
     .query(async ({ input, ctx }) => {
-      const rawBalances = await ctx.db.balanceView.findMany({
-        where: {
-          userId: ctx.session.user.id,
-          friendId: input.friendId,
-          amount: { not: 0 },
-        },
-        include: {
-          group: {
-            select: {
-              name: true,
-              simplifyDebts: true,
-            },
-          },
-        },
-      });
-
-      const processedBalances = await Promise.all(
-        rawBalances.map(async ({ groupId, currency, amount, group }) => {
-          // For non-simplifyDebts groups and non-group balances, use raw balance
-          if (!group?.simplifyDebts || null === groupId) {
-            return {
-              friendId: input.friendId,
-              currency,
-              amount,
-              groupId,
-              groupName: group?.name ?? null,
-            };
-          }
-
-          // For simplifyDebts groups, fetch all group balances and simplify
-          const allGroupBalances = await ctx.db.balanceView.findMany({
-            where: { groupId, currency },
-          });
-
-          const simplified = simplifyDebts(allGroupBalances);
-
-          const simplifiedBalance = simplified.find(
-            (b) =>
-              b.userId === ctx.session.user.id &&
-              b.friendId === input.friendId &&
-              b.currency === currency,
-          );
-
-          return {
-            friendId: input.friendId,
-            currency,
-            amount: simplifiedBalance?.amount ?? 0n,
-            groupId,
-            groupName: group.name,
-          };
-        }),
-      );
-
-      return processedBalances.filter((b) => 0n !== b.amount);
+      const balances = await getUserBalances(ctx.db, ctx.session.user.id);
+      return balances
+        .filter((balance) => balance.friendId === input.friendId && 0n !== balance.amount)
+        .map(({ friendId, currency, amount, groupId, group }) => ({
+          friendId,
+          currency,
+          amount,
+          groupId,
+          groupName: group?.name ?? null,
+        }));
     }),
 
   updateUserDetail: protectedProcedure
@@ -233,11 +189,19 @@ export const userRouter = createTRPCRouter({
       const friend = await db.user.findUnique({
         where: {
           id: input.friendId,
-          userBalances: {
-            some: {
-              friendId: ctx.session.user.id,
+          OR: [
+            { userBalances: { some: { friendId: ctx.session.user.id } } },
+            {
+              associatedGroups: {
+                some: {
+                  group: {
+                    simplifyDebts: true,
+                    groupUsers: { some: { userId: ctx.session.user.id } },
+                  },
+                },
+              },
             },
-          },
+          ],
         },
       });
 

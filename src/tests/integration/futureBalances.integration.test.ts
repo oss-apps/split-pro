@@ -135,6 +135,65 @@ describe('opt-in current balances', () => {
     });
   });
 
+  it.each([false, true])(
+    'includes new simplified friend pairs when future exclusion is %s',
+    async (enabled) => {
+      jest.replaceProperty(env, 'EXCLUDE_FUTURE_EXPENSES', enabled);
+      const { owner, member, outsider, group, input } = await testScenario();
+      const caller = callerFor(owner.id);
+      await caller.group.addMembers({ groupId: group.id, userIds: [outsider.id] });
+      await caller.expense.addOrEditExpense(input);
+      await callerFor(member.id).expense.addOrEditExpense(
+        expenseInput(member.id, outsider.id, { groupId: group.id }),
+      );
+      await caller.expense.addOrEditExpense(
+        expenseInput(owner.id, outsider.id, {
+          groupId: group.id,
+          expenseDate: new Date(Date.now() + 7 * 86_400_000),
+        }),
+      );
+      await caller.group.toggleSimplifyDebts({ groupId: group.id });
+      const amount = enabled ? 1000n : 2000n;
+      const groupBalances = (await caller.group.getGroupDetails({ groupId: group.id }))!
+        .groupBalances;
+      expect(groupBalances).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ userId: owner.id, friendId: outsider.id, amount }),
+        ]),
+      );
+      expect((await caller.expense.getBalances()).balances).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            friendId: outsider.id,
+            currencies: [{ currency: 'USD', amount }],
+          }),
+        ]),
+      );
+      expect(await caller.user.getBalancesWithFriend({ friendId: outsider.id })).toEqual([
+        expect.objectContaining({ groupId: group.id, friendId: outsider.id, amount }),
+      ]);
+    },
+  );
+
+  it('allows opening a simplified friend balance without any direct expense', async () => {
+    jest.replaceProperty(env, 'EXCLUDE_FUTURE_EXPENSES', true);
+    const { owner, member, outsider, group, input } = await testScenario();
+    const caller = callerFor(owner.id);
+    await caller.group.addMembers({ groupId: group.id, userIds: [outsider.id] });
+    await caller.expense.addOrEditExpense(input);
+    await callerFor(member.id).expense.addOrEditExpense(
+      expenseInput(member.id, outsider.id, { groupId: group.id }),
+    );
+    expect(await caller.user.getFriend({ friendId: outsider.id })).toBeNull();
+    await caller.group.toggleSimplifyDebts({ groupId: group.id });
+    expect(await caller.user.getFriend({ friendId: outsider.id })).toMatchObject({
+      id: outsider.id,
+    });
+    expect(await caller.user.getBalancesWithFriend({ friendId: outsider.id })).toEqual([
+      expect.objectContaining({ friendId: outsider.id, amount: 1000n }),
+    ]);
+  });
+
   it.each([
     ['Europe/Warsaw', '2026-03-28T23:30:00Z', '2026-03-29T22:00:00Z'],
     ['Europe/Warsaw', '2026-10-24T22:30:00Z', '2026-10-25T23:00:00Z'],

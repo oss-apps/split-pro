@@ -1,6 +1,34 @@
 import { TZDate } from '@date-fns/tz';
 import { type Prisma, type PrismaClient } from '@prisma/client';
 
+import { simplifyDebts } from '~/lib/simplify';
+
+/** Include pairs created by simplification, using the caller's transaction and cutoff. */
+export const getUserBalances = async (db: Prisma.TransactionClient, userId: number) => {
+  const rawBalances = await db.balanceView.findMany({
+    where: { userId },
+    include: { group: { select: { name: true, simplifyDebts: true } } },
+  });
+  const groups = new Map(
+    rawBalances.flatMap(({ groupId, group }) =>
+      null !== groupId && group?.simplifyDebts ? [[groupId, group] as const] : [],
+    ),
+  );
+  const simplifiedGroups = await Promise.all(
+    [...groups].map(async ([groupId, group]) => {
+      const balances = await db.balanceView.findMany({ where: { groupId } });
+      return simplifyDebts(balances)
+        .filter((balance) => balance.userId === userId)
+        .map((balance) => Object.assign(balance, { group }));
+    }),
+  );
+
+  return [
+    ...rawBalances.filter((balance) => !balance.group?.simplifyDebts),
+    ...simplifiedGroups.flat(),
+  ];
+};
+
 /**
  * Run balance queries with an exclusive expense-date cutoff, or null for total balances.
  * Use the supplied transaction client for every query, including relation reads.

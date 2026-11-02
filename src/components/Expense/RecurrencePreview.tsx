@@ -1,3 +1,4 @@
+import { keepPreviousData } from '@tanstack/react-query';
 import { useTranslation } from 'next-i18next';
 
 import { useIntlCronParser } from '~/hooks/useIntlCronParser';
@@ -15,7 +16,7 @@ export const RecurrencePreview = ({ schedule }: RecurrencePreviewProps) => {
   const isClient = useIsClient();
   const preview = api.expense.getRecurrencePreview.useQuery(
     { cronExpression: schedule },
-    { refetchInterval: 60_000 },
+    { refetchInterval: 60_000, placeholderData: keepPreviousData },
   );
 
   if (preview.isError) {
@@ -34,7 +35,11 @@ export const RecurrencePreview = ({ schedule }: RecurrencePreviewProps) => {
   }).format(nextRun);
 
   return (
-    <span className="flex flex-col gap-1">
+    <span
+      className="flex flex-col gap-1 data-[updating=true]:opacity-60"
+      aria-busy={preview.isPlaceholderData}
+      data-updating={preview.isPlaceholderData}
+    >
       <span>{t('recurrence.next_local_run', { date: localDate, timeZone: browserTimeZone })}</span>
       <span className="text-muted-foreground text-xs">
         {t('recurrence.instance_schedule', {

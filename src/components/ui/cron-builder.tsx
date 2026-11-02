@@ -1,13 +1,12 @@
 // copied from: https://github.com/vpfaiz/cron-builder-ui/
 import { type TFunction, useTranslation } from 'next-i18next';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 
 import { useIntlCronParser } from '~/hooks/useIntlCronParser';
 
 import { RecurrencePreview } from '../Expense/RecurrencePreview';
 
 import { Label } from './label';
-import { NativeSelect, NativeSelectOption } from './native-select';
 import { ToggleGroup, ToggleGroupItem } from './toggle-group';
 
 export interface CronTextResult {
@@ -102,6 +101,7 @@ ScheduleFields.displayName = 'ScheduleFields';
 
 export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
   const { t, i18n } = useTranslation();
+  const fieldId = useId();
 
   const defaultSchedule = value; // Use provided default or fallback
 
@@ -240,70 +240,78 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
     }
   }, [scheduleType, daysOfMonth, months, daysOfWeek, custom]);
 
-  const handleMonthToggle = useCallback((monthIndex: number | string) => {
-    const monthNum = (typeof monthIndex === 'number' ? monthIndex : parseInt(monthIndex, 10)) + 1;
-    setMonths([monthNum]);
-  }, []);
-
   const renderMonthsSelect = () => (
     <div className="flex flex-col gap-2">
-      <Label className="px-1 text-xs">{t('recurrence.months')}</Label>
-      <NativeSelect
+      <Label id={`${fieldId}-months`} className="px-1 text-xs">
+        {t('recurrence.months')}
+      </Label>
+      <ToggleGroup
+        type="single"
+        variant="outline"
         value={String(months[0] ?? 1)}
-        onChange={(e) => handleMonthToggle(parseInt(e.target.value, 10) - 1)}
+        onValueChange={(value) => {
+          if (value) setMonths([Number(value)]);
+        }}
+        aria-labelledby={`${fieldId}-months`}
+        className="grid grid-cols-4"
       >
         {MONTHS_SHORT(i18n.language).map((month, index) => (
-          <NativeSelectOption key={index} value={String(index + 1)}>
+          <ToggleGroupItem key={index} value={String(index + 1)}>
             {month}
-          </NativeSelectOption>
+          </ToggleGroupItem>
         ))}
-      </NativeSelect>
+      </ToggleGroup>
     </div>
   );
-
-  const handleDayOfWeekToggle = useCallback((dayIndex: number | string) => {
-    const dayNum =
-      typeof dayIndex === 'number' || dayIndex === 'L' ? dayIndex : parseInt(dayIndex, 10);
-    setDaysOfWeek([dayNum]);
-  }, []);
 
   const renderDaysOfWeekSelect = () => (
     <div className="flex flex-col gap-2">
-      <Label className="px-1 text-xs">{t('recurrence.days_of_week')}</Label>
-      <NativeSelect
+      <Label id={`${fieldId}-weekdays`} className="px-1 text-xs">
+        {t('recurrence.days_of_week')}
+      </Label>
+      <ToggleGroup
+        type="single"
+        variant="outline"
         value={String(daysOfWeek[0] ?? 0)}
-        onChange={(e) => handleDayOfWeekToggle(parseInt(e.target.value, 10))}
+        onValueChange={(value) => {
+          if (value) setDaysOfWeek([Number(value)]);
+        }}
+        aria-labelledby={`${fieldId}-weekdays`}
+        className="grid grid-cols-7"
       >
         {DAYS_SHORT(i18n.language).map((day, index) => (
-          <NativeSelectOption key={index} value={String(index)}>
+          <ToggleGroupItem key={index} value={String(index)} className="min-w-0 px-0 text-xs">
             {day}
-          </NativeSelectOption>
+          </ToggleGroupItem>
         ))}
-      </NativeSelect>
+      </ToggleGroup>
     </div>
   );
 
-  const handleDayOfMonthToggle = useCallback((day: number | string) => {
-    const dayNum = typeof day === 'number' || day === 'L' ? day : parseInt(day, 10);
-    setDaysOfMonth([dayNum]);
-  }, []);
-
   const renderDaysOfMonthSelect = () => (
     <div className="flex flex-col gap-2">
-      <Label className="px-1 text-xs">{t('recurrence.days_of_month')}</Label>
-      <NativeSelect
+      <Label id={`${fieldId}-monthdays`} className="px-1 text-xs">
+        {t('recurrence.days_of_month')}
+      </Label>
+      <ToggleGroup
+        type="single"
+        variant="outline"
         value={String(daysOfMonth[0] ?? 1)}
-        onChange={(e) =>
-          handleDayOfMonthToggle(e.target.value === 'L' ? 'L' : parseInt(e.target.value, 10))
-        }
+        onValueChange={(value) => {
+          if (value) setDaysOfMonth(['L' === value ? 'L' : Number(value)]);
+        }}
+        aria-labelledby={`${fieldId}-monthdays`}
+        className="grid grid-cols-7"
       >
         {DAYS_OF_MONTH.map((day) => (
-          <NativeSelectOption key={day} value={String(day)}>
+          <ToggleGroupItem key={day} value={String(day)} className="min-w-0 px-0 text-xs">
             {day.toString().padStart(2, '0')}
-          </NativeSelectOption>
+          </ToggleGroupItem>
         ))}
-        <NativeSelectOption value="L">{t('recurrence.last_day')}</NativeSelectOption>
-      </NativeSelect>
+        <ToggleGroupItem value="L" className="col-span-4">
+          {t('recurrence.last_day')}
+        </ToggleGroupItem>
+      </ToggleGroup>
     </div>
   );
 

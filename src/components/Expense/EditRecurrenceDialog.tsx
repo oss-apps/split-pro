@@ -78,6 +78,7 @@ export const EditRecurrenceDialog: React.FC<EditRecurrenceDialogProps> = ({
         actionOnClick={handleDrawerConfirm}
         actionDisabled={!cronValue}
         className="h-[70vh]"
+        dialogClassName="h-[70vh] grid-rows-[auto_minmax(0,1fr)_auto]"
       >
         <CronBuilder value={cronValue} onChange={setCronValue} />
       </AppDrawer>

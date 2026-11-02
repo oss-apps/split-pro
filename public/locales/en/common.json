@@ -433,7 +433,11 @@
     "template_delete_warning": "This is a recurring expense template. Deleting it will stop all future recurring expenses.",
     "derived_delete_warning": "This expense is part of a recurrence. Only this expense will be deleted. Future recurring expenses will continue.",
     "view_recurring_page": "View Recurring page",
-    "toggle_options": "Toggle recurring expense options"
+    "toggle_options": "Toggle recurring expense options",
+    "execution_time_loading": "Loading execution time…",
+    "execution_time_unavailable": "Execution time is unavailable.",
+    "next_local_run": "Next scheduled run: {date} ({timeZone}, your time zone).",
+    "instance_schedule": "Schedule: {schedule} ({timeZone})."
   },
   "ui": {
     "added_by": "Added by",

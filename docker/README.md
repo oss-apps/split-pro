@@ -180,9 +180,7 @@ See [docs/CONFIGURATION.md](../docs/CONFIGURATION.md) for the `connect_timeout`/
 
 ## Recurring transactions (pg_cron)
 
-Recurring expenses require PostgreSQL with `pg_cron`. The example compose file already enables it. If you use another database image, you must enable the extension yourself.
-
-See [docs/RECURRING_TRANSACTIONS.md](../docs/RECURRING_TRANSACTIONS.md).
+See [Recurring transactions](../docs/RECURRING_TRANSACTIONS.md) for requirements, configuration and deployment instructions.
 
 ### External / managed PostgreSQL (non-superuser)
 
@@ -193,7 +191,7 @@ SplitPro does not require superuser access at runtime. A regular database role i
 ```sql
 CREATE EXTENSION IF NOT EXISTS pg_cron;
 GRANT USAGE ON SCHEMA cron TO <app_user>;
-GRANT SELECT, REFERENCES ON cron.job TO <app_user>;
+GRANT SELECT, UPDATE, REFERENCES ON cron.job TO <app_user>;
 GRANT SELECT ON cron.job_run_details TO <app_user>;
 ```
 
@@ -205,11 +203,11 @@ cron.database_name = '<your_splitpro_db>'
 cron.timezone = 'UTC'
 ```
 
-Restart PostgreSQL after changing these settings.
+UTC is the default; choose another IANA zone in `cron.timezone` if needed. Restart PostgreSQL after changing these settings.
 
 The migration that sets up recurring expenses uses `CREATE EXTENSION IF NOT EXISTS pg_cron`, which is a no-op when the extension is already installed — no superuser privileges are needed in that case. If the extension is missing and the app user is not a superuser, PostgreSQL will reject the `CREATE EXTENSION` call; ask your DB administrator to install it beforehand using the commands above.
 
-Jobs created by SplitPro run as the app user and are scoped to that user via `pg_cron`'s row-level security, so the app can only manage its own jobs.
+Jobs created by SplitPro run as the app user and are scoped to that user via `pg_cron`'s row-level security, so the app can only manage its own jobs. The `UPDATE` grant on `cron.job` is required for schedule migration and the row locks used by startup reconciliation.
 
 ## Receipt storage
 

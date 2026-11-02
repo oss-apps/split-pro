@@ -226,11 +226,12 @@ model ExpenseNote {
 }
 
 model ExpenseRecurrence {
-  id       Int       @id @default(autoincrement())
-  jobId    BigInt    @unique
-  notified Boolean   @default(true)
-  expense  Expense[]
-  job      job       @relation(fields: [jobId], references: [jobid], onDelete: Cascade)
+  lastOccurrenceDate DateTime? @db.Date
+  id                 Int       @id @default(autoincrement())
+  jobId              BigInt    @unique
+  notified           Boolean   @default(true)
+  expense            Expense[]
+  job                job       @relation(fields: [jobId], references: [jobid], onDelete: Cascade)
 
   @@schema("public")
 }

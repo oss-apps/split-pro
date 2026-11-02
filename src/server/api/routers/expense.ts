@@ -1,3 +1,8 @@
+import { cronToBackend } from '~/lib/cron';
+import {
+  getNextRecurrenceDate,
+  getRecurrenceSchedule,
+} from '../services/recurrenceScheduleService';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { beforeCursor, paginationInput, toPage } from '~/utils/pagination';
@@ -27,6 +32,16 @@ import { DEFAULT_CATEGORY } from '~/lib/category';
 import { getUserMap } from './user';
 
 export const expenseRouter = createTRPCRouter({
+  getRecurrencePreview: protectedProcedure
+    .input(z.object({ cronExpression: z.string().transform(cronToBackend) }))
+    .query(async ({ input }) => {
+      const [setting] = await db.$queryRaw<{ timeZone: string }[]>`
+        SELECT current_setting('cron.timezone') AS "timeZone"
+      `;
+      const timeZone = setting!.timeZone;
+      const schedule = getRecurrenceSchedule(input.cronExpression);
+      return { timeZone, schedule, nextRun: getNextRecurrenceDate(schedule, timeZone) };
+    }),
   getCumulatedBalances: balanceProcedure.query(async ({ ctx }) => {
     const cumulatedBalances = await ctx.db.balanceView.groupBy({
       by: ['currency'],
@@ -524,7 +539,9 @@ export const expenseRouter = createTRPCRouter({
     }),
 
   updateRecurrence: protectedProcedure
-    .input(z.object({ recurrenceId: z.number(), cronExpression: z.string() }))
+    .input(
+      z.object({ recurrenceId: z.number(), cronExpression: z.string().transform(cronToBackend) }),
+    )
     .mutation(async ({ input, ctx }) => {
       const recurrence = await db.expenseRecurrence.findUnique({
         where: { id: input.recurrenceId },
@@ -546,7 +563,7 @@ export const expenseRouter = createTRPCRouter({
       }
 
       // Use cron.alter_job to update the schedule
-      await db.$executeRaw`SELECT cron.alter_job(${recurrence.job.jobid}, schedule := ${input.cronExpression})`;
+      await db.$executeRaw`SELECT cron.alter_job(${recurrence.job.jobid}, schedule := ${getRecurrenceSchedule(input.cronExpression)})`;
     }),
 
   deleteExpense: protectedProcedure

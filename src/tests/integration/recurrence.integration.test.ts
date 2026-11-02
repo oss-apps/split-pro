@@ -126,4 +126,21 @@ describe('recurrence lifecycle', () => {
       timeSetting.restore();
     }
   });
+  it.each(['Pacific/Kiritimati', 'America/Los_Angeles', 'Asia/Kathmandu'])(
+    'keeps the instance calendar when the request time zone is %s',
+    async (timeZone) => {
+      const { owner, input } = await testScenario();
+      const caller = callerFor(owner.id, timeZone);
+      await caller.expense.addOrEditExpense({ ...input, cronExpression: '0 0 L * *' });
+      const recurrence = await db.expenseRecurrence.findFirstOrThrow({ include: { job: true } });
+      expect(recurrence.job.schedule).toBe('0 0 $ * *');
+      const preview = await caller.expense.getRecurrencePreview({ cronExpression: '0 0 L * *' });
+      expect(preview).toMatchObject({ timeZone: 'UTC', schedule: '0 0 $ * *' });
+      expect(preview.nextRun.getUTCHours()).toBe(0);
+      const lastDay = new Date(
+        Date.UTC(preview.nextRun.getUTCFullYear(), preview.nextRun.getUTCMonth() + 1, 0),
+      ).getUTCDate();
+      expect(preview.nextRun.getUTCDate()).toBe(lastDay);
+    },
+  );
 });

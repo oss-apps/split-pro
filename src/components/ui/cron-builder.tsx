@@ -53,6 +53,8 @@ const SCHEDULE_TYPES = (t: TFunction) =>
 type ScheduleType = ReturnType<typeof SCHEDULE_TYPES>[number];
 
 const DAYS_OF_MONTH = Array.from({ length: 31 }, (_, i) => i + 1);
+// Yearly February 29 rules remain available for leap years.
+const MONTH_LENGTHS = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31] as const;
 
 const MONTHS_SHORT = (code: string) =>
   Array.from({ length: 12 }, (_, i) => {
@@ -250,7 +252,11 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
         variant="outline"
         value={String(months[0] ?? 1)}
         onValueChange={(value) => {
-          if (value) setMonths([Number(value)]);
+          if (!value) return;
+          const month = Number(value);
+          const lastDay = MONTH_LENGTHS[month - 1] ?? 31;
+          setMonths([month]);
+          setDaysOfMonth((days) => days.map((day) => ('L' === day ? day : Math.min(day, lastDay))));
         }}
         aria-labelledby={`${fieldId}-months`}
         className="grid grid-cols-4"
@@ -288,6 +294,8 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
     </div>
   );
 
+  const availableDays = 'year' === scheduleType ? (MONTH_LENGTHS[(months[0] ?? 1) - 1] ?? 31) : 31;
+
   const renderDaysOfMonthSelect = () => (
     <div className="flex flex-col gap-2">
       <Label id={`${fieldId}-monthdays`} className="px-1 text-xs">
@@ -303,7 +311,7 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
         aria-labelledby={`${fieldId}-monthdays`}
         className="grid grid-cols-7"
       >
-        {DAYS_OF_MONTH.map((day) => (
+        {DAYS_OF_MONTH.slice(0, availableDays).map((day) => (
           <ToggleGroupItem key={day} value={String(day)} className="min-w-0 px-0 text-xs">
             {day.toString().padStart(2, '0')}
           </ToggleGroupItem>

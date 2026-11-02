@@ -69,4 +69,19 @@ describe('CronBuilder calendar tiles', () => {
     await user.click(screen.getByText('25', { selector: 'button' }));
     expect(onChange).toHaveBeenLastCalledWith('0 0 25 8 *');
   });
+  it('shows only valid February days and clamps a previously selected 31st', async () => {
+    const user = userEvent.setup();
+    const onChange = jest.fn();
+    render(<CronBuilder value="0 0 31 1 *" onChange={onChange} />);
+    await user.click(screen.getByText('Feb', { selector: 'button' }));
+    expect(screen.queryByText('30', { selector: 'button' })).not.toBeInTheDocument();
+    expect(screen.queryByText('31', { selector: 'button' })).not.toBeInTheDocument();
+    expect(screen.getByText('29', { selector: 'button' })).toHaveAttribute('data-state', 'on');
+    expect(onChange).toHaveBeenLastCalledWith('0 0 29 2 *');
+    await user.click(screen.getByText('Last day', { selector: 'button' }));
+    await user.click(screen.getByText('Apr', { selector: 'button' }));
+    expect(screen.getByText('30', { selector: 'button' })).toBeInTheDocument();
+    expect(screen.queryByText('31', { selector: 'button' })).not.toBeInTheDocument();
+    expect(onChange).toHaveBeenLastCalledWith('0 0 L 4 *');
+  });
 });

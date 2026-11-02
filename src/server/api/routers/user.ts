@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server';
-import { type PrismaClient } from '@prisma/client';
+import { type Prisma, type PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 
 import { env } from '~/env';
@@ -28,6 +28,24 @@ import {
   importGroupFromSplitwise,
   importUserBalanceFromSplitWise,
 } from '../services/splitService';
+
+const getVisibleFriendWhere = (userId: number, friendId: number) =>
+  ({
+    id: friendId,
+    OR: [
+      { userBalances: { some: { friendId: userId } } },
+      {
+        associatedGroups: {
+          some: {
+            group: {
+              simplifyDebts: true,
+              groupUsers: { some: { userId } },
+            },
+          },
+        },
+      },
+    ],
+  }) satisfies Prisma.UserWhereUniqueInput;
 
 const throwInviteError = (
   code: 'PRECONDITION_FAILED' | 'TOO_MANY_REQUESTS' | 'INTERNAL_SERVER_ERROR',
@@ -187,22 +205,7 @@ export const userRouter = createTRPCRouter({
     .input(z.object({ friendId: z.number() }))
     .query(async ({ input, ctx }) => {
       const friend = await db.user.findUnique({
-        where: {
-          id: input.friendId,
-          OR: [
-            { userBalances: { some: { friendId: ctx.session.user.id } } },
-            {
-              associatedGroups: {
-                some: {
-                  group: {
-                    simplifyDebts: true,
-                    groupUsers: { some: { userId: ctx.session.user.id } },
-                  },
-                },
-              },
-            },
-          ],
-        },
+        where: getVisibleFriendWhere(ctx.session.user.id, input.friendId),
       });
 
       if (!friend) {
@@ -254,14 +257,7 @@ export const userRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const friend = await db.user.findUnique({
-        where: {
-          id: input.friendId,
-          userBalances: {
-            some: {
-              friendId: ctx.session.user.id,
-            },
-          },
-        },
+        where: getVisibleFriendWhere(ctx.session.user.id, input.friendId),
       });
 
       if (!friend) {

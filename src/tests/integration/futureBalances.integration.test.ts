@@ -175,7 +175,7 @@ describe('opt-in current balances', () => {
     },
   );
 
-  it('allows opening a simplified friend balance without any direct expense', async () => {
+  it('allows opening and configuring a simplified friend without any direct expense', async () => {
     jest.replaceProperty(env, 'EXCLUDE_FUTURE_EXPENSES', true);
     const { owner, member, outsider, group, input } = await testScenario();
     const caller = callerFor(owner.id);
@@ -184,7 +184,14 @@ describe('opt-in current balances', () => {
     await callerFor(member.id).expense.addOrEditExpense(
       expenseInput(member.id, outsider.id, { groupId: group.id }),
     );
+    const defaultSplit = {
+      splitType: 'SHARE' as const,
+      shares: { [owner.id]: '1', [outsider.id]: '2' },
+    };
     expect(await caller.user.getFriend({ friendId: outsider.id })).toBeNull();
+    await expect(
+      caller.user.upsertFriendDefaultSplit({ friendId: outsider.id, defaultSplit }),
+    ).rejects.toMatchObject({ code: 'NOT_FOUND' });
     await caller.group.toggleSimplifyDebts({ groupId: group.id });
     expect(await caller.user.getFriend({ friendId: outsider.id })).toMatchObject({
       id: outsider.id,
@@ -192,6 +199,27 @@ describe('opt-in current balances', () => {
     expect(await caller.user.getBalancesWithFriend({ friendId: outsider.id })).toEqual([
       expect.objectContaining({ friendId: outsider.id, amount: 1000n }),
     ]);
+    expect(
+      await caller.user.upsertFriendDefaultSplit({ friendId: outsider.id, defaultSplit }),
+    ).toEqual(defaultSplit);
+    expect(await caller.user.getFriend({ friendId: outsider.id })).toMatchObject({ defaultSplit });
+    expect(await callerFor(outsider.id).user.getFriend({ friendId: owner.id })).toMatchObject({
+      defaultSplit,
+    });
+  });
+
+  it('preserves default split configuration for directly connected friends', async () => {
+    const { owner, member, input } = await testScenario();
+    const caller = callerFor(owner.id);
+    await caller.expense.addOrEditExpense(input);
+    const defaultSplit = {
+      splitType: 'SHARE' as const,
+      shares: { [owner.id]: '3', [member.id]: '1' },
+    };
+    expect(
+      await caller.user.upsertFriendDefaultSplit({ friendId: member.id, defaultSplit }),
+    ).toEqual(defaultSplit);
+    expect(await caller.user.getFriend({ friendId: member.id })).toMatchObject({ defaultSplit });
   });
 
   it.each([

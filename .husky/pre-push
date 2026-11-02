@@ -1,10 +1,23 @@
+#!/bin/sh
 # Keep the committed OpenAPI spec in sync with the API router: regenerate it
 # and abort the push when the regenerated file would change, so the spec can
-# never go stale. Compare against both the working tree and the index so the
-# check passes only after the file is actually committed.
-pnpm gen:openapi
-if [ -n "$(git status --porcelain -- src/server/api/openapi.generated.json)" ]; then
-  echo "✖ src/server/api/openapi.generated.json is out of date."
-  echo "  Run: pnpm gen:openapi && git add src/server/api/openapi.generated.json && git commit"
-  exit 1
+# never go stale. Only runs when API source files changed, to avoid slowing
+# down pushes that don't touch the API. Compare against both the working tree
+# and the index so the check passes only after the file is actually committed.
+
+# Determine which commits are being pushed: compare local HEAD against the
+# upstream branch if set, otherwise just the previous commit.
+if git rev-parse --verify @{upstream} >/dev/null 2>&1; then
+  RANGE="@{upstream}...HEAD"
+else
+  RANGE="HEAD~1..HEAD"
+fi
+
+if git diff --name-only "$RANGE" -- src/server/api/ | grep -q .; then
+  pnpm gen:openapi
+  if [ -n "$(git status --porcelain -- src/server/api/openapi.generated.json)" ]; then
+    echo "✖ src/server/api/openapi.generated.json is out of date."
+    echo "  Run: pnpm gen:openapi && git add src/server/api/openapi.generated.json && git commit"
+    exit 1
+  fi
 fi

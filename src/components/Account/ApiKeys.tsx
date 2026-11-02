@@ -139,6 +139,7 @@ export const ApiKeys: React.FC<React.PropsWithChildren> = ({ children }) => {
               min={minExpiry}
               onChange={(e) => setExpiresAt(e.target.value)}
             />
+            <p className="mt-1 text-xs text-gray-500">{t('account.api_keys.expires_hint')}</p>
           </div>
           <Button onClick={onCreate} loading={createMutation.isPending}>
             {t('account.api_keys.create')}

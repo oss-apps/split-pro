@@ -15,12 +15,17 @@ const isSuperjsonEnvelope = (data: object): data is SuperJSONResult => {
 
 /**
  * Deeply convert a procedure result to plain JSON that matches the generated
- * OpenAPI schemas: `BigInt` → number (monetary values are cents and stay well
- * below `Number.MAX_SAFE_INTEGER`), `Date` → ISO 8601 string.
+ * OpenAPI schemas: `Date` → ISO 8601 string. `BigInt` values that fit in a
+ * safe number become numbers; larger values are returned as strings so the
+ * output never silently loses precision (matching input, which accepts
+ * numeric strings for amounts beyond `Number.MAX_SAFE_INTEGER`).
  */
 const toPlainJson = (value: unknown): unknown => {
   if ('bigint' === typeof value) {
-    return Number(value);
+    if (value <= BigInt(Number.MAX_SAFE_INTEGER) && value >= BigInt(Number.MIN_SAFE_INTEGER)) {
+      return Number(value);
+    }
+    return value.toString();
   }
   if (value instanceof Date) {
     return value.toISOString();

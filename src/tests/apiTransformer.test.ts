@@ -57,6 +57,15 @@ describe('apiTransformer', () => {
       expect(() => JSON.stringify(serialized)).not.toThrow();
       expect(serialized).toEqual({ total: 9999999999 });
     });
+
+    it('returns BigInt beyond MAX_SAFE_INTEGER as a string to preserve precision', () => {
+      const unsafe = 9007199254740993n; // Number.MAX_SAFE_INTEGER + 2
+      expect(apiTransformer.output.serialize({ total: unsafe })).toEqual({
+        total: '9007199254740993',
+      });
+      const serialized = apiTransformer.output.serialize({ total: unsafe }) as { total: unknown };
+      expect(typeof serialized.total).toBe('string');
+    });
   });
 });
 
@@ -77,6 +86,15 @@ describe('coerceQueryParam', () => {
     expect(coerceQueryParam('1e3')).toBe('1e3');
     expect(coerceQueryParam('true-ish')).toBe('true-ish');
     expect(coerceQueryParam('')).toBe('');
+  });
+
+  it('turns numeric-looking and boolean-looking query strings into their JSON types, which can fail zod string schemas', () => {
+    // ?name=123 becomes name: 123 (number), which would fail a z.string() schema.
+    expect(coerceQueryParam('123')).toBe(123);
+    expect(typeof coerceQueryParam('123')).toBe('number');
+    // ?name=true becomes name: true (boolean), which would fail a z.string() schema.
+    expect(coerceQueryParam('true')).toBe(true);
+    expect(typeof coerceQueryParam('true')).toBe('boolean');
   });
 });
 

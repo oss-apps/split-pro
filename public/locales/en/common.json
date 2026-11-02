@@ -38,6 +38,7 @@
       "name_label": "New key name",
       "name_placeholder": "e.g. Actual Budget",
       "expires_label": "Expires (optional)",
+      "expires_hint": "Expires at end of day in your local timezone.",
       "create": "Create",
       "last_used": "used {date}",
       "never_used": "never used",

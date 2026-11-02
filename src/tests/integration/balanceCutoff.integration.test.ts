@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
-import { withBalanceCutoff } from '~/server/api/services/balanceQuery';
+import { withBalanceCutoff, withBalanceRange } from '~/server/api/services/balanceQuery';
 import { createDatabaseAdapter } from '~/server/databaseAdapter';
 
 import { createDatabaseExpense } from '../helpers/databaseFactories';
@@ -11,6 +11,33 @@ import { testScenario } from './factories';
 const cutoff = new Date('2026-03-29T22:00:00.000Z');
 
 describe('expense-date-filtered balance view', () => {
+  it.each([
+    { name: 'omitted bounds', range: {}, amount: 4000n },
+    { name: 'null bounds', range: { from: null, before: null }, amount: 4000n },
+    { name: 'start only', range: { from: new Date(cutoff.getTime() - 1000) }, amount: 3000n },
+    { name: 'end only', range: { before: cutoff }, amount: 3000n },
+    {
+      name: 'both bounds',
+      range: { from: new Date(cutoff.getTime() - 1000), before: cutoff },
+      amount: 2000n,
+    },
+    { name: 'equal bounds', range: { from: cutoff, before: cutoff }, amount: 0n },
+  ])('supports $name with inclusive start and exclusive end', async ({ range, amount }) => {
+    const { owner, input } = await testScenario();
+    await Promise.all(
+      [-1001, -1000, -1, 0].map((offset) =>
+        createDatabaseExpense(db, {
+          ...input,
+          expenseDate: new Date(cutoff.getTime() + offset),
+        }),
+      ),
+    );
+    const balances = await withBalanceRange(db, range, (tx) =>
+      tx.balanceView.findMany({ where: { userId: owner.id } }),
+    );
+    expect(balances.reduce((total, balance) => total + balance.amount, 0n)).toBe(amount);
+  });
+
   it('filters before aggregation and preserves Prisma filters, includes and groupBy', async () => {
     const { owner, member, group, input } = await testScenario();
     await createDatabaseExpense(db, {
@@ -65,10 +92,14 @@ describe('expense-date-filtered balance view', () => {
     });
 
     expect(
-      await withBalanceCutoff(db, cutoff, async (tx) => {
-        await tx.$queryRaw`SELECT set_config('TimeZone', 'Pacific/Auckland', true)`;
-        return tx.balanceView.findFirst({ where: { userId: owner.id } });
-      }),
+      await withBalanceRange(
+        db,
+        { from: new Date(cutoff.getTime() - 2), before: cutoff },
+        async (tx) => {
+          await tx.$queryRaw`SELECT set_config('TimeZone', 'Pacific/Auckland', true)`;
+          return tx.balanceView.findFirst({ where: { userId: owner.id } });
+        },
+      ),
     ).toMatchObject({ amount: 1000n });
 
     await db.expense.update({ where: { id: expense.id }, data: { deletedAt: new Date() } });
@@ -95,11 +126,27 @@ describe('expense-date-filtered balance view', () => {
     ).toHaveLength(2);
   });
 
-  it('isolates concurrent cutoffs on different pooled connections', async () => {
+  it('does not retain the lower bound after commit or rollback', async () => {
+    const { input } = await testScenario();
+    await createDatabaseExpense(db, { ...input, expenseDate: cutoff });
+    const range = { from: new Date(cutoff.getTime() + 1) };
+    expect(await withBalanceRange(db, range, (tx) => tx.balanceView.findMany())).toEqual([]);
+    expect(await db.balanceView.findMany()).toHaveLength(2);
+
+    await expect(
+      withBalanceRange(db, range, async () => {
+        throw new Error('Rollback');
+      }),
+    ).rejects.toThrow('Rollback');
+    expect(await db.balanceView.findMany()).toHaveLength(2);
+    expect(await withBalanceCutoff(db, null, (tx) => tx.balanceView.findMany())).toHaveLength(2);
+  });
+
+  it('isolates concurrent ranges on different pooled connections', async () => {
     const { input } = await testScenario();
     await createDatabaseExpense(db, { ...input, expenseDate: cutoff });
     const url = new URL(getTestDatabaseUrl());
-    url.searchParams.set('connection_limit', '3');
+    url.searchParams.set('connection_limit', '4');
     const client = new PrismaClient({ adapter: createDatabaseAdapter(url.toString()) });
     let entered = 0;
     let release = () => {};
@@ -109,10 +156,15 @@ describe('expense-date-filtered balance view', () => {
 
     try {
       const counts = await Promise.all(
-        [cutoff, new Date(cutoff.getTime() + 1), null].map((date) =>
-          withBalanceCutoff(client, date, async (tx) => {
+        [
+          { before: cutoff },
+          { from: cutoff, before: new Date(cutoff.getTime() + 1) },
+          { from: new Date(cutoff.getTime() + 1) },
+          { from: null, before: null },
+        ].map((range) =>
+          withBalanceRange(client, range, async (tx) => {
             entered += 1;
-            if (3 === entered) {
+            if (4 === entered) {
               release();
             }
             await bothEntered;
@@ -120,7 +172,7 @@ describe('expense-date-filtered balance view', () => {
           }),
         ),
       );
-      expect(counts).toEqual([0, 2, 2]);
+      expect(counts).toEqual([0, 2, 0, 2]);
     } finally {
       await client.$disconnect();
     }

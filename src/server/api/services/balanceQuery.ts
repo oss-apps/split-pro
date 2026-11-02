@@ -29,23 +29,39 @@ export const getUserBalances = async (db: Prisma.TransactionClient, userId: numb
   ];
 };
 
+export interface BalanceRange {
+  from?: Date | null;
+  before?: Date | null;
+}
+
 /**
- * Run balance queries with an exclusive expense-date cutoff, or null for total balances.
+ * Filter by inclusive `from` and exclusive `before`; missing or null bounds are unbounded.
  * Use the supplied transaction client for every query, including relation reads.
  */
+export const withBalanceRange = <T>(
+  db: PrismaClient,
+  { from, before }: BalanceRange,
+  query: (tx: Prisma.TransactionClient) => Promise<T>,
+): Promise<T> => {
+  // PostgreSQL settings cannot store null; an empty value explicitly disables filtering.
+  const fromIso = from?.toISOString() ?? '';
+  const cutoffIso = before?.toISOString() ?? '';
+
+  return db.$transaction(async (tx) => {
+    await tx.$queryRaw`
+      SELECT set_config('app.balance_from', ${fromIso}, true) AS balance_from,
+             set_config('app.balance_cutoff', ${cutoffIso}, true) AS balance_cutoff
+    `;
+    return query(tx);
+  });
+};
+
+/** Run balance queries before an exclusive cutoff, or use null for total balances. */
 export const withBalanceCutoff = <T>(
   db: PrismaClient,
   cutoff: Date | null,
   query: (tx: Prisma.TransactionClient) => Promise<T>,
-): Promise<T> => {
-  // PostgreSQL settings cannot store null; an empty value explicitly disables filtering.
-  const cutoffIso = cutoff?.toISOString() ?? '';
-
-  return db.$transaction(async (tx) => {
-    await tx.$queryRaw`SELECT set_config('app.balance_cutoff', ${cutoffIso}, true)`;
-    return query(tx);
-  });
-};
+): Promise<T> => withBalanceRange(db, { before: cutoff }, query);
 
 /** Calendar midnight in the browser's time zone, including daylight-saving transitions. */
 export const withCurrentBalances = <T>(

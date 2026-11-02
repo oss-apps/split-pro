@@ -1,4 +1,4 @@
--- Optional transaction-local expense-date cutoff; unset or null keeps total balances.
+-- Optional transaction-local expense-date bounds; unset or null keeps total balances.
 CREATE OR REPLACE VIEW "public"."BalanceView" AS
 WITH "BaseBalance" AS (
   SELECT
@@ -31,8 +31,15 @@ WITH "BaseBalance" AS (
     (
       (ep."userId" <> e."paidBy")
       AND (e."deletedAt" IS NULL)
-      -- No setting (or an explicit null cutoff encoded as '') preserves total balances.
+      -- Missing bounds (or explicit nulls encoded as '') preserve total balances.
       -- Expense dates are stored as UTC timestamps without time zone.
+      AND COALESCE(
+        e."expenseDate" >= (
+          NULLIF(current_setting('app.balance_from', true), '')::timestamptz
+          AT TIME ZONE 'UTC'
+        ),
+        true
+      )
       AND COALESCE(
         e."expenseDate" < (
           NULLIF(current_setting('app.balance_cutoff', true), '')::timestamptz

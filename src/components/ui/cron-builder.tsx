@@ -152,14 +152,14 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
           values: {
             minutes: parseNumbers(min),
             hours: parseNumbers(hour),
-            daysOfMonth: dom === 'L' ? ['L'] : parseNumbers(dom),
+            daysOfMonth: 'L' === dom ? ['L'] : parseNumbers(dom),
           },
         };
       } else if (dom !== '*' && month !== '*' && dow === '*') {
         return {
           type: 'year',
           values: {
-            daysOfMonth: dom === 'L' ? ['L'] : parseNumbers(dom),
+            daysOfMonth: 'L' === dom ? ['L'] : parseNumbers(dom),
             months: parseNumbers(month),
           },
         };
@@ -182,7 +182,9 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
   const [daysOfWeek, setDaysOfWeek] = useState<Array<number | 'L'>>(
     initialParsed.values.daysOfWeek || [0],
   );
-  const [custom, setCustom] = useState<string>(initialParsed.values.custom || defaultSchedule);
+  const [custom, setCustom] = useState<string>(
+    (initialParsed.values.custom || defaultSchedule).trim().split(/\s+/).slice(-3).join(' '),
+  );
   const [cronExpression, setCronExpression] = useState(defaultSchedule);
 
   const { cronParser } = useIntlCronParser();
@@ -220,9 +222,11 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
       case 'year':
         expression = `${minutesCSV} ${hoursCSV} ${domCSV} ${monthsCSV} *`;
         break;
-      case 'custom':
-        expression = custom ? `0 0 ${custom.trim().split(/\s+/).slice(-3).join(' ')}` : '';
+      case 'custom': {
+        const fields = custom.trim().split(/\s+/);
+        expression = 3 === fields.length ? `0 0 ${fields.join(' ')}` : '';
         break;
+      }
       default:
         expression = '';
     }
@@ -343,7 +347,7 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
                   type="text"
                   id="custom-schedule"
                   name="schedule"
-                  value={custom.trim().split(/\s+/).slice(-3).join(' ')}
+                  value={custom}
                   onChange={(event) => {
                     setCustom(event.target.value);
                   }}

@@ -72,37 +72,15 @@ At least one provider must be configured. SplitPro does not support username/pas
 
 ### Recurring expenses (pg_cron)
 
-| Variable               | Default | Description                                                                                                         |
-| ---------------------- | ------- | ------------------------------------------------------------------------------------------------------------------- |
-| `RECURRENCE_TIME`      | `00:00` | Execution time for all expense recurrences in database `cron.timezone`. Requires 24-hour `HH:mm` (`00:00`–`23:59`). |
-| `RECURRENCE_TIME_ZONE` | `UTC`   | Docker Compose setting for PostgreSQL's `cron.timezone`. Use an IANA zone such as `Europe/Warsaw`.                  |
-
-The UI shows the next scheduled execution in the browser's local date/time and zone,
-with the instance schedule underneath. Calendar fields remain in the instance zone;
-the browser display accounts for date changes and daylight saving at that occurrence.
-
-On app startup, instrumentation reconciles existing expense job times after data
-migrations. New and edited rules use the same execution time. Recreate the app after
-changing `RECURRENCE_TIME`; recreate PostgreSQL and the app after changing the zone.
-Use `docker compose up -d --force-recreate splitpro` or
-`docker compose up -d --force-recreate postgres splitpro` from your deployment directory.
-Use identical settings across application replicas sharing a database.
-
-For external PostgreSQL, configure `cron.timezone` on the database itself and restart
-it. `RECURRENCE_TIME_ZONE` on the app does not configure an external database. UTC in
-the prerequisite example is the default, and can be replaced with your chosen zone.
-
-See [Recurring transactions](RECURRING_TRANSACTIONS.md) for calendar semantics,
-examples, browser-local previews and migration behavior.
+See [Recurring transactions](RECURRING_TRANSACTIONS.md) for configuration and deployment instructions.
 
 ### Cache cleanup (pg_cron)
 
 - `CLEAR_CACHE_CRON_RULE`: Cron rule for cache cleanup jobs in database `cron.timezone` (UTC by default).
 - `CACHE_RETENTION_INTERVAL`: Postgres interval string that defines how long cached data can remain unused.
 
-Changing `RECURRENCE_TIME` does not change cache cleanup jobs. Changing
-`cron.timezone` affects every pg_cron job, so review cache cleanup schedules when
-changing it. Standard cron ranges, lists and steps are supported; see the
+For time-zone behavior, see [Recurring transactions](RECURRING_TRANSACTIONS.md).
+Standard cron ranges, lists and steps are supported; see the
 [pg_cron documentation](https://github.com/citusdata/pg_cron#cron-syntax).
 
 ### SMTP (email provider)

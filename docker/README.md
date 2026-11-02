@@ -180,33 +180,7 @@ See [docs/CONFIGURATION.md](../docs/CONFIGURATION.md) for the `connect_timeout`/
 
 ## Recurring transactions (pg_cron)
 
-Recurring expenses require PostgreSQL with `pg_cron`. The example compose file already enables it. If you use another database image, you must enable the extension yourself.
-
-Production Compose supports these optional `.env` settings:
-
-```dotenv
-RECURRENCE_TIME="06:35"
-RECURRENCE_TIME_ZONE="Europe/Warsaw"
-```
-
-`RECURRENCE_TIME` defaults to `00:00` and is passed to the app. The PostgreSQL service
-uses `RECURRENCE_TIME_ZONE` for `cron.timezone`, defaulting to UTC. Users choose calendar
-days and see the next scheduled run converted to their browser's time zone, including
-any date or daylight-saving offset change. The instance schedule is shown underneath.
-
-Apply a time change with `docker compose up -d --force-recreate splitpro`. For a zone
-change, use `docker compose up -d --force-recreate postgres splitpro`. Run these from
-the directory containing the production Compose file and `.env`. On startup, the app
-updates existing expense jobs to the configured execution time. A plain container
-restart does not apply changed environment variables. Use the same setting for every
-app replica sharing a database.
-
-Changing the zone also affects cache cleanup jobs; changing `RECURRENCE_TIME` only
-affects expense recurrences. For an external database, configure `cron.timezone` on
-PostgreSQL itself; `RECURRENCE_TIME_ZONE` only configures the bundled Compose service.
-
-See [docs/RECURRING_TRANSACTIONS.md](../docs/RECURRING_TRANSACTIONS.md) for examples,
-calendar behavior, startup reconciliation and upgrade guidance.
+See [Recurring transactions](../docs/RECURRING_TRANSACTIONS.md) for requirements, configuration and deployment instructions.
 
 ### External / managed PostgreSQL (non-superuser)
 

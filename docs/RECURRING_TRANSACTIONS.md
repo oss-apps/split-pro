@@ -85,11 +85,14 @@ The PostgreSQL service receives the zone through `-c cron.timezone=...`; the app
 receives `RECURRENCE_TIME` through its environment. Both have defaults, so existing
 `.env` files continue to use midnight UTC.
 
-After changing only the execution time, recreate the app container:
+After changing only the execution time, recreate the app container without its dependencies:
 
 ```bash
-docker compose up -d --force-recreate splitpro
+docker compose up -d --no-deps --force-recreate splitpro
 ```
+
+`--no-deps` keeps PostgreSQL running during a time-only update. PostgreSQL also loads
+`.env`, so otherwise its changed environment can cause an unnecessary recreation.
 
 After changing the time zone, recreate PostgreSQL and the app so the database uses
 the new zone and the app reconciles schedules against it:
@@ -152,9 +155,6 @@ intent. Rules already shifted incorrectly cannot be repaired automatically. Afte
 upgrading, review existing rules, especially the first/last day of a month and
 rules near year boundaries. Correct those schedules in the editor; historical
 expenses are not automatically moved or deleted.
-
-For implementation details and remaining timestamp limitations, see the
-[date-only recurrence design](date-only-recurrence.md).
 
 ## Checking pg_cron
 

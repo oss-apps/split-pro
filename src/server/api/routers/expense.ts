@@ -2,8 +2,13 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { beforeCursor, paginationInput, toPage } from '~/utils/pagination';
 
-import { simplifyDebts } from '~/lib/simplify';
-import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
+import { getUserBalances } from '~/server/api/services/balanceQuery';
+import {
+  balanceProcedure,
+  createTRPCRouter,
+  groupProcedure,
+  protectedProcedure,
+} from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { BigMath, currencyConversion } from '~/utils/numbers';
 
@@ -22,8 +27,8 @@ import { DEFAULT_CATEGORY } from '~/lib/category';
 import { getUserMap } from './user';
 
 export const expenseRouter = createTRPCRouter({
-  getCumulatedBalances: protectedProcedure.query(async ({ ctx }) => {
-    const cumulatedBalances = await db.balanceView.groupBy({
+  getCumulatedBalances: balanceProcedure.query(async ({ ctx }) => {
+    const cumulatedBalances = await ctx.db.balanceView.groupBy({
       by: ['currency'],
       _sum: { amount: true },
       where: { userId: ctx.session.user.id, amount: { not: 0 } },
@@ -46,44 +51,14 @@ export const expenseRouter = createTRPCRouter({
     return { youOwe, youGet };
   }),
 
-  getBalances: protectedProcedure.query(async ({ ctx }) => {
-    const rawBalances = await db.balanceView.findMany({
-      where: {
-        userId: ctx.session.user.id,
-        friendId: { notIn: ctx.session.user.hiddenFriendIds },
-      },
-      include: {
-        group: {
-          select: {
-            simplifyDebts: true,
-          },
-        },
-      },
-    });
-
-    const processedBalances = await Promise.all(
-      rawBalances.map(async ({ friendId, currency, amount, groupId, group }) => {
-        if (!group?.simplifyDebts || null === groupId) {
-          return { friendId, currency, amount };
-        }
-
-        const allGroupBalances = await db.balanceView.findMany({
-          where: { groupId, currency },
-        });
-
-        const simplified = simplifyDebts(allGroupBalances);
-        const simplifiedBalance = simplified.find(
-          (b) =>
-            b.userId === ctx.session.user.id && b.friendId === friendId && b.currency === currency,
-        );
-
-        return { friendId, currency, amount: simplifiedBalance?.amount ?? 0n };
-      }),
+  getBalances: balanceProcedure.query(async ({ ctx }) => {
+    const processedBalances = (await getUserBalances(ctx.db, ctx.session.user.id)).filter(
+      (balance) => !ctx.session.user.hiddenFriendIds.includes(balance.friendId),
     );
 
     // Group by friendId and fetch user details
     const friendIds = [...new Set([...processedBalances].map((b) => b.friendId))];
-    const userMap = await getUserMap(friendIds);
+    const userMap = await getUserMap(friendIds, ctx.db);
 
     // Aggregate by (friendId, currency) since same pair can appear in multiple groups
     const aggregated = processedBalances

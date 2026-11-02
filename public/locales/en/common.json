@@ -539,6 +539,7 @@
     "added_by": "{actor, select, you {Added by you on {date}} other {Added by {user} on {date}}}"
   },
   "expense_list": {
+    "upcoming_expenses": "Upcoming expenses",
     "future_expense": "Future expense — not included in balances yet",
     "user_paid": "{actor, select, you {You paid {amount}} other {{user} paid {amount}}}",
     "user_received": "{actor, select, you {You received {amount}} other {{user} received {amount}}}",

@@ -1,5 +1,6 @@
 import { SplitType } from '@prisma/client';
 import { type inferRouterOutputs } from '@trpc/server';
+import { ArrowUp } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
@@ -52,6 +53,9 @@ export const ExpenseList: React.FC<{
         const isSettlement = e.splitType === SplitType.SETTLEMENT;
         const isCurrencyConversion = e.splitType === SplitType.CURRENCY_CONVERSION;
         const isFuture = null !== cutoff && e.expenseDate.getTime() >= cutoff;
+        const nextExpense = expenses[index + 1];
+        const isLastUpcoming =
+          isFuture && (!nextExpense || nextExpense.expenseDate.getTime() < cutoff);
 
         return (
           <React.Fragment key={e.id}>
@@ -80,6 +84,12 @@ export const ExpenseList: React.FC<{
               {isCurrencyConversion && <CurrencyConversion e={e} userId={userId} />}
               {!isSettlement && !isCurrencyConversion && <Expense e={e} userId={userId} />}
             </Link>
+            {isLastUpcoming && (
+              <p className="text-muted-foreground flex items-center gap-1 text-xs">
+                <ArrowUp className="size-3" aria-hidden="true" />
+                {t('expense_list.upcoming_expenses')}
+              </p>
+            )}
           </React.Fragment>
         );
       })}

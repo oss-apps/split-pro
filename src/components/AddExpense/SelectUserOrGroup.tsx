@@ -147,26 +147,29 @@ export const SelectUserOrGroup: React.FC<{
   }
 
   return (
-    <div className="mt-1">
-      <InvitationOption
-        enabled={enableSendingInvites}
-        checked={sendInvite}
-        onCheckedChange={setSendInvite}
-        disabled={adding}
-      />
-      <Button
-        className="mt-4"
-        variant="outline"
-        disabled={!isEmail.success || adding}
-        onClick={() => void onAddEmailClick()}
-      >
-        <UserPlusIcon className="mr-2 size-4" />
-        {adding
-          ? t('ui.invitation.adding')
-          : t('expense_details.add_expense_details.select_user_or_group.add_to_split_pro')}
-      </Button>
-      <p className="text-muted-foreground mt-2 text-sm">{t('ui.invitation.draft_help')}</p>
-      <div className="mt-2">
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col items-start gap-3">
+        <InvitationOption
+          enabled={enableSendingInvites}
+          checked={sendInvite}
+          onCheckedChange={setSendInvite}
+          disabled={adding}
+        />
+        <Button
+          variant="outline"
+          disabled={!isEmail.success || adding}
+          onClick={() => void onAddEmailClick()}
+        >
+          <UserPlusIcon className="mr-2 size-4" />
+          {adding
+            ? t('ui.invitation.adding')
+            : t('expense_details.add_expense_details.select_user_or_group.add_to_split_pro')}
+        </Button>
+        <p className="text-muted-foreground text-sm leading-relaxed">
+          {t('ui.invitation.draft_help')}
+        </p>
+      </div>
+      <div>
         {filteredFriends?.length ? (
           <>
             <div className="font-normal text-gray-500">{t('actors.friends')}</div>

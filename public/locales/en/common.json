@@ -519,9 +519,9 @@
       "send_email": "Send an invitation email",
       "adding": "Adding…",
       "email_help": "For the email address you enter, we’ll send a link to SplitPro only if it is not verified. This does not sign them in.",
-      "no_email_help": "No invitation email will be sent. They can sign in later using this email address.",
+      "no_email_help": "No invitation email will be sent. Users who have not signed up yet, can sign in later using this email address.",
       "disabled_help": "Invitation emails are disabled on this server. You can still add someone by email.",
-      "draft_help": "Adding a participant does not save the expense. Save the expense when you are done.",
+      "draft_help": "Adding a participant does not save the expense. Save the expense as well when editing.",
       "group_partial_success": "Added to the group, but the invitation email could not be sent.",
       "expense_partial_success": "Added to the draft expense, but the invitation email could not be sent."
     }

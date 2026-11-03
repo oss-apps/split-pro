@@ -17,7 +17,7 @@ export const InvitationOption = ({
   const { t } = useTranslation();
 
   return (
-    <div className="mt-4 flex flex-col gap-2">
+    <div className="flex flex-col gap-2">
       {enabled ? (
         <Label className="flex items-center gap-2">
           <Checkbox
@@ -28,7 +28,7 @@ export const InvitationOption = ({
           {t('ui.invitation.send_email')}
         </Label>
       ) : null}
-      <p className="text-muted-foreground text-sm">
+      <p className="text-muted-foreground text-sm leading-relaxed">
         {t(
           enabled
             ? checked

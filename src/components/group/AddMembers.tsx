@@ -154,20 +154,22 @@ const AddMembers: React.FC<{
         }
       }}
     >
-      <Input
-        className="mt-8 w-full text-lg"
-        placeholder={t('group_details.no_members.add_members_details.placeholder')}
-        value={inputValue}
-        disabled={saving}
-        onChange={(e) => setInputValue(e.target.value)}
-      />
-      <InvitationOption
-        enabled={enableSendingInvites}
-        checked={sendInvite}
-        onCheckedChange={setSendInvite}
-        disabled={saving}
-      />
-      <div className="mt-4 flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
+        <Input
+          className="w-full text-lg"
+          placeholder={t('group_details.no_members.add_members_details.placeholder')}
+          value={inputValue}
+          disabled={saving}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+        <InvitationOption
+          enabled={enableSendingInvites}
+          checked={sendInvite}
+          onCheckedChange={setSendInvite}
+          disabled={saving}
+        />
+      </div>
+      <div className="mt-6 flex flex-col gap-4">
         {emptyReason ? (
           <p className="text-center text-sm text-gray-400">
             {t(`ui.group_people_list_empty.${emptyReason}`)}

@@ -49,18 +49,26 @@ export const SelectUserOrGroup: React.FC<{
 
   const isEmail = z.string().email().safeParse(nameOrEmail);
 
-  const filteredGroups = groupsQuery.data?.filter((g) =>
-    g.group.name.toLowerCase().includes(nameOrEmail.toLowerCase()),
-  );
+  const searchValue = nameOrEmail.trim().toLowerCase();
+  const canSelectGroups = 1 === participants.length;
+  const contactsFailed =
+    (friendsQuery.isError && undefined === friendsQuery.data) ||
+    (canSelectGroups && groupsQuery.isError && undefined === groupsQuery.data);
+  const filteredGroups = canSelectGroups
+    ? groupsQuery.data?.filter((g) => g.group.name.toLowerCase().includes(searchValue))
+    : [];
   const filteredFriends = friendsQuery.data?.filter((f) =>
-    displayName(f).toLowerCase().includes(nameOrEmail.toLowerCase()),
+    displayName(f).toLowerCase().includes(searchValue),
   );
 
   /* Both friends and groups populate this list, so either one counts as having contacts. */
   const emptyReason = peopleListEmptyReason({
-    isLoading: friendsQuery.isPending || groupsQuery.isPending,
-    hasAnyContacts: 0 < (friendsQuery.data?.length ?? 0) || 0 < (groupsQuery.data?.length ?? 0),
-    isFiltering: '' !== nameOrEmail.trim(),
+    isLoading:
+      contactsFailed || friendsQuery.isPending || (canSelectGroups && groupsQuery.isPending),
+    hasAnyContacts:
+      0 < (friendsQuery.data?.length ?? 0) ||
+      (canSelectGroups && 0 < (groupsQuery.data?.length ?? 0)),
+    isFiltering: '' !== searchValue,
   });
 
   const onAddEmailClick = async () => {
@@ -170,6 +178,25 @@ export const SelectUserOrGroup: React.FC<{
         </p>
       </div>
       <div>
+        {contactsFailed ? (
+          <div role="alert" className="flex flex-col items-start gap-2">
+            <p>{t('ui.people_list_load_error')}</p>
+            <Button
+              variant="outline"
+              disabled={friendsQuery.isFetching || (canSelectGroups && groupsQuery.isFetching)}
+              onClick={() => {
+                if (friendsQuery.isError) {
+                  void friendsQuery.refetch();
+                }
+                if (canSelectGroups && groupsQuery.isError) {
+                  void groupsQuery.refetch();
+                }
+              }}
+            >
+              {t('actions.retry')}
+            </Button>
+          </div>
+        ) : null}
         {filteredFriends?.length ? (
           <>
             <div className="font-normal text-gray-500">{t('actors.friends')}</div>
@@ -216,7 +243,7 @@ export const SelectUserOrGroup: React.FC<{
           </>
         ) : null}
 
-        {0 === filteredFriends?.length && 0 === filteredGroups?.length ? (
+        {!contactsFailed && 0 === filteredFriends?.length && 0 === filteredGroups?.length ? (
           <div className="mt-[30%] flex flex-col items-center justify-center gap-8 transition-discrete starting:opacity-0">
             <Image
               alt={t('expense_details.add_expense_details.select_user_or_group.empty_image_alt')}

@@ -107,7 +107,8 @@
     "submit": "Submit",
     "reconnect": "Reconnect",
     "connect": "Connect",
-    "remind_later": "Remind me later"
+    "remind_later": "Remind me later",
+    "retry": "Try again"
   },
   "actors": {
     "deleted_user": "Deleted user",
@@ -499,6 +500,7 @@
       "no_matches": "No available contacts match your search",
       "all_added": "All your saved contacts are already in this group"
     },
+    "people_list_load_error": "Could not load contacts. Please try again.",
     "people_list_empty": {
       "no_contacts": "No saved contacts or groups to show",
       "no_matches": "No available contacts or groups match your search",

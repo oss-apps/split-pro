@@ -32,6 +32,9 @@ const AddMembers: React.FC<{
   const [sendInvite, setSendInvite] = useState(false);
   const [saving, setSaving] = useState(false);
   const submitting = useRef(false);
+  const resolvedEmail = useRef<{ email: string; userId: number; inviteFailed: boolean } | null>(
+    null,
+  );
 
   const friendsQuery = api.user.getFriends.useQuery();
   const addMembersMutation = api.group.addMembers.useMutation();
@@ -48,20 +51,22 @@ const AddMembers: React.FC<{
     return acc;
   }, {});
 
+  const searchValue = inputValue.trim().toLowerCase();
+  const contactsFailed = friendsQuery.isError && undefined === friendsQuery.data;
+
   const filteredUsers = friendsQuery.data?.filter(
-    (friend) =>
-      !groupUserMap[friend.id] &&
-      displayName(friend).toLowerCase().includes(inputValue.toLowerCase()),
+    (friend) => !groupUserMap[friend.id] && displayName(friend).toLowerCase().includes(searchValue),
   );
 
   /* Says why the list is blank instead of rendering nothing, which reads as a broken dialog. */
-  const emptyReason = filteredUsers?.length
-    ? null
-    : peopleListEmptyReason({
-        isLoading: friendsQuery.isPending,
-        hasAnyContacts: 0 < (friendsQuery.data?.length ?? 0),
-        isFiltering: '' !== inputValue.trim(),
-      });
+  const emptyReason =
+    contactsFailed || filteredUsers?.length
+      ? null
+      : peopleListEmptyReason({
+          isLoading: friendsQuery.isPending,
+          hasAnyContacts: 0 < (friendsQuery.data?.length ?? 0),
+          isFiltering: '' !== searchValue,
+        });
 
   function onUserSelect(userId: number) {
     setUserIds((prev) => ({ ...prev, [userId]: !prev[userId] }));
@@ -78,6 +83,7 @@ const AddMembers: React.FC<{
     }
     setOpen(false);
     setInputValue('');
+    resolvedEmail.current = null;
     setUserIds({});
     setSendInvite(false);
   };
@@ -93,22 +99,26 @@ const AddMembers: React.FC<{
       const users = [...selectedIds];
       if (isEmail.success) {
         const email = isEmail.data.toLowerCase();
-        let user = null;
-        try {
-          user = await addFriendMutation.mutateAsync({
-            email,
-            sendInviteEmail: enableSendingInvites && sendInvite,
-          });
-        } catch (error) {
-          const code = getInviteAppErrorCode(error);
-          if (!isInviteEmailSendFailed(code)) {
-            toast.error(t(getInviteErrorToastKey(code)));
-            return;
+        if (resolvedEmail.current?.email !== email) {
+          let user = null;
+          try {
+            user = await addFriendMutation.mutateAsync({
+              email,
+              sendInviteEmail: enableSendingInvites && sendInvite,
+            });
+          } catch (error) {
+            const code = getInviteAppErrorCode(error);
+            if (!isInviteEmailSendFailed(code)) {
+              toast.error(t(getInviteErrorToastKey(code)));
+              return;
+            }
+            user = await addFriendMutation.mutateAsync({ email, sendInviteEmail: false });
+            inviteFailed = true;
           }
-          user = await addFriendMutation.mutateAsync({ email, sendInviteEmail: false });
-          inviteFailed = true;
+          resolvedEmail.current = { email, userId: user.id, inviteFailed };
         }
-        users.push(user.id);
+        inviteFailed = resolvedEmail.current.inviteFailed;
+        users.push(resolvedEmail.current.userId);
       }
       await addMembersMutation.mutateAsync({ groupId: group.id, userIds: [...new Set(users)] });
       void utils.group.getGroupDetails.invalidate({ groupId: group.id }).catch(console.error);
@@ -117,6 +127,7 @@ const AddMembers: React.FC<{
       }
       setOpen(false);
       setInputValue('');
+      resolvedEmail.current = null;
       setUserIds({});
       setSendInvite(false);
     } catch {
@@ -160,7 +171,12 @@ const AddMembers: React.FC<{
           placeholder={t('group_details.no_members.add_members_details.placeholder')}
           value={inputValue}
           disabled={saving}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={(e) => {
+            if (e.target.value.trim().toLowerCase() !== resolvedEmail.current?.email) {
+              resolvedEmail.current = null;
+            }
+            setInputValue(e.target.value);
+          }}
         />
         <InvitationOption
           enabled={enableSendingInvites}
@@ -170,6 +186,18 @@ const AddMembers: React.FC<{
         />
       </div>
       <div className="mt-6 flex flex-col gap-4">
+        {contactsFailed ? (
+          <div role="alert" className="flex flex-col items-start gap-2">
+            <p>{t('ui.people_list_load_error')}</p>
+            <Button
+              variant="outline"
+              disabled={friendsQuery.isFetching}
+              onClick={() => void friendsQuery.refetch()}
+            >
+              {t('actions.retry')}
+            </Button>
+          </div>
+        ) : null}
         {emptyReason ? (
           <p className="text-center text-sm text-gray-400">
             {t(`ui.group_people_list_empty.${emptyReason}`)}

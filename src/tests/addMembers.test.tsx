@@ -11,6 +11,23 @@ import AddMembers from '~/components/group/AddMembers';
 import { type AppDrawer } from '~/components/ui/drawer';
 import { renderWithProviders } from '~/tests/helpers/render';
 
+const mockFriendsQuery = jest.fn();
+const mockGroupsQuery = jest.fn();
+const mockRefetch = jest.fn();
+const resetQueries = () => {
+  mockFriendsQuery.mockReturnValue({
+    data: [{ id: 2, name: 'Alex', email: 'alex@example.com' }],
+    isPending: false,
+    isError: false,
+    refetch: mockRefetch,
+  });
+  mockGroupsQuery.mockReturnValue({
+    data: [],
+    isPending: false,
+    isError: false,
+    refetch: mockRefetch,
+  });
+};
 const mockInvite = jest.fn();
 const mockAdd = jest.fn();
 const mockInvalidate = jest.fn().mockResolvedValue(undefined);
@@ -18,15 +35,12 @@ jest.mock('~/utils/api', () => ({
   api: {
     user: {
       getFriends: {
-        useQuery: () => ({
-          data: [{ id: 2, name: 'Alex', email: 'alex@example.com' }],
-          isPending: false,
-        }),
+        useQuery: () => mockFriendsQuery(),
       },
       inviteFriend: { useMutation: () => ({ mutateAsync: mockInvite }) },
     },
     group: {
-      getAllGroups: { useQuery: () => ({ data: [], isPending: false }) },
+      getAllGroups: { useQuery: () => mockGroupsQuery() },
       addMembers: { useMutation: () => ({ mutateAsync: mockAdd }) },
     },
     useUtils: () => ({ group: { getGroupDetails: { invalidate: mockInvalidate } } }),
@@ -70,6 +84,7 @@ const setup = (enabled = true) => {
 describe('AddMembers', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    resetQueries();
     mockInvite.mockReset().mockResolvedValue({ id: 3 });
     mockAdd.mockReset().mockResolvedValue(undefined);
   });
@@ -117,6 +132,29 @@ describe('AddMembers', () => {
     });
   });
 
+  describe('Contact search', () => {
+    it('trims searches before filtering contacts', () => {
+      setup();
+      fireEvent.change(screen.getByRole('textbox'), { target: { value: ' Alex ' } });
+      expect(screen.getByText('Alex')).toBeVisible();
+      fireEvent.change(screen.getByRole('textbox'), { target: { value: '   ' } });
+      expect(screen.getByText('Alex')).toBeVisible();
+    });
+
+    it('shows a retry action when contacts could not load', () => {
+      mockFriendsQuery.mockReturnValue({
+        data: undefined,
+        isError: true,
+        isPending: false,
+        refetch: mockRefetch,
+      });
+      setup();
+      expect(screen.getByRole('alert')).toHaveTextContent('Could not load contacts.');
+      fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+      expect(mockRefetch).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('Invitations', () => {
     it('reports partial success only after fallback and membership succeed', async () => {
       mockInvite.mockRejectedValueOnce({ data: { appErrorCode: 'INVITE_EMAIL_SEND_FAILED' } });
@@ -152,6 +190,19 @@ describe('AddMembers', () => {
       expect(screen.getByRole('dialog')).toBeVisible();
     });
 
+    it('reuses the resolved user when membership fails after sending an invitation', async () => {
+      mockAdd.mockRejectedValueOnce(new Error('Failed'));
+      setup();
+      fireEvent.change(screen.getByRole('textbox'), { target: { value: 'new@example.com' } });
+      fireEvent.click(screen.getByRole('checkbox'));
+      fireEvent.click(screen.getByText('Submit'));
+      await waitFor(() => expect(toast.error).toHaveBeenCalled());
+      fireEvent.click(screen.getByText('Submit'));
+      await waitFor(() => expect(mockAdd).toHaveBeenCalledTimes(2));
+      expect(mockInvite).toHaveBeenCalledTimes(1);
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    });
+
     it('allows adding without email when invitations are disabled', async () => {
       setup(false);
       expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
@@ -166,12 +217,34 @@ describe('AddMembers', () => {
 describe('Expense participant invitations', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    resetQueries();
     mockInvite.mockReset().mockResolvedValue({ id: 3, name: 'New', email: 'new@example.com' });
     useAddExpenseStore.setState({
       nameOrEmail: 'new@example.com',
       participants: [],
       group: undefined,
     });
+  });
+
+  it('does not let hidden groups suppress the empty search message', () => {
+    mockGroupsQuery.mockReturnValue({ data: [{ group: { name: 'Holiday' } }], isPending: false });
+    useAddExpenseStore.setState({ nameOrEmail: 'Holiday', participants: [] });
+    renderWithProviders(<SelectUserOrGroup enableSendingInvites />);
+    expect(screen.getByText(/No .*match/i)).toBeVisible();
+  });
+
+  it('shows a retry action when contacts could not load', () => {
+    mockFriendsQuery.mockReturnValue({
+      data: undefined,
+      isError: true,
+      isPending: false,
+      refetch: mockRefetch,
+    });
+    useAddExpenseStore.setState({ nameOrEmail: '' });
+    renderWithProviders(<SelectUserOrGroup enableSendingInvites />);
+    expect(screen.getByRole('alert')).toHaveTextContent('Could not load contacts.');
+    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(mockRefetch).toHaveBeenCalledTimes(1);
   });
 
   it('adds to the draft and reports partial success after the email fallback', async () => {

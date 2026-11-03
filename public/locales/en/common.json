@@ -514,7 +514,17 @@
     "show_all_currencies": "Show all currencies",
     "today": "Today",
     "in_group": "In group",
-    "transfer": "{senderRole, select, you {You pay {receiver}} other {{receiverRole, select, you {{sender} pays you} other {{sender} pays {receiver}}}}}"
+    "transfer": "{senderRole, select, you {You pay {receiver}} other {{receiverRole, select, you {{sender} pays you} other {{sender} pays {receiver}}}}}",
+    "invitation": {
+      "send_email": "Send an invitation email",
+      "adding": "Adding…",
+      "email_help": "For the email address you enter, we’ll send a link to SplitPro only if it is not verified. This does not sign them in.",
+      "no_email_help": "No invitation email will be sent. They can sign in later using this email address.",
+      "disabled_help": "Invitation emails are disabled on this server. You can still add someone by email.",
+      "draft_help": "Adding a participant does not save the expense. Save the expense when you are done.",
+      "group_partial_success": "Added to the group, but the invitation email could not be sent.",
+      "expense_partial_success": "Added to the draft expense, but the invitation email could not be sent."
+    }
   },
   "friend": {
     "delete_confirmation": {

@@ -30,6 +30,7 @@ Object.defineProperty(window, 'matchMedia', {
 
 Object.defineProperty(CSSStyleDeclaration.prototype, 'transform', {
   configurable: true,
+  writable: true,
   value: 'none',
 });
 

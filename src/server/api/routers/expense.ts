@@ -1,8 +1,19 @@
+import { cronToBackend } from '~/lib/cron';
+import {
+  getNextRecurrenceDate,
+  getRecurrenceSchedule,
+} from '../services/recurrenceScheduleService';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
+import { beforeCursor, paginationInput, toPage } from '~/utils/pagination';
 
-import { simplifyDebts } from '~/lib/simplify';
-import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
+import { getUserBalances } from '~/server/api/services/balanceQuery';
+import {
+  balanceProcedure,
+  createTRPCRouter,
+  groupProcedure,
+  protectedProcedure,
+} from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { BigMath, currencyConversion } from '~/utils/numbers';
 
@@ -26,8 +37,18 @@ import { DEFAULT_CATEGORY } from '~/lib/category';
 import { getUserMap } from './user';
 
 export const expenseRouter = createTRPCRouter({
-  getCumulatedBalances: protectedProcedure.query(async ({ ctx }) => {
-    const cumulatedBalances = await db.balanceView.groupBy({
+  getRecurrencePreview: protectedProcedure
+    .input(z.object({ cronExpression: z.string().transform(cronToBackend) }))
+    .query(async ({ input }) => {
+      const [setting] = await db.$queryRaw<{ timeZone: string }[]>`
+        SELECT current_setting('cron.timezone') AS "timeZone"
+      `;
+      const timeZone = setting!.timeZone;
+      const schedule = getRecurrenceSchedule(input.cronExpression);
+      return { timeZone, schedule, nextRun: getNextRecurrenceDate(schedule, timeZone) };
+    }),
+  getCumulatedBalances: balanceProcedure.query(async ({ ctx }) => {
+    const cumulatedBalances = await ctx.db.balanceView.groupBy({
       by: ['currency'],
       _sum: { amount: true },
       where: { userId: ctx.session.user.id, amount: { not: 0 } },
@@ -50,44 +71,14 @@ export const expenseRouter = createTRPCRouter({
     return { youOwe, youGet };
   }),
 
-  getBalances: protectedProcedure.query(async ({ ctx }) => {
-    const rawBalances = await db.balanceView.findMany({
-      where: {
-        userId: ctx.session.user.id,
-        friendId: { notIn: ctx.session.user.hiddenFriendIds },
-      },
-      include: {
-        group: {
-          select: {
-            simplifyDebts: true,
-          },
-        },
-      },
-    });
-
-    const processedBalances = await Promise.all(
-      rawBalances.map(async ({ friendId, currency, amount, groupId, group }) => {
-        if (!group?.simplifyDebts || null === groupId) {
-          return { friendId, currency, amount };
-        }
-
-        const allGroupBalances = await db.balanceView.findMany({
-          where: { groupId, currency },
-        });
-
-        const simplified = simplifyDebts(allGroupBalances);
-        const simplifiedBalance = simplified.find(
-          (b) =>
-            b.userId === ctx.session.user.id && b.friendId === friendId && b.currency === currency,
-        );
-
-        return { friendId, currency, amount: simplifiedBalance?.amount ?? 0n };
-      }),
+  getBalances: balanceProcedure.query(async ({ ctx }) => {
+    const processedBalances = (await getUserBalances(ctx.db, ctx.session.user.id)).filter(
+      (balance) => !ctx.session.user.hiddenFriendIds.includes(balance.friendId),
     );
 
     // Group by friendId and fetch user details
     const friendIds = [...new Set([...processedBalances].map((b) => b.friendId))];
-    const userMap = await getUserMap(friendIds);
+    const userMap = await getUserMap(friendIds, ctx.db);
 
     // Aggregate by (friendId, currency) since same pair can appear in multiple groups
     const aggregated = processedBalances
@@ -252,10 +243,12 @@ export const expenseRouter = createTRPCRouter({
     }),
 
   getExpensesWithFriend: protectedProcedure
-    .input(z.object({ friendId: z.number() }))
+    .input(paginationInput.extend({ friendId: z.number() }))
     .query(async ({ input, ctx }) => {
       const expenses = await db.expense.findMany({
+        take: input.limit + 1,
         where: {
+          ...beforeCursor(input.cursor, 'expenseDate'),
           AND: [
             {
               expenseParticipants: {
@@ -306,9 +299,7 @@ export const expenseRouter = createTRPCRouter({
             },
           ],
         },
-        orderBy: {
-          expenseDate: 'desc',
-        },
+        orderBy: [{ expenseDate: 'desc' }, { id: 'desc' }],
         include: {
           expenseParticipants: {
             where: {
@@ -334,14 +325,19 @@ export const expenseRouter = createTRPCRouter({
         },
       });
 
-      return expenses;
+      return toPage(expenses, input.limit, (expense) => ({
+        date: expense.expenseDate,
+        id: expense.id,
+      }));
     }),
 
   getGroupExpenses: groupProcedure
-    .input(z.object({ groupId: z.number() }))
+    .input(paginationInput.extend({ groupId: z.number() }))
     .query(async ({ input, ctx }) => {
       const expenses = await ctx.db.expense.findMany({
+        take: input.limit + 1,
         where: {
+          AND: [beforeCursor(input.cursor, 'expenseDate')],
           groupId: input.groupId,
           deletedBy: null,
           OR: [
@@ -357,9 +353,7 @@ export const expenseRouter = createTRPCRouter({
             },
           ],
         },
-        orderBy: {
-          expenseDate: 'desc',
-        },
+        orderBy: [{ expenseDate: 'desc' }, { id: 'desc' }],
         include: {
           expenseParticipants: true,
           paidByUser: true,
@@ -368,7 +362,10 @@ export const expenseRouter = createTRPCRouter({
         },
       });
 
-      return expenses;
+      return toPage(expenses, input.limit, (expense) => ({
+        date: expense.expenseDate,
+        id: expense.id,
+      }));
     }),
 
   getExpenseDetails: protectedProcedure
@@ -467,22 +464,21 @@ export const expenseRouter = createTRPCRouter({
       return expense;
     }),
 
-  getAllExpenses: protectedProcedure.query(async ({ ctx }) => {
+  getAllExpenses: protectedProcedure.input(paginationInput).query(async ({ ctx, input }) => {
     const expenses = await db.expenseParticipant.findMany({
+      take: input.limit + 1,
       where: {
+        expense: beforeCursor(input.cursor, 'createdAt'),
         userId: ctx.session.user.id,
       },
-      orderBy: {
-        expense: {
-          createdAt: 'desc',
-        },
-      },
+      orderBy: [{ expense: { createdAt: 'desc' } }, { expenseId: 'desc' }],
       include: {
         expense: {
           include: {
             paidByUser: {
               select: {
                 name: true,
+                deletedAt: true,
                 email: true,
                 image: true,
                 id: true,
@@ -491,6 +487,7 @@ export const expenseRouter = createTRPCRouter({
             deletedByUser: {
               select: {
                 name: true,
+                deletedAt: true,
                 email: true,
                 image: true,
                 id: true,
@@ -501,7 +498,10 @@ export const expenseRouter = createTRPCRouter({
       },
     });
 
-    return expenses;
+    return toPage(expenses, input.limit, (item) => ({
+      date: item.expense.createdAt,
+      id: item.expenseId,
+    }));
   }),
 
   getRecurringExpenses: protectedProcedure.query(async ({ ctx }) => {
@@ -524,6 +524,7 @@ export const expenseRouter = createTRPCRouter({
             addedByUser: {
               select: {
                 name: true,
+                deletedAt: true,
                 email: true,
                 image: true,
                 id: true,
@@ -569,7 +570,9 @@ export const expenseRouter = createTRPCRouter({
     }),
 
   updateRecurrence: protectedProcedure
-    .input(z.object({ recurrenceId: z.number(), cronExpression: z.string() }))
+    .input(
+      z.object({ recurrenceId: z.number(), cronExpression: z.string().transform(cronToBackend) }),
+    )
     .mutation(async ({ input, ctx }) => {
       const recurrence = await db.expenseRecurrence.findUnique({
         where: { id: input.recurrenceId },
@@ -591,7 +594,7 @@ export const expenseRouter = createTRPCRouter({
       }
 
       // Use cron.alter_job to update the schedule
-      await db.$executeRaw`SELECT cron.alter_job(${recurrence.job.jobid}, schedule := ${input.cronExpression})`;
+      await db.$executeRaw`SELECT cron.alter_job(${recurrence.job.jobid}, schedule := ${getRecurrenceSchedule(input.cronExpression)})`;
     }),
 
   deleteExpense: protectedProcedure

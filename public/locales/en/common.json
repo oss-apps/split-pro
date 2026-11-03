@@ -78,6 +78,13 @@
       "send_test_notification": "Send test notification",
       "test_notification_sent": "Test notification sent",
       "test_notification_failed": "Could not send test notification"
+    },
+    "deletion": {
+      "action": "Delete account",
+      "title": "Delete your account?",
+      "description": "This cannot be undone. Your identity and sign-in details will be removed, and you will be signed out on all devices. Shared expenses, notes, receipts, group memberships, and outstanding balances will remain under “Deleted user”. Personal information written in shared content will remain. Group ownership will pass to another available member where possible. Recurring expenses you created will stop. You can download your SplitPro data from the account page before continuing.",
+      "confirm": "Permanently delete account",
+      "error": "Could not delete your account. Please try again."
     }
   },
   "actions": {
@@ -103,6 +110,7 @@
     "remind_later": "Remind me later"
   },
   "actors": {
+    "deleted_user": "Deleted user",
     "all": "All",
     "friends": "Friends",
     "groups": "Groups",
@@ -420,12 +428,16 @@
       "year": "Yearly"
     },
     "edit_confirmation_title": "Edit Recurring Expense",
-    "template_edit_warning": "This is a recurring expense template. Changes will apply to all future recurring expenses.",
+    "template_edit_warning": "This is a recurring expense template. Changes will apply to all recurring expenses created in the future.",
     "derived_edit_warning": "This expense is part of a recurrence. Changes will only affect this expense.",
     "template_delete_warning": "This is a recurring expense template. Deleting it will stop all future recurring expenses.",
     "derived_delete_warning": "This expense is part of a recurrence. Only this expense will be deleted. Future recurring expenses will continue.",
     "view_recurring_page": "View Recurring page",
-    "toggle_options": "Toggle recurring expense options"
+    "toggle_options": "Toggle recurring expense options",
+    "execution_time_loading": "Loading execution time…",
+    "execution_time_unavailable": "Execution time is unavailable.",
+    "next_local_run": "Next scheduled run: {date} ({timeZone}, your time zone).",
+    "instance_schedule": "Schedule: {schedule} ({timeZone})."
   },
   "ui": {
     "added_by": "Added by",
@@ -531,6 +543,8 @@
     "added_by": "{actor, select, you {Added by you on {date}} other {Added by {user} on {date}}}"
   },
   "expense_list": {
+    "upcoming_expenses": "Upcoming expenses",
+    "future_expense": "Future expense — not included in balances yet",
     "user_paid": "{actor, select, you {You paid {amount}} other {{user} paid {amount}}}",
     "user_received": "{actor, select, you {You received {amount}} other {{user} received {amount}}}",
     "settlement": "{payerRole, select, you {You paid {amount} to {receiver}} other {{receiverRole, select, you {{payer} paid you {amount}} other {{payer} paid {amount} to {receiver}}}}}",
@@ -541,5 +555,11 @@
     "enable_description": "Don't miss important events. Subscribe to receive notifications when expenses are added or updated.",
     "permission_granted": "You will receive notifications now",
     "subscribe": "Subscribe"
+  },
+  "pagination": {
+    "load_more": "Load more",
+    "loading": "Loading expenses",
+    "retry": "Try again",
+    "error": "Could not load expenses. Please try again."
   }
 }

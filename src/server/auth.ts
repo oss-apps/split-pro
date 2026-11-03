@@ -57,6 +57,21 @@ const SplitProPrismaAdapter = (...args: Parameters<typeof PrismaAdapter>): Adapt
 
   return {
     ...prismaAdapter,
+    deleteSession: async (sessionToken) => {
+      // Account deletion already revokes sessions before the browser signs out.
+      await db.session.deleteMany({ where: { sessionToken } });
+    },
+    getSessionAndUser: async (sessionToken) => {
+      const result = await prismaAdapter.getSessionAndUser?.(sessionToken);
+      if (!result) {
+        return null;
+      }
+      const user = await db.user.findUnique({
+        where: { id: Number(result.user.id) },
+        select: { deletedAt: true },
+      });
+      return user && !user.deletedAt ? result : null;
+    },
     createUser: (user: Omit<AdapterUser, 'id'>): Promise<AdapterUser> => {
       // oxlint-disable-next-line typescript/no-unsafe-assignment
       const prismaCreateUser = prismaAdapter.createUser;
@@ -112,6 +127,16 @@ export const authOptions: NextAuthOptions = {
       },
     }),
     async signIn({ user, email }) {
+      if ('number' === typeof user.id && Number.isInteger(user.id)) {
+        const existingUser = await db.user.findUnique({
+          where: { id: user.id },
+          select: { deletedAt: true },
+        });
+        if (existingUser?.deletedAt) {
+          return false;
+        }
+      }
+
       if (email?.verificationRequest && env.DISABLE_EMAIL_SIGNUP) {
         const existingUser = await db.user.findUnique({
           where: { email: user.email },

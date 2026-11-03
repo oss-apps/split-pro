@@ -16,7 +16,7 @@ describe('assigning an ungrouped expense to a group', () => {
     expect(await db.expense.findUnique({ where: { id: expense!.id } })).toMatchObject({
       groupId: group.id,
     });
-    expect(await caller.expense.getGroupExpenses({ groupId: group.id })).toEqual([
+    expect((await caller.expense.getGroupExpenses({ groupId: group.id })).items).toEqual([
       expect.objectContaining({ id: expense!.id }),
     ]);
     expect(
@@ -50,7 +50,9 @@ describe('assigning an ungrouped expense to a group', () => {
     expect(
       (await db.expense.findMany({ select: { groupId: true } })).map(({ groupId }) => groupId),
     ).toEqual([group.id, group.id]);
-    expect(await callerFor(owner.id).expense.getGroupExpenses({ groupId: group.id })).toEqual([
+    expect(
+      (await callerFor(owner.id).expense.getGroupExpenses({ groupId: group.id })).items,
+    ).toEqual([
       expect.objectContaining({
         id: expense.id,
         groupId: group.id,

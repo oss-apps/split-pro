@@ -4,14 +4,14 @@ import Link from 'next/link';
 import { useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 
+import { RecurrencePreview } from '~/components/Expense/RecurrencePreview';
 import { EditRecurrenceDialog } from '~/components/Expense/EditRecurrenceDialog';
 import MainLayout from '~/components/Layout/MainLayout';
 import { SimpleConfirmationDialog } from '~/components/SimpleConfirmationDialog';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
-import { useIntlCronParser } from '~/hooks/useIntlCronParser';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-import { cronFromBackend } from '~/lib/cron';
+import { cronFromBackend, extractTemplateExpenseId } from '~/lib/cron';
 import { type NextPageWithUser } from '~/types';
 import { type RouterOutputs, api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
@@ -23,8 +23,6 @@ interface RecurringExpenseItemProps {
   onDelete: (recurrenceId: number) => Promise<void>;
   isDeleting: boolean;
   toUIDate: (date: Date) => string;
-  cronParser: (cron: string) => string;
-  i18nReady: boolean;
 }
 
 const RecurringExpenseItem: React.FC<RecurringExpenseItemProps> = ({
@@ -32,8 +30,6 @@ const RecurringExpenseItem: React.FC<RecurringExpenseItemProps> = ({
   onDelete,
   isDeleting,
   toUIDate,
-  cronParser,
-  i18nReady,
 }) => {
   const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const { toUIString, formatter } = getCurrencyHelpersCached(item.expense.currency);
@@ -52,7 +48,10 @@ const RecurringExpenseItem: React.FC<RecurringExpenseItemProps> = ({
 
   return (
     <div className="flex items-center justify-between gap-2">
-      <Link href={`/expenses/${item.expense.id}`} className="flex flex-1 gap-2">
+      <Link
+        href={`/expenses/${extractTemplateExpenseId(item.job.command) ?? item.expense.id}`}
+        className="flex flex-1 gap-2"
+      >
         <div className="mt-1">
           <EntityAvatar entity={item.expense.addedByUser} size={30} />
         </div>
@@ -65,10 +64,9 @@ const RecurringExpenseItem: React.FC<RecurringExpenseItemProps> = ({
                 formatter.formatToParts(0).find(({ type }) => 'currency' === type)?.value ?? '',
             })}
           </p>
-          <p className="text-primary text-sm">
-            {t('recurrence.recurring')}
-            {i18nReady && schedule ? `: ${cronParser(schedule)}` : ''}
-          </p>
+          <div className="text-primary text-sm">
+            {schedule ? <RecurrencePreview schedule={schedule} /> : t('recurrence.recurring')}
+          </div>
           <p className="text-xs text-gray-500">{toUIDate(item.expense.expenseDate)}</p>
         </div>
       </Link>
@@ -102,8 +100,6 @@ const RecurringPage: NextPageWithUser = () => {
   const recurringExpensesQuery = api.expense.getRecurringExpenses.useQuery();
   const deleteRecurrenceMutation = api.expense.deleteRecurrence.useMutation();
   const apiUtils = api.useUtils();
-
-  const { cronParser, i18nReady } = useIntlCronParser();
 
   const handleDelete = useCallback(
     async (recurrenceId: number) => {
@@ -148,8 +144,6 @@ const RecurringPage: NextPageWithUser = () => {
               onDelete={handleDelete}
               isDeleting={deleteRecurrenceMutation.isPending}
               toUIDate={toUIDate}
-              cronParser={cronParser}
-              i18nReady={i18nReady}
             />
           ))}
         </div>

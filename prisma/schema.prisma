@@ -42,6 +42,7 @@ model User {
   name                 String?
   email                String?              @unique
   emailVerified        DateTime?
+  deletedAt            DateTime?
   image                String?
   currency             String               @default("USD")
   defaultCurrency      String?
@@ -225,11 +226,12 @@ model ExpenseNote {
 }
 
 model ExpenseRecurrence {
-  id       Int       @id @default(autoincrement())
-  jobId    BigInt    @unique
-  notified Boolean   @default(true)
-  expense  Expense[]
-  job      job       @relation(fields: [jobId], references: [jobid], onDelete: Cascade)
+  lastOccurrenceDate DateTime? @db.Date
+  id                 Int       @id @default(autoincrement())
+  jobId              BigInt    @unique
+  notified           Boolean   @default(true)
+  expense            Expense[]
+  job                job       @relation(fields: [jobId], references: [jobid], onDelete: Cascade)
 
   @@schema("public")
 }

@@ -8,6 +8,7 @@ import { type SplitwiseGroup, type SplitwiseUser } from '~/types';
 import type { CreateExpense } from '~/types/expense.types';
 import { sendExpensePushNotification } from './notificationService';
 import { createRecurringExpenseJob } from './scheduleService';
+import { getRecurrenceSchedule } from './recurrenceScheduleService';
 import { getCurrencyHelpers } from '~/utils/numbers';
 import { isCurrencyCode } from '~/lib/currency';
 import { DEFAULT_CATEGORY } from '~/lib/category';
@@ -349,7 +350,7 @@ export async function editExpense(
     if (cronExpression && cronExpression !== currentSchedule) {
       // Schedule changed - update the cron job
       operations.push(
-        db.$executeRaw`SELECT cron.alter_job(${expense.recurrence.job.jobid}, schedule := ${cronExpression})`,
+        db.$executeRaw`SELECT cron.alter_job(${expense.recurrence.job.jobid}, schedule := ${getRecurrenceSchedule(cronExpression)})`,
       );
     } else if (!cronExpression) {
       // Recurrence removed - unschedule and delete recurrence record

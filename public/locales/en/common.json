@@ -209,8 +209,8 @@
         "add_to_split_pro": "Add to Expense",
         "note": "Email invites are disabled. You can still add someone by email without sending an invite.",
         "only_one_group_time": "You can have only one group at a time",
-        "send_invite": "Add and send invite email",
-        "warning": "Adding by email works for existing and new users. Choose send invite to also email an invitation if the account is not verified.",
+        "send_invite": "Add with email invitation",
+        "warning": "Both buttons add the person to this draft expense. Save the expense when you are done. The invitation option emails a link to SplitPro only if their email is not verified; it does not sign them in.",
         "empty_image_alt": "No users found"
       },
       "split_type_section": {
@@ -358,11 +358,11 @@
       "add_members": "Add members",
       "add_members_details": {
         "add_to_split_pro": "Add to Group",
-        "note": "Note: sending email invites is disabled",
+        "note": "Email invites are disabled. You can still add someone by email without sending an invite.",
         "placeholder": "Enter name or email",
-        "send_invite": "Add and send invite email",
+        "send_invite": "Add with email invitation",
         "title": "Add members",
-        "warning": "Adding by email works for existing and new users. Choose send invite to also email an invitation if the account is not verified."
+        "warning": "Both buttons immediately add the person and any selected contacts to this group. Save adds selected contacts only, not the typed email. The invitation option emails a link to SplitPro only if their email is not verified; it does not sign them in."
       },
       "invite_link": "Invite link",
       "no_members": "No members in the group yet."

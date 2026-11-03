@@ -5,6 +5,7 @@
       "messages": {
         "language_changed": "Změna jazyka byla úspěšná"
       },
+      "no_language_found": "Jazyk nenalezen.",
       "placeholder": "Vyberte jazyk",
       "title": "Vyberte jazyk"
     },
@@ -14,10 +15,14 @@
       "description": "Při vytváření požadavku na podporu zkopírujte následující informace:",
       "git": "Git",
       "new_version_available": "Je k dispozici nová verze:",
+      "send_test_notification": "Odeslat testovací oznámení",
+      "test_notification_failed": "Odeslání testovacího oznámení se nezdařilo",
+      "test_notification_sent": "Testovací oznámení odesláno",
       "title": "Informace pro ladění",
       "user_agent": "UserAgent",
       "version": "Verze"
     },
+    "default_balance_currency": "Výchozí měna zůstatku",
     "download_app": "Stáhnout aplikaci",
     "download_app_details": {
       "download_as_pwa": "SplitPro si můžete stáhnout na domovskou obrazovku jako PWA.",
@@ -28,8 +33,13 @@
     },
     "download_splitpro_data": "Stáhnout data SplitPro",
     "edit_name": {
+      "apply_avatar": "Použít avatara",
+      "avatar_label": "Profilový obrázek",
+      "avatar_preview": "Náhled avatara",
       "placeholder": "Zadejte jméno",
-      "title": "Upravit jméno"
+      "remove_avatar": "Odstranit avatar",
+      "select_avatar": "Vybrat obrázek",
+      "title": "Upravit detaily"
     },
     "follow_on_x": "Sledujte nás na X",
     "import_from_splitwise": "Import ze Splitwise",
@@ -45,8 +55,8 @@
     },
     "logout": "Odhlásit se",
     "messages": {
-      "submit_error": "Nepodařilo se odeslat zpětnou vazbu",
-      "submit_success": "Zpětná vazba odeslána"
+      "submit_error": "Aktualizace podrobností selhala",
+      "submit_success": "Podrobnosti aktualizovány"
     },
     "notifications": {
       "disable_notification": "Vypnout notifikace",
@@ -58,6 +68,9 @@
     "star_on_github": "Ohodnoťte nás na GitHubu",
     "submit_feedback": "Odeslat zpětnou vazbu",
     "submit_feedback_details": {
+      "messages": {
+        "submit_error": "Odeslání zpětné vazby selhalo"
+      },
       "placeholder": "Zadejte vaši zpětnou vazbu",
       "title": "Odeslat zpětnou vazbu"
     },
@@ -82,6 +95,7 @@
     "leave": "Opustit",
     "next": "Další",
     "reconnect": "Znovu připojit",
+    "remind_later": "Připomeň mi to později",
     "save": "Uložit",
     "settle_up": "Vyrovnat se",
     "submit": "Odeslat"
@@ -120,7 +134,9 @@
     "to_bank": "do banky"
   },
   "currency_conversion": {
+    "amount_aria_label": "Množství",
     "amount_to_receive": "Částka k přijetí",
+    "converted_amount_aria_label": "Převedená částka",
     "description": "Převede částku do jiné měny.",
     "exchange_rate": "Směnný kurz",
     "fetching_rate": "Načítání kurzu...",
@@ -129,23 +145,32 @@
     "title": "Převod měny"
   },
   "errors": {
+    "add_member_failed": "Nepodařilo se přidat člena do skupiny",
     "currency_conversion_error": "Chyba při nastavování převodu měny",
     "currency_conversion_failed": "Měny se nepodařilo převést",
     "currency_conversion_malformed": "Data o převodu měny jsou poškozena",
     "email_invalid": "Email není platný, prosím zkuste přihlášení zopakovat.",
     "email_required": "Email je povinný",
+    "expense_deletion_failed": "Při mazání výdaje došlo k neočekávané chybě.",
+    "expense_submission_failed": "Při odesílání výdaje došlo k neočekávané chybě.",
     "feedback_min_length": "Zpětná vazba musí mít alespoň 10 znaků",
     "feedback_required": "Musí být vyplněna zpětná vazba",
+    "friend_deletion_failed": "Nepodařilo se odstranit přítele",
     "group_balances_malformed": "Data o zůstatcích skupiny jsou poškozena. Nahlašte prosím problém, nebo zkuste provést nový výpočet.",
     "group_name_update_failed": "Chyba při aktualizaci jména skupiny",
+    "image_compression_failed": "Komprese obrázku selhala, probíhá pokus o nahrání původního souboru",
     "import_failed": "Chyba při importování souboru",
     "invalid_cron_expression": "Neplatný cron výraz",
     "invalid_currency_code": "Neplatný kód měny {code}",
+    "invalid_split": "Před uložením upravte, kdo má tento výdaj hradit.",
+    "invite_email_failed": "Nepodařilo se odeslat e-mail s pozvánkou. Zkontrolujte konfiguraci SMTP.",
     "language_change_failed": "Chyba při změně jazyka",
-    "less_than": "Soubor by měl být menší než",
+    "less_than": "Soubor by měl být menší než {size}MB",
     "name_required": "Musí být zadáno jméno",
     "no_providers": "Chyba při načítání poskytovatelů ověření. Zkontrolujte prosím záznamy v backendu.",
     "notification_not_supported": "Notifikace nejsou podporovány",
+    "notification_request_failed": "Chyba při požadavku na povolení oznámení",
+    "notification_subscribe_failed": "Nelze se přihlásit k odběru oznámení",
     "otp_invalid": "Neplatný jednorázový kód",
     "otp_required": "Je nutný jednorázový kód",
     "recurrence_delete_failed": "Opakování se nepodařilo smazat",
@@ -154,6 +179,7 @@
     "saving_expense": "Chyba při ukládání výdaje",
     "setting_update_failed": "Nastavení se nepodařilo aktualizovat",
     "signin_error": "Při přihlašování došlo k chybě: {error}",
+    "signin_failed": "Přihlášení se nezdařilo. Zkuste to prosím znovu.",
     "signup_disabled": "Registrace nových účtů je v této instanci zakázána",
     "something_went_wrong": "Něco se pokazilo",
     "subscribe_error": "Nelze se přihlásit k odběru oznámení",
@@ -171,12 +197,18 @@
       "pick_a_date": "Vyberte datum",
       "select_user_or_group": {
         "add_to_split_pro": "Přidat do Split Pro",
+        "empty_image_alt": "Nebyli nalezeni žádní uživatelé",
         "note": "Poznámka: odesílání pozvánek je prozatím vypnuto kvůli spamu",
         "only_one_group_time": "Můžete mít jen jednu skupinu najednou",
         "send_invite": "Odeslat uživateli pozvánku",
         "warning": "Varování: Pokud email není platný, nepoužívejte odeslat pozvánku. Místo toho použijte přidat do Split Pro. Při zneužití této funkce bude váš účet zablokován"
       },
       "split_type_section": {
+        "direction": {
+          "no_money_flow": "Nikdo jiný nic nedluží",
+          "owes_payer": "{debtor} dluží {payer}",
+          "owes_you": "{debtor} vám dluží"
+        },
         "split_equally": "rozdělit rovnoměrně",
         "split_unequally": "rozdělit nerovnoměrně",
         "types": {

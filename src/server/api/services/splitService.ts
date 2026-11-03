@@ -1,4 +1,5 @@
-import { SplitType, type User } from '@prisma/client';
+import { Prisma, SplitType, type User } from '@prisma/client';
+import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 
 import { db } from '~/server/db';
@@ -193,10 +194,49 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
   sendExpensePushNotification(expenseId).catch(console.error);
 }
 
+/**
+ * Checks the payer and participants when an ungrouped expense is assigned to a group. Callers run
+ * validateExpenseWritePermission first, which already rejects changing a grouped expense's group
+ * and checks that the target group exists, is not archived and has the actor as a member.
+ */
+export async function assertExpenseGroupReassignment(
+  storedGroupId: number | null,
+  groupId: number | null,
+  paidBy: number,
+  participantUserIds: number[],
+) {
+  if (null !== storedGroupId || null === groupId) {
+    return;
+  }
+
+  const members = await db.groupUser.findMany({
+    where: {
+      groupId,
+      userId: {
+        in: [paidBy, ...participantUserIds],
+      },
+    },
+    select: { userId: true },
+  });
+  const memberIds = new Set(members.map((member) => member.userId));
+
+  if (!memberIds.has(paidBy)) {
+    throw new TRPCError({ code: 'BAD_REQUEST', message: 'Payer is not a member of the group' });
+  }
+
+  if (participantUserIds.some((userId) => !memberIds.has(userId))) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Participant is not a member of the group',
+    });
+  }
+}
+
 export async function editExpense(
   {
     expenseId,
     paidBy,
+    groupId,
     name,
     category,
     amount,
@@ -218,6 +258,7 @@ export async function editExpense(
   const expense = await db.expense.findUnique({
     where: { id: expenseId },
     include: {
+      conversionFrom: { select: { id: true } },
       expenseParticipants: true,
       recurrence: {
         include: {
@@ -229,6 +270,13 @@ export async function editExpense(
 
   if (!expense) {
     throw new Error('Expense not found');
+  }
+
+  if ((expense.conversionToId || expense.conversionFrom) && !conversionToParams) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Currency conversions must be edited together',
+    });
   }
 
   // Determine if this is a template or derived expense
@@ -251,9 +299,11 @@ export async function editExpense(
   // Update expense with new details and create new participants
   operations.push(
     db.expense.update({
-      where: { id: expenseId },
+      // Write-time check: a concurrent edit may have grouped the expense after validation.
+      where: { id: expenseId, OR: [{ groupId: null }, { groupId }] },
       data: {
         paidBy,
+        groupId,
         name,
         category,
         amount,
@@ -277,7 +327,11 @@ export async function editExpense(
 
     operations.push(
       db.expense.update({
-        where: { id: expense.conversionToId },
+        // The target can be grouped on its own, so it gets the same write-time check.
+        where: {
+          id: expense.conversionToId,
+          OR: [{ groupId: null }, { groupId: toExpenseData.groupId }],
+        },
         data: {
           ...toExpenseData,
           expenseParticipants: {
@@ -311,7 +365,17 @@ export async function editExpense(
   }
   // For derived expenses, cronExpression is ignored entirely
 
-  await db.$transaction(operations);
+  try {
+    await db.$transaction(operations);
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && 'P2025' === error.code) {
+      throw new TRPCError({
+        code: 'CONFLICT',
+        message: 'This expense was changed by someone else. Reload it and try again.',
+      });
+    }
+    throw error;
+  }
   sendExpensePushNotification(expenseId).catch(console.error);
   return { id: expenseId }; // Return the updated expense
 }

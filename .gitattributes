@@ -1,0 +1,2 @@
+# Mark generated OpenAPI spec as linguist-generated so it collapses in diffs.
+src/server/api/openapi.generated.json linguist-generated=true

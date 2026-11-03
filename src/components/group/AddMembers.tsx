@@ -1,19 +1,24 @@
-import { UserPlusIcon } from '@heroicons/react/24/solid';
 import { type Group, type GroupUser } from '@prisma/client';
 import { clsx } from 'clsx';
-import { CheckIcon, SendIcon } from 'lucide-react';
-import React, { useCallback, useState } from 'react';
+import { CheckIcon } from 'lucide-react';
+import React, { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { Button } from '~/components/ui/button';
 import { AppDrawer } from '~/components/ui/drawer';
-import { getInviteErrorToastKey, isInviteEmailSendFailed } from '~/lib/error/invite';
+import {
+  getInviteAppErrorCode,
+  getInviteErrorToastKey,
+  isInviteEmailSendFailed,
+} from '~/lib/error/invite';
+import { peopleListEmptyReason } from '~/lib/peopleList';
 import { api } from '~/utils/api';
 
 import { EntityAvatar } from '../ui/avatar';
 import { Input } from '../ui/input';
+import { InvitationOption } from '../InvitationOption';
 
 const AddMembers: React.FC<{
   enableSendingInvites: boolean;
@@ -24,6 +29,12 @@ const AddMembers: React.FC<{
   const [open, setOpen] = useState(false);
   const [userIds, setUserIds] = useState<Record<number, boolean>>({});
   const [inputValue, setInputValue] = useState('');
+  const [sendInvite, setSendInvite] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const submitting = useRef(false);
+  const resolvedEmail = useRef<{ email: string; userId: number; inviteFailed: boolean } | null>(
+    null,
+  );
 
   const friendsQuery = api.user.getFriends.useQuery();
   const addMembersMutation = api.group.addMembers.useMutation();
@@ -40,146 +51,162 @@ const AddMembers: React.FC<{
     return acc;
   }, {});
 
+  const searchValue = inputValue.trim().toLowerCase();
+  const contactsFailed = friendsQuery.isError && undefined === friendsQuery.data;
+
   const filteredUsers = friendsQuery.data?.filter(
-    (friend) =>
-      !groupUserMap[friend.id] &&
-      displayName(friend).toLowerCase().includes(inputValue.toLowerCase()),
+    (friend) => !groupUserMap[friend.id] && displayName(friend).toLowerCase().includes(searchValue),
   );
+
+  /* Says why the list is blank instead of rendering nothing, which reads as a broken dialog. */
+  const emptyReason =
+    contactsFailed || filteredUsers?.length
+      ? null
+      : peopleListEmptyReason({
+          isLoading: friendsQuery.isPending,
+          hasAnyContacts: 0 < (friendsQuery.data?.length ?? 0),
+          isFiltering: '' !== searchValue,
+        });
 
   function onUserSelect(userId: number) {
     setUserIds((prev) => ({ ...prev, [userId]: !prev[userId] }));
   }
 
-  const onSave = useCallback(
-    (selectedUserIds: Record<number, boolean>) => {
-      const users = [];
+  const isEmail = z.string().email().safeParse(inputValue.trim());
+  const selectedIds = Object.entries(userIds)
+    .filter(([, selected]) => selected)
+    .map(([id]) => Number(id));
 
-      for (const userId of Object.keys(selectedUserIds)) {
-        if (selectedUserIds[parseInt(userId)]) {
-          users.push(parseInt(userId));
-        }
-      }
-
-      setInputValue('');
-
-      if (0 === users.length) {
-        return;
-      }
-
-      addMembersMutation.mutate(
-        {
-          groupId: group.id,
-          userIds: users,
-        },
-        {
-          onSuccess: () => {
-            utils.group.getGroupDetails.invalidate({ groupId: group.id }).catch(console.error);
-          },
-          onError: () => toast.error(t('errors.add_member_failed')),
-        },
-      );
-      setOpen(false);
-      setUserIds({});
-    },
-    [addMembersMutation, group.id, t, utils],
-  );
-
-  const isEmail = z.string().email().safeParse(inputValue);
-
-  function onAddEmailClick(invite = false) {
-    if (isEmail.success) {
-      const email = inputValue.toLowerCase();
-      const addUserToGroup = (user: { id: number }) => onSave({ ...userIds, [user.id]: true });
-
-      addFriendMutation.mutate(
-        { email, sendInviteEmail: invite },
-        {
-          onSuccess: addUserToGroup,
-          onError: (err) => {
-            const appErrorCode = err.data?.appErrorCode;
-            toast.error(t(getInviteErrorToastKey(appErrorCode)));
-
-            // The friend row already exists whenever this router throws, so retry the group-add.
-            if (isInviteEmailSendFailed(appErrorCode)) {
-              addFriendMutation.mutate(
-                { email, sendInviteEmail: false },
-                {
-                  onSuccess: addUserToGroup,
-                  onError: () => toast.error(t('errors.add_member_failed')),
-                },
-              );
-            }
-          },
-        },
-      );
+  const handleClose = () => {
+    if (submitting.current) {
+      return;
     }
-  }
+    setOpen(false);
+    setInputValue('');
+    resolvedEmail.current = null;
+    setUserIds({});
+    setSendInvite(false);
+  };
 
-  const handleTriggerClick = useCallback(() => setOpen(true), []);
-
-  const handleActionClick = useCallback(() => onSave(userIds), [onSave, userIds]);
-
-  const handleClose = useCallback(() => setOpen(false), []);
+  const onSave = async () => {
+    if (submitting.current || (!isEmail.success && 0 === selectedIds.length)) {
+      return;
+    }
+    submitting.current = true;
+    setSaving(true);
+    let inviteFailed = false;
+    try {
+      const users = [...selectedIds];
+      if (isEmail.success) {
+        const email = isEmail.data.toLowerCase();
+        if (resolvedEmail.current?.email !== email) {
+          let user = null;
+          try {
+            user = await addFriendMutation.mutateAsync({
+              email,
+              sendInviteEmail: enableSendingInvites && sendInvite,
+            });
+          } catch (error) {
+            const code = getInviteAppErrorCode(error);
+            if (!isInviteEmailSendFailed(code)) {
+              toast.error(t(getInviteErrorToastKey(code)));
+              return;
+            }
+            user = await addFriendMutation.mutateAsync({ email, sendInviteEmail: false });
+            inviteFailed = true;
+          }
+          resolvedEmail.current = { email, userId: user.id, inviteFailed };
+        }
+        inviteFailed = resolvedEmail.current.inviteFailed;
+        users.push(resolvedEmail.current.userId);
+      }
+      await addMembersMutation.mutateAsync({ groupId: group.id, userIds: [...new Set(users)] });
+      void utils.group.getGroupDetails.invalidate({ groupId: group.id }).catch(console.error);
+      if (inviteFailed) {
+        toast.warning(t('ui.invitation.group_partial_success'));
+      }
+      setOpen(false);
+      setInputValue('');
+      resolvedEmail.current = null;
+      setUserIds({});
+      setSendInvite(false);
+    } catch {
+      toast.error(t('errors.add_member_failed'));
+    } finally {
+      submitting.current = false;
+      setSaving(false);
+    }
+  };
 
   return (
     <AppDrawer
       trigger={children}
-      onTriggerClick={handleTriggerClick}
+      onTriggerClick={() => setOpen(true)}
+      open={open}
       title={t('group_details.no_members.add_members_details.title')}
       leftAction={t('actions.cancel')}
-      actionTitle={t('actions.save')}
-      actionOnClick={handleActionClick}
+      actionTitle={
+        saving
+          ? t('ui.invitation.adding')
+          : t('group_details.no_members.add_members_details.add_to_split_pro')
+      }
+      actionOnClick={() => void onSave()}
+      actionDisabled={saving || (!isEmail.success && 0 === selectedIds.length)}
       className="h-[85vh]"
-      shouldCloseOnAction
+      dismissible={!saving}
+      shouldCloseOnLeftAction={false}
+      leftActionOnClick={handleClose}
       onClose={handleClose}
-      onOpenChange={(state) => state !== open && setOpen(state)}
+      onOpenChange={(state) => {
+        if (!state) {
+          handleClose();
+        } else {
+          setOpen(true);
+        }
+      }}
     >
-      <Input
-        className="mt-8 w-full text-lg"
-        placeholder={t('group_details.no_members.add_members_details.placeholder')}
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-      />
-      <div>
-        {enableSendingInvites ? (
-          <div className="mt-1 text-orange-600">
-            {t('group_details.no_members.add_members_details.warning')}
-          </div>
-        ) : (
-          <div>{t('group_details.no_members.add_members_details.note')}</div>
-        )}
-
-        <div className="flex justify-center gap-4">
-          {enableSendingInvites && (
-            <Button
-              className="mt-4 w-full text-cyan-500"
-              variant="outline"
-              disabled={!isEmail.success}
-              onClick={() => onAddEmailClick(true)}
-            >
-              <SendIcon className="mr-2 h-4 w-4" />
-              {isEmail.success
-                ? t('group_details.no_members.add_members_details.send_invite')
-                : t('errors.valid_email')}
-            </Button>
-          )}
-          <Button
-            className="mt-4 w-full text-cyan-500"
-            variant="outline"
-            disabled={!isEmail.success}
-            onClick={() => onAddEmailClick(false)}
-          >
-            <UserPlusIcon className="mr-2 h-4 w-4" />
-            {isEmail.success
-              ? t('group_details.no_members.add_members_details.add_to_split_pro')
-              : t('errors.valid_email')}
-          </Button>
-        </div>
+      <div className="flex flex-col gap-4">
+        <Input
+          className="w-full text-lg"
+          placeholder={t('group_details.no_members.add_members_details.placeholder')}
+          value={inputValue}
+          disabled={saving}
+          onChange={(e) => {
+            if (e.target.value.trim().toLowerCase() !== resolvedEmail.current?.email) {
+              resolvedEmail.current = null;
+            }
+            setInputValue(e.target.value);
+          }}
+        />
+        <InvitationOption
+          enabled={enableSendingInvites}
+          checked={sendInvite}
+          onCheckedChange={setSendInvite}
+          disabled={saving}
+        />
       </div>
-      <div className="mt-4 flex flex-col gap-4">
+      <div className="mt-6 flex flex-col gap-4">
+        {contactsFailed ? (
+          <div role="alert" className="flex flex-col items-start gap-2">
+            <p>{t('ui.people_list_load_error')}</p>
+            <Button
+              variant="outline"
+              disabled={friendsQuery.isFetching}
+              onClick={() => void friendsQuery.refetch()}
+            >
+              {t('actions.retry')}
+            </Button>
+          </div>
+        ) : null}
+        {emptyReason ? (
+          <p className="text-center text-sm text-gray-400">
+            {t(`ui.group_people_list_empty.${emptyReason}`)}
+          </p>
+        ) : null}
         {filteredUsers?.map((friend) => (
           <Button
             variant="ghost"
+            disabled={saving}
             key={friend.id}
             className="focus:text-foreground flex items-center justify-between px-0"
             onClick={() => onUserSelect(friend.id)}

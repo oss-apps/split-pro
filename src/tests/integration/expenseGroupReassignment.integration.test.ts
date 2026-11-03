@@ -120,32 +120,37 @@ describe('assigning an ungrouped expense to a group', () => {
     expect(await accountingSnapshot()).toEqual(before);
   });
 
-  it('rejects an ordinary edit of a currency conversion', async () => {
-    const { owner, member, group } = await testScenario();
-    await callerFor(owner.id).expense.addOrEditCurrencyConversion({
-      amount: 1000n,
-      rate: 0.9,
-      from: 'USD',
-      to: 'EUR',
-      senderId: owner.id,
-      receiverId: member.id,
-      groupId: null,
-    });
-    const source = await db.expense.findFirstOrThrow({ where: { conversionToId: { not: null } } });
-    const before = await accountingSnapshot();
+  it.each(['source', 'target'] as const)(
+    'rejects an ordinary edit of a conversion %s',
+    async (side) => {
+      const { owner, member, group } = await testScenario();
+      await callerFor(owner.id).expense.addOrEditCurrencyConversion({
+        amount: 1000n,
+        rate: 0.9,
+        from: 'USD',
+        to: 'EUR',
+        senderId: owner.id,
+        receiverId: member.id,
+        groupId: null,
+      });
+      const source = await db.expense.findFirstOrThrow({
+        where: { conversionToId: { not: null } },
+      });
+      const before = await accountingSnapshot();
 
-    await expect(
-      callerFor(owner.id).expense.addOrEditExpense({
-        ...expenseInput(owner.id, member.id),
-        expenseId: source.id,
-        groupId: group.id,
-      }),
-    ).rejects.toMatchObject({
-      code: 'BAD_REQUEST',
-      message: 'Currency conversions must be edited together',
-    });
-    expect(await accountingSnapshot()).toEqual(before);
-  });
+      await expect(
+        callerFor(owner.id).expense.addOrEditExpense({
+          ...expenseInput(owner.id, member.id),
+          expenseId: 'source' === side ? source.id : source.conversionToId!,
+          groupId: group.id,
+        }),
+      ).rejects.toMatchObject({
+        code: 'BAD_REQUEST',
+        message: 'Currency conversions must be edited together',
+      });
+      expect(await accountingSnapshot()).toEqual(before);
+    },
+  );
 
   it('rejects a caller who neither added nor participates in the expense', async () => {
     const { owner, member, outsider } = await testScenario();

@@ -257,6 +257,7 @@ export async function editExpense(
   const expense = await db.expense.findUnique({
     where: { id: expenseId },
     include: {
+      conversionFrom: { select: { id: true } },
       expenseParticipants: true,
       recurrence: {
         include: {
@@ -270,7 +271,7 @@ export async function editExpense(
     throw new Error('Expense not found');
   }
 
-  if (expense.conversionToId && !conversionToParams) {
+  if ((expense.conversionToId || expense.conversionFrom) && !conversionToParams) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: 'Currency conversions must be edited together',

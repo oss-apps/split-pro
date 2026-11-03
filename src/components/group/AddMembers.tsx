@@ -189,7 +189,7 @@ const AddMembers: React.FC<{
       <div className="mt-4 flex flex-col gap-4">
         {emptyReason ? (
           <p className="text-center text-sm text-gray-400">
-            {t(`ui.people_list_empty.${emptyReason}`)}
+            {t(`ui.group_people_list_empty.${emptyReason}`)}
           </p>
         ) : null}
         {filteredUsers?.map((friend) => (

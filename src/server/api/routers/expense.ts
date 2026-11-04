@@ -31,12 +31,14 @@ import {
   editExpense,
 } from '../services/splitService';
 import { currencyRateProvider } from '../services/currencyRateService';
+import { commentProcedures } from '../services/commentService';
 import { isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { getUserMap } from './user';
 
 export const expenseRouter = createTRPCRouter({
+  ...commentProcedures,
   getRecurrencePreview: protectedProcedure
     .input(z.object({ cronExpression: z.string().transform(cronToBackend) }))
     .query(async ({ input }) => {
@@ -381,7 +383,14 @@ export const expenseRouter = createTRPCRouter({
               user: true,
             },
           },
-          expenseNotes: true,
+          expenseNotes: {
+            orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+            include: {
+              createdBy: {
+                select: { id: true, name: true, email: true, image: true, deletedAt: true },
+              },
+            },
+          },
           addedByUser: true,
           paidByUser: true,
           deletedByUser: true,
@@ -412,6 +421,7 @@ export const expenseRouter = createTRPCRouter({
       if (
         expense &&
         expense.addedBy !== ctx.session.user.id &&
+        expense.paidBy !== ctx.session.user.id &&
         !expense.expenseParticipants.some(
           (participant) => participant.userId === ctx.session.user.id,
         )

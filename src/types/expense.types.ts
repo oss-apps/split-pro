@@ -25,6 +25,7 @@ export type CreateExpense = Omit<
   | 'conversionToId'
   | 'recurrenceId'
 > & {
+  initialComment?: string;
   expenseDate?: Date;
   fileKey?: string;
   expenseId?: string;
@@ -33,6 +34,7 @@ export type CreateExpense = Omit<
 };
 
 export const createExpenseSchema = z.object({
+  initialComment: z.string().trim().max(5000).optional(),
   paidBy: z.number(),
   name: z.string(),
   category: z.string(),

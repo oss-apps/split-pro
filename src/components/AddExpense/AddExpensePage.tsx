@@ -1,4 +1,4 @@
-import { HeartHandshakeIcon, Landmark, RefreshCcwDot, X } from 'lucide-react';
+import { HeartHandshakeIcon, Landmark, MessageSquare, RefreshCcwDot, X } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -13,7 +13,7 @@ import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { cronToBackend } from '~/lib/cron';
 import { cn } from '~/lib/utils';
 import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+import { Input, MultilineInput } from '../ui/input';
 import AddBankTransactions from './AddBankTransactions';
 import { CategoryPicker } from './CategoryPicker';
 import { CurrencyPicker } from './CurrencyPicker';
@@ -35,6 +35,8 @@ export const AddOrEditExpensePage: React.FC<{
   expenseId?: string;
   bankConnectionEnabled: boolean;
 }> = ({ enableSendingInvites, expenseId, bankConnectionEnabled }) => {
+  const [initialComment, setInitialComment] = React.useState('');
+  const [showInitialComment, setShowInitialComment] = React.useState(false);
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
   const isNegative = useAddExpenseStore((s) => s.isNegative);
@@ -121,6 +123,7 @@ export const AddOrEditExpensePage: React.FC<{
         [
           {
             name: description,
+            initialComment: expenseId ? undefined : initialComment,
             currency,
             amount: amount * sign,
             groupId: group?.id ?? null,
@@ -147,6 +150,8 @@ export const AddOrEditExpensePage: React.FC<{
                 if (transactionToAdd) {
                   setMultipleTransactions(allTransactions);
                   setSingleTransaction(transactionToAdd);
+                  setInitialComment('');
+                  setShowInitialComment(false);
                 }
                 return;
               } else {
@@ -190,6 +195,7 @@ export const AddOrEditExpensePage: React.FC<{
       }
     }
   }, [
+    initialComment,
     description,
     currency,
     isNegative,
@@ -223,6 +229,8 @@ export const AddOrEditExpensePage: React.FC<{
 
   const clearTransaction = useCallback(() => {
     resetState();
+    setInitialComment('');
+    setShowInitialComment(false);
     setMultipleTransactions([]);
   }, [resetState, setMultipleTransactions]);
 
@@ -299,7 +307,7 @@ export const AddOrEditExpensePage: React.FC<{
         <SelectUserOrGroup enableSendingInvites={enableSendingInvites} />
       ) : (
         <>
-          <div className="mt-4 flex gap-2 sm:mt-10">
+          <div className="mt-4 grid grid-cols-[73px_minmax(0,1fr)] gap-2 sm:mt-10">
             <CategoryPicker category={category} onCategoryPick={setCategory} />
             <Input
               placeholder={t('expense_details.add_expense_details.description_placeholder')}
@@ -309,7 +317,7 @@ export const AddOrEditExpensePage: React.FC<{
               autoFocus
             />
           </div>
-          <div className="flex gap-2">
+          <div className="grid grid-cols-[73px_minmax(0,1fr)] gap-2">
             <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
             <CurrencyInput
               placeholder={t('expense_details.add_expense_details.amount_placeholder')}
@@ -321,6 +329,37 @@ export const AddOrEditExpensePage: React.FC<{
               rightIcon={currencyConversionComponent}
             />
           </div>
+          {!expenseId && (
+            <div className="grid h-20 grid-cols-[73px_minmax(0,1fr)] items-start gap-2">
+              <button
+                type="button"
+                className="ring-offset-background flex h-10 w-full items-center justify-center rounded-md focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-hidden"
+                aria-label={t('comments.initial_label')}
+                title={t('comments.initial_label')}
+                aria-expanded={showInitialComment}
+                aria-controls="initial-expense-comment"
+                onClick={() => setShowInitialComment(!showInitialComment)}
+              >
+                <MessageSquare
+                  className={cn(
+                    'size-6',
+                    showInitialComment || initialComment.trim() ? 'text-primary' : 'text-gray-300',
+                  )}
+                />
+              </button>
+              {showInitialComment && (
+                <MultilineInput
+                  id="initial-expense-comment"
+                  aria-label={t('comments.initial_label')}
+                  value={initialComment}
+                  onChange={(event) => setInitialComment(event.target.value)}
+                  maxLength={5000}
+                  placeholder={t('comments.initial_placeholder')}
+                  autoFocus
+                />
+              )}
+            </div>
+          )}
           <div className="h-[180px]">
             {amount && '' !== description ? (
               <>

@@ -1,6 +1,7 @@
 jest.mock('~/server/db', () => ({ db: require('~/tests/integration/database').db }));
 jest.mock('~/server/auth', () => ({ getServerAuthSession: jest.fn() }));
 jest.mock('~/server/api/services/notificationService', () => ({
+  sendPushNotificationToUsers: jest.fn().mockResolvedValue({ sentCount: 0 }),
   sendExpensePushNotification: jest.fn().mockResolvedValue(undefined),
   sendGroupSimplifyDebtsToggleNotification: jest.fn().mockResolvedValue(undefined),
 }));

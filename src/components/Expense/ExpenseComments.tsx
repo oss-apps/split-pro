@@ -215,7 +215,12 @@ export const ExpenseComments = ({ expense, userId }: { expense: Expense; userId:
               value={note}
               onChange={(event) => setNote(event.target.value)}
               onKeyDown={(event) => {
-                if ('Enter' !== event.key || event.shiftKey || event.nativeEvent.isComposing) {
+                if (
+                  'Enter' !== event.key ||
+                  event.shiftKey ||
+                  event.nativeEvent.isComposing ||
+                  229 === event.nativeEvent.keyCode
+                ) {
                   return;
                 }
                 event.preventDefault();
@@ -226,7 +231,7 @@ export const ExpenseComments = ({ expense, userId }: { expense: Expense; userId:
               placeholder={t('comments.placeholder')}
               maxLength={5000}
               rows={3}
-              disabled={pending}
+              readOnly={pending}
               className="px-4"
             />
             <InputGroupAddon align="inline-end" className="mr-1 self-end pr-3">

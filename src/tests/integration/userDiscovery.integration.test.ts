@@ -50,6 +50,24 @@ describe('user discovery', () => {
     ]);
   });
 
+  it('returns only picker identity fields for unrelated users', async () => {
+    jest.replaceProperty(env, 'ENABLE_USER_DISCOVERY', true);
+    const owner = await testUser('Owner');
+    const stranger = await testUser('Stranger');
+    await db.user.update({
+      where: { id: stranger.id },
+      data: {
+        bankingId: 'private-bank-id',
+        obapiProviderId: 'private-provider-id',
+        hiddenFriendIds: [owner.id],
+      },
+    });
+
+    expect(await callerFor(owner.id).user.getDiscoverableUsers()).toEqual([
+      { id: stranger.id, name: stranger.name, image: stranger.image },
+    ]);
+  });
+
   it('requires authentication even when enabled', async () => {
     jest.replaceProperty(env, 'ENABLE_USER_DISCOVERY', true);
     await expect(callerFor(null).user.getDiscoverableUsers()).rejects.toMatchObject({

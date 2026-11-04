@@ -258,8 +258,8 @@ describe('Expense participant invitations', () => {
   it('filters and selects discovered users in their own section', () => {
     mockDiscoveryQuery.mockReturnValue({
       data: [
-        { id: 4, name: 'Hidden friend', email: 'hidden@example.com' },
-        { id: 5, name: 'Other person', email: 'other@example.com' },
+        { id: 4, name: 'Hidden friend', image: null },
+        { id: 5, name: 'Other person', image: null },
       ],
       isPending: false,
       isError: false,

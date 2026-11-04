@@ -92,6 +92,7 @@ export const userRouter = createTRPCRouter({
         deletedAt: null,
         id: { notIn: [ctx.session.user.id, ...friends.map((friend) => friend.friendId)] },
       },
+      select: { id: true, name: true, image: true },
       orderBy: [{ name: 'asc' }, { id: 'asc' }],
     });
   }),

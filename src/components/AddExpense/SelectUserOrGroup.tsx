@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-import { useAddExpenseStore } from '~/store/addStore';
+import { type Participant, useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { deserializeDefaultSplit } from '~/lib/defaultSplit';
 import {
@@ -143,7 +143,7 @@ export const SelectUserOrGroup: React.FC<{
   );
 
   const handleFriendClick = useCallback(
-    (f: User) => {
+    (f: Participant) => {
       const isExisting = participants.some((p) => p.id === f.id);
 
       if (isExisting) {

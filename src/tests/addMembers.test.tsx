@@ -12,9 +12,16 @@ import { type AppDrawer } from '~/components/ui/drawer';
 import { renderWithProviders } from '~/tests/helpers/render';
 
 const mockFriendsQuery = jest.fn();
+const mockDiscoveryQuery = jest.fn();
 const mockGroupsQuery = jest.fn();
 const mockRefetch = jest.fn();
 const resetQueries = () => {
+  mockDiscoveryQuery.mockReturnValue({
+    data: [],
+    isPending: false,
+    isError: false,
+    refetch: mockRefetch,
+  });
   mockFriendsQuery.mockReturnValue({
     data: [{ id: 2, name: 'Alex', email: 'alex@example.com' }],
     isPending: false,
@@ -34,6 +41,7 @@ const mockInvalidate = jest.fn().mockResolvedValue(undefined);
 jest.mock('~/utils/api', () => ({
   api: {
     user: {
+      getDiscoverableUsers: { useQuery: () => mockDiscoveryQuery() },
       getFriends: {
         useQuery: () => mockFriendsQuery(),
       },
@@ -245,6 +253,24 @@ describe('Expense participant invitations', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('Could not load contacts.');
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
     expect(mockRefetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('filters and selects discovered users in their own section', () => {
+    mockDiscoveryQuery.mockReturnValue({
+      data: [
+        { id: 4, name: 'Hidden friend', email: 'hidden@example.com' },
+        { id: 5, name: 'Other person', email: 'other@example.com' },
+      ],
+      isPending: false,
+      isError: false,
+    });
+    useAddExpenseStore.setState({ nameOrEmail: 'hidden', participants: [] });
+    renderWithProviders(<SelectUserOrGroup enableSendingInvites={false} />);
+    expect(screen.getByText('Other users')).toBeInTheDocument();
+    expect(screen.queryByText('Other person')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Hidden friend' }));
+    expect(useAddExpenseStore.getState().participants.map((user) => user.id)).toEqual([4]);
+    expect(useAddExpenseStore.getState().nameOrEmail).toBe('');
   });
 
   it('adds to the draft and reports partial success after the email fallback', async () => {

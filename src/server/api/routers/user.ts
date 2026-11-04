@@ -76,6 +76,26 @@ export const userRouter = createTRPCRouter({
     return friends.map((f) => f.friend);
   }),
 
+  getDiscoverableUsers: protectedProcedure.query(async ({ ctx }) => {
+    if (!env.ENABLE_USER_DISCOVERY) {
+      return [];
+    }
+
+    const friends = await ctx.db.balanceView.findMany({
+      where: { userId: ctx.session.user.id, friendId: { notIn: ctx.session.user.hiddenFriendIds } },
+      select: { friendId: true },
+      distinct: ['friendId'],
+    });
+
+    return ctx.db.user.findMany({
+      where: {
+        deletedAt: null,
+        id: { notIn: [ctx.session.user.id, ...friends.map((friend) => friend.friendId)] },
+      },
+      orderBy: [{ name: 'asc' }, { id: 'asc' }],
+    });
+  }),
+
   getOwnExpenses: protectedProcedure.query(async ({ ctx }) => {
     const expenses = await db.expense.findMany({
       where: {

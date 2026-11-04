@@ -25,7 +25,8 @@ import { UploadFile } from './UploadFile';
 import { UserInput } from './UserInput';
 import { CurrencyInput } from '../ui/currency-input';
 import { CurrencyConversion } from '../Friend/CurrencyConversion';
-import { currencyConversion } from '~/utils/numbers';
+import { BigMath, currencyConversion } from '~/utils/numbers';
+import { isExpression, safeEvaluateExpression } from '~/utils/expression';
 import { CurrencyConversionIcon } from '../ui/categoryIcons';
 import { useSession } from 'next-auth/react';
 import { isStringQueryParam } from '~/utils/queryParams';
@@ -111,6 +112,21 @@ export const AddOrEditExpensePage: React.FC<{
       return;
     }
 
+    let finalAmount = amount;
+    if (isExpression(amtStr)) {
+      const evaluated = safeEvaluateExpression(amtStr);
+      if (null === evaluated) {
+        return;
+      }
+      finalAmount = BigMath.abs(
+        getCurrencyHelpersCached(currency).expressionResultToBigInt(evaluated),
+      );
+    }
+
+    if (0n === finalAmount) {
+      return;
+    }
+
     setMultipleTransactions([]);
     setIsTransactionLoading(false);
 
@@ -122,7 +138,7 @@ export const AddOrEditExpensePage: React.FC<{
           {
             name: description,
             currency,
-            amount: amount * sign,
+            amount: finalAmount * sign,
             groupId: group?.id ?? null,
             splitType,
             participants: participants.map((p) => ({
@@ -194,6 +210,7 @@ export const AddOrEditExpensePage: React.FC<{
     currency,
     isNegative,
     amount,
+    amtStr,
     participants,
     category,
     expenseDate,
@@ -212,6 +229,7 @@ export const AddOrEditExpensePage: React.FC<{
     setSingleTransaction,
     t,
     update,
+    getCurrencyHelpersCached,
   ]);
 
   const handleDescriptionChange = useCallback(
@@ -315,6 +333,7 @@ export const AddOrEditExpensePage: React.FC<{
               placeholder={t('expense_details.add_expense_details.amount_placeholder')}
               currency={currency}
               strValue={amtStr}
+              allowExpressions
               allowNegative
               hideSymbol
               onValueChange={onUpdateAmount}

@@ -220,7 +220,7 @@ export const ExpenseComments = ({ expense, userId }: { expense: Expense; userId:
               disabled={pending}
               className="px-4"
             />
-            <InputGroupAddon align="inline-end" className="mr-0 self-end pb-3">
+            <InputGroupAddon align="inline-end" className="mr-1 self-end pr-3">
               <InputGroupButton
                 type="submit"
                 variant="default"

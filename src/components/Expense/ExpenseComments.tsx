@@ -214,6 +214,15 @@ export const ExpenseComments = ({ expense, userId }: { expense: Expense; userId:
               aria-label={t('comments.add')}
               value={note}
               onChange={(event) => setNote(event.target.value)}
+              onKeyDown={(event) => {
+                if ('Enter' !== event.key || event.shiftKey || event.nativeEvent.isComposing) {
+                  return;
+                }
+                event.preventDefault();
+                if (!pending && note.trim()) {
+                  event.currentTarget.form?.requestSubmit();
+                }
+              }}
               placeholder={t('comments.placeholder')}
               maxLength={5000}
               rows={3}

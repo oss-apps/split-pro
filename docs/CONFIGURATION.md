@@ -64,6 +64,7 @@ At least one provider must be configured. SplitPro does not support username/pas
 ### App behavior
 
 - `DEFAULT_HOMEPAGE`: Sets the landing page route, e.g. `/home` or `/balances`.
+- `ENABLE_USER_DISCOVERY`: Default `false`. Show an “Other users” section in the expense participant picker, including hidden friends and users without shared expenses. Excludes yourself and deleted accounts. Enable for private instances where all users may discover each other; this does not add friends to the balance dashboard.
 - `ENABLE_SENDING_INVITES`: Enable email invites (requires SMTP config).
 - `DISABLE_EMAIL_SIGNUP`: Disable email magic-link signup for new users.
 - `UPLOAD_MAX_FILE_SIZE_MB`: Maximum receipt upload size in MB. Used by both client-side pre-check and server-side upload limit. This is also the max size target for image compression, so increase it if you see bad resolution/quality. Default: `10`.

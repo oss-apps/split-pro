@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-import { useAddExpenseStore } from '~/store/addStore';
+import { type Participant, useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { deserializeDefaultSplit } from '~/lib/defaultSplit';
 import {
@@ -40,6 +40,7 @@ export const SelectUserOrGroup: React.FC<{
     useAddExpenseStore((s) => s.actions);
 
   const friendsQuery = api.user.getFriends.useQuery();
+  const discoveryQuery = api.user.getDiscoverableUsers.useQuery();
   const groupsQuery = api.group.getAllGroups.useQuery();
   const addFriendMutation = api.user.inviteFriend.useMutation();
 
@@ -53,20 +54,29 @@ export const SelectUserOrGroup: React.FC<{
   const canSelectGroups = 1 === participants.length;
   const contactsFailed =
     (friendsQuery.isError && undefined === friendsQuery.data) ||
+    (discoveryQuery.isError && undefined === discoveryQuery.data) ||
     (canSelectGroups && groupsQuery.isError && undefined === groupsQuery.data);
   const filteredGroups = canSelectGroups
     ? groupsQuery.data?.filter((g) => g.group.name.toLowerCase().includes(searchValue))
     : [];
-  const filteredFriends = friendsQuery.data?.filter((f) =>
-    displayName(f).toLowerCase().includes(searchValue),
+  const filteredFriends = friendsQuery.data?.filter(
+    (f) => !f.deletedAt && displayName(f).toLowerCase().includes(searchValue),
   );
 
-  /* Both friends and groups populate this list, so either one counts as having contacts. */
+  const filteredOtherUsers = discoveryQuery.data?.filter((user) =>
+    displayName(user).toLowerCase().includes(searchValue),
+  );
+
+  /* Friends, discoverable users, and groups all count as contacts. */
   const emptyReason = peopleListEmptyReason({
     isLoading:
-      contactsFailed || friendsQuery.isPending || (canSelectGroups && groupsQuery.isPending),
+      contactsFailed ||
+      friendsQuery.isPending ||
+      discoveryQuery.isPending ||
+      (canSelectGroups && groupsQuery.isPending),
     hasAnyContacts:
       0 < (friendsQuery.data?.length ?? 0) ||
+      0 < (discoveryQuery.data?.length ?? 0) ||
       (canSelectGroups && 0 < (groupsQuery.data?.length ?? 0)),
     isFiltering: '' !== searchValue,
   });
@@ -133,7 +143,7 @@ export const SelectUserOrGroup: React.FC<{
   );
 
   const handleFriendClick = useCallback(
-    (f: User) => {
+    (f: Participant) => {
       const isExisting = participants.some((p) => p.id === f.id);
 
       if (isExisting) {
@@ -183,10 +193,17 @@ export const SelectUserOrGroup: React.FC<{
             <p>{t('ui.people_list_load_error')}</p>
             <Button
               variant="outline"
-              disabled={friendsQuery.isFetching || (canSelectGroups && groupsQuery.isFetching)}
+              disabled={
+                friendsQuery.isFetching ||
+                discoveryQuery.isFetching ||
+                (canSelectGroups && groupsQuery.isFetching)
+              }
               onClick={() => {
                 if (friendsQuery.isError) {
                   void friendsQuery.refetch();
+                }
+                if (discoveryQuery.isError) {
+                  void discoveryQuery.refetch();
                 }
                 if (canSelectGroups && groupsQuery.isError) {
                   void groupsQuery.refetch();
@@ -201,6 +218,30 @@ export const SelectUserOrGroup: React.FC<{
           <>
             <div className="font-normal text-gray-500">{t('actors.friends')}</div>
             {filteredFriends.map((f) => (
+              <button
+                disabled={adding}
+                key={f.id}
+                className="flex w-full items-center justify-between border-b border-gray-900 py-4"
+                onClick={() => handleFriendClick(f)}
+              >
+                <div className="flex min-w-0 items-center gap-4">
+                  <EntityAvatar entity={f} size={35} />
+                  <div className="truncate">{displayName(f)}</div>
+                </div>
+                {participants.some((p) => p.id === f.id) ? (
+                  <div>
+                    <CheckIcon className="text-primary h-4 w-4" />
+                  </div>
+                ) : null}
+              </button>
+            ))}
+          </>
+        ) : null}
+
+        {filteredOtherUsers?.length ? (
+          <>
+            <div className="font-normal text-gray-500">{t('actors.other_users')}</div>
+            {filteredOtherUsers.map((f) => (
               <button
                 disabled={adding}
                 key={f.id}
@@ -243,7 +284,10 @@ export const SelectUserOrGroup: React.FC<{
           </>
         ) : null}
 
-        {!contactsFailed && 0 === filteredFriends?.length && 0 === filteredGroups?.length ? (
+        {!contactsFailed &&
+        0 === filteredFriends?.length &&
+        0 === filteredOtherUsers?.length &&
+        0 === filteredGroups?.length ? (
           <div className="mt-[30%] flex flex-col items-center justify-center gap-8 transition-discrete starting:opacity-0">
             <Image
               alt={t('expense_details.add_expense_details.select_user_or_group.empty_image_alt')}

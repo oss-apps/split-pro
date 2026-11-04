@@ -10,7 +10,8 @@ import { shuffleArray } from '~/utils/array';
 import { BigMath } from '~/utils/numbers';
 import { cyrb128, splitmix32 } from '~/utils/random';
 
-export type Participant = User & { amount?: bigint };
+export type Participant = Pick<User, 'id' | 'name' | 'image'> &
+  Partial<Pick<User, 'email' | 'deletedAt'>> & { amount?: bigint };
 export type SplitShares = Record<number, Record<SplitType, bigint | undefined>>;
 
 export interface AddExpenseState {
@@ -26,7 +27,7 @@ export interface AddExpenseState {
   currency: CurrencyCode;
   category: string;
   nameOrEmail: string;
-  paidBy?: User;
+  paidBy?: Participant;
   showFriends: boolean;
   isFileUploading: boolean;
   fileKey?: string;
@@ -51,7 +52,7 @@ export interface AddExpenseState {
     setCurrency: (currency: CurrencyCode) => void;
     setCategory: (category: string) => void;
     setNameOrEmail: (nameOrEmail: string) => void;
-    setPaidBy: (user: User) => void;
+    setPaidBy: (user: Participant) => void;
     setCurrentUser: (user: User) => void;
     setDescription: (description: string) => void;
     setFileUploading: (isFileUploading: boolean) => void;
@@ -395,7 +396,7 @@ export function calculateSplitShareBasedOnAmount(
   participants: Participant[],
   splitType: SplitType,
   splitShares: SplitShares,
-  paidBy?: User,
+  paidBy?: Participant,
 ) {
   switch (splitType) {
     case SplitType.EQUAL:

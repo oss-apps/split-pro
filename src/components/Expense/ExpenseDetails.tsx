@@ -25,6 +25,7 @@ import { CategoryIcon } from '../ui/categoryIcons';
 import { CurrencyInput } from '../ui/currency-input';
 import { AppDrawer } from '../ui/drawer';
 import { Separator } from '../ui/separator';
+import { ExpenseComments } from './ExpenseComments';
 import { Receipt } from './Receipt';
 import { RecurrencePreview } from './RecurrencePreview';
 import { DateSelector } from '../AddExpense/DateSelector';
@@ -164,6 +165,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
           </>
         )}
       </div>
+      <ExpenseComments expense={expense} userId={user.id} />
     </>
   );
 };

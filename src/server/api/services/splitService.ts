@@ -49,6 +49,7 @@ export async function createExpense(
     fileKey,
     transactionId,
     cronExpression,
+    initialComment,
   }: CreateExpense & { cronExpression?: string },
   currentUserId: number,
   conversionFromParams?: CreateExpense,
@@ -103,6 +104,9 @@ export async function createExpense(
       expenseDate,
       transactionId,
       conversionFrom,
+      expenseNotes: initialComment?.trim()
+        ? { create: { note: initialComment.trim(), createdById: currentUserId } }
+        : undefined,
     },
   });
 

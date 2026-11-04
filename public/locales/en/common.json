@@ -584,5 +584,18 @@
     "loading": "Loading expenses",
     "retry": "Try again",
     "error": "Could not load expenses. Please try again."
+  },
+  "comments": {
+    "title": "Comments",
+    "initial_label": "Add a note (optional)",
+    "initial_placeholder": "Add details about this expense…",
+    "add": "Add a comment",
+    "placeholder": "Write a comment…",
+    "post": "Post comment",
+    "edit": "Edit",
+    "delete": "Delete",
+    "edit_label": "Edit comment",
+    "delete_confirm": "Delete this comment?",
+    "error": "Could not save the comment"
   }
 }

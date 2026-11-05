@@ -32,7 +32,7 @@
     },
     "download_app": "Alkalmazás letöltése",
     "download_app_details": {
-      "download_as_pwa": "A SplitPro-t PWA-ként letöltheted a kezdőképernyődre.",
+      "download_as_pwa": "Letöltheted a SplitPro-t PWA-ként a kezdőképernyődre.",
       "title": "Alkalmazás letöltése",
       "using_android": "Ha Androidot használsz, nézd meg ezt",
       "using_ios": "Ha iOS-t használsz, nézd meg ezt",
@@ -40,14 +40,14 @@
     },
     "download_splitpro_data": "SplitPro adatok letöltése",
     "edit_name": {
-      "apply_avatar": "Avatar alkalmazása",
+      "apply_avatar": "Profilkép alkalmazása",
       "avatar_label": "Profilkép",
-      "avatar_preview": "Avatar előnézete",
+      "avatar_preview": "Profilkép előnézete",
       "placeholder": "Írd be a neved",
-      "remove_avatar": "Avatar eltávolítása",
+      "remove_avatar": "Profilkép eltávolítása",
       "select_avatar": "Kép kiválasztása",
       "title": "Részletek szerkesztése",
-      "zoom": "Közelítés"
+      "zoom": "Nagyítás"
     },
     "follow_on_x": "Kövess minket az X-en",
     "import_from_splitwise": "Importálás a Splitwise-ból",
@@ -90,7 +90,7 @@
   "actions": {
     "add_expense": "Költség hozzáadása",
     "back": "Vissza",
-    "cancel": "Mégsem",
+    "cancel": "Mégse",
     "close": "Bezárás",
     "confirm": "Megerősítés",
     "connect": "Csatlakozás",
@@ -105,6 +105,7 @@
     "next": "Következő",
     "reconnect": "Újracsatlakozás",
     "remind_later": "Emlékeztessen később",
+    "retry": "Újrapróbálás",
     "save": "Mentés",
     "settle_up": "Kiegyenlítés",
     "submit": "Küldés"
@@ -124,6 +125,7 @@
     "friends": "Barátok",
     "groups": "Csoportok",
     "members": "Tagok",
+    "other_users": "Más felhasználók",
     "owner": "Tulajdonos",
     "you": "Te",
     "you_accusativus": "Téged",
@@ -131,10 +133,10 @@
   },
   "auth": {
     "continue_with": "Folytatás ezzel: {provider}",
-    "email_placeholder": "Add meg az e-mail címed",
+    "email_placeholder": "Add meg az email-címed",
     "no_providers_configured": "Nincsenek konfigurált hitelesítési szolgáltatók",
-    "no_providers_instructions": "Kérjük, konfigurálj legalább egy hitelesítési szolgáltatót a bejelentkezéshez. Lásd a",
-    "otp_sent": "Elküldtünk egy e-mailt az OTP-vel. Kérjük, ellenőrizd a beérkező leveleidet, és kattints az e-mailben található linkre a bejelentkezéshez.",
+    "no_providers_instructions": "Kérjük, konfigurálj legalább egy hitelesítési szolgáltatót a bejelentkezéshez. Lásd:",
+    "otp_sent": "Elküldtünk egy emailt az OTP-vel. Kérjük, ellenőrizd a beérkező leveleidet, és kattints az emailben található linkre a bejelentkezéshez.",
     "send_magic_link": "Magic link küldése",
     "sending": "Küldés...",
     "setup_instructions": "Docker beállítási utasítások",
@@ -171,6 +173,19 @@
     "select_bank_provider": "Banki szolgáltató kiválasztása",
     "to_bank": "bankba"
   },
+  "comments": {
+    "add": "Megjegyzés hozzáadása",
+    "delete": "Törlés",
+    "delete_confirm": "Törlöd ezt a megjegyzést?",
+    "edit": "Szerkesztés",
+    "edit_label": "Megjegyzés szerkesztése",
+    "error": "Nem sikerült elmenteni a megjegyzést",
+    "initial_label": "Jegyzet hozzáadása (opcionális)",
+    "initial_placeholder": "Adj meg részleteket erről a kiadásról…",
+    "placeholder": "Írj egy megjegyzést…",
+    "post": "Megjegyzés elküldése",
+    "title": "Megjegyzések"
+  },
   "currency_conversion": {
     "amount_aria_label": "Összeg",
     "amount_to_receive": "Esedékes összeg",
@@ -187,8 +202,8 @@
     "currency_conversion_error": "Hiba a pénznemátváltás beállításakor",
     "currency_conversion_failed": "Nem sikerült átváltani a pénznemet",
     "currency_conversion_malformed": "A pénznemátváltási adatok hibásak",
-    "email_invalid": "Az e-mail cím érvénytelen, kérjük, próbáld újra a bejelentkezési folyamatot.",
-    "email_required": "E-mail cím megadása kötelező",
+    "email_invalid": "Az email-cím érvénytelen, kérjük, próbáld újra a bejelentkezési folyamatot.",
+    "email_required": "Email-cím megadása kötelező",
     "expense_deletion_failed": "Váratlan hiba történt a kiadás törlése során.",
     "expense_submission_failed": "Váratlan hiba történt a kiadás beküldése során.",
     "feedback_min_length": "A visszajelzésnek legalább 10 karakterből kell állnia",
@@ -201,7 +216,7 @@
     "invalid_cron_expression": "Érvénytelen cron kifejezés",
     "invalid_currency_code": "Érvénytelen pénznemkód {code}",
     "invalid_split": "Mentés előtt állítsd be, hogy ki tartozik ezzel a költséggel.",
-    "invite_email_failed": "A meghívó e-mail elküldése sikertelen. Ellenőrizd az SMTP-beállításokat.",
+    "invite_email_failed": "A meghívó email elküldése sikertelen. Ellenőrizd az SMTP-beállításokat.",
     "language_change_failed": "Hiba a nyelv módosításakor",
     "less_than": "A fájl mérete nem haladhatja meg a {size} MB-ot",
     "name_required": "Név megadása kötelező",
@@ -224,7 +239,7 @@
     "unsubscribe_error": "Hiba az értesítésekről történő leiratkozáskor",
     "upload_failed": "Nem sikerült feltölteni a fájlt",
     "uploading_error": "Nem sikerült feltölteni a fájlt",
-    "valid_email": "Adj meg érvényes e-mail címet"
+    "valid_email": "Adj meg érvényes email-címet"
   },
   "expense_details": {
     "add_expense": "Költség hozzáadása",
@@ -234,12 +249,12 @@
       "description_placeholder": "Írd be a leírást",
       "pick_a_date": "Válassz egy dátumot",
       "select_user_or_group": {
-        "add_to_split_pro": "Hozzáadás a SplitPro-hoz",
+        "add_to_split_pro": "Hozzáadás a kiadásokhoz",
         "empty_image_alt": "Nem találhatók felhasználók",
-        "note": "Megjegyzés: a meghívó küldése jelenleg le van tiltva a spam miatt",
+        "note": "Az emailes meghívás le van tiltva. Meghívó küldése nélkül is hozzáadhatsz bárkit emailben.",
         "only_one_group_time": "Egyszerre csak egy csoportod lehet",
-        "send_invite": "Meghívó küldése felhasználónak",
-        "warning": "Figyelmeztetés: Ne használd a „meghívó küldése” funkciót, ha érvénytelen az e-mail cím. Helyette használd a „hozzáadás a SplitPro-hoz” funkciót. Fiókod blokkolásra kerül, ha ezt a funkciót nem rendeltetésszerűen használod"
+        "send_invite": "Hozzáadás emailes meghívóval",
+        "warning": "Mindkét gomb hozzáadja a személyt ehhez a kiadástervezethez. Ha készen vagy, mentsd el a kiadást. A meghívásos opció csak akkor küld linket emailben a SplitPro-hoz, ha az email-címük nincs megerősítve; ez nem lépteti be őket."
       },
       "split_type_section": {
         "direction": {
@@ -282,10 +297,10 @@
         }
       },
       "user_input": {
-        "add_more_friends": "Barátok, csoportok keresése vagy e-mail cím hozzáadása",
+        "add_more_friends": "Barátok, csoportok keresése vagy email-cím hozzáadása",
         "cannot_change_group": "Szerkesztés közben nem lehet csoportot váltani",
         "remove_group": "A csoport eltávolításához nyomd meg a törlés gombot",
-        "search_friends": "Barátok, csoportok keresése vagy e-mail cím hozzáadása"
+        "search_friends": "Barátok, csoportok keresése vagy email-cím hozzáadása"
       }
     },
     "already_added": "Már hozzáadva",
@@ -323,7 +338,9 @@
   },
   "expense_list": {
     "conversion_for_users": "Pénznemváltás: {payerRole, select, you {tőled} other {{payer}}} és {receiverRole, select, you {neked} other {{receiver}}}",
+    "future_expense": "Jövőbeli kiadás — még nem szerepel az egyenlegekben",
     "settlement": "{payerRole, select, you {Fizettél {amount} neki: {receiver}} other {{receiverRole, select, you {{payer} fizetett neked {amount}} other {{payer} fizetett {amount} neki: {receiver}}}}}",
+    "upcoming_expenses": "Közelgő kiadások",
     "user_paid": "{actor, select, you {Fizettél {amount}} other {{user} fizetett {amount}}}",
     "user_received": "{actor, select, you {Kaptál {amount}} other {{user} kapott {amount}}}"
   },
@@ -409,12 +426,12 @@
     "no_members": {
       "add_members": "Tagok hozzáadása",
       "add_members_details": {
-        "add_to_split_pro": "Hozzáadás a SplitPro-hoz",
-        "note": "Megjegyzés: az e-mail meghívók küldése le van tiltva",
-        "placeholder": "Írd be a neved vagy az e-mail címed",
-        "send_invite": "Meghívó küldése felhasználónak",
+        "add_to_split_pro": "Hozzáadás a csoporthoz",
+        "note": "Az emailes meghívók le vannak tiltva. Ettől függetlenül hozzáadhatsz valakit email-cím alapján anélkül, hogy meghívót küldenél.",
+        "placeholder": "Írd be a neved vagy az email-címed",
+        "send_invite": "Hozzáadás emailes meghívóval",
         "title": "Tagok hozzáadása",
-        "warning": "Figyelmeztetés: Ne használd a „meghívó küldése” funkciót, ha érvénytelen az e-mail cím. Helyette használd a „hozzáadás a SplitPro-hoz” funkciót. Fiókod blokkolásra kerül, ha ezt a funkciót nem rendeltetésszerűen használod"
+        "warning": "Mindkét gomb azonnal hozzáadja a személyt és a kijelölt névjegyeket ehhez a csoporthoz. A Mentés gomb csak a kijelölt névjegyeket adja hozzá, a beírt email-címet nem. A meghívásos opció csak akkor küld linket emailben a SplitPro-hoz, ha az email-címük nincs megerősítve; ez nem lépteti be őket."
       },
       "invite_link": "Meghívólink",
       "no_members": "Még nincsenek tagok a csoportban."
@@ -469,10 +486,14 @@
     "edit_description": "Ez megváltoztatja a jövőbeli kiadások ütemezését. A meglévő kiadások nem módosulnak.",
     "edit_title": "Ismétlődés szerkesztése",
     "empty": "Még nincsenek ismétlődő költségek",
+    "execution_time_loading": "Végrehajtási idő betöltése…",
+    "execution_time_unavailable": "A végrehajtási idő nem érhető el.",
     "expense_for_the_amount_of": "{name} kiadás {amount} {currency} összegben",
+    "instance_schedule": "Ütemezés: {schedule} ({timeZone}).",
     "last_day": "Utolsó nap",
     "months": "Hónapok",
     "never": "Nincs konfigurálva ütemezés",
+    "next_local_run": "Következő ütemezett futás: {date} ({timeZone}, a te időzónád).",
     "recurring": "Ismétlés",
     "schedule_type": {
       "custom": "Egyedi",
@@ -483,7 +504,7 @@
       "year": "Évente"
     },
     "template_delete_warning": "Ez egy ismétlődő költségsablon. A törlése leállítja az összes jövőbeni ismétlődő költséget.",
-    "template_edit_warning": "Ez egy ismétlődő költségsablon. A változtatások minden jövőbeli ismétlődő költségre vonatkoznak.",
+    "template_edit_warning": "Ez egy rendszeres kiadás sablonja. A módosítások a jövőben létrehozott összes rendszeres kiadásra érvényesek lesznek.",
     "time_of_day": "Napszak",
     "title": "Ismétlődés",
     "toggle_options": "Ismétlődő kiadás opcióinak ki-/bekapcsolása",
@@ -538,19 +559,40 @@
       }
     },
     "expense_details": "Költségadatok",
+    "group_people_list_empty": {
+      "all_added": "Az összes mentett névjegyed tagja már ennek a csoportnak",
+      "no_contacts": "Nincsenek megjeleníthető mentett névjegyek",
+      "no_matches": "Egyetlen elérhető névjegy sem felel meg a keresésnek"
+    },
     "in_group": "Csoportban",
+    "invitation": {
+      "adding": "Hozzáadás…",
+      "disabled_help": "Ezen a szerveren le vannak tiltva a meghívó emailek. Ettől függetlenül hozzáadhatsz valakit email-cím alapján.",
+      "draft_help": "Egy résztvevő hozzáadása nem menti el a kiadást. Szerkesztéskor a kiadást is el kell mentened.",
+      "email_help": "A megadott email-címre csak akkor küldünk linket a SplitPro-hoz, ha az nincs megerősítve. Ez nem lépteti be őket.",
+      "expense_partial_success": "Hozzáadva a kiadástervezethez, de a meghívó emailt nem sikerült elküldeni.",
+      "group_partial_success": "Hozzáadva a csoporthoz, de a meghívó emailt nem sikerült elküldeni.",
+      "no_email_help": "Nem küldünk meghívó emailt. Azok a felhasználók, akik még nem regisztráltak, később bejelentkezhetnek ezzel az email-címmel.",
+      "send_email": "Meghívó email küldése"
+    },
     "no_activity": "Még nincsenek tevékenységek",
     "not_involved": "Nem vesz részt",
     "not_set": "Nincs beállítva",
     "on": "ekkor",
     "or": "vagy",
     "outstanding_balances": "Kiegyenlítetlen egyenlegek",
+    "people_list_empty": {
+      "all_added": "Minden mentett névjegyed szerepel már ebben a csoportban",
+      "no_contacts": "Nincsenek megjeleníthető mentett névjegyek vagy csoportok",
+      "no_matches": "Egyetlen elérhető névjegy vagy csoport sem felel meg a keresésnek"
+    },
+    "people_list_load_error": "Nem sikerült betölteni a névjegyeket. Kérlek, próbáld újra.",
     "select_balance": "Válassz egyenleget",
     "select_currency": "Válassz pénznemet",
     "settle_up_name": "Kiegyenlítés",
     "settled_up": "Kiegyenlítve",
     "settlement": "Elszámolás",
-    "share_text": "Nézd meg a SplitPro-t. Ez egy nyílt forráskódú, ingyenes alternatívája a Splitwise-nak",
+    "share_text": "Nézd meg a SplitPro-t. Ez egy nyílt forráskódú, ingyenes alternatíva a Splitwise helyett",
     "show_all_currencies": "Összes pénznem megjelenítése",
     "today": "Ma",
     "total_balance": "Összes egyenleg",

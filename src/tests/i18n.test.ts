@@ -320,6 +320,9 @@ describe('ICU migration', () => {
       message.replace('{provider}', 'GitHub'),
     );
     expect(hydrated.t('missing.key')).toBe('missing.key');
+    expect(hydrated.t('balance_summary.member_count', { count: 1 })).toBe('1 member');
+    expect(hydrated.t('balance_summary.member_count', { count: 2 })).toBe('2 members');
+    expect(hydrated.t('hero.title_rich', { ns: 'home' })).toContain('<highlight>free</highlight>');
   });
 
   it('uses ICU plural rules, including exact zero and language-specific categories', async () => {
@@ -339,5 +342,93 @@ describe('ICU migration', () => {
     expect(instance.t('items', { count: 2 })).toBe('2 rzeczy');
     expect(instance.t('items', { count: 5 })).toBe('5 rzeczy');
     expect(instance.t('items', { count: 1.5 })).toBe('1,5 rzeczy');
+  });
+});
+
+describe('phase 2 complete messages', () => {
+  it.each(['en', 'it', 'default'])(
+    'preserves landing rich text through SSR in %s',
+    async (locale) => {
+      const instance = await createTranslator(locale, { en: resources.en! });
+      const title = renderToStaticMarkup(
+        createElement(Trans, {
+          i18n: instance,
+          ns: 'home',
+          i18nKey: 'hero.title_rich',
+          components: { highlight: createElement('strong') },
+        }),
+      );
+      expect(title).toBe('Split expenses with your friends for <strong>free</strong>.');
+      const subtitle = renderToStaticMarkup(
+        createElement(Trans, {
+          i18n: instance,
+          ns: 'home',
+          i18nKey: 'hero.subtitle_rich',
+          components: {
+            sourceLink: createElement('a', { href: 'https://github.com/oss-apps/split-pro' }),
+          },
+        }),
+      );
+      expect(subtitle).toBe(
+        'An <a href="https://github.com/oss-apps/split-pro">open source</a> alternative to SplitWise.',
+      );
+    },
+  );
+
+  it.each(['you', 'other'])(
+    'renders complete group balances for %s without parsing names as markup',
+    async (actor) => {
+      const instance = await createTranslator('en');
+      const html = renderToStaticMarkup(
+        createElement(Trans, {
+          i18n: instance,
+          i18nKey: 'expense_details.balance_list.owes_amount',
+          values: { actor },
+          components: {
+            person: createElement('span', null, '<Anna>'),
+            amount: createElement('span', { className: 'amount' }, '€10'),
+          },
+        }),
+      );
+      expect(html).toBe(
+        `${'you' === actor ? 'You owe' : '<span>&lt;Anna&gt;</span> owes'} <span class="amount">€10</span>`,
+      );
+    },
+  );
+
+  it('allows translators to move balance amounts before labels', async () => {
+    const instance = await createTranslator('en', {
+      en: {
+        common: {
+          reordered: '<amount/> <label>You owe</label>',
+        },
+      },
+    });
+    expect(
+      renderToStaticMarkup(
+        createElement(Trans, {
+          i18n: instance,
+          i18nKey: 'reordered',
+          components: {
+            label: createElement('small'),
+            amount: createElement('span', null, '€10'),
+          },
+        }),
+      ),
+    ).toBe('<span>€10</span> <small>You owe</small>');
+  });
+
+  it('supports gender select with an unspecified fallback without inferring gender from names', async () => {
+    const instance = await createTranslator('en', {
+      en: {
+        common: {
+          gender:
+            '{gender, select, female {She paid {amount}} male {He paid {amount}} other {They paid {amount}}}',
+        },
+      },
+    });
+    expect(instance.t('gender', { gender: 'female', amount: '€10' })).toBe('She paid €10');
+    expect(instance.t('gender', { gender: 'male', amount: '€10' })).toBe('He paid €10');
+    expect(instance.t('gender', { gender: 'unknown', amount: '€10' })).toBe('They paid €10');
   });
 });

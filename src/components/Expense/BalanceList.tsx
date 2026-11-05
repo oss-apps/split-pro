@@ -1,4 +1,5 @@
 import type { BalanceView, User } from '@prisma/client';
+import { Trans } from 'next-i18next';
 import { clsx } from 'clsx';
 import { type ComponentProps, Fragment, useMemo } from 'react';
 import { EntityAvatar } from '~/components/ui/avatar';
@@ -81,24 +82,26 @@ export const BalanceList: React.FC<{
                       })}
                     </span>
                   ) : (
-                    <>
-                      <span className="text-gray-400">
-                        {t(`expense_details.balance_list.${0 < totalAmount[1] ? 'lent' : 'owes'}`, {
-                          actor: isCurrentUser ? 'you' : 'other',
-                          person: displayName(user),
-                        })}{' '}
-                      </span>
-                      <span
-                        className={clsx(
-                          'text-right',
-                          0 < totalAmount[1] ? 'text-emerald-500' : 'text-orange-600',
-                        )}
-                      >
-                        {getCurrencyHelpersCached(totalAmount[0]).toUIString(
-                          BigMath.abs(totalAmount[1]),
-                        )}
-                      </span>
-                    </>
+                    <Trans
+                      t={t}
+                      i18nKey={`expense_details.balance_list.${0 < totalAmount[1] ? 'lent_amount' : 'owes_amount'}`}
+                      values={{ actor: isCurrentUser ? 'you' : 'other' }}
+                      components={{
+                        person: <span className="text-gray-400">{displayName(user)}</span>,
+                        amount: (
+                          <span
+                            className={clsx(
+                              'text-right',
+                              0 < totalAmount[1] ? 'text-emerald-500' : 'text-orange-600',
+                            )}
+                          >
+                            {getCurrencyHelpersCached(totalAmount[0]).toUIString(
+                              BigMath.abs(totalAmount[1]),
+                            )}
+                          </span>
+                        ),
+                      }}
+                    />
                   )}
                 </div>
               </div>

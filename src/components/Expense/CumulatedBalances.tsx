@@ -1,3 +1,4 @@
+import { Trans } from 'next-i18next';
 import { useMemo } from 'react';
 import { ConvertibleBalance } from '~/components/Expense/ConvertibleBalance';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
@@ -11,7 +12,6 @@ export const CumulatedBalances: React.FC<{
   balances?: { currency: string; amount: bigint }[];
 }> = ({ entityId, entityType, balances }) => {
   const { t } = useTranslationWithUtils();
-
   const selectedCurrency = useCurrencyPreferenceStore((s) => s.getPreference(entityId, entityType));
 
   const allNonZeroCurrencies = useMemo(() => {
@@ -30,7 +30,7 @@ export const CumulatedBalances: React.FC<{
     <div className="flex flex-col gap-1">
       {isCurrencyCode(selectedCurrency) ? (
         <CumulatedBalanceDisplay
-          prefix={`${t('ui.total_balance')}: `}
+          messageKey="balance_summary.total_rich"
           entityId={entityId}
           entityType={entityType}
           cumulatedBalances={balances}
@@ -39,7 +39,7 @@ export const CumulatedBalances: React.FC<{
       ) : (
         <>
           <CumulatedBalanceDisplay
-            prefix={t('ui.expense.statements.you_lent')}
+            messageKey="balance_summary.lent_rich"
             entityId={entityId}
             entityType={entityType}
             cumulatedBalances={youLent}
@@ -48,7 +48,7 @@ export const CumulatedBalances: React.FC<{
             currencies={allNonZeroCurrencies}
           />
           <CumulatedBalanceDisplay
-            prefix={t('ui.expense.statements.you_owe')}
+            messageKey="balance_summary.owes_rich"
             entityId={entityId}
             entityType={entityType}
             className="text-negative"
@@ -63,7 +63,7 @@ export const CumulatedBalances: React.FC<{
   );
 };
 const CumulatedBalanceDisplay: React.FC<{
-  prefix?: string;
+  messageKey: string;
   entityId: number;
   entityType?: 'group';
   className?: string;
@@ -71,7 +71,7 @@ const CumulatedBalanceDisplay: React.FC<{
   forceShowButton?: boolean;
   currencies: string[];
 }> = ({
-  prefix = '',
+  messageKey,
   entityId,
   entityType,
   className = '',
@@ -79,20 +79,29 @@ const CumulatedBalanceDisplay: React.FC<{
   forceShowButton = false,
   currencies,
 }) => {
+  const { t } = useTranslationWithUtils();
   if (!cumulatedBalances || cumulatedBalances.length === 0) {
     return null;
   }
 
   return (
     <div className={cn('flex flex-wrap gap-1', className)}>
-      {prefix}
-      <ConvertibleBalance
-        balances={cumulatedBalances}
-        entityId={entityId}
-        entityType={entityType}
-        forceShowButton={forceShowButton}
-        showMultiOption
-        overrideCurrencies={currencies}
+      <Trans
+        t={t}
+        i18nKey={messageKey}
+        components={{
+          label: <span />,
+          amount: (
+            <ConvertibleBalance
+              balances={cumulatedBalances}
+              entityId={entityId}
+              entityType={entityType}
+              forceShowButton={forceShowButton}
+              showMultiOption
+              overrideCurrencies={currencies}
+            />
+          ),
+        }}
       />
     </div>
   );

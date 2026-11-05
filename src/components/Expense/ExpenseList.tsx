@@ -3,7 +3,7 @@ import { type inferRouterOutputs } from '@trpc/server';
 import { ArrowUp } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTranslation } from 'next-i18next';
+import { Trans, useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import React, { useContext } from 'react';
 import { toast } from 'sonner';
@@ -133,16 +133,24 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
       </div>
       <div className="min-w-10 shrink-0">
         {youPaid || 0n !== yourExpenseAmount ? (
-          <>
-            <div className={`text-right text-xs ${youPaid ? 'text-positive' : 'text-negative'}`}>
-              {t(youPaid ? 'ui.expense.statements.you_lent' : 'ui.expense.statements.you_owe')}
-            </div>
-            <div
-              className={`xs:max-w-full max-w-32 truncate text-right ${youPaid ? 'text-positive' : 'text-negative'}`}
-            >
-              {toUIString(yourExpenseAmount)}
-            </div>
-          </>
+          <Trans
+            t={t}
+            i18nKey={youPaid ? 'balance_summary.lent_rich' : 'balance_summary.owes_rich'}
+            components={{
+              label: (
+                <div
+                  className={`text-right text-xs ${youPaid ? 'text-positive' : 'text-negative'}`}
+                />
+              ),
+              amount: (
+                <div
+                  className={`xs:max-w-full max-w-32 truncate text-right ${youPaid ? 'text-positive' : 'text-negative'}`}
+                >
+                  {toUIString(yourExpenseAmount)}
+                </div>
+              ),
+            }}
+          />
         ) : (
           <div>
             <p className="text-xs text-gray-400">{t('ui.not_involved')}</p>

@@ -68,7 +68,9 @@
     "image_alt": "SplitPro app preview",
     "title_before_highlight": "Split expenses with your friends for",
     "title_after_highlight": ".",
-    "subtitle": "An open source alternative to SplitWise."
+    "subtitle": "An open source alternative to SplitWise.",
+    "title_rich": "Split expenses with your friends for <highlight>free</highlight>.",
+    "subtitle_rich": "An <sourceLink>open source</sourceLink> alternative to SplitWise."
   },
   "meta": {
     "description": "SplitPro: Split Expenses with your friends for free",

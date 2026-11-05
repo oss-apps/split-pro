@@ -1,9 +1,7 @@
 # Obsolete translation keys
 
-Remove in part 2 of the PR
-
-Mark these keys as obsolete in Weblate. Remove them from all catalogs after
-release; older app versions may still use them.
+Keep deprecated keys in every catalog for Weblate history and older app versions.
+Phase 2 adds complete messages only to English; Weblate supplies other languages.
 
 Keep the current `common` and `home` namespaces.
 
@@ -60,3 +58,17 @@ All keys not listed above remain unchanged, including `actors.you`,
   `other {{person} owes}` are valid; do not replace them globally.
 - Participant messages must include `<person/>` and `<amount/>` once per branch.
   They render the existing clickable user and styled amount components.
+
+## Phase 2 additions
+
+- `home:hero.title_rich` and `home:hero.subtitle_rich` replace landing fragments,
+  including highlight and source link placement.
+- `common:balance_summary.{lent_rich,owes_rich,total_rich}` own both the label
+  and the amount component; translators may reorder them.
+- `common:expense_details.balance_list.{lent_amount,owes_amount}` include the
+  actor and amount in one message. Names stay inside React text components.
+- Existing actor selects, participant links, activity messages, metadata, and
+  plural messages remain in use. No gender is inferred from user names; the
+  application has no gender field. ICU gender selects are covered by a fixture.
+
+All prior keys, catalog paths and namespaces are retained.

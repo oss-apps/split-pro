@@ -1,5 +1,6 @@
 import { type User } from '@prisma/client';
 import { clsx } from 'clsx';
+import { Trans } from 'next-i18next';
 
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import type { MinimalBalance } from '~/types/balance.types';
@@ -24,14 +25,27 @@ export const FriendBalance: React.FC<{
         </div>
       </div>
       <div>
-        <div
-          className={clsx('text-right text-xs', isPositive ? 'text-green-500' : 'text-orange-600')}
-        >
-          {t(`ui.expense.statements.${isPositive ? 'you_lent' : 'you_owe'}`)}
-        </div>
-        <div className={`${isPositive ? 'text-green-500' : 'text-orange-600'} flex text-right`}>
-          {toUIString(balance.amount)}
-        </div>
+        <Trans
+          t={t}
+          i18nKey={isPositive ? 'balance_summary.lent_rich' : 'balance_summary.owes_rich'}
+          components={{
+            label: (
+              <div
+                className={clsx(
+                  'text-right text-xs',
+                  isPositive ? 'text-green-500' : 'text-orange-600',
+                )}
+              />
+            ),
+            amount: (
+              <div
+                className={`${isPositive ? 'text-green-500' : 'text-orange-600'} flex text-right`}
+              >
+                {toUIString(balance.amount)}
+              </div>
+            ),
+          }}
+        />
       </div>
     </div>
   );

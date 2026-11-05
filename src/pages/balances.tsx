@@ -1,3 +1,4 @@
+import { Trans } from 'next-i18next';
 import { ArrowUpOnSquareIcon } from '@heroicons/react/24/outline';
 import { Download, PlusIcon } from 'lucide-react';
 import Head from 'next/head';
@@ -75,7 +76,7 @@ const BalancePage: NextPageWithUser = ({ user }) => {
         <div className="mx-4 flex items-stretch justify-between gap-4">
           {selectedCurrency && isCurrencyCode(selectedCurrency) ? (
             <CumulatedBalanceDisplay
-              prefix={t('ui.total_balance')}
+              messageKey="balance_summary.total_rich"
               cumulatedBalances={[
                 cumulatedQuery.data?.youOwe ?? [],
                 cumulatedQuery.data?.youGet ?? [],
@@ -86,12 +87,12 @@ const BalancePage: NextPageWithUser = ({ user }) => {
           ) : (
             <>
               <CumulatedBalanceDisplay
-                prefix={t('ui.expense.statements.you_owe')}
+                messageKey="balance_summary.owes_rich"
                 cumulatedBalances={cumulatedQuery.data?.youOwe}
                 currencies={allNonZeroCurrencies}
               />
               <CumulatedBalanceDisplay
-                prefix={t('ui.expense.statements.you_lent')}
+                messageKey="balance_summary.lent_rich"
                 cumulatedBalances={cumulatedQuery.data?.youGet}
                 currencies={allNonZeroCurrencies}
               />
@@ -133,31 +134,36 @@ const BalancePage: NextPageWithUser = ({ user }) => {
 };
 
 const CumulatedBalanceDisplay: React.FC<{
-  prefix?: string;
+  messageKey: string;
   className?: string;
   cumulatedBalances?: { currency: string; amount: bigint }[];
   currencies: string[];
-}> = ({ prefix = '', className = '', cumulatedBalances, currencies }) => {
+}> = ({ messageKey, className = '', cumulatedBalances, currencies }) => {
+  const { t } = useTranslationWithUtils();
   if (!cumulatedBalances || cumulatedBalances.length === 0) {
     return null;
   }
 
   return (
     <div className={cn('w-1/2 rounded-2xl border px-4 py-2', className)}>
-      <div className="mt-2 px-1">
-        <div className="flex items-center justify-center gap-2 text-center">
-          <p className="text-sm">{prefix}</p>
-        </div>
-      </div>
-      <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
-        <ConvertibleBalance
-          balances={cumulatedBalances}
-          showMultiOption
-          className="flex-wrap"
-          overrideCurrencies={currencies}
-          forceShowButton={currencies.length > 1}
-        />
-      </div>
+      <Trans
+        t={t}
+        i18nKey={messageKey}
+        components={{
+          label: <div className="mt-2 px-1 text-center text-sm" />,
+          amount: (
+            <div className="mt-4 mb-2 flex flex-wrap justify-center gap-1">
+              <ConvertibleBalance
+                balances={cumulatedBalances}
+                showMultiOption
+                className="flex-wrap"
+                overrideCurrencies={currencies}
+                forceShowButton={currencies.length > 1}
+              />
+            </div>
+          ),
+        }}
+      />
     </div>
   );
 };

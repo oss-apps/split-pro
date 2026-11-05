@@ -552,9 +552,6 @@
     "friend_owes_you": "{friend} owes you {amount}",
     "you_owe_friend": "You owe {friend} {amount}",
     "more": "{count, plural, one {# more balance} other {# more balances}}",
-    "lent_rich": "<label>You lent</label> <amount/>",
-    "owes_rich": "<label>You owe</label> <amount/>",
-    "total_rich": "<label>Total balance:</label> <amount/>",
     "member_count": "{count, plural, one {# member} other {# members}}"
   },
   "balance_list": {

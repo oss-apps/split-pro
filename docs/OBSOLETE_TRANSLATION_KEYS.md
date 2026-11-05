@@ -63,8 +63,8 @@ All keys not listed above remain unchanged, including `actors.you`,
 
 - `home:hero.title_rich` and `home:hero.subtitle_rich` replace landing fragments,
   including highlight and source link placement.
-- `common:balance_summary.{lent_rich,owes_rich,total_rich}` own both the label
-  and the amount component; translators may reorder them.
+- Balance labels reuse translated `ui.expense.statements.{you_lent,you_owe}`
+  and `ui.total_balance`. Amounts are separate UI values with fixed placement.
 - `common:expense_details.balance_list.{lent_amount,owes_amount}` include the
   actor and amount in one message. Names stay inside React text components.
 - Existing actor selects, participant links, activity messages, metadata, and

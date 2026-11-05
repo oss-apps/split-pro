@@ -1,6 +1,5 @@
 'use client';
 
-import { Trans } from 'next-i18next';
 import { EqualApproximately } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -272,34 +271,23 @@ const AmountDisplay: React.FC<{
   }
 
   const isPositive = amount > 0n;
-  const amountComponent = (
-    <span className={cn(isPositive ? 'text-positive' : 'text-negative', className)}>
-      {getCurrencyHelpersCached(currency).toUIString(amount)}
-      {hasMore && `+`}
-    </span>
-  );
   return (
     <div>
-      {withText ? (
-        <Trans
-          t={t}
-          i18nKey={isPositive ? 'balance_summary.lent_rich' : 'balance_summary.owes_rich'}
-          components={{
-            label: (
-              <div
-                className={cn(
-                  'text-right text-xs',
-                  isPositive ? 'text-positive' : 'text-negative',
-                  className,
-                )}
-              />
-            ),
-            amount: amountComponent,
-          }}
-        />
-      ) : (
-        amountComponent
+      {withText && (
+        <div
+          className={cn(
+            'text-right text-xs',
+            isPositive ? 'text-positive' : 'text-negative',
+            className,
+          )}
+        >
+          {t(`ui.expense.statements.${isPositive ? 'you_lent' : 'you_owe'}`)}
+        </div>
       )}
+      <span className={cn(isPositive ? 'text-positive' : 'text-negative', className)}>
+        {getCurrencyHelpersCached(currency).toUIString(amount)}
+        {hasMore && `+`}
+      </span>
     </div>
   );
 };

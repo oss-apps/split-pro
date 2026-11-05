@@ -82,26 +82,28 @@ export const BalanceList: React.FC<{
                       })}
                     </span>
                   ) : (
-                    <Trans
-                      t={t}
-                      i18nKey={`expense_details.balance_list.${0 < totalAmount[1] ? 'lent_amount' : 'owes_amount'}`}
-                      values={{ actor: isCurrentUser ? 'you' : 'other' }}
-                      components={{
-                        person: <span className="text-gray-400">{displayName(user)}</span>,
-                        amount: (
-                          <span
-                            className={clsx(
-                              'text-right',
-                              0 < totalAmount[1] ? 'text-emerald-500' : 'text-orange-600',
-                            )}
-                          >
-                            {getCurrencyHelpersCached(totalAmount[0]).toUIString(
-                              BigMath.abs(totalAmount[1]),
-                            )}
-                          </span>
-                        ),
-                      }}
-                    />
+                    <span className="text-gray-400">
+                      <Trans
+                        t={t}
+                        i18nKey={`expense_details.balance_list.${0 < totalAmount[1] ? 'lent_amount' : 'owes_amount'}`}
+                        values={{ actor: isCurrentUser ? 'you' : 'other' }}
+                        components={{
+                          person: <span className="text-gray-400">{displayName(user)}</span>,
+                          amount: (
+                            <span
+                              className={clsx(
+                                'text-right',
+                                0 < totalAmount[1] ? 'text-emerald-500' : 'text-orange-600',
+                              )}
+                            >
+                              {getCurrencyHelpersCached(totalAmount[0]).toUIString(
+                                BigMath.abs(totalAmount[1]),
+                              )}
+                            </span>
+                          ),
+                        }}
+                      />
+                    </span>
                   )}
                 </div>
               </div>

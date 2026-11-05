@@ -396,28 +396,6 @@ describe('phase 2 complete messages', () => {
     },
   );
 
-  it('allows translators to move balance amounts before labels', async () => {
-    const instance = await createTranslator('en', {
-      en: {
-        common: {
-          reordered: '<amount/> <label>You owe</label>',
-        },
-      },
-    });
-    expect(
-      renderToStaticMarkup(
-        createElement(Trans, {
-          i18n: instance,
-          i18nKey: 'reordered',
-          components: {
-            label: createElement('small'),
-            amount: createElement('span', null, '€10'),
-          },
-        }),
-      ),
-    ).toBe('<span>€10</span> <small>You owe</small>');
-  });
-
   it('supports gender select with an unspecified fallback without inferring gender from names', async () => {
     const instance = await createTranslator('en', {
       en: {

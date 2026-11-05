@@ -268,7 +268,9 @@
       "press_balance_info": "Press on individual balance to initiate settlement",
       "settled": "{actor, select, you {You are settled up} other {{person} is settled up}}",
       "lent": "{actor, select, you {You lent} other {{person} lent}}",
-      "owes": "{actor, select, you {You owe} other {{person} owes}}"
+      "owes": "{actor, select, you {You owe} other {{person} owes}}",
+      "lent_amount": "{actor, select, you {You lent <amount/>} other {<person/> lent <amount/>}}",
+      "owes_amount": "{actor, select, you {You owe <amount/>} other {<person/> owes <amount/>}}"
     },
     "delete_expense_details": {
       "text": "This action cannot be undone. This will permanently delete your expense.",
@@ -487,7 +489,8 @@
         "you_pay_user": "You pay {user}",
         "user_pays_you": "{user} pays you",
         "user_pays_user": "{payer} pays {receiver}"
-      }
+      },
+      "fetch_rate_date": "Exchange rate date"
     },
     "expense_details": "Expense details",
     "no_activity": "No activities yet",
@@ -548,7 +551,11 @@
   "balance_summary": {
     "friend_owes_you": "{friend} owes you {amount}",
     "you_owe_friend": "You owe {friend} {amount}",
-    "more": "{count, plural, one {# more balance} other {# more balances}}"
+    "more": "{count, plural, one {# more balance} other {# more balances}}",
+    "lent_rich": "<label>You lent</label> <amount/>",
+    "owes_rich": "<label>You owe</label> <amount/>",
+    "total_rich": "<label>Total balance:</label> <amount/>",
+    "member_count": "{count, plural, one {# member} other {# members}}"
   },
   "balance_list": {
     "pays": "{payerRole, select, you {You pay {amount} to {receiver}} other {{payer} pays {amount} to {receiverRole, select, you {you} other {{receiver}}}}}",

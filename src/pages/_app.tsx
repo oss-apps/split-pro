@@ -13,6 +13,7 @@ import { Toaster } from 'sonner';
 import { LoadingSpinner } from '~/components/ui/spinner';
 import { ThemeProvider } from 'next-themes';
 import { CurrencyHelpersProvider } from '~/contexts/CurrencyHelpersContext';
+import { BalanceDateProvider } from '~/contexts/BalanceDateContext';
 import { useAppStore } from '~/store/appStore';
 import { api } from '~/utils/api';
 
@@ -106,6 +107,9 @@ const Auth: React.FC<{ Page: PageWithAuth; pageProps: AppProps['pageProps'] }> =
   const { status, data, update } = useSession({ required: true });
   const [showSpinner, setShowSpinner] = useState(false);
   const updateUser = api.user.updateUserDetail.useMutation();
+  const balanceSettings = api.user.getBalanceSettings.useQuery(undefined, {
+    enabled: 'authenticated' === status,
+  });
   const router = useRouter();
 
   const { setWebPushPublicKey } = useAppStore((s) => s.actions);
@@ -178,7 +182,11 @@ const Auth: React.FC<{ Page: PageWithAuth; pageProps: AppProps['pageProps'] }> =
     );
   }
 
-  return <Page user={data.user} {...pageProps} />;
+  return (
+    <BalanceDateProvider enabled={balanceSettings.data?.excludeFutureExpenses ?? false}>
+      <Page user={data.user} {...pageProps} />
+    </BalanceDateProvider>
+  );
 };
 
 export default api.withTRPC(appWithTranslation(MyApp, i18nConfig));

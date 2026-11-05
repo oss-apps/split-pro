@@ -34,7 +34,7 @@ If SplitPro connects to an external/managed PostgreSQL instance, make sure your 
    ```sql
    CREATE EXTENSION IF NOT EXISTS pg_cron;
    GRANT USAGE ON SCHEMA cron TO <app_user>;
-   GRANT SELECT, REFERENCES ON cron.job TO <app_user>;
+   GRANT SELECT, UPDATE, REFERENCES ON cron.job TO <app_user>;
    GRANT SELECT ON cron.job_run_details TO <app_user>;
    ```
 
@@ -47,7 +47,9 @@ If SplitPro connects to an external/managed PostgreSQL instance, make sure your 
    SELECT extname FROM pg_extension WHERE extname = 'pg_cron';
    ```
 
-SplitPro can then run with a regular (non-superuser) `POSTGRES_USER`.
+SplitPro can then run with a regular (non-superuser) `POSTGRES_USER`. The `UPDATE`
+permission on `cron.job` is needed for schedule migration and the row locks used by
+startup reconciliation. pg_cron's row-level security scopes jobs to their owner.
 
 If your deployment sits behind a NAT/firewall/proxy that can silently drop idle TCP connections (leaving the pool with dead sockets that hang instead of erroring), add `connect_timeout` and `socket_timeout` (seconds) to `DATABASE_URL` so Prisma gives up on a stale connection instead of hanging indefinitely - e.g. `?connect_timeout=5&socket_timeout=5`. `/api/readyz`'s own query timeout only bounds queries that reach Postgres; it can't help if the socket itself is dead. See [docker/README.md#health-checks](../docker/README.md#health-checks) for `/api/healthz`/`/api/readyz` details and example probe configuration.
 
@@ -62,18 +64,25 @@ At least one provider must be configured. SplitPro does not support username/pas
 ### App behavior
 
 - `DEFAULT_HOMEPAGE`: Sets the landing page route, e.g. `/home` or `/balances`.
+- `ENABLE_USER_DISCOVERY`: Default `false`. Show an “Other users” section in the expense participant picker, including hidden friends and users without shared expenses. Excludes yourself and deleted accounts. Enable for private instances where all users may discover each other; this does not add friends to the balance dashboard.
 - `ENABLE_SENDING_INVITES`: Enable email invites (requires SMTP config).
 - `DISABLE_EMAIL_SIGNUP`: Disable email magic-link signup for new users.
 - `UPLOAD_MAX_FILE_SIZE_MB`: Maximum receipt upload size in MB. Used by both client-side pre-check and server-side upload limit. This is also the max size target for image compression, so increase it if you see bad resolution/quality. Default: `10`.
 
 ## Optional variables
 
+### Recurring expenses (pg_cron)
+
+See [Recurring transactions](RECURRING_TRANSACTIONS.md) for configuration and deployment instructions.
+
 ### Cache cleanup (pg_cron)
 
-- `CLEAR_CACHE_CRON_RULE`: Cron rule for cache cleanup jobs (UTC).
+- `CLEAR_CACHE_CRON_RULE`: Cron rule for cache cleanup jobs in database `cron.timezone` (UTC by default).
 - `CACHE_RETENTION_INTERVAL`: Postgres interval string that defines how long cached data can remain unused.
 
-`pg_cron` does not support cron ranges or lists. See https://github.com/citusdata/pg_cron#what-is-pg_cron for details.
+For time-zone behavior, see [Recurring transactions](RECURRING_TRANSACTIONS.md).
+Standard cron ranges, lists and steps are supported; see the
+[pg_cron documentation](https://github.com/citusdata/pg_cron#cron-syntax).
 
 ### SMTP (email provider)
 

@@ -13,3 +13,14 @@ export const getInviteErrorToastKey = (
   InviteErrorCode.INVITE_EMAIL_SEND_FAILED === appErrorCode
     ? 'errors.invite_email_failed'
     : 'errors.add_member_failed';
+
+export const getInviteAppErrorCode = (error: unknown): string | undefined => {
+  if ('object' !== typeof error || null === error || !('data' in error)) {
+    return undefined;
+  }
+  const data = error.data;
+  if ('object' !== typeof data || null === data || !('appErrorCode' in data)) {
+    return undefined;
+  }
+  return 'string' === typeof data.appErrorCode ? data.appErrorCode : undefined;
+};

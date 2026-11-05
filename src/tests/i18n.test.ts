@@ -169,9 +169,10 @@ describe('ICU migration', () => {
   );
 
   it.each(['en', 'it', 'fr', 'default'])(
-    'restores real catalog plurals and fallback for %s',
+    'formats English catalog plurals with fallback for %s',
     async (locale) => {
-      const instance = await createTranslator(locale);
+      // Keep fallback coverage independent of translations added in Weblate.
+      const instance = await createTranslator(locale, { en: resources.en! });
       expect(
         instance.t(
           'expense_details.add_expense_details.split_type_section.split_equally_with_count',

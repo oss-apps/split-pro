@@ -78,6 +78,13 @@
       "send_test_notification": "Send test notification",
       "test_notification_sent": "Test notification sent",
       "test_notification_failed": "Could not send test notification"
+    },
+    "deletion": {
+      "action": "Delete account",
+      "title": "Delete your account?",
+      "description": "This cannot be undone. Your identity and sign-in details will be removed, and you will be signed out on all devices. Shared expenses, notes, receipts, group memberships, and outstanding balances will remain under “Deleted user”. Personal information written in shared content will remain. Group ownership will pass to another available member where possible. Recurring expenses you created will stop. You can download your SplitPro data from the account page before continuing.",
+      "confirm": "Permanently delete account",
+      "error": "Could not delete your account. Please try again."
     }
   },
   "actions": {
@@ -100,11 +107,14 @@
     "submit": "Submit",
     "reconnect": "Reconnect",
     "connect": "Connect",
-    "remind_later": "Remind me later"
+    "remind_later": "Remind me later",
+    "retry": "Try again"
   },
   "actors": {
+    "deleted_user": "Deleted user",
     "all": "All",
     "friends": "Friends",
+    "other_users": "Other users",
     "groups": "Groups",
     "members": "Members",
     "owner": "Owner",
@@ -198,11 +208,11 @@
       "description_placeholder": "Enter description",
       "pick_a_date": "Pick a date",
       "select_user_or_group": {
-        "add_to_split_pro": "Add to Split Pro",
-        "note": "Note: sending invite is disabled for now because of spam",
+        "add_to_split_pro": "Add to Expense",
+        "note": "Email invites are disabled. You can still add someone by email without sending an invite.",
         "only_one_group_time": "You can have only one group at a time",
-        "send_invite": "Send invite to user",
-        "warning": "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused",
+        "send_invite": "Add with email invitation",
+        "warning": "Both buttons add the person to this draft expense. Save the expense when you are done. The invitation option emails a link to SplitPro only if their email is not verified; it does not sign them in.",
         "empty_image_alt": "No users found"
       },
       "split_type_section": {
@@ -349,12 +359,12 @@
     "no_members": {
       "add_members": "Add members",
       "add_members_details": {
-        "add_to_split_pro": "Add to Split Pro",
-        "note": "Note: sending email invites is disabled",
+        "add_to_split_pro": "Add to Group",
+        "note": "Email invites are disabled. You can still add someone by email without sending an invite.",
         "placeholder": "Enter name or email",
-        "send_invite": "Send invite to user",
+        "send_invite": "Add with email invitation",
         "title": "Add members",
-        "warning": "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused"
+        "warning": "Both buttons immediately add the person and any selected contacts to this group. Save adds selected contacts only, not the typed email. The invitation option emails a link to SplitPro only if their email is not verified; it does not sign them in."
       },
       "invite_link": "Invite link",
       "no_members": "No members in the group yet."
@@ -420,12 +430,16 @@
       "year": "Yearly"
     },
     "edit_confirmation_title": "Edit Recurring Expense",
-    "template_edit_warning": "This is a recurring expense template. Changes will apply to all future recurring expenses.",
+    "template_edit_warning": "This is a recurring expense template. Changes will apply to all recurring expenses created in the future.",
     "derived_edit_warning": "This expense is part of a recurrence. Changes will only affect this expense.",
     "template_delete_warning": "This is a recurring expense template. Deleting it will stop all future recurring expenses.",
     "derived_delete_warning": "This expense is part of a recurrence. Only this expense will be deleted. Future recurring expenses will continue.",
     "view_recurring_page": "View Recurring page",
-    "toggle_options": "Toggle recurring expense options"
+    "toggle_options": "Toggle recurring expense options",
+    "execution_time_loading": "Loading execution time…",
+    "execution_time_unavailable": "Execution time is unavailable.",
+    "next_local_run": "Next scheduled run: {date} ({timeZone}, your time zone).",
+    "instance_schedule": "Schedule: {schedule} ({timeZone})."
   },
   "ui": {
     "added_by": "Added by",
@@ -482,6 +496,17 @@
     "on": "on",
     "or": "or",
     "outstanding_balances": "Outstanding balances",
+    "group_people_list_empty": {
+      "no_contacts": "No saved contacts to show",
+      "no_matches": "No available contacts match your search",
+      "all_added": "All your saved contacts are already in this group"
+    },
+    "people_list_load_error": "Could not load contacts. Please try again.",
+    "people_list_empty": {
+      "no_contacts": "No saved contacts or groups to show",
+      "no_matches": "No available contacts or groups match your search",
+      "all_added": "All your saved contacts are already in this group"
+    },
     "total_balance": "Total balance",
     "select_currency": "Select currency",
     "select_balance": "Select balance",
@@ -492,7 +517,17 @@
     "show_all_currencies": "Show all currencies",
     "today": "Today",
     "in_group": "In group",
-    "transfer": "{senderRole, select, you {You pay {receiver}} other {{receiverRole, select, you {{sender} pays you} other {{sender} pays {receiver}}}}}"
+    "transfer": "{senderRole, select, you {You pay {receiver}} other {{receiverRole, select, you {{sender} pays you} other {{sender} pays {receiver}}}}}",
+    "invitation": {
+      "send_email": "Send an invitation email",
+      "adding": "Adding…",
+      "email_help": "For the email address you enter, we’ll send a link to SplitPro only if it is not verified. This does not sign them in.",
+      "no_email_help": "No invitation email will be sent. Users who have not signed up yet, can sign in later using this email address.",
+      "disabled_help": "Invitation emails are disabled on this server. You can still add someone by email.",
+      "draft_help": "Adding a participant does not save the expense. Save the expense as well when editing.",
+      "group_partial_success": "Added to the group, but the invitation email could not be sent.",
+      "expense_partial_success": "Added to the draft expense, but the invitation email could not be sent."
+    }
   },
   "friend": {
     "delete_confirmation": {
@@ -531,6 +566,8 @@
     "added_by": "{actor, select, you {Added by you on {date}} other {Added by {user} on {date}}}"
   },
   "expense_list": {
+    "upcoming_expenses": "Upcoming expenses",
+    "future_expense": "Future expense — not included in balances yet",
     "user_paid": "{actor, select, you {You paid {amount}} other {{user} paid {amount}}}",
     "user_received": "{actor, select, you {You received {amount}} other {{user} received {amount}}}",
     "settlement": "{payerRole, select, you {You paid {amount} to {receiver}} other {{receiverRole, select, you {{payer} paid you {amount}} other {{payer} paid {amount} to {receiver}}}}}",
@@ -541,5 +578,24 @@
     "enable_description": "Don't miss important events. Subscribe to receive notifications when expenses are added or updated.",
     "permission_granted": "You will receive notifications now",
     "subscribe": "Subscribe"
+  },
+  "pagination": {
+    "load_more": "Load more",
+    "loading": "Loading expenses",
+    "retry": "Try again",
+    "error": "Could not load expenses. Please try again."
+  },
+  "comments": {
+    "title": "Comments",
+    "initial_label": "Add a note (optional)",
+    "initial_placeholder": "Add details about this expense…",
+    "add": "Add a comment",
+    "placeholder": "Write a comment…",
+    "post": "Post comment",
+    "edit": "Edit",
+    "delete": "Delete",
+    "edit_label": "Edit comment",
+    "delete_confirm": "Delete this comment?",
+    "error": "Could not save the comment"
   }
 }

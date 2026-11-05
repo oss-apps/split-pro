@@ -17,7 +17,10 @@ const user: User = {
 
 const mockRecurrences = ['EUR', 'JPY', 'KWD'].map((currency, id) => ({
   id,
-  job: { schedule: '0 0 * * *' },
+  job: {
+    schedule: '0 0 * * *',
+    command: `SELECT duplicate_expense_with_participants('00000000-0000-4000-8000-00000000000${id}'::uuid)`,
+  },
   expense: {
     id: String(id),
     name: currency,
@@ -32,6 +35,7 @@ jest.mock('~/utils/api', () => ({
   api: {
     expense: {
       getRecurringExpenses: { useQuery: () => ({ data: mockRecurrences, isPending: false }) },
+      getRecurrencePreview: { useQuery: () => ({ data: undefined, isError: false }) },
       deleteRecurrence: { useMutation: () => ({ isPending: false }) },
     },
     useUtils: () => ({ expense: { getRecurringExpenses: {} } }),
@@ -62,7 +66,18 @@ jest.mock('~/components/SimpleConfirmationDialog', () => ({
 jest.mock('~/components/ui/avatar', () => ({ EntityAvatar: () => null }));
 jest.mock('~/utils/i18n/server', () => ({ withI18nStaticProps: () => () => ({ props: {} }) }));
 
-describe('RecurringPage currencies', () => {
+describe('RecurringPage', () => {
+  it('links to the template when the displayed expense is a later occurrence', () => {
+    const html = renderToStaticMarkup(<RecurringPage user={user} />);
+
+    mockRecurrences.forEach((recurrence) => {
+      expect(html).toContain(
+        `href="/expenses/00000000-0000-4000-8000-00000000000${recurrence.id}"`,
+      );
+      expect(html).not.toContain(`href="/expenses/${recurrence.expense.id}"`);
+    });
+  });
+
   it('formats every row in its own currency when decimal places differ', () => {
     const html = renderToStaticMarkup(<RecurringPage user={user} />);
 

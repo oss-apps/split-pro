@@ -1,3 +1,4 @@
+import { cronToBackend } from '~/lib/cron';
 import { type Expense, type ExpenseParticipant, SplitType } from '@prisma/client';
 import { type ZodTypeAny, z } from 'zod';
 
@@ -24,6 +25,7 @@ export type CreateExpense = Omit<
   | 'conversionToId'
   | 'recurrenceId'
 > & {
+  initialComment?: string;
   expenseDate?: Date;
   fileKey?: string;
   expenseId?: string;
@@ -32,6 +34,7 @@ export type CreateExpense = Omit<
 };
 
 export const createExpenseSchema = z.object({
+  initialComment: z.string().trim().max(5000).optional(),
   paidBy: z.number(),
   name: z.string(),
   category: z.string(),
@@ -53,7 +56,10 @@ export const createExpenseSchema = z.object({
   expenseDate: z.date().optional(),
   expenseId: z.string().optional(),
   conversionToId: z.string().optional(),
-  cronExpression: z.string().optional(),
+  cronExpression: z
+    .string()
+    .transform((value) => (value ? cronToBackend(value) : ''))
+    .optional(),
 }) satisfies z.ZodType<CreateExpense>;
 
 export const createCurrencyConversionSchema = z.object({

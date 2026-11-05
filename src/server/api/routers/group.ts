@@ -3,7 +3,13 @@ import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
 import { simplifyDebts } from '~/lib/simplify';
-import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
+import {
+  balanceProcedure,
+  createTRPCRouter,
+  groupBalanceProcedure,
+  groupProcedure,
+  protectedProcedure,
+} from '~/server/api/trpc';
 import { sendGroupSimplifyDebtsToggleNotification } from '~/server/api/services/notificationService';
 import { SplitType } from '@prisma/client';
 import {
@@ -67,7 +73,7 @@ export const groupRouter = createTRPCRouter({
     );
   }),
 
-  getAllGroupsWithBalances: protectedProcedure
+  getAllGroupsWithBalances: balanceProcedure
     .input(z.object({ getArchived: z.boolean() }).optional())
     .query(async ({ ctx, input }) => {
       const groups = await ctx.db.groupUser.findMany({
@@ -139,12 +145,24 @@ export const groupRouter = createTRPCRouter({
       return group;
     }),
 
-  getGroupDetails: groupProcedure.query(async ({ input, ctx }) => {
+  getGroupDetails: groupBalanceProcedure.query(async ({ input, ctx }) => {
     const group = await ctx.db.group.findUnique({
       where: {
         id: input.groupId,
       },
       include: {
+        expenses: {
+          where: {
+            deletedBy: null,
+            OR: [
+              { splitType: { not: SplitType.CURRENCY_CONVERSION } },
+              { conversionToId: { not: null } },
+            ],
+          },
+          orderBy: [{ expenseDate: 'asc' }, { id: 'asc' }],
+          take: 1,
+          select: { createdAt: true },
+        },
         groupUsers: {
           include: {
             user: true,

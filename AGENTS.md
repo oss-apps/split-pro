@@ -1,5 +1,11 @@
 # AGENTS.md - Coding Agent Guidelines for SplitPro
 
+## Agent Documentation
+
+- Agents may create implementation notes, plans, progress reports, and task summaries in
+  `.agent-notes/`, which is Git-ignored. Do not stage or commit these files unless the user
+  explicitly requests committed documentation.
+
 ## Build/Lint/Test Commands
 
 ### Development

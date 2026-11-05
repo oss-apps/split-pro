@@ -11,6 +11,9 @@ importers:
 
   .:
     dependencies:
+      '@date-fns/tz':
+        specifier: ^1.4.1
+        version: 1.4.1
       '@heroicons/react':
         specifier: ^2.2.0
         version: 2.2.0(react@19.3.1)

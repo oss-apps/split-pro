@@ -7,12 +7,10 @@ import { Trans } from 'next-i18next';
 import type { inferRouterOutputs } from '@trpc/server';
 import { ArrowRightIcon, Landmark, Merge, PencilIcon, Users } from 'lucide-react';
 import Link from 'next/link';
-import React, { type ComponentProps, useCallback, useMemo, useState } from 'react';
+import React, { type ComponentProps, useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
-import { useIntlCronParser } from '~/hooks/useIntlCronParser';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-import { cronFromBackend } from '~/lib/cron';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { isCurrencyCode } from '~/lib/currency';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
@@ -27,7 +25,9 @@ import { CategoryIcon } from '../ui/categoryIcons';
 import { CurrencyInput } from '../ui/currency-input';
 import { AppDrawer } from '../ui/drawer';
 import { Separator } from '../ui/separator';
+import { ExpenseComments } from './ExpenseComments';
 import { Receipt } from './Receipt';
+import { RecurrencePreview } from './RecurrencePreview';
 import { DateSelector } from '../AddExpense/DateSelector';
 
 type ExpenseDetailsOutput = NonNullable<inferRouterOutputs<ExpenseRouter>['getExpenseDetails']>;
@@ -39,23 +39,6 @@ interface ExpenseDetailsProps {
 
 const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
   const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
-
-  const { cronParser, i18nReady } = useIntlCronParser();
-
-  const cronString = useMemo(() => {
-    if (!expense.recurrence) {
-      return null;
-    }
-    try {
-      return cronParser(cronFromBackend(expense.recurrence.job.schedule));
-    } catch {
-      toast.error(t('errors.invalid_cron_expression'));
-      console.error(
-        `Failed to parse cron expression for expense: ${expense.recurrence.job.schedule}`,
-      );
-      return null;
-    }
-  }, [t, expense.recurrence, cronParser]);
 
   const { toUIString } = getCurrencyHelpersCached(expense.currency);
 
@@ -105,8 +88,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
             )}
             {expense.recurrence ? (
               <Link href="/recurring" className="text-primary text-sm hover:underline">
-                {t('recurrence.recurring')}
-                {i18nReady ? `: ${cronString}` : ''}
+                <RecurrencePreview schedule={expense.recurrence.job.schedule} />
               </Link>
             ) : null}
             {expense.group ? (
@@ -183,6 +165,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
           </>
         )}
       </div>
+      <ExpenseComments expense={expense} userId={user.id} />
     </>
   );
 };

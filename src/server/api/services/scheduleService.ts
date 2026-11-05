@@ -1,5 +1,7 @@
 import { db } from '~/server/db';
 
+import { getRecurrenceSchedule } from './recurrenceScheduleService';
+
 export const createRecurringDeleteBankCacheJob = async (
   cronExpression: string,
   interval: string,
@@ -20,5 +22,5 @@ export const createRecurringExpenseJob = (expenseId: string, cronExpression: str
   db.$queryRawUnsafe<[{ schedule: bigint }]>(
     `SELECT cron.schedule($1, $2, $$ SELECT duplicate_expense_with_participants('${expenseId}'::UUID); $$);`,
     expenseId,
-    cronExpression,
+    getRecurrenceSchedule(cronExpression),
   );

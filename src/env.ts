@@ -3,6 +3,11 @@ import { z } from 'zod';
 
 import { parseEnvBoolean } from './utils/env';
 
+const recurrenceTimeSchema = z
+  .string()
+  .regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'RECURRENCE_TIME must use HH:mm (00:00–23:59)')
+  .default('00:00');
+
 export const env = createEnv({
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
@@ -36,9 +41,12 @@ export const env = createEnv({
       (str) => process.env.VERCEL_URL ?? str,
       process.env.VERCEL ? z.string() : z.string().url(),
     ),
+    RECURRENCE_TIME: recurrenceTimeSchema,
     CLEAR_CACHE_CRON_RULE: z.string().optional(),
     CACHE_RETENTION_INTERVAL: z.string().optional(),
     ENABLE_SENDING_INVITES: z.boolean(),
+    ENABLE_USER_DISCOVERY: z.boolean().default(false),
+    EXCLUDE_FUTURE_EXPENSES: z.boolean().default(false),
     DISABLE_EMAIL_SIGNUP: z.boolean(),
     INVITE_ONLY: z.boolean(),
     FROM_EMAIL: z.string().optional(),
@@ -107,9 +115,13 @@ export const env = createEnv({
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     NEXTAUTH_URL_INTERNAL: process.env.NEXTAUTH_URL_INTERNAL ?? process.env.NEXTAUTH_URL,
+    // Skipping validation also skips Zod defaults; resolve the same schema default here.
+    RECURRENCE_TIME: process.env.RECURRENCE_TIME || recurrenceTimeSchema.parse(undefined),
     CLEAR_CACHE_CRON_RULE: process.env.CLEAR_CACHE_CRON_RULE ?? '0 2 * * 0',
     CACHE_RETENTION_INTERVAL: process.env.CACHE_RETENTION_INTERVAL ?? '2 days',
     ENABLE_SENDING_INVITES: parseEnvBoolean(process.env.ENABLE_SENDING_INVITES),
+    ENABLE_USER_DISCOVERY: parseEnvBoolean(process.env.ENABLE_USER_DISCOVERY),
+    EXCLUDE_FUTURE_EXPENSES: parseEnvBoolean(process.env.EXCLUDE_FUTURE_EXPENSES),
     DISABLE_EMAIL_SIGNUP: parseEnvBoolean(process.env.DISABLE_EMAIL_SIGNUP),
     INVITE_ONLY: parseEnvBoolean(process.env.INVITE_ONLY),
     FROM_EMAIL: process.env.FROM_EMAIL,

@@ -156,6 +156,7 @@ interface AppDrawerProps {
   disableTrigger?: boolean;
   onTriggerClick?: React.MouseEventHandler<HTMLButtonElement>;
   className?: string;
+  dialogClassName?: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   title?: string;
@@ -185,6 +186,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
     leftActionOnClick,
     shouldCloseOnLeftAction,
     className,
+    dialogClassName,
     dismissible,
     actionDisabled,
     disableTrigger,
@@ -220,6 +222,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
             {trigger}
           </DialogTrigger>
           <DialogContent
+            className={dialogClassName}
             aria-describedby={undefined}
             onInteractOutside={(e) => {
               if (false === dismissible) {

@@ -15,8 +15,11 @@ import superjson from 'superjson';
 import { ZodError, z } from 'zod';
 
 import { getAppErrorCode } from '~/server/api/appError';
+import { env } from '~/env';
+import { withCurrentBalances } from '~/server/api/services/balanceQuery';
 import { getServerAuthSession } from '~/server/auth';
 import { db } from '~/server/db';
+import { TIME_ZONE_HEADER, parseTimeZone } from '~/utils/timeZone';
 
 /**
  * 1. CONTEXT
@@ -29,6 +32,7 @@ import { db } from '~/server/db';
 export interface CreateContextOptions {
   session: Session | null;
   db?: PrismaClient;
+  timeZone?: string | string[];
 }
 
 /**
@@ -44,6 +48,7 @@ export interface CreateContextOptions {
 export const createInnerTRPCContext = (opts: CreateContextOptions) => ({
   session: opts.session,
   db: opts.db ?? db,
+  timeZone: parseTimeZone(opts.timeZone),
 });
 
 /**
@@ -60,6 +65,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   return createInnerTRPCContext({
     session,
+    timeZone: req.headers[TIME_ZONE_HEADER],
   });
 };
 
@@ -118,8 +124,16 @@ export const publicProcedure = t.procedure;
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
+export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+
+  const user = await ctx.db.user.findUnique({
+    where: { id: ctx.session.user.id },
+    select: { deletedAt: true },
+  });
+  if (!user || user.deletedAt) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
 
@@ -130,6 +144,16 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
     },
   });
 });
+
+const currentBalances = t.middleware(({ ctx, next }) => {
+  if (!env.EXCLUDE_FUTURE_EXPENSES) {
+    return next();
+  }
+
+  return withCurrentBalances(ctx.db, ctx.timeZone, (tx) => next({ ctx: { db: tx } }));
+});
+
+export const balanceProcedure = protectedProcedure.use(currentBalances);
 
 export const groupProcedure = protectedProcedure
   .input(z.object({ groupId: z.number() }))
@@ -147,3 +171,5 @@ export const groupProcedure = protectedProcedure
 
     return next({ ctx: { ...ctx } });
   });
+
+export const groupBalanceProcedure = groupProcedure.use(currentBalances);

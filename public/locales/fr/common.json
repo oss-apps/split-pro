@@ -23,6 +23,13 @@
       "version": "Version"
     },
     "default_balance_currency": "Monnaie par défaut des soldes",
+    "deletion": {
+      "action": "Supprimer le compte",
+      "confirm": "Supprimer le compte définitivement",
+      "description": "Cette action est irréversible. Ton identité et tes informations de connexion seront supprimées, et tous les appareils actuellement connectés à ton compte ne le seront plus. Les dépenses partagées, notes, reçus, appartenance à des groupes de dépenses, et soldes non acquittés resteront consultables avec un label \"Compte supprimé\". Tes informations personnelles écrites dans du contenu partagé resteront consultables. L'administration de groupe sera transférée à une autre personne membre de celui-ci lorsque c'est possible. Les dépenses récurrentes que tu as créées s'arrêteront. Tu peux télécharger tes données SplitPro depuis la page de gestion de compte avant de continuer.",
+      "error": "Ton compte n'a pas pu être supprimé. Merci de réessayer.",
+      "title": "Supprimer le compte ?"
+    },
     "download_app": "Télécharger l'app",
     "download_app_details": {
       "download_as_pwa": "Tu peux télécharger SplitPro en tant que PWA (Aplication Web Progressive) sur ton écran d'accueil.",
@@ -98,6 +105,7 @@
     "next": "Suivant",
     "reconnect": "Se reconnecter",
     "remind_later": "Me le rappeler plus tard",
+    "retry": "Réessayer",
     "save": "Enregistrer",
     "settle_up": "Rembourser",
     "submit": "Valider"
@@ -113,9 +121,11 @@
   },
   "actors": {
     "all": "Toustes",
+    "deleted_user": "Compte supprimé",
     "friends": "Amis",
     "groups": "Groupes",
     "members": "Membres",
+    "other_users": "Autres personnes",
     "owner": "Gestionnaire",
     "you": "Tu",
     "you_accusativus": "Toi",
@@ -162,6 +172,19 @@
     "search_bank": "Rechercher une banque",
     "select_bank_provider": "Sélectionner une banque",
     "to_bank": "à la banque"
+  },
+  "comments": {
+    "add": "Ajouter un commentaire",
+    "delete": "Supprimer",
+    "delete_confirm": "Effacer ce commentaire ?",
+    "edit": "Éditer",
+    "edit_label": "Édition du commentaire",
+    "error": "Erreur lors de l'enregistrement du commentaire",
+    "initial_label": "Ajouter une note (optionnel)",
+    "initial_placeholder": "Ajoute des détails à propos de cette dépense…",
+    "placeholder": "Écris un commentaire…",
+    "post": "Poster le commentaire",
+    "title": "Commentaires"
   },
   "currency_conversion": {
     "amount_aria_label": "Montant",
@@ -226,12 +249,12 @@
       "description_placeholder": "Description de la dépense",
       "pick_a_date": "Choisir une date",
       "select_user_or_group": {
-        "add_to_split_pro": "Inviter sur SplitPro",
+        "add_to_split_pro": "Ajouter à la dépense",
         "empty_image_alt": "Aucun utilisateur trouvé",
-        "note": "Note : l'envoi de mails d'invitation est désactivé pour le moment pour éviter le spam",
+        "note": "L'envoi de mails d'invitation est désactivé. Tu peux toujours ajouter une personne via son email, sans envoyer d'invitation.",
         "only_one_group_time": "Une dépense ne peut concerner qu'un seul groupe à la fois",
-        "send_invite": "Envoyer une invitation",
-        "warning": "Attention : N'envoyez pas d'invitation à des adresses mail non enregistrées ici, utilisez plutôt la fonction « inviter sur SplitPro ». Votre compte sera bloqué si vous utilisez mal cette fonctionnalité"
+        "send_invite": "Ajouter avec un mail d'invitation",
+        "warning": "Les deux boutons ajoutent la personne à ce brouillon de dépense. Enregistre-la lorsque tu as terminé. L'option d'invitation envoie un lien vers SplitPro à la personne uniquement si son mail n'est pas encore vérifié ; cela ne la connecte pas."
       },
       "split_type_section": {
         "direction": {
@@ -315,7 +338,9 @@
   },
   "expense_list": {
     "conversion_for_users": "Conversion monétaire pour {payerRole, select, you {toi} other {{payer}}} et {receiverRole, select, you {toi} other {{receiver}}}",
+    "future_expense": "Dépense future — non incluse dans les soldes",
     "settlement": "{payerRole, select, you {Tu as payé {amount} à {receiver}} other {{receiverRole, select, you {{payer} t'a payé {amount}} other {{payer} a payé {amount} à {receiver}}}}}",
+    "upcoming_expenses": "Dépenses à venir",
     "user_paid": "{actor, select, you {Tu as payé {amount}} other {{user} a payé {amount}}}",
     "user_received": "{actor, select, you {Tu as reçu {amount}} other {{user} a reçu {amount}}}"
   },
@@ -402,11 +427,11 @@
       "add_members": "Ajouter des membres",
       "add_members_details": {
         "add_to_split_pro": "Ajouter à ce groupe",
-        "note": "Note : l'envoi d'invitation par mail est désactivé",
+        "note": "L'envoi d'invitation par mail est désactivé. Tu peux toujours ajouter une personne via son mail sans lui envoyer d'invitation.",
         "placeholder": "Entrer un pseudo ou un mail",
-        "send_invite": "Envoyer une invitation",
+        "send_invite": "Ajouter avec envoi de mail d'invitation",
         "title": "Ajouter des membres",
-        "warning": "Attention : N'envoyez pas d'invitation à des adresses mail non enregistrées ici, utilisez plutôt la fonction « inviter sur SplitPro ». Votre compte sera bloqué si vous utilisez mal cette fonctionnalité"
+        "warning": "Les deux boutons ajoutent immédiatement la personne ainsi que les contacts sélectionnés à ce groupe. L'enregistrement ajoute les contacts sélectionnés uniquement, pas l'adresse mail nouvellement entrée. L'option d'invitation envoie un mail à la personne vers SplitPro uniquement si son adresse n'est pas encore vérifiée ; cela ne la connecte pas."
       },
       "invite_link": "Lien d'invitation",
       "no_members": "Aucun membre dans ce groupe pour l'instant."
@@ -442,6 +467,12 @@
     "permission_granted": "Tu vas recevoir une notification maintenant",
     "subscribe": "S'abonner"
   },
+  "pagination": {
+    "error": "Impossible de charger les dépenses. Merci de réessayer.",
+    "load_more": "Charger la suite",
+    "loading": "Chargement des dépenses",
+    "retry": "Réessayer"
+  },
   "recurrence": {
     "cron_expression": "Expression « cron »",
     "days_of_month": "Jours dans le mois",
@@ -455,10 +486,14 @@
     "edit_description": "Ceci changera la programmation des futures dépenses sur ce modèle, mais les dépenses déjà créées ne seront pas modifiées.",
     "edit_title": "Modifier la récurrence",
     "empty": "Aucune dépense récurrente pour l'instant",
+    "execution_time_loading": "Chargement de la date d'exécution…",
+    "execution_time_unavailable": "La date d'exécution n'est pas disponible.",
     "expense_for_the_amount_of": "Dépense {name} pour un montant de {amount}{currency}",
+    "instance_schedule": "Programmée le : {schedule} ({timeZone}).",
     "last_day": "Dernier jour",
     "months": "Mois",
     "never": "Aucun programme planifié",
+    "next_local_run": "Prochaine exécution : {date} ({timeZone}, ton fuseau horaire).",
     "recurring": "Récurrente",
     "schedule_type": {
       "custom": "Personnalisée",
@@ -469,7 +504,7 @@
       "year": "Annuelle"
     },
     "template_delete_warning": "Ceci est un modèle de dépense récurrente. Sa suppression arrêtera la génération de toutes les futures dépenses récurrentes.",
-    "template_edit_warning": "Ceci est un modèle de dépense récurrente. Les paramètres seront appliqués à toutes les futures dépenses récurrentes.",
+    "template_edit_warning": "Ceci est un modèle de dépense récurrente. Les paramètres seront appliqués à toutes les dépenses récurrentes créées dans le futur.",
     "time_of_day": "Heure journalière",
     "title": "Récurrence",
     "toggle_options": "Activer/désactiver les options de dépenses récurrentes",
@@ -524,13 +559,34 @@
       }
     },
     "expense_details": "Détails de la dépense",
+    "group_people_list_empty": {
+      "all_added": "Tous tes contacts sont déjà dans ce groupe",
+      "no_contacts": "Pas de contacts à afficher",
+      "no_matches": "Aucun contact ne correspond à ta recherche"
+    },
     "in_group": "dans le groupe",
+    "invitation": {
+      "adding": "Ajout en cours…",
+      "disabled_help": "L'envoi d'invitation par mail est désactivé sur ce serveur. Tu peux toutefois ajouter une personne via son adresse mail.",
+      "draft_help": "L'ajout d'une personne ne sauvegarde pas la dépense. Enregistre la également quand tu l'édites.",
+      "email_help": "Nous enverrons un lien vers SplitPro à l'adresse entrée uniquement si elle n'est pas encore vérifiée. Cela ne connectera pas la personne.",
+      "expense_partial_success": "La personne a été ajoutée au brouillon de la dépense, mais le mail d'invitation n'a pas pu être envoyé.",
+      "group_partial_success": "La personne a bien été ajoutée au groupe, mais le mail d'invitation n'a pas pu être envoyé.",
+      "no_email_help": "Aucun mail d'invitation ne sera envoyé. Les personnes qui ne sont pas encore inscrites pourront se connecter ultérieurement via cette adresse.",
+      "send_email": "Inviter par mail"
+    },
     "no_activity": "Aucune activité pour l'instant",
-    "not_involved": "Non concerné⋅e",
+    "not_involved": "Ne te concerne pas",
     "not_set": "Non défini",
     "on": "le",
     "or": "ou",
     "outstanding_balances": "Soldes en cours",
+    "people_list_empty": {
+      "all_added": "Tous tes contacts sont déjà dans ce groupe",
+      "no_contacts": "Aucun contact ou groupe à afficher",
+      "no_matches": "Aucun contact ou groupe ne correspond à ta recherche"
+    },
+    "people_list_load_error": "Erreur de chargement des contacts. Merci de réessayer.",
     "select_balance": "Choix du solde",
     "select_currency": "Choix de la devise",
     "settle_up_name": "Régler une dette",

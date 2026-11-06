@@ -198,18 +198,13 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
   sendExpensePushNotification(expenseId).catch(console.error);
 }
 
-/**
- * Checks the payer and participants when an ungrouped expense is assigned to a group. Callers run
- * validateExpenseWritePermission first, which already rejects changing a grouped expense's group
- * and checks that the target group exists, is not archived and has the actor as a member.
- */
-export async function assertExpenseGroupReassignment(
-  storedGroupId: number | null,
+// Call after checking the actor's permission to write to the group.
+export async function assertExpenseGroupMembers(
   groupId: number | null,
   paidBy: number,
   participantUserIds: number[],
 ) {
-  if (null !== storedGroupId || null === groupId) {
+  if (null === groupId) {
     return;
   }
 

@@ -78,7 +78,11 @@ describe('expense lifecycle', () => {
       // A missing user forces the nested write to fail after scheduling a recurring job.
       const invalid = {
         ...input,
-        participants: [{ userId: -1, amount: -1000n }],
+        groupId: null,
+        participants: [
+          { userId: input.paidBy, amount: 1000n },
+          { userId: 2147483647, amount: -1000n },
+        ],
         ...(recurring ? { cronExpression: '0 0 1 1 *' } : {}),
       };
       const log = jest.spyOn(console, 'error').mockImplementation(() => undefined);
@@ -98,7 +102,7 @@ describe('expense lifecycle', () => {
   it('preserves the original expense if an edit transaction fails', async () => {
     const { owner, input } = await testScenario();
     const caller = callerFor(owner.id);
-    const [expense] = await caller.expense.addOrEditExpense(input);
+    const [expense] = await caller.expense.addOrEditExpense({ ...input, groupId: null });
     const before = await accountingSnapshot();
     const log = jest.spyOn(console, 'error').mockImplementation(() => undefined);
     try {
@@ -107,7 +111,11 @@ describe('expense lifecycle', () => {
           ...input,
           expenseId: expense!.id,
           amount: 999n,
-          participants: [{ userId: -1, amount: -999n }],
+          participants: [
+            { userId: input.paidBy, amount: 999n },
+            { userId: 2147483647, amount: -999n },
+          ],
+          groupId: null,
         }),
       ).rejects.toMatchObject({ code: 'INTERNAL_SERVER_ERROR' });
       expect(await db.expense.findUnique({ where: { id: expense!.id } })).toMatchObject({

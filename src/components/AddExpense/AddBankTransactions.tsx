@@ -1,4 +1,6 @@
 import React, { useCallback } from 'react';
+import { toast } from 'sonner';
+import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { calculateParticipantSplit, useAddExpenseStore } from '~/store/addStore';
 import type { TransactionAddInputModel } from '~/types';
 import { BankingTransactionList } from './BankTransactions/BankingTransactionList';
@@ -10,6 +12,7 @@ const AddBankTransactions: React.FC<{
   bankConnectionEnabled: boolean;
   children: React.ReactNode;
 }> = ({ bankConnectionEnabled, children }) => {
+  const { t } = useTranslationWithUtils();
   const participants = useAddExpenseStore((s) => s.participants);
   const group = useAddExpenseStore((s) => s.group);
   const category = useAddExpenseStore((s) => s.category);
@@ -38,7 +41,7 @@ const AddBankTransactions: React.FC<{
 
   const router = useRouter();
 
-  const addAllMultipleExpenses = useCallback(async () => {
+  const addAllMultipleExpenses = useCallback(() => {
     setIsTransactionLoading(true);
 
     if (!paidBy) {
@@ -97,7 +100,7 @@ const AddBankTransactions: React.FC<{
         });
       }) as CreateExpense[];
 
-    await addExpenseMutation.mutateAsync(expenses, {
+    addExpenseMutation.mutate(expenses, {
       onSuccess: () => {
         setMultipleTransactions([]);
         setIsTransactionLoading(false);
@@ -106,9 +109,11 @@ const AddBankTransactions: React.FC<{
       },
       onError: () => {
         setIsTransactionLoading(false);
+        toast.error(t('errors.saving_expense'));
       },
     });
   }, [
+    t,
     setSplitScreenOpen,
     router,
     resetState,

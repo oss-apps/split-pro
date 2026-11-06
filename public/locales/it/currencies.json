@@ -6,7 +6,7 @@
     },
     "AFN": {
       "name": "Afghani Afghano",
-      "name_plural": "Afghani Afghani"
+      "name_plural": "Afghani afghani"
     },
     "ALL": {
       "name": "Lek Albanese",
@@ -53,8 +53,8 @@
       "name_plural": "Dollari del Brunei"
     },
     "BOB": {
-      "name": "Boliviano Boliviano",
-      "name_plural": "Boliviani Boliviani"
+      "name": "Boliviano boliviano",
+      "name_plural": "Boliviani boliviani"
     },
     "BRL": {
       "name": "Real Brasiliano",
@@ -74,8 +74,8 @@
     },
     "CAD": {
       "name": "Dollaro Canadese",
-      "name_plural": "Dollari Canadesi",
-      "name_2": ""
+      "name_2": "",
+      "name_plural": "Dollari Canadesi"
     },
     "CDF": {
       "name": "Franco Congolese",

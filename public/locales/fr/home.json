@@ -9,12 +9,12 @@
       "title": "Conversion monétaire"
     },
     "debt_simplification": {
-      "description": "Simplifie automatiquement les dettes des groupes et réduis le nombre de transactions à faire entre ami⋅es.",
+      "description": "Simplifie automatiquement les dettes des groupes et réduis le nombre de transactions à faire entre potes.",
       "title": "Simplification des dettes"
     },
     "groups_and_friends": {
       "description": "Tu peux créer de multiples groupes, ou simplement gérer ton solde avec les autres. Tout sera regroupé sur ton tableau de bord !",
-      "title": "Groupes et ami⋅es"
+      "title": "Groupes et contacts"
     },
     "i18": {
       "description": "L'appli est disponible dans de multiples langues pour rendre le partage des dépenses accessible partout.",
@@ -59,15 +59,19 @@
   },
   "hero": {
     "add_expense_button": "Nouvelle dépense",
+    "image_alt": "Prévisualisation de l'application SplitPro",
     "star_github_button": "Soutiens-nous sur GitHub",
+    "subtitle": "Une alternative open source à SplitWise.",
     "subtitle_link": "open source",
     "subtitle_part1": "Une alternative",
     "subtitle_part2": "à Splitwise",
+    "title_after_highlight": ".",
+    "title_before_highlight": "Partage des dépenses avec tes potes",
     "title_highlight": "gratuitement",
     "title_part1": "Répartissez vos dépenses entre ami⋅es"
   },
   "meta": {
-    "description": "SplitPro : partagez gratuitement vos dépenses entre ami⋅es",
+    "description": "SplitPro : partagez gratuitement vos dépenses entre potes",
     "title": "SplitPro : partagez gratuitement vos dépenses entre amis"
   },
   "nav": {

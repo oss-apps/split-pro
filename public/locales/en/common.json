@@ -521,7 +521,7 @@
     "friend_owes_you": "{friend} owes you {amount}",
     "you_owe_friend": "You owe {friend} {amount}",
     "more": "{count, plural, one {# more balance} other {# more balances}}",
-    "member_count": "{count, plural, one {# member} other {# members}}"
+    "member_count": "{count, plural, =1 {# member} other {# members}}"
   },
   "balance_list": {
     "pays": "{payerRole, select, you {You pay {amount} to {receiver}} other {{payer} pays {amount} to {receiverRole, select, you {you} other {{receiver}}}}}",

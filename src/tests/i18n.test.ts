@@ -188,6 +188,16 @@ describe('ICU migration', () => {
     },
   );
 
+  it.each(['en', 'it', 'id', 'fr', 'default'])(
+    'keeps English fallback member counts grammatical for %s',
+    async (locale) => {
+      const instance = await createTranslator(locale, { en: resources.en! });
+      expect(instance.t('balance_summary.member_count', { count: 0 })).toBe('0 members');
+      expect(instance.t('balance_summary.member_count', { count: 1 })).toBe('1 member');
+      expect(instance.t('balance_summary.member_count', { count: 2 })).toBe('2 members');
+    },
+  );
+
   it.each(config.i18n.locales)('includes the sign-in error argument in %s', async (locale) => {
     const instance = await createTranslator(locale);
     expect(instance.t('errors.signin_error', { error: 'OAuthCallback' })).toContain(

@@ -95,8 +95,6 @@ describe('ICU migration', () => {
 
   it.each([
     ['expense_details.balance_list.settled', 'You are settled up', 'Marco is settled up'],
-    ['expense_details.balance_list.lent', 'You lent', 'Marco lent'],
-    ['expense_details.balance_list.owes', 'You owe', 'Marco owes'],
     ['activity.user_deleted_expense', 'You deleted Dinner', 'Marco deleted Dinner'],
     ['expense_list.user_paid', 'You paid €10', 'Marco paid €10'],
     ['expense_list.user_received', 'You received €10', 'Marco received €10'],
@@ -375,14 +373,19 @@ describe('phase 2 complete messages', () => {
     },
   );
 
-  it.each(['you', 'other'])(
-    'renders complete group balances for %s without parsing names as markup',
-    async (actor) => {
+  it.each([
+    ['you', 'owes_amount', 'You owe'],
+    ['other', 'owes_amount', '<span>&lt;Anna&gt;</span> owes'],
+    ['you', 'lent_amount', 'You lent'],
+    ['other', 'lent_amount', '<span>&lt;Anna&gt;</span> lent'],
+  ])(
+    'renders complete group balances for %s/%s without parsing names as markup',
+    async (actor, key, prefix) => {
       const instance = await createTranslator('en');
       const html = renderToStaticMarkup(
         createElement(Trans, {
           i18n: instance,
-          i18nKey: 'expense_details.balance_list.owes_amount',
+          i18nKey: `expense_details.balance_list.${key}`,
           values: { actor },
           components: {
             person: createElement('span', null, '<Anna>'),
@@ -390,9 +393,7 @@ describe('phase 2 complete messages', () => {
           },
         }),
       );
-      expect(html).toBe(
-        `${'you' === actor ? 'You owe' : '<span>&lt;Anna&gt;</span> owes'} <span class="amount">€10</span>`,
-      );
+      expect(html).toBe(`${prefix} <span class="amount">€10</span>`);
     },
   );
 

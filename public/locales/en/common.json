@@ -116,11 +116,8 @@
     "friends": "Friends",
     "other_users": "Other users",
     "groups": "Groups",
-    "members": "Members",
     "owner": "Owner",
-    "you": "You",
-    "you_accusativus": "You",
-    "you_dativus": "You"
+    "you": "You"
   },
   "auth": {
     "continue_with": "Continue with {provider}",
@@ -263,12 +260,8 @@
       }
     },
     "balance_list": {
-      "are_settled_up": "are settled up",
-      "is_settled_up": "is settled up",
       "press_balance_info": "Press on individual balance to initiate settlement",
       "settled": "{actor, select, you {You are settled up} other {{person} is settled up}}",
-      "lent": "{actor, select, you {You lent} other {{person} lent}}",
-      "owes": "{actor, select, you {You owe} other {{person} owes}}",
       "lent_amount": "{actor, select, you {You lent <amount/>} other {<person/> lent <amount/>}}",
       "owes_amount": "{actor, select, you {You owe <amount/>} other {<person/> owes <amount/>}}"
     },
@@ -444,37 +437,13 @@
     "instance_schedule": "Schedule: {schedule} ({timeZone})."
   },
   "ui": {
-    "added_by": "Added by",
     "and": "and",
-    "balance": "balance",
-    "balances": "balances",
     "delete": "Delete",
-    "deleted_by": "Deleted by",
-    "edited_by": "Edited by",
     "expense": {
-      "for": "for",
       "from": "from",
       "paid_by": "Paid by",
       "received_by": "Received by",
       "to": "to",
-      "user": {
-        "deleted": "deleted",
-        "get": "gets",
-        "lent": "lent",
-        "owe": "owes",
-        "paid": "paid",
-        "pay": "pays",
-        "received": "received"
-      },
-      "you": {
-        "deleted": "deleted",
-        "get": "get",
-        "lent": "lent",
-        "owe": "owe",
-        "paid": "paid",
-        "pay": "pay",
-        "received": "received"
-      },
       "payer": {
         "current_user": "You"
       },

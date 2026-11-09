@@ -143,11 +143,13 @@ export const expenseRouter = createTRPCRouter({
           throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
         }
 
-        await assertExpenseGroupMembers(
-          input.groupId,
-          input.paidBy,
-          input.participants.map((participant) => participant.userId),
-        );
+        if (!input.expenseId) {
+          await assertExpenseGroupMembers(
+            input.groupId,
+            input.paidBy,
+            input.participants.map((participant) => participant.userId),
+          );
+        }
 
         try {
           const expense = input.expenseId

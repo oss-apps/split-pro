@@ -284,6 +284,40 @@ export async function editExpense(
     : null;
   const isTemplate = templateId === expenseId;
 
+  const storedParticipants = new Map(
+    expense.expenseParticipants.map((participant) => [participant.userId, participant.amount]),
+  );
+  const metadataOnly =
+    !conversionToParams &&
+    groupId === expense.groupId &&
+    paidBy === expense.paidBy &&
+    amount === expense.amount &&
+    currency === expense.currency &&
+    splitType === expense.splitType &&
+    (!expenseDate || expenseDate.getTime() === expense.expenseDate.getTime()) &&
+    (isTemplate
+      ? Boolean(
+          cronExpression &&
+          getRecurrenceSchedule(cronExpression) === expense.recurrence?.job?.schedule,
+        )
+      : !cronExpression) &&
+    participants.filter((p) => 0n !== p.amount).length ===
+      expense.expenseParticipants.filter((p) => 0n !== p.amount).length &&
+    participants.every(
+      (p) =>
+        (storedParticipants.has(p.userId) || p.userId === expense.paidBy) &&
+        p.amount === (storedParticipants.get(p.userId) ?? 0n),
+    );
+
+  // Historical members may remain on settled expenses, but cannot take on new obligations.
+  if (!conversionToParams && !metadataOnly) {
+    await assertExpenseGroupMembers(
+      groupId,
+      paidBy,
+      participants.map((p) => p.userId),
+    );
+  }
+
   const operations = [];
 
   // Delete existing participants
@@ -299,7 +333,12 @@ export async function editExpense(
   operations.push(
     db.expense.update({
       // Write-time check: a concurrent edit may have grouped the expense after validation.
-      where: { id: expenseId, OR: [{ groupId: null }, { groupId }] },
+      where: {
+        id: expenseId,
+        OR: [{ groupId: null }, { groupId }],
+        // Do not restore old balances if another edit changed them after the comparison.
+        ...(metadataOnly ? { updatedAt: expense.updatedAt } : {}),
+      },
       data: {
         paidBy,
         groupId,

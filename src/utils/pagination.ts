@@ -1,10 +1,15 @@
 import { z } from 'zod';
 
+// Plain-JSON clients of the public REST API send the cursor date as an ISO 8601 string.
+const cursorDate = z
+  .union([z.date(), z.string().datetime({ offset: true })])
+  .transform((value) => new Date(value));
+
 // Keep search/filter criteria alongside this schema in the query input.
 // Each set of criteria gets its own cache and starts at the first page.
 export const paginationInput = z.object({
   limit: z.number().int().min(1).max(100).default(50),
-  cursor: z.object({ date: z.date(), id: z.string().uuid() }).nullish(),
+  cursor: z.object({ date: cursorDate, id: z.string().uuid() }).nullish(),
 });
 
 export type ListCursor = NonNullable<z.infer<typeof paginationInput>['cursor']>;

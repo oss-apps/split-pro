@@ -13,12 +13,12 @@ import { InviteErrorCode } from '~/lib/error/invite';
 import { getUserBalances } from '~/server/api/services/balanceQuery';
 import { AppError } from '~/server/api/appError';
 import { generateApiKey } from '~/server/api/apiKey';
-import { paginatedResult, paginationInput } from '~/server/api/pagination';
 import { balanceProcedure, createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';
 import { deleteAccount } from '~/server/api/services/deleteAccount';
 import { sendFeedbackEmail, sendInviteEmail } from '~/server/mailer';
 import { SplitwiseGroupSchema, SplitwiseUserSchema } from '~/types';
+import { beforeCursor, paginationInput, toPage } from '~/utils/pagination';
 
 import {
   getSubscriptionEndpoint,
@@ -56,8 +56,6 @@ const throwInviteError = (
 ): never => {
   throw new TRPCError({ code, message, cause: new AppError(inviteErrorCode, message) });
 };
-
-const MAX_API_KEYS_PER_USER = 10;
 
 /**
  * Method record for `userRouter`, exported so the public API router
@@ -472,10 +470,10 @@ export const userMethods = {
     )
     .mutation(async ({ input, ctx }) => {
       const keyCount = await db.apiKey.count({ where: { userId: ctx.session.user.id } });
-      if (keyCount >= MAX_API_KEYS_PER_USER) {
+      if (keyCount >= env.API_KEYS_MAX_PER_USER) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: `You can have at most ${MAX_API_KEYS_PER_USER} API keys`,
+          message: `You can have at most ${env.API_KEYS_MAX_PER_USER} API keys`,
         });
       }
 
@@ -514,29 +512,27 @@ export const userMethods = {
 export const userRouter = createTRPCRouter(userMethods);
 
 /**
- * API-only variant of `getOwnExpenses` with offset pagination, mounted in the
+ * API-only variant of `getOwnExpenses` with cursor pagination, mounted in the
  * public API router instead of the app router.
  */
 export const getOwnExpensesApiProcedure = protectedProcedure
   .input(paginationInput.default({}))
   .query(async ({ input, ctx }) => {
-    const where = { paidBy: ctx.session.user.id, deletedBy: null };
+    const expenses = await db.expense.findMany({
+      take: input.limit + 1,
+      where: {
+        ...beforeCursor(input.cursor, 'expenseDate'),
+        paidBy: ctx.session.user.id,
+        deletedBy: null,
+      },
+      orderBy: [{ expenseDate: 'desc' }, { id: 'desc' }],
+      include: { group: true },
+    });
 
-    const [items, total] = await Promise.all([
-      db.expense.findMany({
-        where,
-        // Tie-break with `id`: `expenseDate` is not unique and Postgres may return
-        // Tied rows in an arbitrary order between queries, breaking pagination
-        // For clients walking pages.
-        orderBy: [{ expenseDate: 'desc' }, { id: 'desc' }],
-        include: { group: true },
-        take: input.limit,
-        skip: input.offset,
-      }),
-      db.expense.count({ where }),
-    ]);
-
-    return paginatedResult(items, total, input);
+    return toPage(expenses, input.limit, (expense) => ({
+      date: expense.expenseDate,
+      id: expense.id,
+    }));
   });
 
 export const getUserMap = async (userIds: number[], database: Pick<PrismaClient, 'user'> = db) => {

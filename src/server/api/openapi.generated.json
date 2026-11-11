@@ -4,53 +4,6 @@
   "info": { "title": "SplitPro API", "version": "0.1.0" },
   "servers": [{ "url": "/api/v1" }],
   "paths": {
-    "/user.getOwnExpenses": {
-      "get": {
-        "operationId": "user.getOwnExpenses",
-        "tags": ["user"],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "result": {
-                      "type": "object",
-                      "properties": { "data": { "$ref": "#/components/schemas/PaginatedResult" } },
-                      "required": ["data"]
-                    }
-                  },
-                  "required": ["result"]
-                }
-              }
-            }
-          },
-          "default": { "$ref": "#/components/responses/Error" }
-        },
-        "parameters": [
-          {
-            "name": "input",
-            "in": "query",
-            "required": true,
-            "style": "deepObject",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "limit": { "type": "number", "default": 20 },
-                    "offset": { "type": "number", "default": 0 }
-                  },
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        ]
-      }
-    },
     "/user.me": {
       "get": {
         "operationId": "user.me",
@@ -167,6 +120,194 @@
           },
           "default": { "$ref": "#/components/responses/Error" }
         }
+      }
+    },
+    "/user.getOwnExpenses": {
+      "get": {
+        "operationId": "user.getOwnExpenses",
+        "tags": ["user"],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "group": {
+                                    "oneOf": [
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "name": { "type": "string" },
+                                          "id": { "type": "number" },
+                                          "userId": { "type": "number" },
+                                          "image": { "type": ["string", "null"] },
+                                          "defaultCurrency": { "type": ["string", "null"] },
+                                          "createdAt": { "type": "string", "format": "date-time" },
+                                          "updatedAt": { "type": "string", "format": "date-time" },
+                                          "publicId": { "type": "string" },
+                                          "splitwiseGroupId": { "type": ["string", "null"] },
+                                          "simplifyDebts": { "type": "boolean" },
+                                          "archivedAt": {
+                                            "oneOf": [
+                                              { "type": "string", "format": "date-time" },
+                                              { "type": "null" }
+                                            ]
+                                          }
+                                        },
+                                        "required": [
+                                          "name",
+                                          "id",
+                                          "userId",
+                                          "image",
+                                          "defaultCurrency",
+                                          "createdAt",
+                                          "updatedAt",
+                                          "publicId",
+                                          "splitwiseGroupId",
+                                          "simplifyDebts",
+                                          "archivedAt"
+                                        ],
+                                        "additionalProperties": false
+                                      },
+                                      { "type": "null" }
+                                    ]
+                                  },
+                                  "name": { "type": "string" },
+                                  "id": { "type": "string" },
+                                  "deletedAt": {
+                                    "oneOf": [
+                                      { "type": "string", "format": "date-time" },
+                                      { "type": "null" }
+                                    ]
+                                  },
+                                  "currency": { "type": "string" },
+                                  "groupId": { "type": ["number", "null"] },
+                                  "amount": { "type": "integer", "format": "bigint" },
+                                  "createdAt": { "type": "string", "format": "date-time" },
+                                  "updatedAt": { "type": "string", "format": "date-time" },
+                                  "paidBy": { "type": "number" },
+                                  "addedBy": { "type": "number" },
+                                  "category": { "type": "string" },
+                                  "splitType": {
+                                    "type": "string",
+                                    "enum": [
+                                      "EQUAL",
+                                      "PERCENTAGE",
+                                      "EXACT",
+                                      "SHARE",
+                                      "ADJUSTMENT",
+                                      "SETTLEMENT",
+                                      "CURRENCY_CONVERSION"
+                                    ]
+                                  },
+                                  "expenseDate": { "type": "string", "format": "date-time" },
+                                  "fileKey": { "type": ["string", "null"] },
+                                  "deletedBy": { "type": ["number", "null"] },
+                                  "updatedBy": { "type": ["number", "null"] },
+                                  "transactionId": { "type": ["string", "null"] },
+                                  "recurrenceId": { "type": ["number", "null"] },
+                                  "conversionToId": { "type": ["string", "null"] }
+                                },
+                                "required": [
+                                  "group",
+                                  "name",
+                                  "id",
+                                  "deletedAt",
+                                  "currency",
+                                  "groupId",
+                                  "amount",
+                                  "createdAt",
+                                  "updatedAt",
+                                  "paidBy",
+                                  "addedBy",
+                                  "category",
+                                  "splitType",
+                                  "expenseDate",
+                                  "fileKey",
+                                  "deletedBy",
+                                  "updatedBy",
+                                  "transactionId",
+                                  "recurrenceId",
+                                  "conversionToId"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "nextCursor": {
+                              "type": "object",
+                              "properties": {
+                                "id": { "type": "string" },
+                                "date": { "type": "string", "format": "date-time" }
+                              },
+                              "required": ["id", "date"],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": ["items", "nextCursor"],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": ["data"]
+                    }
+                  },
+                  "required": ["result"]
+                }
+              }
+            }
+          },
+          "default": { "$ref": "#/components/responses/Error" }
+        },
+        "parameters": [
+          {
+            "name": "input",
+            "in": "query",
+            "required": true,
+            "style": "deepObject",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cursor": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": { "type": "string" },
+                            "date": {
+                              "oneOf": [
+                                { "type": "string" },
+                                { "type": "string", "format": "date-time" }
+                              ]
+                            }
+                          },
+                          "required": ["id", "date"],
+                          "additionalProperties": false
+                        },
+                        { "type": "null" }
+                      ]
+                    },
+                    "limit": { "type": "number", "default": 50 }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        ]
       }
     },
     "/user.getBalancesWithFriend": {
@@ -934,264 +1075,6 @@
         ]
       }
     },
-    "/expense.getAllExpenses": {
-      "get": {
-        "operationId": "expense.getAllExpenses",
-        "tags": ["expense"],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "result": {
-                      "type": "object",
-                      "properties": { "data": { "$ref": "#/components/schemas/PaginatedResult2" } },
-                      "required": ["data"]
-                    }
-                  },
-                  "required": ["result"]
-                }
-              }
-            }
-          },
-          "default": { "$ref": "#/components/responses/Error" }
-        },
-        "parameters": [
-          {
-            "name": "input",
-            "in": "query",
-            "required": true,
-            "style": "deepObject",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "limit": { "type": "number", "default": 20 },
-                    "offset": { "type": "number", "default": 0 }
-                  },
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        ]
-      }
-    },
-    "/expense.getExpensesWithFriend": {
-      "get": {
-        "operationId": "expense.getExpensesWithFriend",
-        "tags": ["expense"],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "result": {
-                      "type": "object",
-                      "properties": { "data": { "$ref": "#/components/schemas/PaginatedResult3" } },
-                      "required": ["data"]
-                    }
-                  },
-                  "required": ["result"]
-                }
-              }
-            }
-          },
-          "default": { "$ref": "#/components/responses/Error" }
-        },
-        "parameters": [
-          {
-            "name": "input",
-            "in": "query",
-            "required": true,
-            "style": "deepObject",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "friendId": { "type": "number" },
-                    "limit": { "type": "number", "default": 20 },
-                    "offset": { "type": "number", "default": 0 }
-                  },
-                  "required": ["friendId"],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        ]
-      }
-    },
-    "/expense.getGroupExpenses": {
-      "get": {
-        "operationId": "expense.getGroupExpenses",
-        "tags": ["expense"],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "result": {
-                      "type": "object",
-                      "properties": { "data": { "$ref": "#/components/schemas/PaginatedResult4" } },
-                      "required": ["data"]
-                    }
-                  },
-                  "required": ["result"]
-                }
-              }
-            }
-          },
-          "default": { "$ref": "#/components/responses/Error" }
-        },
-        "parameters": [
-          {
-            "name": "input",
-            "in": "query",
-            "required": true,
-            "style": "deepObject",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "groupId": { "type": "number" },
-                    "limit": { "type": "number", "default": 20 },
-                    "offset": { "type": "number", "default": 0 }
-                  },
-                  "required": ["groupId"],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        ]
-      }
-    },
-    "/expense.addOrEditExpense": {
-      "post": {
-        "operationId": "expense.addOrEditExpense",
-        "tags": ["expense"],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "result": {
-                      "type": "object",
-                      "properties": {
-                        "data": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": { "id": { "type": "string" } },
-                            "required": ["id"],
-                            "additionalProperties": false
-                          }
-                        }
-                      },
-                      "required": ["data"]
-                    }
-                  },
-                  "required": ["result"]
-                }
-              }
-            }
-          },
-          "default": { "$ref": "#/components/responses/Error" }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "name": { "type": "string" },
-                    "currency": { "type": "string" },
-                    "groupId": { "type": ["number", "null"] },
-                    "amount": {
-                      "oneOf": [
-                        { "type": "string" },
-                        { "type": "number" },
-                        { "type": "integer", "format": "bigint" }
-                      ]
-                    },
-                    "paidBy": { "type": "number" },
-                    "category": { "type": "string" },
-                    "splitType": {
-                      "type": "string",
-                      "enum": [
-                        "EQUAL",
-                        "PERCENTAGE",
-                        "EXACT",
-                        "SHARE",
-                        "ADJUSTMENT",
-                        "SETTLEMENT",
-                        "CURRENCY_CONVERSION"
-                      ]
-                    },
-                    "participants": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "userId": { "type": "number" },
-                          "amount": {
-                            "oneOf": [
-                              { "type": "string" },
-                              { "type": "number" },
-                              { "type": "integer", "format": "bigint" }
-                            ]
-                          }
-                        },
-                        "required": ["userId", "amount"],
-                        "additionalProperties": false
-                      }
-                    },
-                    "expenseDate": {
-                      "oneOf": [{ "type": "string" }, { "type": "string", "format": "date-time" }]
-                    },
-                    "fileKey": { "type": "string" },
-                    "transactionId": { "type": "string" },
-                    "conversionToId": { "type": "string" },
-                    "expenseId": { "type": "string" },
-                    "cronExpression": { "type": "string" }
-                  },
-                  "required": [
-                    "name",
-                    "currency",
-                    "groupId",
-                    "amount",
-                    "paidBy",
-                    "category",
-                    "splitType",
-                    "participants"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/expense.getBalances": {
       "get": {
         "operationId": "expense.getBalances",
@@ -1296,6 +1179,837 @@
         }
       }
     },
+    "/expense.getAllExpenses": {
+      "get": {
+        "operationId": "expense.getAllExpenses",
+        "tags": ["expense"],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "expense": {
+                                    "type": "object",
+                                    "properties": {
+                                      "deletedByUser": {
+                                        "oneOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "name": { "type": ["string", "null"] },
+                                              "id": { "type": "number" },
+                                              "email": { "type": ["string", "null"] },
+                                              "deletedAt": {
+                                                "oneOf": [
+                                                  { "type": "string", "format": "date-time" },
+                                                  { "type": "null" }
+                                                ]
+                                              },
+                                              "image": { "type": ["string", "null"] }
+                                            },
+                                            "required": [
+                                              "name",
+                                              "id",
+                                              "email",
+                                              "deletedAt",
+                                              "image"
+                                            ],
+                                            "additionalProperties": false
+                                          },
+                                          { "type": "null" }
+                                        ]
+                                      },
+                                      "paidByUser": {
+                                        "type": "object",
+                                        "properties": {
+                                          "name": { "type": ["string", "null"] },
+                                          "id": { "type": "number" },
+                                          "email": { "type": ["string", "null"] },
+                                          "deletedAt": {
+                                            "oneOf": [
+                                              { "type": "string", "format": "date-time" },
+                                              { "type": "null" }
+                                            ]
+                                          },
+                                          "image": { "type": ["string", "null"] }
+                                        },
+                                        "required": ["name", "id", "email", "deletedAt", "image"],
+                                        "additionalProperties": false
+                                      },
+                                      "name": { "type": "string" },
+                                      "id": { "type": "string" },
+                                      "deletedAt": {
+                                        "oneOf": [
+                                          { "type": "string", "format": "date-time" },
+                                          { "type": "null" }
+                                        ]
+                                      },
+                                      "currency": { "type": "string" },
+                                      "groupId": { "type": ["number", "null"] },
+                                      "amount": { "type": "integer", "format": "bigint" },
+                                      "createdAt": { "type": "string", "format": "date-time" },
+                                      "updatedAt": { "type": "string", "format": "date-time" },
+                                      "paidBy": { "type": "number" },
+                                      "addedBy": { "type": "number" },
+                                      "category": { "type": "string" },
+                                      "splitType": {
+                                        "type": "string",
+                                        "enum": [
+                                          "EQUAL",
+                                          "PERCENTAGE",
+                                          "EXACT",
+                                          "SHARE",
+                                          "ADJUSTMENT",
+                                          "SETTLEMENT",
+                                          "CURRENCY_CONVERSION"
+                                        ]
+                                      },
+                                      "expenseDate": { "type": "string", "format": "date-time" },
+                                      "fileKey": { "type": ["string", "null"] },
+                                      "deletedBy": { "type": ["number", "null"] },
+                                      "updatedBy": { "type": ["number", "null"] },
+                                      "transactionId": { "type": ["string", "null"] },
+                                      "recurrenceId": { "type": ["number", "null"] },
+                                      "conversionToId": { "type": ["string", "null"] }
+                                    },
+                                    "required": [
+                                      "deletedByUser",
+                                      "paidByUser",
+                                      "name",
+                                      "id",
+                                      "deletedAt",
+                                      "currency",
+                                      "groupId",
+                                      "amount",
+                                      "createdAt",
+                                      "updatedAt",
+                                      "paidBy",
+                                      "addedBy",
+                                      "category",
+                                      "splitType",
+                                      "expenseDate",
+                                      "fileKey",
+                                      "deletedBy",
+                                      "updatedBy",
+                                      "transactionId",
+                                      "recurrenceId",
+                                      "conversionToId"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  "userId": { "type": "number" },
+                                  "amount": { "type": "integer", "format": "bigint" },
+                                  "expenseId": { "type": "string" }
+                                },
+                                "required": ["expense", "userId", "amount", "expenseId"],
+                                "additionalProperties": false
+                              }
+                            },
+                            "nextCursor": {
+                              "type": "object",
+                              "properties": {
+                                "id": { "type": "string" },
+                                "date": { "type": "string", "format": "date-time" }
+                              },
+                              "required": ["id", "date"],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": ["items", "nextCursor"],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": ["data"]
+                    }
+                  },
+                  "required": ["result"]
+                }
+              }
+            }
+          },
+          "default": { "$ref": "#/components/responses/Error" }
+        },
+        "parameters": [
+          {
+            "name": "input",
+            "in": "query",
+            "required": true,
+            "style": "deepObject",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cursor": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": { "type": "string" },
+                            "date": {
+                              "oneOf": [
+                                { "type": "string" },
+                                { "type": "string", "format": "date-time" }
+                              ]
+                            }
+                          },
+                          "required": ["id", "date"],
+                          "additionalProperties": false
+                        },
+                        { "type": "null" }
+                      ]
+                    },
+                    "limit": { "type": "number", "default": 50 }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/expense.getExpensesWithFriend": {
+      "get": {
+        "operationId": "expense.getExpensesWithFriend",
+        "tags": ["expense"],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "group": {
+                                    "oneOf": [
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "name": { "type": "string" },
+                                          "id": { "type": "number" },
+                                          "simplifyDebts": { "type": "boolean" }
+                                        },
+                                        "required": ["name", "id", "simplifyDebts"],
+                                        "additionalProperties": false
+                                      },
+                                      { "type": "null" }
+                                    ]
+                                  },
+                                  "expenseParticipants": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "userId": { "type": "number" },
+                                        "amount": { "type": "integer", "format": "bigint" },
+                                        "expenseId": { "type": "string" }
+                                      },
+                                      "required": ["userId", "amount", "expenseId"],
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "conversionTo": {
+                                    "oneOf": [
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "name": { "type": "string" },
+                                          "id": { "type": "string" },
+                                          "deletedAt": {
+                                            "oneOf": [
+                                              { "type": "string", "format": "date-time" },
+                                              { "type": "null" }
+                                            ]
+                                          },
+                                          "currency": { "type": "string" },
+                                          "groupId": { "type": ["number", "null"] },
+                                          "amount": { "type": "integer", "format": "bigint" },
+                                          "createdAt": { "type": "string", "format": "date-time" },
+                                          "updatedAt": { "type": "string", "format": "date-time" },
+                                          "paidBy": { "type": "number" },
+                                          "addedBy": { "type": "number" },
+                                          "category": { "type": "string" },
+                                          "splitType": {
+                                            "type": "string",
+                                            "enum": [
+                                              "EQUAL",
+                                              "PERCENTAGE",
+                                              "EXACT",
+                                              "SHARE",
+                                              "ADJUSTMENT",
+                                              "SETTLEMENT",
+                                              "CURRENCY_CONVERSION"
+                                            ]
+                                          },
+                                          "expenseDate": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                          },
+                                          "fileKey": { "type": ["string", "null"] },
+                                          "deletedBy": { "type": ["number", "null"] },
+                                          "updatedBy": { "type": ["number", "null"] },
+                                          "transactionId": { "type": ["string", "null"] },
+                                          "recurrenceId": { "type": ["number", "null"] },
+                                          "conversionToId": { "type": ["string", "null"] }
+                                        },
+                                        "required": [
+                                          "name",
+                                          "id",
+                                          "deletedAt",
+                                          "currency",
+                                          "groupId",
+                                          "amount",
+                                          "createdAt",
+                                          "updatedAt",
+                                          "paidBy",
+                                          "addedBy",
+                                          "category",
+                                          "splitType",
+                                          "expenseDate",
+                                          "fileKey",
+                                          "deletedBy",
+                                          "updatedBy",
+                                          "transactionId",
+                                          "recurrenceId",
+                                          "conversionToId"
+                                        ],
+                                        "additionalProperties": false
+                                      },
+                                      { "type": "null" }
+                                    ]
+                                  },
+                                  "paidByUser": {
+                                    "type": "object",
+                                    "properties": {
+                                      "name": { "type": ["string", "null"] },
+                                      "id": { "type": "number" },
+                                      "email": { "type": ["string", "null"] },
+                                      "emailVerified": {
+                                        "oneOf": [
+                                          { "type": "string", "format": "date-time" },
+                                          { "type": "null" }
+                                        ]
+                                      },
+                                      "deletedAt": {
+                                        "oneOf": [
+                                          { "type": "string", "format": "date-time" },
+                                          { "type": "null" }
+                                        ]
+                                      },
+                                      "image": { "type": ["string", "null"] },
+                                      "currency": { "type": "string" },
+                                      "defaultCurrency": { "type": ["string", "null"] },
+                                      "preferredLanguage": { "type": "string" },
+                                      "bankingId": { "type": ["string", "null"] },
+                                      "obapiProviderId": { "type": ["string", "null"] },
+                                      "hiddenFriendIds": {
+                                        "type": "array",
+                                        "items": { "type": "number" }
+                                      }
+                                    },
+                                    "required": [
+                                      "name",
+                                      "id",
+                                      "email",
+                                      "emailVerified",
+                                      "deletedAt",
+                                      "image",
+                                      "currency",
+                                      "defaultCurrency",
+                                      "preferredLanguage",
+                                      "bankingId",
+                                      "obapiProviderId",
+                                      "hiddenFriendIds"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  "name": { "type": "string" },
+                                  "id": { "type": "string" },
+                                  "deletedAt": {
+                                    "oneOf": [
+                                      { "type": "string", "format": "date-time" },
+                                      { "type": "null" }
+                                    ]
+                                  },
+                                  "currency": { "type": "string" },
+                                  "groupId": { "type": ["number", "null"] },
+                                  "amount": { "type": "integer", "format": "bigint" },
+                                  "createdAt": { "type": "string", "format": "date-time" },
+                                  "updatedAt": { "type": "string", "format": "date-time" },
+                                  "paidBy": { "type": "number" },
+                                  "addedBy": { "type": "number" },
+                                  "category": { "type": "string" },
+                                  "splitType": {
+                                    "type": "string",
+                                    "enum": [
+                                      "EQUAL",
+                                      "PERCENTAGE",
+                                      "EXACT",
+                                      "SHARE",
+                                      "ADJUSTMENT",
+                                      "SETTLEMENT",
+                                      "CURRENCY_CONVERSION"
+                                    ]
+                                  },
+                                  "expenseDate": { "type": "string", "format": "date-time" },
+                                  "fileKey": { "type": ["string", "null"] },
+                                  "deletedBy": { "type": ["number", "null"] },
+                                  "updatedBy": { "type": ["number", "null"] },
+                                  "transactionId": { "type": ["string", "null"] },
+                                  "recurrenceId": { "type": ["number", "null"] },
+                                  "conversionToId": { "type": ["string", "null"] }
+                                },
+                                "required": [
+                                  "group",
+                                  "expenseParticipants",
+                                  "conversionTo",
+                                  "paidByUser",
+                                  "name",
+                                  "id",
+                                  "deletedAt",
+                                  "currency",
+                                  "groupId",
+                                  "amount",
+                                  "createdAt",
+                                  "updatedAt",
+                                  "paidBy",
+                                  "addedBy",
+                                  "category",
+                                  "splitType",
+                                  "expenseDate",
+                                  "fileKey",
+                                  "deletedBy",
+                                  "updatedBy",
+                                  "transactionId",
+                                  "recurrenceId",
+                                  "conversionToId"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "nextCursor": {
+                              "type": "object",
+                              "properties": {
+                                "id": { "type": "string" },
+                                "date": { "type": "string", "format": "date-time" }
+                              },
+                              "required": ["id", "date"],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": ["items", "nextCursor"],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": ["data"]
+                    }
+                  },
+                  "required": ["result"]
+                }
+              }
+            }
+          },
+          "default": { "$ref": "#/components/responses/Error" }
+        },
+        "parameters": [
+          {
+            "name": "input",
+            "in": "query",
+            "required": true,
+            "style": "deepObject",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "friendId": { "type": "number" },
+                    "cursor": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": { "type": "string" },
+                            "date": {
+                              "oneOf": [
+                                { "type": "string" },
+                                { "type": "string", "format": "date-time" }
+                              ]
+                            }
+                          },
+                          "required": ["id", "date"],
+                          "additionalProperties": false
+                        },
+                        { "type": "null" }
+                      ]
+                    },
+                    "limit": { "type": "number", "default": 50 }
+                  },
+                  "required": ["friendId"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/expense.getGroupExpenses": {
+      "get": {
+        "operationId": "expense.getGroupExpenses",
+        "tags": ["expense"],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "expenseParticipants": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "userId": { "type": "number" },
+                                        "amount": { "type": "integer", "format": "bigint" },
+                                        "expenseId": { "type": "string" }
+                                      },
+                                      "required": ["userId", "amount", "expenseId"],
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "deletedByUser": {
+                                    "oneOf": [
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "name": { "type": ["string", "null"] },
+                                          "id": { "type": "number" },
+                                          "email": { "type": ["string", "null"] },
+                                          "emailVerified": {
+                                            "oneOf": [
+                                              { "type": "string", "format": "date-time" },
+                                              { "type": "null" }
+                                            ]
+                                          },
+                                          "deletedAt": {
+                                            "oneOf": [
+                                              { "type": "string", "format": "date-time" },
+                                              { "type": "null" }
+                                            ]
+                                          },
+                                          "image": { "type": ["string", "null"] },
+                                          "currency": { "type": "string" },
+                                          "defaultCurrency": { "type": ["string", "null"] },
+                                          "preferredLanguage": { "type": "string" },
+                                          "bankingId": { "type": ["string", "null"] },
+                                          "obapiProviderId": { "type": ["string", "null"] },
+                                          "hiddenFriendIds": {
+                                            "type": "array",
+                                            "items": { "type": "number" }
+                                          }
+                                        },
+                                        "required": [
+                                          "name",
+                                          "id",
+                                          "email",
+                                          "emailVerified",
+                                          "deletedAt",
+                                          "image",
+                                          "currency",
+                                          "defaultCurrency",
+                                          "preferredLanguage",
+                                          "bankingId",
+                                          "obapiProviderId",
+                                          "hiddenFriendIds"
+                                        ],
+                                        "additionalProperties": false
+                                      },
+                                      { "type": "null" }
+                                    ]
+                                  },
+                                  "conversionTo": {
+                                    "oneOf": [
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "name": { "type": "string" },
+                                          "id": { "type": "string" },
+                                          "deletedAt": {
+                                            "oneOf": [
+                                              { "type": "string", "format": "date-time" },
+                                              { "type": "null" }
+                                            ]
+                                          },
+                                          "currency": { "type": "string" },
+                                          "groupId": { "type": ["number", "null"] },
+                                          "amount": { "type": "integer", "format": "bigint" },
+                                          "createdAt": { "type": "string", "format": "date-time" },
+                                          "updatedAt": { "type": "string", "format": "date-time" },
+                                          "paidBy": { "type": "number" },
+                                          "addedBy": { "type": "number" },
+                                          "category": { "type": "string" },
+                                          "splitType": {
+                                            "type": "string",
+                                            "enum": [
+                                              "EQUAL",
+                                              "PERCENTAGE",
+                                              "EXACT",
+                                              "SHARE",
+                                              "ADJUSTMENT",
+                                              "SETTLEMENT",
+                                              "CURRENCY_CONVERSION"
+                                            ]
+                                          },
+                                          "expenseDate": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                          },
+                                          "fileKey": { "type": ["string", "null"] },
+                                          "deletedBy": { "type": ["number", "null"] },
+                                          "updatedBy": { "type": ["number", "null"] },
+                                          "transactionId": { "type": ["string", "null"] },
+                                          "recurrenceId": { "type": ["number", "null"] },
+                                          "conversionToId": { "type": ["string", "null"] }
+                                        },
+                                        "required": [
+                                          "name",
+                                          "id",
+                                          "deletedAt",
+                                          "currency",
+                                          "groupId",
+                                          "amount",
+                                          "createdAt",
+                                          "updatedAt",
+                                          "paidBy",
+                                          "addedBy",
+                                          "category",
+                                          "splitType",
+                                          "expenseDate",
+                                          "fileKey",
+                                          "deletedBy",
+                                          "updatedBy",
+                                          "transactionId",
+                                          "recurrenceId",
+                                          "conversionToId"
+                                        ],
+                                        "additionalProperties": false
+                                      },
+                                      { "type": "null" }
+                                    ]
+                                  },
+                                  "paidByUser": {
+                                    "type": "object",
+                                    "properties": {
+                                      "name": { "type": ["string", "null"] },
+                                      "id": { "type": "number" },
+                                      "email": { "type": ["string", "null"] },
+                                      "emailVerified": {
+                                        "oneOf": [
+                                          { "type": "string", "format": "date-time" },
+                                          { "type": "null" }
+                                        ]
+                                      },
+                                      "deletedAt": {
+                                        "oneOf": [
+                                          { "type": "string", "format": "date-time" },
+                                          { "type": "null" }
+                                        ]
+                                      },
+                                      "image": { "type": ["string", "null"] },
+                                      "currency": { "type": "string" },
+                                      "defaultCurrency": { "type": ["string", "null"] },
+                                      "preferredLanguage": { "type": "string" },
+                                      "bankingId": { "type": ["string", "null"] },
+                                      "obapiProviderId": { "type": ["string", "null"] },
+                                      "hiddenFriendIds": {
+                                        "type": "array",
+                                        "items": { "type": "number" }
+                                      }
+                                    },
+                                    "required": [
+                                      "name",
+                                      "id",
+                                      "email",
+                                      "emailVerified",
+                                      "deletedAt",
+                                      "image",
+                                      "currency",
+                                      "defaultCurrency",
+                                      "preferredLanguage",
+                                      "bankingId",
+                                      "obapiProviderId",
+                                      "hiddenFriendIds"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  "name": { "type": "string" },
+                                  "id": { "type": "string" },
+                                  "deletedAt": {
+                                    "oneOf": [
+                                      { "type": "string", "format": "date-time" },
+                                      { "type": "null" }
+                                    ]
+                                  },
+                                  "currency": { "type": "string" },
+                                  "groupId": { "type": ["number", "null"] },
+                                  "amount": { "type": "integer", "format": "bigint" },
+                                  "createdAt": { "type": "string", "format": "date-time" },
+                                  "updatedAt": { "type": "string", "format": "date-time" },
+                                  "paidBy": { "type": "number" },
+                                  "addedBy": { "type": "number" },
+                                  "category": { "type": "string" },
+                                  "splitType": {
+                                    "type": "string",
+                                    "enum": [
+                                      "EQUAL",
+                                      "PERCENTAGE",
+                                      "EXACT",
+                                      "SHARE",
+                                      "ADJUSTMENT",
+                                      "SETTLEMENT",
+                                      "CURRENCY_CONVERSION"
+                                    ]
+                                  },
+                                  "expenseDate": { "type": "string", "format": "date-time" },
+                                  "fileKey": { "type": ["string", "null"] },
+                                  "deletedBy": { "type": ["number", "null"] },
+                                  "updatedBy": { "type": ["number", "null"] },
+                                  "transactionId": { "type": ["string", "null"] },
+                                  "recurrenceId": { "type": ["number", "null"] },
+                                  "conversionToId": { "type": ["string", "null"] }
+                                },
+                                "required": [
+                                  "expenseParticipants",
+                                  "deletedByUser",
+                                  "conversionTo",
+                                  "paidByUser",
+                                  "name",
+                                  "id",
+                                  "deletedAt",
+                                  "currency",
+                                  "groupId",
+                                  "amount",
+                                  "createdAt",
+                                  "updatedAt",
+                                  "paidBy",
+                                  "addedBy",
+                                  "category",
+                                  "splitType",
+                                  "expenseDate",
+                                  "fileKey",
+                                  "deletedBy",
+                                  "updatedBy",
+                                  "transactionId",
+                                  "recurrenceId",
+                                  "conversionToId"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "nextCursor": {
+                              "type": "object",
+                              "properties": {
+                                "id": { "type": "string" },
+                                "date": { "type": "string", "format": "date-time" }
+                              },
+                              "required": ["id", "date"],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": ["items", "nextCursor"],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": ["data"]
+                    }
+                  },
+                  "required": ["result"]
+                }
+              }
+            }
+          },
+          "default": { "$ref": "#/components/responses/Error" }
+        },
+        "parameters": [
+          {
+            "name": "input",
+            "in": "query",
+            "required": true,
+            "style": "deepObject",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "groupId": { "type": "number" },
+                    "cursor": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": { "type": "string" },
+                            "date": {
+                              "oneOf": [
+                                { "type": "string" },
+                                { "type": "string", "format": "date-time" }
+                              ]
+                            }
+                          },
+                          "required": ["id", "date"],
+                          "additionalProperties": false
+                        },
+                        { "type": "null" }
+                      ]
+                    },
+                    "limit": { "type": "number", "default": 50 }
+                  },
+                  "required": ["groupId"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
     "/expense.getExpenseDetails": {
       "get": {
         "operationId": "expense.getExpenseDetails",
@@ -1361,6 +2075,23 @@
                                   "items": {
                                     "type": "object",
                                     "properties": {
+                                      "createdBy": {
+                                        "type": "object",
+                                        "properties": {
+                                          "name": { "type": ["string", "null"] },
+                                          "id": { "type": "number" },
+                                          "email": { "type": ["string", "null"] },
+                                          "deletedAt": {
+                                            "oneOf": [
+                                              { "type": "string", "format": "date-time" },
+                                              { "type": "null" }
+                                            ]
+                                          },
+                                          "image": { "type": ["string", "null"] }
+                                        },
+                                        "required": ["name", "id", "email", "deletedAt", "image"],
+                                        "additionalProperties": false
+                                      },
                                       "id": { "type": "string" },
                                       "createdAt": { "type": "string", "format": "date-time" },
                                       "note": { "type": "string" },
@@ -1368,6 +2099,7 @@
                                       "expenseId": { "type": "string" }
                                     },
                                     "required": [
+                                      "createdBy",
                                       "id",
                                       "createdAt",
                                       "note",
@@ -1888,128 +2620,206 @@
           }
         ]
       }
+    },
+    "/expense.addOrEditExpense": {
+      "post": {
+        "operationId": "expense.addOrEditExpense",
+        "tags": ["expense"],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": { "id": { "type": "string" } },
+                            "required": ["id"],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": ["data"]
+                    }
+                  },
+                  "required": ["result"]
+                }
+              }
+            }
+          },
+          "default": { "$ref": "#/components/responses/Error" }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "currency": { "type": "string" },
+                    "groupId": { "type": ["number", "null"] },
+                    "amount": {
+                      "oneOf": [
+                        { "type": "string" },
+                        { "type": "number" },
+                        { "type": "integer", "format": "bigint" }
+                      ]
+                    },
+                    "paidBy": { "type": "number" },
+                    "category": { "type": "string" },
+                    "splitType": {
+                      "type": "string",
+                      "enum": [
+                        "EQUAL",
+                        "PERCENTAGE",
+                        "EXACT",
+                        "SHARE",
+                        "ADJUSTMENT",
+                        "SETTLEMENT",
+                        "CURRENCY_CONVERSION"
+                      ]
+                    },
+                    "participants": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "userId": { "type": "number" },
+                          "amount": {
+                            "oneOf": [
+                              { "type": "string" },
+                              { "type": "number" },
+                              { "type": "integer", "format": "bigint" }
+                            ]
+                          }
+                        },
+                        "required": ["userId", "amount"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "expenseDate": {
+                      "oneOf": [{ "type": "string" }, { "type": "string", "format": "date-time" }]
+                    },
+                    "fileKey": { "type": "string" },
+                    "transactionId": { "type": "string" },
+                    "conversionToId": { "type": "string" },
+                    "expenseId": { "type": "string" },
+                    "cronExpression": { "type": "string" },
+                    "initialComment": { "type": "string" }
+                  },
+                  "required": [
+                    "name",
+                    "currency",
+                    "groupId",
+                    "amount",
+                    "paidBy",
+                    "category",
+                    "splitType",
+                    "participants"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/upload": {
+      "post": {
+        "operationId": "upload",
+        "tags": ["upload"],
+        "summary": "Upload a receipt image",
+        "description": "Upload an image as `multipart/form-data` in the `file` field. It is converted to WebP and stored for the authenticated user. Pass the returned `key` as `fileKey` to `expense.addOrEditExpense` to attach it to an expense.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": { "file": { "type": "string", "format": "binary" } },
+                "required": ["file"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Stored file key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "key": { "type": "string", "examples": ["1/0d9c…-….webp"] } },
+                  "required": ["key"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No file provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, unknown or expired API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Upload failed, e.g. file too large or not an image",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
-      "PaginatedResult": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "group": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "name": { "type": "string" },
-                        "id": { "type": "number" },
-                        "userId": { "type": "number" },
-                        "image": { "type": ["string", "null"] },
-                        "defaultCurrency": { "type": ["string", "null"] },
-                        "createdAt": { "type": "string", "format": "date-time" },
-                        "updatedAt": { "type": "string", "format": "date-time" },
-                        "publicId": { "type": "string" },
-                        "splitwiseGroupId": { "type": ["string", "null"] },
-                        "simplifyDebts": { "type": "boolean" },
-                        "archivedAt": {
-                          "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
-                        }
-                      },
-                      "required": [
-                        "name",
-                        "id",
-                        "userId",
-                        "image",
-                        "defaultCurrency",
-                        "createdAt",
-                        "updatedAt",
-                        "publicId",
-                        "splitwiseGroupId",
-                        "simplifyDebts",
-                        "archivedAt"
-                      ],
-                      "additionalProperties": false
-                    },
-                    { "type": "null" }
-                  ]
-                },
-                "name": { "type": "string" },
-                "id": { "type": "string" },
-                "deletedAt": {
-                  "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
-                },
-                "currency": { "type": "string" },
-                "groupId": { "type": ["number", "null"] },
-                "amount": { "type": "integer", "format": "bigint" },
-                "createdAt": { "type": "string", "format": "date-time" },
-                "updatedAt": { "type": "string", "format": "date-time" },
-                "paidBy": { "type": "number" },
-                "addedBy": { "type": "number" },
-                "category": { "type": "string" },
-                "splitType": {
-                  "type": "string",
-                  "enum": [
-                    "EQUAL",
-                    "PERCENTAGE",
-                    "EXACT",
-                    "SHARE",
-                    "ADJUSTMENT",
-                    "SETTLEMENT",
-                    "CURRENCY_CONVERSION"
-                  ]
-                },
-                "expenseDate": { "type": "string", "format": "date-time" },
-                "fileKey": { "type": ["string", "null"] },
-                "deletedBy": { "type": ["number", "null"] },
-                "updatedBy": { "type": ["number", "null"] },
-                "transactionId": { "type": ["string", "null"] },
-                "recurrenceId": { "type": ["number", "null"] },
-                "conversionToId": { "type": ["string", "null"] }
-              },
-              "required": [
-                "group",
-                "name",
-                "id",
-                "deletedAt",
-                "currency",
-                "groupId",
-                "amount",
-                "createdAt",
-                "updatedAt",
-                "paidBy",
-                "addedBy",
-                "category",
-                "splitType",
-                "expenseDate",
-                "fileKey",
-                "deletedBy",
-                "updatedBy",
-                "transactionId",
-                "recurrenceId",
-                "conversionToId"
-              ],
-              "additionalProperties": false
-            }
-          },
-          "pagination": {
-            "type": "object",
-            "properties": {
-              "total": { "type": "number" },
-              "limit": { "type": "number" },
-              "offset": { "type": "number" },
-              "hasMore": { "type": "boolean" }
-            },
-            "required": ["total", "limit", "offset", "hasMore"],
-            "additionalProperties": false
-          }
-        },
-        "required": ["items", "pagination"],
-        "additionalProperties": false
-      },
       "SerializedDefaultSplitConfig": {
         "type": "object",
         "properties": {
@@ -2116,575 +2926,6 @@
           "toSpliced",
           "with"
         ],
-        "additionalProperties": false
-      },
-      "PaginatedResult2": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "expense": {
-                  "type": "object",
-                  "properties": {
-                    "deletedByUser": {
-                      "oneOf": [
-                        {
-                          "type": "object",
-                          "properties": {
-                            "name": { "type": ["string", "null"] },
-                            "id": { "type": "number" },
-                            "email": { "type": ["string", "null"] },
-                            "image": { "type": ["string", "null"] }
-                          },
-                          "required": ["name", "id", "email", "image"],
-                          "additionalProperties": false
-                        },
-                        { "type": "null" }
-                      ]
-                    },
-                    "paidByUser": {
-                      "type": "object",
-                      "properties": {
-                        "name": { "type": ["string", "null"] },
-                        "id": { "type": "number" },
-                        "email": { "type": ["string", "null"] },
-                        "image": { "type": ["string", "null"] }
-                      },
-                      "required": ["name", "id", "email", "image"],
-                      "additionalProperties": false
-                    },
-                    "name": { "type": "string" },
-                    "id": { "type": "string" },
-                    "deletedAt": {
-                      "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
-                    },
-                    "currency": { "type": "string" },
-                    "groupId": { "type": ["number", "null"] },
-                    "amount": { "type": "integer", "format": "bigint" },
-                    "createdAt": { "type": "string", "format": "date-time" },
-                    "updatedAt": { "type": "string", "format": "date-time" },
-                    "paidBy": { "type": "number" },
-                    "addedBy": { "type": "number" },
-                    "category": { "type": "string" },
-                    "splitType": {
-                      "type": "string",
-                      "enum": [
-                        "EQUAL",
-                        "PERCENTAGE",
-                        "EXACT",
-                        "SHARE",
-                        "ADJUSTMENT",
-                        "SETTLEMENT",
-                        "CURRENCY_CONVERSION"
-                      ]
-                    },
-                    "expenseDate": { "type": "string", "format": "date-time" },
-                    "fileKey": { "type": ["string", "null"] },
-                    "deletedBy": { "type": ["number", "null"] },
-                    "updatedBy": { "type": ["number", "null"] },
-                    "transactionId": { "type": ["string", "null"] },
-                    "recurrenceId": { "type": ["number", "null"] },
-                    "conversionToId": { "type": ["string", "null"] }
-                  },
-                  "required": [
-                    "deletedByUser",
-                    "paidByUser",
-                    "name",
-                    "id",
-                    "deletedAt",
-                    "currency",
-                    "groupId",
-                    "amount",
-                    "createdAt",
-                    "updatedAt",
-                    "paidBy",
-                    "addedBy",
-                    "category",
-                    "splitType",
-                    "expenseDate",
-                    "fileKey",
-                    "deletedBy",
-                    "updatedBy",
-                    "transactionId",
-                    "recurrenceId",
-                    "conversionToId"
-                  ],
-                  "additionalProperties": false
-                },
-                "userId": { "type": "number" },
-                "amount": { "type": "integer", "format": "bigint" },
-                "expenseId": { "type": "string" }
-              },
-              "required": ["expense", "userId", "amount", "expenseId"],
-              "additionalProperties": false
-            }
-          },
-          "pagination": {
-            "type": "object",
-            "properties": {
-              "total": { "type": "number" },
-              "limit": { "type": "number" },
-              "offset": { "type": "number" },
-              "hasMore": { "type": "boolean" }
-            },
-            "required": ["total", "limit", "offset", "hasMore"],
-            "additionalProperties": false
-          }
-        },
-        "required": ["items", "pagination"],
-        "additionalProperties": false
-      },
-      "PaginatedResult3": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "group": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "name": { "type": "string" },
-                        "id": { "type": "number" },
-                        "simplifyDebts": { "type": "boolean" }
-                      },
-                      "required": ["name", "id", "simplifyDebts"],
-                      "additionalProperties": false
-                    },
-                    { "type": "null" }
-                  ]
-                },
-                "expenseParticipants": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "userId": { "type": "number" },
-                      "amount": { "type": "integer", "format": "bigint" },
-                      "expenseId": { "type": "string" }
-                    },
-                    "required": ["userId", "amount", "expenseId"],
-                    "additionalProperties": false
-                  }
-                },
-                "conversionTo": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "name": { "type": "string" },
-                        "id": { "type": "string" },
-                        "deletedAt": {
-                          "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
-                        },
-                        "currency": { "type": "string" },
-                        "groupId": { "type": ["number", "null"] },
-                        "amount": { "type": "integer", "format": "bigint" },
-                        "createdAt": { "type": "string", "format": "date-time" },
-                        "updatedAt": { "type": "string", "format": "date-time" },
-                        "paidBy": { "type": "number" },
-                        "addedBy": { "type": "number" },
-                        "category": { "type": "string" },
-                        "splitType": {
-                          "type": "string",
-                          "enum": [
-                            "EQUAL",
-                            "PERCENTAGE",
-                            "EXACT",
-                            "SHARE",
-                            "ADJUSTMENT",
-                            "SETTLEMENT",
-                            "CURRENCY_CONVERSION"
-                          ]
-                        },
-                        "expenseDate": { "type": "string", "format": "date-time" },
-                        "fileKey": { "type": ["string", "null"] },
-                        "deletedBy": { "type": ["number", "null"] },
-                        "updatedBy": { "type": ["number", "null"] },
-                        "transactionId": { "type": ["string", "null"] },
-                        "recurrenceId": { "type": ["number", "null"] },
-                        "conversionToId": { "type": ["string", "null"] }
-                      },
-                      "required": [
-                        "name",
-                        "id",
-                        "deletedAt",
-                        "currency",
-                        "groupId",
-                        "amount",
-                        "createdAt",
-                        "updatedAt",
-                        "paidBy",
-                        "addedBy",
-                        "category",
-                        "splitType",
-                        "expenseDate",
-                        "fileKey",
-                        "deletedBy",
-                        "updatedBy",
-                        "transactionId",
-                        "recurrenceId",
-                        "conversionToId"
-                      ],
-                      "additionalProperties": false
-                    },
-                    { "type": "null" }
-                  ]
-                },
-                "paidByUser": {
-                  "type": "object",
-                  "properties": {
-                    "name": { "type": ["string", "null"] },
-                    "id": { "type": "number" },
-                    "email": { "type": ["string", "null"] },
-                    "emailVerified": {
-                      "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
-                    },
-                    "deletedAt": {
-                      "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
-                    },
-                    "image": { "type": ["string", "null"] },
-                    "currency": { "type": "string" },
-                    "defaultCurrency": { "type": ["string", "null"] },
-                    "preferredLanguage": { "type": "string" },
-                    "bankingId": { "type": ["string", "null"] },
-                    "obapiProviderId": { "type": ["string", "null"] },
-                    "hiddenFriendIds": { "type": "array", "items": { "type": "number" } }
-                  },
-                  "required": [
-                    "name",
-                    "id",
-                    "email",
-                    "emailVerified",
-                    "deletedAt",
-                    "image",
-                    "currency",
-                    "defaultCurrency",
-                    "preferredLanguage",
-                    "bankingId",
-                    "obapiProviderId",
-                    "hiddenFriendIds"
-                  ],
-                  "additionalProperties": false
-                },
-                "name": { "type": "string" },
-                "id": { "type": "string" },
-                "deletedAt": {
-                  "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
-                },
-                "currency": { "type": "string" },
-                "groupId": { "type": ["number", "null"] },
-                "amount": { "type": "integer", "format": "bigint" },
-                "createdAt": { "type": "string", "format": "date-time" },
-                "updatedAt": { "type": "string", "format": "date-time" },
-                "paidBy": { "type": "number" },
-                "addedBy": { "type": "number" },
-                "category": { "type": "string" },
-                "splitType": {
-                  "type": "string",
-                  "enum": [
-                    "EQUAL",
-                    "PERCENTAGE",
-                    "EXACT",
-                    "SHARE",
-                    "ADJUSTMENT",
-                    "SETTLEMENT",
-                    "CURRENCY_CONVERSION"
-                  ]
-                },
-                "expenseDate": { "type": "string", "format": "date-time" },
-                "fileKey": { "type": ["string", "null"] },
-                "deletedBy": { "type": ["number", "null"] },
-                "updatedBy": { "type": ["number", "null"] },
-                "transactionId": { "type": ["string", "null"] },
-                "recurrenceId": { "type": ["number", "null"] },
-                "conversionToId": { "type": ["string", "null"] }
-              },
-              "required": [
-                "group",
-                "expenseParticipants",
-                "conversionTo",
-                "paidByUser",
-                "name",
-                "id",
-                "deletedAt",
-                "currency",
-                "groupId",
-                "amount",
-                "createdAt",
-                "updatedAt",
-                "paidBy",
-                "addedBy",
-                "category",
-                "splitType",
-                "expenseDate",
-                "fileKey",
-                "deletedBy",
-                "updatedBy",
-                "transactionId",
-                "recurrenceId",
-                "conversionToId"
-              ],
-              "additionalProperties": false
-            }
-          },
-          "pagination": {
-            "type": "object",
-            "properties": {
-              "total": { "type": "number" },
-              "limit": { "type": "number" },
-              "offset": { "type": "number" },
-              "hasMore": { "type": "boolean" }
-            },
-            "required": ["total", "limit", "offset", "hasMore"],
-            "additionalProperties": false
-          }
-        },
-        "required": ["items", "pagination"],
-        "additionalProperties": false
-      },
-      "PaginatedResult4": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "expenseParticipants": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "userId": { "type": "number" },
-                      "amount": { "type": "integer", "format": "bigint" },
-                      "expenseId": { "type": "string" }
-                    },
-                    "required": ["userId", "amount", "expenseId"],
-                    "additionalProperties": false
-                  }
-                },
-                "deletedByUser": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "name": { "type": ["string", "null"] },
-                        "id": { "type": "number" },
-                        "email": { "type": ["string", "null"] },
-                        "emailVerified": {
-                          "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
-                        },
-                        "deletedAt": {
-                          "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
-                        },
-                        "image": { "type": ["string", "null"] },
-                        "currency": { "type": "string" },
-                        "defaultCurrency": { "type": ["string", "null"] },
-                        "preferredLanguage": { "type": "string" },
-                        "bankingId": { "type": ["string", "null"] },
-                        "obapiProviderId": { "type": ["string", "null"] },
-                        "hiddenFriendIds": { "type": "array", "items": { "type": "number" } }
-                      },
-                      "required": [
-                        "name",
-                        "id",
-                        "email",
-                        "emailVerified",
-                        "deletedAt",
-                        "image",
-                        "currency",
-                        "defaultCurrency",
-                        "preferredLanguage",
-                        "bankingId",
-                        "obapiProviderId",
-                        "hiddenFriendIds"
-                      ],
-                      "additionalProperties": false
-                    },
-                    { "type": "null" }
-                  ]
-                },
-                "conversionTo": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "name": { "type": "string" },
-                        "id": { "type": "string" },
-                        "deletedAt": {
-                          "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
-                        },
-                        "currency": { "type": "string" },
-                        "groupId": { "type": ["number", "null"] },
-                        "amount": { "type": "integer", "format": "bigint" },
-                        "createdAt": { "type": "string", "format": "date-time" },
-                        "updatedAt": { "type": "string", "format": "date-time" },
-                        "paidBy": { "type": "number" },
-                        "addedBy": { "type": "number" },
-                        "category": { "type": "string" },
-                        "splitType": {
-                          "type": "string",
-                          "enum": [
-                            "EQUAL",
-                            "PERCENTAGE",
-                            "EXACT",
-                            "SHARE",
-                            "ADJUSTMENT",
-                            "SETTLEMENT",
-                            "CURRENCY_CONVERSION"
-                          ]
-                        },
-                        "expenseDate": { "type": "string", "format": "date-time" },
-                        "fileKey": { "type": ["string", "null"] },
-                        "deletedBy": { "type": ["number", "null"] },
-                        "updatedBy": { "type": ["number", "null"] },
-                        "transactionId": { "type": ["string", "null"] },
-                        "recurrenceId": { "type": ["number", "null"] },
-                        "conversionToId": { "type": ["string", "null"] }
-                      },
-                      "required": [
-                        "name",
-                        "id",
-                        "deletedAt",
-                        "currency",
-                        "groupId",
-                        "amount",
-                        "createdAt",
-                        "updatedAt",
-                        "paidBy",
-                        "addedBy",
-                        "category",
-                        "splitType",
-                        "expenseDate",
-                        "fileKey",
-                        "deletedBy",
-                        "updatedBy",
-                        "transactionId",
-                        "recurrenceId",
-                        "conversionToId"
-                      ],
-                      "additionalProperties": false
-                    },
-                    { "type": "null" }
-                  ]
-                },
-                "paidByUser": {
-                  "type": "object",
-                  "properties": {
-                    "name": { "type": ["string", "null"] },
-                    "id": { "type": "number" },
-                    "email": { "type": ["string", "null"] },
-                    "emailVerified": {
-                      "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
-                    },
-                    "deletedAt": {
-                      "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
-                    },
-                    "image": { "type": ["string", "null"] },
-                    "currency": { "type": "string" },
-                    "defaultCurrency": { "type": ["string", "null"] },
-                    "preferredLanguage": { "type": "string" },
-                    "bankingId": { "type": ["string", "null"] },
-                    "obapiProviderId": { "type": ["string", "null"] },
-                    "hiddenFriendIds": { "type": "array", "items": { "type": "number" } }
-                  },
-                  "required": [
-                    "name",
-                    "id",
-                    "email",
-                    "emailVerified",
-                    "deletedAt",
-                    "image",
-                    "currency",
-                    "defaultCurrency",
-                    "preferredLanguage",
-                    "bankingId",
-                    "obapiProviderId",
-                    "hiddenFriendIds"
-                  ],
-                  "additionalProperties": false
-                },
-                "name": { "type": "string" },
-                "id": { "type": "string" },
-                "deletedAt": {
-                  "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
-                },
-                "currency": { "type": "string" },
-                "groupId": { "type": ["number", "null"] },
-                "amount": { "type": "integer", "format": "bigint" },
-                "createdAt": { "type": "string", "format": "date-time" },
-                "updatedAt": { "type": "string", "format": "date-time" },
-                "paidBy": { "type": "number" },
-                "addedBy": { "type": "number" },
-                "category": { "type": "string" },
-                "splitType": {
-                  "type": "string",
-                  "enum": [
-                    "EQUAL",
-                    "PERCENTAGE",
-                    "EXACT",
-                    "SHARE",
-                    "ADJUSTMENT",
-                    "SETTLEMENT",
-                    "CURRENCY_CONVERSION"
-                  ]
-                },
-                "expenseDate": { "type": "string", "format": "date-time" },
-                "fileKey": { "type": ["string", "null"] },
-                "deletedBy": { "type": ["number", "null"] },
-                "updatedBy": { "type": ["number", "null"] },
-                "transactionId": { "type": ["string", "null"] },
-                "recurrenceId": { "type": ["number", "null"] },
-                "conversionToId": { "type": ["string", "null"] }
-              },
-              "required": [
-                "expenseParticipants",
-                "deletedByUser",
-                "conversionTo",
-                "paidByUser",
-                "name",
-                "id",
-                "deletedAt",
-                "currency",
-                "groupId",
-                "amount",
-                "createdAt",
-                "updatedAt",
-                "paidBy",
-                "addedBy",
-                "category",
-                "splitType",
-                "expenseDate",
-                "fileKey",
-                "deletedBy",
-                "updatedBy",
-                "transactionId",
-                "recurrenceId",
-                "conversionToId"
-              ],
-              "additionalProperties": false
-            }
-          },
-          "pagination": {
-            "type": "object",
-            "properties": {
-              "total": { "type": "number" },
-              "limit": { "type": "number" },
-              "offset": { "type": "number" },
-              "hasMore": { "type": "boolean" }
-            },
-            "required": ["total", "limit", "offset", "hasMore"],
-            "additionalProperties": false
-          }
-        },
-        "required": ["items", "pagination"],
         "additionalProperties": false
       },
       "typeToFlattenedError": {

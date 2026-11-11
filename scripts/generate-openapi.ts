@@ -5,6 +5,8 @@ import path from 'node:path';
 import { generateOpenAPIDocument } from '@trpc/openapi';
 import { format, resolveConfig } from 'prettier';
 
+import { paginationInput } from '../src/utils/pagination';
+
 /**
  * Generates the OpenAPI spec for the public API from `apiRouter`.
  *
@@ -28,6 +30,8 @@ const outputPath = path.join(rootDir, 'src/server/api/openapi.generated.json');
  */
 const SERVER_URL = '/api/v1';
 
+type OpenAPIDocument = Awaited<ReturnType<typeof generateOpenAPIDocument>>;
+
 /** Minimal shape of a query parameter object we post-process below. */
 interface QueryParameterObject {
   name?: unknown;
@@ -48,11 +52,11 @@ const isOperationObject = (value: unknown): value is OperationObject =>
 /**
  * The generator infers Zod `.default()` as optional fields but does not emit
  * the actual default values into the schema. Walk every query parameter named
- * `input` and inject the defaults for `limit` (20) and `offset` (0) so the
- * docs UI and generated clients pick them up automatically.
+ * `input` and inject the default `limit` of the shared pagination schema so
+ * the docs UI and generated clients pick it up automatically.
  */
-const injectPaginationDefaults = (doc: Awaited<ReturnType<typeof generateOpenAPIDocument>>) => {
-  const defaultMap: Record<string, number> = { limit: 20, offset: 0 };
+const injectPaginationDefaults = (doc: OpenAPIDocument) => {
+  const defaultMap: Record<string, number> = { limit: paginationInput.parse({}).limit };
 
   for (const pathItem of Object.values(doc.paths ?? {})) {
     for (const operation of Object.values(pathItem ?? {})) {
@@ -80,6 +84,68 @@ const injectPaginationDefaults = (doc: Awaited<ReturnType<typeof generateOpenAPI
   }
 };
 
+const errorResponse = (description: string) => ({
+  description,
+  content: {
+    'application/json': {
+      schema: {
+        type: 'object' as const,
+        properties: { error: { type: 'string' as const } },
+        required: ['error'],
+      },
+    },
+  },
+});
+
+/**
+ * Receipt upload is a plain Next.js route (`src/pages/api/v1/upload.ts`), not a
+ * tRPC procedure, so the generator cannot see it. Document it by hand.
+ */
+const addUploadPath = (doc: OpenAPIDocument) => {
+  doc.paths ??= {};
+  doc.paths['/upload'] = {
+    post: {
+      operationId: 'upload',
+      tags: ['upload'],
+      summary: 'Upload a receipt image',
+      description:
+        'Upload an image as `multipart/form-data` in the `file` field. It is converted to WebP ' +
+        'and stored for the authenticated user. Pass the returned `key` as `fileKey` to ' +
+        '`expense.addOrEditExpense` to attach it to an expense.',
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              properties: { file: { type: 'string', format: 'binary' } },
+              required: ['file'],
+            },
+          },
+        },
+      },
+      responses: {
+        '200': {
+          description: 'Stored file key',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: { key: { type: 'string', examples: ['1/0d9c…-….webp'] } },
+                required: ['key'],
+              },
+            },
+          },
+        },
+        '400': errorResponse('No file provided'),
+        '401': errorResponse('Missing, unknown or expired API key'),
+        '405': errorResponse('Method not allowed'),
+        '500': errorResponse('Upload failed, e.g. file too large or not an image'),
+      },
+    },
+  };
+};
+
 async function main() {
   const doc = await generateOpenAPIDocument(routerPath, {
     exportName: 'apiRouter',
@@ -98,6 +164,7 @@ async function main() {
   doc.security = [{ bearerAuth: [] }];
 
   injectPaginationDefaults(doc);
+  addUploadPath(doc);
 
   // Format the output with the project's prettier config so the generated file
   // Is byte-identical to what the pre-commit hook produces.

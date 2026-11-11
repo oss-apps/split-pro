@@ -14,8 +14,9 @@ import {
   groupProcedure,
   protectedProcedure,
 } from '~/server/api/trpc';
-import { paginationInput as apiPaginationInput, paginatedResult } from '~/server/api/pagination';
 import { db } from '~/server/db';
+import { BigMath, currencyConversion } from '~/utils/numbers';
+
 import {
   type CreateExpense,
   arrayify,
@@ -24,7 +25,6 @@ import {
   getBatchCurrencyRatesSchema,
   getCurrencyRateSchema,
 } from '~/types/expense.types';
-import { BigMath, currencyConversion } from '~/utils/numbers';
 import {
   assertExpenseGroupReassignment,
   createExpense,
@@ -87,64 +87,6 @@ const upsertExpenses = async (expenses: CreateExpense[], userId: number) => {
 
   return results;
 };
-
-/** Where-clause shared by the app and paginated API group expense listings. */
-const groupExpensesWhere = (groupId: number) => ({
-  groupId,
-  deletedBy: null,
-  OR: [
-    {
-      NOT: {
-        splitType: SplitType.CURRENCY_CONVERSION,
-      },
-    },
-    {
-      NOT: {
-        conversionToId: null,
-      },
-    },
-  ],
-});
-
-/** Where-clause shared by the app and paginated API friend expense listings. */
-const expensesWithFriendWhere = (userId: number, friendId: number) => ({
-  AND: [
-    {
-      expenseParticipants: {
-        some: {
-          userId: friendId,
-          amount: { not: 0n },
-        },
-      },
-    },
-    {
-      expenseParticipants: {
-        some: {
-          userId,
-          amount: { not: 0n },
-        },
-      },
-    },
-    {
-      OR: [{ paidBy: userId }, { paidBy: friendId }],
-    },
-    { deletedBy: null },
-    {
-      OR: [
-        {
-          NOT: {
-            splitType: SplitType.CURRENCY_CONVERSION,
-          },
-        },
-        {
-          NOT: {
-            conversionToId: null,
-          },
-        },
-      ],
-    },
-  ],
-});
 
 /**
  * Method record for `expenseRouter`, exported so the public API router
@@ -322,7 +264,55 @@ export const expenseMethods = {
         take: input.limit + 1,
         where: {
           ...beforeCursor(input.cursor, 'expenseDate'),
-          ...expensesWithFriendWhere(ctx.session.user.id, input.friendId),
+          AND: [
+            {
+              expenseParticipants: {
+                some: {
+                  userId: input.friendId,
+                  amount: {
+                    not: 0n,
+                  },
+                },
+              },
+            },
+            {
+              expenseParticipants: {
+                some: {
+                  userId: ctx.session.user.id,
+                  amount: {
+                    not: 0n,
+                  },
+                },
+              },
+            },
+            {
+              OR: [
+                {
+                  paidBy: ctx.session.user.id,
+                },
+                {
+                  paidBy: input.friendId,
+                },
+              ],
+            },
+            {
+              deletedBy: null,
+            },
+            {
+              OR: [
+                {
+                  NOT: {
+                    splitType: SplitType.CURRENCY_CONVERSION,
+                  },
+                },
+                {
+                  NOT: {
+                    conversionToId: null,
+                  },
+                },
+              ],
+            },
+          ],
         },
         orderBy: [{ expenseDate: 'desc' }, { id: 'desc' }],
         include: {
@@ -363,7 +353,20 @@ export const expenseMethods = {
         take: input.limit + 1,
         where: {
           AND: [beforeCursor(input.cursor, 'expenseDate')],
-          ...groupExpensesWhere(input.groupId),
+          groupId: input.groupId,
+          deletedBy: null,
+          OR: [
+            {
+              NOT: {
+                splitType: SplitType.CURRENCY_CONVERSION,
+              },
+            },
+            {
+              NOT: {
+                conversionToId: null,
+              },
+            },
+          ],
         },
         orderBy: [{ expenseDate: 'desc' }, { id: 'desc' }],
         include: {
@@ -484,45 +487,47 @@ export const expenseMethods = {
       return expense;
     }),
 
-  getAllExpenses: protectedProcedure.input(paginationInput).query(async ({ ctx, input }) => {
-    const expenses = await db.expenseParticipant.findMany({
-      take: input.limit + 1,
-      where: {
-        expense: beforeCursor(input.cursor, 'createdAt'),
-        userId: ctx.session.user.id,
-      },
-      orderBy: [{ expense: { createdAt: 'desc' } }, { expenseId: 'desc' }],
-      include: {
-        expense: {
-          include: {
-            paidByUser: {
-              select: {
-                name: true,
-                deletedAt: true,
-                email: true,
-                image: true,
-                id: true,
+  getAllExpenses: protectedProcedure
+    .input(paginationInput.default({}))
+    .query(async ({ ctx, input }) => {
+      const expenses = await db.expenseParticipant.findMany({
+        take: input.limit + 1,
+        where: {
+          expense: beforeCursor(input.cursor, 'createdAt'),
+          userId: ctx.session.user.id,
+        },
+        orderBy: [{ expense: { createdAt: 'desc' } }, { expenseId: 'desc' }],
+        include: {
+          expense: {
+            include: {
+              paidByUser: {
+                select: {
+                  name: true,
+                  deletedAt: true,
+                  email: true,
+                  image: true,
+                  id: true,
+                },
               },
-            },
-            deletedByUser: {
-              select: {
-                name: true,
-                deletedAt: true,
-                email: true,
-                image: true,
-                id: true,
+              deletedByUser: {
+                select: {
+                  name: true,
+                  deletedAt: true,
+                  email: true,
+                  image: true,
+                  id: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
 
-    return toPage(expenses, input.limit, (item) => ({
-      date: item.expense.createdAt,
-      id: item.expenseId,
-    }));
-  }),
+      return toPage(expenses, input.limit, (item) => ({
+        date: item.expense.createdAt,
+        id: item.expenseId,
+      }));
+    }),
 
   getRecurringExpenses: protectedProcedure.query(async ({ ctx }) => {
     const recurrences = await db.expenseRecurrence.findMany({
@@ -776,123 +781,5 @@ const apiCreateExpenseSchema = createExpenseSchema.extend({
 export const addOrEditExpenseApiProcedure = protectedProcedure
   .input(z.array(apiCreateExpenseSchema))
   .mutation(async ({ input: expenses, ctx }) => upsertExpenses(expenses, ctx.session.user.id));
-
-/**
- * API-only variant of `getGroupExpenses` with offset pagination. Keeps the
- * `groupProcedure` membership check.
- */
-export const getGroupExpensesApiProcedure = groupProcedure
-  .input(z.object({ groupId: z.number() }).extend(apiPaginationInput.shape))
-  .query(async ({ input, ctx }) => {
-    const where = groupExpensesWhere(input.groupId);
-
-    const [items, total] = await Promise.all([
-      ctx.db.expense.findMany({
-        where,
-        orderBy: [{ expenseDate: 'desc' }, { id: 'desc' }],
-        include: {
-          expenseParticipants: true,
-          paidByUser: true,
-          deletedByUser: true,
-          conversionTo: true,
-        },
-        take: input.limit,
-        skip: input.offset,
-      }),
-      ctx.db.expense.count({ where }),
-    ]);
-
-    return paginatedResult(items, total, input);
-  });
-
-/**
- * API-only variant of `getExpensesWithFriend` with offset pagination.
- */
-export const getExpensesWithFriendApiProcedure = protectedProcedure
-  .input(z.object({ friendId: z.number() }).extend(apiPaginationInput.shape))
-  .query(async ({ input, ctx }) => {
-    const where = expensesWithFriendWhere(ctx.session.user.id, input.friendId);
-
-    const [items, total] = await Promise.all([
-      db.expense.findMany({
-        where,
-        // Tie-break with `id`: `expenseDate` is not unique and Postgres may return
-        // Tied rows in an arbitrary order between queries, breaking pagination
-        // For clients walking pages.
-        orderBy: [{ expenseDate: 'desc' }, { id: 'desc' }],
-        include: {
-          expenseParticipants: {
-            where: {
-              OR: [{ userId: ctx.session.user.id }, { userId: input.friendId }],
-            },
-          },
-          paidByUser: true,
-          conversionTo: true,
-          group: {
-            select: {
-              id: true,
-              name: true,
-              simplifyDebts: true,
-            },
-          },
-        },
-        take: input.limit,
-        skip: input.offset,
-      }),
-      db.expense.count({ where }),
-    ]);
-
-    return paginatedResult(items, total, input);
-  });
-
-/**
- * API-only variant of `getAllExpenses` with offset pagination.
- */
-export const getAllExpensesApiProcedure = protectedProcedure
-  .input(apiPaginationInput.default({}))
-  .query(async ({ input, ctx }) => {
-    const where = { userId: ctx.session.user.id };
-
-    const [items, total] = await Promise.all([
-      db.expenseParticipant.findMany({
-        where,
-        // Tie-break on the composite primary key: rows sharing an expense
-        // Have identical `expenseId`, so both halves are needed for a stable
-        // Order across queries.
-        orderBy: [
-          { expense: { createdAt: 'desc' as const } },
-          { expenseId: 'desc' as const },
-          { userId: 'desc' as const },
-        ],
-        include: {
-          expense: {
-            include: {
-              paidByUser: {
-                select: {
-                  name: true,
-                  email: true,
-                  image: true,
-                  id: true,
-                },
-              },
-              deletedByUser: {
-                select: {
-                  name: true,
-                  email: true,
-                  image: true,
-                  id: true,
-                },
-              },
-            },
-          },
-        },
-        take: input.limit,
-        skip: input.offset,
-      }),
-      db.expenseParticipant.count({ where }),
-    ]);
-
-    return paginatedResult(items, total, input);
-  });
 
 export type ExpenseRouter = typeof expenseRouter;

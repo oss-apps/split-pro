@@ -2,7 +2,9 @@ import { type NextApiRequest, type NextApiResponse } from 'next';
 
 /**
  * Renders interactive API reference docs (Scalar) for the public REST API at
- * `GET /api/docs`, pointing at `/api/openapi.json`.
+ * `GET /api/docs`, pointing at `/api/openapi.json`. The models list is hidden:
+ * its schemas are named after internal TypeScript types (`RecursiveType`,
+ * `typeToFlattenedError`, …) and are already shown inline on each endpoint.
  *
  * The Scalar bundle is loaded from jsDelivr pinned to an exact version with a
  * subresource-integrity hash: the script runs on the app origin, so a
@@ -22,7 +24,11 @@ export default function handler(_req: NextApiRequest, res: NextApiResponse) {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
-    <script id="api-reference" data-url="/api/openapi.json"></script>
+    <script
+      id="api-reference"
+      data-url="/api/openapi.json"
+      data-configuration='{"hideModels":true}'
+    ></script>
     <script
       src="https://cdn.jsdelivr.net/npm/@scalar/api-reference@${SCALAR_VERSION}"
       integrity="${SCALAR_INTEGRITY}"

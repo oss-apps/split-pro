@@ -8,6 +8,8 @@ const recurrenceTimeSchema = z
   .regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'RECURRENCE_TIME must use HH:mm (00:00–23:59)')
   .default('00:00');
 
+const apiKeysMaxPerUserSchema = z.coerce.number().int().positive().default(10);
+
 export const env = createEnv({
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
@@ -77,6 +79,7 @@ export const env = createEnv({
     WEB_PUSH_PUBLIC_KEY: z.string().optional(),
     FEEDBACK_EMAIL: z.string().optional(),
     DISCORD_WEBHOOK_URL: z.string().optional(),
+    API_KEYS_MAX_PER_USER: apiKeysMaxPerUserSchema,
     DEFAULT_HOMEPAGE: z.string().default('/home'),
     CURRENCY_RATE_PROVIDER: z
       .enum(['frankfurter', 'openexchangerates', 'nbp'])
@@ -124,6 +127,9 @@ export const env = createEnv({
     EXCLUDE_FUTURE_EXPENSES: parseEnvBoolean(process.env.EXCLUDE_FUTURE_EXPENSES),
     DISABLE_EMAIL_SIGNUP: parseEnvBoolean(process.env.DISABLE_EMAIL_SIGNUP),
     INVITE_ONLY: parseEnvBoolean(process.env.INVITE_ONLY),
+    // Skipping validation also skips Zod defaults; resolve the same schema default here.
+    API_KEYS_MAX_PER_USER:
+      process.env.API_KEYS_MAX_PER_USER || apiKeysMaxPerUserSchema.parse(undefined),
     FROM_EMAIL: process.env.FROM_EMAIL,
     EMAIL_SERVER_HOST: process.env.EMAIL_SERVER_HOST,
     EMAIL_SERVER_PORT: process.env.EMAIL_SERVER_PORT,

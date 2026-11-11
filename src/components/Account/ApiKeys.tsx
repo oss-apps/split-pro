@@ -1,5 +1,5 @@
 import { Copy, Trash2 } from 'lucide-react';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { toast } from 'sonner';
 
@@ -27,55 +27,6 @@ export const ApiKeys: React.FC<React.PropsWithChildren> = ({ children }) => {
   const keysQuery = api.user.listApiKeys.useQuery();
   const createMutation = api.user.createApiKey.useMutation();
   const revokeMutation = api.user.revokeApiKey.useMutation();
-
-  const onCreate = useCallback(async () => {
-    const trimmed = name.trim();
-    if (!trimmed) {
-      toast.error(t('account.api_keys.messages.name_required'));
-      return;
-    }
-
-    try {
-      const result = await createMutation.mutateAsync({
-        name: trimmed,
-        expiresAt: expiresAt ? new Date(`${expiresAt}T23:59:59`) : null,
-      });
-      setCreatedKey(result.key);
-      setName('');
-      setExpiresAt('');
-      await utils.user.listApiKeys.invalidate();
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : t('account.api_keys.messages.create_failed'),
-      );
-    }
-  }, [name, expiresAt, createMutation, utils.user.listApiKeys, t]);
-
-  const onRevoke = useCallback(
-    async (id: string) => {
-      try {
-        await revokeMutation.mutateAsync({ id });
-        await utils.user.listApiKeys.invalidate();
-      } catch (error) {
-        toast.error(
-          error instanceof Error ? error.message : t('account.api_keys.messages.revoke_failed'),
-        );
-      }
-    },
-    [revokeMutation, utils.user.listApiKeys, t],
-  );
-
-  const copyKey = useCallback(
-    async (value: string) => {
-      try {
-        await navigator.clipboard.writeText(value);
-        toast.success(t('account.api_keys.messages.copied'));
-      } catch {
-        toast.error(t('account.api_keys.messages.copy_failed'));
-      }
-    },
-    [t],
-  );
 
   return (
     <AppDrawer
@@ -109,41 +60,80 @@ export const ApiKeys: React.FC<React.PropsWithChildren> = ({ children }) => {
               <code className="text-primary grow overflow-x-auto rounded bg-black/40 px-2 py-1 text-sm">
                 {createdKey}
               </code>
-              <Button size="icon" variant="secondary" onClick={() => copyKey(createdKey)}>
+              <Button
+                size="icon"
+                variant="secondary"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(createdKey);
+                    toast.success(t('account.api_keys.messages.copied'));
+                  } catch {
+                    toast.error(t('account.api_keys.messages.copy_failed'));
+                  }
+                }}
+              >
                 <Copy className="size-4" />
               </Button>
             </div>
           </div>
         ) : null}
 
-        <div className="flex items-end gap-2">
-          <div className="grow">
-            <label className="mb-1 block text-sm text-gray-400" htmlFor="api-key-name">
-              {t('account.api_keys.name_label')}
-            </label>
-            <Input
-              id="api-key-name"
-              value={name}
-              placeholder={t('account.api_keys.name_placeholder')}
-              onChange={(e) => setName(e.target.value)}
-            />
+        <div className="flex flex-col gap-1">
+          <div className="flex items-end gap-2">
+            <div className="grow">
+              <label className="mb-1 block text-sm text-gray-400" htmlFor="api-key-name">
+                {t('account.api_keys.name_label')}
+              </label>
+              <Input
+                id="api-key-name"
+                value={name}
+                placeholder={t('account.api_keys.name_placeholder')}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div className="w-40">
+              <label className="mb-1 block text-sm text-gray-400" htmlFor="api-key-expiry">
+                {t('account.api_keys.expires_label')}
+              </label>
+              <Input
+                id="api-key-expiry"
+                type="date"
+                value={expiresAt}
+                min={minExpiry}
+                onChange={(e) => setExpiresAt(e.target.value)}
+              />
+            </div>
+            <Button
+              loading={createMutation.isPending}
+              onClick={async () => {
+                const trimmed = name.trim();
+                if (!trimmed) {
+                  toast.error(t('account.api_keys.messages.name_required'));
+                  return;
+                }
+
+                try {
+                  const result = await createMutation.mutateAsync({
+                    name: trimmed,
+                    expiresAt: expiresAt ? new Date(`${expiresAt}T23:59:59`) : null,
+                  });
+                  setCreatedKey(result.key);
+                  setName('');
+                  setExpiresAt('');
+                  await utils.user.listApiKeys.invalidate();
+                } catch (error) {
+                  toast.error(
+                    error instanceof Error
+                      ? error.message
+                      : t('account.api_keys.messages.create_failed'),
+                  );
+                }
+              }}
+            >
+              {t('account.api_keys.create')}
+            </Button>
           </div>
-          <div className="w-40">
-            <label className="mb-1 block text-sm text-gray-400" htmlFor="api-key-expiry">
-              {t('account.api_keys.expires_label')}
-            </label>
-            <Input
-              id="api-key-expiry"
-              type="date"
-              value={expiresAt}
-              min={minExpiry}
-              onChange={(e) => setExpiresAt(e.target.value)}
-            />
-            <p className="mt-1 text-xs text-gray-500">{t('account.api_keys.expires_hint')}</p>
-          </div>
-          <Button onClick={onCreate} loading={createMutation.isPending}>
-            {t('account.api_keys.create')}
-          </Button>
+          <p className="text-xs text-gray-500">{t('account.api_keys.expires_hint')}</p>
         </div>
 
         <div className="flex flex-col gap-2">
@@ -173,8 +163,19 @@ export const ApiKeys: React.FC<React.PropsWithChildren> = ({ children }) => {
                   size="icon"
                   variant="ghost"
                   className="text-red-500"
-                  onClick={() => onRevoke(key.id)}
                   disabled={revokeMutation.isPending}
+                  onClick={async () => {
+                    try {
+                      await revokeMutation.mutateAsync({ id: key.id });
+                      await utils.user.listApiKeys.invalidate();
+                    } catch (error) {
+                      toast.error(
+                        error instanceof Error
+                          ? error.message
+                          : t('account.api_keys.messages.revoke_failed'),
+                      );
+                    }
+                  }}
                 >
                   <Trash2 className="size-4" />
                 </Button>

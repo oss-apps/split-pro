@@ -1,6 +1,6 @@
 import { apiTransformer } from '~/server/api/apiTransformer';
-import { paginatedResult, paginationInput } from '~/server/api/pagination';
-import { coerceQueryParam } from '~/utils/queryParams';
+import { paginationInput } from '~/utils/pagination';
+import { coerceQueryParam, queryParamsToInput } from '~/utils/queryParams';
 
 describe('apiTransformer', () => {
   describe('input.deserialize', () => {
@@ -98,30 +98,44 @@ describe('coerceQueryParam', () => {
   });
 });
 
-describe('paginationInput', () => {
-  it('applies defaults for missing values', () => {
-    expect(paginationInput.parse({})).toEqual({ limit: 20, offset: 0 });
-    expect(paginationInput.default({}).parse(undefined)).toEqual({ limit: 20, offset: 0 });
-  });
-
-  it('rejects fractional and out-of-range values', () => {
-    expect(paginationInput.safeParse({ limit: 1.5 }).success).toBe(false);
-    expect(paginationInput.safeParse({ limit: 0 }).success).toBe(false);
-    expect(paginationInput.safeParse({ limit: 101 }).success).toBe(false);
-    expect(paginationInput.safeParse({ offset: -1 }).success).toBe(false);
-  });
-});
-
-describe('paginatedResult', () => {
-  it('wraps items with pagination metadata', () => {
-    const page = [1, 2, 3];
-    expect(paginatedResult(page, 10, { limit: 3, offset: 0 })).toEqual({
-      items: page,
-      pagination: { total: 10, limit: 3, offset: 0, hasMore: true },
+describe('queryParamsToInput', () => {
+  it('builds a plain JSON input from individual query params', () => {
+    expect(queryParamsToInput(new URLSearchParams('groupId=150&limit=20'))).toEqual({
+      groupId: 150,
+      limit: 20,
     });
   });
 
-  it('marks the last page', () => {
-    expect(paginatedResult([9, 10], 10, { limit: 5, offset: 8 }).pagination.hasMore).toBe(false);
+  it('nests bracket keys so cursors can be sent as query params', () => {
+    const params = new URLSearchParams(
+      'limit=10&cursor[date]=2026-10-25T12:00:00.000Z&cursor[id]=00000000-0000-4000-8000-000000000001',
+    );
+    expect(queryParamsToInput(params)).toEqual({
+      limit: 10,
+      cursor: { date: '2026-10-25T12:00:00.000Z', id: '00000000-0000-4000-8000-000000000001' },
+    });
+  });
+
+  it('skips tRPC reserved params', () => {
+    expect(queryParamsToInput(new URLSearchParams('batch=1&trpc=x'))).toEqual({});
+  });
+});
+
+describe('paginationInput', () => {
+  const id = '00000000-0000-4000-8000-000000000001';
+
+  it('accepts the cursor date as an ISO 8601 string from plain-JSON clients', () => {
+    const date = new Date('2026-10-25T12:00:00.000Z');
+    const cursor = apiTransformer.output.serialize({ date, id });
+    expect(paginationInput.parse({ cursor }).cursor).toEqual({ date, id });
+  });
+
+  it('still accepts Date cursors from the app', () => {
+    const date = new Date();
+    expect(paginationInput.parse({ cursor: { date, id } }).cursor).toEqual({ date, id });
+  });
+
+  it('rejects cursor dates that are not ISO 8601 date-times', () => {
+    expect(paginationInput.safeParse({ cursor: { date: '25.10.2026', id } }).success).toBe(false);
   });
 });

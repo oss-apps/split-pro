@@ -20,3 +20,36 @@ export const coerceQueryParam = (value: string): string | number | boolean => {
 
   return value;
 };
+
+const NESTED_KEY = /^([^[\]]+)\[([^[\]]+)\]$/;
+const RESERVED_KEYS = new Set(['batch', 'trpc']);
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  'object' === typeof value && null !== value && !Array.isArray(value);
+
+/**
+ * Convert individual query params into a plain JSON input object for the public
+ * API. One level of bracket nesting (`cursor[date]=…&cursor[id]=…`) becomes a
+ * nested object, so object inputs such as pagination cursors can be sent too.
+ */
+export const queryParamsToInput = (searchParams: URLSearchParams): Record<string, unknown> => {
+  const input: Record<string, unknown> = {};
+
+  searchParams.forEach((value, key) => {
+    if (RESERVED_KEYS.has(key)) {
+      return;
+    }
+
+    const nested = NESTED_KEY.exec(key);
+    if (!nested) {
+      input[key] = coerceQueryParam(value);
+      return;
+    }
+
+    const [, parent = '', child = ''] = nested;
+    const existing = input[parent];
+    input[parent] = { ...(isRecord(existing) ? existing : {}), [child]: coerceQueryParam(value) };
+  });
+
+  return input;
+};

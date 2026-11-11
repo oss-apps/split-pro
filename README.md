@@ -95,6 +95,7 @@ Bank integration allows you to load transactions from providers like Plaid and c
 - [docs/CURRENCY_CONVERSIONS.md](docs/CURRENCY_CONVERSIONS.md)
 - [docs/RECURRING_TRANSACTIONS.md](docs/RECURRING_TRANSACTIONS.md)
 - [docs/BANK_TRANSACTIONS.md](docs/BANK_TRANSACTIONS.md)
+- [docs/API.md](docs/API.md)
 - [docker/README.md](docker/README.md)
 
 ## Versions

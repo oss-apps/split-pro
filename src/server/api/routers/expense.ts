@@ -18,6 +18,7 @@ import { db } from '~/server/db';
 import { BigMath, currencyConversion } from '~/utils/numbers';
 
 import {
+  type CreateExpense,
   arrayify,
   createCurrencyConversionSchema,
   createExpenseSchema,
@@ -37,7 +38,62 @@ import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { getUserMap } from './user';
 
-export const expenseRouter = createTRPCRouter({
+/**
+ * Shared write path for creating/editing expenses, used by both the app
+ * router's `addOrEditExpense` and the public API variant. Re-run permission
+ * checks per expense and stop on the first failure.
+ */
+const upsertExpenses = async (expenses: CreateExpense[], userId: number) => {
+  const results = [];
+  // Expense writes must preserve input order and stop on the first validation/write failure.
+  // oxlint-disable no-await-in-loop
+  for (const input of expenses) {
+    const storedGroupId = await validateExpenseWritePermission(
+      input.expenseId,
+      input.groupId,
+      userId,
+    );
+    if (input.splitType === SplitType.CURRENCY_CONVERSION) {
+      throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
+    }
+
+    if (input.expenseId) {
+      await assertExpenseGroupReassignment(
+        storedGroupId,
+        input.groupId,
+        input.paidBy,
+        input.participants.map((participant) => participant.userId),
+      );
+    }
+
+    try {
+      const expense = input.expenseId
+        ? await editExpense(input, userId)
+        : await createExpense(input, userId);
+
+      results.push(expense);
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw error;
+      }
+      console.error(error);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to create expense',
+      });
+    }
+  }
+  // oxlint-enable no-await-in-loop
+
+  return results;
+};
+
+/**
+ * Method record for `expenseRouter`, exported so the public API router
+ * (`~/server/api/apiRouter`) can mount a curated subset of the same procedures
+ * without duplicating them.
+ */
+export const expenseMethods = {
   ...commentProcedures,
   getRecurrencePreview: protectedProcedure
     .input(z.object({ cronExpression: z.string().transform(cronToBackend) }))
@@ -132,50 +188,7 @@ export const expenseRouter = createTRPCRouter({
 
   addOrEditExpense: protectedProcedure
     .input(arrayify(createExpenseSchema))
-    .mutation(async ({ input: expenses, ctx }) => {
-      const results = [];
-      // Expense writes must preserve input order and stop on the first validation/write failure.
-      // oxlint-disable no-await-in-loop
-      for (const input of expenses) {
-        const storedGroupId = await validateExpenseWritePermission(
-          input.expenseId,
-          input.groupId,
-          ctx.session.user.id,
-        );
-        if (input.splitType === SplitType.CURRENCY_CONVERSION) {
-          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
-        }
-
-        if (input.expenseId) {
-          await assertExpenseGroupReassignment(
-            storedGroupId,
-            input.groupId,
-            input.paidBy,
-            input.participants.map((participant) => participant.userId),
-          );
-        }
-
-        try {
-          const expense = input.expenseId
-            ? await editExpense(input, ctx.session.user.id)
-            : await createExpense(input, ctx.session.user.id);
-
-          results.push(expense);
-        } catch (error) {
-          if (error instanceof TRPCError) {
-            throw error;
-          }
-          console.error(error);
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'Failed to create expense',
-          });
-        }
-      }
-      // oxlint-enable no-await-in-loop
-
-      return results;
-    }),
+    .mutation(async ({ input: expenses, ctx }) => upsertExpenses(expenses, ctx.session.user.id)),
 
   addOrEditCurrencyConversion: protectedProcedure
     .input(createCurrencyConversionSchema)
@@ -474,45 +487,47 @@ export const expenseRouter = createTRPCRouter({
       return expense;
     }),
 
-  getAllExpenses: protectedProcedure.input(paginationInput).query(async ({ ctx, input }) => {
-    const expenses = await db.expenseParticipant.findMany({
-      take: input.limit + 1,
-      where: {
-        expense: beforeCursor(input.cursor, 'createdAt'),
-        userId: ctx.session.user.id,
-      },
-      orderBy: [{ expense: { createdAt: 'desc' } }, { expenseId: 'desc' }],
-      include: {
-        expense: {
-          include: {
-            paidByUser: {
-              select: {
-                name: true,
-                deletedAt: true,
-                email: true,
-                image: true,
-                id: true,
+  getAllExpenses: protectedProcedure
+    .input(paginationInput.default({}))
+    .query(async ({ ctx, input }) => {
+      const expenses = await db.expenseParticipant.findMany({
+        take: input.limit + 1,
+        where: {
+          expense: beforeCursor(input.cursor, 'createdAt'),
+          userId: ctx.session.user.id,
+        },
+        orderBy: [{ expense: { createdAt: 'desc' } }, { expenseId: 'desc' }],
+        include: {
+          expense: {
+            include: {
+              paidByUser: {
+                select: {
+                  name: true,
+                  deletedAt: true,
+                  email: true,
+                  image: true,
+                  id: true,
+                },
               },
-            },
-            deletedByUser: {
-              select: {
-                name: true,
-                deletedAt: true,
-                email: true,
-                image: true,
-                id: true,
+              deletedByUser: {
+                select: {
+                  name: true,
+                  deletedAt: true,
+                  email: true,
+                  image: true,
+                  id: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
 
-    return toPage(expenses, input.limit, (item) => ({
-      date: item.expense.createdAt,
-      id: item.expenseId,
-    }));
-  }),
+      return toPage(expenses, input.limit, (item) => ({
+        date: item.expense.createdAt,
+        id: item.expenseId,
+      }));
+    }),
 
   getRecurringExpenses: protectedProcedure.query(async ({ ctx }) => {
     const recurrences = await db.expenseRecurrence.findMany({
@@ -669,7 +684,9 @@ export const expenseRouter = createTRPCRouter({
 
       return { rates };
     }),
-});
+};
+
+export const expenseRouter = createTRPCRouter(expenseMethods);
 
 const validateEditExpensePermission = async (expenseId: string, userId: number): Promise<void> => {
   const [expenseParticipant, addedBy] = await Promise.all([
@@ -735,5 +752,34 @@ const validateExpenseWritePermission = async (
   }
   return storedGroupId;
 };
+
+/**
+ * JSON has no BigInt or Date type, so the public API additionally accepts
+ * plain JSON numbers (and numeric strings, for amounts beyond
+ * `Number.MAX_SAFE_INTEGER`) and coerces them before validation by the shared
+ * `createExpenseSchema` rules.
+ */
+const apiAmountSchema = z
+  .union([z.bigint(), z.number().int().safe(), z.string().regex(/^-?\d+$/)])
+  .transform((value) => BigInt(value));
+
+const apiDateSchema = z
+  .union([z.date(), z.string().datetime({ offset: true })])
+  .transform((value) => new Date(value));
+
+const apiCreateExpenseSchema = createExpenseSchema.extend({
+  amount: apiAmountSchema,
+  participants: z.array(z.object({ userId: z.number(), amount: apiAmountSchema })),
+  expenseDate: apiDateSchema.optional(),
+});
+
+/**
+ * API-only variant of `addOrEditExpense` mounted in the public API router.
+ * Accepts a JSON array body (plain JSON or a superjson envelope) and runs the
+ * exact same write path and permission checks as the app procedure.
+ */
+export const addOrEditExpenseApiProcedure = protectedProcedure
+  .input(z.array(apiCreateExpenseSchema))
+  .mutation(async ({ input: expenses, ctx }) => upsertExpenses(expenses, ctx.session.user.id));
 
 export type ExpenseRouter = typeof expenseRouter;

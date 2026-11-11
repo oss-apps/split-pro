@@ -19,7 +19,12 @@ import {
   serializeDefaultSplit,
 } from '~/lib/defaultSplit';
 
-export const groupRouter = createTRPCRouter({
+/**
+ * Method record for `groupRouter`, exported so the public API router
+ * (`~/server/api/apiRouter`) can mount a curated subset of the same procedures
+ * without duplicating them.
+ */
+export const groupMethods = {
   create: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
@@ -504,6 +509,8 @@ export const groupRouter = createTRPCRouter({
 
       return group;
     }),
-});
+};
+
+export const groupRouter = createTRPCRouter(groupMethods);
 
 export type GroupRouter = typeof groupRouter;

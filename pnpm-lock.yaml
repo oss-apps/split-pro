@@ -189,6 +189,9 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.6.1
         version: 14.6.4(@testing-library/dom@10.4.1)
+      '@trpc/openapi':
+        specifier: 11.18.0-alpha
+        version: 11.18.0-alpha(@trpc/server@11.8.0(typescript@5.7.3))(typescript@5.7.3)(zod@3.25.76)
       '@types/formidable':
         specifier: ^3.4.6
         version: 3.4.6
@@ -210,6 +213,9 @@ importers:
       babel-plugin-react-compiler:
         specifier: ^1.0.0
         version: 1.0.0
+      cross-env:
+        specifier: ^10.1.0
+        version: 10.1.0
       esbuild:
         specifier: ^0.25.12
         version: 0.25.12
@@ -534,6 +540,9 @@ packages:
 
   '@emnapi/wasi-threads@1.2.1':
     resolution: {integrity: sha512-uTII7OYF+/Mes/MrcIOYp5yOtSMLBWSIoLPpcgwipoiKbli6k322tcoFsxoIIxPDqW01SQGAgko4EzZi2BNv2w==}
+
+  '@epic-web/invariant@1.0.0':
+    resolution: {integrity: sha512-lrTPqgvfFQtR/eY/qkIzp98OGdNJu0m5ji3q/nJI8v3SXkRKEnWiOxMmbvcSoAIzv/cGiuvRy57k4suKQSAdwA==}
 
   '@esbuild/aix-ppc64@0.25.12':
     resolution: {integrity: sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA==}
@@ -2633,6 +2642,20 @@ packages:
       '@trpc/react-query':
         optional: true
 
+  '@trpc/openapi@11.18.0-alpha':
+    resolution: {integrity: sha512-BdtOEd8v5SIs5j0ZF5q4upR44yLM6t5N6o8+NX7qlBVXr/05yzoKJZC4b6z2z2nER70CDWfl49G68leiXjauHQ==}
+    hasBin: true
+    peerDependencies:
+      '@hey-api/openapi-ts': '>=0.94.5'
+      '@trpc/server': 11.18.0
+      typescript: '>=5.7.2'
+      zod: '>=4.0.0'
+    peerDependenciesMeta:
+      '@hey-api/openapi-ts':
+        optional: true
+      zod:
+        optional: true
+
   '@trpc/react-query@11.8.0':
     resolution: {integrity: sha512-zJG22PqhGUBq6ke58McGxRBGWGDTHlmsgpxp/rQx8iT2yi0Ja1H2/UcSsjZ/MG65DhCfpKvMVH0OVivTn9FWwA==}
     peerDependencies:
@@ -3216,6 +3239,11 @@ packages:
 
   cronstrue@3.9.0:
     resolution: {integrity: sha512-T3S35zmD0Ai2B4ko6+mEM+k9C6tipe2nB9RLiGT6QL2Wn0Vsn2cCZAC8Oeuf4CaE00GZWVdpYitbpWCNlIWqdA==}
+    hasBin: true
+
+  cross-env@10.1.0:
+    resolution: {integrity: sha512-GsYosgnACZTADcmEyJctkJIoqAhHjttw7RsFrVoJNXbsWWqaq6Ym+7kZjq6mS45O0jij6vtiReppKQEtqWy6Dw==}
+    engines: {node: '>=20'}
     hasBin: true
 
   cross-spawn@7.0.6:
@@ -4343,6 +4371,9 @@ packages:
   onetime@7.0.0:
     resolution: {integrity: sha512-VXJjc87FScF88uafS3JllDgvAm+c/Slfz06lorj2uAY34rlUu0Nt+v8wreiImcrgAjjIHp1rXpTDlLOGw29WwQ==}
     engines: {node: '>=18'}
+
+  openapi-types@12.1.3:
+    resolution: {integrity: sha512-N4YtSYJqghVu4iek2ZUvcN/0aqH1kRDuNqzcycDxhOUpg7GdvLa2F3DgS6yBNhInhv2r/6I0Flkn7CqL8+nIcw==}
 
   openid-client@5.7.1:
     resolution: {integrity: sha512-jDBPgSVfTnkIh71Hg9pRvtJc6wTwqjRkN88+gCFtYWrlP4Yx2Dsrow8uPi3qLr/aeymPF3o2+dS+wOpglK04ew==}
@@ -5537,6 +5568,8 @@ snapshots:
     dependencies:
       tslib: 2.8.1
     optional: true
+
+  '@epic-web/invariant@1.0.0': {}
 
   '@esbuild/aix-ppc64@0.25.12':
     optional: true
@@ -7476,6 +7509,14 @@ snapshots:
       '@tanstack/react-query': 5.90.12(react@19.3.1)
       '@trpc/react-query': 11.8.0(@tanstack/react-query@5.90.12(react@19.3.1))(@trpc/client@11.8.0(@trpc/server@11.8.0(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.8.0(typescript@5.7.3))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@5.7.3)
 
+  '@trpc/openapi@11.18.0-alpha(@trpc/server@11.8.0(typescript@5.7.3))(typescript@5.7.3)(zod@3.25.76)':
+    dependencies:
+      '@trpc/server': 11.8.0(typescript@5.7.3)
+      openapi-types: 12.1.3
+      typescript: 5.7.3
+    optionalDependencies:
+      zod: 3.25.76
+
   '@trpc/react-query@11.8.0(@tanstack/react-query@5.90.12(react@19.3.1))(@trpc/client@11.8.0(@trpc/server@11.8.0(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.8.0(typescript@5.7.3))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@5.7.3)':
     dependencies:
       '@tanstack/react-query': 5.90.12(react@19.3.1)
@@ -8078,6 +8119,11 @@ snapshots:
       luxon: 3.7.2
 
   cronstrue@3.9.0: {}
+
+  cross-env@10.1.0:
+    dependencies:
+      '@epic-web/invariant': 1.0.0
+      cross-spawn: 7.0.6
 
   cross-spawn@7.0.6:
     dependencies:
@@ -9367,6 +9413,8 @@ snapshots:
   onetime@7.0.0:
     dependencies:
       mimic-function: 5.0.1
+
+  openapi-types@12.1.3: {}
 
   openid-client@5.7.1:
     dependencies:

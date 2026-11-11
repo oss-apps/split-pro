@@ -1,20 +1,25 @@
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { UserPlusIcon } from '@heroicons/react/24/solid';
 import type { Group, GroupUser, SplitType, User } from '@prisma/client';
-import { SendIcon } from 'lucide-react';
 import Image from 'next/image';
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-import { useAddExpenseStore } from '~/store/addStore';
+import { type Participant, useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
 import { deserializeDefaultSplit } from '~/lib/defaultSplit';
-import { getInviteErrorToastKey, isInviteEmailSendFailed } from '~/lib/error/invite';
+import {
+  getInviteAppErrorCode,
+  getInviteErrorToastKey,
+  isInviteEmailSendFailed,
+} from '~/lib/error/invite';
+import { peopleListEmptyReason } from '~/lib/peopleList';
 
 import { EntityAvatar } from '../ui/avatar';
 import { Button } from '../ui/button';
+import { InvitationOption } from '../InvitationOption';
 
 type SelectableGroup = Group & {
   groupUsers: (GroupUser & { user: User })[];
@@ -35,91 +40,86 @@ export const SelectUserOrGroup: React.FC<{
     useAddExpenseStore((s) => s.actions);
 
   const friendsQuery = api.user.getFriends.useQuery();
+  const discoveryQuery = api.user.getDiscoverableUsers.useQuery();
   const groupsQuery = api.group.getAllGroups.useQuery();
   const addFriendMutation = api.user.inviteFriend.useMutation();
 
+  const [sendInvite, setSendInvite] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const submitting = useRef(false);
+
   const isEmail = z.string().email().safeParse(nameOrEmail);
 
-  const filteredGroups = groupsQuery.data?.filter((g) =>
-    g.group.name.toLowerCase().includes(nameOrEmail.toLowerCase()),
+  const searchValue = nameOrEmail.trim().toLowerCase();
+  const canSelectGroups = 1 === participants.length;
+  const contactsFailed =
+    (friendsQuery.isError && undefined === friendsQuery.data) ||
+    (discoveryQuery.isError && undefined === discoveryQuery.data) ||
+    (canSelectGroups && groupsQuery.isError && undefined === groupsQuery.data);
+  const filteredGroups = canSelectGroups
+    ? groupsQuery.data?.filter((g) => g.group.name.toLowerCase().includes(searchValue))
+    : [];
+  const filteredFriends = friendsQuery.data?.filter(
+    (f) => !f.deletedAt && displayName(f).toLowerCase().includes(searchValue),
   );
-  const filteredFriends = friendsQuery.data?.filter((f) =>
-    displayName(f).toLowerCase().includes(nameOrEmail.toLowerCase()),
+
+  const filteredOtherUsers = discoveryQuery.data?.filter((user) =>
+    displayName(user).toLowerCase().includes(searchValue),
   );
 
-  const onAddEmailClick = useCallback(
-    (invite = false) => {
-      if (isEmail.success) {
-        const email = nameOrEmail;
-        const removePendingParticipant = () => {
-          const pendingParticipant = useAddExpenseStore
-            .getState()
-            .participants.find((participant) => -1 === participant.id);
-          if (email === pendingParticipant?.email) {
-            removeParticipant(-1);
-          }
-        };
-        const addParticipant = (user: User) => {
-          removePendingParticipant();
-          addOrUpdateParticipant(user);
-          if (email === useAddExpenseStore.getState().nameOrEmail) {
-            setNameOrEmail('');
-          }
-        };
+  /* Friends, discoverable users, and groups all count as contacts. */
+  const emptyReason = peopleListEmptyReason({
+    isLoading:
+      contactsFailed ||
+      friendsQuery.isPending ||
+      discoveryQuery.isPending ||
+      (canSelectGroups && groupsQuery.isPending),
+    hasAnyContacts:
+      0 < (friendsQuery.data?.length ?? 0) ||
+      0 < (discoveryQuery.data?.length ?? 0) ||
+      (canSelectGroups && 0 < (groupsQuery.data?.length ?? 0)),
+    isFiltering: '' !== searchValue,
+  });
 
-        addFriendMutation.mutate(
-          { email, sendInviteEmail: invite },
-          {
-            onSuccess: addParticipant,
-            onError: (err) => {
-              const appErrorCode = err.data?.appErrorCode;
-              toast.error(t(getInviteErrorToastKey(appErrorCode)));
-
-              // The friend row already exists whenever this router throws, so retry the participant-add.
-              if (isInviteEmailSendFailed(appErrorCode)) {
-                addFriendMutation.mutate(
-                  { email, sendInviteEmail: false },
-                  {
-                    onSuccess: addParticipant,
-                    onError: () => {
-                      removePendingParticipant();
-                      toast.error(t('errors.add_member_failed'));
-                    },
-                  },
-                );
-              } else {
-                removePendingParticipant();
-              }
-            },
-          },
-        );
-        addOrUpdateParticipant({
-          id: -1,
-          name: nameOrEmail,
-          email: nameOrEmail,
-          deletedAt: null,
-          emailVerified: new Date(),
-          image: null,
-          currency: 'USD',
-          defaultCurrency: null,
-          obapiProviderId: null,
-          bankingId: null,
-          preferredLanguage: '',
-          hiddenFriendIds: [],
+  const onAddEmailClick = async () => {
+    if (!isEmail.success || submitting.current) {
+      return;
+    }
+    submitting.current = true;
+    setAdding(true);
+    const email = nameOrEmail;
+    let inviteFailed = false;
+    try {
+      let user = null;
+      try {
+        user = await addFriendMutation.mutateAsync({
+          email,
+          sendInviteEmail: enableSendingInvites && sendInvite,
         });
-        // Add email to split pro
+      } catch (error) {
+        const code = getInviteAppErrorCode(error);
+        if (!isInviteEmailSendFailed(code)) {
+          toast.error(t(getInviteErrorToastKey(code)));
+          return;
+        }
+        user = await addFriendMutation.mutateAsync({ email, sendInviteEmail: false });
+        inviteFailed = true;
       }
-    },
-    [
-      isEmail.success,
-      nameOrEmail,
-      addFriendMutation,
-      addOrUpdateParticipant,
-      setNameOrEmail,
-      removeParticipant,
-      t,
-    ],
-  );
+      addOrUpdateParticipant(user);
+      if (email === useAddExpenseStore.getState().nameOrEmail) {
+        setNameOrEmail('');
+      }
+      setSendInvite(false);
+      if (inviteFailed) {
+        toast.warning(t('ui.invitation.expense_partial_success'));
+      }
+    } catch {
+      toast.error(t('errors.add_member_failed'));
+    } finally {
+      submitting.current = false;
+      setAdding(false);
+    }
+  };
 
   const onGroupSelect = useCallback(
     (selectedGroup: SelectableGroup) => {
@@ -142,19 +142,8 @@ export const SelectUserOrGroup: React.FC<{
     [setGroup, setParticipants, setNameOrEmail],
   );
 
-  const handleAddEmailClickTrue = useCallback(() => onAddEmailClick(true), [onAddEmailClick]);
-  const handleAddEmailClickFalse = useCallback(() => onAddEmailClick(false), [onAddEmailClick]);
-
-  if (group) {
-    return (
-      <div className="mt-4 text-center text-red-500">
-        {t('expense_details.add_expense_details.select_user_or_group.only_one_group_time')}
-      </div>
-    );
-  }
-
   const handleFriendClick = useCallback(
-    (f: User) => {
+    (f: Participant) => {
       const isExisting = participants.some((p) => p.id === f.id);
 
       if (isExisting) {
@@ -167,49 +156,94 @@ export const SelectUserOrGroup: React.FC<{
     [participants, removeParticipant, addOrUpdateParticipant, setNameOrEmail],
   );
 
-  return (
-    <div className="mt-1">
-      <div>
-        <div>
-          {enableSendingInvites ? (
-            <div className="mt-1 text-orange-600">
-              {isEmail.success
-                ? t('expense_details.add_expense_details.select_user_or_group.warning')
-                : null}
-            </div>
-          ) : (
-            <div>{t('expense_details.add_expense_details.select_user_or_group.note')}</div>
-          )}
-        </div>
-        <div className="flex flex-wrap justify-center gap-x-4">
-          {enableSendingInvites && (
-            <Button
-              className="mt-4 text-cyan-500 hover:text-cyan-500"
-              variant="outline"
-              disabled={!isEmail.success}
-              onClick={handleAddEmailClickTrue}
-            >
-              <SendIcon className="mr-2 h-4 w-4" />
-              {t('expense_details.add_expense_details.select_user_or_group.send_invite')}
-            </Button>
-          )}
-          <Button
-            className="mt-4 text-cyan-500 hover:text-cyan-500"
-            variant="outline"
-            disabled={!isEmail.success}
-            onClick={handleAddEmailClickFalse}
-          >
-            <UserPlusIcon className="mr-2 h-4 w-4" />
-            {t('expense_details.add_expense_details.select_user_or_group.add_to_split_pro')}
-          </Button>
-        </div>
+  if (group) {
+    return (
+      <div className="mt-4 text-center text-red-500">
+        {t('expense_details.add_expense_details.select_user_or_group.only_one_group_time')}
       </div>
-      <div className="mt-2">
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col items-start gap-3">
+        <InvitationOption
+          enabled={enableSendingInvites}
+          checked={sendInvite}
+          onCheckedChange={setSendInvite}
+          disabled={adding}
+        />
+        <Button
+          variant="outline"
+          disabled={!isEmail.success || adding}
+          onClick={() => void onAddEmailClick()}
+        >
+          <UserPlusIcon className="mr-2 size-4" />
+          {adding
+            ? t('ui.invitation.adding')
+            : t('expense_details.add_expense_details.select_user_or_group.add_to_split_pro')}
+        </Button>
+        <p className="text-muted-foreground text-sm leading-relaxed">
+          {t('ui.invitation.draft_help')}
+        </p>
+      </div>
+      <div>
+        {contactsFailed ? (
+          <div role="alert" className="flex flex-col items-start gap-2">
+            <p>{t('ui.people_list_load_error')}</p>
+            <Button
+              variant="outline"
+              disabled={
+                friendsQuery.isFetching ||
+                discoveryQuery.isFetching ||
+                (canSelectGroups && groupsQuery.isFetching)
+              }
+              onClick={() => {
+                if (friendsQuery.isError) {
+                  void friendsQuery.refetch();
+                }
+                if (discoveryQuery.isError) {
+                  void discoveryQuery.refetch();
+                }
+                if (canSelectGroups && groupsQuery.isError) {
+                  void groupsQuery.refetch();
+                }
+              }}
+            >
+              {t('actions.retry')}
+            </Button>
+          </div>
+        ) : null}
         {filteredFriends?.length ? (
           <>
             <div className="font-normal text-gray-500">{t('actors.friends')}</div>
             {filteredFriends.map((f) => (
               <button
+                disabled={adding}
+                key={f.id}
+                className="flex w-full items-center justify-between border-b border-gray-900 py-4"
+                onClick={() => handleFriendClick(f)}
+              >
+                <div className="flex min-w-0 items-center gap-4">
+                  <EntityAvatar entity={f} size={35} />
+                  <div className="truncate">{displayName(f)}</div>
+                </div>
+                {participants.some((p) => p.id === f.id) ? (
+                  <div>
+                    <CheckIcon className="text-primary h-4 w-4" />
+                  </div>
+                ) : null}
+              </button>
+            ))}
+          </>
+        ) : null}
+
+        {filteredOtherUsers?.length ? (
+          <>
+            <div className="font-normal text-gray-500">{t('actors.other_users')}</div>
+            {filteredOtherUsers.map((f) => (
+              <button
+                disabled={adding}
                 key={f.id}
                 className="flex w-full items-center justify-between border-b border-gray-900 py-4"
                 onClick={() => handleFriendClick(f)}
@@ -235,6 +269,7 @@ export const SelectUserOrGroup: React.FC<{
             <div className="mt-2 flex flex-col gap-1">
               {filteredGroups.map((g) => (
                 <button
+                  disabled={adding}
                   key={g.groupId}
                   className="border-b border-gray-900 py-4"
                   onClick={() => onGroupSelect(g.group)}
@@ -249,14 +284,22 @@ export const SelectUserOrGroup: React.FC<{
           </>
         ) : null}
 
-        {0 === filteredFriends?.length && 0 === filteredGroups?.length ? (
-          <div className="mt-[30%] flex flex-col items-center justify-center gap-20 transition-discrete starting:opacity-0">
+        {!contactsFailed &&
+        0 === filteredFriends?.length &&
+        0 === filteredOtherUsers?.length &&
+        0 === filteredGroups?.length ? (
+          <div className="mt-[30%] flex flex-col items-center justify-center gap-8 transition-discrete starting:opacity-0">
             <Image
               alt={t('expense_details.add_expense_details.select_user_or_group.empty_image_alt')}
               src="/empty_img.svg"
               width={250}
               height={250}
             />
+            {emptyReason ? (
+              <p className="text-center text-sm text-gray-400">
+                {t(`ui.people_list_empty.${emptyReason}`)}
+              </p>
+            ) : null}
           </div>
         ) : null}
       </div>

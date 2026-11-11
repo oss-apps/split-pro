@@ -99,18 +99,11 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                     <DefaultSplitSettings
                       participants={[
                         {
-                          ...user,
+                          id: user.id,
                           deletedAt: null,
-                          emailVerified: null,
                           name: user.name ?? null,
                           email: user.email ?? null,
                           image: user.image ?? null,
-                          obapiProviderId: user.obapiProviderId ?? null,
-                          bankingId: user.bankingId ?? null,
-                          preferredLanguage: user.preferredLanguage ?? '',
-                          hiddenFriendIds: user.hiddenFriendIds ?? [],
-                          currency: user.currency ?? 'USD',
-                          defaultCurrency: user.defaultCurrency ?? null,
                         },
                         friendQuery.data,
                       ]}

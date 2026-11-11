@@ -25,8 +25,14 @@ import {
   getCurrencyRateSchema,
 } from '~/types/expense.types';
 import { BigMath, currencyConversion } from '~/utils/numbers';
-import { createExpense, deleteExpense, editExpense } from '../services/splitService';
+import {
+  assertExpenseGroupReassignment,
+  createExpense,
+  deleteExpense,
+  editExpense,
+} from '../services/splitService';
 import { currencyRateProvider } from '../services/currencyRateService';
+import { commentProcedures } from '../services/commentService';
 import { isCurrencyCode } from '~/lib/currency';
 import { SplitType } from '@prisma/client';
 import { DEFAULT_CATEGORY } from '~/lib/category';
@@ -42,9 +48,22 @@ const upsertExpenses = async (expenses: CreateExpense[], userId: number) => {
   // Expense writes must preserve input order and stop on the first validation/write failure.
   // oxlint-disable no-await-in-loop
   for (const input of expenses) {
-    await validateExpenseWritePermission(input.expenseId, input.groupId, userId);
+    const storedGroupId = await validateExpenseWritePermission(
+      input.expenseId,
+      input.groupId,
+      userId,
+    );
     if (input.splitType === SplitType.CURRENCY_CONVERSION) {
       throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid split type' });
+    }
+
+    if (input.expenseId) {
+      await assertExpenseGroupReassignment(
+        storedGroupId,
+        input.groupId,
+        input.paidBy,
+        input.participants.map((participant) => participant.userId),
+      );
     }
 
     try {
@@ -54,6 +73,9 @@ const upsertExpenses = async (expenses: CreateExpense[], userId: number) => {
 
       results.push(expense);
     } catch (error) {
+      if (error instanceof TRPCError) {
+        throw error;
+      }
       console.error(error);
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
@@ -130,6 +152,7 @@ const expensesWithFriendWhere = (userId: number, friendId: number) => ({
  * without duplicating them.
  */
 export const expenseMethods = {
+  ...commentProcedures,
   getRecurrencePreview: protectedProcedure
     .input(z.object({ cronExpression: z.string().transform(cronToBackend) }))
     .query(async ({ input }) => {
@@ -229,7 +252,11 @@ export const expenseMethods = {
     .input(createCurrencyConversionSchema)
     .mutation(async ({ input, ctx }) => {
       const { amount, rate, from, to, senderId, receiverId, groupId, expenseId } = input;
-      await validateExpenseWritePermission(expenseId, groupId, ctx.session.user.id);
+      const storedGroupId = await validateExpenseWritePermission(
+        expenseId,
+        groupId,
+        ctx.session.user.id,
+      );
 
       if (!isCurrencyCode(from) || !isCurrencyCode(to)) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid currency code' });
@@ -271,6 +298,12 @@ export const expenseMethods = {
       if (!expenseId) {
         res = await createExpense(conversionTo, ctx.session.user.id, conversionFrom);
       } else {
+        await assertExpenseGroupReassignment(
+          storedGroupId,
+          conversionFrom.groupId,
+          conversionFrom.paidBy,
+          conversionFrom.participants.map((participant) => participant.userId),
+        );
         res = await editExpense(conversionFrom, ctx.session.user.id, conversionTo);
       }
 
@@ -360,7 +393,14 @@ export const expenseMethods = {
               user: true,
             },
           },
-          expenseNotes: true,
+          expenseNotes: {
+            orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+            include: {
+              createdBy: {
+                select: { id: true, name: true, email: true, image: true, deletedAt: true },
+              },
+            },
+          },
           addedByUser: true,
           paidByUser: true,
           deletedByUser: true,
@@ -391,6 +431,7 @@ export const expenseMethods = {
       if (
         expense &&
         expense.addedBy !== ctx.session.user.id &&
+        expense.paidBy !== ctx.session.user.id &&
         !expense.expenseParticipants.some(
           (participant) => participant.userId === ctx.session.user.id,
         )
@@ -663,26 +704,33 @@ const validateEditExpensePermission = async (expenseId: string, userId: number):
   }
 };
 
+/**
+ * Checks that the user may write the expense into `groupId` and returns the expense's stored
+ * group (null for a new or ungrouped expense).
+ */
 const validateExpenseWritePermission = async (
   expenseId: string | undefined,
   groupId: number | null,
   userId: number,
-): Promise<void> => {
+): Promise<number | null> => {
+  let storedGroupId: number | null = null;
   if (expenseId) {
     await validateEditExpensePermission(expenseId, userId);
     const expense = await db.expense.findUniqueOrThrow({
       where: { id: expenseId },
       select: { groupId: true },
     });
-    if (expense.groupId !== groupId) {
+    // An ungrouped expense may be assigned to a group; a grouped expense keeps its group.
+    if (null !== expense.groupId && expense.groupId !== groupId) {
       throw new TRPCError({
         code: 'BAD_REQUEST',
         message: 'Cannot move an expense to another group',
       });
     }
+    storedGroupId = expense.groupId;
   }
   if (null === groupId) {
-    return;
+    return storedGroupId;
   }
   const group = await db.group.findUnique({
     where: { id: groupId },
@@ -697,6 +745,7 @@ const validateExpenseWritePermission = async (
   if (group.archivedAt) {
     throw new TRPCError({ code: 'BAD_REQUEST', message: 'Group is archived' });
   }
+  return storedGroupId;
 };
 
 /**

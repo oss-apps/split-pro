@@ -11,7 +11,7 @@ import { SimpleConfirmationDialog } from '~/components/SimpleConfirmationDialog'
 import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-import { cronFromBackend } from '~/lib/cron';
+import { cronFromBackend, extractTemplateExpenseId } from '~/lib/cron';
 import { type NextPageWithUser } from '~/types';
 import { type RouterOutputs, api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
@@ -48,7 +48,10 @@ const RecurringExpenseItem: React.FC<RecurringExpenseItemProps> = ({
 
   return (
     <div className="flex items-center justify-between gap-2">
-      <Link href={`/expenses/${item.expense.id}`} className="flex flex-1 gap-2">
+      <Link
+        href={`/expenses/${extractTemplateExpenseId(item.job.command) ?? item.expense.id}`}
+        className="flex flex-1 gap-2"
+      >
         <div className="mt-1">
           <EntityAvatar entity={item.expense.addedByUser} size={30} />
         </div>

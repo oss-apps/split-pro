@@ -105,6 +105,7 @@
     "next": "Avanti",
     "reconnect": "Riconnettiti",
     "remind_later": "Ricordamelo più tardi",
+    "retry": "Riprova",
     "save": "Salva",
     "settle_up": "Regola",
     "submit": "Invia"
@@ -124,6 +125,7 @@
     "friends": "Amici",
     "groups": "Gruppi",
     "members": "Membri",
+    "other_users": "Altri utenti",
     "owner": "Proprietario",
     "you": "Tu",
     "you_accusativus": "Tu",
@@ -172,6 +174,19 @@
     "search_bank": "Ricerca banca",
     "select_bank_provider": "Seleziona il fornitore bancario",
     "to_bank": "alla banca"
+  },
+  "comments": {
+    "add": "Aggiungi un commento",
+    "delete": "Elimina",
+    "delete_confirm": "Elimina questo commento?",
+    "edit": "Modifica",
+    "edit_label": "Modifica commento",
+    "error": "Impossibile salvare il commento",
+    "initial_label": "Aggiungi una nota (facoltativo)",
+    "initial_placeholder": "Aggiungi i dettagli relativi a questa spesa…",
+    "placeholder": "Scrivi un commento…",
+    "post": "Pubblica il commento",
+    "title": "Commenti"
   },
   "currency_conversion": {
     "amount_aria_label": "Importo",
@@ -237,12 +252,12 @@
       "description_placeholder": "Inserisci descrizione",
       "pick_a_date": "Scegli una data",
       "select_user_or_group": {
-        "add_to_split_pro": "Aggiungi a Split Pro",
+        "add_to_split_pro": "Aggiungi alle spese",
         "empty_image_alt": "Nessun utente trovato",
-        "note": "Nota: l'invio di inviti è disabilitato per ora a causa dello spam",
+        "note": "Gli inviti via e-mail sono disattivati. È comunque possibile aggiungere qualcuno tramite e-mail senza inviare un invito.",
         "only_one_group_time": "Puoi operare su un solo gruppo alla volta",
-        "send_invite": "Invia invito all'utente",
-        "warning": "Attenzione: non usare \"Invia invito\" se l'email non è valida. Usa invece \"Aggiungi a Split Pro\". Il tuo account verrà bloccato se questa funzione viene utilizzata in modo improprio"
+        "send_invite": "Aggiungi tramite invito via e-mail",
+        "warning": "Entrambi i pulsanti aggiungono la persona a questa bozza di spesa. Salva la spesa quando hai finito. L'opzione “Invita” invia via e-mail un link a SplitPro solo se l'indirizzo e-mail del destinatario non è stato verificato; non effettua l'accesso per conto suo."
       },
       "split_type_section": {
         "direction": {
@@ -326,7 +341,9 @@
   },
   "expense_list": {
     "conversion_for_users": "Conversione di valuta per {payerRole, select, you {te} other {{payer}}} e {receiverRole, select, you {te} other {{receiver}}}",
+    "future_expense": "Spese future — non ancora incluse nei saldi",
     "settlement": "{payerRole, select, you {Hai pagato {amount} a {receiver}} other {{receiverRole, select, you {{payer} ti ha pagato {amount}} other {{payer} ha pagato {amount} a {receiver}}}}}",
+    "upcoming_expenses": "Prossime spese",
     "user_paid": "{actor, select, you {Hai pagato {amount}} other {{user} ha pagato {amount}}}",
     "user_received": "{actor, select, you {Hai ricevuto {amount}} other {{user} ha ricevuto {amount}}}"
   },
@@ -412,12 +429,12 @@
     "no_members": {
       "add_members": "Aggiungi membri",
       "add_members_details": {
-        "add_to_split_pro": "Aggiungi a Split Pro",
-        "note": "Nota: l'invio di inviti è disabilitato per ora a causa dello spam",
+        "add_to_split_pro": "Aggiungi al gruppo",
+        "note": "Gli inviti via e-mail sono disattivati. È comunque possibile aggiungere qualcuno tramite e-mail senza inviare un invito.",
         "placeholder": "Inserisci il nome o l'email",
-        "send_invite": "Invia invito all'utente",
+        "send_invite": "Aggiungi tramite invito via e-mail",
         "title": "Aggiungi membri",
-        "warning": "Attenzione: non usare \"Invia invito\" se l'email non è valida. Usa invece \"Aggiungi a Split Pro\". Il tuo account verrà bloccato se questa funzione viene utilizzata in modo improprio"
+        "warning": "Entrambi i pulsanti aggiungono immediatamente la persona e tutti i contatti selezionati a questo gruppo. Il pulsante “Salva” aggiunge solo i contatti selezionati, non l'indirizzo e-mail digitato. L'opzione “Invita” invia via e-mail un link a SplitPro solo se l'indirizzo e-mail del destinatario non è verificato; non effettua l'accesso per conto suo."
       },
       "copied": "Copiato",
       "invite_link": "Condividi il link d'invito",
@@ -474,10 +491,14 @@
     "edit_description": "Questo cambierà il programma delle spese future. Le spese già create non saranno modificate.",
     "edit_title": "Modifica ricorrenza",
     "empty": "Ancora nessuna spesa ricorrente",
+    "execution_time_loading": "Caricamento della prossima esecuzione…",
+    "execution_time_unavailable": "Prossima esecuzione non disponibile.",
     "expense_for_the_amount_of": "Spesa {name} di {amount} {currency}",
+    "instance_schedule": "Pianificazione: {schedule} ({timeZone}).",
     "last_day": "Ultimo giorno",
     "months": "Mesi",
     "never": "Nessuna pianificazione configurata",
+    "next_local_run": "Prossima esecuzione programmata: {date} ({timeZone}, nel tuo fuso orario).",
     "recurring": "Ricorrente",
     "schedule_type": {
       "custom": "Personalizzata",
@@ -488,7 +509,7 @@
       "year": "Annuale"
     },
     "template_delete_warning": "Questa è una spesa ricorrente modello. Eliminandola si interromperanno tutte le future spese ricorrenti.",
-    "template_edit_warning": "Questa è una spesa ricorrente modello. Le modifiche si applicheranno a tutte le future spese ricorrenti.",
+    "template_edit_warning": "Questo è un modello per le spese ricorrenti. Le modifiche verranno applicate a tutte le spese ricorrenti create in futuro.",
     "time_of_day": "Ora del giorno",
     "title": "Ricorrenza",
     "toggle_options": "Attiva/disattiva le opzioni per le spese ricorrenti",
@@ -543,13 +564,34 @@
       }
     },
     "expense_details": "Dettagli spesa",
+    "group_people_list_empty": {
+      "all_added": "Tutti i tuoi contatti salvati sono già presenti in questo gruppo",
+      "no_contacts": "Nessun contatto da mostrare",
+      "no_matches": "Non ci sono contatti disponibili che corrispondono alla tua ricerca"
+    },
     "in_group": "Nel gruppo",
+    "invitation": {
+      "adding": "Aggiunta in corso…",
+      "disabled_help": "Le e-mail di invito sono disattivate su questo server. È comunque possibile aggiungere qualcuno tramite e-mail.",
+      "draft_help": "L'aggiunta di un partecipante non comporta il salvataggio della spesa. Durante la modifica, salva anche la spesa.",
+      "email_help": "All'indirizzo e-mail inserito invieremo un link a SplitPro solo se non è stato verificato. Ciò non comporta l'accesso all'account.",
+      "expense_partial_success": "È stato aggiunto alla bozza delle spese, ma non è stato possibile inviare l'e-mail di invito.",
+      "group_partial_success": "Aggiunto al gruppo, ma non è stato possibile inviare l'e-mail di invito.",
+      "no_email_help": "Non verrà inviata alcuna e-mail di invito. Gli utenti che non si sono ancora registrati potranno accedere in un secondo momento utilizzando questo indirizzo e-mail.",
+      "send_email": "Invia un'e-mail di invito"
+    },
     "no_activity": "Nessuna attività ancora",
     "not_involved": "Non coinvolto",
     "not_set": "Non impostato",
     "on": "il",
     "or": "o",
     "outstanding_balances": "Saldi in sospeso",
+    "people_list_empty": {
+      "all_added": "Tutti i tuoi contatti salvati sono già presenti in questo gruppo",
+      "no_contacts": "Non ci sono contatti o gruppi salvati da visualizzare",
+      "no_matches": "Non ci sono contatti o gruppi disponibili che corrispondono alla tua ricerca"
+    },
+    "people_list_load_error": "Impossibile caricare i contatti. Riprova.",
     "select_balance": "Seleziona saldo",
     "select_currency": "Seleziona valuta",
     "settle_up_name": "Regola",

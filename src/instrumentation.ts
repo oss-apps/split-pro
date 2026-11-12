@@ -10,8 +10,18 @@ export async function register() {
     console.log('Registering instrumentation');
 
     // Run data migrations
-    const { runMigrations } = await import('./migrations');
-    await runMigrations();
+    const [
+      { checkDatabaseConnection, runMigrations },
+      { terminateAfterMigrationFailure, waitForDatabase },
+    ] = await Promise.all([import('./migrations'), import('./migrations/retry')]);
+    try {
+      // Retry only a side-effect-free readiness query. Migrations can modify the database and files.
+      // Repeating a partially completed migration could repeat those side effects.
+      await waitForDatabase(checkDatabaseConnection);
+      await runMigrations();
+    } catch (error) {
+      await terminateAfterMigrationFailure(error);
+    }
 
     if (!env.TEST_MODE) {
       const { reconcileRecurrenceSchedules } =

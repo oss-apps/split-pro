@@ -46,6 +46,31 @@ describe('terminateAfterMigrationFailure', () => {
     );
     expect(exit).toHaveBeenCalledWith(1);
   });
+
+  it('exits when flushing stderr never settles', async () => {
+    jest.useFakeTimers();
+    const exitError = new Error('process exited');
+    const exit = jest.fn((): never => {
+      throw exitError;
+    });
+    const flush = jest.fn(() => new Promise<void>(() => undefined));
+    const logger = { error: jest.fn() };
+
+    const termination = terminateAfterMigrationFailure(new Error('Migration failed'), {
+      exit,
+      flush,
+      flushTimeoutMs: 1000,
+      logger,
+    });
+    const expectation = expect(termination).rejects.toBe(exitError);
+
+    await jest.advanceTimersByTimeAsync(999);
+    expect(exit).not.toHaveBeenCalled();
+    await jest.advanceTimersByTimeAsync(1);
+    await expectation;
+    expect(exit).toHaveBeenCalledWith(1);
+    jest.useRealTimers();
+  });
 });
 
 describe('waitForDatabase', () => {

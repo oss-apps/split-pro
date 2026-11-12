@@ -1,6 +1,7 @@
 // Backoff is capped by the wall-clock timeout below, including time spent on connection attempts.
 const RETRY_DELAYS_MS = [1000, 2000, 4000, 8000, 16000, 30000] as const;
 const RETRY_TIMEOUT_MS = 60_000;
+const FLUSH_TIMEOUT_MS = 2000;
 
 interface RetryOptions {
   delaysMs?: readonly number[];
@@ -13,6 +14,7 @@ interface RetryOptions {
 interface TerminationOptions {
   exit?: (code: number) => never;
   flush?: () => Promise<void>;
+  flushTimeoutMs?: number;
   logger?: Pick<Console, 'error'>;
 }
 
@@ -33,17 +35,26 @@ export const terminateAfterMigrationFailure = async (
 ): Promise<never> => {
   const exit = options.exit ?? ((code: number): never => process.exit(code));
   const flush = options.flush ?? flushOutput;
+  const flushTimeoutMs = options.flushTimeoutMs ?? FLUSH_TIMEOUT_MS;
   const logger = options.logger ?? console;
 
   logger.error('Database migrations failed:', error);
 
+  let flushTimeout: ReturnType<typeof setTimeout> | undefined = undefined;
+  const flushDeadline = new Promise<void>((resolve) => {
+    flushTimeout = setTimeout(resolve, flushTimeoutMs);
+  });
+
   try {
     // Console writes to Docker pipes can be asynchronous.
     // Ordered empty writes wait for prior stdout and stderr output before termination.
-    await flush();
+    // A blocked pipe may never call back, so the deadline guarantees the exit below still runs.
+    await Promise.race([flush(), flushDeadline]);
   } catch (flushError) {
     // A logging failure must not leave Next.js running with its rejected instrumentation promise.
     logger.error('Failed to flush database migration logs:', flushError);
+  } finally {
+    clearTimeout(flushTimeout);
   }
 
   // Next.js caches a rejected instrumentation promise for the life of the process.

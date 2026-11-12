@@ -10,11 +10,12 @@ export async function register() {
     console.log('Registering instrumentation');
 
     // Run data migrations
-    const [
-      { checkDatabaseConnection, runMigrations },
-      { terminateAfterMigrationFailure, waitForDatabase },
-    ] = await Promise.all([import('./migrations'), import('./migrations/retry')]);
+    // The retry module has no imports, so loading it cannot fail the way the migrations module can.
+    // Keeping it outside the try guarantees the catch can always terminate the process.
+    const { terminateAfterMigrationFailure, waitForDatabase } = await import('./migrations/retry');
     try {
+      // Import inside the try so database client or env failures at import time also terminate.
+      const { checkDatabaseConnection, runMigrations } = await import('./migrations');
       // Retry only a side-effect-free readiness query. Migrations can modify the database and files.
       // Repeating a partially completed migration could repeat those side effects.
       await waitForDatabase(checkDatabaseConnection);

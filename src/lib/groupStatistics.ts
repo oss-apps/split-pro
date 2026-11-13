@@ -18,6 +18,8 @@ export interface MemberTotal {
 /**
  * Sums, per user and currency, how much each person paid and how much of the expenses was theirs.
  * Participant amounts are net: the payer holds `amount - ownShare`, everyone else `-share`.
+ * Zero-amount rows aren't stored, so the payer is credited the full amount up front rather than
+ * through their (possibly missing) participant row.
  */
 export const computeMemberTotals = (expenses: StatisticsExpense[]): MemberTotal[] => {
   const totals = new Map<string, MemberTotal>();
@@ -34,10 +36,11 @@ export const computeMemberTotals = (expenses: StatisticsExpense[]): MemberTotal[
   };
 
   expenses.forEach((expense) => {
-    totalFor(expense.paidBy, expense.currency).paid += expense.amount;
+    const payer = totalFor(expense.paidBy, expense.currency);
+    payer.paid += expense.amount;
+    payer.share += expense.amount;
     expense.expenseParticipants.forEach((participant) => {
-      const paidAmount = participant.userId === expense.paidBy ? expense.amount : 0n;
-      totalFor(participant.userId, expense.currency).share += paidAmount - participant.amount;
+      totalFor(participant.userId, expense.currency).share -= participant.amount;
     });
   });
 

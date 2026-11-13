@@ -51,6 +51,17 @@ describe('computeMemberTotals', () => {
     });
   });
 
+  describe('omitted participant rows', () => {
+    it('should give the payer the full share when every participant row is omitted', () => {
+      // A payer covering the whole cost has a zero net amount, and zero rows aren't stored.
+      const totals = computeMemberTotals([
+        { paidBy: 1, currency: 'USD', amount: 10000n, expenseParticipants: [] },
+      ]);
+
+      expect(totals).toEqual([{ userId: 1, currency: 'USD', paid: 10000n, share: 10000n }]);
+    });
+  });
+
   describe('multiple expenses', () => {
     it('should sum expenses per user and keep currencies separate', () => {
       const totals = computeMemberTotals([

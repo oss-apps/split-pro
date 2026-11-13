@@ -343,7 +343,12 @@
       "title": "Group info"
     },
     "group_statistics": {
+      "approximate_percentage": "≈{value, number, percent}",
       "first_expense": "First expense",
+      "paid": "Paid",
+      "per_person": "Spending per person",
+      "percentage": "{value, number, percent}",
+      "share": "Share of costs",
       "title": "Group statistics",
       "total_expenses": "Total expenses"
     },

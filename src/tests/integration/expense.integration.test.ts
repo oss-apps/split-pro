@@ -163,6 +163,20 @@ describe('settlement accounting', () => {
       expect(await callerFor(owner.id).group.getGroupTotals({ groupId: group.id })).toEqual([
         expect.objectContaining({ currency: 'USD', _sum: { amount: 2000n } }),
       ]);
+      // Settlements are left out, so only the original 2000 split shows up.
+      const memberTotals = await callerFor(owner.id).group.getGroupMemberTotals({
+        groupId: group.id,
+      });
+      expect(
+        memberTotals.members
+          .map(({ user, totals }) => ({ userId: user.id, totals }))
+          .sort((a, b) => a.userId - b.userId),
+      ).toEqual(
+        [
+          { userId: receiverId, totals: [{ currency: 'USD', paid: 2000n, share: 1000n }] },
+          { userId: payerId, totals: [{ currency: 'USD', paid: 0n, share: 1000n }] },
+        ].sort((a, b) => a.userId - b.userId),
+      );
     },
   );
 });

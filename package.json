@@ -37,7 +37,7 @@
   "dependencies": {
     "@date-fns/tz": "^1.4.1",
     "@heroicons/react": "^2.2.0",
-    "@hookform/resolvers": "^3.3.4",
+    "@hookform/resolvers": "^5.9.2",
     "@icons-pack/react-simple-icons": "^13.7.0",
     "@next-auth/prisma-adapter": "^1.0.7",
     "@prisma/adapter-pg": "^7.10.1",

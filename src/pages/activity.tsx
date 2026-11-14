@@ -98,7 +98,11 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
             });
 
             return (
-              <Link href={`/expenses/${e.expenseId}`} key={e.expenseId} className="flex gap-2">
+              <Link
+                href={`/expenses/${e.expenseId}`}
+                key={e.expenseId}
+                className="group/expense flex gap-2"
+              >
                 <div className="mt-1">
                   <EntityAvatar entity={e.expense.paidByUser} size={30} />
                 </div>

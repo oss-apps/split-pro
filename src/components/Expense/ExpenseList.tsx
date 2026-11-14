@@ -74,7 +74,7 @@ export const ExpenseList: React.FC<{
             <Link
               href={`/${isGroup ? 'groups' : 'balances'}/${contactId}/expenses/${e.id}`}
               className={cn(
-                'flex items-center justify-between',
+                'group/expense flex items-center justify-between',
                 isFirstOfMonth ? 'pb-2' : 'py-2',
                 isFuture && 'opacity-50 grayscale',
               )}

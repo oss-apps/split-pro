@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { Prisma, SplitType, type User } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
@@ -72,76 +73,42 @@ export async function createExpense(
     delete conversionFrom.create.participants;
   }
 
-  // Pre-generate UUID and create cron job if recurring (before transaction)
-  let expenseId: string | undefined = undefined;
-  let jobId: bigint | undefined = undefined;
+  const createdExpense = await db.$transaction(async (tx) => {
+    const expenseId = randomUUID();
+    const jobId = cronExpression
+      ? (await createRecurringExpenseJob(expenseId, cronExpression, tx))[0].schedule
+      : undefined;
+    const recurrence =
+      undefined === jobId ? undefined : await tx.expenseRecurrence.create({ data: { jobId } });
 
-  if (cronExpression) {
-    const [{ gen_random_uuid }] = await db.$queryRaw<[{ gen_random_uuid: string }]>`
-      SELECT gen_random_uuid()::text as gen_random_uuid
-    `;
-    expenseId = gen_random_uuid;
-
-    const [{ schedule }] = await createRecurringExpenseJob(expenseId, cronExpression);
-    jobId = schedule;
-  }
-
-  const createExpenseOperation = db.expense.create({
-    data: {
-      ...(expenseId && { id: expenseId }),
-      groupId,
-      paidBy,
-      name,
-      category,
-      amount,
-      splitType,
-      currency,
-      expenseParticipants: {
-        create: nonZeroParticipants,
+    return tx.expense.create({
+      data: {
+        id: expenseId,
+        groupId,
+        paidBy,
+        name,
+        category,
+        amount,
+        splitType,
+        currency,
+        expenseParticipants: {
+          create: nonZeroParticipants,
+        },
+        fileKey,
+        addedBy: currentUserId,
+        expenseDate,
+        transactionId,
+        conversionFrom,
+        recurrenceId: recurrence?.id,
+        expenseNotes: initialComment?.trim()
+          ? { create: { note: initialComment.trim(), createdById: currentUserId } }
+          : undefined,
       },
-      fileKey,
-      addedBy: currentUserId,
-      expenseDate,
-      transactionId,
-      conversionFrom,
-      expenseNotes: initialComment?.trim()
-        ? { create: { note: initialComment.trim(), createdById: currentUserId } }
-        : undefined,
-    },
+    });
   });
 
-  try {
-    const [createdExpense] = await db.$transaction([
-      createExpenseOperation,
-      // Link recurrence to expense if we created a cron job
-      ...(expenseId && jobId
-        ? [
-            db.expenseRecurrence.create({
-              data: {
-                expense: {
-                  connect: { id: expenseId },
-                },
-                job: {
-                  connect: { jobid: jobId },
-                },
-              },
-            }),
-          ]
-        : []),
-    ]);
-    if (!createdExpense) {
-      throw new Error('Expense creation failed');
-    }
-
-    sendExpensePushNotification(createdExpense.id).catch(console.error);
-    return createdExpense;
-  } catch (error) {
-    // If we created a cron job but transaction failed, clean up the cron job
-    if (expenseId) {
-      await db.$executeRaw`SELECT cron.unschedule(${expenseId})`;
-    }
-    throw error;
-  }
+  sendExpensePushNotification(createdExpense.id).catch(console.error);
+  return createdExpense;
 }
 
 export async function deleteExpense(expenseId: string, deletedBy: number) {
@@ -318,93 +285,84 @@ export async function editExpense(
     );
   }
 
-  const operations = [];
-
-  // Delete existing participants
-  operations.push(
-    db.expenseParticipant.deleteMany({
-      where: {
-        expenseId: expense.conversionToId ? { in: [expenseId, expense.conversionToId] } : expenseId,
-      },
-    }),
-  );
-
-  // Update expense with new details and create new participants
-  operations.push(
-    db.expense.update({
-      // Write-time check: a concurrent edit may have grouped the expense after validation.
-      where: {
-        id: expenseId,
-        OR: [{ groupId: null }, { groupId }],
-        // Do not restore old balances if another edit changed them after the comparison.
-        ...(metadataOnly ? { updatedAt: expense.updatedAt } : {}),
-      },
-      data: {
-        paidBy,
-        groupId,
-        name,
-        category,
-        amount,
-        splitType,
-        currency,
-        expenseParticipants: {
-          create: participants,
-        },
-        fileKey,
-        transactionId,
-        expenseDate,
-        updatedBy: currentUserId,
-      },
-    }),
-  );
-  if (conversionToParams) {
-    if (!expense.conversionToId) {
-      throw new Error('Conversion to expense not found for editing');
-    }
-    const { participants: toParticipants, ...toExpenseData } = conversionToParams;
-
-    operations.push(
-      db.expense.update({
-        // The target can be grouped on its own, so it gets the same write-time check.
+  try {
+    await db.$transaction(async (tx) => {
+      await tx.expenseParticipant.deleteMany({
         where: {
-          id: expense.conversionToId,
-          OR: [{ groupId: null }, { groupId: toExpenseData.groupId }],
+          expenseId: expense.conversionToId
+            ? { in: [expenseId, expense.conversionToId] }
+            : expenseId,
+        },
+      });
+
+      const updatedExpense = await tx.expense.update({
+        // Write-time check: a concurrent edit may have grouped the expense after validation.
+        where: {
+          id: expenseId,
+          OR: [{ groupId: null }, { groupId }],
+          // Do not restore old balances if another edit changed them after the comparison.
+          ...(metadataOnly ? { updatedAt: expense.updatedAt } : {}),
         },
         data: {
-          ...toExpenseData,
-          expenseParticipants: {
-            create: toParticipants,
-          },
+          paidBy,
+          groupId,
+          name,
+          category,
+          amount,
+          splitType,
+          currency,
+          expenseParticipants: { create: participants },
+          fileKey,
+          transactionId,
+          expenseDate,
           updatedBy: currentUserId,
         },
-      }),
-    );
-  }
+      });
 
-  // Handle recurrence changes only for template expenses
-  if (isTemplate && expense.recurrence?.job) {
-    const currentSchedule = expense.recurrence.job.schedule;
+      if (conversionToParams) {
+        if (!expense.conversionToId) {
+          throw new Error('Conversion to expense not found for editing');
+        }
+        const { participants: toParticipants, ...toExpenseData } = conversionToParams;
+        await tx.expense.update({
+          // The target can be grouped on its own, so it gets the same write-time check.
+          where: {
+            id: expense.conversionToId,
+            OR: [{ groupId: null }, { groupId: toExpenseData.groupId }],
+          },
+          data: {
+            ...toExpenseData,
+            expenseParticipants: { create: toParticipants },
+            updatedBy: currentUserId,
+          },
+        });
+      }
 
-    if (cronExpression && cronExpression !== currentSchedule) {
-      // Schedule changed - update the cron job
-      operations.push(
-        db.$executeRaw`SELECT cron.alter_job(${expense.recurrence.job.jobid}, schedule := ${getRecurrenceSchedule(cronExpression)})`,
-      );
-    } else if (!cronExpression) {
-      // Recurrence removed - unschedule and delete recurrence record
-      operations.push(db.$executeRaw`SELECT cron.unschedule(${expense.recurrence.job.jobname})`);
-      operations.push(
-        db.expenseRecurrence.delete({
-          where: { id: expense.recurrence.id },
-        }),
-      );
-    }
-    // If cronExpression === currentSchedule, no action needed
-  }
-  // For derived expenses, cronExpression is ignored entirely
+      // Only template edits change an existing recurrence; derived edits leave it alone.
+      if (isTemplate && expense.recurrence?.job) {
+        const currentSchedule = expense.recurrence.job.schedule;
+        if (cronExpression && cronExpression !== currentSchedule) {
+          await tx.$executeRaw`SELECT cron.alter_job(${expense.recurrence.job.jobid}, schedule := ${getRecurrenceSchedule(cronExpression)})`;
+        } else if (!cronExpression) {
+          await tx.$executeRaw`SELECT cron.unschedule(${expense.recurrence.job.jobname})`;
+          await tx.expenseRecurrence.delete({ where: { id: expense.recurrence.id } });
+        }
+      }
 
-  try {
-    await db.$transaction(operations);
+      // The update holds the expense's row lock and returns its current recurrence ID.
+      // Concurrent edits must not create a second recurrence from a stale read.
+      if (null === updatedExpense.recurrenceId && cronExpression && !expense.recurrence) {
+        const [{ schedule: jobId }] = await createRecurringExpenseJob(
+          expenseId,
+          cronExpression,
+          tx,
+        );
+        await tx.expense.update({
+          where: { id: expenseId },
+          data: { recurrence: { create: { jobId } } },
+        });
+      }
+    });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && 'P2025' === error.code) {
       throw new TRPCError({

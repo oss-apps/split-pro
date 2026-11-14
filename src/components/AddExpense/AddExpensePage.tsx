@@ -19,6 +19,7 @@ import AddBankTransactions from './AddBankTransactions';
 import { CategoryPicker } from './CategoryPicker';
 import { CurrencyPicker } from './CurrencyPicker';
 import { DateSelector } from './DateSelector';
+import { EditRecurrenceDialog } from '../Expense/EditRecurrenceDialog';
 import { RecurrenceInput } from './RecurrenceInput';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { PayerSelectionForm, SplitExpenseForm } from './SplitTypeSection';
@@ -35,7 +36,8 @@ export const AddOrEditExpensePage: React.FC<{
   enableSendingInvites: boolean;
   expenseId?: string;
   bankConnectionEnabled: boolean;
-}> = ({ enableSendingInvites, expenseId, bankConnectionEnabled }) => {
+  recurrence?: { id: number; schedule: string };
+}> = ({ enableSendingInvites, expenseId, bankConnectionEnabled, recurrence }) => {
   const [initialComment, setInitialComment] = React.useState('');
   const [showInitialComment, setShowInitialComment] = React.useState(false);
   const showFriends = useAddExpenseStore((s) => s.showFriends);
@@ -74,6 +76,7 @@ export const AddOrEditExpensePage: React.FC<{
     setMultipleTransactions,
     setIsTransactionLoading,
     setSingleTransaction,
+    setCronExpression,
   } = useAddExpenseStore((s) => s.actions);
 
   const apiUtils = api.useUtils();
@@ -430,23 +433,37 @@ export const AddOrEditExpensePage: React.FC<{
               </>
             ) : null}
           </div>
-          <div className="flex items-center justify-evenly px-4 lg:px-0">
-            {!expenseId && (
-              <RecurrenceInput>
-                <Button variant="ghost" size="sm">
-                  <RefreshCcwDot
-                    className={cn(
-                      cronExpression && 'text-primary',
-                      (!amtStr || !description) && 'invisible',
-                      'size-6',
-                    )}
-                  />
-                  <span className="sr-only">{t('recurrence.toggle_options')}</span>
-                </Button>
-              </RecurrenceInput>
-            )}
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 lg:px-0">
+            <div className="justify-self-start">
+              {!recurrence && (
+                <RecurrenceInput>
+                  <Button variant="ghost" size="sm">
+                    <RefreshCcwDot
+                      className={cn(
+                        cronExpression && 'text-primary',
+                        (!amtStr || !description) && 'invisible',
+                        'size-6',
+                      )}
+                    />
+                    <span className="sr-only">{t('recurrence.toggle_options')}</span>
+                  </Button>
+                </RecurrenceInput>
+              )}
+              {expenseId && recurrence && (
+                <EditRecurrenceDialog
+                  recurrenceId={recurrence.id}
+                  currentSchedule={cronExpression || recurrence.schedule}
+                  onScheduleChange={setCronExpression}
+                >
+                  <Button variant="ghost" size="sm">
+                    <RefreshCcwDot className="text-primary size-6" />
+                    <span className="sr-only">{t('recurrence.toggle_options')}</span>
+                  </Button>
+                </EditRecurrenceDialog>
+              )}
+            </div>
             <SponsorUs />
-            <div className="flex gap-2">
+            <div className="flex gap-2 justify-self-end">
               <AddBankTransactions bankConnectionEnabled={bankConnectionEnabled}>
                 <Button
                   variant="ghost"

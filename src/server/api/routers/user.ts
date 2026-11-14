@@ -206,11 +206,21 @@ export const userRouter = createTRPCRouter({
 
   getUserDetails: protectedProcedure
     .input(z.object({ userId: z.number() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const user = await db.user.findUnique({
         where: {
           id: input.userId,
+          OR: [
+            { id: ctx.session.user.id },
+            { userBalances: { some: { friendId: ctx.session.user.id } } },
+            {
+              associatedGroups: {
+                some: { group: { groupUsers: { some: { userId: ctx.session.user.id } } } },
+              },
+            },
+          ],
         },
+        select: { id: true, name: true, email: true, image: true, deletedAt: true },
       });
 
       return user;

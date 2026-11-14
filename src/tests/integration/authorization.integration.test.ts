@@ -54,6 +54,21 @@ describe('authorization', () => {
     expect(await accountingSnapshot()).toEqual(before);
   });
 
+  it('hides unrelated user accounts and returns only profile fields', async () => {
+    const { owner, member, outsider } = await testScenario();
+    const caller = callerFor(owner.id);
+    expect(await caller.user.getUserDetails({ userId: outsider.id })).toBeNull();
+    const profiles = await Promise.all(
+      [owner.id, member.id].map((userId) => caller.user.getUserDetails({ userId })),
+    );
+    profiles.forEach((profile) => {
+      expect(profile).toBeTruthy();
+      expect(Object.keys(profile!).sort()).toEqual(
+        ['id', 'name', 'email', 'image', 'deletedAt'].sort(),
+      );
+    });
+  });
+
   it('rejects writes to archived groups', async () => {
     const { owner, group, input } = await testScenario();
     const caller = callerFor(owner.id);

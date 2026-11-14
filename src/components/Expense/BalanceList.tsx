@@ -22,7 +22,10 @@ interface UserWithBalance {
 export const BalanceList: React.FC<{
   groupBalances?: BalanceView[];
   users?: User[];
-}> = ({ groupBalances = [], users = [] }) => {
+  groupId: number;
+  defaultCurrency?: string | null;
+  isArchived?: boolean;
+}> = ({ groupBalances = [], users = [], groupId, defaultCurrency, isArchived }) => {
   const { displayName, t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const userQuery = api.user.me.useQuery();
 
@@ -56,6 +59,8 @@ export const BalanceList: React.FC<{
     return res;
   }, [groupBalances, users]);
 
+  const currentUser = userQuery.data ? userMap[userQuery.data.id]?.user : undefined;
+
   return (
     <Accordion type="multiple">
       {Object.values(userMap).map(({ user, total, balances }) => {
@@ -68,46 +73,88 @@ export const BalanceList: React.FC<{
           }
         });
 
+        const transferBalance = Object.entries(
+          currentUser ? (userMap[currentUser.id]?.balances[user.id] ?? {}) : {},
+        ).find(([, amount]) => 0n !== amount);
+        const transferLabel = t('actions.record_transfer_with', { user: displayName(user) });
+
         return (
           <AccordionItem key={user.id} value={displayName(user)}>
-            <AccordionTrigger className="overflow-hidden hover:no-underline">
-              <div className="mr-2 flex min-w-0 flex-1 items-center gap-3">
-                <EntityAvatar entity={user} />
-                <div className="text-foreground line-clamp-2 min-w-0 break-words">
-                  {Object.values(total).every((amount) => 0n === amount) ? (
-                    <span className="text-gray-400">
-                      {t('expense_details.balance_list.settled', {
-                        actor: isCurrentUser ? 'you' : 'other',
-                        person: displayName(user),
-                      })}
-                    </span>
-                  ) : (
-                    <span className="text-gray-400">
-                      <Trans
-                        t={t}
-                        i18nKey={`expense_details.balance_list.${0 < totalAmount[1] ? 'lent_amount' : 'owes_amount'}`}
-                        values={{ actor: isCurrentUser ? 'you' : 'other' }}
-                        components={{
-                          person: <span className="text-gray-400">{displayName(user)}</span>,
-                          amount: (
-                            <span
-                              className={clsx(
-                                'text-right',
-                                0 < totalAmount[1] ? 'text-emerald-500' : 'text-orange-600',
-                              )}
-                            >
-                              {getCurrencyHelpersCached(totalAmount[0]).toUIString(
-                                BigMath.abs(totalAmount[1]),
-                              )}
-                            </span>
-                          ),
-                        }}
-                      />
-                    </span>
-                  )}
+            <div className="relative">
+              <AccordionTrigger
+                disabled={
+                  !Object.values(balances).some((perFriend) =>
+                    Object.values(perFriend).some((amount) => 0n !== amount),
+                  )
+                }
+                className="overflow-hidden pr-24 hover:no-underline disabled:cursor-default [&>svg]:absolute [&>svg]:right-0 disabled:[&>svg]:hidden"
+              >
+                <div className="mr-2 flex min-w-0 flex-1 items-center gap-3">
+                  <EntityAvatar entity={user} />
+                  <div className="text-foreground line-clamp-2 min-w-0 break-words">
+                    {Object.values(total).every((amount) => 0n === amount) ? (
+                      <span className="text-gray-400">
+                        {t('expense_details.balance_list.settled', {
+                          actor: isCurrentUser ? 'you' : 'other',
+                          person: displayName(user),
+                        })}
+                      </span>
+                    ) : (
+                      <span className="text-gray-400">
+                        <Trans
+                          t={t}
+                          i18nKey={`expense_details.balance_list.${0 < totalAmount[1] ? 'lent_amount' : 'owes_amount'}`}
+                          values={{ actor: isCurrentUser ? 'you' : 'other' }}
+                          components={{
+                            person: <span className="text-gray-400">{displayName(user)}</span>,
+                            amount: (
+                              <span
+                                className={clsx(
+                                  'text-right',
+                                  0 < totalAmount[1] ? 'text-emerald-500' : 'text-orange-600',
+                                )}
+                              >
+                                {getCurrencyHelpersCached(totalAmount[0]).toUIString(
+                                  BigMath.abs(totalAmount[1]),
+                                )}
+                              </span>
+                            ),
+                          }}
+                        />
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </AccordionTrigger>
+              </AccordionTrigger>
+              {!isCurrentUser && currentUser ? (
+                <div className="absolute top-1/2 right-10 -translate-y-1/2">
+                  <GroupSettleUp
+                    user={currentUser}
+                    friend={user}
+                    amount={transferBalance?.[1] ?? 0n}
+                    currency={
+                      transferBalance?.[0] ??
+                      defaultCurrency ??
+                      currentUser.defaultCurrency ??
+                      currentUser.currency
+                    }
+                    groupId={groupId}
+                    allowCurrencyChange
+                  >
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="size-11"
+                      aria-label={transferLabel}
+                      title={transferLabel}
+                      disabled={isArchived}
+                    >
+                      <SettleupIcon className="size-4" />
+                    </Button>
+                  </GroupSettleUp>
+                </div>
+              ) : null}
+            </div>
             <AccordionContent>
               {Object.entries(balances).map(([friendId, perFriendBalances]) => {
                 const friendBalance = userMap[Number(friendId)];

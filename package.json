@@ -130,7 +130,10 @@
     "overrides": {
       "axios": "1.20.0",
       "@serwist/turbopack>zod": "4.6.7",
-      "@serwist/build>zod": "4.6.7"
+      "@serwist/build>zod": "4.6.7",
+      "@jest/reporters>glob": "14.0.6",
+      "test-exclude>glob": "14.0.6",
+      "jest-config>glob": "14.0.6"
     },
     "onlyBuiltDependencies": [
       "@prisma/client",

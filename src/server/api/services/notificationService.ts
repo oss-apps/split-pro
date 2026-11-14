@@ -66,7 +66,11 @@ export const sendPushNotificationToUsers = async (userIds: number[], pushData: P
   return { sentCount: pushResults.filter((result) => result.ok).length };
 };
 
-export async function sendExpensePushNotification(expenseId: string) {
+export async function sendExpensePushNotification(
+  expenseId: string,
+  editorId?: number,
+  previousParticipantIds: number[] = [],
+) {
   const expense = await db.expense.findUnique({
     where: {
       id: expenseId,
@@ -193,10 +197,17 @@ export async function sendExpensePushNotification(expenseId: string) {
     },
   };
 
-  await sendPushNotificationToUsers(
-    participants.map((p) => p.userId),
-    pushData,
-  );
+  const recipients =
+    undefined !== editorId
+      ? [
+          ...new Set([
+            expense.paidBy,
+            ...expense.expenseParticipants.map((p) => p.userId),
+            ...previousParticipantIds,
+          ]),
+        ].filter((id) => id !== editorId)
+      : participants.map((p) => p.userId);
+  await sendPushNotificationToUsers(recipients, pushData);
 }
 
 export async function sendGroupSimplifyDebtsToggleNotification(

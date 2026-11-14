@@ -475,7 +475,8 @@ export async function importUserBalanceFromSplitWise(
         }).toSafeBigInt;
       }
 
-      const amount = currencyHelperCache[currency](balance.amount);
+      // Splitwise balances are signed: a negative one is money the user owes
+      const amount = currencyHelperCache[currency](balance.amount, true);
 
       operations.push(
         db.expense.create({

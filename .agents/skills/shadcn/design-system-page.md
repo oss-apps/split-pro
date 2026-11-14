@@ -149,7 +149,7 @@ Pin interaction states with a `data-preview` attribute. Override the hover, focu
       @slot;
     }
   }
-  &[data-preview~="hover"] {
+  &[data-preview~='hover'] {
     @slot;
   }
 }
@@ -178,12 +178,12 @@ The columns are default, hover, focus, active and disabled. Add `loading` with S
 
 ```tsx
 <StateMatrix
-  rows={["input"] as const}
-  states={["default", "hover", "focus", "disabled", "invalid"]}
+  rows={['input'] as const}
+  states={['default', 'hover', 'focus', 'disabled', 'invalid']}
   render={(_, state) => (
     <Input
       placeholder="you@company.com"
-      aria-invalid={state === "invalid" || undefined}
+      aria-invalid={state === 'invalid' || undefined}
       {...previewState(state)}
     />
   )}

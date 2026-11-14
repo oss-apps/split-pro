@@ -178,7 +178,7 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 <Button
                   size="sm"
                   className="flex w-[150px] items-center gap-2 rounded-md border bg-cyan-500 px-3 text-sm font-normal text-black focus:bg-cyan-600 focus:ring-0 focus-visible:outline-hidden lg:w-[180px]"
-                  disabled={!balances.data?.length}
+                  disabled={balances.isPending || balances.isError}
                 >
                   <HandCoins className="size-4" /> {t('actions.settle_up')}
                 </Button>
@@ -231,7 +231,7 @@ FriendPage.auth = true;
 
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
-    ...(await customServerSideTranslations(context.locale, ['common'])),
+    ...(await customServerSideTranslations(context.locale, ['common', 'currencies'])),
   },
 });
 

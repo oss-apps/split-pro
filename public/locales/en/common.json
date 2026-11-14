@@ -88,6 +88,8 @@
     }
   },
   "actions": {
+    "reverse_direction": "Reverse direction",
+    "record_transfer_with": "Record transfer with {user}",
     "add_expense": "Add expense",
     "back": "Back",
     "cancel": "Cancel",
@@ -481,6 +483,7 @@
     },
     "total_balance": "Total balance",
     "select_currency": "Select currency",
+    "transfer_amount": "Transfer amount",
     "select_balance": "Select balance",
     "settle_up_name": "Settle up",
     "settled_up": "Settled up",

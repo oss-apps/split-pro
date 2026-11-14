@@ -34,7 +34,8 @@ export type CreateExpense = Omit<
   participants: Omit<ExpenseParticipant, 'expenseId'>[];
 };
 
-const userIdSchema = z.number().int().positive().max(2_147_483_647);
+// Seeded databases can contain persisted user and group IDs of zero.
+const userIdSchema = z.number().int().nonnegative().max(2_147_483_647);
 const MAX_EXPENSE_AMOUNT = 9_223_372_036_854_775_807n;
 export const expenseAmountSchema = z.bigint().min(-MAX_EXPENSE_AMOUNT).max(MAX_EXPENSE_AMOUNT);
 

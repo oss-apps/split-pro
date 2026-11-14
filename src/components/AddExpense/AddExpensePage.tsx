@@ -1,3 +1,4 @@
+import { TRPCClientError } from '@trpc/client';
 import { HeartHandshakeIcon, Landmark, MessageSquare, RefreshCcwDot, X } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
@@ -188,7 +189,9 @@ export const AddOrEditExpensePage: React.FC<{
       );
     } catch (error) {
       console.error(error);
-      if (error instanceof Error) {
+      if (error instanceof TRPCClientError && error.data?.zodError) {
+        toast.error(t('errors.expense_invalid_input'));
+      } else if (error instanceof Error) {
         toast.error(error.message);
       } else {
         toast.error(t('errors.expense_submission_failed'));

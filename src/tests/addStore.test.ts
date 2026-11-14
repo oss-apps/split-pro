@@ -1425,6 +1425,14 @@ describe('editing percentage expenses (#764)', () => {
 });
 
 describe('server validation of client splits', () => {
+  it('accepts persisted zero IDs from seeded databases', () => {
+    expect(createExpenseSchema.safeParse(expenseInput(0, 1, { groupId: 0 })).success).toBe(true);
+  });
+
+  it.each([-1, 0.5, 2_147_483_648])('rejects invalid account ID %s', (id) => {
+    expect(createExpenseSchema.safeParse(expenseInput(id, 1)).success).toBe(false);
+  });
+
   it.each([
     [SplitType.EQUAL, [1n, 1n, 1n]],
     [SplitType.SHARE, [1n, 2n, 3n]],

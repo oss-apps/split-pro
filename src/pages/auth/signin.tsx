@@ -48,7 +48,9 @@ const providerTypeGuard = (providerId: string): providerId is keyof typeof provi
 const emailSchema = (t: TFunction) =>
   z.object({
     email: z
-      .string({ required_error: t('errors.email_required') })
+      .string({
+        error: (issue) => (undefined === issue.input ? t('errors.email_required') : undefined),
+      })
       .email({ message: t('errors.email_invalid') }),
   });
 

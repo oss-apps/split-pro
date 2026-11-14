@@ -86,7 +86,7 @@
     "superjson": "^2.2.1",
     "vaul": "^1.1.2",
     "web-push": "^3.6.7",
-    "zod": "^3.22.4",
+    "zod": "^4.6.7",
     "zustand": "^4.5.0"
   },
   "devDependencies": {
@@ -128,7 +128,9 @@
   "packageManager": "pnpm@10.11.0",
   "pnpm": {
     "overrides": {
-      "axios": "1.20.0"
+      "axios": "1.20.0",
+      "@serwist/turbopack>zod": "4.6.7",
+      "@serwist/build>zod": "4.6.7"
     },
     "onlyBuiltDependencies": [
       "@prisma/client",

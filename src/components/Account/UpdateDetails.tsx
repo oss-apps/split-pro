@@ -75,7 +75,9 @@ const getCroppedImage = async (imageSrc: string, pixelCrop: Area) => {
 const detailsSchema = (t: TFunction) =>
   z.object({
     name: z
-      .string({ required_error: t('errors.name_required') })
+      .string({
+        error: (issue) => (undefined === issue.input ? t('errors.name_required') : undefined),
+      })
       .min(1, { message: t('errors.name_required') }),
     image: z.string().nullable().optional(),
     defaultCurrency: z.string().nullable().optional(),

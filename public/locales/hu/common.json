@@ -148,6 +148,7 @@
   },
   "balance_summary": {
     "friend_owes_you": "{friend} tartozik neked {amount}",
+    "member_count": "{count, plural, =1 {# tag} other {# tag}}",
     "more": "{count, plural, one {# további egyenleg} other {# további egyenleg}}",
     "you_owe_friend": "Tartozol {friend} részére {amount}"
   },
@@ -308,7 +309,9 @@
       "are_settled_up": "kiegyenlítve",
       "is_settled_up": "kiegyenlítve",
       "lent": "{actor, select, you {Kölcsönadtál} other {{person} kölcsönadott}}",
+      "lent_amount": "{actor, select, you {Kölcsönadtál <amount/>} other {<person/> kölcsönadott <amount/>}}",
       "owes": "{actor, select, you {Tartozol} other {{person} tartozik}}",
+      "owes_amount": "{actor, select, you {Tartozásod <amount/>} other {<person/> tartozása <amount/>}}",
       "press_balance_info": "Nyomj az egyéni egyenlegre az elszámolás indításához",
       "settled": "{actor, select, you {Minden számlád rendezve van} other {{person} elszámolt}}"
     },
@@ -519,6 +522,7 @@
     "deleted_by": "Törölte",
     "edited_by": "Szerkesztette",
     "expense": {
+      "fetch_rate_date": "Árfolyam dátuma",
       "for": "itt",
       "from": "tőle",
       "paid_by": "Fizette",

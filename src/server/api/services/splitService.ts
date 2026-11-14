@@ -401,6 +401,20 @@ export async function editExpense(
     }
     // If cronExpression === currentSchedule, no action needed
   }
+  if (!expense.recurrence && cronExpression) {
+    const schedule = getRecurrenceSchedule(cronExpression);
+    const command = `SELECT duplicate_expense_with_participants('${expenseId}'::UUID);`;
+    operations.push(db.$executeRaw`
+      WITH recurrence AS (
+        INSERT INTO "ExpenseRecurrence" ("jobId", "notified")
+        SELECT cron.schedule(${expenseId}, ${schedule}, ${command}), true
+        FROM "Expense" WHERE id = ${expenseId}::uuid AND "recurrenceId" IS NULL
+        RETURNING id
+      )
+      UPDATE "Expense" SET "recurrenceId" = recurrence.id
+      FROM recurrence WHERE "Expense".id = ${expenseId}::uuid
+    `);
+  }
   // For derived expenses, cronExpression is ignored entirely
 
   try {

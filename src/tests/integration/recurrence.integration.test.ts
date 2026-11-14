@@ -6,6 +6,30 @@ import { testScenario } from './factories';
 import { callerFor } from './trpc';
 
 describe('recurrence lifecycle', () => {
+  it('turns an existing ordinary expense into a recurring template when edited', async () => {
+    const { owner, input } = await testScenario();
+    const caller = callerFor(owner.id);
+    const [expense] = await caller.expense.addOrEditExpense(input);
+    await caller.expense.addOrEditExpense({
+      ...input,
+      expenseId: expense!.id,
+      cronExpression: '0 0 1 1 *',
+    });
+    const saved = await caller.expense.getExpenseDetails({ expenseId: expense!.id });
+    expect(saved?.recurrence?.job.schedule).toBe('0 0 1 1 *');
+    expect(saved?.recurrence?.job.command).toContain(expense!.id);
+    const activity = await caller.expense.getAllExpenses({});
+    expect(activity.items.find((item) => item.expenseId === expense!.id)?.expense).toMatchObject({
+      recurrenceId: saved?.recurrence?.id,
+      updatedBy: owner.id,
+    });
+    expect(await db.expense.count()).toBe(1);
+    expect(await db.expenseRecurrence.count()).toBe(1);
+    await caller.expense.deleteExpense({ expenseId: expense!.id });
+    expect(await db.expenseRecurrence.count()).toBe(0);
+    expect(await db.job.count()).toBe(0);
+  });
+
   it('duplicates participants and balances, edits the schedule, and stops only when the template is deleted', async () => {
     const { owner, member, input, group } = await testScenario();
     const caller = callerFor(owner.id);

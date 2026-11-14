@@ -256,6 +256,14 @@ const AddPage: NextPageWithUser<{
             enableSendingInvites={enableSendingInvites}
             expenseId={parsedExpenseId}
             bankConnectionEnabled={bankConnectionEnabled}
+            recurrence={
+              expenseQuery.data?.recurrence
+                ? {
+                    id: expenseQuery.data.recurrence.id,
+                    schedule: expenseQuery.data.recurrence.job.schedule,
+                  }
+                : undefined
+            }
           />
         )}
       </MainLayout>

@@ -1,4 +1,7 @@
-const createdExpenses: { amount: bigint; expenseParticipants: { create: { userId: number; amount: bigint }[] } }[] = [];
+const createdExpenses: {
+  amount: bigint;
+  expenseParticipants: { create: { userId: number; amount: bigint }[] };
+}[] = [];
 
 jest.mock('~/server/db', () => ({
   db: {

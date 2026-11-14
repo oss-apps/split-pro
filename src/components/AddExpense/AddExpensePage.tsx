@@ -76,7 +76,10 @@ export const AddOrEditExpensePage: React.FC<{
     setSingleTransaction,
   } = useAddExpenseStore((s) => s.actions);
 
-  const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
+  const apiUtils = api.useUtils();
+  const addExpenseMutation = api.expense.addOrEditExpense.useMutation({
+    onSuccess: () => apiUtils.expense.invalidate(),
+  });
   const updateProfile = api.user.updateUserDetail.useMutation();
   const { update } = useSession();
 
@@ -174,14 +177,17 @@ export const AddOrEditExpensePage: React.FC<{
                   navPromise = async () => router.back();
                 }
 
-                navPromise().catch(console.error);
-                update((session: any) => ({
-                  ...session,
-                  user: {
-                    ...(session?.user ?? {}),
-                    currency,
-                  },
-                })).catch(console.error);
+                navPromise()
+                  .then(() =>
+                    update((session: any) => ({
+                      ...session,
+                      user: {
+                        ...(session?.user ?? {}),
+                        currency,
+                      },
+                    })),
+                  )
+                  .catch(console.error);
               }
             }
           },

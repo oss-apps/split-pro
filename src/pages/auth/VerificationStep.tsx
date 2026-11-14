@@ -13,7 +13,9 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '~/components/ui/input-otp
 const otpSchema = (t: TFunction) =>
   z.object({
     otp: z
-      .string({ required_error: t('errors.otp_required') })
+      .string({
+        error: (issue) => (undefined === issue.input ? t('errors.otp_required') : undefined),
+      })
       .length(5, { message: t('errors.otp_invalid') }),
   });
 

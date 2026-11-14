@@ -1,5 +1,5 @@
-ARG ALPINE_VERSION=3.21
-ARG NODE_VERSION=22.16.0
+ARG ALPINE_VERSION=3.24
+ARG NODE_VERSION=22.23.5
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS base
 
@@ -18,7 +18,7 @@ RUN apk update && apk add --no-cache libc6-compat
 
 WORKDIR /app
 RUN npm i -g corepack@latest && corepack enable
-COPY package.json pnpm-lock.yaml prisma/ ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml prisma/ ./
 
 RUN pnpm install --frozen-lockfile
 

@@ -18,7 +18,7 @@ RUN apk update && apk add --no-cache libc6-compat
 
 WORKDIR /app
 RUN npm i -g corepack@latest && corepack enable
-COPY package.json pnpm-lock.yaml prisma/ ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml prisma/ ./
 
 RUN pnpm install --frozen-lockfile
 

@@ -21,19 +21,27 @@
           postgres = pkgs.postgresql_18.withPackages (extensions: [ extensions.pg_cron ]);
           pnpm = pkgs.stdenvNoCC.mkDerivation {
             pname = "pnpm";
-            version = "10.11.0";
+            version = "12.18.0";
             src = pkgs.fetchurl {
-              url = "https://registry.npmjs.org/pnpm/-/pnpm-10.11.0.tgz";
-              hash = "sha256-pp6csHfaQZ1H0Y8d1S4gckWynKxuB2rO2+uL47Gme9c=";
+              url = "https://registry.npmjs.org/@pnpm/exe.linux-${
+                if system == "x86_64-linux" then "x64" else "arm64"
+              }/-/exe.linux-${if system == "x86_64-linux" then "x64" else "arm64"}-12.18.0.tgz";
+              hash =
+                if system == "x86_64-linux" then
+                  "sha512-OJ+X2wcraldCwj75pCIerWARQSRpdfj0eBTs/2ODyhfeW46ylOnjTIE/GKra6Mn6E72/gBmXS8igrUioa+F9fQ=="
+                else
+                  "sha512-2dpyVBCHT+FfpuQh9i+7MXAqNWYLCvD5vYr5p6Eimxoga8USLnjbUgyj72AOrO0hjc5ri3TEFP3jiyBHjkSZpQ==";
+            };
+            payload = pkgs.fetchurl {
+              url = "https://registry.npmjs.org/pnpm/-/pnpm-12.18.0.tgz";
+              hash = "sha512-nXiC1dyCFH7PxOBiqjSDTgrQKWcQoYN6ERWuASEn02txCeMhrBWYod0KZVl2gbHpmRfhLtDXSerpEYeUM2O+sw==";
             };
             nativeBuildInputs = [ pkgs.makeWrapper ];
             installPhase = ''
-              mkdir -p "$out/lib/pnpm" "$out/bin"
-              cp -r . "$out/lib/pnpm/"
-              makeWrapper ${node}/bin/node "$out/bin/pnpm" \
-                --add-flags "$out/lib/pnpm/bin/pnpm.cjs"
-              makeWrapper ${node}/bin/node "$out/bin/pnpx" \
-                --add-flags "$out/lib/pnpm/bin/pnpx.cjs"
+              mkdir -p "$out/bin"
+              tar -xzf "$payload" -C "$out/bin" --strip-components=1
+              install -m755 pnpm "$out/bin/pnpm"
+              makeWrapper "$out/bin/pnpm" "$out/bin/pnpx" --add-flags dlx
             '';
           };
           # npm downloads standard Linux binaries (Prisma, SWC, tsc, oxlint, etc.).

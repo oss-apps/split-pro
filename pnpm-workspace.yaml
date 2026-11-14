@@ -1,0 +1,20 @@
+overrides:
+  axios: 1.20.0
+  '@serwist/turbopack>zod': 4.6.7
+  '@serwist/build>zod': 4.6.7
+  '@jest/reporters>glob': 14.0.6
+  'test-exclude>glob': 14.0.6
+  'jest-config>glob': 14.0.6
+  'test-exclude>minimatch': 11.0.8
+
+allowBuilds:
+  '@prisma/client': true
+  '@prisma/engines': true
+  '@tailwindcss/oxide': true
+  core-js: true
+  esbuild: true
+  prisma: true
+  sharp: true
+  unrs-resolver: true
+  '@parcel/watcher': true
+  "@swc/core": false

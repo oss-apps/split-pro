@@ -414,7 +414,11 @@ export async function editExpense(
     }
     throw error;
   }
-  sendExpensePushNotification(expenseId).catch(console.error);
+  sendExpensePushNotification(
+    expenseId,
+    currentUserId,
+    expense.expenseParticipants.map((p) => p.userId),
+  ).catch(console.error);
   return { id: expenseId }; // Return the updated expense
 }
 

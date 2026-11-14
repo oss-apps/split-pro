@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { Prisma, SplitType, type User } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
@@ -72,76 +73,42 @@ export async function createExpense(
     delete conversionFrom.create.participants;
   }
 
-  // Pre-generate UUID and create cron job if recurring (before transaction)
-  let expenseId: string | undefined = undefined;
-  let jobId: bigint | undefined = undefined;
+  const createdExpense = await db.$transaction(async (tx) => {
+    const expenseId = randomUUID();
+    const jobId = cronExpression
+      ? (await createRecurringExpenseJob(expenseId, cronExpression, tx))[0].schedule
+      : undefined;
+    const recurrence =
+      undefined === jobId ? undefined : await tx.expenseRecurrence.create({ data: { jobId } });
 
-  if (cronExpression) {
-    const [{ gen_random_uuid }] = await db.$queryRaw<[{ gen_random_uuid: string }]>`
-      SELECT gen_random_uuid()::text as gen_random_uuid
-    `;
-    expenseId = gen_random_uuid;
-
-    const [{ schedule }] = await createRecurringExpenseJob(expenseId, cronExpression);
-    jobId = schedule;
-  }
-
-  const createExpenseOperation = db.expense.create({
-    data: {
-      ...(expenseId && { id: expenseId }),
-      groupId,
-      paidBy,
-      name,
-      category,
-      amount,
-      splitType,
-      currency,
-      expenseParticipants: {
-        create: nonZeroParticipants,
+    return tx.expense.create({
+      data: {
+        id: expenseId,
+        groupId,
+        paidBy,
+        name,
+        category,
+        amount,
+        splitType,
+        currency,
+        expenseParticipants: {
+          create: nonZeroParticipants,
+        },
+        fileKey,
+        addedBy: currentUserId,
+        expenseDate,
+        transactionId,
+        conversionFrom,
+        recurrenceId: recurrence?.id,
+        expenseNotes: initialComment?.trim()
+          ? { create: { note: initialComment.trim(), createdById: currentUserId } }
+          : undefined,
       },
-      fileKey,
-      addedBy: currentUserId,
-      expenseDate,
-      transactionId,
-      conversionFrom,
-      expenseNotes: initialComment?.trim()
-        ? { create: { note: initialComment.trim(), createdById: currentUserId } }
-        : undefined,
-    },
+    });
   });
 
-  try {
-    const [createdExpense] = await db.$transaction([
-      createExpenseOperation,
-      // Link recurrence to expense if we created a cron job
-      ...(expenseId && jobId
-        ? [
-            db.expenseRecurrence.create({
-              data: {
-                expense: {
-                  connect: { id: expenseId },
-                },
-                job: {
-                  connect: { jobid: jobId },
-                },
-              },
-            }),
-          ]
-        : []),
-    ]);
-    if (!createdExpense) {
-      throw new Error('Expense creation failed');
-    }
-
-    sendExpensePushNotification(createdExpense.id).catch(console.error);
-    return createdExpense;
-  } catch (error) {
-    // If we created a cron job but transaction failed, clean up the cron job
-    if (expenseId) {
-      await db.$executeRaw`SELECT cron.unschedule(${expenseId})`;
-    }
-    throw error;
-  }
+  sendExpensePushNotification(createdExpense.id).catch(console.error);
+  return createdExpense;
 }
 
 export async function deleteExpense(expenseId: string, deletedBy: number) {

@@ -30,30 +30,33 @@ describe('recurrence lifecycle', () => {
     expect(await db.job.count()).toBe(0);
   });
 
-  it('rolls back the cron job and expense edit when linking the recurrence fails', async () => {
-    const { owner, input } = await testScenario();
-    const caller = callerFor(owner.id);
-    const [expense] = await caller.expense.addOrEditExpense(input);
-    const before = await accountingSnapshot();
-    await db.$executeRaw`ALTER TABLE "ExpenseRecurrence" ADD CONSTRAINT test_reject_recurrence CHECK (false)`;
-    const log = jest.spyOn(console, 'error').mockImplementation(() => undefined);
-    try {
-      await expect(
-        caller.expense.addOrEditExpense({
-          ...input,
-          expenseId: expense!.id,
-          name: 'Must roll back',
-          cronExpression: '0 0 1 1 *',
-        }),
-      ).rejects.toMatchObject({ code: 'INTERNAL_SERVER_ERROR' });
-      expect(await db.job.count()).toBe(0);
-      expect(await db.expenseRecurrence.count()).toBe(0);
-      expect(await accountingSnapshot()).toEqual(before);
-    } finally {
-      await db.$executeRaw`ALTER TABLE "ExpenseRecurrence" DROP CONSTRAINT test_reject_recurrence`;
-      log.mockRestore();
-    }
-  });
+  it.each(['create', 'edit'] as const)(
+    'rolls back the cron job and expense changes on a failed %s',
+    async (mode) => {
+      const { owner, input } = await testScenario();
+      const caller = callerFor(owner.id);
+      const [expense] = await caller.expense.addOrEditExpense(input);
+      const before = await accountingSnapshot();
+      await db.$executeRaw`ALTER TABLE "ExpenseRecurrence" ADD CONSTRAINT test_reject_recurrence CHECK (false)`;
+      const log = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+      try {
+        await expect(
+          caller.expense.addOrEditExpense({
+            ...input,
+            expenseId: 'edit' === mode ? expense!.id : undefined,
+            name: 'Must roll back',
+            cronExpression: '0 0 1 1 *',
+          }),
+        ).rejects.toMatchObject({ code: 'INTERNAL_SERVER_ERROR' });
+        expect(await db.job.count()).toBe(0);
+        expect(await db.expenseRecurrence.count()).toBe(0);
+        expect(await accountingSnapshot()).toEqual(before);
+      } finally {
+        await db.$executeRaw`ALTER TABLE "ExpenseRecurrence" DROP CONSTRAINT test_reject_recurrence`;
+        log.mockRestore();
+      }
+    },
+  );
 
   it('duplicates participants and balances, edits the schedule, and stops only when the template is deleted', async () => {
     const { owner, member, input, group } = await testScenario();

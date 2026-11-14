@@ -23,7 +23,7 @@ export const createRecurringDeleteBankCacheJob = async (
 export const createRecurringExpenseJob = (
   expenseId: string,
   cronExpression: string,
-  client: Pick<Prisma.TransactionClient, '$queryRaw'> = db,
+  client: Pick<Prisma.TransactionClient, '$queryRaw'>,
 ) => {
   const command = `SELECT duplicate_expense_with_participants('${expenseId}'::UUID);`;
   return client.$queryRaw<[{ schedule: bigint }]>`

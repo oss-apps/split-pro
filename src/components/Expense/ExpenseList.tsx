@@ -12,6 +12,7 @@ import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { cn } from '~/lib/utils';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { api } from '~/utils/api';
+import { RecurringExpenseIndicator } from './RecurringExpenseIndicator';
 import { Separator } from '../ui/separator';
 import { BalanceDateContext } from '~/contexts/BalanceDateContext';
 
@@ -73,7 +74,7 @@ export const ExpenseList: React.FC<{
             <Link
               href={`/${isGroup ? 'groups' : 'balances'}/${contactId}/expenses/${e.id}`}
               className={cn(
-                'flex items-center justify-between',
+                'group/expense flex items-center justify-between',
                 isFirstOfMonth ? 'pb-2' : 'py-2',
                 isFuture && 'opacity-50 grayscale',
               )}
@@ -118,6 +119,11 @@ const Expense: ExpenseComponent = ({ e, userId }) => {
       <div className="flex min-w-0 items-center gap-4">
         <div className="inline-block w-6 shrink-0 text-center text-xs text-gray-500">
           {toUIDate(e.expenseDate)}
+          {null !== e.recurrenceId && (
+            <span className="mt-1 flex justify-center">
+              <RecurringExpenseIndicator />
+            </span>
+          )}
         </div>
         <CategoryIcon category={e.category} className="size-5 shrink-0 text-gray-400" />
         <div className="min-w-0 pe-1">
@@ -165,6 +171,11 @@ const Settlement: ExpenseComponent = ({ e, userId }) => {
     <div className="flex items-center gap-4">
       <div className="inline-block w-6 text-center text-xs text-gray-500">
         {toUIDate(e.expenseDate)}
+        {null !== e.recurrenceId && (
+          <span className="mt-1 flex justify-center">
+            <RecurringExpenseIndicator />
+          </span>
+        )}
       </div>
       <SettleupIcon className="size-5 shrink-0 text-gray-400" />
       <div className="min-w-0">
@@ -203,6 +214,11 @@ const CurrencyConversion: ExpenseComponent = ({ e, userId }) => {
     <div className="flex min-w-0 items-center gap-4">
       <div className="inline-block w-6 shrink-0 text-center text-xs text-gray-500">
         {toUIDate(e.expenseDate)}
+        {null !== e.recurrenceId && (
+          <span className="mt-1 flex justify-center">
+            <RecurringExpenseIndicator />
+          </span>
+        )}
       </div>
       <CurrencyConversionIcon className="size-5 shrink-0 text-gray-400" />
       <div className="min-w-0">

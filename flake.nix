@@ -1,7 +1,7 @@
 {
   description = "SplitPro development environment";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
   outputs =
     { nixpkgs, ... }:
@@ -76,13 +76,13 @@
               p.libdrm
               p.expat
               p.libxkbcommon
-              p.xorg.libX11
-              p.xorg.libXcomposite
-              p.xorg.libXdamage
-              p.xorg.libXext
-              p.xorg.libXfixes
-              p.xorg.libXrandr
-              p.xorg.libxcb
+              p.libx11
+              p.libxcomposite
+              p.libxdamage
+              p.libxext
+              p.libxfixes
+              p.libxrandr
+              p.libxcb
               p.mesa
               p.libgbm
               p.udev
@@ -130,7 +130,7 @@
               postgres
               pkgs.git
               pkgs.openssl
-              pkgs.nixfmt-rfc-style
+              pkgs.nixfmt
               pkgs.dejavu_fonts
             ];
             SPLITPRO_NATIVE_POSTGRES = "1";

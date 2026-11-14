@@ -8,6 +8,8 @@ import {
   initSplitShares,
   useAddExpenseStore,
 } from '~/store/addStore';
+import { createExpenseSchema } from '~/types/expense.types';
+import { expenseInput } from '~/tests/helpers/databaseFactories';
 import { shuffleArray } from '~/utils/array';
 import { getCurrencyHelpers } from '~/utils/numbers';
 
@@ -1420,4 +1422,43 @@ describe('editing percentage expenses (#764)', () => {
       useAddExpenseStore.getState().participants.map((participant) => participant.amount),
     ).toEqual(savedBalances);
   });
+});
+
+describe('server validation of client splits', () => {
+  it.each([
+    [SplitType.EQUAL, [1n, 1n, 1n]],
+    [SplitType.SHARE, [1n, 2n, 3n]],
+    [SplitType.PERCENTAGE, [3333n, 3333n, 3334n]],
+    [SplitType.EXACT, [34n, 33n, 33n]],
+    [SplitType.ADJUSTMENT, [1n, 2n, 3n]],
+  ] as const)(
+    'accepts rounded %s splits and refunds produced by the client',
+    (splitType, shares) => {
+      const participants = createParticipants([user1, user2, user3]);
+      const result = calculateParticipantSplit({
+        amount: 100n,
+        participants,
+        splitType,
+        splitShares: createSplitShares(participants, splitType, [...shares]),
+        paidBy: user1,
+        expenseDate: new Date('2024-01-01'),
+        isNegative: false,
+      });
+      expect(result.canSplitScreenClosed).toBe(true);
+      [1n, -1n].forEach((sign) => {
+        expect(
+          createExpenseSchema.safeParse(
+            expenseInput(user1.id, user2.id, {
+              amount: 100n * sign,
+              splitType,
+              participants: result.participants.map((p) => ({
+                userId: p.id,
+                amount: (p.amount ?? 0n) * sign,
+              })),
+            }),
+          ).success,
+        ).toBe(true);
+      });
+    },
+  );
 });

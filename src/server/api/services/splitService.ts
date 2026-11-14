@@ -198,18 +198,13 @@ export async function deleteExpense(expenseId: string, deletedBy: number) {
   sendExpensePushNotification(expenseId).catch(console.error);
 }
 
-/**
- * Checks the payer and participants when an ungrouped expense is assigned to a group. Callers run
- * validateExpenseWritePermission first, which already rejects changing a grouped expense's group
- * and checks that the target group exists, is not archived and has the actor as a member.
- */
-export async function assertExpenseGroupReassignment(
-  storedGroupId: number | null,
+// Call after checking the actor's permission to write to the group.
+export async function assertExpenseGroupMembers(
   groupId: number | null,
   paidBy: number,
   participantUserIds: number[],
 ) {
-  if (null !== storedGroupId || null === groupId) {
+  if (null === groupId) {
     return;
   }
 
@@ -289,6 +284,40 @@ export async function editExpense(
     : null;
   const isTemplate = templateId === expenseId;
 
+  const storedParticipants = new Map(
+    expense.expenseParticipants.map((participant) => [participant.userId, participant.amount]),
+  );
+  const metadataOnly =
+    !conversionToParams &&
+    groupId === expense.groupId &&
+    paidBy === expense.paidBy &&
+    amount === expense.amount &&
+    currency === expense.currency &&
+    splitType === expense.splitType &&
+    (!expenseDate || expenseDate.getTime() === expense.expenseDate.getTime()) &&
+    (isTemplate
+      ? Boolean(
+          cronExpression &&
+          getRecurrenceSchedule(cronExpression) === expense.recurrence?.job?.schedule,
+        )
+      : !cronExpression) &&
+    participants.filter((p) => 0n !== p.amount).length ===
+      expense.expenseParticipants.filter((p) => 0n !== p.amount).length &&
+    participants.every(
+      (p) =>
+        (storedParticipants.has(p.userId) || p.userId === expense.paidBy) &&
+        p.amount === (storedParticipants.get(p.userId) ?? 0n),
+    );
+
+  // Historical members may remain on settled expenses, but cannot take on new obligations.
+  if (!conversionToParams && !metadataOnly) {
+    await assertExpenseGroupMembers(
+      groupId,
+      paidBy,
+      participants.map((p) => p.userId),
+    );
+  }
+
   const operations = [];
 
   // Delete existing participants
@@ -304,7 +333,12 @@ export async function editExpense(
   operations.push(
     db.expense.update({
       // Write-time check: a concurrent edit may have grouped the expense after validation.
-      where: { id: expenseId, OR: [{ groupId: null }, { groupId }] },
+      where: {
+        id: expenseId,
+        OR: [{ groupId: null }, { groupId }],
+        // Do not restore old balances if another edit changed them after the comparison.
+        ...(metadataOnly ? { updatedAt: expense.updatedAt } : {}),
+      },
       data: {
         paidBy,
         groupId,

@@ -318,107 +318,84 @@ export async function editExpense(
     );
   }
 
-  const operations = [];
-
-  // Delete existing participants
-  operations.push(
-    db.expenseParticipant.deleteMany({
-      where: {
-        expenseId: expense.conversionToId ? { in: [expenseId, expense.conversionToId] } : expenseId,
-      },
-    }),
-  );
-
-  // Update expense with new details and create new participants
-  operations.push(
-    db.expense.update({
-      // Write-time check: a concurrent edit may have grouped the expense after validation.
-      where: {
-        id: expenseId,
-        OR: [{ groupId: null }, { groupId }],
-        // Do not restore old balances if another edit changed them after the comparison.
-        ...(metadataOnly ? { updatedAt: expense.updatedAt } : {}),
-      },
-      data: {
-        paidBy,
-        groupId,
-        name,
-        category,
-        amount,
-        splitType,
-        currency,
-        expenseParticipants: {
-          create: participants,
-        },
-        fileKey,
-        transactionId,
-        expenseDate,
-        updatedBy: currentUserId,
-      },
-    }),
-  );
-  if (conversionToParams) {
-    if (!expense.conversionToId) {
-      throw new Error('Conversion to expense not found for editing');
-    }
-    const { participants: toParticipants, ...toExpenseData } = conversionToParams;
-
-    operations.push(
-      db.expense.update({
-        // The target can be grouped on its own, so it gets the same write-time check.
+  try {
+    await db.$transaction(async (tx) => {
+      await tx.expenseParticipant.deleteMany({
         where: {
-          id: expense.conversionToId,
-          OR: [{ groupId: null }, { groupId: toExpenseData.groupId }],
+          expenseId: expense.conversionToId
+            ? { in: [expenseId, expense.conversionToId] }
+            : expenseId,
+        },
+      });
+
+      const updatedExpense = await tx.expense.update({
+        // Write-time check: a concurrent edit may have grouped the expense after validation.
+        where: {
+          id: expenseId,
+          OR: [{ groupId: null }, { groupId }],
+          // Do not restore old balances if another edit changed them after the comparison.
+          ...(metadataOnly ? { updatedAt: expense.updatedAt } : {}),
         },
         data: {
-          ...toExpenseData,
-          expenseParticipants: {
-            create: toParticipants,
-          },
+          paidBy,
+          groupId,
+          name,
+          category,
+          amount,
+          splitType,
+          currency,
+          expenseParticipants: { create: participants },
+          fileKey,
+          transactionId,
+          expenseDate,
           updatedBy: currentUserId,
         },
-      }),
-    );
-  }
+      });
 
-  // Handle recurrence changes only for template expenses
-  if (isTemplate && expense.recurrence?.job) {
-    const currentSchedule = expense.recurrence.job.schedule;
+      if (conversionToParams) {
+        if (!expense.conversionToId) {
+          throw new Error('Conversion to expense not found for editing');
+        }
+        const { participants: toParticipants, ...toExpenseData } = conversionToParams;
+        await tx.expense.update({
+          // The target can be grouped on its own, so it gets the same write-time check.
+          where: {
+            id: expense.conversionToId,
+            OR: [{ groupId: null }, { groupId: toExpenseData.groupId }],
+          },
+          data: {
+            ...toExpenseData,
+            expenseParticipants: { create: toParticipants },
+            updatedBy: currentUserId,
+          },
+        });
+      }
 
-    if (cronExpression && cronExpression !== currentSchedule) {
-      // Schedule changed - update the cron job
-      operations.push(
-        db.$executeRaw`SELECT cron.alter_job(${expense.recurrence.job.jobid}, schedule := ${getRecurrenceSchedule(cronExpression)})`,
-      );
-    } else if (!cronExpression) {
-      // Recurrence removed - unschedule and delete recurrence record
-      operations.push(db.$executeRaw`SELECT cron.unschedule(${expense.recurrence.job.jobname})`);
-      operations.push(
-        db.expenseRecurrence.delete({
-          where: { id: expense.recurrence.id },
-        }),
-      );
-    }
-    // If cronExpression === currentSchedule, no action needed
-  }
-  if (!expense.recurrence && cronExpression) {
-    const schedule = getRecurrenceSchedule(cronExpression);
-    const command = `SELECT duplicate_expense_with_participants('${expenseId}'::UUID);`;
-    operations.push(db.$executeRaw`
-      WITH recurrence AS (
-        INSERT INTO "ExpenseRecurrence" ("jobId", "notified")
-        SELECT cron.schedule(${expenseId}, ${schedule}, ${command}), true
-        FROM "Expense" WHERE id = ${expenseId}::uuid AND "recurrenceId" IS NULL
-        RETURNING id
-      )
-      UPDATE "Expense" SET "recurrenceId" = recurrence.id
-      FROM recurrence WHERE "Expense".id = ${expenseId}::uuid
-    `);
-  }
-  // For derived expenses, cronExpression is ignored entirely
+      // Only template edits change an existing recurrence; derived edits leave it alone.
+      if (isTemplate && expense.recurrence?.job) {
+        const currentSchedule = expense.recurrence.job.schedule;
+        if (cronExpression && cronExpression !== currentSchedule) {
+          await tx.$executeRaw`SELECT cron.alter_job(${expense.recurrence.job.jobid}, schedule := ${getRecurrenceSchedule(cronExpression)})`;
+        } else if (!cronExpression) {
+          await tx.$executeRaw`SELECT cron.unschedule(${expense.recurrence.job.jobname})`;
+          await tx.expenseRecurrence.delete({ where: { id: expense.recurrence.id } });
+        }
+      }
 
-  try {
-    await db.$transaction(operations);
+      // The update holds the expense's row lock and returns its current recurrence ID.
+      // Concurrent edits must not create a second recurrence from a stale read.
+      if (null === updatedExpense.recurrenceId && cronExpression && !expense.recurrence) {
+        const [{ schedule: jobId }] = await createRecurringExpenseJob(
+          expenseId,
+          cronExpression,
+          tx,
+        );
+        await tx.expense.update({
+          where: { id: expenseId },
+          data: { recurrence: { create: { jobId } } },
+        });
+      }
+    });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && 'P2025' === error.code) {
       throw new TRPCError({

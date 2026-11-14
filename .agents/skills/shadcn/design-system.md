@@ -215,14 +215,14 @@ npm install @fontsource-variable/inter @fontsource-variable/cormorant-garamond @
 ```
 
 ```css
-@import "@fontsource-variable/inter";
-@import "@fontsource-variable/cormorant-garamond";
-@import "@fontsource-variable/jetbrains-mono";
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/cormorant-garamond';
+@import '@fontsource-variable/jetbrains-mono';
 
 @theme inline {
-  --font-sans: "Inter Variable", -apple-system, system-ui, sans-serif;
-  --font-serif: "Cormorant Garamond Variable", Garamond, serif;
-  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+  --font-sans: 'Inter Variable', -apple-system, system-ui, sans-serif;
+  --font-serif: 'Cormorant Garamond Variable', Garamond, serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
   --font-heading: var(--font-sans);
 }
 ```
@@ -269,12 +269,12 @@ Match the documented focus treatment:
 :is(
   button,
   a[href],
-  [role="button"],
-  [role="tab"],
-  [role="checkbox"],
-  [role="radio"],
-  [role="switch"],
-  [role="slider"]
+  [role='button'],
+  [role='tab'],
+  [role='checkbox'],
+  [role='radio'],
+  [role='switch'],
+  [role='slider']
 ):focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;

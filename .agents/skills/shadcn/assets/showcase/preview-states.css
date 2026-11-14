@@ -6,7 +6,7 @@
       @slot;
     }
   }
-  &[data-preview~="hover"] {
+  &[data-preview~='hover'] {
     @slot;
   }
 }

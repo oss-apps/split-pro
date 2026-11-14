@@ -11,6 +11,7 @@ overrides:
   '@jest/reporters>glob': 14.0.6
   test-exclude>glob: 14.0.6
   jest-config>glob: 14.0.6
+  test-exclude>minimatch: 11.0.8
 
 importers:
 
@@ -10029,7 +10030,7 @@ snapshots:
     dependencies:
       '@istanbuljs/schema': 0.1.3
       glob: 14.0.6
-      minimatch: 10.2.6
+      minimatch: 11.0.8
 
   tinyexec@1.0.4: {}
 

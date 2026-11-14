@@ -133,7 +133,8 @@
       "@serwist/build>zod": "4.6.7",
       "@jest/reporters>glob": "14.0.6",
       "test-exclude>glob": "14.0.6",
-      "jest-config>glob": "14.0.6"
+      "jest-config>glob": "14.0.6",
+      "test-exclude>minimatch": "11.0.8"
     },
     "onlyBuiltDependencies": [
       "@prisma/client",

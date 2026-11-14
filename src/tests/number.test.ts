@@ -2,6 +2,21 @@
 import { currencyConversion, getCurrencyHelpers } from '../utils/numbers';
 
 describe('getCurrencyHelpers', () => {
+  describe('expressionResultToBigInt', () => {
+    it('converts exact expression results to minor currency units', () => {
+      const { expressionResultToBigInt } = getCurrencyHelpers({ currency: 'USD' });
+
+      expect(expressionResultToBigInt({ numerator: 2739n, denominator: 100n })).toBe(2739n);
+      expect(expressionResultToBigInt({ numerator: 1n, denominator: 3n })).toBe(33n);
+    });
+
+    it('rounds results using the currency precision', () => {
+      const { expressionResultToBigInt } = getCurrencyHelpers({ currency: 'JPY' });
+
+      expect(expressionResultToBigInt({ numerator: 7n, denominator: 2n })).toBe(4n);
+    });
+  });
+
   describe('toUIString', () => {
     describe('en-US locale', () => {
       const locale = 'en-US';

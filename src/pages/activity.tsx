@@ -13,6 +13,7 @@ import { type TFunction } from 'next-i18next';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { withI18nStaticProps } from '~/utils/i18n/server';
 import { RefreshCcwDot } from 'lucide-react';
+import { RecurringExpenseIndicator } from '~/components/Expense/RecurringExpenseIndicator';
 import { Button } from '~/components/ui/button';
 import React from 'react';
 
@@ -139,7 +140,10 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
                     toUIString,
                     !!e.expense.deletedBy,
                   )}
-                  <p className="text-xs text-gray-500">{toUIDate(e.expense.expenseDate)}</p>
+                  <p className="flex items-center gap-1 text-xs text-gray-500">
+                    {toUIDate(e.expense.expenseDate)}
+                    {null !== e.expense.recurrenceId && <RecurringExpenseIndicator />}
+                  </p>
                 </div>
               </Link>
             );

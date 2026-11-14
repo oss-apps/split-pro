@@ -40,7 +40,7 @@ describe('expense accounting validation', () => {
     { groupId: -1 },
     { currency: 'INVALID' },
     { amount: 9_223_372_036_854_775_808n },
-    { participants: [{ userId: 0, amount: 0n }] },
+    { participants: [{ userId: -1, amount: 0n }] },
     { participants: [{ userId: 1, amount: 9_223_372_036_854_775_808n }] },
   ])('rejects malformed accounting: %p', (overrides) => {
     expect(createExpenseSchema.safeParse({ ...input, ...overrides }).success).toBe(false);

@@ -179,6 +179,7 @@
     "recurrence_update_failed": "Failed to update recurrence",
     "notification_request_failed": "Error requesting notification permission",
     "notification_subscribe_failed": "Cannot subscribe to notifications",
+    "expense_invalid_input": "Please check the expense details and try again.",
     "expense_submission_failed": "An unexpected error occurred while submitting the expense.",
     "expense_deletion_failed": "An unexpected error occurred while deleting the expense.",
     "friend_deletion_failed": "Failed to delete friend",

@@ -1,5 +1,13 @@
+import { SplitType } from '@prisma/client';
+
 import { type CurrencyCode, isCurrencyCode } from '~/lib/currency';
 import { BigMath, currencyConversion } from '~/utils/numbers';
+
+// Settlements and currency conversions move money between people; they aren't spending.
+export const NON_SPENDING_SPLIT_TYPES = [
+  SplitType.SETTLEMENT,
+  SplitType.CURRENCY_CONVERSION,
+] as const;
 
 export interface StatisticsExpense {
   paidBy: number;

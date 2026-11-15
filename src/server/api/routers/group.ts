@@ -2,7 +2,11 @@ import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
-import { computeMemberTotals, currenciesByUse } from '~/lib/groupStatistics';
+import {
+  NON_SPENDING_SPLIT_TYPES,
+  computeMemberTotals,
+  currenciesByUse,
+} from '~/lib/groupStatistics';
 import { simplifyDebts } from '~/lib/simplify';
 import {
   balanceProcedure,
@@ -204,10 +208,7 @@ export const groupRouter = createTRPCRouter({
       where: {
         groupId: input.groupId,
         deletedAt: null,
-        // Settlements and currency conversions move money between people; they aren't spending.
-        splitType: {
-          notIn: [SplitType.SETTLEMENT, SplitType.CURRENCY_CONVERSION],
-        },
+        splitType: { notIn: [...NON_SPENDING_SPLIT_TYPES] },
       },
     });
 
@@ -219,9 +220,7 @@ export const groupRouter = createTRPCRouter({
       where: {
         groupId: input.groupId,
         deletedAt: null,
-        splitType: {
-          notIn: [SplitType.SETTLEMENT, SplitType.CURRENCY_CONVERSION],
-        },
+        splitType: { notIn: [...NON_SPENDING_SPLIT_TYPES] },
       },
       select: {
         paidBy: true,

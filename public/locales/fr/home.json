@@ -65,14 +65,16 @@
     "subtitle_link": "open source",
     "subtitle_part1": "Une alternative",
     "subtitle_part2": "à Splitwise",
+    "subtitle_rich": "Une alternative <sourceLink>open source</sourceLink> à SplitWise.",
     "title_after_highlight": ".",
     "title_before_highlight": "Partage des dépenses avec tes potes",
     "title_highlight": "gratuitement",
-    "title_part1": "Répartissez vos dépenses entre ami⋅es"
+    "title_part1": "Répartissez vos dépenses entre ami⋅es",
+    "title_rich": "Partage tes dépenses avec tes potes <highlight>gratuitement</highlight>."
   },
   "meta": {
     "description": "SplitPro : partagez gratuitement vos dépenses entre potes",
-    "title": "SplitPro : partagez gratuitement vos dépenses entre amis"
+    "title": "SplitPro : partagez gratuitement vos dépenses entre potes"
   },
   "nav": {
     "app_name": "SplitPro",

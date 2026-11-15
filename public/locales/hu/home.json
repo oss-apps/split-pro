@@ -65,10 +65,12 @@
     "subtitle_link": "nyílt forráskódú",
     "subtitle_part1": "Egy",
     "subtitle_part2": "Splitwise alternatíva",
+    "subtitle_rich": "A SplitWise <sourceLink>nyílt forráskódú</sourceLink> alternatívája.",
     "title_after_highlight": ".",
     "title_before_highlight": "Oszd meg a kiadásaidat a barátaiddal",
     "title_highlight": "ingyenes",
-    "title_part1": "Oszd meg költségeidet a barátaiddal"
+    "title_part1": "Oszd meg költségeidet a barátaiddal",
+    "title_rich": "Oszd meg a költségeket a barátaiddal <highlight>ingyen</highlight>."
   },
   "meta": {
     "description": "SplitPro: Oszd meg költségeidet a barátaiddal ingyen",

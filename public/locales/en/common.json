@@ -340,6 +340,9 @@
     },
     "group_statistics": {
       "first_expense": "First expense",
+      "paid": "Paid",
+      "per_person": "Spending per person",
+      "share": "Share of costs",
       "title": "Group statistics",
       "total_expenses": "Total expenses"
     },

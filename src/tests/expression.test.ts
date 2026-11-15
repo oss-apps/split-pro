@@ -1,4 +1,9 @@
-import { isExpression, safeEvaluateExpression, sanitizeExpressionInput } from '../utils/expression';
+import {
+  hasDuplicateDecimalSeparator,
+  isExpression,
+  safeEvaluateExpression,
+  sanitizeExpressionInput,
+} from '../utils/expression';
 
 describe('isExpression', () => {
   it.each([
@@ -11,6 +16,19 @@ describe('isExpression', () => {
     ['(2+3)*4', true],
   ])('returns %p for %p', (input, expected) => {
     expect(isExpression(input)).toBe(expected);
+  });
+});
+
+describe('hasDuplicateDecimalSeparator', () => {
+  it.each([
+    ['1.2.3', '.', ',', true],
+    ['1.2.3+4', '.', ',', true],
+    ['(1.2.3)+4', '.', ',', true],
+    ['1.2+3.4', '.', ',', false],
+    ['1,2,3', ',', '.', true],
+    ['1,234.56', '.', ',', false],
+  ])('returns %p for %p with separators %p and %p', (input, decimal, alternative, expected) => {
+    expect(hasDuplicateDecimalSeparator(input, decimal, alternative)).toBe(expected);
   });
 });
 

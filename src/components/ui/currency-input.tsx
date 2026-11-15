@@ -1,8 +1,15 @@
 import React from 'react';
-import { Input, InputProps } from './input';
-import { cn } from '~/lib/utils';
+
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-import { isExpression, safeEvaluateExpression, sanitizeExpressionInput } from '~/utils/expression';
+import { cn } from '~/lib/utils';
+import {
+  hasDuplicateDecimalSeparator,
+  isExpression,
+  safeEvaluateExpression,
+  sanitizeExpressionInput,
+} from '~/utils/expression';
+
+import { Input, type InputProps } from './input';
 
 const CurrencyInput: React.FC<
   Omit<InputProps, 'type' | 'inputMode'> & {
@@ -34,6 +41,11 @@ const CurrencyInput: React.FC<
     expressionResultToBigInt,
     sanitizeInput,
   } = getCurrencyHelpersCached(currency);
+  const hasDuplicateDecimal = hasDuplicateDecimalSeparator(
+    strValue,
+    decimalSeparator,
+    alternativeDecimalSeparator,
+  );
 
   return (
     <Input
@@ -41,12 +53,12 @@ const CurrencyInput: React.FC<
       inputMode={allowExpressions ? 'text' : 'decimal'}
       value={strValue}
       onFocus={() => {
-        if (!allowExpressions || !isExpression(strValue)) {
+        if (!allowExpressions || (!isExpression(strValue) && !hasDuplicateDecimal)) {
           onValueChange({ strValue: parseToCleanString(strValue, allowNegative) });
         }
       }}
       onBlur={() => {
-        if (allowExpressions && isExpression(strValue)) {
+        if (allowExpressions && (isExpression(strValue) || hasDuplicateDecimal)) {
           return;
         }
 
@@ -55,6 +67,12 @@ const CurrencyInput: React.FC<
       }}
       onChange={(e) => {
         const rawValue = e.target.value;
+        if (
+          allowExpressions &&
+          hasDuplicateDecimalSeparator(rawValue, decimalSeparator, alternativeDecimalSeparator)
+        ) {
+          return onValueChange({ strValue: rawValue, bigIntValue: 0n });
+        }
         if (allowExpressions && isExpression(rawValue)) {
           const strValue = sanitizeExpressionInput(
             rawValue,

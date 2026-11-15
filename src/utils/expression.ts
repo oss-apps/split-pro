@@ -4,7 +4,36 @@ export interface ExpressionResult {
 }
 
 export const isExpression = (input: string): boolean =>
-  /[+*/()]/.test(input) || (input.length > 1 && input.slice(1).includes('-'));
+  /[+*/()]/.test(input) || (1 < input.length && input.slice(1).includes('-'));
+
+export const hasDuplicateDecimalSeparator = (
+  input: string,
+  decimalSeparator = '.',
+  alternativeDecimalSeparator = decimalSeparator === '.' ? ',' : '.',
+): boolean => {
+  const separatorsInNumber = new Set<string>();
+  let hasDuplicate = false;
+
+  input.split('').forEach((character) => {
+    if (['+', '-', '*', '/', '(', ')'].includes(character)) {
+      separatorsInNumber.clear();
+      return;
+    }
+
+    if (character !== decimalSeparator && character !== alternativeDecimalSeparator) {
+      return;
+    }
+
+    if (separatorsInNumber.has(character)) {
+      hasDuplicate = true;
+      return;
+    }
+
+    separatorsInNumber.add(character);
+  });
+
+  return hasDuplicate;
+};
 
 export const sanitizeExpressionInput = (
   input: string,
@@ -191,7 +220,7 @@ export const safeEvaluateExpression = (input: string): ExpressionResult | null =
     }
 
     const [integerPart = '', fractionPart = ''] = numStr.split('.');
-    if (numStr.split('.').length > 2) {
+    if (2 < numStr.split('.').length) {
       return null;
     }
 

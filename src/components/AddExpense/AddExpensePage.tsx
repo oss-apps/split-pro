@@ -86,10 +86,20 @@ export const AddOrEditExpensePage: React.FC<{
 
       updateProfile.mutate({ currency: newCurrency });
 
-      setPreviousCurrency(currency);
+      if (isExpression(amtStr)) {
+        const evaluated = safeEvaluateExpression(amtStr);
+        setAmount(
+          null === evaluated
+            ? 0n
+            : getCurrencyHelpersCached(newCurrency).expressionResultToBigInt(evaluated),
+        );
+        setPreviousCurrency(null);
+      } else {
+        setPreviousCurrency(currency);
+      }
       setCurrency(newCurrency);
     },
-    [currency, setCurrency, updateProfile],
+    [amtStr, currency, getCurrencyHelpersCached, setAmount, setCurrency, updateProfile],
   );
 
   const router = useRouter();

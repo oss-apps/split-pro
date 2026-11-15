@@ -21,15 +21,22 @@ describe('isExpression', () => {
 
 describe('hasDuplicateDecimalSeparator', () => {
   it.each([
-    ['1.2.3', '.', ',', true],
-    ['1.2.3+4', '.', ',', true],
-    ['(1.2.3)+4', '.', ',', true],
-    ['1.2+3.4', '.', ',', false],
-    ['1,2,3', ',', '.', true],
-    ['1,234.56', '.', ',', false],
-  ])('returns %p for %p with separators %p and %p', (input, decimal, alternative, expected) => {
-    expect(hasDuplicateDecimalSeparator(input, decimal, alternative)).toBe(expected);
-  });
+    ['1.2.3', '.', ',', '', true],
+    ['1.2.3+4', '.', ',', '', true],
+    ['(1.2.3)+4', '.', ',', '', true],
+    ['1.2+3.4', '.', ',', '', false],
+    ['1,2,3', ',', '.', '', true],
+    ['1,234.56', '.', ',', ',', false],
+    ['1,000,000', '.', ',', ',', false],
+    ['1,000,000.56', '.', ',', ',', false],
+    ['1,2,3', '.', ',', ',', true],
+    ['1.000.000,56', ',', '.', '.', false],
+  ])(
+    'returns %p for %p with separators %p, %p, and group %p',
+    (input, decimal, alternative, group, expected) => {
+      expect(hasDuplicateDecimalSeparator(input, decimal, alternative, group)).toBe(expected);
+    },
+  );
 });
 
 describe('sanitizeExpressionInput', () => {

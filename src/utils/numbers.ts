@@ -238,6 +238,7 @@ export const getCurrencyHelpers = ({
     decimalDigits,
     decimalSeparator,
     alternativeDecimalSeparator,
+    thousandSeparator,
     parseToCleanString,
     toUIString,
     format,

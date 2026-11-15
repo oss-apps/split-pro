@@ -10,29 +10,35 @@ export const hasDuplicateDecimalSeparator = (
   input: string,
   decimalSeparator = '.',
   alternativeDecimalSeparator = decimalSeparator === '.' ? ',' : '.',
+  groupSeparator = '',
 ): boolean => {
-  const separatorsInNumber = new Set<string>();
-  let hasDuplicate = false;
+  const numberTerms = input.split(/[-+*/()]/);
 
-  input.split('').forEach((character) => {
-    if (['+', '-', '*', '/', '(', ')'].includes(character)) {
-      separatorsInNumber.clear();
-      return;
+  return numberTerms.some((numberTerm) => {
+    const decimalParts = numberTerm.split(decimalSeparator);
+    if (2 < decimalParts.length) {
+      return true;
     }
 
-    if (character !== decimalSeparator && character !== alternativeDecimalSeparator) {
-      return;
+    const [integerPart = '', fractionalPart = ''] = decimalParts;
+    const alternativeCount = numberTerm.split(alternativeDecimalSeparator).length - 1;
+    if (1 >= alternativeCount) {
+      return false;
     }
 
-    if (separatorsInNumber.has(character)) {
-      hasDuplicate = true;
-      return;
+    if (alternativeDecimalSeparator !== groupSeparator || '' === groupSeparator) {
+      return true;
     }
 
-    separatorsInNumber.add(character);
+    const groups = integerPart.split(groupSeparator).map((group) => group.replace(/[^0-9]/g, ''));
+    const isGroupedInteger =
+      1 < groups.length &&
+      0 < (groups[0]?.length ?? 0) &&
+      (groups[0]?.length ?? 0) < 4 &&
+      groups.slice(1).every((group) => 3 === group.length);
+
+    return !isGroupedInteger || fractionalPart.includes(alternativeDecimalSeparator);
   });
-
-  return hasDuplicate;
 };
 
 export const sanitizeExpressionInput = (

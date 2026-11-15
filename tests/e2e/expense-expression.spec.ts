@@ -67,3 +67,27 @@ test('recalculates participant splits when changing currency on an expression', 
     ]),
   );
 });
+
+test('keeps grouped amounts editable in the expression-enabled input', async ({
+  page,
+  scenario,
+  uniqueName,
+  db,
+}) => {
+  await page.goto(`/en/add?groupId=${scenario.group.id}`);
+  await page.getByPlaceholder(/description/i).fill(`${uniqueName} grouped amount`);
+
+  const amountInput = page.getByPlaceholder(/amount/i);
+  await amountInput.fill('1000000');
+  await page.getByPlaceholder(/description/i).focus();
+  await expect(amountInput).toHaveValue('1,000,000');
+  await amountInput.focus();
+  await expect(amountInput).toHaveValue('1000000');
+
+  await amountInput.fill('1000000+1');
+  await page.getByRole('button', { name: 'Save', exact: true }).last().click();
+  await expect(page).toHaveURL(/\/groups\/\d+\/expenses\//);
+
+  const expense = await db.expense.findFirstOrThrow({ where: { groupId: scenario.group.id } });
+  expect(expense.amount).toBe(100_000_100n);
+});

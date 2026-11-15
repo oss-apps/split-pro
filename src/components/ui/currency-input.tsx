@@ -35,6 +35,7 @@ const CurrencyInput: React.FC<
     decimalDigits,
     decimalSeparator,
     alternativeDecimalSeparator,
+    thousandSeparator,
     format,
     parseToCleanString,
     toSafeBigInt,
@@ -45,6 +46,7 @@ const CurrencyInput: React.FC<
     strValue,
     decimalSeparator,
     alternativeDecimalSeparator,
+    thousandSeparator,
   );
 
   return (
@@ -69,7 +71,12 @@ const CurrencyInput: React.FC<
         const rawValue = e.target.value;
         if (
           allowExpressions &&
-          hasDuplicateDecimalSeparator(rawValue, decimalSeparator, alternativeDecimalSeparator)
+          hasDuplicateDecimalSeparator(
+            rawValue,
+            decimalSeparator,
+            alternativeDecimalSeparator,
+            thousandSeparator,
+          )
         ) {
           return onValueChange({ strValue: rawValue, bigIntValue: 0n });
         }

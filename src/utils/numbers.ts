@@ -279,9 +279,12 @@ export function currencyConversion({
  *
  * Intl has no direct option for this. ECMA-402 applies the approximately sign when both ends
  * of `formatRange` format to the same string, so a range of equal values always gets it.
+ * Browsers without `formatRange` (e.g. Firefox before 116) get CLDR's default sign, `~`.
  */
 export const formatApproximately = (formatter: Intl.NumberFormat, value: number) =>
-  formatter.formatRange(value, value);
+  'function' === typeof formatter.formatRange
+    ? formatter.formatRange(value, value)
+    : `~${formatter.format(value)}`;
 
 /* Format a fraction (0.25) as a localized percentage string (25%) */
 export const toUIPercentage = (

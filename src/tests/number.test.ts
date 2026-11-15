@@ -265,6 +265,14 @@ describe('formatApproximately', () => {
     const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
     expect(formatApproximately(formatter, 12.5)).toBe('~$12.50');
   });
+
+  it('should fall back to ~ when formatRange is unavailable', () => {
+    const formatter = new Intl.NumberFormat('de', { style: 'percent' });
+    // Shadow the prototype method, as in browsers without Intl.NumberFormat v3.
+    Object.defineProperty(formatter, 'formatRange', { value: undefined });
+
+    expect(formatApproximately(formatter, 0.25)).toBe(`~${formatter.format(0.25)}`);
+  });
 });
 
 describe('toUIPercentage', () => {

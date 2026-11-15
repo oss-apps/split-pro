@@ -29,6 +29,8 @@ test('records a two-member expense with exact persisted shares and debt', async 
     .click();
   await expect(page).toHaveURL(/\/groups\/\d+\/expenses\//);
   await expect(page.getByText(`${uniqueName} expense`, { exact: true })).toBeVisible();
+  await expect(page.getByText(/^You owe \$6\.17 and get back \$6\.17$/)).toBeVisible();
+  await expect(page.getByText(/^E2E Member owes \$6\.17$/)).toBeVisible();
   const expense = await db.expense.findFirstOrThrow({
     where: { groupId: scenario.group.id },
     include: { expenseParticipants: true },

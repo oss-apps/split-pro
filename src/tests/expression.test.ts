@@ -1,6 +1,7 @@
 import {
   hasDuplicateDecimalSeparator,
   isExpression,
+  removeValidGroupingSeparators,
   safeEvaluateExpression,
   sanitizeExpressionInput,
 } from '../utils/expression';
@@ -37,6 +38,18 @@ describe('hasDuplicateDecimalSeparator', () => {
       expect(hasDuplicateDecimalSeparator(input, decimal, alternative, group)).toBe(expected);
     },
   );
+});
+
+describe('removeValidGroupingSeparators', () => {
+  it.each([
+    ['1,000,000', '.', ',', '1000000'],
+    ['1,000,000.50+1,000', '.', ',', '1000000.50+1000'],
+    ['1.000.000,50+1.000', ',', '.', '1000000,50+1000'],
+    ['1,5+2', '.', ',', '1,5+2'],
+    ['1,2,3+4', '.', ',', '1,2,3+4'],
+  ])('normalizes grouped amounts %p', (input, decimalSeparator, groupSeparator, expected) => {
+    expect(removeValidGroupingSeparators(input, decimalSeparator, groupSeparator)).toBe(expected);
+  });
 });
 
 describe('sanitizeExpressionInput', () => {

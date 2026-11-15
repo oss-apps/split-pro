@@ -6,6 +6,20 @@ export interface ExpressionResult {
 export const isExpression = (input: string): boolean =>
   /[+*/()]/.test(input) || (1 < input.length && input.slice(1).includes('-'));
 
+const isValidGroupedInteger = (integerPart: string, groupSeparator: string): boolean => {
+  if ('' === groupSeparator) {
+    return false;
+  }
+
+  const groups = integerPart.split(groupSeparator).map((group) => group.replace(/[^0-9]/g, ''));
+  return (
+    1 < groups.length &&
+    0 < (groups[0]?.length ?? 0) &&
+    (groups[0]?.length ?? 0) < 4 &&
+    groups.slice(1).every((group) => 3 === group.length)
+  );
+};
+
 export const hasDuplicateDecimalSeparator = (
   input: string,
   decimalSeparator = '.',
@@ -22,23 +36,57 @@ export const hasDuplicateDecimalSeparator = (
 
     const [integerPart = '', fractionalPart = ''] = decimalParts;
     const alternativeCount = numberTerm.split(alternativeDecimalSeparator).length - 1;
-    if (1 >= alternativeCount) {
+    const validGrouping =
+      alternativeDecimalSeparator === groupSeparator &&
+      isValidGroupedInteger(integerPart, groupSeparator) &&
+      !fractionalPart.includes(groupSeparator);
+    if (validGrouping) {
       return false;
     }
 
-    if (alternativeDecimalSeparator !== groupSeparator || '' === groupSeparator) {
+    if (fractionalPart.includes(alternativeDecimalSeparator)) {
       return true;
     }
 
-    const groups = integerPart.split(groupSeparator).map((group) => group.replace(/[^0-9]/g, ''));
-    const isGroupedInteger =
-      1 < groups.length &&
-      0 < (groups[0]?.length ?? 0) &&
-      (groups[0]?.length ?? 0) < 4 &&
-      groups.slice(1).every((group) => 3 === group.length);
-
-    return !isGroupedInteger || fractionalPart.includes(alternativeDecimalSeparator);
+    return 1 < alternativeCount;
   });
+};
+
+export const removeValidGroupingSeparators = (
+  input: string,
+  decimalSeparator: string,
+  groupSeparator: string,
+): string => {
+  if ('' === groupSeparator || decimalSeparator === groupSeparator) {
+    return input;
+  }
+
+  return input
+    .split(/([-+*/()])/)
+    .map((numberTerm) => {
+      if (['+', '-', '*', '/', '(', ')'].includes(numberTerm)) {
+        return numberTerm;
+      }
+
+      const decimalParts = numberTerm.split(decimalSeparator);
+      if (2 < decimalParts.length) {
+        return numberTerm;
+      }
+
+      const [integerPart = '', fractionalPart = ''] = decimalParts;
+      if (
+        !isValidGroupedInteger(integerPart, groupSeparator) ||
+        fractionalPart.includes(groupSeparator)
+      ) {
+        return numberTerm;
+      }
+
+      const normalizedInteger = integerPart.split(groupSeparator).join('');
+      return decimalParts.length > 1
+        ? `${normalizedInteger}${decimalSeparator}${fractionalPart}`
+        : normalizedInteger;
+    })
+    .join('');
 };
 
 export const sanitizeExpressionInput = (

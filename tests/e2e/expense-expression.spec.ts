@@ -78,13 +78,20 @@ test('keeps grouped amounts editable in the expression-enabled input', async ({
   await page.getByPlaceholder(/description/i).fill(`${uniqueName} grouped amount`);
 
   const amountInput = page.getByPlaceholder(/amount/i);
-  await amountInput.fill('1000000');
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.evaluate(() => navigator.clipboard.writeText('1,000,000'));
+  await amountInput.focus();
+  await page.keyboard.press('Control+V');
+  await expect(amountInput).toHaveValue('1000000');
   await page.getByPlaceholder(/description/i).focus();
   await expect(amountInput).toHaveValue('1,000,000');
   await amountInput.focus();
   await expect(amountInput).toHaveValue('1000000');
 
-  await amountInput.fill('1000000+1');
+  await page.evaluate(() => navigator.clipboard.writeText('1,000,000+1'));
+  await page.keyboard.press('Control+A');
+  await page.keyboard.press('Control+V');
+  await expect(amountInput).toHaveValue('1000000+1');
   await page.getByRole('button', { name: 'Save', exact: true }).last().click();
   await expect(page).toHaveURL(/\/groups\/\d+\/expenses\//);
 

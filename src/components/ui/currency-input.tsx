@@ -5,6 +5,7 @@ import { cn } from '~/lib/utils';
 import {
   hasDuplicateDecimalSeparator,
   isExpression,
+  removeValidGroupingSeparators,
   safeEvaluateExpression,
   sanitizeExpressionInput,
 } from '~/utils/expression';
@@ -69,20 +70,22 @@ const CurrencyInput: React.FC<
       }}
       onChange={(e) => {
         const rawValue = e.target.value;
+        const normalizedValue = allowExpressions
+          ? removeValidGroupingSeparators(rawValue, decimalSeparator, thousandSeparator)
+          : rawValue;
         if (
           allowExpressions &&
           hasDuplicateDecimalSeparator(
-            rawValue,
+            normalizedValue,
             decimalSeparator,
             alternativeDecimalSeparator,
-            thousandSeparator,
           )
         ) {
-          return onValueChange({ strValue: rawValue, bigIntValue: 0n });
+          return onValueChange({ strValue: normalizedValue, bigIntValue: 0n });
         }
-        if (allowExpressions && isExpression(rawValue)) {
+        if (allowExpressions && isExpression(normalizedValue)) {
           const strValue = sanitizeExpressionInput(
-            rawValue,
+            normalizedValue,
             decimalDigits,
             decimalSeparator,
             alternativeDecimalSeparator,
@@ -94,7 +97,7 @@ const CurrencyInput: React.FC<
           });
         }
 
-        const strValue = sanitizeInput(rawValue, allowNegative, true);
+        const strValue = sanitizeInput(normalizedValue, allowNegative, true);
         const bigIntValue = toSafeBigInt(strValue, allowNegative);
         onValueChange({ strValue, bigIntValue });
       }}

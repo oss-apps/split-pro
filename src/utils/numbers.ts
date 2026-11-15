@@ -273,6 +273,26 @@ export function currencyConversion({
   );
 }
 
+/**
+ * Format a value with the formatter's locale-specific approximately sign
+ * (en `~25%`, de `≈25 %`, fr `≃25 %`, ja `約25%`).
+ *
+ * Intl has no direct option for this. ECMA-402 applies the approximately sign when both ends
+ * of `formatRange` format to the same string, so a range of equal values always gets it.
+ */
+export const formatApproximately = (formatter: Intl.NumberFormat, value: number) =>
+  formatter.formatRange(value, value);
+
+/* Format a fraction (0.25) as a localized percentage string (25%) */
+export const toUIPercentage = (
+  locale: string,
+  value: number,
+  { approximate = false }: { approximate?: boolean } = {},
+) => {
+  const formatter = new Intl.NumberFormat(locale, { style: 'percent', maximumFractionDigits: 0 });
+  return approximate ? formatApproximately(formatter, value) : formatter.format(value);
+};
+
 export const MAX_RATE_PRECISION = 10;
 
 export const getRatePrecision = (value: number, maxPrecision = MAX_RATE_PRECISION) => {

@@ -17,7 +17,7 @@ interface Amount {
 }
 
 const GroupMemberTotals: React.FC<GroupMemberTotalsProps> = ({ groupId, defaultCurrency }) => {
-  const { t, displayName, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { t, displayName, getCurrencyHelpersCached, toUIPercentage } = useTranslationWithUtils();
   const [ratesDate] = useState(() => new Date());
   const memberTotalsQuery = api.group.getGroupMemberTotals.useQuery(
     { groupId },
@@ -75,16 +75,7 @@ const GroupMemberTotals: React.FC<GroupMemberTotalsProps> = ({ groupId, defaultC
           </Fragment>
         ))}
         {null !== fraction ? (
-          <span>
-            (
-            {t(
-              isMultiCurrency
-                ? 'group_details.group_statistics.approximate_percentage'
-                : 'group_details.group_statistics.percentage',
-              { value: fraction },
-            )}
-            )
-          </span>
+          <span>({toUIPercentage(fraction, { approximate: isMultiCurrency })})</span>
         ) : null}
       </>
     );

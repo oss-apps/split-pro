@@ -158,7 +158,9 @@ and could restart all replicas at once.
   app procedures, shared via exported method records in the router files. When
   exposing a procedure, move it from the table above to the endpoint table.
 - `POST /api/v1/upload` is a plain Next.js route (`src/pages/api/v1/upload.ts`)
-  and documented by hand in `scripts/generate-openapi.ts`.
+  and documented by hand in `scripts/generate-openapi.ts`. It authenticates an
+  API key first and falls back to the cookie session for the app's own upload
+  UI — there is no separate internal upload route.
 - Regenerate the OpenAPI spec after changing any exposed procedure with
   `pnpm gen:openapi`. The pre-push hook fails if the committed
   `src/server/api/openapi.generated.json` is out of date, and CI checks it too.

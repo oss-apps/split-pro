@@ -13,9 +13,9 @@ const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
 
 /**
  * Store a multipart `file` upload as WebP (plus thumbnail) for the given user
- * and respond with its file key. Shared by the app route (`/api/upload`, cookie
- * session) and the public API route (`/api/v1/upload`, API key), which must
- * disable Next's body parser and authenticate the request beforehand.
+ * and respond with its file key. Serves `/api/v1/upload` (API key or cookie
+ * session), which must disable Next's body parser and authenticate the
+ * request beforehand.
  */
 export const handleUpload = async (req: NextApiRequest, res: NextApiResponse, userId: number) => {
   if (!(await fileExists(UPLOAD_DIR))) {

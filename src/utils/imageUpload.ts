@@ -28,7 +28,7 @@ export const uploadImage = async (file: File): Promise<string> => {
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch('/api/upload', {
+  const response = await fetch('/api/v1/upload', {
     method: 'POST',
     body: formData,
   });

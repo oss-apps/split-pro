@@ -206,6 +206,7 @@
     "email_invalid": "Az email-cím érvénytelen, kérjük, próbáld újra a bejelentkezési folyamatot.",
     "email_required": "Email-cím megadása kötelező",
     "expense_deletion_failed": "Váratlan hiba történt a kiadás törlése során.",
+    "expense_invalid_input": "Ellenőrizd a kiadás adatait, majd próbáld újra.",
     "expense_submission_failed": "Váratlan hiba történt a kiadás beküldése során.",
     "feedback_min_length": "A visszajelzésnek legalább 10 karakterből kell állnia",
     "feedback_required": "Visszajelzés szükséges",
@@ -414,6 +415,9 @@
     },
     "group_statistics": {
       "first_expense": "Első kiadás",
+      "paid": "Fizetve",
+      "per_person": "Költés személyenként",
+      "share": "Költséghányad",
       "title": "Csoportstatisztikák",
       "total_expenses": "Összes költség"
     },

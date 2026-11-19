@@ -534,6 +534,7 @@
   "expense_participant": {
     "gets": "{actor, select, you {<person/> get <amount/>} other {<person/> gets <amount/>}}",
     "owes": "{actor, select, you {<person/> owe <amount/>} other {<person/> owes <amount/>}}",
+    "owes_and_gets": "{actor, select, you {<person/> owe <share/> and get back <amount/>} other {<person/> owes <share/> and gets back <amount/>}}",
     "paid": "<person/> paid <amount/>",
     "received": "<person/> received <amount/>"
   },

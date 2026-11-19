@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { isCurrencyCode } from '~/lib/currency';
+import { getParticipantShare, hasShareBreakdown } from '~/lib/expenseShare';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
@@ -41,6 +42,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
   const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
 
   const { toUIString } = getCurrencyHelpersCached(expense.currency);
+  const showShareBreakdown = hasShareBreakdown(expense);
 
   return (
     <>
@@ -109,7 +111,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
         <div>{expense.fileKey ? <Receipt fileKey={expense.fileKey} /> : null}</div>
       </div>
       <Separator />
-      <div className="mt-10 flex items-center gap-2">
+      <div className="mt-10 flex flex-wrap items-center gap-x-2 gap-y-1">
         <Trans
           t={t}
           i18nKey={
@@ -148,6 +150,11 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
               participant={participant}
               userId={user.id}
               currency={expense.currency}
+              payerShare={
+                showShareBreakdown && participant.userId === expense.paidBy
+                  ? getParticipantShare(participant, expense)
+                  : undefined
+              }
             />
           ))}
         {expense.conversionTo && (
@@ -174,19 +181,29 @@ const ExpenseParticipantEntry: React.FC<{
   participant: ExpenseDetailsOutput['expenseParticipants'][number];
   userId: number;
   currency: string;
-}> = ({ participant, userId, currency }) => {
+  /** The payer's own share, shown alongside what they get back. Omitted for everyone else. */
+  payerShare?: bigint;
+}> = ({ participant, userId, currency, payerShare }) => {
   const { displayName, t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const { toUIString } = getCurrencyHelpersCached(currency);
 
   const isCurrentUser = userId === participant.userId;
   const isPositive = participant.amount > 0n;
   const amountColorClass = isPositive ? 'text-positive' : 'text-negative';
+  const hasPayerShare = undefined !== payerShare && 0n < payerShare;
+
+  const getI18nKey = () => {
+    if (hasPayerShare && isPositive) {
+      return 'expense_participant.owes_and_gets';
+    }
+    return isPositive ? 'expense_participant.gets' : 'expense_participant.owes';
+  };
 
   return (
-    <div key={participant.userId} className="flex items-center gap-2 text-sm">
+    <div key={participant.userId} className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
       <Trans
         t={t}
-        i18nKey={isPositive ? 'expense_participant.gets' : 'expense_participant.owes'}
+        i18nKey={getI18nKey()}
         values={{ actor: isCurrentUser ? 'you' : 'other' }}
         components={{
           person: (
@@ -198,6 +215,7 @@ const ExpenseParticipantEntry: React.FC<{
             </Link>
           ),
           amount: <span className={amountColorClass}>{toUIString(participant.amount)}</span>,
+          share: <span className="text-negative">{toUIString(payerShare ?? 0n)}</span>,
         }}
       />
     </div>

@@ -100,31 +100,9 @@
           pkgs = import nixpkgs { inherit system; };
           node = pkgs.nodejs_22;
           postgres = pkgs.postgresql_18.withPackages (extensions: [ extensions.pg_cron ]);
-          pnpm = pkgs.stdenvNoCC.mkDerivation {
-            pname = "pnpm";
-            version = "12.18.0";
-            src = pkgs.fetchurl {
-              url = "https://registry.npmjs.org/@pnpm/exe.linux-${
-                if system == "x86_64-linux" then "x64" else "arm64"
-              }/-/exe.linux-${if system == "x86_64-linux" then "x64" else "arm64"}-12.18.0.tgz";
-              hash =
-                if system == "x86_64-linux" then
-                  "sha512-OJ+X2wcraldCwj75pCIerWARQSRpdfj0eBTs/2ODyhfeW46ylOnjTIE/GKra6Mn6E72/gBmXS8igrUioa+F9fQ=="
-                else
-                  "sha512-2dpyVBCHT+FfpuQh9i+7MXAqNWYLCvD5vYr5p6Eimxoga8USLnjbUgyj72AOrO0hjc5ri3TEFP3jiyBHjkSZpQ==";
-            };
-            payload = pkgs.fetchurl {
-              url = "https://registry.npmjs.org/pnpm/-/pnpm-12.18.0.tgz";
-              hash = "sha512-nXiC1dyCFH7PxOBiqjSDTgrQKWcQoYN6ERWuASEn02txCeMhrBWYod0KZVl2gbHpmRfhLtDXSerpEYeUM2O+sw==";
-            };
-            nativeBuildInputs = [ pkgs.makeWrapper ];
-            installPhase = ''
-              mkdir -p "$out/bin"
-              tar -xzf "$payload" -C "$out/bin" --strip-components=1
-              install -m755 pnpm "$out/bin/pnpm"
-              makeWrapper "$out/bin/pnpm" "$out/bin/pnpx" --add-flags dlx
-            '';
-          };
+          # Use nixpkgs' pnpm even when package.json's `packageManager` pins a newer patch release
+          # (see pnpm_config_pm_on_fail below).
+          pnpm = pkgs.pnpm_12;
           # npm downloads standard Linux binaries (Prisma, SWC, tsc, oxlint, etc.).
           # Run Node commands in an FHS environment instead of modifying node_modules
           # or substituting a different version of Prisma's engines.
@@ -215,6 +193,8 @@
               pkgs.dejavu_fonts
             ];
             SPLITPRO_NATIVE_POSTGRES = "1";
+            # Stop pnpm from downloading the exact `packageManager` version. Use nixpkgs' pnpm_12.
+            pnpm_config_pm_on_fail = "ignore";
             shellHook = ''
               export SPLITPRO_ROOT="$PWD"
               export NEXT_TELEMETRY_DISABLED=1

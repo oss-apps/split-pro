@@ -1,0 +1,42 @@
+name: Nix
+
+on:
+  - pull_request
+permissions:
+  contents: read
+
+jobs:
+  nix:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      # The NixOS VM test needs hardware virtualisation.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            system-features = nixos-test benchmark big-parallel kvm
+
+      # Builds the package and runs the envCoverage, version and VM checks for x86_64-linux;
+      # the outputs for other systems are only evaluated.
+      - name: Run flake checks
+        run: nix flake check -L --keep-going
+
+      # Building for aarch64 would need an aarch64 runner. Evaluating catches most breakage.
+      - name: Evaluate aarch64-linux outputs
+        run: |
+          nix eval --raw .#packages.aarch64-linux.split-pro.drvPath
+          nix eval --raw .#checks.aarch64-linux.vm.drvPath
+          nix eval --raw .#devShells.aarch64-linux.default.drvPath
+
+      - name: Check that the package is reproducible
+        run: nix build .#split-pro --rebuild -L

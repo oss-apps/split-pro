@@ -4,15 +4,75 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
   outputs =
-    { nixpkgs, ... }:
+    { self, nixpkgs, ... }:
     let
       systems = [
         "x86_64-linux"
         "aarch64-linux"
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
+      inherit (nixpkgs) lib;
+
+      # Only the files that `next build` needs, so that unrelated edits don't cause a rebuild.
+      src = lib.fileset.toSource {
+        root = ./.;
+        fileset = lib.fileset.unions [
+          ./src
+          ./public
+          ./prisma
+          ./worker
+          ./package.json
+          ./pnpm-lock.yaml
+          ./pnpm-workspace.yaml
+          ./next.config.js
+          ./next-i18next.config.js
+          ./postcss.config.cjs
+          ./prisma.config.ts
+          ./tsconfig.json
+          ./components.json
+        ];
+      };
+      baseVersion = (lib.importJSON ./package.json).version;
+      date = self.lastModifiedDate or "19700101";
+      version = "${baseVersion}-unstable-${builtins.substring 0 4 date}-${builtins.substring 4 2 date}-${builtins.substring 6 2 date}";
+      pnpmDepsHash = "sha256-cGUS42ae6kamzLyukZuBPWq/qEsskqJnHN1dHl/jb6U=";
     in
     {
+      packages = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        rec {
+          split-pro = (pkgs.callPackage ./nix/package.nix { }).overrideAttrs (prev: {
+            inherit src version;
+            pnpmDeps = prev.pnpmDeps.overrideAttrs { outputHash = pnpmDepsHash; };
+          });
+          default = split-pro;
+        }
+      );
+
+      checks = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          # nix/package.nix needs a literal version, because nixpkgs can't read package.json
+          # without import from derivation (IFD).
+          version =
+            let
+              nixVersion = (pkgs.callPackage ./nix/package.nix { }).version;
+            in
+            pkgs.runCommand "split-pro-version-check" { } (
+              if nixVersion == baseVersion then
+                "touch $out"
+              else
+                throw "nix/package.nix version (${nixVersion}) differs from package.json (${baseVersion}); bump both together."
+            );
+        }
+      );
+
       devShells = forAllSystems (
         system:
         let

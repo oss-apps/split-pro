@@ -52,12 +52,29 @@
         }
       );
 
+      # nix/module.nix is the module for nixpkgs, where the package defaults to pkgs.split-pro.
+      # Until SplitPro is in nixpkgs, the module exported here defaults to this checkout's
+      # package instead.
+      nixosModules = rec {
+        split-pro =
+          { lib, pkgs, ... }:
+          {
+            imports = [ ./nix/module.nix ];
+            services.split-pro.package =
+              lib.mkDefault
+                self.packages.${pkgs.stdenv.hostPlatform.system}.split-pro;
+          };
+        default = split-pro;
+      };
+
       checks = forAllSystems (
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
+          split-pro = self.packages.${system}.split-pro;
         in
         {
+          inherit (split-pro.tests) envCoverage;
           # nix/package.nix needs a literal version, because nixpkgs can't read package.json
           # without import from derivation (IFD).
           version =
@@ -70,6 +87,10 @@
               else
                 throw "nix/package.nix version (${nixVersion}) differs from package.json (${baseVersion}); bump both together."
             );
+          vm = pkgs.testers.runNixOSTest {
+            imports = [ ./nix/test.nix ];
+            defaults.imports = [ self.nixosModules.default ];
+          };
         }
       );
 

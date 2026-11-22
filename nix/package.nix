@@ -10,6 +10,7 @@
   prisma-engines_7,
   openssl,
   nixosTests ? { },
+  callPackage,
 }:
 let
   nodejs = nodejs_22;
@@ -109,7 +110,10 @@ stdenv.mkDerivation (finalAttrs: {
 
   passthru = {
     inherit nodejs;
-    tests = lib.optionalAttrs (nixosTests ? split-pro) { nixos = nixosTests.split-pro; };
+    tests = {
+      envCoverage = callPackage ./env-coverage.nix { split-pro = finalAttrs.finalPackage; };
+    }
+    // lib.optionalAttrs (nixosTests ? split-pro) { nixos = nixosTests.split-pro; };
   };
 
   meta = {

@@ -5,10 +5,10 @@ import { getServerSession } from 'next-auth/next';
 
 import { authOptions } from '~/server/auth';
 import { fileExists } from '~/utils/file';
-
-const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
+import { getUploadDir } from '~/server/uploads';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const UPLOAD_DIR = getUploadDir();
   if ('GET' !== req.method) {
     return res.status(405).end();
   }

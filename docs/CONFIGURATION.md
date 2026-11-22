@@ -68,6 +68,7 @@ At least one provider must be configured. SplitPro does not support username/pas
 - `ENABLE_SENDING_INVITES`: Enable email invites (requires SMTP config).
 - `DISABLE_EMAIL_SIGNUP`: Disable email magic-link signup for new users.
 - `UPLOAD_MAX_FILE_SIZE_MB`: Maximum receipt upload size in MB. Used by both client-side pre-check and server-side upload limit. This is also the max size target for image compression, so increase it if you see bad resolution/quality. Default: `10`.
+- `UPLOAD_DIR`: Directory for uploaded receipts and avatars. Default: `uploads` in the app's working directory (`/app/uploads` in Docker). Set it when the app directory is read-only, e.g. on NixOS.
 
 ## Optional variables
 

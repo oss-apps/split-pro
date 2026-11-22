@@ -10,6 +10,7 @@ import { env } from '~/env';
 
 import { type File, formidable } from 'formidable';
 import { fileExists } from '~/utils/file';
+import { getUploadDir } from '~/server/uploads';
 
 export const config = {
   api: {
@@ -17,9 +18,8 @@ export const config = {
   },
 };
 
-const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const uploadDir = getUploadDir();
   if ('POST' !== req.method) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -29,8 +29,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  if (!(await fileExists(UPLOAD_DIR))) {
-    await fs.mkdir(UPLOAD_DIR, { recursive: true });
+  if (!(await fileExists(uploadDir))) {
+    await fs.mkdir(uploadDir, { recursive: true });
   }
 
   const form = formidable({
@@ -49,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const userId = String(session.user.id);
-    const userDir = path.join(UPLOAD_DIR, userId);
+    const userDir = path.join(uploadDir, userId);
 
     if (!(await fileExists(userDir))) {
       await fs.mkdir(userDir, { recursive: true });

@@ -2,12 +2,9 @@ import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
-import {
-  NON_SPENDING_SPLIT_TYPES,
-  computeMemberTotals,
-  currenciesByUse,
-} from '~/lib/groupStatistics';
+import { computeMemberTotals, currenciesByUse } from '~/lib/groupStatistics';
 import { simplifyDebts } from '~/lib/simplify';
+import { NON_SPENDING_SPLIT_TYPES } from '~/lib/splitTypes';
 import {
   balanceProcedure,
   createTRPCRouter,

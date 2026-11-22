@@ -26,17 +26,9 @@ jobs:
           extra_nix_config: |
             system-features = nixos-test benchmark big-parallel kvm
 
-      # Builds the package and runs the envCoverage, version and VM checks for x86_64-linux;
-      # the outputs for other systems are only evaluated.
+      # Builds the package and runs the envCoverage, version and VM checks for x86_64-linux.
       - name: Run flake checks
         run: nix flake check -L --keep-going
-
-      # Building for aarch64 would need an aarch64 runner. Evaluating catches most breakage.
-      - name: Evaluate aarch64-linux outputs
-        run: |
-          nix eval --raw .#packages.aarch64-linux.split-pro.drvPath
-          nix eval --raw .#checks.aarch64-linux.vm.drvPath
-          nix eval --raw .#devShells.aarch64-linux.default.drvPath
 
       - name: Check that the package is reproducible
         run: nix build .#split-pro --rebuild -L

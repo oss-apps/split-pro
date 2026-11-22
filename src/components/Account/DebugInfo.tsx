@@ -17,6 +17,9 @@ import { env } from '~/env';
 import { cn } from '~/lib/utils';
 import { Button } from '../ui/button';
 
+/** Returns the release that a version string belongs to, e.g. `2.1.6` for both the tag `v2.1.6` and a Nix build `2.1.6-unstable-2026-11-19`. */
+const releaseOf = (version: string) => version.replace(/^v/, '').replace(/-unstable-.*$/, '');
+
 export const DebugInfo: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation('common');
   const [newVersion, setNewVersion] = React.useState<string | null>(null);
@@ -101,7 +104,7 @@ export const DebugInfo: React.FC<React.PropsWithChildren> = ({ children }) => {
             />
             {newVersion &&
             env.NEXT_PUBLIC_APP_VERSION &&
-            newVersion !== env.NEXT_PUBLIC_APP_VERSION ? (
+            releaseOf(newVersion) !== releaseOf(env.NEXT_PUBLIC_APP_VERSION) ? (
               <p className="mt-4 text-sm text-yellow-600">
                 {t('account.debug_info_details.new_version_available')}: {newVersion}
               </p>

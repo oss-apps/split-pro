@@ -24,7 +24,8 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN pnpm build
+# Without an APP_VERSION build arg (local builds), fall back to package.json.
+RUN NEXT_PUBLIC_APP_VERSION="${NEXT_PUBLIC_APP_VERSION:-v$(node -p "require('./package.json').version")}" pnpm build
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS release
 

@@ -44,5 +44,5 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "public", "playwright-report", "test-results"]
+  "exclude": ["node_modules", "public", "playwright-report", "test-results", "nix"]
 }

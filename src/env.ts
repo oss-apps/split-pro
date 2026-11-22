@@ -1,7 +1,7 @@
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 
-import { parseEnvBoolean } from './utils/env';
+import { parseEnvBoolean, parseEnvNumber } from './utils/env';
 
 const recurrenceTimeSchema = z
   .string()
@@ -58,12 +58,12 @@ export const env = createEnv({
     GOCARDLESS_COUNTRY: z.string().optional(),
     GOCARDLESS_SECRET_ID: z.string().optional(),
     GOCARDLESS_SECRET_KEY: z.string().optional(),
-    GOCARDLESS_INTERVAL_IN_DAYS: z.number().optional(),
+    GOCARDLESS_INTERVAL_IN_DAYS: z.number().int().positive().optional(),
     PLAID_CLIENT_ID: z.string().optional(),
     PLAID_SECRET: z.string().optional(),
     PLAID_ENVIRONMENT: z.enum(['sandbox', 'development', 'production']).default('sandbox'),
     PLAID_COUNTRY_CODES: z.string().optional(),
-    PLAID_INTERVAL_IN_DAYS: z.number().optional(),
+    PLAID_INTERVAL_IN_DAYS: z.number().int().positive().optional(),
     GOOGLE_CLIENT_ID: z.string().optional(),
     GOOGLE_CLIENT_SECRET: z.string().optional(),
     AUTHENTIK_ID: z.string().optional(),
@@ -89,6 +89,7 @@ export const env = createEnv({
     OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: z.boolean().default(false),
     OAUTH_AUTO_REDIRECT: z.boolean().default(false),
     UPLOAD_MAX_FILE_SIZE_MB: z.coerce.number().int().positive().default(10),
+    UPLOAD_DIR: z.string().optional(),
   },
 
   /**
@@ -133,12 +134,12 @@ export const env = createEnv({
     GOCARDLESS_COUNTRY: process.env.GOCARDLESS_COUNTRY,
     GOCARDLESS_SECRET_ID: process.env.GOCARDLESS_SECRET_ID,
     GOCARDLESS_SECRET_KEY: process.env.GOCARDLESS_SECRET_KEY,
-    GOCARDLESS_INTERVAL_IN_DAYS: process.env.GOCARDLESS_INTERVAL_IN_DAYS,
+    GOCARDLESS_INTERVAL_IN_DAYS: parseEnvNumber(process.env.GOCARDLESS_INTERVAL_IN_DAYS),
     PLAID_CLIENT_ID: process.env.PLAID_CLIENT_ID,
     PLAID_SECRET: process.env.PLAID_SECRET,
     PLAID_ENVIRONMENT: process.env.PLAID_ENVIRONMENT,
     PLAID_COUNTRY_CODES: process.env.PLAID_COUNTRY_CODES,
-    PLAID_INTERVAL_IN_DAYS: process.env.PLAID_INTERVAL_IN_DAYS,
+    PLAID_INTERVAL_IN_DAYS: parseEnvNumber(process.env.PLAID_INTERVAL_IN_DAYS),
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     AUTHENTIK_ID: process.env.AUTHENTIK_ID,
@@ -166,6 +167,7 @@ export const env = createEnv({
     UPLOAD_MAX_FILE_SIZE_MB: process.env.UPLOAD_MAX_FILE_SIZE_MB
       ? Number(process.env.UPLOAD_MAX_FILE_SIZE_MB)
       : 10,
+    UPLOAD_DIR: process.env.UPLOAD_DIR,
     NEXT_PUBLIC_APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION,
     NEXT_PUBLIC_GIT_SHA: process.env.NEXT_PUBLIC_GIT_SHA,
   },

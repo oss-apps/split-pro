@@ -2,6 +2,8 @@ import { unlink } from 'node:fs/promises';
 import path from 'node:path';
 import { type PrismaClient } from '@prisma/client';
 
+import { getUploadDir } from '~/server/uploads';
+
 /** Remove only a locally uploaded avatar belonging to this user, never shared receipts. */
 export const deleteAccountAvatar = async (
   db: PrismaClient,
@@ -21,7 +23,7 @@ export const deleteAccountAvatar = async (
   }
   const remove = async (key: string) => {
     try {
-      await unlink(path.join(process.cwd(), 'uploads', key));
+      await unlink(path.join(getUploadDir(), key));
     } catch (error) {
       if (error instanceof Error && 'code' in error && 'ENOENT' === error.code) {
         return;

@@ -335,6 +335,9 @@ Husky runs on commit:
 
 Override with `git commit --no-verify` if needed.
 
+When splitting a work package into atomic commits, it is acceptable to run them with the -n flag,
+since all PRs are squashed anyway.
+
 ## Testing Harness Workflow
 
 Keep the fast checks (`pnpm prettier --check .`, `pnpm lint`, `pnpm tsc --noEmit`,

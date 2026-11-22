@@ -14,3 +14,9 @@ export const parseEnvBoolean = (value: string | undefined, fallback = false): bo
 
   return fallback;
 };
+
+/** Returns undefined for an unset or empty value. Anything else is converted to a number, which zod then validates. */
+export const parseEnvNumber = (value: string | undefined): number | undefined => {
+  const trimmed = value?.trim();
+  return trimmed ? Number(trimmed) : undefined;
+};

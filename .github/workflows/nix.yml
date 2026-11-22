@@ -1,0 +1,34 @@
+name: Nix
+
+on:
+  - pull_request
+permissions:
+  contents: read
+
+jobs:
+  nix:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      # The NixOS VM test needs hardware virtualisation.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            system-features = nixos-test benchmark big-parallel kvm
+
+      # Builds the package and runs the envCoverage, version and VM checks for x86_64-linux.
+      - name: Run flake checks
+        run: nix flake check -L --keep-going
+
+      - name: Check that the package is reproducible
+        run: nix build .#split-pro --rebuild -L

@@ -4,46 +4,105 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
   outputs =
-    { nixpkgs, ... }:
+    { self, nixpkgs, ... }:
     let
       systems = [
         "x86_64-linux"
         "aarch64-linux"
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
+      inherit (nixpkgs) lib;
+
+      # Only the files that `next build` needs, so that unrelated edits don't cause a rebuild.
+      src = lib.fileset.toSource {
+        root = ./.;
+        fileset = lib.fileset.unions [
+          ./src
+          ./public
+          ./prisma
+          ./worker
+          ./package.json
+          ./pnpm-lock.yaml
+          ./pnpm-workspace.yaml
+          ./next.config.js
+          ./next-i18next.config.js
+          ./postcss.config.cjs
+          ./prisma.config.ts
+          ./tsconfig.json
+          ./components.json
+        ];
+      };
+      baseVersion = (lib.importJSON ./package.json).version;
+      date = self.lastModifiedDate or "19700101";
+      version = "${baseVersion}-unstable-${builtins.substring 0 4 date}-${builtins.substring 4 2 date}-${builtins.substring 6 2 date}";
+      pnpmDepsHash = "sha256-cGUS42ae6kamzLyukZuBPWq/qEsskqJnHN1dHl/jb6U=";
     in
     {
+      packages = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        rec {
+          split-pro = (pkgs.callPackage ./nix/package.nix { }).overrideAttrs (prev: {
+            inherit src version;
+            pnpmDeps = prev.pnpmDeps.overrideAttrs { outputHash = pnpmDepsHash; };
+          });
+          default = split-pro;
+        }
+      );
+
+      # nix/module.nix is the module for nixpkgs, where the package defaults to pkgs.split-pro.
+      # Until SplitPro is in nixpkgs, the module exported here defaults to this checkout's
+      # package instead.
+      nixosModules = rec {
+        split-pro =
+          { lib, pkgs, ... }:
+          {
+            imports = [ ./nix/module.nix ];
+            services.split-pro.package =
+              lib.mkDefault
+                self.packages.${pkgs.stdenv.hostPlatform.system}.split-pro;
+          };
+        default = split-pro;
+      };
+
+      checks = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          split-pro = self.packages.${system}.split-pro;
+        in
+        {
+          inherit (split-pro.tests) envCoverage;
+          # nix/package.nix needs a literal version, because nixpkgs can't read package.json
+          # without import from derivation (IFD).
+          version =
+            let
+              nixVersion = (pkgs.callPackage ./nix/package.nix { }).version;
+            in
+            pkgs.runCommand "split-pro-version-check" { } (
+              if nixVersion == baseVersion then
+                "touch $out"
+              else
+                throw "nix/package.nix version (${nixVersion}) differs from package.json (${baseVersion}); bump both together."
+            );
+          vm = pkgs.testers.runNixOSTest {
+            imports = [ ./nix/test.nix ];
+            defaults.imports = [ self.nixosModules.default ];
+          };
+        }
+      );
+
       devShells = forAllSystems (
         system:
         let
           pkgs = import nixpkgs { inherit system; };
           node = pkgs.nodejs_22;
           postgres = pkgs.postgresql_18.withPackages (extensions: [ extensions.pg_cron ]);
-          pnpm = pkgs.stdenvNoCC.mkDerivation {
-            pname = "pnpm";
-            version = "12.18.0";
-            src = pkgs.fetchurl {
-              url = "https://registry.npmjs.org/@pnpm/exe.linux-${
-                if system == "x86_64-linux" then "x64" else "arm64"
-              }/-/exe.linux-${if system == "x86_64-linux" then "x64" else "arm64"}-12.18.0.tgz";
-              hash =
-                if system == "x86_64-linux" then
-                  "sha512-OJ+X2wcraldCwj75pCIerWARQSRpdfj0eBTs/2ODyhfeW46ylOnjTIE/GKra6Mn6E72/gBmXS8igrUioa+F9fQ=="
-                else
-                  "sha512-2dpyVBCHT+FfpuQh9i+7MXAqNWYLCvD5vYr5p6Eimxoga8USLnjbUgyj72AOrO0hjc5ri3TEFP3jiyBHjkSZpQ==";
-            };
-            payload = pkgs.fetchurl {
-              url = "https://registry.npmjs.org/pnpm/-/pnpm-12.18.0.tgz";
-              hash = "sha512-nXiC1dyCFH7PxOBiqjSDTgrQKWcQoYN6ERWuASEn02txCeMhrBWYod0KZVl2gbHpmRfhLtDXSerpEYeUM2O+sw==";
-            };
-            nativeBuildInputs = [ pkgs.makeWrapper ];
-            installPhase = ''
-              mkdir -p "$out/bin"
-              tar -xzf "$payload" -C "$out/bin" --strip-components=1
-              install -m755 pnpm "$out/bin/pnpm"
-              makeWrapper "$out/bin/pnpm" "$out/bin/pnpx" --add-flags dlx
-            '';
-          };
+          # Use nixpkgs' pnpm even when package.json's `packageManager` pins a newer patch release
+          # (see pnpm_config_pm_on_fail below).
+          pnpm = pkgs.pnpm_12;
           # npm downloads standard Linux binaries (Prisma, SWC, tsc, oxlint, etc.).
           # Run Node commands in an FHS environment instead of modifying node_modules
           # or substituting a different version of Prisma's engines.
@@ -134,6 +193,8 @@
               pkgs.dejavu_fonts
             ];
             SPLITPRO_NATIVE_POSTGRES = "1";
+            # Stop pnpm from downloading the exact `packageManager` version. Use nixpkgs' pnpm_12.
+            pnpm_config_pm_on_fail = "ignore";
             shellHook = ''
               export SPLITPRO_ROOT="$PWD"
               export NEXT_TELEMETRY_DISABLED=1

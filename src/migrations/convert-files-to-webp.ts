@@ -4,8 +4,7 @@ import sharp from 'sharp';
 import { fileExists } from '~/utils/file';
 
 import { db } from '~/server/db';
-
-const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
+import { getUploadDir } from '~/server/uploads';
 
 const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp'];
 
@@ -148,6 +147,7 @@ async function updateDatabaseFileKeys(convertedFiles: { oldKey: string; newKey: 
 
 export async function convertExistingFilesToWebP(): Promise<void> {
   console.log('\n=== Converting existing files to WebP format ===\n');
+  const UPLOAD_DIR = getUploadDir();
 
   if (!(await fileExists(UPLOAD_DIR))) {
     console.log('Uploads directory does not exist. Skipping file conversion.');

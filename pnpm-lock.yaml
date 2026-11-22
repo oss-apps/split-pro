@@ -180,6 +180,9 @@ importers:
       '@date-fns/tz':
         specifier: ^1.4.1
         version: 1.4.1
+      '@fontsource/poppins':
+        specifier: 5.3.0
+        version: 5.3.0
       '@heroicons/react':
         specifier: ^2.2.0
         version: 2.2.0(react@19.3.1)
@@ -1031,6 +1034,9 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@fontsource/poppins@5.3.0':
+    resolution: {integrity: sha512-cms1nM7U6SN8epIV1WMVOV8VsA645aSm3wHfzIQnkk188U341ThbJGSl2Sv54V29gnDbT2arMPfLzvVIIVCceQ==}
 
   '@formatjs/ecma402-abstract@2.3.6':
     resolution: {integrity: sha512-HJnTFeRM2kVFVr5gr5kH1XP6K0JcJtE7Lzvtr3FS/so5f1kpsqqqxy5JF+FRaO6H2qmcMfAUIox7AJteieRtVw==}
@@ -5980,6 +5986,8 @@ snapshots:
       react-dom: 19.3.1(react@19.3.1)
 
   '@floating-ui/utils@0.2.10': {}
+
+  '@fontsource/poppins@5.3.0': {}
 
   '@formatjs/ecma402-abstract@2.3.6':
     dependencies:

@@ -5,7 +5,7 @@ import { type Session } from 'next-auth';
 import { SessionProvider, useSession } from 'next-auth/react';
 import { appWithTranslation, useTranslation } from 'next-i18next';
 import { type AppProps } from 'next/app';
-import { Poppins } from 'next/font/google';
+import localFont from 'next/font/local';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -20,7 +20,42 @@ import { api } from '~/utils/api';
 import 'react-easy-crop/react-easy-crop.css';
 import '~/styles/globals.css';
 
-const poppins = Poppins({ weight: ['200', '300', '400', '500', '600', '700'], subsets: ['latin'] });
+// Self-hosted so builds work offline (e.g. in the Nix sandbox).
+const poppins = localFont({
+  src: [
+    {
+      path: '../../node_modules/@fontsource/poppins/files/poppins-latin-200-normal.woff2',
+      weight: '200',
+      style: 'normal',
+    },
+    {
+      path: '../../node_modules/@fontsource/poppins/files/poppins-latin-300-normal.woff2',
+      weight: '300',
+      style: 'normal',
+    },
+    {
+      path: '../../node_modules/@fontsource/poppins/files/poppins-latin-400-normal.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../../node_modules/@fontsource/poppins/files/poppins-latin-500-normal.woff2',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../../node_modules/@fontsource/poppins/files/poppins-latin-600-normal.woff2',
+      weight: '600',
+      style: 'normal',
+    },
+    {
+      path: '../../node_modules/@fontsource/poppins/files/poppins-latin-700-normal.woff2',
+      weight: '700',
+      style: 'normal',
+    },
+  ],
+  display: 'swap',
+});
 const toastOptions = { duration: 1500 };
 
 type PageWithAuth = AppProps['Component'] & { auth?: boolean };

@@ -5,7 +5,12 @@ import { join } from 'node:path';
 import { db } from '~/server/db';
 import { env } from '~/env';
 
-const migrationsPath = `${process.cwd()}/prisma/migrations`;
+/*
+ * Excluded from output tracing, because the Dockerfile and nix/package.nix copy the migrations
+ * next to server.js themselves.
+ */
+// oxlint-disable-next-line capitalized-comments -- Turbopack only reads the lowercase directive.
+const migrationsPath = join(/* turbopackIgnore: true */ process.cwd(), 'prisma', 'migrations');
 
 export async function runDbMigrations() {
   console.info(`Running DB migrations for "${env.NODE_ENV}"`);

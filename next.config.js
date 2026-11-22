@@ -15,11 +15,15 @@ const { parseEnvBoolean } = envUtils;
  */
 await jiti.import('./src/env');
 
+const buildId = process.env.NEXT_BUILD_ID;
+
 /** @type {import("next").NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   reactCompiler: true,
   output: parseEnvBoolean(process.env.DOCKER_OUTPUT) ? 'standalone' : undefined,
+  /** Reproducible builds, such as the Nix package, pass a build ID derived from the source. Otherwise Next.js picks a random one. */
+  ...(buildId ? { generateBuildId: () => buildId } : {}),
   transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core'],
   /**
    * If you are using `appDir` then you must comment the below `i18n` config out.

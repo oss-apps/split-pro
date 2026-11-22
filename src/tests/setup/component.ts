@@ -5,6 +5,7 @@ import { clearTestQueryClients } from '../helpers/queryClient';
 import { resetStores } from '../helpers/resetStores';
 
 jest.mock('next-i18next', () => ({
+  ...jest.requireActual('next-i18next'),
   useTranslation: require('~/tests/helpers/i18n').useTestTranslation,
 }));
 

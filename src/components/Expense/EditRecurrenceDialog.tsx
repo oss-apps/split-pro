@@ -13,6 +13,7 @@ interface EditRecurrenceDialogProps {
   recurrenceId: number;
   currentSchedule: string | null;
   children: React.ReactNode;
+  onScheduleChange?: (schedule: string) => void;
 }
 
 const FALLBACK_CRON = '0 0 1 * *'; // Default to monthly on the 1st if no current schedule is provided due to error
@@ -21,6 +22,7 @@ export const EditRecurrenceDialog: React.FC<EditRecurrenceDialogProps> = ({
   recurrenceId,
   currentSchedule,
   children,
+  onScheduleChange,
 }) => {
   const { t } = useTranslation();
   const [cronValue, setCronValue] = useState(currentSchedule ?? FALLBACK_CRON);
@@ -42,13 +44,14 @@ export const EditRecurrenceDialog: React.FC<EditRecurrenceDialogProps> = ({
         recurrenceId,
         cronExpression: cronToBackend(cronValue),
       });
-      await apiUtils.expense.getRecurringExpenses.invalidate();
+      onScheduleChange?.(cronValue);
+      await apiUtils.expense.invalidate();
       setConfirmOpen(false);
     } catch (error) {
       toast.error(t('errors.recurrence_update_failed'));
       console.error('Error updating recurrence:', error);
     }
-  }, [updateMutation, recurrenceId, cronValue, apiUtils.expense.getRecurringExpenses, t]);
+  }, [updateMutation, recurrenceId, cronValue, apiUtils.expense, onScheduleChange, t]);
 
   const handleCancel = useCallback(() => {
     setConfirmOpen(false);

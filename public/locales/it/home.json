@@ -59,10 +59,14 @@
   },
   "hero": {
     "add_expense_button": "Aggiungi una spesa",
+    "image_alt": "Anteprima dell'app SplitPro",
     "star_github_button": "Dacci una stella su github",
+    "subtitle": "Un'alternativa open source a SplitWise.",
     "subtitle_link": "open source",
     "subtitle_part1": "Un'alternativa",
     "subtitle_part2": "a SplitWise",
+    "title_after_highlight": ".",
+    "title_before_highlight": "Dividi le spese con i tuoi amici per",
     "title_highlight": "gratuitamente",
     "title_part1": "Dividi le spese con i tuoi amici"
   },

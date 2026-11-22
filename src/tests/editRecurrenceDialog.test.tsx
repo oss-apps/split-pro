@@ -17,7 +17,7 @@ jest.mock('~/utils/api', () => ({
         useMutation: () => ({ mutateAsync: mockUpdate, isPending: false }),
       },
     },
-    useUtils: () => ({ expense: { getRecurringExpenses: { invalidate: mockInvalidate } } }),
+    useUtils: () => ({ expense: { invalidate: mockInvalidate } }),
   },
 }));
 jest.mock('~/components/ui/drawer', () => ({

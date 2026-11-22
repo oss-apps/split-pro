@@ -1,5 +1,10 @@
 // Filepath: /home/wiktor/kod/split-pro/src/utils/number.test.ts
-import { currencyConversion, getCurrencyHelpers } from '../utils/numbers';
+import {
+  currencyConversion,
+  formatApproximately,
+  getCurrencyHelpers,
+  toUIPercentage,
+} from '../utils/numbers';
 
 describe('getCurrencyHelpers', () => {
   describe('toUIString', () => {
@@ -252,5 +257,59 @@ describe('currencyConversion', () => {
     const res = currencyConversion({ from, to, amount, rate });
 
     expect(res).toBe(12345n);
+  });
+});
+
+describe('formatApproximately', () => {
+  it('should prefix the approximately sign for any formatter', () => {
+    const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    expect(formatApproximately(formatter, 12.5)).toBe('~$12.50');
+  });
+
+  it('should fall back to ~ when formatRange is unavailable', () => {
+    const formatter = new Intl.NumberFormat('de', { style: 'percent' });
+    // Shadow the prototype method, as in browsers without Intl.NumberFormat v3.
+    Object.defineProperty(formatter, 'formatRange', { value: undefined });
+
+    expect(formatApproximately(formatter, 0.25)).toBe(`~${formatter.format(0.25)}`);
+  });
+});
+
+describe('toUIPercentage', () => {
+  describe('exact', () => {
+    it.each([
+      [0.25, '25%'],
+      [0, '0%'],
+      [1, '100%'],
+      [0.3333, '33%'],
+    ])('should format %p as %p in en-US', (value, expected) => {
+      expect(toUIPercentage('en-US', value)).toBe(expected);
+    });
+
+    it('should follow the locale percent pattern', () => {
+      expect(toUIPercentage('de', 0.25)).toBe(
+        new Intl.NumberFormat('de', { style: 'percent' }).format(0.25),
+      );
+      expect(toUIPercentage('tr', 0.25)).toBe('%25');
+    });
+  });
+
+  describe('approximate', () => {
+    it('should prefix the en-US approximately sign', () => {
+      expect(toUIPercentage('en-US', 0.25, { approximate: true })).toBe('~25%');
+    });
+
+    it.each(['de', 'fr', 'ja'])('should use the %s approximately sign', (locale) => {
+      const sign = new Intl.NumberFormat(locale, { style: 'percent' })
+        .formatRangeToParts(0.25, 0.25)
+        // TypeScript's Intl lib does not list the approximatelySign part type yet.
+        .find(({ type }) => 'approximatelySign' === (type as string))?.value;
+
+      expect(sign).toBeDefined();
+      expect(toUIPercentage(locale, 0.25, { approximate: true })).toContain(sign);
+      expect(toUIPercentage(locale, 0.25, { approximate: true })).not.toBe(
+        toUIPercentage(locale, 0.25),
+      );
+    });
   });
 });

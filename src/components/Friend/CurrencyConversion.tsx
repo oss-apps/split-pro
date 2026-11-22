@@ -287,9 +287,7 @@ export const CurrencyConversion: React.FC<{
                 </div>
               </div>
               <div className="flex w-1/2 flex-col items-end gap-2 sm:w-full sm:items-start">
-                <Label className="capitalize">
-                  {t('actions.fetch')} {t('ui.expense.from')}
-                </Label>
+                <Label className="capitalize">{t('ui.expense.fetch_rate_date')}</Label>
                 <div className="flex h-11 items-center justify-center">
                   <DateSelector
                     mode="single"

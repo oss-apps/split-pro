@@ -97,5 +97,5 @@
       }
     }
   ],
-  "ignorePatterns": ["prisma/seed.ts", "src/components/ui/*"]
+  "ignorePatterns": ["prisma/seed.ts", "src/components/ui/*", ".agents/skills/**"]
 }

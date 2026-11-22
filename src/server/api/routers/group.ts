@@ -2,6 +2,11 @@ import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
+import {
+  NON_SPENDING_SPLIT_TYPES,
+  computeMemberTotals,
+  currenciesByUse,
+} from '~/lib/groupStatistics';
 import { simplifyDebts } from '~/lib/simplify';
 import {
   balanceProcedure,
@@ -208,13 +213,52 @@ export const groupMethods = {
       where: {
         groupId: input.groupId,
         deletedAt: null,
-        splitType: {
-          not: SplitType.SETTLEMENT,
-        },
+        splitType: { notIn: [...NON_SPENDING_SPLIT_TYPES] },
       },
     });
 
     return totals;
+  }),
+
+  getGroupMemberTotals: groupProcedure.query(async ({ input, ctx }) => {
+    const expenses = await ctx.db.expense.findMany({
+      where: {
+        groupId: input.groupId,
+        deletedAt: null,
+        splitType: { notIn: [...NON_SPENDING_SPLIT_TYPES] },
+      },
+      select: {
+        paidBy: true,
+        currency: true,
+        amount: true,
+        expenseParticipants: { select: { userId: true, amount: true } },
+      },
+    });
+
+    const totals = computeMemberTotals(expenses);
+    const groupUsers = await ctx.db.groupUser.findMany({
+      where: { groupId: input.groupId },
+      select: { userId: true },
+    });
+    // Current members are always listed; former members only when they have expenses.
+    const userIds = new Set([
+      ...groupUsers.map(({ userId }) => userId),
+      ...totals.map((total) => total.userId),
+    ]);
+    const users = await ctx.db.user.findMany({
+      where: { id: { in: [...userIds] } },
+      select: { id: true, name: true, email: true, image: true, deletedAt: true },
+    });
+
+    return {
+      currencies: currenciesByUse(expenses),
+      members: users.map((user) => ({
+        user,
+        totals: totals
+          .filter((total) => total.userId === user.id)
+          .map(({ currency, paid, share }) => ({ currency, paid, share })),
+      })),
+    };
   }),
 
   addMembers: groupProcedure

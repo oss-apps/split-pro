@@ -1,3 +1,4 @@
+import { TRPCClientError } from '@trpc/client';
 import { HeartHandshakeIcon, Landmark, MessageSquare, RefreshCcwDot, X } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
@@ -18,6 +19,7 @@ import AddBankTransactions from './AddBankTransactions';
 import { CategoryPicker } from './CategoryPicker';
 import { CurrencyPicker } from './CurrencyPicker';
 import { DateSelector } from './DateSelector';
+import { EditRecurrenceDialog } from '../Expense/EditRecurrenceDialog';
 import { RecurrenceInput } from './RecurrenceInput';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { PayerSelectionForm, SplitExpenseForm } from './SplitTypeSection';
@@ -34,7 +36,8 @@ export const AddOrEditExpensePage: React.FC<{
   enableSendingInvites: boolean;
   expenseId?: string;
   bankConnectionEnabled: boolean;
-}> = ({ enableSendingInvites, expenseId, bankConnectionEnabled }) => {
+  recurrence?: { id: number; schedule: string };
+}> = ({ enableSendingInvites, expenseId, bankConnectionEnabled, recurrence }) => {
   const [initialComment, setInitialComment] = React.useState('');
   const [showInitialComment, setShowInitialComment] = React.useState(false);
   const showFriends = useAddExpenseStore((s) => s.showFriends);
@@ -73,9 +76,13 @@ export const AddOrEditExpensePage: React.FC<{
     setMultipleTransactions,
     setIsTransactionLoading,
     setSingleTransaction,
+    setCronExpression,
   } = useAddExpenseStore((s) => s.actions);
 
-  const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
+  const apiUtils = api.useUtils();
+  const addExpenseMutation = api.expense.addOrEditExpense.useMutation({
+    onSuccess: () => apiUtils.expense.invalidate(),
+  });
   const updateProfile = api.user.updateUserDetail.useMutation();
   const { update } = useSession();
 
@@ -173,14 +180,17 @@ export const AddOrEditExpensePage: React.FC<{
                   navPromise = async () => router.back();
                 }
 
-                navPromise().catch(console.error);
-                update((session: any) => ({
-                  ...session,
-                  user: {
-                    ...(session?.user ?? {}),
-                    currency,
-                  },
-                })).catch(console.error);
+                navPromise()
+                  .then(() =>
+                    update((session: any) => ({
+                      ...session,
+                      user: {
+                        ...(session?.user ?? {}),
+                        currency,
+                      },
+                    })),
+                  )
+                  .catch(console.error);
               }
             }
           },
@@ -188,7 +198,9 @@ export const AddOrEditExpensePage: React.FC<{
       );
     } catch (error) {
       console.error(error);
-      if (error instanceof Error) {
+      if (error instanceof TRPCClientError && error.data?.zodError) {
+        toast.error(t('errors.expense_invalid_input'));
+      } else if (error instanceof Error) {
         toast.error(error.message);
       } else {
         toast.error(t('errors.expense_submission_failed'));
@@ -421,23 +433,37 @@ export const AddOrEditExpensePage: React.FC<{
               </>
             ) : null}
           </div>
-          <div className="flex items-center justify-evenly px-4 lg:px-0">
-            {!expenseId && (
-              <RecurrenceInput>
-                <Button variant="ghost" size="sm">
-                  <RefreshCcwDot
-                    className={cn(
-                      cronExpression && 'text-primary',
-                      (!amtStr || !description) && 'invisible',
-                      'size-6',
-                    )}
-                  />
-                  <span className="sr-only">{t('recurrence.toggle_options')}</span>
-                </Button>
-              </RecurrenceInput>
-            )}
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 lg:px-0">
+            <div className="justify-self-start">
+              {!recurrence && (
+                <RecurrenceInput>
+                  <Button variant="ghost" size="sm">
+                    <RefreshCcwDot
+                      className={cn(
+                        cronExpression && 'text-primary',
+                        (!amtStr || !description) && 'invisible',
+                        'size-6',
+                      )}
+                    />
+                    <span className="sr-only">{t('recurrence.toggle_options')}</span>
+                  </Button>
+                </RecurrenceInput>
+              )}
+              {expenseId && recurrence && (
+                <EditRecurrenceDialog
+                  recurrenceId={recurrence.id}
+                  currentSchedule={cronExpression || recurrence.schedule}
+                  onScheduleChange={setCronExpression}
+                >
+                  <Button variant="ghost" size="sm">
+                    <RefreshCcwDot className="text-primary size-6" />
+                    <span className="sr-only">{t('recurrence.toggle_options')}</span>
+                  </Button>
+                </EditRecurrenceDialog>
+              )}
+            </div>
             <SponsorUs />
-            <div className="flex gap-2">
+            <div className="flex gap-2 justify-self-end">
               <AddBankTransactions bankConnectionEnabled={bankConnectionEnabled}>
                 <Button
                   variant="ghost"

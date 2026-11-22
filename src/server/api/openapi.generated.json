@@ -249,10 +249,10 @@
                             "nextCursor": {
                               "type": "object",
                               "properties": {
-                                "id": { "type": "string" },
-                                "date": { "type": "string", "format": "date-time" }
+                                "date": { "type": "string", "format": "date-time" },
+                                "id": { "type": "string" }
                               },
-                              "required": ["id", "date"],
+                              "required": ["date", "id"],
                               "additionalProperties": false
                             }
                           },
@@ -281,26 +281,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "limit": { "type": "number", "default": 50 },
                     "cursor": {
                       "oneOf": [
                         {
                           "type": "object",
                           "properties": {
-                            "id": { "type": "string" },
                             "date": {
                               "oneOf": [
                                 { "type": "string" },
                                 { "type": "string", "format": "date-time" }
                               ]
-                            }
+                            },
+                            "id": { "type": "string" }
                           },
-                          "required": ["id", "date"],
+                          "required": ["date", "id"],
                           "additionalProperties": false
                         },
                         { "type": "null" }
                       ]
-                    },
-                    "limit": { "type": "number", "default": 50 }
+                    }
                   },
                   "additionalProperties": false
                 }
@@ -1322,10 +1322,10 @@
                             "nextCursor": {
                               "type": "object",
                               "properties": {
-                                "id": { "type": "string" },
-                                "date": { "type": "string", "format": "date-time" }
+                                "date": { "type": "string", "format": "date-time" },
+                                "id": { "type": "string" }
                               },
-                              "required": ["id", "date"],
+                              "required": ["date", "id"],
                               "additionalProperties": false
                             }
                           },
@@ -1354,26 +1354,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "limit": { "type": "number", "default": 50 },
                     "cursor": {
                       "oneOf": [
                         {
                           "type": "object",
                           "properties": {
-                            "id": { "type": "string" },
                             "date": {
                               "oneOf": [
                                 { "type": "string" },
                                 { "type": "string", "format": "date-time" }
                               ]
-                            }
+                            },
+                            "id": { "type": "string" }
                           },
-                          "required": ["id", "date"],
+                          "required": ["date", "id"],
                           "additionalProperties": false
                         },
                         { "type": "null" }
                       ]
-                    },
-                    "limit": { "type": "number", "default": 50 }
+                    }
                   },
                   "additionalProperties": false
                 }
@@ -1616,10 +1616,10 @@
                             "nextCursor": {
                               "type": "object",
                               "properties": {
-                                "id": { "type": "string" },
-                                "date": { "type": "string", "format": "date-time" }
+                                "date": { "type": "string", "format": "date-time" },
+                                "id": { "type": "string" }
                               },
-                              "required": ["id", "date"],
+                              "required": ["date", "id"],
                               "additionalProperties": false
                             }
                           },
@@ -1649,26 +1649,26 @@
                   "type": "object",
                   "properties": {
                     "friendId": { "type": "number" },
+                    "limit": { "type": "number", "default": 50 },
                     "cursor": {
                       "oneOf": [
                         {
                           "type": "object",
                           "properties": {
-                            "id": { "type": "string" },
                             "date": {
                               "oneOf": [
                                 { "type": "string" },
                                 { "type": "string", "format": "date-time" }
                               ]
-                            }
+                            },
+                            "id": { "type": "string" }
                           },
-                          "required": ["id", "date"],
+                          "required": ["date", "id"],
                           "additionalProperties": false
                         },
                         { "type": "null" }
                       ]
-                    },
-                    "limit": { "type": "number", "default": 50 }
+                    }
                   },
                   "required": ["friendId"],
                   "additionalProperties": false
@@ -1947,10 +1947,10 @@
                             "nextCursor": {
                               "type": "object",
                               "properties": {
-                                "id": { "type": "string" },
-                                "date": { "type": "string", "format": "date-time" }
+                                "date": { "type": "string", "format": "date-time" },
+                                "id": { "type": "string" }
                               },
-                              "required": ["id", "date"],
+                              "required": ["date", "id"],
                               "additionalProperties": false
                             }
                           },
@@ -1980,26 +1980,26 @@
                   "type": "object",
                   "properties": {
                     "groupId": { "type": "number" },
+                    "limit": { "type": "number", "default": 50 },
                     "cursor": {
                       "oneOf": [
                         {
                           "type": "object",
                           "properties": {
-                            "id": { "type": "string" },
                             "date": {
                               "oneOf": [
                                 { "type": "string" },
                                 { "type": "string", "format": "date-time" }
                               ]
-                            }
+                            },
+                            "id": { "type": "string" }
                           },
-                          "required": ["id", "date"],
+                          "required": ["date", "id"],
                           "additionalProperties": false
                         },
                         { "type": "null" }
                       ]
-                    },
-                    "limit": { "type": "number", "default": 50 }
+                    }
                   },
                   "required": ["groupId"],
                   "additionalProperties": false
@@ -2665,18 +2665,10 @@
                 "items": {
                   "type": "object",
                   "properties": {
-                    "name": { "type": "string" },
-                    "currency": { "type": "string" },
-                    "groupId": { "type": ["number", "null"] },
-                    "amount": {
-                      "oneOf": [
-                        { "type": "string" },
-                        { "type": "number" },
-                        { "type": "integer", "format": "bigint" }
-                      ]
-                    },
                     "paidBy": { "type": "number" },
+                    "name": { "type": "string" },
                     "category": { "type": "string" },
+                    "groupId": { "type": ["number", "null"] },
                     "splitType": {
                       "type": "string",
                       "enum": [
@@ -2687,6 +2679,14 @@
                         "ADJUSTMENT",
                         "SETTLEMENT",
                         "CURRENCY_CONVERSION"
+                      ]
+                    },
+                    "currency": { "type": "string" },
+                    "amount": {
+                      "oneOf": [
+                        { "type": "string" },
+                        { "type": "number" },
+                        { "type": "integer", "format": "bigint" }
                       ]
                     },
                     "participants": {
@@ -2707,24 +2707,24 @@
                         "additionalProperties": false
                       }
                     },
-                    "expenseDate": {
-                      "oneOf": [{ "type": "string" }, { "type": "string", "format": "date-time" }]
-                    },
+                    "initialComment": { "type": "string" },
                     "fileKey": { "type": "string" },
                     "transactionId": { "type": "string" },
-                    "conversionToId": { "type": "string" },
                     "expenseId": { "type": "string" },
+                    "conversionToId": { "type": "string" },
                     "cronExpression": { "type": "string" },
-                    "initialComment": { "type": "string" }
+                    "expenseDate": {
+                      "oneOf": [{ "type": "string" }, { "type": "string", "format": "date-time" }]
+                    }
                   },
                   "required": [
-                    "name",
-                    "currency",
-                    "groupId",
-                    "amount",
                     "paidBy",
+                    "name",
                     "category",
+                    "groupId",
                     "splitType",
+                    "currency",
+                    "amount",
                     "participants"
                   ],
                   "additionalProperties": false
@@ -2928,14 +2928,11 @@
         ],
         "additionalProperties": false
       },
-      "typeToFlattenedError": {
+      "$ZodFlattenedError": {
         "type": "object",
         "properties": {
           "formErrors": { "type": "array", "items": { "type": "string" } },
-          "fieldErrors": {
-            "type": "object",
-            "additionalProperties": { "type": "array", "items": { "type": "string" } }
-          }
+          "fieldErrors": { "type": "object" }
         },
         "required": ["formErrors", "fieldErrors"],
         "additionalProperties": false
@@ -2957,7 +2954,7 @@
                       "properties": {
                         "zodError": {
                           "oneOf": [
-                            { "$ref": "#/components/schemas/typeToFlattenedError" },
+                            { "$ref": "#/components/schemas/$ZodFlattenedError" },
                             { "type": "null" }
                           ]
                         },

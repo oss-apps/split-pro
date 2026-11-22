@@ -59,10 +59,14 @@
   },
   "hero": {
     "add_expense_button": "Költség hozzáadása",
+    "image_alt": "SplitPro alkalmazás-előnézet",
     "star_github_button": "Adj csillagot a GitHubon",
+    "subtitle": "Egy nyílt forráskódú alternatíva a Splitwise helyett.",
     "subtitle_link": "nyílt forráskódú",
     "subtitle_part1": "Egy",
     "subtitle_part2": "Splitwise alternatíva",
+    "title_after_highlight": ".",
+    "title_before_highlight": "Oszd meg a kiadásaidat a barátaiddal",
     "title_highlight": "ingyenes",
     "title_part1": "Oszd meg költségeidet a barátaiddal"
   },

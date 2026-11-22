@@ -24,6 +24,7 @@ import { flattenPages, nextPageParam } from '~/utils/pagination';
 import { BalanceList } from '~/components/Expense/BalanceList';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
 import AddMembers from '~/components/group/AddMembers';
+import GroupMemberTotals from '~/components/group/GroupMemberTotals';
 import GroupMyBalance from '~/components/group/GroupMyBalance';
 import NoMembers from '~/components/group/NoMembers';
 import MainLayout from '~/components/Layout/MainLayout';
@@ -211,6 +212,10 @@ const BalancePage: NextPageWithUser<{
                     </p>
                   </div>
                 )}
+                <GroupMemberTotals
+                  groupId={groupId}
+                  defaultCurrency={groupDetailQuery.data?.defaultCurrency}
+                />
               </>
             </AppDrawer>
             <AppDrawer

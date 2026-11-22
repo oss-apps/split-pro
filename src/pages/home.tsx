@@ -18,7 +18,7 @@ import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTranslation } from 'next-i18next';
+import { Trans, useTranslation } from 'next-i18next';
 import { BackgroundGradient } from '~/components/ui/background-gradient';
 import { Button } from '~/components/ui/button';
 
@@ -72,19 +72,27 @@ const Home = () => {
           <div>
             <div className="mb-32 text-center lg:mb-0 lg:h-[70vh] lg:text-left">
               <h1 className="max-w-3xl text-center text-2xl leading-loose font-semibold text-gray-100 lg:text-left lg:text-5xl lg:leading-16">
-                {t('hero.title_before_highlight')}{' '}
-                <span className="text-primary font-bold">{t('hero.title_highlight')}</span>
-                {t('hero.title_after_highlight')}
+                <Trans
+                  t={t}
+                  i18nKey="hero.title_rich"
+                  components={{ highlight: <span className="text-primary font-bold" /> }}
+                />
               </h1>
               <h2 className="mt-5 text-gray-300 lg:mt-8 lg:text-lg">
-                <a
-                  className="text-primary hover:underline"
-                  href="https://github.com/oss-apps/split-pro"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {t('hero.subtitle')}
-                </a>
+                <Trans
+                  t={t}
+                  i18nKey="hero.subtitle_rich"
+                  components={{
+                    sourceLink: (
+                      <a
+                        className="text-primary hover:underline"
+                        href="https://github.com/oss-apps/split-pro"
+                        target="_blank"
+                        rel="noreferrer"
+                      />
+                    ),
+                  }}
+                />
               </h2>
               <div className="mt-10 flex flex-col gap-6 lg:flex-row">
                 <Link href="/auth/signin" className="mx-auto lg:mx-0">

@@ -16,7 +16,9 @@ import { AccountButton } from './AccountButton';
 const feedbackSchema = (t: TFunction) =>
   z.object({
     feedback: z
-      .string({ required_error: t('errors.feedback_required') })
+      .string({
+        error: (issue) => (undefined === issue.input ? t('errors.feedback_required') : undefined),
+      })
       .min(10, { message: t('errors.feedback_min_length') }),
   });
 

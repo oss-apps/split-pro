@@ -78,7 +78,11 @@ describe('expense lifecycle', () => {
       // A missing user forces the nested write to fail after scheduling a recurring job.
       const invalid = {
         ...input,
-        participants: [{ userId: -1, amount: -1000n }],
+        groupId: null,
+        participants: [
+          { userId: input.paidBy, amount: 1000n },
+          { userId: 2147483647, amount: -1000n },
+        ],
         ...(recurring ? { cronExpression: '0 0 1 1 *' } : {}),
       };
       const log = jest.spyOn(console, 'error').mockImplementation(() => undefined);
@@ -98,7 +102,7 @@ describe('expense lifecycle', () => {
   it('preserves the original expense if an edit transaction fails', async () => {
     const { owner, input } = await testScenario();
     const caller = callerFor(owner.id);
-    const [expense] = await caller.expense.addOrEditExpense(input);
+    const [expense] = await caller.expense.addOrEditExpense({ ...input, groupId: null });
     const before = await accountingSnapshot();
     const log = jest.spyOn(console, 'error').mockImplementation(() => undefined);
     try {
@@ -107,7 +111,11 @@ describe('expense lifecycle', () => {
           ...input,
           expenseId: expense!.id,
           amount: 999n,
-          participants: [{ userId: -1, amount: -999n }],
+          participants: [
+            { userId: input.paidBy, amount: 999n },
+            { userId: 2147483647, amount: -999n },
+          ],
+          groupId: null,
         }),
       ).rejects.toMatchObject({ code: 'INTERNAL_SERVER_ERROR' });
       expect(await db.expense.findUnique({ where: { id: expense!.id } })).toMatchObject({
@@ -163,6 +171,20 @@ describe('settlement accounting', () => {
       expect(await callerFor(owner.id).group.getGroupTotals({ groupId: group.id })).toEqual([
         expect.objectContaining({ currency: 'USD', _sum: { amount: 2000n } }),
       ]);
+      // Settlements are left out, so only the original 2000 split shows up.
+      const memberTotals = await callerFor(owner.id).group.getGroupMemberTotals({
+        groupId: group.id,
+      });
+      expect(
+        memberTotals.members
+          .map(({ user, totals }) => ({ userId: user.id, totals }))
+          .sort((a, b) => a.userId - b.userId),
+      ).toEqual(
+        [
+          { userId: receiverId, totals: [{ currency: 'USD', paid: 2000n, share: 1000n }] },
+          { userId: payerId, totals: [{ currency: 'USD', paid: 0n, share: 1000n }] },
+        ].sort((a, b) => a.userId - b.userId),
+      );
     },
   );
 });

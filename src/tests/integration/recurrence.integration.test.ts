@@ -2,10 +2,62 @@ import { env } from '~/env';
 import { reconcileRecurrenceSchedules } from '~/server/api/services/recurrenceScheduleService';
 
 import { db } from './database';
-import { testScenario } from './factories';
+import { accountingSnapshot, testScenario } from './factories';
 import { callerFor } from './trpc';
 
 describe('recurrence lifecycle', () => {
+  it('turns an existing ordinary expense into a recurring template when edited', async () => {
+    const { owner, input } = await testScenario();
+    const caller = callerFor(owner.id);
+    const [expense] = await caller.expense.addOrEditExpense(input);
+    await caller.expense.addOrEditExpense({
+      ...input,
+      expenseId: expense!.id,
+      cronExpression: '0 0 1 1 *',
+    });
+    const saved = await caller.expense.getExpenseDetails({ expenseId: expense!.id });
+    expect(saved?.recurrence?.job.schedule).toBe('0 0 1 1 *');
+    expect(saved?.recurrence?.job.command).toContain(expense!.id);
+    const activity = await caller.expense.getAllExpenses({});
+    expect(activity.items.find((item) => item.expenseId === expense!.id)?.expense).toMatchObject({
+      recurrenceId: saved?.recurrence?.id,
+      updatedBy: owner.id,
+    });
+    expect(await db.expense.count()).toBe(1);
+    expect(await db.expenseRecurrence.count()).toBe(1);
+    await caller.expense.deleteExpense({ expenseId: expense!.id });
+    expect(await db.expenseRecurrence.count()).toBe(0);
+    expect(await db.job.count()).toBe(0);
+  });
+
+  it.each(['create', 'edit'] as const)(
+    'rolls back the cron job and expense changes on a failed %s',
+    async (mode) => {
+      const { owner, input } = await testScenario();
+      const caller = callerFor(owner.id);
+      const [expense] = await caller.expense.addOrEditExpense(input);
+      const before = await accountingSnapshot();
+      await db.$executeRaw`ALTER TABLE "ExpenseRecurrence" ADD CONSTRAINT test_reject_recurrence CHECK (false)`;
+      const log = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+      try {
+        await expect(
+          caller.expense.addOrEditExpense({
+            ...input,
+            expenseId: 'edit' === mode ? expense!.id : undefined,
+            name: 'Must roll back',
+            cronExpression: '0 0 1 1 *',
+          }),
+        ).rejects.toMatchObject({ code: 'INTERNAL_SERVER_ERROR' });
+        expect(await db.job.count()).toBe(0);
+        expect(await db.expenseRecurrence.count()).toBe(0);
+        expect(await accountingSnapshot()).toEqual(before);
+      } finally {
+        await db.$executeRaw`ALTER TABLE "ExpenseRecurrence" DROP CONSTRAINT test_reject_recurrence`;
+        log.mockRestore();
+      }
+    },
+  );
+
   it('duplicates participants and balances, edits the schedule, and stops only when the template is deleted', async () => {
     const { owner, member, input, group } = await testScenario();
     const caller = callerFor(owner.id);

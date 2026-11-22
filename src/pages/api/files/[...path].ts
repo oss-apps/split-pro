@@ -1,14 +1,11 @@
 import fs from 'node:fs/promises';
-import path from 'node:path';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
 
 import { authOptions } from '~/server/auth';
-import { fileExists } from '~/utils/file';
-import { getUploadDir } from '~/server/uploads';
+import { resolveUploadPath } from '~/server/uploads';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const UPLOAD_DIR = getUploadDir();
   if ('GET' !== req.method) {
     return res.status(405).end();
   }
@@ -24,16 +21,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).send('Invalid path');
   }
 
-  const filePath = path.join(UPLOAD_DIR, ...pathParts);
-  const resolvedPath = path.resolve(filePath);
-
-  if (!resolvedPath.startsWith(path.resolve(UPLOAD_DIR))) {
+  const resolved = await resolveUploadPath(pathParts);
+  if ('forbidden' === resolved.status) {
     return res.status(403).send('Forbidden');
   }
-
-  if (!(await fileExists(filePath))) {
+  if ('not-found' === resolved.status) {
     return res.status(404).send('File not found');
   }
+  const filePath = resolved.path;
 
   res.setHeader('Content-Type', 'image/webp');
   res.setHeader('Cache-Control', 'private, max-age=31536000, immutable');

@@ -1,16 +1,18 @@
-// Removes the random values that `next build` embeds in its output, so that the package is
-// reproducible and contains no secrets shared by every installation.
-// Run at build time: node normalize-next.cjs <dist-dir>
-//
-// For preview mode and on-demand revalidation, Next.js compares a request cookie or the
-// `x-prerender-revalidate` header with `previewModeId` using plain `===` (see Next.js
-// api-utils). A blank id would therefore match an empty header. HTTP header and cookie values
-// can never contain a line feed, so no request can match an id that contains one. Both features
-// become unreachable. SplitPro uses neither of them.
-//
-// Server Actions encrypt their bound arguments with `encryptionKey`. SplitPro has no Server
-// Actions, and the build fails if any appear. They would need a key generated for each
-// installation and passed in at runtime (NEXT_SERVER_ACTIONS_ENCRYPTION_KEY).
+/*
+ * Removes the random values that `next build` embeds in its output, so that the package is
+ * reproducible and contains no secrets shared by every installation.
+ * Run at build time: node normalize-next.cjs <dist-dir>
+ *
+ * For preview mode and on-demand revalidation, Next.js compares a request cookie or the
+ * `x-prerender-revalidate` header with `previewModeId` using plain `===` (see Next.js
+ * api-utils). A blank id would therefore match an empty header. HTTP header and cookie values
+ * can never contain a line feed, so no request can match an id that contains one. Both features
+ * become unreachable. SplitPro uses neither of them.
+ *
+ * Server Actions encrypt their bound arguments with `encryptionKey`. SplitPro has no Server
+ * Actions, and the build fails if any appear. They would need a key generated for each
+ * installation and passed in at runtime (NEXT_SERVER_ACTIONS_ENCRYPTION_KEY).
+ */
 const fs = require('fs');
 const path = require('path');
 

@@ -19,7 +19,9 @@ const fail = (message) => {
 
 const keyName = (prop) => {
   if (!ts.isPropertyAssignment(prop) && !ts.isShorthandPropertyAssignment(prop)) {
-    fail(`unsupported member in server block: ${prop.getText(source).slice(0, 60)}`);
+    throw new Error(
+      `env-coverage: unsupported member in server block: ${prop.getText(source).slice(0, 60)}`,
+    );
   }
   const { name } = prop;
   if (
@@ -29,7 +31,7 @@ const keyName = (prop) => {
   ) {
     return name.text;
   }
-  fail(`computed key in server block: ${name.getText(source)}`);
+  throw new Error(`env-coverage: computed key in server block: ${name.getText(source)}`);
 };
 
 // Find `createEnv({ server: { ... } })`.

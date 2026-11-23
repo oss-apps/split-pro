@@ -21,10 +21,13 @@ import {
   type CreateExpense,
   arrayify,
   createCurrencyConversionSchema,
+  createExpenseObjectSchema,
   createExpenseSchema,
   expenseAmountSchema,
+  expenseParticipantSchema,
   getBatchCurrencyRatesSchema,
   getCurrencyRateSchema,
+  refineExpense,
 } from '~/types/expense.types';
 import {
   assertExpenseGroupMembers,
@@ -749,17 +752,20 @@ const validateExpenseWritePermission = async (
  */
 const apiAmountSchema = z
   .union([z.bigint(), z.number().int().safe(), z.string().regex(/^-?\d+$/)])
-  .transform((value) => BigInt(value));
+  .transform((value) => BigInt(value))
+  .pipe(expenseAmountSchema);
 
 const apiDateSchema = z
   .union([z.date(), z.string().datetime({ offset: true })])
   .transform((value) => new Date(value));
 
-const apiCreateExpenseSchema = createExpenseSchema.extend({
-  amount: apiAmountSchema,
-  participants: z.array(z.object({ userId: z.number(), amount: apiAmountSchema })),
-  expenseDate: apiDateSchema.optional(),
-});
+const apiCreateExpenseSchema = createExpenseObjectSchema
+  .extend({
+    amount: apiAmountSchema,
+    participants: z.array(expenseParticipantSchema.extend({ amount: apiAmountSchema })).min(1),
+    expenseDate: apiDateSchema.optional(),
+  })
+  .superRefine(refineExpense);
 
 /**
  * API-only variant of `addOrEditExpense` mounted in the public API router.

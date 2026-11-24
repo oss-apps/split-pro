@@ -1,7 +1,7 @@
 {
   "features": {
     "bank_connection": {
-      "description": "Adiciona despesas mais depressa com integração com a API de transações bancárias da GoCardless ou da Plaid",
+      "description": "Adiciona despesas mais depressa com integração da API de transações bancárias da GoCardless ou da Plaid",
       "title": "Ligação a Banco"
     },
     "currency_conversion": {
@@ -59,12 +59,15 @@
   },
   "hero": {
     "add_expense_button": "Adicionar Despesa",
+    "image_alt": "Pré-visualizar a app SplitPro",
     "star_github_button": "Dá-nos uma estrela no GitHub",
     "subtitle_link": "código aberto",
     "subtitle_part1": "Um",
     "subtitle_part2": "alternativa ao SplitWise",
+    "subtitle_rich": "Uma alternativa de <sourceLink>fonte-aberta</sourceLink> ao SplitWise.",
     "title_highlight": "gratuito",
-    "title_part1": "Divide Despesas com os teus amigos por"
+    "title_part1": "Divide Despesas com os teus amigos por",
+    "title_rich": "Divide as despesas com os teus amigos <highlight>gratuitamente</highlight>."
   },
   "meta": {
     "description": "SplitPro: Divide as tuas despesas com os teus amigos gratuitamente",

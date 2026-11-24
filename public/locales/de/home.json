@@ -59,12 +59,15 @@
   },
   "hero": {
     "add_expense_button": "Ausgabe hinzufügen",
+    "image_alt": "SplitPro App-Vorschau",
     "star_github_button": "Gib uns einen Stern auf Github",
     "subtitle_link": "Open Source",
     "subtitle_part1": "Eine",
     "subtitle_part2": "Alternative zu SplitWise",
+    "subtitle_rich": "Eine <sourceLink>Open-Source-Alternative</sourceLink> zu SplitWise.",
     "title_highlight": "Kostenlos",
-    "title_part1": "Teile Ausgaben mit deinen Freunden"
+    "title_part1": "Teile Ausgaben mit deinen Freunden",
+    "title_rich": "Ausgaben <highlight>kostenlos</highlight> mit Freunden teilen."
   },
   "meta": {
     "description": "SplitPro: Teile Ausgaben kostenlos mit deinen Freunden",

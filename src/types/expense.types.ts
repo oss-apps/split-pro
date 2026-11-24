@@ -39,69 +39,92 @@ const userIdSchema = z.number().int().nonnegative().max(2_147_483_647);
 const MAX_EXPENSE_AMOUNT = 9_223_372_036_854_775_807n;
 export const expenseAmountSchema = z.bigint().min(-MAX_EXPENSE_AMOUNT).max(MAX_EXPENSE_AMOUNT);
 
-export const createExpenseSchema = z
-  .object({
-    initialComment: z.string().trim().max(5000).optional(),
-    paidBy: userIdSchema,
-    name: z.string(),
-    category: z.string(),
-    amount: expenseAmountSchema,
-    groupId: userIdSchema.nullable(),
-    splitType: z.enum([
-      SplitType.ADJUSTMENT,
-      SplitType.EQUAL,
-      SplitType.PERCENTAGE,
-      SplitType.SHARE,
-      SplitType.EXACT,
-      SplitType.SETTLEMENT,
-      SplitType.CURRENCY_CONVERSION,
-    ]),
-    currency: z.string().refine(isCurrencyCode, 'Invalid currency code'),
-    participants: z.array(z.object({ userId: userIdSchema, amount: expenseAmountSchema })).min(1),
-    fileKey: z.string().optional(),
-    transactionId: z.string().optional(),
-    expenseDate: z.date().optional(),
-    expenseId: z.string().optional(),
-    conversionToId: z.string().optional(),
-    cronExpression: z
-      .string()
-      .transform((value) => (value ? cronToBackend(value) : ''))
-      .optional(),
-  })
-  .superRefine(({ amount, paidBy, participants }, ctx) => {
-    const ids = participants.map(({ userId }) => userId);
-    if (new Set(ids).size !== ids.length) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['participants'],
-        message: 'Duplicate participants',
-      });
-    }
-    if (0n !== participants.reduce((sum, participant) => sum + participant.amount, 0n)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['participants'],
-        message: 'Participant balances must sum to zero',
-      });
-    }
-    // Recover each cost share from the net balance, including refunds with reversed signs.
-    const sign = amount < 0n ? -1n : 1n;
-    const total = amount * sign;
-    if (
-      participants.some((participant) => {
-        const share =
-          (participant.userId === paidBy ? amount - participant.amount : -participant.amount) *
-          sign;
-        return share < 0n || share > total;
-      })
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['participants'],
-        message: 'Participant shares do not match the expense amount',
-      });
-    }
-  }) satisfies z.ZodType<CreateExpense>;
+export const expenseParticipantSchema = z.object({
+  userId: userIdSchema,
+  amount: expenseAmountSchema,
+});
+
+/**
+ * Unrefined object schema. Zod 4 cannot `.extend()` a refined object, so variants
+ * (e.g. the public API) extend this and re-apply `refineExpense`.
+ */
+export const createExpenseObjectSchema = z.object({
+  initialComment: z.string().trim().max(5000).optional(),
+  paidBy: userIdSchema,
+  name: z.string(),
+  category: z.string(),
+  amount: expenseAmountSchema,
+  groupId: userIdSchema.nullable(),
+  splitType: z.enum([
+    SplitType.ADJUSTMENT,
+    SplitType.EQUAL,
+    SplitType.PERCENTAGE,
+    SplitType.SHARE,
+    SplitType.EXACT,
+    SplitType.SETTLEMENT,
+    SplitType.CURRENCY_CONVERSION,
+  ]),
+  currency: z.string().refine(isCurrencyCode, 'Invalid currency code'),
+  participants: z.array(expenseParticipantSchema).min(1),
+  fileKey: z.string().optional(),
+  transactionId: z.string().optional(),
+  expenseDate: z.date().optional(),
+  expenseId: z.string().optional(),
+  conversionToId: z.string().optional(),
+  cronExpression: z
+    .string()
+    .transform((value) => (value ? cronToBackend(value) : ''))
+    .optional(),
+});
+
+export const refineExpense = (
+  {
+    amount,
+    paidBy,
+    participants,
+  }: {
+    amount: bigint;
+    paidBy: number;
+    participants: { userId: number; amount: bigint }[];
+  },
+  ctx: z.RefinementCtx,
+) => {
+  const ids = participants.map(({ userId }) => userId);
+  if (new Set(ids).size !== ids.length) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['participants'],
+      message: 'Duplicate participants',
+    });
+  }
+  if (0n !== participants.reduce((sum, participant) => sum + participant.amount, 0n)) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['participants'],
+      message: 'Participant balances must sum to zero',
+    });
+  }
+  // Recover each cost share from the net balance, including refunds with reversed signs.
+  const sign = amount < 0n ? -1n : 1n;
+  const total = amount * sign;
+  if (
+    participants.some((participant) => {
+      const share =
+        (participant.userId === paidBy ? amount - participant.amount : -participant.amount) * sign;
+      return share < 0n || share > total;
+    })
+  ) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['participants'],
+      message: 'Participant shares do not match the expense amount',
+    });
+  }
+};
+
+export const createExpenseSchema = createExpenseObjectSchema.superRefine(
+  refineExpense,
+) satisfies z.ZodType<CreateExpense>;
 
 export const createCurrencyConversionSchema = z
   .object({

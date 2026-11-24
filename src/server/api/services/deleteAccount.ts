@@ -73,6 +73,7 @@ export const deleteAccount = async (
 
         await tx.account.deleteMany({ where: { userId } });
         await tx.session.deleteMany({ where: { userId } });
+        await tx.apiKey.deleteMany({ where: { userId } });
         if (user.email) {
           await tx.verificationToken.deleteMany({ where: { identifier: user.email } });
         }

@@ -6,6 +6,7 @@
   "scripts": {
     "build": "next build",
     "just-build": "next build",
+    "gen:openapi": "cross-env SKIP_ENV_VALIDATION=true tsx scripts/generate-openapi.ts",
     "db:push": "prisma db push && prisma generate",
     "db:studio": "prisma studio",
     "db:dev": "prisma migrate dev && prisma generate",
@@ -102,7 +103,9 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@types/web-push": "^3.6.3",
+    "@trpc/openapi": "11.18.0-alpha",
     "babel-plugin-react-compiler": "^1.0.0",
+    "cross-env": "^10.1.0",
     "esbuild": "^0.25.12",
     "husky": "^9.1.7",
     "jest": "30.5.2",

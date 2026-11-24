@@ -41,6 +41,11 @@ jobs:
       - name: Run tests
         run: pnpm test
 
+      - name: Verify OpenAPI spec is up to date
+        run: |
+          pnpm gen:openapi
+          git diff --exit-code -- src/server/api/openapi.generated.json
+
       # Database seed hash verification is currently disabled because it is failing in CI.
       # - name: Verify seed hash
       #   run: pnpm db:verify-seed-hash

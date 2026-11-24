@@ -64,8 +64,24 @@ model User {
   friendDefaultSplitsA FriendDefaultSplit[] @relation("FriendDefaultSplitUserA")
   friendDefaultSplitsB FriendDefaultSplit[] @relation("FriendDefaultSplitUserB")
   sessions             Session[]
+  apiKeys              ApiKey[]
   hiddenFriendIds      Int[]                @default([])
 
+  @@schema("public")
+}
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  userId     Int
+  name       String
+  hashedKey  String    @unique
+  partialKey String
+  lastUsedAt DateTime?
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
   @@schema("public")
 }
 

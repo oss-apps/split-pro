@@ -1,5 +1,8 @@
 import { type Prisma } from '@prisma/client';
 
+// Prisma passes `contains` to ILIKE unescaped; backslash is PostgreSQL's default LIKE escape.
+const escapeLike = (value: string) => value.replace(/[\\%_]/g, (match) => `\\${match}`);
+
 /**
  * Builds the Prisma filter for the free-text `search` param of the expense lists.
  * Matches the expense name, category, group name and the payer's name or email,
@@ -11,7 +14,7 @@ export const expenseSearchWhere = (search?: string): Prisma.ExpenseWhereInput =>
     return {};
   }
 
-  const contains = { contains: term, mode: 'insensitive' } as const;
+  const contains = { contains: escapeLike(term), mode: 'insensitive' } as const;
   return {
     OR: [
       { name: contains },

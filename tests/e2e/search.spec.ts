@@ -1,3 +1,5 @@
+import { createDatabaseGroup } from '~/tests/helpers/databaseFactories';
+
 import { createDatabaseExpense, expect, expenseInput, test } from './fixtures';
 
 (['activity', 'friend', 'group'] as const).forEach((list) => {
@@ -36,4 +38,30 @@ import { createDatabaseExpense, expect, expenseInput, test } from './fixtures';
     await expect(searchBox).toHaveValue('');
     await expect(rows).toHaveCount(3);
   });
+});
+
+test('a search with no matches keeps the controls in a one-member group', async ({
+  page,
+  scenario,
+  db,
+}) => {
+  const soloGroup = await createDatabaseGroup(db, scenario.owner.id, [], {
+    name: `${scenario.group.name} solo`,
+  });
+  await createDatabaseExpense(
+    db,
+    expenseInput(scenario.owner.id, scenario.member.id, {
+      groupId: soloGroup.id,
+      name: 'Rent',
+      participants: [{ userId: scenario.owner.id, amount: 0n }],
+    }),
+  );
+  await page.goto(`/en/groups/${soloGroup.id}`);
+  const rows = page.locator('a[href*="/expenses/"]');
+  await expect(rows).toHaveCount(1);
+
+  await page.getByPlaceholder('Search expenses').fill('no such expense');
+  await expect(page.getByText('No expenses match your search')).toBeVisible();
+  await page.getByRole('button', { name: 'Clear search' }).click();
+  await expect(rows).toHaveCount(1);
 });

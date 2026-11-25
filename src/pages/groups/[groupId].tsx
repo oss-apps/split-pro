@@ -524,6 +524,7 @@ const BalancePage: NextPageWithUser<{
         loading={groupDetailQuery.isPending}
       >
         {1 === groupDetailQuery.data?.groupUsers.length &&
+        !searchValue &&
         !expensesQuery.isError &&
         !expenseItems.length ? (
           <div className="h-[85vh]">

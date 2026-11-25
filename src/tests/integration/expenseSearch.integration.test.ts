@@ -45,6 +45,25 @@ describe('expense history search', () => {
     expect(await friendIds()).toHaveLength(3);
   });
 
+  it('matches LIKE wildcards and backslashes literally', async () => {
+    const owner = await testUser('Owner');
+    const member = await testUser('Member');
+    const caller = callerFor(owner.id);
+    const [juice, underscore, backslash] = await caller.expense.addOrEditExpense(
+      ['100% juice', 'a_b', 'C:\\temp', 'axb', 'Plain'].map((name) =>
+        expenseInput(owner.id, member.id, { name }),
+      ),
+    );
+    const names = async (search: string) =>
+      (await caller.expense.getAllExpenses({ search })).items.map(({ expenseId }) => expenseId);
+
+    expect(await names('%')).toEqual([juice!.id]);
+    expect(await names('100%')).toEqual([juice!.id]);
+    expect(await names('a_b')).toEqual([underscore!.id]);
+    expect(await names('_')).toEqual([underscore!.id]);
+    expect(await names('\\')).toEqual([backslash!.id]);
+  });
+
   it('pages through search results', async () => {
     const owner = await testUser('Owner');
     const member = await testUser('Member');

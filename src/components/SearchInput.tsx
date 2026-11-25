@@ -19,6 +19,7 @@ export const SearchInput: React.FC<{
     <Input
       type="text"
       enterKeyHint="search"
+      maxLength={100}
       value={value}
       onChange={(ev) => onChange(ev.target.value)}
       placeholder={placeholder ?? t('ui.search_expenses_placeholder')}

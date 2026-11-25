@@ -1373,7 +1373,8 @@
                         },
                         { "type": "null" }
                       ]
-                    }
+                    },
+                    "search": { "type": "string" }
                   },
                   "additionalProperties": false
                 }
@@ -1668,7 +1669,8 @@
                         },
                         { "type": "null" }
                       ]
-                    }
+                    },
+                    "search": { "type": "string" }
                   },
                   "required": ["friendId"],
                   "additionalProperties": false
@@ -1999,7 +2001,8 @@
                         },
                         { "type": "null" }
                       ]
-                    }
+                    },
+                    "search": { "type": "string" }
                   },
                   "required": ["groupId"],
                   "additionalProperties": false

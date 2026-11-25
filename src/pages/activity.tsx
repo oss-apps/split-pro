@@ -1,8 +1,11 @@
 import { SplitType } from '@prisma/client';
+import { keepPreviousData } from '@tanstack/react-query';
 import { type User } from 'next-auth';
 import Head from 'next/head';
 import Link from 'next/link';
 import { InfiniteScroll } from '~/components/InfiniteScroll';
+import { SearchInput } from '~/components/SearchInput';
+import { useSearch } from '~/hooks/useSearch';
 import { flattenPages, nextPageParam } from '~/utils/pagination';
 import MainLayout from '~/components/Layout/MainLayout';
 import { EntityAvatar } from '~/components/ui/avatar';
@@ -59,9 +62,10 @@ function getPaymentString(
 
 const ActivityPage: NextPageWithUser = ({ user }) => {
   const { displayName, t, toUIDate, i18n } = useTranslationWithUtils();
+  const { value: searchValue, setValue: setSearchValue, search } = useSearch();
   const expensesQuery = api.expense.getAllExpenses.useInfiniteQuery(
-    {},
-    { getNextPageParam: nextPageParam },
+    { search },
+    { getNextPageParam: nextPageParam, placeholderData: keepPreviousData },
   );
   const expenseItems = flattenPages(expensesQuery.data);
 
@@ -88,8 +92,13 @@ const ActivityPage: NextPageWithUser = ({ user }) => {
         loading={expensesQuery.isPending}
       >
         <div className="flex flex-col gap-4">
-          {!expensesQuery.isError && !expenseItems.length ? (
-            <div className="mt-[30vh] text-center text-gray-400">{t('ui.no_activity')}</div>
+          {searchValue || expenseItems.length ? (
+            <SearchInput value={searchValue} onChange={setSearchValue} />
+          ) : null}
+          {!expensesQuery.isError && !expensesQuery.isPending && !expenseItems.length ? (
+            <div className={`${search ? 'mt-[20vh]' : 'mt-[30vh]'} text-center text-gray-400`}>
+              {t(search ? 'ui.no_search_results' : 'ui.no_activity')}
+            </div>
           ) : null}
           {expenseItems.map((e) => {
             const { toUIString } = getCurrencyHelpers({

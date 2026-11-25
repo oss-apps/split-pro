@@ -1,3 +1,4 @@
+import { keepPreviousData } from '@tanstack/react-query';
 import { clsx } from 'clsx';
 import {
   Archive,
@@ -20,6 +21,7 @@ import { useRouter } from 'next/router';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { InfiniteScroll } from '~/components/InfiniteScroll';
+import { SearchInput } from '~/components/SearchInput';
 import { flattenPages, nextPageParam } from '~/utils/pagination';
 import { BalanceList } from '~/components/Expense/BalanceList';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
@@ -39,6 +41,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { UpdateName } from '~/components/Account/UpdateDetails';
 import { CurrencyPicker } from '~/components/AddExpense/CurrencyPicker';
 import { env } from '~/env';
+import { useSearch } from '~/hooks/useSearch';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { deserializeDefaultSplit } from '~/lib/defaultSplit';
 import { isCurrencyCode, parseCurrencyCode } from '~/lib/currency';
@@ -68,9 +71,14 @@ const BalancePage: NextPageWithUser<{
     { groupId },
     { enabled: router.isReady && Boolean(groupId) },
   );
+  const { value: searchValue, setValue: setSearchValue, search } = useSearch();
   const expensesQuery = api.expense.getGroupExpenses.useInfiniteQuery(
-    { groupId },
-    { getNextPageParam: nextPageParam, enabled: router.isReady && Boolean(groupId) },
+    { groupId, search },
+    {
+      getNextPageParam: nextPageParam,
+      enabled: router.isReady && Boolean(groupId),
+      placeholderData: keepPreviousData,
+    },
   );
   const expenseItems = flattenPages(expensesQuery.data);
   const deleteGroupMutation = api.group.delete.useMutation();
@@ -576,11 +584,15 @@ const BalancePage: NextPageWithUser<{
                 <TabsTrigger value="balances">{t('group_details.tabs.balances')}</TabsTrigger>
               </TabsList>
               <TabsContent value="expenses">
+                {searchValue || expenseItems.length ? (
+                  <SearchInput value={searchValue} onChange={setSearchValue} className="mb-2" />
+                ) : null}
                 <ExpenseList
                   userId={user.id}
                   expenses={expenseItems}
                   contactId={groupId}
                   isLoading={expensesQuery.isPending || expensesQuery.isError}
+                  isSearch={Boolean(search)}
                   isGroup
                 />
                 <InfiniteScroll

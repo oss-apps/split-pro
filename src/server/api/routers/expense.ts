@@ -5,7 +5,8 @@ import {
 } from '../services/recurrenceScheduleService';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { beforeCursor, paginationInput, toPage } from '~/utils/pagination';
+import { beforeCursor, searchablePaginationInput, toPage } from '~/utils/pagination';
+import { expenseSearchWhere } from '~/server/api/services/expenseSearch';
 
 import { getUserBalances } from '~/server/api/services/balanceQuery';
 import {
@@ -252,13 +253,14 @@ export const expenseMethods = {
     }),
 
   getExpensesWithFriend: protectedProcedure
-    .input(paginationInput.extend({ friendId: z.number() }))
+    .input(searchablePaginationInput.extend({ friendId: z.number() }))
     .query(async ({ input, ctx }) => {
       const expenses = await db.expense.findMany({
         take: input.limit + 1,
         where: {
           ...beforeCursor(input.cursor, 'expenseDate'),
           AND: [
+            expenseSearchWhere(input.search),
             {
               expenseParticipants: {
                 some: {
@@ -341,12 +343,12 @@ export const expenseMethods = {
     }),
 
   getGroupExpenses: groupProcedure
-    .input(paginationInput.extend({ groupId: z.number() }))
+    .input(searchablePaginationInput.extend({ groupId: z.number() }))
     .query(async ({ input, ctx }) => {
       const expenses = await ctx.db.expense.findMany({
         take: input.limit + 1,
         where: {
-          AND: [beforeCursor(input.cursor, 'expenseDate')],
+          AND: [beforeCursor(input.cursor, 'expenseDate'), expenseSearchWhere(input.search)],
           groupId: input.groupId,
           deletedBy: null,
           OR: [
@@ -482,12 +484,14 @@ export const expenseMethods = {
     }),
 
   getAllExpenses: protectedProcedure
-    .input(paginationInput.prefault({}))
+    .input(searchablePaginationInput.prefault({}))
     .query(async ({ ctx, input }) => {
       const expenses = await db.expenseParticipant.findMany({
         take: input.limit + 1,
         where: {
-          expense: beforeCursor(input.cursor, 'createdAt'),
+          expense: {
+            AND: [beforeCursor(input.cursor, 'createdAt'), expenseSearchWhere(input.search)],
+          },
           userId: ctx.session.user.id,
         },
         orderBy: [{ expense: { createdAt: 'desc' } }, { expenseId: 'desc' }],

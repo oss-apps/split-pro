@@ -33,12 +33,17 @@ export const ExpenseList: React.FC<{
   contactId: number;
   isGroup?: boolean;
   isLoading?: boolean;
-}> = ({ userId, isGroup = false, expenses = [], contactId, isLoading }) => {
+  isSearch?: boolean;
+}> = ({ userId, isGroup = false, expenses = [], contactId, isLoading, isSearch = false }) => {
   const { i18n, t } = useTranslationWithUtils();
   const cutoff = useContext(BalanceDateContext);
 
   if (!isLoading && expenses.length === 0) {
-    return <NoExpenses />;
+    return isSearch ? (
+      <div className="mt-20 text-center text-gray-400">{t('ui.no_search_results')}</div>
+    ) : (
+      <NoExpenses />
+    );
   }
 
   return (

@@ -12,6 +12,11 @@ export const paginationInput = z.object({
   cursor: z.object({ date: cursorDate, id: z.string().uuid() }).nullish(),
 });
 
+// Free-text search shared by the expense lists, see `expenseSearchWhere` for the matched fields.
+export const searchablePaginationInput = paginationInput.extend({
+  search: z.string().max(100).optional(),
+});
+
 export type ListCursor = NonNullable<z.infer<typeof paginationInput>['cursor']>;
 
 // Value-based cursors continue working if the boundary row is deleted.

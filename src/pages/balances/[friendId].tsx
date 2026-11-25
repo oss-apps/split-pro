@@ -1,3 +1,4 @@
+import { keepPreviousData } from '@tanstack/react-query';
 import { ChevronLeftIcon, HandCoins, Pencil, PlusIcon } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -5,6 +6,7 @@ import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { toast } from 'sonner';
 import { InfiniteScroll } from '~/components/InfiniteScroll';
+import { SearchInput } from '~/components/SearchInput';
 import { collectPages, flattenPages, nextPageParam } from '~/utils/pagination';
 import { DefaultSplitSettings } from '~/components/DefaultSplit/DefaultSplitSettings';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
@@ -19,6 +21,7 @@ import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { type GetServerSideProps } from 'next';
+import { useSearch } from '~/hooks/useSearch';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { CumulatedBalances } from '~/components/Expense/CumulatedBalances';
 import { deserializeDefaultSplit } from '~/lib/defaultSplit';
@@ -35,9 +38,14 @@ const FriendPage: NextPageWithUser = ({ user }) => {
     { enabled: Boolean(parsedFriendId) },
   );
 
+  const { value: searchValue, setValue: setSearchValue, search } = useSearch();
   const expenses = api.expense.getExpensesWithFriend.useInfiniteQuery(
-    { friendId: parsedFriendId },
-    { getNextPageParam: nextPageParam, enabled: Boolean(parsedFriendId) },
+    { friendId: parsedFriendId, search },
+    {
+      getNextPageParam: nextPageParam,
+      enabled: Boolean(parsedFriendId),
+      placeholderData: keepPreviousData,
+    },
   );
   const expenseItems = flattenPages(expenses.data);
   const utils = api.useUtils();
@@ -201,13 +209,18 @@ const FriendPage: NextPageWithUser = ({ user }) => {
                 currentUserId={user.id}
                 friendName={displayName(friendQuery.data) ?? ''}
                 friendId={friendQuery.data?.id ?? ''}
-                disabled={0 === expenseItems.length}
+                // Export covers the full history, so an empty search result must not disable it.
+                disabled={!search && 0 === expenseItems.length}
               />
             </div>
+            {searchValue || expenseItems.length ? (
+              <SearchInput value={searchValue} onChange={setSearchValue} />
+            ) : null}
             <ExpenseList
               expenses={expenseItems}
               contactId={parsedFriendId}
               isLoading={expenses.isPending || expenses.isError}
+              isSearch={Boolean(search)}
               userId={user.id}
             />
             <InfiniteScroll

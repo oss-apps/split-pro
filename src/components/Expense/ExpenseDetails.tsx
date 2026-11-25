@@ -1,18 +1,19 @@
 import { SplitType } from '@prisma/client';
 import { isSameDay } from 'date-fns';
 import { type User as NextUser } from 'next-auth';
+import { useSession } from 'next-auth/react';
+import { Trans } from 'next-i18next';
 
 import type { inferRouterOutputs } from '@trpc/server';
 import { ArrowRightIcon, Landmark, Merge, PencilIcon, Users } from 'lucide-react';
 import Link from 'next/link';
-import React, { type ComponentProps, useCallback, useMemo, useState } from 'react';
+import React, { type ComponentProps, useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
-import { useIntlCronParser } from '~/hooks/useIntlCronParser';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-import { cronFromBackend } from '~/lib/cron';
 import { DEFAULT_CATEGORY } from '~/lib/category';
 import { isCurrencyCode } from '~/lib/currency';
+import { getParticipantShare, hasShareBreakdown } from '~/lib/expenseShare';
 import type { ExpenseRouter } from '~/server/api/routers/expense';
 import { useAddExpenseStore } from '~/store/addStore';
 import { api } from '~/utils/api';
@@ -25,7 +26,9 @@ import { CategoryIcon } from '../ui/categoryIcons';
 import { CurrencyInput } from '../ui/currency-input';
 import { AppDrawer } from '../ui/drawer';
 import { Separator } from '../ui/separator';
+import { ExpenseComments } from './ExpenseComments';
 import { Receipt } from './Receipt';
+import { RecurrencePreview } from './RecurrencePreview';
 import { DateSelector } from '../AddExpense/DateSelector';
 
 type ExpenseDetailsOutput = NonNullable<inferRouterOutputs<ExpenseRouter>['getExpenseDetails']>;
@@ -38,24 +41,8 @@ interface ExpenseDetailsProps {
 const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
   const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
 
-  const { cronParser, i18nReady } = useIntlCronParser();
-
-  const cronString = useMemo(() => {
-    if (!expense.recurrence) {
-      return null;
-    }
-    try {
-      return cronParser(cronFromBackend(expense.recurrence.job.schedule));
-    } catch {
-      toast.error(t('errors.invalid_cron_expression'));
-      console.error(
-        `Failed to parse cron expression for expense: ${expense.recurrence.job.schedule}`,
-      );
-      return null;
-    }
-  }, [t, expense.recurrence, cronParser]);
-
   const { toUIString } = getCurrencyHelpersCached(expense.currency);
+  const showShareBreakdown = hasShareBreakdown(expense);
 
   return (
     <>
@@ -77,25 +64,33 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
             ) : null}
             {expense.updatedByUser ? (
               <p className="text-sm text-gray-500">
-                {t('ui.edited_by')} {displayName(expense.updatedByUser, user.id, 'dativus')}{' '}
-                {t('ui.on')} {toUIDate(expense.updatedAt, { year: true })}
+                {t('expense_metadata.edited_by', {
+                  actor: expense.updatedByUser.id === user.id ? 'you' : 'other',
+                  user: displayName(expense.updatedByUser),
+                  date: toUIDate(expense.updatedAt, { year: true }),
+                })}
               </p>
             ) : null}
             {expense.deletedByUser ? (
               <p className="text-negative text-sm">
-                {t('ui.deleted_by')} {displayName(expense.deletedByUser, user.id, 'dativus')}{' '}
-                {t('ui.on')} {toUIDate(expense.deletedAt ?? expense.createdAt, { year: true })}
+                {t('expense_metadata.deleted_by', {
+                  actor: expense.deletedByUser.id === user.id ? 'you' : 'other',
+                  user: displayName(expense.deletedByUser),
+                  date: toUIDate(expense.deletedAt ?? expense.createdAt, { year: true }),
+                })}
               </p>
             ) : (
               <p className="text-sm text-gray-500">
-                {t('ui.added_by')} {displayName(expense.addedByUser, user.id, 'dativus')}{' '}
-                {t('ui.on')} {toUIDate(expense.createdAt, { year: true })}
+                {t('expense_metadata.added_by', {
+                  actor: expense.addedByUser.id === user.id ? 'you' : 'other',
+                  user: displayName(expense.addedByUser),
+                  date: toUIDate(expense.createdAt, { year: true }),
+                })}
               </p>
             )}
             {expense.recurrence ? (
               <Link href="/recurring" className="text-primary text-sm hover:underline">
-                {t('recurrence.recurring')}
-                {i18nReady ? `: ${cronString}` : ''}
+                <RecurrencePreview schedule={expense.recurrence.job.schedule} />
               </Link>
             ) : null}
             {expense.group ? (
@@ -116,25 +111,35 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
         <div>{expense.fileKey ? <Receipt fileKey={expense.fileKey} /> : null}</div>
       </div>
       <Separator />
-      <div className="mt-10 flex items-center gap-2">
-        <Link
-          href={
-            expense.paidByUser.id === user.id ? '/balances' : `/balances/${expense.paidByUser.id}`
+      <div className="mt-10 flex flex-wrap items-center gap-x-2 gap-y-1">
+        <Trans
+          t={t}
+          i18nKey={
+            0n > expense.amount ? 'expense_participant.received' : 'expense_participant.paid'
           }
-        >
-          <Button variant="outline" size="sm" className="gap-2 px-2">
-            <EntityAvatar entity={expense.paidByUser} size={25} />
-            <span>{displayName(expense.paidByUser, user.id)}</span>
-          </Button>
-        </Link>
-        <span className="text-gray-500">
-          {t(
-            `ui.expense.${expense.paidByUser.id === user.id ? 'you' : 'user'}.${expense.amount < 0 ? 'received' : 'paid'}`,
-          )}
-        </span>
-        <span className={expense.amount > 0 ? 'text-negative' : 'text-positive'}>
-          {toUIString(expense.amount)}
-        </span>
+          values={{ actor: expense.paidByUser.id === user.id ? 'you' : 'other' }}
+          components={{
+            person: (
+              <Link
+                href={
+                  expense.paidByUser.id === user.id
+                    ? '/balances'
+                    : `/balances/${expense.paidByUser.id}`
+                }
+              >
+                <Button variant="outline" size="sm" className="gap-2 px-2">
+                  <EntityAvatar entity={expense.paidByUser} size={25} />
+                  <span>{displayName(expense.paidByUser, user.id)}</span>
+                </Button>
+              </Link>
+            ),
+            amount: (
+              <span className={0n < expense.amount ? 'text-negative' : 'text-positive'}>
+                {toUIString(expense.amount)}
+              </span>
+            ),
+          }}
+        />
       </div>
       <div className="mt-4 ml-14 flex flex-col gap-4">
         {expense.expenseParticipants
@@ -145,6 +150,11 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
               participant={participant}
               userId={user.id}
               currency={expense.currency}
+              payerShare={
+                showShareBreakdown && participant.userId === expense.paidBy
+                  ? getParticipantShare(participant, expense)
+                  : undefined
+              }
             />
           ))}
         {expense.conversionTo && (
@@ -162,6 +172,7 @@ const ExpenseDetails: React.FC<ExpenseDetailsProps> = ({ user, expense }) => {
           </>
         )}
       </div>
+      <ExpenseComments expense={expense} userId={user.id} />
     </>
   );
 };
@@ -170,26 +181,43 @@ const ExpenseParticipantEntry: React.FC<{
   participant: ExpenseDetailsOutput['expenseParticipants'][number];
   userId: number;
   currency: string;
-}> = ({ participant, userId, currency }) => {
+  /** The payer's own share, shown alongside what they get back. Omitted for everyone else. */
+  payerShare?: bigint;
+}> = ({ participant, userId, currency, payerShare }) => {
   const { displayName, t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const { toUIString } = getCurrencyHelpersCached(currency);
 
   const isCurrentUser = userId === participant.userId;
   const isPositive = participant.amount > 0n;
   const amountColorClass = isPositive ? 'text-positive' : 'text-negative';
+  const hasPayerShare = undefined !== payerShare && 0n < payerShare;
+
+  const getI18nKey = () => {
+    if (hasPayerShare && isPositive) {
+      return 'expense_participant.owes_and_gets';
+    }
+    return isPositive ? 'expense_participant.gets' : 'expense_participant.owes';
+  };
 
   return (
-    <div key={participant.userId} className="flex items-center gap-2 text-sm">
-      <Link href={isCurrentUser ? '/balances' : `/balances/${participant.userId}`}>
-        <Button variant="outline" size="sm" className="gap-2 px-2">
-          <EntityAvatar entity={participant.user} size={25} />
-          <span>{displayName(participant.user, userId)}</span>
-        </Button>
-      </Link>
-      <span className="text-gray-500">
-        {t(`ui.expense.${isCurrentUser ? 'you' : 'user'}.${isPositive ? 'get' : 'owe'}`)}
-      </span>
-      <span className={amountColorClass}>{toUIString(participant.amount)}</span>
+    <div key={participant.userId} className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+      <Trans
+        t={t}
+        i18nKey={getI18nKey()}
+        values={{ actor: isCurrentUser ? 'you' : 'other' }}
+        components={{
+          person: (
+            <Link href={isCurrentUser ? '/balances' : `/balances/${participant.userId}`}>
+              <Button variant="outline" size="sm" className="gap-2 px-2">
+                <EntityAvatar entity={participant.user} size={25} />
+                <span>{displayName(participant.user, userId)}</span>
+              </Button>
+            </Link>
+          ),
+          amount: <span className={amountColorClass}>{toUIString(participant.amount)}</span>,
+          share: <span className="text-negative">{toUIString(payerShare ?? 0n)}</span>,
+        }}
+      />
     </div>
   );
 };
@@ -200,16 +228,16 @@ export const EditCurrencyConversion: React.FC<{ expense: ExpenseDetailsOutput }>
   const { setCurrency } = useAddExpenseStore((s) => s.actions);
   const { t } = useTranslationWithUtils();
 
-  if (!expense.conversionTo) {
+  const addOrEditCurrencyConversionMutation = api.expense.addOrEditCurrencyConversion.useMutation();
+  const apiUtils = api.useUtils();
+
+  const hasConversionTo = Boolean(expense.conversionTo);
+  if (!hasConversionTo) {
     toast.error(t('errors.currency_conversion_malformed'));
     console.error(
       'Malformed currency conversion data: no conversionTo present, please report this issue.',
     );
-    return null;
   }
-
-  const addOrEditCurrencyConversionMutation = api.expense.addOrEditCurrencyConversion.useMutation();
-  const apiUtils = api.useUtils();
 
   const onClick = useCallback(() => {
     if (expense.conversionTo && isCurrencyCode(expense.conversionTo.currency)) {
@@ -220,12 +248,11 @@ export const EditCurrencyConversion: React.FC<{ expense: ExpenseDetailsOutput }>
   const sender = expense.paidByUser;
   const receiver = expense.expenseParticipants.find((p) => p.userId !== expense.paidBy)?.user;
 
-  if (!sender || !receiver || !isCurrencyCode(expense.currency)) {
-    return null;
-  }
-
   const onSubmit: ComponentProps<typeof CurrencyConversion>['onSubmit'] = useCallback(
     async (data) => {
+      if (!sender || !receiver) {
+        return;
+      }
       await addOrEditCurrencyConversionMutation.mutateAsync({
         ...data,
         senderId: sender.id,
@@ -235,15 +262,12 @@ export const EditCurrencyConversion: React.FC<{ expense: ExpenseDetailsOutput }>
       });
       await apiUtils.invalidate();
     },
-    [
-      addOrEditCurrencyConversionMutation,
-      sender.id,
-      receiver.id,
-      expense.groupId,
-      expense.id,
-      apiUtils,
-    ],
+    [addOrEditCurrencyConversionMutation, sender, receiver, expense.groupId, expense.id, apiUtils],
   );
+
+  if (!hasConversionTo || !sender || !receiver || !isCurrencyCode(expense.currency)) {
+    return null;
+  }
 
   return (
     <CurrencyConversion
@@ -261,6 +285,7 @@ export const EditCurrencyConversion: React.FC<{ expense: ExpenseDetailsOutput }>
 
 export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ expense }) => {
   const { displayName, t, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { data: session } = useSession();
 
   const sender = expense.paidByUser;
   const receiver = expense.expenseParticipants.find((p) => p.userId !== expense.paidBy)?.user;
@@ -352,7 +377,12 @@ export const EditSettlement: React.FC<{ expense: ExpenseDetailsOutput }> = ({ ex
             <EntityAvatar entity={receiver} />
           </div>
           <p className="mt-2 text-center text-sm text-gray-400">
-            {displayName(sender)} {t('ui.expense.user.pay')} {displayName(receiver)}
+            {t('ui.transfer', {
+              senderRole: sender.id === session?.user.id ? 'you' : 'other',
+              receiverRole: receiver.id === session?.user.id ? 'you' : 'other',
+              sender: displayName(sender),
+              receiver: displayName(receiver),
+            })}
           </p>
           {expense.group ? (
             <p className="mt-1 text-center text-xs text-gray-500">{expense.group.name}</p>

@@ -4,9 +4,13 @@
 /node_modules
 /.pnp
 .pnp.js
+.swc/
 
 # testing
 /coverage
+/test-results
+/playwright-report/
+/playwright/.auth
 
 # database
 /prisma/db.sqlite
@@ -39,6 +43,9 @@ yarn-error.log*
 .env
 .env*.local
 
+# direnv cache and native development database
+/.direnv/
+
 # vercel
 .vercel
 
@@ -59,5 +66,8 @@ certificates
 SEED_STATISTICS.md
 
 # Agents
+.agent-notes/
 .worktrees/
 docs/superpowers/
+# next-agents-md
+.next-docs/

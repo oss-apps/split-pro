@@ -156,6 +156,7 @@ interface AppDrawerProps {
   disableTrigger?: boolean;
   onTriggerClick?: React.MouseEventHandler<HTMLButtonElement>;
   className?: string;
+  dialogClassName?: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   title?: string;
@@ -185,6 +186,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
     leftActionOnClick,
     shouldCloseOnLeftAction,
     className,
+    dialogClassName,
     dismissible,
     actionDisabled,
     disableTrigger,
@@ -220,6 +222,8 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
             {trigger}
           </DialogTrigger>
           <DialogContent
+            className={dialogClassName}
+            aria-describedby={undefined}
             onInteractOutside={(e) => {
               if (false === dismissible) {
                 e.preventDefault();
@@ -284,7 +288,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
         >
           {trigger}
         </DrawerTrigger>
-        <DrawerContent className={className}>
+        <DrawerContent className={className} aria-describedby={undefined}>
           <div className="overflow-auto p-4 pt-2">
             <div className="mb-4 flex items-center justify-between">
               {leftAction ? (
@@ -303,7 +307,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = (props) => {
               ) : (
                 <div className="w-10" />
               )}
-              <p>{title}</p>
+              <DrawerTitle className="font-normal">{title}</DrawerTitle>
               {actionTitle ? (
                 !shouldCloseOnAction ? (
                   <Button

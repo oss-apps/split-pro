@@ -23,7 +23,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 22.16.0
+          node-version: 22.23.5
           cache: pnpm
 
       - name: Install dependencies
@@ -36,14 +36,19 @@ jobs:
         run: pnpm lint
 
       - name: Run tsc
-        run: pnpm tsgo --noEmit
+        run: pnpm tsc --noEmit
 
       - name: Run tests
         run: pnpm test
+
+      - name: Verify OpenAPI spec is up to date
+        run: |
+          pnpm gen:openapi
+          git diff --exit-code -- src/server/api/openapi.generated.json
 
       # Database seed hash verification is currently disabled because it is failing in CI.
       # - name: Verify seed hash
       #   run: pnpm db:verify-seed-hash
 
       - name: Run build
-        run: pnpm build --no-lint
+        run: pnpm build

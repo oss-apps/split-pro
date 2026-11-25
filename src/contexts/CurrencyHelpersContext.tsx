@@ -1,7 +1,30 @@
 'use client';
 
-import React, { createContext, useCallback, useMemo } from 'react';
+import React, { createContext, useMemo } from 'react';
 import { getCurrencyHelpers } from '~/utils/numbers';
+
+const CURRENCY_HELPERS_CACHE_LIMIT = 100;
+const currencyHelpersCache = new Map<string, CurrencyHelpersType>();
+
+const getCachedCurrencyHelpers = (currency: string, locale = 'en-US'): CurrencyHelpersType => {
+  const cacheKey = JSON.stringify([currency, locale]);
+  const cachedHelpers = currencyHelpersCache.get(cacheKey);
+  if (cachedHelpers) {
+    currencyHelpersCache.delete(cacheKey);
+    currencyHelpersCache.set(cacheKey, cachedHelpers);
+    return cachedHelpers;
+  }
+
+  const helpers = getCurrencyHelpers({ currency, locale });
+  currencyHelpersCache.set(cacheKey, helpers);
+  if (currencyHelpersCache.size > CURRENCY_HELPERS_CACHE_LIMIT) {
+    const leastRecentlyUsedKey = currencyHelpersCache.keys().next().value;
+    if (leastRecentlyUsedKey !== undefined) {
+      currencyHelpersCache.delete(leastRecentlyUsedKey);
+    }
+  }
+  return helpers;
+};
 
 export type CurrencyHelpersType = ReturnType<typeof getCurrencyHelpers>;
 
@@ -22,32 +45,11 @@ interface CurrencyHelpersProviderProps {
  * The cache is indexed by currency code and locale combination.
  */
 export const CurrencyHelpersProvider: React.FC<CurrencyHelpersProviderProps> = ({ children }) => {
-  // Cache map: key is "currency|locale"
-  const cache = useMemo(() => new Map<string, CurrencyHelpersType>(), []);
-
-  const getCachedCurrencyHelpers = useCallback(
-    (currency: string, locale = 'en-US') => {
-      const cacheKey = `${currency}|${locale}`;
-
-      // Return cached helpers if available
-      if (cache.has(cacheKey)) {
-        return cache.get(cacheKey)!;
-      }
-
-      // Create new helpers and cache them
-      const helpers = getCurrencyHelpers({ currency, locale });
-      cache.set(cacheKey, helpers);
-
-      return helpers;
-    },
-    [cache],
-  );
-
   const value: CurrencyHelpersContextType = useMemo(
     () => ({
       getCachedCurrencyHelpers,
     }),
-    [getCachedCurrencyHelpers],
+    [],
   );
 
   return (

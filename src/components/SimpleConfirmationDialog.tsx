@@ -1,5 +1,5 @@
 import { type VariantProps } from 'class-variance-authority';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'next-i18next';
 
 import {
@@ -14,19 +14,21 @@ import {
 } from './ui/alert-dialog';
 import { Button, type buttonVariants } from './ui/button';
 
-export const SimpleConfirmationDialog: React.FC<
-  {
-    title: string;
-    open?: boolean;
-    onOpenChange?: (open: boolean) => void;
-    onCancel?: () => void;
-    description: React.ReactNode;
-    hasPermission: boolean;
-    onConfirm: () => void | Promise<void>;
-    loading: boolean;
-    children?: React.ReactNode;
-  } & VariantProps<typeof buttonVariants>
-> = ({
+type SimpleConfirmationDialogProps = {
+  title: string;
+  onCancel?: () => void;
+  description: React.ReactNode;
+  hasPermission: boolean;
+  onConfirm: () => void | Promise<void>;
+  loading: boolean;
+  children?: React.ReactNode;
+} & VariantProps<typeof buttonVariants> &
+  (
+    | { open: boolean; onOpenChange: (open: boolean) => void }
+    | { open?: never; onOpenChange?: never }
+  );
+
+export const SimpleConfirmationDialog: React.FC<SimpleConfirmationDialogProps> = ({
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
   onCancel,
@@ -41,8 +43,8 @@ export const SimpleConfirmationDialog: React.FC<
   const { t } = useTranslation();
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = typeof controlledOpen === 'boolean';
-  const open = isControlled ? controlledOpen! : internalOpen;
-  const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? controlledOnOpenChange : setInternalOpen;
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>

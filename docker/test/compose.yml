@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: ossapps/postgres:18.3-trixie
+    environment:
+      POSTGRES_USER: ${TEST_POSTGRES_USER:-splitpro}
+      POSTGRES_PASSWORD: ${TEST_POSTGRES_PASSWORD:-test-password}
+      POSTGRES_DB: ${TEST_POSTGRES_DB:-splitpro_harness_test}
+    command: >-
+      postgres
+      -c shared_preload_libraries=pg_cron
+      -c cron.database_name=${TEST_POSTGRES_DB:-splitpro_harness_test}
+      -c cron.timezone=UTC
+    ports:
+      - '127.0.0.1:${TEST_POSTGRES_PORT:-55439}:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 2s
+      timeout: 5s
+      retries: 15

@@ -19,7 +19,7 @@ services:
       postgres
       -c shared_preload_libraries=pg_cron
       -c cron.database_name=${POSTGRES_DB:-splitpro}
-      -c cron.timezone=UTC
+      -c cron.timezone=${RECURRENCE_TIME_ZONE:-UTC}
     # ports:
     #   - "5432:5432"
     env_file: .env
@@ -34,8 +34,15 @@ services:
       - ${PORT:-3000}:${PORT:-3000}
     environment:
       - PORT=${PORT:-3000}
-      # - HOSTNAME=0.0.0.0 # Uncomment this, to have the server listen on all network interfaces. Needed when you want to connect to split-pro via docker internal networks, e.g. for reverse proxy setups.
+      - HOSTNAME=0.0.0.0
+      # Execution time in PostgreSQL's cron.timezone; applied to expense jobs at startup.
+      - RECURRENCE_TIME=${RECURRENCE_TIME:-00:00}
     env_file: .env
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1:${PORT:-3000}/api/healthz']
+      interval: 30s
+      timeout: 5s
+      retries: 3
     depends_on:
       postgres:
         condition: service_healthy

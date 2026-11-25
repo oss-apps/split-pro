@@ -23,6 +23,13 @@
       "version": "Version"
     },
     "default_balance_currency": "Monnaie par défaut des soldes",
+    "deletion": {
+      "action": "Supprimer le compte",
+      "confirm": "Supprimer le compte définitivement",
+      "description": "Cette action est irréversible. Ton identité et tes informations de connexion seront supprimées, et tous les appareils actuellement connectés à ton compte ne le seront plus. Les dépenses partagées, notes, reçus, appartenance à des groupes de dépenses, et soldes non acquittés resteront consultables avec un label \"Compte supprimé\". Tes informations personnelles écrites dans du contenu partagé resteront consultables. L'administration de groupe sera transférée à une autre personne membre de celui-ci lorsque c'est possible. Les dépenses récurrentes que tu as créées s'arrêteront. Tu peux télécharger tes données SplitPro depuis la page de gestion de compte avant de continuer.",
+      "error": "Ton compte n'a pas pu être supprimé. Merci de réessayer.",
+      "title": "Supprimer le compte ?"
+    },
     "download_app": "Télécharger l'app",
     "download_app_details": {
       "download_as_pwa": "Tu peux télécharger SplitPro en tant que PWA (Aplication Web Progressive) sur ton écran d'accueil.",
@@ -52,7 +59,7 @@
         "import_success": "L'import a bien fonctionné"
       },
       "no_file_chosen": "Aucun fichier choisi",
-      "note": "Note : l'import ne fonctionne actuellement que pour les ami⋅es et les groupes, mais pas pour les transactions. On y travaille !"
+      "note": "Note : l'import ne fonctionne actuellement que pour les amis et les groupes, mais pas pour les transactions. On y travaille !"
     },
     "logout": "Déconnexion",
     "messages": {
@@ -69,6 +76,10 @@
     "star_on_github": "Soutenir sur GitHub",
     "submit_feedback": "Faire un feedback",
     "submit_feedback_details": {
+      "messages": {
+        "submit_error": "Impossible d'envoyer le feedback",
+        "submit_success": "Feedback envoyé"
+      },
       "placeholder": "Faire des retours sur l'appli",
       "title": "Faire un feedback"
     },
@@ -93,22 +104,35 @@
     "leave": "Quitter",
     "next": "Suivant",
     "reconnect": "Se reconnecter",
+    "remind_later": "Me le rappeler plus tard",
+    "retry": "Réessayer",
     "save": "Enregistrer",
     "settle_up": "Rembourser",
     "submit": "Valider"
   },
+  "activity": {
+    "user_deleted_expense": "{actor, select, you {Tu as supprimé {expense}} other {{user} a supprimé {expense}}}",
+    "user_paid_for_expense": "{user} a payé {amount} pour {expense}",
+    "user_received_for_expense": "{user} a reçu {amount} pour {expense}",
+    "you_paid_amount": "Tu as payé {amount}",
+    "you_paid_for_expense": "Tu as payé {amount} pour {expense}",
+    "you_received_amount": "Tu as reçu {amount}",
+    "you_received_for_expense": "Tu as reçu {amount} pour {expense}"
+  },
   "actors": {
     "all": "Toustes",
-    "friends": "Ami⋅es",
+    "deleted_user": "Compte supprimé",
+    "friends": "Amis",
     "groups": "Groupes",
     "members": "Membres",
+    "other_users": "Autres personnes",
     "owner": "Gestionnaire",
     "you": "Tu",
     "you_accusativus": "Toi",
     "you_dativus": "Toi"
   },
   "auth": {
-    "continue_with": "Continuer avec {{provider}}",
+    "continue_with": "Continuer avec {provider}",
     "email_placeholder": "Ton adresse mail",
     "no_providers_configured": "Aucun fournisseur d'authentification configuré",
     "no_providers_instructions": "Veuillez configurer au moins un fournisseur d'authentification pour vous connecter. Voir les",
@@ -117,6 +141,15 @@
     "sending": "Envoi en cours…",
     "setup_instructions": "instructions de configuration Docker",
     "trouble_logging_in": "Un problème pour te connecter ? Contact"
+  },
+  "balance_list": {
+    "gets": "{receiverRole, select, you {Tu reçois {amount} de {payer}} other {{receiver} reçoit {amount} de {payerRole, select, you {toi} other {{payer}}}}}",
+    "pays": "{payerRole, select, you {Tu paie {amount} à {receiver}} other {{payer} paie {amount} à {receiverRole, select, you {toi} other {{receiver}}}}}"
+  },
+  "balance_summary": {
+    "friend_owes_you": "{friend} te doit {amount}",
+    "more": "{count, plural, one {# solde supplémentaire} other {# soldes supplémentaires}}",
+    "you_owe_friend": "Tu dois {amount} à {friend}"
   },
   "balances": {
     "default_split": {
@@ -140,8 +173,23 @@
     "select_bank_provider": "Sélectionner une banque",
     "to_bank": "à la banque"
   },
+  "comments": {
+    "add": "Ajouter un commentaire",
+    "delete": "Supprimer",
+    "delete_confirm": "Effacer ce commentaire ?",
+    "edit": "Éditer",
+    "edit_label": "Édition du commentaire",
+    "error": "Erreur lors de l'enregistrement du commentaire",
+    "initial_label": "Ajouter une note (optionnel)",
+    "initial_placeholder": "Ajoute des détails à propos de cette dépense…",
+    "placeholder": "Écris un commentaire…",
+    "post": "Poster le commentaire",
+    "title": "Commentaires"
+  },
   "currency_conversion": {
+    "amount_aria_label": "Montant",
     "amount_to_receive": "Montant à recevoir",
+    "converted_amount_aria_label": "Montant converti",
     "description": "Convertir le montant vers une autre devise.",
     "exchange_rate": "Taux de change",
     "fetching_rate": "Récupération du taux de change…",
@@ -150,24 +198,32 @@
     "title": "Conversion monétaire"
   },
   "errors": {
+    "add_member_failed": "L'ajout d'un membre au groupe a échoué",
     "currency_conversion_error": "Une erreur est survenue lors de l'enregistrement de la conversion monétaire",
     "currency_conversion_failed": "Échec de la conversion des devises",
     "currency_conversion_malformed": "Les données de conversion de devise sont corrompues",
     "email_invalid": "Cette adresse mail est invalide, merci de recommencer le processus de connexion.",
     "email_required": "L'adresse mail est requise",
+    "expense_deletion_failed": "Une erreur inattendue s'est produite lors de la suppression de la dépense.",
+    "expense_submission_failed": "Une erreur inattendue s'est produite lors de l'enregistrement de la dépense.",
     "feedback_min_length": "Le texte doit faire au moins 10 caractères",
     "feedback_required": "Fournis des informations",
+    "friend_deletion_failed": "Impossible de supprimer l'ami",
     "group_balances_malformed": "Les données des soldes de groupe sont erronées, merci d'essayer de relancer leur calcul ou de reporter une erreur sinon.",
     "group_name_update_failed": "Une erreur est survenue lors de la mise à jour du nom du groupe",
     "image_compression_failed": "Échec de compression de l'image, tentative d'envoi de l'image originale",
     "import_failed": "Une erreur est survenue lors de l'import du fichier",
     "invalid_cron_expression": "Expression cron invalide",
-    "invalid_currency_code": "Le code de devise {{code}} est invalide",
+    "invalid_currency_code": "Le code de devise {code} est invalide",
+    "invalid_split": "Indique qui a payé cette dépense avant d'enregistrer.",
+    "invite_email_failed": "Impossible d'envoyer le mail d'invitation. Vérifie la configuration du SMTP.",
     "language_change_failed": "Le changement de langage a échoué",
-    "less_than": "Le poids du fichier doit être inférieur à {{size}}Mo",
+    "less_than": "Le poids du fichier doit être inférieur à {size}Mo",
     "name_required": "Un nom est requis",
     "no_providers": "Une erreur est survenue lors du chargement des fournisseurs d'authentification. Vérifiez les logs du backend sur le serveur.",
     "notification_not_supported": "Notification non supportée",
+    "notification_request_failed": "Erreur lors de la demande de permission pour les notifications",
+    "notification_subscribe_failed": "Impossible de s'inscrire aux notifications",
     "otp_invalid": "Code OTP invalide",
     "otp_required": "Le code OTP est requis",
     "recurrence_delete_failed": "Une erreur est survenue lors de la suppression de la récurrence",
@@ -175,7 +231,8 @@
     "request_error": "Une erreur est survenue lors du chargement des notifications",
     "saving_expense": "Un erreur est survenue lors de l'enregistrement de la dépense",
     "setting_update_failed": "Une erreur est survenue lors de la mise à jour des paramètres",
-    "signin_error": "Une erreur est survenue lors de la connexion : ",
+    "signin_error": "Une erreur est survenue lors de la connexion : {error}",
+    "signin_failed": "Connexion impossible. Réessaies.",
     "signup_disabled": "L'inscription de nouveaux comptes est désactivée sur cette instance",
     "something_went_wrong": "Une erreur est survenue",
     "subscribe_error": "Une erreur est survenue lors de l'abonnement aux notifications",
@@ -192,14 +249,22 @@
       "description_placeholder": "Description de la dépense",
       "pick_a_date": "Choisir une date",
       "select_user_or_group": {
-        "add_to_split_pro": "Inviter sur SplitPro",
-        "note": "Note : l'envoi de mails d'invitation est désactivé pour le moment pour éviter le spam",
+        "add_to_split_pro": "Ajouter à la dépense",
+        "empty_image_alt": "Aucun utilisateur trouvé",
+        "note": "L'envoi de mails d'invitation est désactivé. Tu peux toujours ajouter une personne via son email, sans envoyer d'invitation.",
         "only_one_group_time": "Une dépense ne peut concerner qu'un seul groupe à la fois",
-        "send_invite": "Envoyer une invitation",
-        "warning": "Attention : N'envoyez pas d'invitation à des adresses mail non enregistrées ici, utilisez plutôt la fonction « inviter sur SplitPro ». Votre compte sera bloqué si vous utilisez mal cette fonctionnalité"
+        "send_invite": "Ajouter avec un mail d'invitation",
+        "warning": "Les deux boutons ajoutent la personne à ce brouillon de dépense. Enregistre-la lorsque tu as terminé. L'option d'invitation envoie un lien vers SplitPro à la personne uniquement si son mail n'est pas encore vérifié ; cela ne la connecte pas."
       },
       "split_type_section": {
+        "direction": {
+          "no_money_flow": "Personne d'autre ne doit d'argent",
+          "owes_payer": "{debtor} doit cette somme à {payer}",
+          "owes_you": "{debtor} te doit",
+          "you_owe": "Ta dette envers {payer}"
+        },
         "split_equally": "partagé à parts égales",
+        "split_equally_with_count": "partagé équitablement entre {count, plural, one {# personne} other {# personnes}}",
         "split_unequally": "partagé inégalement",
         "types": {
           "adjustment": {
@@ -232,17 +297,20 @@
         }
       },
       "user_input": {
-        "add_more_friends": "Rechercher des ami⋅es, des groupes ou ajouter une adresse mail",
+        "add_more_friends": "Rechercher des amis, des groupes ou ajouter une adresse mail",
         "cannot_change_group": "Impossible de changer de groupe en cours d'édition",
         "remove_group": "Presse « Retour Arrière » pour supprimer le groupe",
-        "search_friends": "Rechercher des ami⋅es, des groupes ou ajouter une adresse mail"
+        "search_friends": "Rechercher des amis, des groupes ou ajouter une adresse mail"
       }
     },
-    "already_added": "Déjà ajouté⋅e",
+    "already_added": "Déjà ajouté",
     "balance_list": {
       "are_settled_up": "es quitte",
       "is_settled_up": "est quitte",
-      "press_balance_info": "Clique sur un solde pour effectuer un règlement"
+      "lent": "{actor, select, you {Tu as prêté} other {{person} a prêté}}",
+      "owes": "{actor, select, you {Tu dois} other {{person} doit}}",
+      "press_balance_info": "Clique sur un solde pour effectuer un règlement",
+      "settled": "{actor, select, you {Tu es quitte} other {{person} est quitte}}"
     },
     "bank_transactions": "Transactions bancaires",
     "clear": "Effacer",
@@ -250,6 +318,7 @@
       "text": "Cette action n'est pas réversible. Ceci supprimera définitivement ta dépense.",
       "title": "Confirmer la suppression définitive ?"
     },
+    "empty_state_image_alt": "Pas de dépense",
     "multiple_transactions": {
       "add_all": "Tout ajouter",
       "add_one_by_one": "Ajuster par transaction",
@@ -258,9 +327,40 @@
     },
     "no_transactions_yet": "Aucune transaction pour l'instant",
     "pending": "En attente",
+    "receipt": {
+      "image_alt": "Reçu de la dépense",
+      "thumbnail_alt": "Aperçu du reçu de la dépense",
+      "title": "Reçu de la dépense"
+    },
     "submit_all": "Tout enregistrer",
     "title": "Nouvelle dépense",
     "title_mobile": "Ajouter"
+  },
+  "expense_list": {
+    "conversion_for_users": "Conversion monétaire pour {payerRole, select, you {toi} other {{payer}}} et {receiverRole, select, you {toi} other {{receiver}}}",
+    "future_expense": "Dépense future — non incluse dans les soldes",
+    "settlement": "{payerRole, select, you {Tu as payé {amount} à {receiver}} other {{receiverRole, select, you {{payer} t'a payé {amount}} other {{payer} a payé {amount} à {receiver}}}}}",
+    "upcoming_expenses": "Dépenses à venir",
+    "user_paid": "{actor, select, you {Tu as payé {amount}} other {{user} a payé {amount}}}",
+    "user_received": "{actor, select, you {Tu as reçu {amount}} other {{user} a reçu {amount}}}"
+  },
+  "expense_metadata": {
+    "added_by": "{actor, select, you {Ajouté par toi le {date}} other {Ajouté par {user} le {date}}}",
+    "deleted_by": "{actor, select, you {Supprimé par toi le {date}} other {Supprimé par {user} le {date}}}",
+    "edited_by": "{actor, select, you {Édité par toi le {date}} other {Édité par {user} le {date}}}"
+  },
+  "expense_participant": {
+    "gets": "{actor, select, you {<person/> reçois <amount/>} other {<person/> reçoit <amount/>}}",
+    "owes": "{actor, select, you {<person/> dois <amount/>} other {<person/> doit <amount/>}}",
+    "paid": "<person/> payé <amount/>",
+    "received": "<person/> reçu <amount/>"
+  },
+  "friend": {
+    "delete_confirmation": {
+      "description": "Veux-tu vraiment continuer ?",
+      "outstanding_balance": "Tu ne peux pas supprimer un ami avec des soldes en attente. Règle-les d'abord.",
+      "title": "Es-tu vraiment sûr ?"
+    }
   },
   "group_details": {
     "add_members": "Ajouter des membres",
@@ -275,7 +375,7 @@
       "archive_group_details": {
         "can_archive": "Ce groupe sera archivé et caché de ta liste de groupes principale. Tu pourras toujours y accéder ultérieurement si besoin.",
         "cant_archive": "Impossible d'archiver le groupe tant qu'il y a des soldes en cours. Tous les soldes doivent être préalablement réglés.",
-        "title": "Es-tu sûr⋅e de vouloir archiver ce groupe ?"
+        "title": "Es-tu sûr de vouloir archiver ce groupe ?"
       },
       "archived": "Archivé",
       "configure_default_split": "Choisir la méthode de répartition par défaut",
@@ -293,7 +393,7 @@
       "leave_group_details": {
         "can_leave": "Cette action est irréversible",
         "cant_leave": "Impossible de quitter le groupe tant que tes soldes avec ses membres ne sont pas réglés",
-        "title": "Es-tu sûr⋅e de quitter ce groupe ?"
+        "title": "Es-tu sûr de quitter ce groupe ?"
       },
       "members": "Membres",
       "recalculate_balances": "Recalculer les soldes",
@@ -302,9 +402,9 @@
         "title": "Confirmer le re-calcul des soldes  ?"
       },
       "remove_member_details": {
-        "can_remove": "Tu es sur le point de retirer ce⋅tte membre du groupe",
-        "cant_remove": "Impossible de supprimer un⋅e membre tant que leur solde en cours n'est pas réglé",
-        "title": "Confirmer le retrait de ce⋅tte membre du groupe ?"
+        "can_remove": "Tu es sur le point de retirer ce membre du groupe",
+        "cant_remove": "Impossible de supprimer un membre tant que leur solde en cours n'est pas réglé",
+        "title": "Confirmer le retrait de ce membre du groupe ?"
       },
       "simplify_debts": "Simplifier les dettes",
       "title": "Informations du groupe"
@@ -327,14 +427,14 @@
       "add_members": "Ajouter des membres",
       "add_members_details": {
         "add_to_split_pro": "Ajouter à ce groupe",
-        "note": "Note : l'envoi d'invitation par mail est désactivé",
+        "note": "L'envoi d'invitation par mail est désactivé. Tu peux toujours ajouter une personne via son mail sans lui envoyer d'invitation.",
         "placeholder": "Entrer un pseudo ou un mail",
-        "send_invite": "Envoyer une invitation",
+        "send_invite": "Ajouter avec envoi de mail d'invitation",
         "title": "Ajouter des membres",
-        "warning": "Attention : N'envoyez pas d'invitation à des adresses mail non enregistrées ici, utilisez plutôt la fonction « inviter sur SplitPro ». Votre compte sera bloqué si vous utilisez mal cette fonctionnalité"
+        "warning": "Les deux boutons ajoutent immédiatement la personne ainsi que les contacts sélectionnés à ce groupe. L'enregistrement ajoute les contacts sélectionnés uniquement, pas l'adresse mail nouvellement entrée. L'option d'invitation envoie un mail à la personne vers SplitPro uniquement si son adresse n'est pas encore vérifiée ; cela ne la connecte pas."
       },
       "invite_link": "Lien d'invitation",
-      "no_members": "Aucun⋅e membre dans ce groupe pour l'instant."
+      "no_members": "Aucun membre dans ce groupe pour l'instant."
     },
     "tabs": {
       "balances": "Soldes",
@@ -349,8 +449,8 @@
   },
   "meta": {
     "application_name": "SplitPro",
-    "description": "Partagez gratuitement vos dépenses entre ami⋅es",
-    "title": "SplitPro : partagez gratuitement vos dépenses entre ami⋅es"
+    "description": "Partagez gratuitement vos dépenses entre amis",
+    "title": "SplitPro : partagez gratuitement vos dépenses entre amis"
   },
   "navigation": {
     "account": "Compte",
@@ -360,6 +460,18 @@
     "balances": "Soldes",
     "groups": "Groupes",
     "recurring": "Récurrences"
+  },
+  "notifications": {
+    "enable_description": "Ne loupe rien. Active les notifications pour savoir quand des dépenses sont ajoutées ou mises à jour.",
+    "enable_title": "Activer les notifications",
+    "permission_granted": "Tu vas recevoir une notification maintenant",
+    "subscribe": "S'abonner"
+  },
+  "pagination": {
+    "error": "Impossible de charger les dépenses. Merci de réessayer.",
+    "load_more": "Charger la suite",
+    "loading": "Chargement des dépenses",
+    "retry": "Réessayer"
   },
   "recurrence": {
     "cron_expression": "Expression « cron »",
@@ -374,10 +486,14 @@
     "edit_description": "Ceci changera la programmation des futures dépenses sur ce modèle, mais les dépenses déjà créées ne seront pas modifiées.",
     "edit_title": "Modifier la récurrence",
     "empty": "Aucune dépense récurrente pour l'instant",
-    "expense_for_the_amount_of": "Dépense {{name}} pour un montant de {{amount}}{{currency}}",
+    "execution_time_loading": "Chargement de la date d'exécution…",
+    "execution_time_unavailable": "La date d'exécution n'est pas disponible.",
+    "expense_for_the_amount_of": "Dépense {name} pour un montant de {amount}{currency}",
+    "instance_schedule": "Programmée le : {schedule} ({timeZone}).",
     "last_day": "Dernier jour",
     "months": "Mois",
     "never": "Aucun programme planifié",
+    "next_local_run": "Prochaine exécution : {date} ({timeZone}, ton fuseau horaire).",
     "recurring": "Récurrente",
     "schedule_type": {
       "custom": "Personnalisée",
@@ -388,9 +504,10 @@
       "year": "Annuelle"
     },
     "template_delete_warning": "Ceci est un modèle de dépense récurrente. Sa suppression arrêtera la génération de toutes les futures dépenses récurrentes.",
-    "template_edit_warning": "Ceci est un modèle de dépense récurrente. Les paramètres seront appliqués à toutes les futures dépenses récurrentes.",
+    "template_edit_warning": "Ceci est un modèle de dépense récurrente. Les paramètres seront appliqués à toutes les dépenses récurrentes créées dans le futur.",
     "time_of_day": "Heure journalière",
     "title": "Récurrence",
+    "toggle_options": "Activer/désactiver les options de dépenses récurrentes",
     "view_recurring_page": "Afficher cette récurrence"
   },
   "ui": {
@@ -405,13 +522,28 @@
       "for": "pour",
       "from": "de",
       "paid_by": "Payé par",
+      "payer": {
+        "current_user": "Tu"
+      },
       "received_by": "Reçu par",
+      "recipient": {
+        "current_user": "Tu"
+      },
+      "statements": {
+        "user_pays_user": "{payer} paie {receiver}",
+        "user_pays_you": "{user} te paie",
+        "you_lent": "Tu as prêté",
+        "you_lent_amount": "Tu as prêté {amount}",
+        "you_owe": "Tu dois",
+        "you_owe_amount": "Tu dois {amount}",
+        "you_pay_user": "Tu paies {user}"
+      },
       "to": "à",
       "user": {
         "deleted": "a supprimé",
         "get": "reçoit",
         "lent": "a avancé",
-        "owe": "doit",
+        "owe": "doit à",
         "paid": "a payé",
         "pay": "doit",
         "received": "a reçu"
@@ -427,13 +559,34 @@
       }
     },
     "expense_details": "Détails de la dépense",
+    "group_people_list_empty": {
+      "all_added": "Tous tes contacts sont déjà dans ce groupe",
+      "no_contacts": "Pas de contacts à afficher",
+      "no_matches": "Aucun contact ne correspond à ta recherche"
+    },
     "in_group": "dans le groupe",
+    "invitation": {
+      "adding": "Ajout en cours…",
+      "disabled_help": "L'envoi d'invitation par mail est désactivé sur ce serveur. Tu peux toutefois ajouter une personne via son adresse mail.",
+      "draft_help": "L'ajout d'une personne ne sauvegarde pas la dépense. Enregistre la également quand tu l'édites.",
+      "email_help": "Nous enverrons un lien vers SplitPro à l'adresse entrée uniquement si elle n'est pas encore vérifiée. Cela ne connectera pas la personne.",
+      "expense_partial_success": "La personne a été ajoutée au brouillon de la dépense, mais le mail d'invitation n'a pas pu être envoyé.",
+      "group_partial_success": "La personne a bien été ajoutée au groupe, mais le mail d'invitation n'a pas pu être envoyé.",
+      "no_email_help": "Aucun mail d'invitation ne sera envoyé. Les personnes qui ne sont pas encore inscrites pourront se connecter ultérieurement via cette adresse.",
+      "send_email": "Inviter par mail"
+    },
     "no_activity": "Aucune activité pour l'instant",
-    "not_involved": "Non concerné⋅e",
+    "not_involved": "Ne te concerne pas",
     "not_set": "Non défini",
     "on": "le",
     "or": "ou",
     "outstanding_balances": "Soldes en cours",
+    "people_list_empty": {
+      "all_added": "Tous tes contacts sont déjà dans ce groupe",
+      "no_contacts": "Aucun contact ou groupe à afficher",
+      "no_matches": "Aucun contact ou groupe ne correspond à ta recherche"
+    },
+    "people_list_load_error": "Erreur de chargement des contacts. Merci de réessayer.",
     "select_balance": "Choix du solde",
     "select_currency": "Choix de la devise",
     "settle_up_name": "Régler une dette",
@@ -442,6 +595,7 @@
     "share_text": "Jette un œil à SplitPro : c'est une alternative open source et gratuite à Splitwise",
     "show_all_currencies": "Montrer toutes les devises",
     "today": "Aujourd'hui",
-    "total_balance": "Solde global"
+    "total_balance": "Solde global",
+    "transfer": "{senderRole, select, you {Tu paies {receiver}} other {{receiverRole, select, you {{sender} te paie} other {{sender} paie {receiver}}}}}"
   }
 }

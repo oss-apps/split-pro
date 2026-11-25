@@ -1,2 +1,2 @@
 pnpm lint-staged
-pnpm tsgo --noEmit
+pnpm tsc --noEmit

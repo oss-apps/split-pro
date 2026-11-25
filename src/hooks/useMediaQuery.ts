@@ -6,10 +6,10 @@ import { useEffect, useState } from 'react';
  * @returns A boolean indicating if the query matches
  */
 const useMediaQuery = (query: string): boolean => {
-  const getMatches = (query: string): boolean => {
+  const getMatches = (mediaQuery: string): boolean => {
     // Prevents SSR issues
     if ('undefined' !== typeof window) {
-      return window.matchMedia(query).matches;
+      return window.matchMedia(mediaQuery).matches;
     }
     return false;
   };

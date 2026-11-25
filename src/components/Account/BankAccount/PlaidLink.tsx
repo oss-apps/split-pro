@@ -39,6 +39,7 @@ const usePlaidLinkHook = (
   }, [linkToken, onConnect]);
 
   return {
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- react-plaid-link types this SDK callback as Function; its documented callback accepts no arguments here.
     open: open as () => void,
     ready,
   };
@@ -80,6 +81,6 @@ export const PlaidLink: React.FC<PlaidLinkProps> = ({ onConnect, onSuccess, chil
 
   return React.cloneElement(children, {
     onClick: open,
-    disabled: !ready || isLoading || (children.props as ButtonProps).disabled,
+    disabled: !ready || isLoading || children.props.disabled,
   } as Partial<ButtonProps>);
 };

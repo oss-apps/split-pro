@@ -8,12 +8,14 @@
  * Versions are compared lexicographically, which works for semver.
  */
 
+import { Prisma } from '@prisma/client';
+
+import { env } from '~/env';
 import { db } from '~/server/db';
 
 // Import migrations
 import { convertExistingFilesToWebP } from './convert-files-to-webp';
 import { runDbMigrations } from './programmatic-prisma';
-import { env } from '~/env';
 
 /**
  * Get the current schema version from the database.
@@ -25,9 +27,14 @@ async function getCurrentVersion(): Promise<string | null> {
       where: { key: 'schema_version' },
     });
     return record?.value ?? null;
-  } catch {
-    // Table might not exist yet
-    return null;
+  } catch (error) {
+    // A missing metadata table identifies databases created before version tracking was added.
+    // Connection and permission failures must escape so startup does not mistake them for old data.
+    if (error instanceof Prisma.PrismaClientKnownRequestError && 'P2021' === error.code) {
+      return null;
+    }
+
+    throw error;
   }
 }
 
@@ -41,6 +48,11 @@ async function setVersion(version: string): Promise<void> {
     create: { key: 'schema_version', value: version },
   });
 }
+
+export const checkDatabaseConnection = async (): Promise<void> => {
+  // Keep this probe free of writes so every retry is safe.
+  await db.$queryRaw`SELECT 1`;
+};
 
 /**
  * Run all pending migrations.

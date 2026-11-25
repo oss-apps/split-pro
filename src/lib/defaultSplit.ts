@@ -25,7 +25,7 @@ export interface SerializedDefaultSplitConfig {
 }
 
 export const isDefaultSplitType = (splitType: SplitType): splitType is DefaultSplitType =>
-  DEFAULT_SPLIT_TYPES.includes(splitType as DefaultSplitType);
+  DEFAULT_SPLIT_TYPES.some((defaultSplitType) => defaultSplitType === splitType);
 
 export const serializeDefaultSplit = (
   config: DefaultSplitConfig,

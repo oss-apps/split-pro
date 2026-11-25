@@ -39,7 +39,7 @@ export const CumulatedBalances: React.FC<{
       ) : (
         <>
           <CumulatedBalanceDisplay
-            prefix={`${t('actors.you')} ${t('ui.expense.you.lent')}`}
+            prefix={t('ui.expense.statements.you_lent')}
             entityId={entityId}
             entityType={entityType}
             cumulatedBalances={youLent}
@@ -48,7 +48,7 @@ export const CumulatedBalances: React.FC<{
             currencies={allNonZeroCurrencies}
           />
           <CumulatedBalanceDisplay
-            prefix={`${t('actors.you')} ${t('ui.expense.you.owe')}`}
+            prefix={t('ui.expense.statements.you_owe')}
             entityId={entityId}
             entityType={entityType}
             className="text-negative"

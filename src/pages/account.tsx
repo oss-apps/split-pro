@@ -1,4 +1,4 @@
-import { SiGithub, SiX } from '@icons-pack/react-simple-icons';
+import { SiGithub } from '@icons-pack/react-simple-icons';
 import {
   BadgeInfo,
   CreditCard,
@@ -6,6 +6,7 @@ import {
   DownloadCloud,
   FileDown,
   HeartHandshakeIcon,
+  KeyRound,
   Languages,
   Star,
 } from 'lucide-react';
@@ -18,6 +19,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { AccountButton } from '~/components/Account/AccountButton';
 import { DownloadAppDrawer } from '~/components/Account/DownloadAppDrawer';
+import { DeleteAccount } from '~/components/Account/DeleteAccount';
 import { LanguagePicker } from '~/components/Account/LanguagePicker';
 import { SubmitFeedback } from '~/components/Account/SubmitFeedback';
 import { SubscribeNotification } from '~/components/Account/SubscribeNotification';
@@ -36,6 +38,7 @@ import {
 import { api } from '~/utils/api';
 import type { NextPageWithUser } from '~/types';
 import { DebugInfo } from '~/components/Account/DebugInfo';
+import { ApiKeys } from '~/components/Account/ApiKeys';
 import { useAppStore } from '~/store/appStore';
 
 const AccountPage: NextPageWithUser<{
@@ -86,7 +89,10 @@ const AccountPage: NextPageWithUser<{
     [updateDetailsMutation, utils.user.me, t],
   );
 
-  const header = useMemo(() => <div className="text-3xl font-semibold">Account</div>, []);
+  const header = useMemo(
+    () => <div className="text-3xl font-semibold">{t('account.title')}</div>,
+    [t],
+  );
 
   const onSignOut = useCallback(async () => {
     await signOut({ redirect: false });
@@ -172,6 +178,13 @@ const AccountPage: NextPageWithUser<{
             {t('account.import_from_splitwise')}
           </AccountButton>
 
+          <ApiKeys>
+            <AccountButton>
+              <KeyRound className="size-5 text-amber-500" />
+              {t('account.api_keys.title')}
+            </AccountButton>
+          </ApiKeys>
+
           <DebugInfo>
             <AccountButton>
               <BadgeInfo className="size-5 text-red-700" />
@@ -189,6 +202,9 @@ const AccountPage: NextPageWithUser<{
             {t('account.logout')}
           </Button>
         </div>
+        <div className="mt-6 flex justify-center">
+          <DeleteAccount />
+        </div>
       </MainLayout>
     </>
   );
@@ -199,7 +215,7 @@ AccountPage.auth = true;
 export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: {
     feedbackPossible: Boolean(env.FEEDBACK_EMAIL),
-    bankConnectionEnabled: Boolean(isBankConnectionConfigured()),
+    bankConnectionEnabled: isBankConnectionConfigured(),
     bankConnection: whichBankConnectionConfigured(),
     ...(await customServerSideTranslations(context.locale, ['common', 'currencies'])),
     maxUploadFileSizeMB: env.UPLOAD_MAX_FILE_SIZE_MB,

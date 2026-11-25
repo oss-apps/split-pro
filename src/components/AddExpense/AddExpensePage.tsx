@@ -1,4 +1,5 @@
-import { HeartHandshakeIcon, Landmark, RefreshCcwDot, X } from 'lucide-react';
+import { TRPCClientError } from '@trpc/client';
+import { HeartHandshakeIcon, Landmark, MessageSquare, RefreshCcwDot, X } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -13,11 +14,12 @@ import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { cronToBackend } from '~/lib/cron';
 import { cn } from '~/lib/utils';
 import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+import { Input, MultilineInput } from '../ui/input';
 import AddBankTransactions from './AddBankTransactions';
 import { CategoryPicker } from './CategoryPicker';
 import { CurrencyPicker } from './CurrencyPicker';
 import { DateSelector } from './DateSelector';
+import { EditRecurrenceDialog } from '../Expense/EditRecurrenceDialog';
 import { RecurrenceInput } from './RecurrenceInput';
 import { SelectUserOrGroup } from './SelectUserOrGroup';
 import { PayerSelectionForm, SplitExpenseForm } from './SplitTypeSection';
@@ -28,12 +30,16 @@ import { CurrencyConversion } from '../Friend/CurrencyConversion';
 import { currencyConversion } from '~/utils/numbers';
 import { CurrencyConversionIcon } from '../ui/categoryIcons';
 import { useSession } from 'next-auth/react';
+import { isStringQueryParam } from '~/utils/queryParams';
 
 export const AddOrEditExpensePage: React.FC<{
   enableSendingInvites: boolean;
   expenseId?: string;
   bankConnectionEnabled: boolean;
-}> = ({ enableSendingInvites, expenseId, bankConnectionEnabled }) => {
+  recurrence?: { id: number; schedule: string };
+}> = ({ enableSendingInvites, expenseId, bankConnectionEnabled, recurrence }) => {
+  const [initialComment, setInitialComment] = React.useState('');
+  const [showInitialComment, setShowInitialComment] = React.useState(false);
   const showFriends = useAddExpenseStore((s) => s.showFriends);
   const amount = useAddExpenseStore((s) => s.amount);
   const isNegative = useAddExpenseStore((s) => s.isNegative);
@@ -54,6 +60,7 @@ export const AddOrEditExpensePage: React.FC<{
   const transactionId = useAddExpenseStore((s) => s.transactionId);
   const cronExpression = useAddExpenseStore((s) => s.cronExpression);
   const multipleTransactions = useAddExpenseStore((s) => s.multipleTransactions);
+  const [previousCurrency, setPreviousCurrency] = React.useState<CurrencyCode | null>(null);
 
   const { t, displayName, generateSplitDescription, getCurrencyHelpersCached } =
     useTranslationWithUtils();
@@ -69,9 +76,13 @@ export const AddOrEditExpensePage: React.FC<{
     setMultipleTransactions,
     setIsTransactionLoading,
     setSingleTransaction,
+    setCronExpression,
   } = useAddExpenseStore((s) => s.actions);
 
-  const addExpenseMutation = api.expense.addOrEditExpense.useMutation();
+  const apiUtils = api.useUtils();
+  const addExpenseMutation = api.expense.addOrEditExpense.useMutation({
+    onSuccess: () => apiUtils.expense.invalidate(),
+  });
   const updateProfile = api.user.updateUserDetail.useMutation();
   const { update } = useSession();
 
@@ -83,7 +94,7 @@ export const AddOrEditExpensePage: React.FC<{
 
       updateProfile.mutate({ currency: newCurrency });
 
-      previousCurrencyRef.current = currency;
+      setPreviousCurrency(currency);
       setCurrency(newCurrency);
     },
     [currency, setCurrency, updateProfile],
@@ -99,7 +110,7 @@ export const AddOrEditExpensePage: React.FC<{
       if (bigIntValue !== undefined) {
         setAmount(bigIntValue);
       }
-      previousCurrencyRef.current = null;
+      setPreviousCurrency(null);
     },
     [setAmount, setAmountStr],
   );
@@ -119,6 +130,7 @@ export const AddOrEditExpensePage: React.FC<{
         [
           {
             name: description,
+            initialComment: expenseId ? undefined : initialComment,
             currency,
             amount: amount * sign,
             groupId: group?.id ?? null,
@@ -145,6 +157,8 @@ export const AddOrEditExpensePage: React.FC<{
                 if (transactionToAdd) {
                   setMultipleTransactions(allTransactions);
                   setSingleTransaction(transactionToAdd);
+                  setInitialComment('');
+                  setShowInitialComment(false);
                 }
                 return;
               } else {
@@ -154,10 +168,10 @@ export const AddOrEditExpensePage: React.FC<{
 
                 const { friendId, groupId } = router.query;
 
-                if (friendId && !groupId) {
-                  navPromise = () => router.push(`/balances/${friendId as string}/expenses/${id}`);
-                } else if (groupId) {
-                  navPromise = () => router.push(`/groups/${groupId as string}/expenses/${id}`);
+                if (isStringQueryParam(friendId) && friendId && !groupId) {
+                  navPromise = () => router.push(`/balances/${friendId}/expenses/${id}`);
+                } else if (isStringQueryParam(groupId) && groupId) {
+                  navPromise = () => router.push(`/groups/${groupId}/expenses/${id}`);
                 } else {
                   navPromise = () => router.push(`/expenses/${id}?keepAdding=1`);
                 }
@@ -166,14 +180,17 @@ export const AddOrEditExpensePage: React.FC<{
                   navPromise = async () => router.back();
                 }
 
-                navPromise().catch(console.error);
-                update((session: any) => ({
-                  ...session,
-                  user: {
-                    ...(session?.user ?? {}),
-                    currency,
-                  },
-                })).catch(console.error);
+                navPromise()
+                  .then(() =>
+                    update((session: any) => ({
+                      ...session,
+                      user: {
+                        ...(session?.user ?? {}),
+                        currency,
+                      },
+                    })),
+                  )
+                  .catch(console.error);
               }
             }
           },
@@ -181,13 +198,16 @@ export const AddOrEditExpensePage: React.FC<{
       );
     } catch (error) {
       console.error(error);
-      if (error instanceof Error) {
+      if (error instanceof TRPCClientError && error.data?.zodError) {
+        toast.error(t('errors.expense_invalid_input'));
+      } else if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error('An unexpected error occurred while submitting the expense.');
+        toast.error(t('errors.expense_submission_failed'));
       }
     }
   }, [
+    initialComment,
     description,
     currency,
     isNegative,
@@ -208,26 +228,27 @@ export const AddOrEditExpensePage: React.FC<{
     cronExpression,
     multipleTransactions,
     setSingleTransaction,
+    t,
     update,
   ]);
 
   const handleDescriptionChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setDescription(e.target.value.toString() ?? '');
+      setDescription(e.target.value ?? '');
     },
     [setDescription],
   );
 
   const clearTransaction = useCallback(() => {
     resetState();
+    setInitialComment('');
+    setShowInitialComment(false);
     setMultipleTransactions([]);
   }, [resetState, setMultipleTransactions]);
 
-  const previousCurrencyRef = React.useRef<CurrencyCode | null>(null);
-
   const onConvertAmount: React.ComponentProps<typeof CurrencyConversion>['onSubmit'] = useCallback(
     ({ amount: absAmount, rate }) => {
-      if (!previousCurrencyRef.current) {
+      if (!previousCurrency) {
         return;
       }
 
@@ -236,23 +257,18 @@ export const AddOrEditExpensePage: React.FC<{
         currencyConversion({
           amount: absAmount,
           rate,
-          from: previousCurrencyRef.current,
+          from: previousCurrency,
           to: currency,
         });
       setAmount(targetAmount);
       setAmountStr(getCurrencyHelpersCached(currency).toUIString(targetAmount, false, true));
-      previousCurrencyRef.current = null;
+      setPreviousCurrency(null);
     },
-    [setAmount, setAmountStr, currency, getCurrencyHelpersCached],
+    [setAmount, setAmountStr, currency, getCurrencyHelpersCached, previousCurrency],
   );
 
   const currencyConversionComponent = React.useMemo(() => {
-    if (
-      currency === previousCurrencyRef.current ||
-      previousCurrencyRef.current === null ||
-      !amount ||
-      0n === amount
-    ) {
+    if (currency === previousCurrency || previousCurrency === null || !amount || 0n === amount) {
       return null;
     }
 
@@ -260,7 +276,7 @@ export const AddOrEditExpensePage: React.FC<{
       <CurrencyConversion
         onSubmit={onConvertAmount}
         amount={amount}
-        currency={previousCurrencyRef.current}
+        currency={previousCurrency}
         editingTargetCurrency={currency}
       >
         <Button size="icon" variant="secondary" className="size-8">
@@ -268,7 +284,7 @@ export const AddOrEditExpensePage: React.FC<{
         </Button>
       </CurrencyConversion>
     );
-  }, [amount, currency, onConvertAmount]);
+  }, [amount, currency, onConvertAmount, previousCurrency]);
 
   const onBackButtonPress = useCallback(() => {
     router.back();
@@ -303,7 +319,7 @@ export const AddOrEditExpensePage: React.FC<{
         <SelectUserOrGroup enableSendingInvites={enableSendingInvites} />
       ) : (
         <>
-          <div className="mt-4 flex gap-2 sm:mt-10">
+          <div className="mt-4 grid grid-cols-[73px_minmax(0,1fr)] gap-2 sm:mt-10">
             <CategoryPicker category={category} onCategoryPick={setCategory} />
             <Input
               placeholder={t('expense_details.add_expense_details.description_placeholder')}
@@ -313,7 +329,7 @@ export const AddOrEditExpensePage: React.FC<{
               autoFocus
             />
           </div>
-          <div className="flex gap-2">
+          <div className="grid grid-cols-[73px_minmax(0,1fr)] gap-2">
             <CurrencyPicker currentCurrency={currency} onCurrencyPick={onCurrencyPick} />
             <CurrencyInput
               placeholder={t('expense_details.add_expense_details.amount_placeholder')}
@@ -325,6 +341,37 @@ export const AddOrEditExpensePage: React.FC<{
               rightIcon={currencyConversionComponent}
             />
           </div>
+          {!expenseId && (
+            <div className="grid h-20 grid-cols-[73px_minmax(0,1fr)] items-start gap-2">
+              <button
+                type="button"
+                className="ring-offset-background flex h-10 w-full items-center justify-center rounded-md focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-hidden"
+                aria-label={t('comments.initial_label')}
+                title={t('comments.initial_label')}
+                aria-expanded={showInitialComment}
+                aria-controls="initial-expense-comment"
+                onClick={() => setShowInitialComment(!showInitialComment)}
+              >
+                <MessageSquare
+                  className={cn(
+                    'size-6',
+                    showInitialComment || initialComment.trim() ? 'text-primary' : 'text-gray-300',
+                  )}
+                />
+              </button>
+              {showInitialComment && (
+                <MultilineInput
+                  id="initial-expense-comment"
+                  aria-label={t('comments.initial_label')}
+                  value={initialComment}
+                  onChange={(event) => setInitialComment(event.target.value)}
+                  maxLength={5000}
+                  placeholder={t('comments.initial_placeholder')}
+                  autoFocus
+                />
+              )}
+            </div>
+          )}
           <div className="h-[180px]">
             {amount && '' !== description ? (
               <>
@@ -336,7 +383,9 @@ export const AddOrEditExpensePage: React.FC<{
                       className="text-primary h-8 max-w-full min-w-0 justify-start px-1.5 py-0 text-base sm:max-w-none"
                     >
                       <span className="max-w-full truncate">
-                        {displayName(paidBy, currentUser?.id, 'dativus')}
+                        {paidBy?.id === currentUser?.id
+                          ? t(`ui.expense.${isNegative ? 'recipient' : 'payer'}.current_user`)
+                          : displayName(paidBy)}
                       </span>
                     </Button>
                   </PayerSelectionForm>
@@ -384,23 +433,37 @@ export const AddOrEditExpensePage: React.FC<{
               </>
             ) : null}
           </div>
-          <div className="flex items-center justify-evenly px-4 lg:px-0">
-            {!expenseId && (
-              <RecurrenceInput>
-                <Button variant="ghost" size="sm">
-                  <RefreshCcwDot
-                    className={cn(
-                      cronExpression && 'text-primary',
-                      (!amtStr || !description) && 'invisible',
-                      'size-6',
-                    )}
-                  />
-                  <span className="sr-only">Toggle recurring expense options</span>
-                </Button>
-              </RecurrenceInput>
-            )}
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 lg:px-0">
+            <div className="justify-self-start">
+              {!recurrence && (
+                <RecurrenceInput>
+                  <Button variant="ghost" size="sm">
+                    <RefreshCcwDot
+                      className={cn(
+                        cronExpression && 'text-primary',
+                        (!amtStr || !description) && 'invisible',
+                        'size-6',
+                      )}
+                    />
+                    <span className="sr-only">{t('recurrence.toggle_options')}</span>
+                  </Button>
+                </RecurrenceInput>
+              )}
+              {expenseId && recurrence && (
+                <EditRecurrenceDialog
+                  recurrenceId={recurrence.id}
+                  currentSchedule={cronExpression || recurrence.schedule}
+                  onScheduleChange={setCronExpression}
+                >
+                  <Button variant="ghost" size="sm">
+                    <RefreshCcwDot className="text-primary size-6" />
+                    <span className="sr-only">{t('recurrence.toggle_options')}</span>
+                  </Button>
+                </EditRecurrenceDialog>
+              )}
+            </div>
             <SponsorUs />
-            <div className="flex gap-2">
+            <div className="flex gap-2 justify-self-end">
               <AddBankTransactions bankConnectionEnabled={bankConnectionEnabled}>
                 <Button
                   variant="ghost"

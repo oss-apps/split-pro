@@ -105,7 +105,7 @@ const placeholderGenerators: Record<string, () => string> = {
   item: generateItem,
   room: generateRoom,
   person: generatePerson,
-  name: generatePerson, // alias for person
+  name: generatePerson, // Alias for person
 };
 
 /**

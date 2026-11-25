@@ -2,8 +2,16 @@ import { TRPCError } from '@trpc/server';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
+import { computeMemberTotals, currenciesByUse } from '~/lib/groupStatistics';
 import { simplifyDebts } from '~/lib/simplify';
-import { createTRPCRouter, groupProcedure, protectedProcedure } from '~/server/api/trpc';
+import { NON_SPENDING_SPLIT_TYPES } from '~/lib/splitTypes';
+import {
+  balanceProcedure,
+  createTRPCRouter,
+  groupBalanceProcedure,
+  groupProcedure,
+  protectedProcedure,
+} from '~/server/api/trpc';
 import { sendGroupSimplifyDebtsToggleNotification } from '~/server/api/services/notificationService';
 import { SplitType } from '@prisma/client';
 import {
@@ -13,7 +21,12 @@ import {
   serializeDefaultSplit,
 } from '~/lib/defaultSplit';
 
-export const groupRouter = createTRPCRouter({
+/**
+ * Method record for `groupRouter`, exported so the public API router
+ * (`~/server/api/apiRouter`) can mount a curated subset of the same procedures
+ * without duplicating them.
+ */
+export const groupMethods = {
   create: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
@@ -52,21 +65,22 @@ export const groupRouter = createTRPCRouter({
       },
     });
 
-    return groups.map((groupUser) => ({
-      ...groupUser,
-      group: {
-        ...groupUser.group,
-        defaultSplit: groupUser.group.groupDefaultSplit
-          ? parseSerializedDefaultSplit(
-              groupUser.group.groupDefaultSplit.splitType,
-              groupUser.group.groupDefaultSplit.shares,
-            )
-          : null,
-      },
-    }));
+    return groups.map((groupUser) =>
+      Object.assign(groupUser, {
+        group: {
+          ...groupUser.group,
+          defaultSplit: groupUser.group.groupDefaultSplit
+            ? parseSerializedDefaultSplit(
+                groupUser.group.groupDefaultSplit.splitType,
+                groupUser.group.groupDefaultSplit.shares,
+              )
+            : null,
+        },
+      }),
+    );
   }),
 
-  getAllGroupsWithBalances: protectedProcedure
+  getAllGroupsWithBalances: balanceProcedure
     .input(z.object({ getArchived: z.boolean() }).optional())
     .query(async ({ ctx, input }) => {
       const groups = await ctx.db.groupUser.findMany({
@@ -107,10 +121,7 @@ export const groupRouter = createTRPCRouter({
           balances[balance.currency] = (balances[balance.currency] ?? 0n) + balance.amount;
         }
 
-        return {
-          ...g.group,
-          balances,
-        };
+        return Object.assign(g.group, { balances });
       });
 
       return groupsWithBalances;
@@ -141,12 +152,24 @@ export const groupRouter = createTRPCRouter({
       return group;
     }),
 
-  getGroupDetails: groupProcedure.query(async ({ input, ctx }) => {
+  getGroupDetails: groupBalanceProcedure.query(async ({ input, ctx }) => {
     const group = await ctx.db.group.findUnique({
       where: {
         id: input.groupId,
       },
       include: {
+        expenses: {
+          where: {
+            deletedBy: null,
+            OR: [
+              { splitType: { not: SplitType.CURRENCY_CONVERSION } },
+              { conversionToId: { not: null } },
+            ],
+          },
+          orderBy: [{ expenseDate: 'asc' }, { id: 'asc' }],
+          take: 1,
+          select: { createdAt: true },
+        },
         groupUsers: {
           include: {
             user: true,
@@ -187,13 +210,52 @@ export const groupRouter = createTRPCRouter({
       where: {
         groupId: input.groupId,
         deletedAt: null,
-        splitType: {
-          not: SplitType.SETTLEMENT,
-        },
+        splitType: { notIn: [...NON_SPENDING_SPLIT_TYPES] },
       },
     });
 
     return totals;
+  }),
+
+  getGroupMemberTotals: groupProcedure.query(async ({ input, ctx }) => {
+    const expenses = await ctx.db.expense.findMany({
+      where: {
+        groupId: input.groupId,
+        deletedAt: null,
+        splitType: { notIn: [...NON_SPENDING_SPLIT_TYPES] },
+      },
+      select: {
+        paidBy: true,
+        currency: true,
+        amount: true,
+        expenseParticipants: { select: { userId: true, amount: true } },
+      },
+    });
+
+    const totals = computeMemberTotals(expenses);
+    const groupUsers = await ctx.db.groupUser.findMany({
+      where: { groupId: input.groupId },
+      select: { userId: true },
+    });
+    // Current members are always listed; former members only when they have expenses.
+    const userIds = new Set([
+      ...groupUsers.map(({ userId }) => userId),
+      ...totals.map((total) => total.userId),
+    ]);
+    const users = await ctx.db.user.findMany({
+      where: { id: { in: [...userIds] } },
+      select: { id: true, name: true, email: true, image: true, deletedAt: true },
+    });
+
+    return {
+      currencies: currenciesByUse(expenses),
+      members: users.map((user) => ({
+        user,
+        totals: totals
+          .filter((total) => total.userId === user.id)
+          .map(({ currency, paid, share }) => ({ currency, paid, share })),
+      })),
+    };
   }),
 
   addMembers: groupProcedure
@@ -488,6 +550,8 @@ export const groupRouter = createTRPCRouter({
 
       return group;
     }),
-});
+};
+
+export const groupRouter = createTRPCRouter(groupMethods);
 
 export type GroupRouter = typeof groupRouter;

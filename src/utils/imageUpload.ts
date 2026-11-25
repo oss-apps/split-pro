@@ -1,6 +1,7 @@
 import imageCompression from 'browser-image-compression';
+import { UploadResponseSchema } from '~/types/notifications';
 
-import { env } from '~/env';
+import '~/env';
 
 const compressImage = async (file: File, maxSizeMB: number) => {
   if (!file.type.startsWith('image/')) {
@@ -27,7 +28,7 @@ export const uploadImage = async (file: File): Promise<string> => {
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch('/api/upload', {
+  const response = await fetch('/api/v1/upload', {
     method: 'POST',
     body: formData,
   });
@@ -36,8 +37,13 @@ export const uploadImage = async (file: File): Promise<string> => {
     throw new Error(response.statusText);
   }
 
-  const data = (await response.json()) as { key: string };
-  return data.key;
+  const data: unknown = await response.json();
+  const validated = UploadResponseSchema.safeParse(data);
+  if (!validated.success) {
+    throw new Error('Invalid upload response');
+  }
+
+  return validated.data.key;
 };
 
 export const toImageSrc = (value?: string | null) => {

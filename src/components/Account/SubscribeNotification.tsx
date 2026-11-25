@@ -1,11 +1,10 @@
-import { Bell, BellOff, ChevronRight } from 'lucide-react';
+import { Bell, BellOff } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useAppStore } from '~/store/appStore';
 import { api } from '~/utils/api';
 import { useTranslation } from 'next-i18next';
 
-import { Button } from '../ui/button';
 import { AccountButton } from './AccountButton';
 
 const base64ToUint8Array = (base64: string) => {

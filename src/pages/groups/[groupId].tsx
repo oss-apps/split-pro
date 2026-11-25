@@ -19,9 +19,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { InfiniteScroll } from '~/components/InfiniteScroll';
+import { flattenPages, nextPageParam } from '~/utils/pagination';
 import { BalanceList } from '~/components/Expense/BalanceList';
 import { ExpenseList } from '~/components/Expense/ExpenseList';
 import AddMembers from '~/components/group/AddMembers';
+import GroupMemberTotals from '~/components/group/GroupMemberTotals';
 import GroupMyBalance from '~/components/group/GroupMyBalance';
 import NoMembers from '~/components/group/NoMembers';
 import MainLayout from '~/components/Layout/MainLayout';
@@ -44,19 +47,32 @@ import { type NextPageWithUser } from '~/types';
 import { api } from '~/utils/api';
 import { customServerSideTranslations } from '~/utils/i18n/server';
 import { useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
+import { isStringQueryParam } from '~/utils/queryParams';
 
 const BalancePage: NextPageWithUser<{
   enableSendingInvites: boolean;
 }> = ({ user, enableSendingInvites }) => {
   const { displayName, toUIDate, t, getCurrencyHelpersCached } = useTranslationWithUtils();
   const router = useRouter();
-  const groupId = parseInt(router.query.groupId as string);
+  const groupId = isStringQueryParam(router.query.groupId)
+    ? parseInt(router.query.groupId)
+    : Number.NaN;
 
   const setGroupDefaultCurrency = useCurrencyPreferenceStore((s) => s.setGroupDefaultCurrency);
 
-  const groupDetailQuery = api.group.getGroupDetails.useQuery({ groupId });
-  const groupTotalQuery = api.group.getGroupTotals.useQuery({ groupId });
-  const expensesQuery = api.expense.getGroupExpenses.useQuery({ groupId });
+  const groupDetailQuery = api.group.getGroupDetails.useQuery(
+    { groupId },
+    { enabled: router.isReady && Boolean(groupId) },
+  );
+  const groupTotalQuery = api.group.getGroupTotals.useQuery(
+    { groupId },
+    { enabled: router.isReady && Boolean(groupId) },
+  );
+  const expensesQuery = api.expense.getGroupExpenses.useInfiniteQuery(
+    { groupId },
+    { getNextPageParam: nextPageParam, enabled: router.isReady && Boolean(groupId) },
+  );
+  const expenseItems = flattenPages(expensesQuery.data);
   const deleteGroupMutation = api.group.delete.useMutation();
   const leaveGroupMutation = api.group.leaveGroup.useMutation();
   const toggleArchiveMutation = api.group.toggleArchive.useMutation();
@@ -171,6 +187,7 @@ const BalancePage: NextPageWithUser<{
                   {t('group_details.group_statistics.total_expenses')}
                 </p>
                 <div className="mt-2 flex flex-wrap gap-1">
+                  {/* oxlint-disable no-underscore-dangle -- Prisma's generated aggregate API uses the `_sum` field name. */}
                   {groupTotalQuery.data?.map((total, index, arr) =>
                     null != total._sum.amount ? (
                       <Fragment key={total.currency}>
@@ -181,19 +198,24 @@ const BalancePage: NextPageWithUser<{
                       </Fragment>
                     ) : null,
                   )}
+                  {/* oxlint-enable no-underscore-dangle */}
                 </div>
-                {expensesQuery?.data && expensesQuery.data[expensesQuery.data.length - 1] && (
+                {groupDetailQuery.data?.expenses[0] && (
                   <div className="mt-8">
                     <p className="font-semibold">
                       {t('group_details.group_statistics.first_expense')}
                     </p>
                     <p>
-                      {toUIDate(expensesQuery.data[expensesQuery.data.length - 1]!.createdAt, {
+                      {toUIDate(groupDetailQuery.data.expenses[0].createdAt, {
                         year: true,
                       })}
                     </p>
                   </div>
                 )}
+                <GroupMemberTotals
+                  groupId={groupId}
+                  defaultCurrency={groupDetailQuery.data?.defaultCurrency}
+                />
               </>
             </AppDrawer>
             <AppDrawer
@@ -242,23 +264,23 @@ const BalancePage: NextPageWithUser<{
                       ) : (
                         isAdmin &&
                         (() => {
-                          const canLeave = !groupDetailQuery.data?.groupBalances.find(
+                          const canLeaveMember = !groupDetailQuery.data?.groupBalances.find(
                             (b) => 0n !== b.amount && b.userId === groupUser.userId,
                           );
 
                           return (
                             <SimpleConfirmationDialog
                               title={
-                                canLeave
+                                canLeaveMember
                                   ? t('group_details.group_info.remove_member_details.title')
                                   : ''
                               }
                               description={
-                                canLeave
+                                canLeaveMember
                                   ? t('group_details.group_info.remove_member_details.can_remove')
                                   : t('group_details.group_info.remove_member_details.cant_remove')
                               }
-                              hasPermission={canLeave}
+                              hasPermission={canLeaveMember}
                               onConfirm={() => onGroupLeave(groupUser.userId)}
                               loading={leaveGroupMutation.isPending}
                               variant="destructive"
@@ -493,7 +515,9 @@ const BalancePage: NextPageWithUser<{
         }
         loading={groupDetailQuery.isPending}
       >
-        {1 === groupDetailQuery.data?.groupUsers.length && !expensesQuery.data?.length ? (
+        {1 === groupDetailQuery.data?.groupUsers.length &&
+        !expensesQuery.isError &&
+        !expenseItems.length ? (
           <div className="h-[85vh]">
             <NoMembers group={groupDetailQuery.data} enableSendingInvites={enableSendingInvites} />
           </div>
@@ -554,10 +578,20 @@ const BalancePage: NextPageWithUser<{
               <TabsContent value="expenses">
                 <ExpenseList
                   userId={user.id}
-                  expenses={expensesQuery.data}
+                  expenses={expenseItems}
                   contactId={groupId}
-                  isLoading={expensesQuery.isPending}
+                  isLoading={expensesQuery.isPending || expensesQuery.isError}
                   isGroup
+                />
+                <InfiniteScroll
+                  hasNextPage={expensesQuery.hasNextPage}
+                  isFetching={expensesQuery.isFetching}
+                  isError={expensesQuery.isError}
+                  onLoadMore={
+                    expensesQuery.isError && !expensesQuery.isFetchNextPageError
+                      ? expensesQuery.refetch
+                      : expensesQuery.fetchNextPage
+                  }
                 />
               </TabsContent>
               <TabsContent value="balances">

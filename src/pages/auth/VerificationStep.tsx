@@ -13,7 +13,9 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '~/components/ui/input-otp
 const otpSchema = (t: TFunction) =>
   z.object({
     otp: z
-      .string({ required_error: t('errors.otp_required') })
+      .string({
+        error: (issue) => (undefined === issue.input ? t('errors.otp_required') : undefined),
+      })
       .length(5, { message: t('errors.otp_invalid') }),
   });
 
@@ -38,9 +40,17 @@ const VerificationStep: FC<VerificationStepProps> = ({ feedbackEmail, email, cal
       return;
     }
 
-    window.location.href = `/api/auth/callback/email?email=${encodeURIComponent(
+    const otp = otpForm.getValues().otp;
+    const params = new URLSearchParams({
       email,
-    )}&token=${otpForm.getValues().otp}${callbackUrl ? `&callbackUrl=${callbackUrl}` : ''}`;
+      token: otp,
+    });
+
+    if (callbackUrl) {
+      params.append('callbackUrl', callbackUrl);
+    }
+
+    window.location.href = `/api/auth/callback/email?${params.toString()}`;
   }, [email, otpForm, callbackUrl, t]);
 
   const feedbackEmailLink = useMemo(() => `mailto:${feedbackEmail}`, [feedbackEmail]);

@@ -4,6 +4,7 @@ import {
   CurrencyHelpersContext,
   type CurrencyHelpersType,
 } from '~/contexts/CurrencyHelpersContext';
+import { toUIPercentage as tUP } from '~/utils/numbers';
 import {
   type ParametersExceptTranslation,
   displayName as dn,
@@ -12,14 +13,17 @@ import {
   toUIDate as tUD,
 } from '~/utils/strings';
 
+type ParametersExceptLocale<F> = F extends (locale: string, ...rest: infer R) => any ? R : never;
+
 export const useTranslationWithUtils = (
   namespaces?: string[] | string,
-): ReturnType<typeof useTranslation> & {
+): Pick<ReturnType<typeof useTranslation>, 't' | 'i18n' | 'ready'> & {
   displayName: typeof displayName;
   generateSplitDescription: typeof generateSplitDescription;
   toUIDate: typeof toUIDate;
   getCurrencyName: typeof getCurrencyName;
   getCurrencyHelpersCached: (currency: string) => CurrencyHelpersType;
+  toUIPercentage: (...args: ParametersExceptLocale<typeof tUP>) => string;
 } => {
   if (typeof namespaces === 'string') {
     namespaces = [namespaces];
@@ -61,15 +65,23 @@ export const useTranslationWithUtils = (
     [context, translation.i18n.language],
   );
 
-  // @ts-ignore
+  const toUIPercentage = useCallback(
+    (...args: ParametersExceptLocale<typeof tUP>): string =>
+      tUP(translation.i18n.language, ...args),
+    [translation.i18n.language],
+  );
+
   return useMemo(
     () => ({
-      ...translation,
+      t: translation.t,
+      i18n: translation.i18n,
+      ready: translation.ready,
       displayName,
       generateSplitDescription,
       toUIDate,
       getCurrencyName,
       getCurrencyHelpersCached,
+      toUIPercentage,
     }),
     [
       translation,
@@ -78,6 +90,7 @@ export const useTranslationWithUtils = (
       toUIDate,
       getCurrencyName,
       getCurrencyHelpersCached,
+      toUIPercentage,
     ],
   );
 };

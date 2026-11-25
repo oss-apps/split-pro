@@ -48,7 +48,9 @@ const providerTypeGuard = (providerId: string): providerId is keyof typeof provi
 const emailSchema = (t: TFunction) =>
   z.object({
     email: z
-      .string({ required_error: t('errors.email_required') })
+      .string({
+        error: (issue) => (undefined === issue.input ? t('errors.email_required') : undefined),
+      })
       .email({ message: t('errors.email_invalid') }),
   });
 
@@ -89,8 +91,8 @@ const Home: NextPage<{
         } else {
           throw new Error('No providers returned from getProviders()');
         }
-      } catch (error) {
-        console.error('Error fetching providers client-side:', error);
+      } catch (providerError) {
+        console.error('Error fetching providers client-side:', providerError);
         toast.error(t('errors.no_providers'), { duration: 8000 });
       } finally {
         setIsLoadingProviders(false);
@@ -105,7 +107,7 @@ const Home: NextPage<{
       } else if ('SessionRequired' === error) {
         return;
       } else {
-        toast.error(t('errors.signin_error') + error);
+        toast.error(t('errors.signin_error', { error }));
         console.error('Error during sign-in:', error);
       }
     }
@@ -121,7 +123,7 @@ const Home: NextPage<{
     const oauthProvider = oauthProviders[0];
     if (shouldAutoRedirect && oauthProvider && !showVerificationStep && !isLoadingProviders) {
       void signIn(oauthProvider.id, { callbackUrl }).catch(() => {
-        toast.error(t('errors.signin_error'));
+        toast.error(t('errors.signin_failed'));
       });
     }
   }, [
@@ -160,15 +162,15 @@ const Home: NextPage<{
     [callbackUrl],
   );
 
-  const field = useCallback(
-    ({ field }: any) => (
+  const renderField = useCallback(
+    ({ field: formField }: any) => (
       <FormItem>
         <FormControl>
           <Input
             placeholder={t('auth.email_placeholder')}
             className="w-[300px] text-lg"
             type="email"
-            {...field}
+            {...formField}
           />
         </FormControl>
         <FormDescription />
@@ -252,7 +254,11 @@ const Home: NextPage<{
                           onSubmit={emailForm.handleSubmit(onEmailSubmit)}
                           className="mt-6 space-y-8"
                         >
-                          <FormField control={emailForm.control} name="email" render={field} />
+                          <FormField
+                            control={emailForm.control}
+                            name="email"
+                            render={renderField}
+                          />
                           <Button
                             className="mt-6 w-[300px] bg-white hover:bg-gray-100 focus:bg-gray-100"
                             type="submit"

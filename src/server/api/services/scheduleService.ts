@@ -1,4 +1,8 @@
+import { type Prisma } from '@prisma/client';
+
 import { db } from '~/server/db';
+
+import { getRecurrenceSchedule } from './recurrenceScheduleService';
 
 export const createRecurringDeleteBankCacheJob = async (
   cronExpression: string,
@@ -16,9 +20,13 @@ export const createRecurringDeleteBankCacheJob = async (
     `);
 };
 
-export const createRecurringExpenseJob = (expenseId: string, cronExpression: string) =>
-  db.$queryRawUnsafe<[{ schedule: bigint }]>(
-    `SELECT cron.schedule($1, $2, $$ SELECT duplicate_expense_with_participants('${expenseId}'::UUID); $$);`,
-    expenseId,
-    cronExpression,
-  );
+export const createRecurringExpenseJob = (
+  expenseId: string,
+  cronExpression: string,
+  client: Pick<Prisma.TransactionClient, '$queryRaw'>,
+) => {
+  const command = `SELECT duplicate_expense_with_participants('${expenseId}'::UUID);`;
+  return client.$queryRaw<[{ schedule: bigint }]>`
+    SELECT cron.schedule(${expenseId}, ${getRecurrenceSchedule(cronExpression)}, ${command})
+  `;
+};

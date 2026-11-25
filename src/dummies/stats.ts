@@ -103,7 +103,7 @@ export function generateSeedStatistics(
   // Top 3 users by currency
   const topUsersByCurrency: Record<string, typeof topConnectedUsers> = {};
   Object.keys(expensesByCurrency).forEach((currency) => {
-    const connectedUsersList = users
+    const currencyConnectedUsers = users
       .filter((user) => user.currency === currency)
       .map((user) => ({
         email: user.email,
@@ -113,7 +113,7 @@ export function generateSeedStatistics(
       .sort((a, b) => b.connections - a.connections)
       .slice(0, 3);
 
-    topUsersByCurrency[currency] = connectedUsersList;
+    topUsersByCurrency[currency] = currencyConnectedUsers;
   });
 
   return {

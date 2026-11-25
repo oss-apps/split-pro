@@ -33,6 +33,7 @@ export const RecurrenceInput: React.FC<RecurrenceInputProps> = ({
       shouldCloseOnAction
       actionTitle={t('actions.confirm')}
       className="h-[70vh]"
+      dialogClassName="h-[70vh] grid-rows-[auto_minmax(0,1fr)_auto]"
     >
       <CronBuilder value={cronExpression} onChange={setCronExpression} />
     </AppDrawer>

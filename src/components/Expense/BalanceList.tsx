@@ -1,6 +1,7 @@
 import type { BalanceView, User } from '@prisma/client';
+import { Trans } from 'next-i18next';
 import { clsx } from 'clsx';
-import { type ComponentProps, Fragment, useCallback, useMemo } from 'react';
+import { type ComponentProps, Fragment, useMemo } from 'react';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { api } from '~/utils/api';
 import { BigMath } from '~/utils/numbers';
@@ -11,7 +12,6 @@ import { GroupSettleUp } from '../Friend/GroupSettleup';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { Button } from '../ui/button';
 import { CurrencyConversionIcon, SettleupIcon } from '../ui/categoryIcons';
-import { toast } from 'sonner';
 
 interface UserWithBalance {
   user: User;
@@ -35,32 +35,26 @@ export const BalanceList: React.FC<{
       return acc;
     }, {});
     groupBalances
-      .filter(
-        ({ amount, userId, friendId }) =>
-          0 < BigMath.abs(amount) && userId !== friendId && res[userId] && res[friendId],
+      .filter(({ amount, userId, friendId }) =>
+        Boolean(0 < BigMath.abs(amount) && userId !== friendId && res[userId] && res[friendId]),
       )
       .forEach((balance) => {
-        if (!res[balance.userId]) {
-          res[balance.userId] = {
-            user: users.find((u) => u.id === balance.userId) ?? ({} as User),
-            balances: {},
-            total: {},
-          };
-          console.error('BalanceList: userId not found in users list', balance.userId);
-          toast.error(t('common:errors.group_balances_malformed'));
+        const userBalance = res[balance.userId];
+        if (!userBalance) {
+          return;
         }
-        if (!res[balance.userId]!.balances[balance.friendId]) {
-          res[balance.userId]!.balances[balance.friendId] = {};
+        if (!userBalance.balances[balance.friendId]) {
+          userBalance.balances[balance.friendId] = {};
         }
-        const friendBalance = res[balance.userId]!.balances[balance.friendId]!;
+        const friendBalance = userBalance.balances[balance.friendId]!;
         friendBalance[balance.currency] = (friendBalance[balance.currency] ?? 0n) + balance.amount;
 
-        res[balance.userId]!.total[balance.currency] =
-          (res[balance.userId]!.total[balance.currency] ?? 0n) + balance.amount;
+        userBalance.total[balance.currency] =
+          (userBalance.total[balance.currency] ?? 0n) + balance.amount;
       });
 
     return res;
-  }, [groupBalances, users, t]);
+  }, [groupBalances, users]);
 
   return (
     <Accordion type="multiple">
@@ -80,40 +74,47 @@ export const BalanceList: React.FC<{
               <div className="mr-2 flex min-w-0 flex-1 items-center gap-3">
                 <EntityAvatar entity={user} />
                 <div className="text-foreground line-clamp-2 min-w-0 break-words">
-                  {displayName(user, userQuery.data?.id)}
                   {Object.values(total).every((amount) => 0n === amount) ? (
                     <span className="text-gray-400">
-                      {' '}
-                      {isCurrentUser
-                        ? t('expense_details.balance_list.are_settled_up')
-                        : t('expense_details.balance_list.is_settled_up')}
+                      {t('expense_details.balance_list.settled', {
+                        actor: isCurrentUser ? 'you' : 'other',
+                        person: displayName(user),
+                      })}
                     </span>
                   ) : (
-                    <>
-                      <span className="text-gray-400">
-                        {' '}
-                        {t(
-                          `ui.expense.${isCurrentUser ? 'you' : 'user'}.${0 < totalAmount[1] ? 'lent' : 'owe'}`,
-                        )}{' '}
-                      </span>
-                      <span
-                        className={clsx(
-                          'text-right',
-                          0 < totalAmount[1] ? 'text-emerald-500' : 'text-orange-600',
-                        )}
-                      >
-                        {getCurrencyHelpersCached(totalAmount[0]).toUIString(
-                          BigMath.abs(totalAmount[1]),
-                        )}
-                      </span>
-                    </>
+                    <span className="text-gray-400">
+                      <Trans
+                        t={t}
+                        i18nKey={`expense_details.balance_list.${0 < totalAmount[1] ? 'lent_amount' : 'owes_amount'}`}
+                        values={{ actor: isCurrentUser ? 'you' : 'other' }}
+                        components={{
+                          person: <span className="text-gray-400">{displayName(user)}</span>,
+                          amount: (
+                            <span
+                              className={clsx(
+                                'text-right',
+                                0 < totalAmount[1] ? 'text-emerald-500' : 'text-orange-600',
+                              )}
+                            >
+                              {getCurrencyHelpersCached(totalAmount[0]).toUIString(
+                                BigMath.abs(totalAmount[1]),
+                              )}
+                            </span>
+                          ),
+                        }}
+                      />
+                    </span>
                   )}
                 </div>
               </div>
             </AccordionTrigger>
             <AccordionContent>
               {Object.entries(balances).map(([friendId, perFriendBalances]) => {
-                const friend = userMap[Number(friendId)]!.user;
+                const friendBalance = userMap[Number(friendId)];
+                if (!friendBalance) {
+                  return null;
+                }
+                const friend = friendBalance.user;
 
                 return (
                   <Fragment key={friendId}>
@@ -145,30 +146,21 @@ export const BalanceList: React.FC<{
                           <div className="ml-5 flex cursor-pointer items-center gap-3 text-sm">
                             <EntityAvatar entity={friend} size={20} />
                             <div className="text-foreground">
-                              {displayName(friend, userQuery.data?.id)}
-                              <span className="text-gray-400">
-                                {' '}
-                                {t(
-                                  `ui.expense.${friend.id === userQuery.data?.id ? 'you' : 'user'}.${0 > amount ? 'get' : 'pay'}`,
-                                )}{' '}
-                              </span>
-                              <span
-                                className={clsx(
-                                  'text-right',
-                                  0 < amount ? 'text-emerald-500' : 'text-orange-600',
-                                )}
-                              >
-                                {getCurrencyHelpersCached(currency).toUIString(BigMath.abs(amount))}
-                              </span>
-                              <span className="xs:inline hidden text-gray-400">
-                                {' '}
-                                {t(`ui.expense.${0 < amount ? 'to' : 'from'}`, {
-                                  ns: 'common',
-                                })}{' '}
-                              </span>
-                              <span className="xs:inline text-foreground hidden">
-                                {displayName(user, userQuery.data?.id, 'accusativus')}
-                              </span>
+                              {t(0 < amount ? 'balance_list.pays' : 'balance_list.gets', {
+                                payerRole:
+                                  (0 < amount ? friend : user).id === userQuery.data?.id
+                                    ? 'you'
+                                    : 'other',
+                                receiverRole:
+                                  (0 < amount ? user : friend).id === userQuery.data?.id
+                                    ? 'you'
+                                    : 'other',
+                                payer: displayName(0 < amount ? friend : user),
+                                receiver: displayName(0 < amount ? user : friend),
+                                amount: getCurrencyHelpersCached(currency).toUIString(
+                                  BigMath.abs(amount),
+                                ),
+                              })}
                             </div>
                           </div>
                           <div className="flex gap-2">

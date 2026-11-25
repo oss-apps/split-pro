@@ -30,6 +30,28 @@
       "title": "Edit details"
     },
     "follow_on_x": "Follow us on X",
+    "api_keys": {
+      "title": "API keys",
+      "description": "Use API keys to access the SplitPro API. Send the key as",
+      "docs_prefix": "Documentation is at",
+      "copy_now_notice": "Copy your key now — it won't be shown again.",
+      "name_label": "New key name",
+      "name_placeholder": "e.g. Actual Budget",
+      "expires_label": "Expires (optional)",
+      "expires_hint": "Expires at end of day in your local timezone.",
+      "create": "Create",
+      "last_used": "used {date}",
+      "never_used": "never used",
+      "expires_on": "expires {date}",
+      "empty": "No API keys yet.",
+      "messages": {
+        "name_required": "Please enter a name for the key",
+        "create_failed": "Failed to create API key",
+        "revoke_failed": "Failed to revoke API key",
+        "copied": "Copied to clipboard",
+        "copy_failed": "Failed to copy"
+      }
+    },
     "import_from_splitwise": "Import from Splitwise",
     "import_from_splitwise_details": {
       "choose_file": "Choose file",
@@ -57,7 +79,11 @@
     "submit_feedback": "Submit feedback",
     "submit_feedback_details": {
       "placeholder": "Enter your feedback",
-      "title": "Submit feedback"
+      "title": "Submit feedback",
+      "messages": {
+        "submit_error": "Failed to send feedback",
+        "submit_success": "Feedback sent"
+      }
     },
     "support_us": "Sponsor us",
     "title": "Account",
@@ -74,6 +100,13 @@
       "send_test_notification": "Send test notification",
       "test_notification_sent": "Test notification sent",
       "test_notification_failed": "Could not send test notification"
+    },
+    "deletion": {
+      "action": "Delete account",
+      "title": "Delete your account?",
+      "description": "This cannot be undone. Your identity and sign-in details will be removed, and you will be signed out on all devices. Shared expenses, notes, receipts, group memberships, and outstanding balances will remain under “Deleted user”. Personal information written in shared content will remain. Group ownership will pass to another available member where possible. Recurring expenses you created will stop. You can download your SplitPro data from the account page before continuing.",
+      "confirm": "Permanently delete account",
+      "error": "Could not delete your account. Please try again."
     }
   },
   "actions": {
@@ -95,20 +128,21 @@
     "settle_up": "Settle up",
     "submit": "Submit",
     "reconnect": "Reconnect",
-    "connect": "Connect"
+    "connect": "Connect",
+    "remind_later": "Remind me later",
+    "retry": "Try again"
   },
   "actors": {
+    "deleted_user": "Deleted user",
     "all": "All",
     "friends": "Friends",
+    "other_users": "Other users",
     "groups": "Groups",
-    "members": "Members",
     "owner": "Owner",
-    "you": "You",
-    "you_accusativus": "You",
-    "you_dativus": "You"
+    "you": "You"
   },
   "auth": {
-    "continue_with": "Continue with {{provider}}",
+    "continue_with": "Continue with {provider}",
     "email_placeholder": "Enter your email",
     "no_providers_configured": "No authentication providers configured",
     "no_providers_instructions": "Please configure at least one authentication provider to sign in. See the",
@@ -125,7 +159,9 @@
     "fetching_rate": "Fetching rate...",
     "rate": "Rate",
     "success_toast": "Currency conversion set successfully",
-    "title": "Currency conversion"
+    "title": "Currency conversion",
+    "amount_aria_label": "Amount",
+    "converted_amount_aria_label": "Converted amount"
   },
   "errors": {
     "currency_conversion_error": "Error while setting currency conversion",
@@ -137,10 +173,10 @@
     "add_member_failed": "Failed to add member to the group",
     "group_name_update_failed": "Error in updating group name",
     "import_failed": "Error importing file",
-    "invalid_currency_code": "Invalid currency code {{code}}",
+    "invalid_currency_code": "Invalid currency code {code}",
     "invalid_split": "Adjust who owes this expense before saving.",
     "language_change_failed": "Error changing language",
-    "less_than": "File should be less than {{size}}MB",
+    "less_than": "File should be less than {size}MB",
     "image_compression_failed": "Image compression failed, trying to upload original file",
     "name_required": "Name is required",
     "notification_not_supported": "Notification is not supported",
@@ -149,7 +185,7 @@
     "request_error": "Error requesting notification",
     "saving_expense": "Error while saving expense",
     "setting_update_failed": "Failed to update setting",
-    "signin_error": "An error occurred while signing in: ",
+    "signin_error": "An error occurred while signing in: {error}",
     "signup_disabled": "Signup of new accounts is disabled on this instance",
     "something_went_wrong": "Something went wrong",
     "subscribe_error": "Cannot subscribe to notification",
@@ -162,7 +198,15 @@
     "invalid_cron_expression": "Invalid cron expression",
     "currency_conversion_failed": "Failed to convert currencies",
     "recurrence_delete_failed": "Failed to delete recurrence",
-    "recurrence_update_failed": "Failed to update recurrence"
+    "recurrence_update_failed": "Failed to update recurrence",
+    "notification_request_failed": "Error requesting notification permission",
+    "notification_subscribe_failed": "Cannot subscribe to notifications",
+    "expense_invalid_input": "Please check the expense details and try again.",
+    "expense_submission_failed": "An unexpected error occurred while submitting the expense.",
+    "expense_deletion_failed": "An unexpected error occurred while deleting the expense.",
+    "friend_deletion_failed": "Failed to delete friend",
+    "signin_failed": "Sign-in failed. Please try again.",
+    "invite_email_failed": "Failed to send invite email. Check the SMTP configuration."
   },
   "bank_transactions": {
     "choose_bank_provider": "Choose bank provider",
@@ -184,18 +228,19 @@
       "description_placeholder": "Enter description",
       "pick_a_date": "Pick a date",
       "select_user_or_group": {
-        "add_to_split_pro": "Add to Split Pro",
-        "note": "Note: sending invite is disabled for now because of spam",
+        "add_to_split_pro": "Add to Expense",
+        "note": "Email invites are disabled. You can still add someone by email without sending an invite.",
         "only_one_group_time": "You can have only one group at a time",
-        "send_invite": "Send invite to user",
-        "warning": "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused"
+        "send_invite": "Add with email invitation",
+        "warning": "Both buttons add the person to this draft expense. Save the expense when you are done. The invitation option emails a link to SplitPro only if their email is not verified; it does not sign them in.",
+        "empty_image_alt": "No users found"
       },
       "split_type_section": {
         "direction": {
           "no_money_flow": "No one else owes anything",
-          "owes_payer": "{{debtor}} owes {{payer}}",
-          "owes_you": "{{debtor}} owes you",
-          "you_owe": "You owe {{payer}}"
+          "owes_payer": "{debtor} owes {payer}",
+          "owes_you": "{debtor} owes you",
+          "you_owe": "You owe {payer}"
         },
         "split_equally": "split equally",
         "split_unequally": "split unequally",
@@ -221,7 +266,8 @@
             "title": "Share",
             "total_shares": "Total shares"
           }
-        }
+        },
+        "split_equally_with_count": "split equally among {count, plural, one {# person} other {# people}}"
       },
       "sponsor_us": "Sponsor us",
       "upload_file": {
@@ -237,9 +283,10 @@
       }
     },
     "balance_list": {
-      "are_settled_up": "are settled up",
-      "is_settled_up": "is settled up",
-      "press_balance_info": "Press on individual balance to initiate settlement"
+      "press_balance_info": "Press on individual balance to initiate settlement",
+      "settled": "{actor, select, you {You are settled up} other {{person} is settled up}}",
+      "lent_amount": "{actor, select, you {You lent <amount/>} other {<person/> lent <amount/>}}",
+      "owes_amount": "{actor, select, you {You owe <amount/>} other {<person/> owes <amount/>}}"
     },
     "delete_expense_details": {
       "text": "This action cannot be undone. This will permanently delete your expense.",
@@ -258,7 +305,13 @@
     "submit_all": "Submit all",
     "pending": "Pending",
     "no_transactions_yet": "No transactions yet",
-    "already_added": "Already added"
+    "already_added": "Already added",
+    "receipt": {
+      "title": "Expense receipt",
+      "thumbnail_alt": "Expense receipt thumbnail",
+      "image_alt": "Expense receipt"
+    },
+    "empty_state_image_alt": "No expenses"
   },
   "group_details": {
     "add_members": "Add members",
@@ -309,6 +362,9 @@
     },
     "group_statistics": {
       "first_expense": "First expense",
+      "paid": "Paid",
+      "per_person": "Spending per person",
+      "share": "Share of costs",
       "title": "Group statistics",
       "total_expenses": "Total expenses"
     },
@@ -324,12 +380,12 @@
     "no_members": {
       "add_members": "Add members",
       "add_members_details": {
-        "add_to_split_pro": "Add to Split Pro",
-        "note": "Note: sending email invites is disabled",
+        "add_to_split_pro": "Add to Group",
+        "note": "Email invites are disabled. You can still add someone by email without sending an invite.",
         "placeholder": "Enter name or email",
-        "send_invite": "Send invite to user",
+        "send_invite": "Add with email invitation",
         "title": "Add members",
-        "warning": "Warning: Don't use send invite if it's invalid email. use add to Split Pro instead. Your account will be blocked if this feature is misused"
+        "warning": "Both buttons immediately add the person and any selected contacts to this group. Save adds selected contacts only, not the typed email. The invitation option emails a link to SplitPro only if their email is not verified; it does not sign them in."
       },
       "invite_link": "Invite link",
       "no_members": "No members in the group yet."
@@ -381,7 +437,7 @@
     "never": "No schedule configured",
     "empty": "No recurring expenses yet",
     "recurring": "Recurring",
-    "expense_for_the_amount_of": "Expense {{name}} for the amount of {{amount}} {{currency}}",
+    "expense_for_the_amount_of": "Expense {name} for the amount of {amount} {currency}",
     "delete_title": "Delete Recurrence",
     "delete_description": "This will stop future expense creation. Existing expenses created by this recurrence will not be deleted.",
     "edit_title": "Edit Recurrence",
@@ -395,54 +451,60 @@
       "year": "Yearly"
     },
     "edit_confirmation_title": "Edit Recurring Expense",
-    "template_edit_warning": "This is a recurring expense template. Changes will apply to all future recurring expenses.",
+    "template_edit_warning": "This is a recurring expense template. Changes will apply to all recurring expenses created in the future.",
     "derived_edit_warning": "This expense is part of a recurrence. Changes will only affect this expense.",
     "template_delete_warning": "This is a recurring expense template. Deleting it will stop all future recurring expenses.",
     "derived_delete_warning": "This expense is part of a recurrence. Only this expense will be deleted. Future recurring expenses will continue.",
-    "view_recurring_page": "View Recurring page"
+    "view_recurring_page": "View Recurring page",
+    "toggle_options": "Toggle recurring expense options",
+    "execution_time_loading": "Loading execution time…",
+    "execution_time_unavailable": "Execution time is unavailable.",
+    "next_local_run": "Next scheduled run: {date} ({timeZone}, your time zone).",
+    "instance_schedule": "Schedule: {schedule} ({timeZone})."
   },
   "ui": {
-    "added_by": "Added by",
     "and": "and",
-    "balance": "balance",
-    "balances": "balances",
     "delete": "Delete",
-    "deleted_by": "Deleted by",
-    "edited_by": "Edited by",
     "expense": {
-      "for": "for",
       "from": "from",
       "paid_by": "Paid by",
       "received_by": "Received by",
       "to": "to",
-      "user": {
-        "deleted": "deleted",
-        "get": "gets",
-        "lent": "lent",
-        "owe": "owes",
-        "paid": "paid",
-        "pay": "pays",
-        "received": "received"
+      "payer": {
+        "current_user": "You"
       },
-      "you": {
-        "deleted": "deleted",
-        "get": "get",
-        "lent": "lent",
-        "owe": "owe",
-        "paid": "paid",
-        "pay": "pay",
-        "received": "received"
-      }
+      "recipient": {
+        "current_user": "You"
+      },
+      "statements": {
+        "you_lent": "You lent",
+        "you_owe": "You owe",
+        "you_lent_amount": "You lent {amount}",
+        "you_owe_amount": "You owe {amount}",
+        "you_pay_user": "You pay {user}",
+        "user_pays_you": "{user} pays you",
+        "user_pays_user": "{payer} pays {receiver}"
+      },
+      "fetch_rate_date": "Exchange rate date"
     },
     "expense_details": "Expense details",
     "no_activity": "No activities yet",
-    "no_search_results": "No expenses match your search",
-    "search_expenses_placeholder": "Search expenses...",
     "not_involved": "Not involved",
     "not_set": "Not set",
     "on": "on",
     "or": "or",
     "outstanding_balances": "Outstanding balances",
+    "group_people_list_empty": {
+      "no_contacts": "No saved contacts to show",
+      "no_matches": "No available contacts match your search",
+      "all_added": "All your saved contacts are already in this group"
+    },
+    "people_list_load_error": "Could not load contacts. Please try again.",
+    "people_list_empty": {
+      "no_contacts": "No saved contacts or groups to show",
+      "no_matches": "No available contacts or groups match your search",
+      "all_added": "All your saved contacts are already in this group"
+    },
     "total_balance": "Total balance",
     "select_currency": "Select currency",
     "select_balance": "Select balance",
@@ -452,6 +514,88 @@
     "share_text": "Check out SplitPro. It's an open source free alternative for Splitwise",
     "show_all_currencies": "Show all currencies",
     "today": "Today",
-    "in_group": "In group"
+    "in_group": "In group",
+    "transfer": "{senderRole, select, you {You pay {receiver}} other {{receiverRole, select, you {{sender} pays you} other {{sender} pays {receiver}}}}}",
+    "invitation": {
+      "send_email": "Send an invitation email",
+      "adding": "Adding…",
+      "email_help": "For the email address you enter, we’ll send a link to SplitPro only if it is not verified. This does not sign them in.",
+      "no_email_help": "No invitation email will be sent. Users who have not signed up yet, can sign in later using this email address.",
+      "disabled_help": "Invitation emails are disabled on this server. You can still add someone by email.",
+      "draft_help": "Adding a participant does not save the expense. Save the expense as well when editing.",
+      "group_partial_success": "Added to the group, but the invitation email could not be sent.",
+      "expense_partial_success": "Added to the draft expense, but the invitation email could not be sent."
+    }
+  },
+  "friend": {
+    "delete_confirmation": {
+      "title": "Are you absolutely sure?",
+      "description": "Do you really want to continue?",
+      "outstanding_balance": "You cannot remove a friend with outstanding balances. Settle up first."
+    }
+  },
+  "activity": {
+    "you_paid_for_expense": "You paid {amount} for {expense}",
+    "you_received_for_expense": "You received {amount} for {expense}",
+    "user_paid_for_expense": "{user} paid {amount} for {expense}",
+    "user_received_for_expense": "{user} received {amount} for {expense}",
+    "user_deleted_expense": "{actor, select, you {You deleted {expense}} other {{user} deleted {expense}}}",
+    "you_paid_amount": "You paid {amount}",
+    "you_received_amount": "You received {amount}"
+  },
+  "balance_summary": {
+    "friend_owes_you": "{friend} owes you {amount}",
+    "you_owe_friend": "You owe {friend} {amount}",
+    "more": "{count, plural, one {# more balance} other {# more balances}}",
+    "member_count": "{count, plural, =1 {# member} other {# members}}"
+  },
+  "balance_list": {
+    "pays": "{payerRole, select, you {You pay {amount} to {receiver}} other {{payer} pays {amount} to {receiverRole, select, you {you} other {{receiver}}}}}",
+    "gets": "{receiverRole, select, you {You get {amount} from {payer}} other {{receiver} gets {amount} from {payerRole, select, you {you} other {{payer}}}}}"
+  },
+  "expense_participant": {
+    "gets": "{actor, select, you {<person/> get <amount/>} other {<person/> gets <amount/>}}",
+    "owes": "{actor, select, you {<person/> owe <amount/>} other {<person/> owes <amount/>}}",
+    "owes_and_gets": "{actor, select, you {<person/> owe <share/> and get back <amount/>} other {<person/> owes <share/> and gets back <amount/>}}",
+    "paid": "<person/> paid <amount/>",
+    "received": "<person/> received <amount/>"
+  },
+  "expense_metadata": {
+    "edited_by": "{actor, select, you {Edited by you on {date}} other {Edited by {user} on {date}}}",
+    "deleted_by": "{actor, select, you {Deleted by you on {date}} other {Deleted by {user} on {date}}}",
+    "added_by": "{actor, select, you {Added by you on {date}} other {Added by {user} on {date}}}"
+  },
+  "expense_list": {
+    "upcoming_expenses": "Upcoming expenses",
+    "future_expense": "Future expense — not included in balances yet",
+    "user_paid": "{actor, select, you {You paid {amount}} other {{user} paid {amount}}}",
+    "user_received": "{actor, select, you {You received {amount}} other {{user} received {amount}}}",
+    "settlement": "{payerRole, select, you {You paid {amount} to {receiver}} other {{receiverRole, select, you {{payer} paid you {amount}} other {{payer} paid {amount} to {receiver}}}}}",
+    "conversion_for_users": "Currency conversion for {payerRole, select, you {you} other {{payer}}} and {receiverRole, select, you {you} other {{receiver}}}"
+  },
+  "notifications": {
+    "enable_title": "Enable notifications",
+    "enable_description": "Don't miss important events. Subscribe to receive notifications when expenses are added or updated.",
+    "permission_granted": "You will receive notifications now",
+    "subscribe": "Subscribe"
+  },
+  "pagination": {
+    "load_more": "Load more",
+    "loading": "Loading expenses",
+    "retry": "Try again",
+    "error": "Could not load expenses. Please try again."
+  },
+  "comments": {
+    "title": "Comments",
+    "initial_label": "Add a note (optional)",
+    "initial_placeholder": "Add details about this expense…",
+    "add": "Add a comment",
+    "placeholder": "Write a comment…",
+    "post": "Post comment",
+    "edit": "Edit",
+    "delete": "Delete",
+    "edit_label": "Edit comment",
+    "delete_confirm": "Delete this comment?",
+    "error": "Could not save the comment"
   }
 }

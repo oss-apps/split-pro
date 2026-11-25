@@ -41,7 +41,7 @@ const dataToHash = JSON.stringify(dummyData);
 const hash = createHash('sha256').update(dataToHash).digest('hex');
 
 const savedHash = await readFile('./prisma/seed-checksum.txt', 'utf-8').catch(() => null);
-// await writeFile('./prisma/seed-checksum.txt', hash);
+// Await writeFile('./prisma/seed-checksum.txt', hash);
 
 if (savedHash && savedHash.trim() !== hash) {
   const msg = `Generated data checksum does not match saved checksum! This may indicate non-deterministic data generation.

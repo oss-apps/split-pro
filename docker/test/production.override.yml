@@ -1,0 +1,19 @@
+# Layered over docker/prod/compose.yml; paths resolve in the temporary project directory.
+services:
+  postgres:
+    image: ${SMOKE_DB_IMAGE:?err}
+    pull_policy: never
+    container_name: !reset null
+    restart: 'no'
+    ports: !override
+      - '127.0.0.1::5432'
+
+  splitpro:
+    container_name: !reset null
+    image: ${SMOKE_IMAGE:?err}
+    pull_policy: never
+    restart: 'no'
+    ports: !override
+      - '127.0.0.1:${SMOKE_HTTP_PORT:-0}:3000'
+    environment:
+      NEXTAUTH_URL: ${SMOKE_BASE_URL:-http://127.0.0.1:3000}

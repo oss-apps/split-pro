@@ -1,13 +1,12 @@
 // copied from: https://github.com/vpfaiz/cron-builder-ui/
-import { format } from 'date-fns';
 import { type TFunction, useTranslation } from 'next-i18next';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 
 import { useIntlCronParser } from '~/hooks/useIntlCronParser';
 
-import { Input } from './input';
+import { RecurrencePreview } from '../Expense/RecurrencePreview';
+
 import { Label } from './label';
-import { NativeSelect, NativeSelectOption } from './native-select';
 import { ToggleGroup, ToggleGroupItem } from './toggle-group';
 
 export interface CronTextResult {
@@ -35,7 +34,7 @@ interface ParsedCron {
   values: {
     minutes?: number[];
     hours?: number[];
-    daysOfMonth?: number[];
+    daysOfMonth?: Array<number | 'L'>;
     months?: number[];
     daysOfWeek?: number[];
     custom?: string;
@@ -49,12 +48,13 @@ const SCHEDULE_TYPES = (t: TFunction) =>
     { value: 'week', label: t('recurrence.schedule_type.week') },
     { value: 'month', label: t('recurrence.schedule_type.month') },
     { value: 'year', label: t('recurrence.schedule_type.year') },
-    { value: 'custom', label: t('recurrence.schedule_type.custom') },
   ] as const;
 
 type ScheduleType = ReturnType<typeof SCHEDULE_TYPES>[number];
 
 const DAYS_OF_MONTH = Array.from({ length: 31 }, (_, i) => i + 1);
+// Yearly February 29 rules remain available for leap years.
+const MONTH_LENGTHS = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31] as const;
 
 const MONTHS_SHORT = (code: string) =>
   Array.from({ length: 12 }, (_, i) => {
@@ -74,18 +74,11 @@ interface ScheduleFieldsProps {
   renderDaysOfWeekSelect: () => React.ReactNode;
   renderMonthsSelect: () => React.ReactNode;
   renderDaysOfMonthSelect: () => React.ReactNode;
-  renderTimeInput: () => React.ReactNode;
 }
 
 const ScheduleFields = React.memo<ScheduleFieldsProps>(
-  ({
-    scheduleType,
-    renderDaysOfWeekSelect,
-    renderMonthsSelect,
-    renderDaysOfMonthSelect,
-    renderTimeInput,
-  }) => {
-    const outputs = [renderTimeInput];
+  ({ scheduleType, renderDaysOfWeekSelect, renderMonthsSelect, renderDaysOfMonthSelect }) => {
+    const outputs: Array<() => React.ReactNode> = [];
 
     if ('never' === scheduleType) {
       return null;
@@ -110,6 +103,7 @@ ScheduleFields.displayName = 'ScheduleFields';
 
 export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
   const { t, i18n } = useTranslation();
+  const fieldId = useId();
 
   const defaultSchedule = value; // Use provided default or fallback
 
@@ -160,7 +154,15 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
           values: {
             minutes: parseNumbers(min),
             hours: parseNumbers(hour),
-            daysOfMonth: parseNumbers(dom),
+            daysOfMonth: 'L' === dom ? ['L'] : parseNumbers(dom),
+          },
+        };
+      } else if (dom !== '*' && month !== '*' && dow === '*') {
+        return {
+          type: 'year',
+          values: {
+            daysOfMonth: 'L' === dom ? ['L'] : parseNumbers(dom),
+            months: parseNumbers(month),
           },
         };
       } else {
@@ -175,8 +177,6 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
   const initialParsed = parseCronExpression(defaultSchedule);
 
   const [scheduleType, setScheduleType] = useState(initialParsed.type);
-  const [minutes, setMinutes] = useState<number[]>(initialParsed.values.minutes || [0]);
-  const [hours, setHours] = useState<number[]>(initialParsed.values.hours || [0]);
   const [daysOfMonth, setDaysOfMonth] = useState<Array<number | 'L'>>(
     initialParsed.values.daysOfMonth || [1],
   );
@@ -184,14 +184,14 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
   const [daysOfWeek, setDaysOfWeek] = useState<Array<number | 'L'>>(
     initialParsed.values.daysOfWeek || [0],
   );
-  const [custom, setCustom] = useState<string>(initialParsed.values.custom || defaultSchedule);
+  const [custom, setCustom] = useState<string>(
+    (initialParsed.values.custom || defaultSchedule).trim().split(/\s+/).slice(-3).join(' '),
+  );
   const [cronExpression, setCronExpression] = useState(defaultSchedule);
 
   const { cronParser } = useIntlCronParser();
 
   function loadDefaults() {
-    setMinutes([0]);
-    setHours([0]);
     setDaysOfMonth([1]);
     setMonths([1]);
     setDaysOfWeek([0]);
@@ -204,14 +204,12 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
     const cleanMonths = (months || []).filter((v) => v !== undefined && v !== null);
     const cleanDaysOfMonth = (daysOfMonth || []).filter((v) => v !== undefined && v !== null);
     const cleanDaysOfWeek = (daysOfWeek || []).filter((v) => v !== undefined && v !== null);
-    const cleanHours = (hours || []).filter((v) => v !== undefined && v !== null);
-    const cleanMinutes = (minutes || []).filter((v) => v !== undefined && v !== null);
 
     const monthsCSV = cleanMonths.length === 12 ? '*' : cleanMonths.join(',');
     const domCSV = cleanDaysOfMonth.length === 31 ? '*' : cleanDaysOfMonth.join(',');
     const dowCSV = cleanDaysOfWeek.length === 7 ? '*' : cleanDaysOfWeek.join(',');
-    const hoursCSV = cleanHours.length === 24 ? '*' : cleanHours.join(',');
-    const minutesCSV = cleanMinutes.length === 60 ? '*' : cleanMinutes.join(',');
+    const hoursCSV = '0';
+    const minutesCSV = '0';
 
     switch (scheduleType) {
       case 'day':
@@ -226,9 +224,11 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
       case 'year':
         expression = `${minutesCSV} ${hoursCSV} ${domCSV} ${monthsCSV} *`;
         break;
-      case 'custom':
-        expression = custom || '';
+      case 'custom': {
+        const fields = custom.trim().split(/\s+/);
+        expression = 3 === fields.length ? `0 0 ${fields.join(' ')}` : '';
         break;
+      }
       default:
         expression = '';
     }
@@ -240,102 +240,88 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
       setCronExpression('');
       onChange('');
     }
-  }, [scheduleType, minutes, hours, daysOfMonth, months, daysOfWeek, custom]);
-
-  const handleMonthToggle = useCallback((monthIndex: number | string) => {
-    const monthNum = (typeof monthIndex === 'number' ? monthIndex : parseInt(monthIndex, 10)) + 1;
-    setMonths([monthNum]);
-  }, []);
+  }, [scheduleType, daysOfMonth, months, daysOfWeek, custom]);
 
   const renderMonthsSelect = () => (
     <div className="flex flex-col gap-2">
-      <Label className="px-1 text-xs">{t('recurrence.months')}</Label>
-      <NativeSelect
+      <Label id={`${fieldId}-months`} className="px-1 text-xs">
+        {t('recurrence.months')}
+      </Label>
+      <ToggleGroup
+        type="single"
+        variant="outline"
         value={String(months[0] ?? 1)}
-        onChange={(e) => handleMonthToggle(parseInt(e.target.value, 10) - 1)}
+        onValueChange={(value) => {
+          if (!value) return;
+          const month = Number(value);
+          const lastDay = MONTH_LENGTHS[month - 1] ?? 31;
+          setMonths([month]);
+          setDaysOfMonth((days) => days.map((day) => ('L' === day ? day : Math.min(day, lastDay))));
+        }}
+        aria-labelledby={`${fieldId}-months`}
+        className="grid grid-cols-4"
       >
         {MONTHS_SHORT(i18n.language).map((month, index) => (
-          <NativeSelectOption key={index} value={String(index + 1)}>
+          <ToggleGroupItem key={index} value={String(index + 1)}>
             {month}
-          </NativeSelectOption>
+          </ToggleGroupItem>
         ))}
-      </NativeSelect>
+      </ToggleGroup>
     </div>
   );
-
-  const handleDayOfWeekToggle = useCallback((dayIndex: number | string) => {
-    const dayNum =
-      typeof dayIndex === 'number' || dayIndex === 'L' ? dayIndex : parseInt(dayIndex, 10);
-    setDaysOfWeek([dayNum]);
-  }, []);
 
   const renderDaysOfWeekSelect = () => (
     <div className="flex flex-col gap-2">
-      <Label className="px-1 text-xs">{t('recurrence.days_of_week')}</Label>
-      <NativeSelect
+      <Label id={`${fieldId}-weekdays`} className="px-1 text-xs">
+        {t('recurrence.days_of_week')}
+      </Label>
+      <ToggleGroup
+        type="single"
+        variant="outline"
         value={String(daysOfWeek[0] ?? 0)}
-        onChange={(e) => handleDayOfWeekToggle(parseInt(e.target.value, 10))}
+        onValueChange={(value) => {
+          if (value) setDaysOfWeek([Number(value)]);
+        }}
+        aria-labelledby={`${fieldId}-weekdays`}
+        className="grid grid-cols-7"
       >
         {DAYS_SHORT(i18n.language).map((day, index) => (
-          <NativeSelectOption key={index} value={String(index)}>
+          <ToggleGroupItem key={index} value={String(index)} className="min-w-0 px-0 text-xs">
             {day}
-          </NativeSelectOption>
+          </ToggleGroupItem>
         ))}
-      </NativeSelect>
+      </ToggleGroup>
     </div>
   );
 
-  const handleDayOfMonthToggle = useCallback((day: number | string) => {
-    const dayNum = typeof day === 'number' || day === 'L' ? day : parseInt(day, 10);
-    setDaysOfMonth([dayNum]);
-  }, []);
+  const availableDays = 'year' === scheduleType ? (MONTH_LENGTHS[(months[0] ?? 1) - 1] ?? 31) : 31;
 
   const renderDaysOfMonthSelect = () => (
     <div className="flex flex-col gap-2">
-      <Label className="px-1 text-xs">{t('recurrence.days_of_month')}</Label>
-      <NativeSelect
+      <Label id={`${fieldId}-monthdays`} className="px-1 text-xs">
+        {t('recurrence.days_of_month')}
+      </Label>
+      <ToggleGroup
+        type="single"
+        variant="outline"
         value={String(daysOfMonth[0] ?? 1)}
-        onChange={(e) =>
-          handleDayOfMonthToggle(e.target.value === 'L' ? 'L' : parseInt(e.target.value, 10))
-        }
+        onValueChange={(value) => {
+          if (value) setDaysOfMonth(['L' === value ? 'L' : Number(value)]);
+        }}
+        aria-labelledby={`${fieldId}-monthdays`}
+        className="grid grid-cols-7"
       >
-        {DAYS_OF_MONTH.map((day) => (
-          <NativeSelectOption key={day} value={String(day)}>
+        {DAYS_OF_MONTH.slice(0, availableDays).map((day) => (
+          <ToggleGroupItem key={day} value={String(day)} className="min-w-0 px-0 text-xs">
             {day.toString().padStart(2, '0')}
-          </NativeSelectOption>
+          </ToggleGroupItem>
         ))}
-        <NativeSelectOption value="L">{t('recurrence.last_day')}</NativeSelectOption>
-      </NativeSelect>
+        <ToggleGroupItem value="L" className="col-span-4">
+          {t('recurrence.last_day')}
+        </ToggleGroupItem>
+      </ToggleGroup>
     </div>
   );
-
-  const renderTimeInput = () => {
-    const [value, setValue] = useState(
-      format(new Date().setHours(hours[0] || 0, minutes[0] || 0), 'HH:mm'),
-    );
-
-    return (
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="time-picker" className="px-1 text-xs">
-          {t('recurrence.time_of_day')}
-        </Label>
-        <Input
-          type="time"
-          id="time-picker"
-          value={value}
-          onChange={(e) => {
-            const date = e.target.valueAsDate;
-            setValue(e.target.value);
-            if (date) {
-              setHours([date.getUTCHours()]);
-              setMinutes([date.getUTCMinutes()]);
-            }
-          }}
-          className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-        />
-      </div>
-    );
-  };
 
   // Render Cron expression builder UI
   return (
@@ -382,7 +368,7 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
                     setCustom(event.target.value);
                   }}
                   className="border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-[50%] rounded-md border px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none"
-                  placeholder="0 0 * * 0"
+                  placeholder="* * 0"
                 />
               </div>
             ) : (
@@ -391,21 +377,17 @@ export function CronBuilder({ onChange, value, className }: CronBuilderProps) {
                 renderDaysOfWeekSelect={renderDaysOfWeekSelect}
                 renderMonthsSelect={renderMonthsSelect}
                 renderDaysOfMonthSelect={renderDaysOfMonthSelect}
-                renderTimeInput={renderTimeInput}
               />
             )}
 
-            <div className="h-19">
+            <div aria-live="polite">
               {(() => {
                 const cronString = getCronText(cronParser, cronExpression);
                 if (cronString.status)
                   return (
-                    <p className="bg-card text-card-foreground overflow-clip rounded-sm p-3">
-                      {cronString.value}{' '}
-                      <span className="bg-accent text-accent-foreground rounded-sm p-1 px-2 font-mono">
-                        cron({cronExpression})
-                      </span>
-                    </p>
+                    <div className="bg-card text-card-foreground rounded-sm p-3">
+                      <RecurrencePreview schedule={cronExpression} />
+                    </div>
                   );
                 else
                   return (

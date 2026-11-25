@@ -3,13 +3,13 @@ const config = {
   '*': ['prettier --write -u'],
 
   // Run oxlint on JavaScript/TypeScript files
-  '*.{js,jsx,ts,tsx}': ['oxlint --type-aware --fix'],
+  '*.{js,jsx,ts,tsx}': ['oxlint --fix'],
 
   // Format prisma.schema files
   '*.prisma': ['pnpm prisma format'],
 
-  // Type check TypeScript files (optional - can be slow)
-  // '*.{ts,tsx}': () => 'tsc --noEmit',
+  // Type check TypeScript files
+  '*.{ts,tsx}': () => 'tsc --noEmit',
 };
 
 export default config;

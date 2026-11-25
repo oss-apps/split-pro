@@ -5,7 +5,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
   schemas  = ["cron", "public"]
 }
 
@@ -43,6 +42,7 @@ model User {
   name                 String?
   email                String?              @unique
   emailVerified        DateTime?
+  deletedAt            DateTime?
   image                String?
   currency             String               @default("USD")
   defaultCurrency      String?
@@ -64,8 +64,24 @@ model User {
   friendDefaultSplitsA FriendDefaultSplit[] @relation("FriendDefaultSplitUserA")
   friendDefaultSplitsB FriendDefaultSplit[] @relation("FriendDefaultSplitUserB")
   sessions             Session[]
+  apiKeys              ApiKey[]
   hiddenFriendIds      Int[]                @default([])
 
+  @@schema("public")
+}
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  userId     Int
+  name       String
+  hashedKey  String    @unique
+  partialKey String
+  lastUsedAt DateTime?
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
   @@schema("public")
 }
 
@@ -226,11 +242,12 @@ model ExpenseNote {
 }
 
 model ExpenseRecurrence {
-  id       Int       @id @default(autoincrement())
-  jobId    BigInt    @unique
-  notified Boolean   @default(true)
-  expense  Expense[]
-  job      job       @relation(fields: [jobId], references: [jobid], onDelete: Cascade)
+  lastOccurrenceDate DateTime? @db.Date
+  id                 Int       @id @default(autoincrement())
+  jobId              BigInt    @unique
+  notified           Boolean   @default(true)
+  expense            Expense[]
+  job                job       @relation(fields: [jobId], references: [jobid], onDelete: Cascade)
 
   @@schema("public")
 }

@@ -22,7 +22,7 @@ export const SettleUp: React.FC<
     friend: User;
   }>
 > = ({ children, balances, friend }) => {
-  const { t, displayName, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { t } = useTranslationWithUtils();
   const { data } = useSession();
   const currentUser = data?.user;
 
@@ -38,6 +38,23 @@ export const SettleUp: React.FC<
     );
   }
 
+  return (
+    <SettleUpWithBalances
+      balances={balances}
+      friend={friend}
+      currentUser={currentUser}
+      trigger={children}
+    />
+  );
+};
+
+const SettleUpWithBalances: React.FC<{
+  balances: MinimalBalance[];
+  friend: User;
+  currentUser: NonNullable<ReturnType<typeof useSession>['data']>['user'];
+  trigger: React.ReactNode;
+}> = ({ balances, friend, currentUser, trigger }) => {
+  const { t, displayName, getCurrencyHelpersCached } = useTranslationWithUtils();
   const [balanceToSettle, setBalanceToSettle] = useState<MinimalBalance | undefined>(
     1 < balances.length ? undefined : balances[0],
   );
@@ -128,7 +145,7 @@ export const SettleUp: React.FC<
 
   return (
     <AppDrawer
-      trigger={children}
+      trigger={trigger}
       disableTrigger={!balances?.length}
       leftAction={t('actions.back')}
       leftActionOnClick={onBackClick}
@@ -142,7 +159,7 @@ export const SettleUp: React.FC<
     >
       {!balanceToSettle ? (
         <div>
-          {balances?.map((b) => (
+          {balances.map((b) => (
             <div
               key={`${b.friendId}-${b.currency}-${b.groupId ?? 'null'}`}
               onClick={() => onSelectBalance(b)}
@@ -162,8 +179,8 @@ export const SettleUp: React.FC<
             </div>
             <p className="mt-2 text-center text-sm text-gray-400">
               {isCurrentUserPaying
-                ? `${t('actors.you')} ${t('ui.expense.you.pay')} ${displayName(friend)}`
-                : `${displayName(friend)} ${t('ui.expense.user.pay')} ${t('actors.you')}`}
+                ? t('ui.expense.statements.you_pay_user', { user: displayName(friend) })
+                : t('ui.expense.statements.user_pays_you', { user: displayName(friend) })}
             </p>
             {balanceToSettle.groupName ? (
               <p className="mt-1 text-center text-xs text-gray-500">{balanceToSettle.groupName}</p>

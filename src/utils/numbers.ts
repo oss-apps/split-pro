@@ -7,12 +7,12 @@ export const getCurrencyHelpers = ({
   locale?: string;
   currency?: string;
 }) => {
-  currency = isCurrencyCode(currency) ? currency : 'USD';
-  const { decimalDigits } = CURRENCIES[currency as CurrencyCode];
+  const normalizedCurrency = isCurrencyCode(currency) ? currency : 'USD';
+  const { decimalDigits } = CURRENCIES[normalizedCurrency];
 
   const formatter = new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency,
+    currency: normalizedCurrency,
     minimumFractionDigits: 0,
     maximumFractionDigits: decimalDigits,
   });
@@ -84,7 +84,7 @@ export const getCurrencyHelpers = ({
     let hasDecimalSeparator = false;
     let hasNegativeSign = false;
 
-    `${input}`.split('').forEach((letter) => {
+    input.split('').forEach((letter) => {
       //Allowing only one separator
       if (letter === decimalSeparator && !hasDecimalSeparator) {
         cleaned += letter;
@@ -150,8 +150,11 @@ export const getCurrencyHelpers = ({
 
     if (typeof value === 'bigint') {
       const sign = value < 0n && signed ? '-' : '';
-      const integer = `${value / decimalMultiplierN}`;
-      const fraction = `${value}`.slice(-decimalDigits).padStart(decimalDigits, '0');
+      const absValue = BigMath.abs(value);
+      const integer = `${absValue / decimalMultiplierN}`;
+      const fraction = `${absValue % decimalMultiplierN}`
+        .slice(-decimalDigits)
+        .padStart(decimalDigits, '0');
       return (
         sign +
         normalizeToMaxLength(
@@ -220,7 +223,7 @@ export const getCurrencyHelpers = ({
       sign +
       parts
         .filter(({ type }) => !hideSymbol || type !== 'currency')
-        .map(({ value }) => value)
+        .map(({ value: partValue }) => partValue)
         .join('')
     );
   };
@@ -269,6 +272,29 @@ export function currencyConversion({
     postMultiplier * BigInt(ratePrecisionFactor),
   );
 }
+
+/**
+ * Format a value with the formatter's locale-specific approximately sign
+ * (en `~25%`, de `≈25 %`, fr `≃25 %`, ja `約25%`).
+ *
+ * Intl has no direct option for this. ECMA-402 applies the approximately sign when both ends
+ * of `formatRange` format to the same string, so a range of equal values always gets it.
+ * Browsers without `formatRange` (e.g. Firefox before 116) get CLDR's default sign, `~`.
+ */
+export const formatApproximately = (formatter: Intl.NumberFormat, value: number) =>
+  'function' === typeof formatter.formatRange
+    ? formatter.formatRange(value, value)
+    : `~${formatter.format(value)}`;
+
+/* Format a fraction (0.25) as a localized percentage string (25%) */
+export const toUIPercentage = (
+  locale: string,
+  value: number,
+  { approximate = false }: { approximate?: boolean } = {},
+) => {
+  const formatter = new Intl.NumberFormat(locale, { style: 'percent', maximumFractionDigits: 0 });
+  return approximate ? formatApproximately(formatter, value) : formatter.format(value);
+};
 
 export const MAX_RATE_PRECISION = 10;
 

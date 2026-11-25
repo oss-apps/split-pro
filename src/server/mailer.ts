@@ -1,7 +1,7 @@
-import { type User } from 'next-auth';
-import nodemailer, { type Transporter } from 'nodemailer';
+import { type Transporter, createTransport } from 'nodemailer';
 
 import { env } from '~/env';
+import { escapeHtml } from '~/lib/utils';
 
 import { sendToDiscord } from './service-notification';
 
@@ -23,15 +23,18 @@ const getTransporter = () => {
   }
 
   if (!mailServerConfig.host) {
-    return;
+    return undefined;
   }
 
   const transport = {
     ...mailServerConfig,
     secure: 465 === mailServerConfig.port,
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 30_000,
   };
 
-  transporter = nodemailer.createTransport(transport);
+  transporter = createTransport(transport);
   return transporter;
 };
 
@@ -61,17 +64,20 @@ export async function sendInviteEmail(email: string, name: string) {
 
   if ('development' === env.NODE_ENV) {
     console.log('Sending invite email', email, name);
-    return;
+    return true;
   }
 
   const subject = 'Invitation to SplitPro';
   const text = `Hey,\n\nYou have been invited to SplitPro by ${name}. It's a completely open source free alternative to splitwise. You can sign in to SplitPro by clicking the below URL:\n${env.NEXTAUTH_URL}\n\nThanks,\nSplitPro Team`;
-  const html = `<p>Hey,</p> <p>You have been invited to SplitPro by ${name}. It's a completely open source free alternative to splitwise. You can sign in to SplitPro by clicking the below URL:</p><p><a href="${env.NEXTAUTH_URL}">Sign in to ${host}</a></p><br><p>Thanks,<br/>SplitPro Team</p>`;
+  const html = `<p>Hey,</p> <p>You have been invited to SplitPro by ${escapeHtml(name)}. It's a completely open source free alternative to splitwise. You can sign in to SplitPro by clicking the below URL:</p><p><a href="${env.NEXTAUTH_URL}">Sign in to ${host}</a></p><br><p>Thanks,<br/>SplitPro Team</p>`;
 
-  await sendMail(email, subject, text, html);
+  return await sendMail(email, subject, text, html);
 }
 
-export async function sendFeedbackEmail(feedback: string, user: User) {
+export async function sendFeedbackEmail(
+  feedback: string,
+  user: { name?: string | null; email?: string | null },
+) {
   console.log('Received feedback from: ', user.email, 'Feedback: ', feedback);
 
   if (!env.FEEDBACK_EMAIL) {
@@ -91,10 +97,10 @@ async function sendMail(
   html: string,
   replyTo?: string,
 ) {
-  const transporter = getTransporter();
+  const mailTransporter = getTransporter();
   try {
-    if (transporter) {
-      await transporter.sendMail({
+    if (mailTransporter) {
+      await mailTransporter.sendMail({
         to: email,
         from: env.FROM_EMAIL,
         subject,
@@ -110,13 +116,17 @@ async function sendMail(
     }
   } catch (error) {
     console.log('Error sending email', error);
-    await sendToDiscord(
-      `Error sending email: ${
-        error instanceof Error
-          ? `error.message: ${error.message}\nerror.stack: ${error.stack}`
-          : 'Unknown error'
-      }`,
-    );
+    await Promise.resolve(
+      sendToDiscord(
+        `Error sending email: ${
+          error instanceof Error
+            ? `error.message: ${error.message}\nerror.stack: ${error.stack}`
+            : 'Unknown error'
+        }`,
+      ),
+    ).catch((notificationError: unknown) => {
+      console.error('Failed to report email error to Discord', notificationError);
+    });
   }
 
   return false;

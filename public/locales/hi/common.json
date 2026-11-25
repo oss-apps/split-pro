@@ -1,12 +1,13 @@
 {
   "account": {
-    "change_language": "",
+    "change_language": "भाषा बदलें",
     "change_language_details": {
       "messages": {
-        "language_changed": ""
+        "language_changed": "भाषा सफलतापूर्वक बदल गई"
       },
-      "placeholder": "",
-      "title": ""
+      "no_language_found": "कोई भाषा नहीं मिली।",
+      "placeholder": "भाषा का चयन करें",
+      "title": "भाषा का चयन करें"
     },
     "debug_info": "",
     "debug_info_details": {
@@ -18,18 +19,25 @@
       "user_agent": "",
       "version": ""
     },
-    "download_app": "",
+    "default_balance_currency": "निरधारित शेष मुद्रा",
+    "download_app": "ऐप डाउनलोड करें",
     "download_app_details": {
-      "download_as_pwa": "",
-      "title": "",
-      "using_android": "",
-      "using_ios": "",
-      "video": ""
+      "download_as_pwa": "आप स्प्लिटप्रो को पीडब्ल्यूए (प्रोग्रेसिव वेब ऐप) के रूप में अपनी होम स्क्रीन पर डाउनलोड कर सकते हैं।",
+      "title": "ऐप डाउनलोड करें",
+      "using_android": "यदि आप एंड्रॉइड का उपयोग कर रहे हैं, तो इसे जरुर देखे",
+      "using_ios": "यदि आप आई-ओएस का उपयोग कर रहे हैं, तो इसे जरुर देखे",
+      "video": "वीडियो"
     },
-    "download_splitpro_data": "",
+    "download_splitpro_data": "स्प्लिटप्रो डेटा डाउनलोड करें",
     "edit_name": {
-      "placeholder": "",
-      "title": ""
+      "apply_avatar": "स्वरूप लागू करें",
+      "avatar_label": "प्रोफ़ाइल चित्र",
+      "avatar_preview": "स्वरूप पूर्वावलोकन",
+      "placeholder": "नाम दर्ज करें",
+      "remove_avatar": "स्वरूप हटाएँ",
+      "select_avatar": "चित्र चुनें",
+      "title": "",
+      "zoom": "ज़ूम"
     },
     "follow_on_x": "",
     "import_from_splitwise": "",

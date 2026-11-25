@@ -90,7 +90,7 @@ export const ConvertibleBalance: React.FC<ConvertibleBalanceProps> = ({
     }
   }, [clearPreference, entityId, sessionPreference]);
 
-  const currentDate = useMemo(() => new Date(), []);
+  const [currentDate] = useState(() => new Date());
 
   const ratesQuery = api.expense.getBatchCurrencyRates.useQuery(
     {
@@ -281,7 +281,7 @@ const AmountDisplay: React.FC<{
             className,
           )}
         >
-          {t('actors.you')} {t(`ui.expense.you.${isPositive ? 'lent' : 'owe'}`)}
+          {t(`ui.expense.statements.${isPositive ? 'you_lent' : 'you_owe'}`)}
         </div>
       )}
       <span className={cn(isPositive ? 'text-positive' : 'text-negative', className)}>

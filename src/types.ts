@@ -5,11 +5,7 @@ import { type CurrencyCode } from './lib/currency';
 
 export type NextPageWithUser<T = {}> = NextPage<{ user: User } & T> & { auth: boolean };
 
-export interface PushMessage {
-  title: string;
-  message: string;
-  data?: { url?: string };
-}
+export type { PushMessage } from './types/notifications';
 
 export interface SplitwisePicture {
   small: string;

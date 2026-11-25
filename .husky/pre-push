@@ -1,0 +1,38 @@
+#!/bin/sh
+# Keep the committed OpenAPI spec in sync with the API router: when a pushed ref
+# changes API source files, regenerate the spec and abort the push if it differs
+# from the spec committed in that ref. CI runs the same check authoritatively.
+
+ZERO_SHA=0000000000000000000000000000000000000000
+SPEC=src/server/api/openapi.generated.json
+HEAD_SHA=$(git rev-parse HEAD)
+
+# stdin: <local-ref> <local-sha> <remote-ref> <remote-sha>, one line per pushed ref.
+while read -r local_ref local_sha remote_ref remote_sha; do
+  # Ref deletion: nothing to validate.
+  [ "$local_sha" = "$ZERO_SHA" ] && continue
+
+  # New branch, or remote commit unknown locally (e.g. force-push): always check.
+  if [ "$remote_sha" != "$ZERO_SHA" ] && git cat-file -e "$remote_sha^{commit}" 2>/dev/null; then
+    git diff --name-only "$remote_sha" "$local_sha" -- src/server/api/ | grep -q . || continue
+  fi
+
+  # The generator reads the working tree, which only reflects the checked-out commit.
+  if [ "$local_sha" != "$HEAD_SHA" ]; then
+    echo "⚠ Skipping OpenAPI check for $local_ref (not checked out); CI will verify it."
+    continue
+  fi
+
+  if [ -n "$(git status --porcelain -- src/server/api/ scripts/generate-openapi.ts)" ]; then
+    echo "✖ Uncommitted API changes; commit or stash them so the OpenAPI check runs against $local_ref."
+    exit 1
+  fi
+
+  pnpm gen:openapi || exit 1
+
+  if ! git diff --quiet "$local_sha" -- "$SPEC"; then
+    echo "✖ $SPEC is out of date."
+    echo "  Run: pnpm gen:openapi && git add $SPEC && git commit"
+    exit 1
+  fi
+done

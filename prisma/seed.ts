@@ -5,12 +5,31 @@ import { dummyData } from '~/dummies';
 import { calculateParticipantSplit } from '~/store/addStore';
 import assert from 'node:assert';
 import { settleBalances } from './seedSettlement';
+import { createDatabaseAdapter } from '~/server/databaseAdapter';
+import { env } from '~/env';
+import { db } from '~/server/db';
+import { forEachSeedBatch } from './seedUtils';
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ adapter: createDatabaseAdapter(env.DATABASE_URL) });
 
 async function createUsers() {
-  await prisma.user.createMany({
-    data: dummyData.users,
+  await prisma.$transaction(async (tx) => {
+    await tx.user.createMany({
+      data: dummyData.users,
+    });
+
+    // Explicit seed IDs do not advance PostgreSQL's auto-increment sequence.
+    // Keep subsequent signups above both seeded IDs and previously allocated IDs.
+    await tx.$executeRaw`
+      SELECT setval(
+        pg_get_serial_sequence('public."User"', 'id'),
+        GREATEST(
+          (SELECT MAX("id") FROM "public"."User"),
+          (SELECT last_value FROM "public"."User_id_seq")
+        ),
+        true
+      )
+    `;
   });
 
   console.log('Finished creating users');
@@ -19,19 +38,17 @@ async function createUsers() {
 }
 
 async function createGroups() {
-  await Promise.all(
-    dummyData.groups.map(({ members, type, ...group }) =>
-      prisma.group.create({
-        data: {
-          ...group,
-          groupUsers: {
-            create: members.map((member) => ({
-              userId: member.id,
-            })),
-          },
+  await forEachSeedBatch(dummyData.groups, ({ members, type, ...group }) =>
+    prisma.group.create({
+      data: {
+        ...group,
+        groupUsers: {
+          create: members.map((member) => ({
+            userId: member.id,
+          })),
         },
-      }),
-    ),
+      },
+    }),
   );
 
   console.log('Finished creating groups');
@@ -42,32 +59,30 @@ async function createGroups() {
 const idLookup: Map<number, string> = new Map();
 
 async function createExpenses() {
-  await Promise.all(
-    dummyData.expenses.map(async (expense, idx) => {
-      const res = await createExpense(
-        {
-          ...expense,
-          paidBy: expense.paidBy.id,
-          participants: calculateParticipantSplit(expense as any).participants.map((p) => ({
-            userId: p.id,
-            amount: p.amount ?? 0n,
-          })),
-        },
-        expense.addedBy,
-      );
+  await forEachSeedBatch(dummyData.expenses, async (expense, idx) => {
+    const res = await createExpense(
+      {
+        ...expense,
+        paidBy: expense.paidBy.id,
+        participants: calculateParticipantSplit(expense as any).participants.map((p) => ({
+          userId: p.id,
+          amount: p.amount ?? 0n,
+        })),
+      },
+      expense.addedBy,
+    );
 
-      await prisma.expense.update({
-        where: {
-          id: res!.id,
-        },
-        data: {
-          createdAt: expense.createdAt,
-        },
-      });
+    await prisma.expense.update({
+      where: {
+        id: res!.id,
+      },
+      data: {
+        createdAt: expense.createdAt,
+      },
+    });
 
-      idLookup.set(idx, res!.id);
-    }),
-  );
+    idLookup.set(idx, res!.id);
+  });
 
   console.log('Finished creating expenses');
 
@@ -75,23 +90,21 @@ async function createExpenses() {
 }
 
 async function editExpenses() {
-  await Promise.all(
-    dummyData.expenseEdits.map(async ({ idx, ...expense }) => {
-      assert(idLookup.get(idx), `No expense ID found for index ${idx}`);
-      await editExpense(
-        {
-          ...expense,
-          expenseId: idLookup.get(idx),
-          paidBy: expense.paidBy.id,
-          participants: calculateParticipantSplit(expense as any).participants.map((p) => ({
-            userId: p.id,
-            amount: p.amount ?? 0n,
-          })),
-        },
-        expense.updatedBy.id,
-      );
-    }),
-  );
+  await forEachSeedBatch(dummyData.expenseEdits, async ({ idx, ...expense }) => {
+    assert(idLookup.get(idx), `No expense ID found for index ${idx}`);
+    await editExpense(
+      {
+        ...expense,
+        expenseId: idLookup.get(idx),
+        paidBy: expense.paidBy.id,
+        participants: calculateParticipantSplit(expense as any).participants.map((p) => ({
+          userId: p.id,
+          amount: p.amount ?? 0n,
+        })),
+      },
+      expense.updatedBy.id,
+    );
+  });
 
   console.log('Finished editing expenses');
 
@@ -99,12 +112,10 @@ async function editExpenses() {
 }
 
 async function deleteExpenses() {
-  await Promise.all(
-    dummyData.expensesToDelete.map(async ({ idx, deletedBy }) => {
-      assert(idLookup.get(idx), `No expense ID found for index ${idx}`);
-      await deleteExpense(idLookup.get(idx)!, deletedBy.id);
-    }),
-  );
+  await forEachSeedBatch(dummyData.expensesToDelete, async ({ idx, deletedBy }) => {
+    assert(idLookup.get(idx), `No expense ID found for index ${idx}`);
+    await deleteExpense(idLookup.get(idx)!, deletedBy.id);
+  });
 
   console.log('Finished deleting expenses');
 
@@ -131,6 +142,6 @@ main()
     console.error(e);
     process.exit(1);
   })
-  .finally(() => {
-    prisma.$disconnect().catch(console.log);
+  .finally(async () => {
+    await Promise.all([prisma.$disconnect(), db.$disconnect()]);
   });

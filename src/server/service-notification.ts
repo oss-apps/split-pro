@@ -16,6 +16,7 @@ export async function sendToDiscord(message: string) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ content: message }),
+    signal: AbortSignal.timeout(5_000),
   });
 
   if (response.ok) {

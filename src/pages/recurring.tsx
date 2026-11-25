@@ -4,14 +4,14 @@ import Link from 'next/link';
 import { useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 
+import { RecurrencePreview } from '~/components/Expense/RecurrencePreview';
 import { EditRecurrenceDialog } from '~/components/Expense/EditRecurrenceDialog';
 import MainLayout from '~/components/Layout/MainLayout';
 import { SimpleConfirmationDialog } from '~/components/SimpleConfirmationDialog';
 import { EntityAvatar } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
-import { useIntlCronParser } from '~/hooks/useIntlCronParser';
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
-import { cronFromBackend } from '~/lib/cron';
+import { cronFromBackend, extractTemplateExpenseId } from '~/lib/cron';
 import { type NextPageWithUser } from '~/types';
 import { type RouterOutputs, api } from '~/utils/api';
 import { withI18nStaticProps } from '~/utils/i18n/server';
@@ -22,22 +22,17 @@ interface RecurringExpenseItemProps {
   item: RecurringExpense;
   onDelete: (recurrenceId: number) => Promise<void>;
   isDeleting: boolean;
-  toUIString: (amount: bigint) => string;
   toUIDate: (date: Date) => string;
-  cronParser: (cron: string) => string;
-  i18nReady: boolean;
 }
 
 const RecurringExpenseItem: React.FC<RecurringExpenseItemProps> = ({
   item,
   onDelete,
   isDeleting,
-  toUIString,
   toUIDate,
-  cronParser,
-  i18nReady,
 }) => {
-  const { t } = useTranslationWithUtils();
+  const { t, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { toUIString, formatter } = getCurrencyHelpersCached(item.expense.currency);
 
   const schedule = useMemo(() => {
     try {
@@ -53,7 +48,10 @@ const RecurringExpenseItem: React.FC<RecurringExpenseItemProps> = ({
 
   return (
     <div className="flex items-center justify-between gap-2">
-      <Link href={`/expenses/${item.expense.id}`} className="flex flex-1 gap-2">
+      <Link
+        href={`/expenses/${extractTemplateExpenseId(item.job.command) ?? item.expense.id}`}
+        className="flex flex-1 gap-2"
+      >
         <div className="mt-1">
           <EntityAvatar entity={item.expense.addedByUser} size={30} />
         </div>
@@ -61,14 +59,14 @@ const RecurringExpenseItem: React.FC<RecurringExpenseItemProps> = ({
           <p className="font-semibold">
             {t('recurrence.expense_for_the_amount_of', {
               name: item.expense.name,
-              amount: toUIString(item.expense.amount),
-              currency: item.expense.currency,
+              amount: toUIString(item.expense.amount, false, true),
+              currency:
+                formatter.formatToParts(0).find(({ type }) => 'currency' === type)?.value ?? '',
             })}
           </p>
-          <p className="text-primary text-sm">
-            {t('recurrence.recurring')}
-            {i18nReady && schedule ? `: ${cronParser(schedule)}` : ''}
-          </p>
+          <div className="text-primary text-sm">
+            {schedule ? <RecurrencePreview schedule={schedule} /> : t('recurrence.recurring')}
+          </div>
           <p className="text-xs text-gray-500">{toUIDate(item.expense.expenseDate)}</p>
         </div>
       </Link>
@@ -97,17 +95,11 @@ const RecurringExpenseItem: React.FC<RecurringExpenseItemProps> = ({
 };
 
 const RecurringPage: NextPageWithUser = () => {
-  const { t, toUIDate, getCurrencyHelpersCached } = useTranslationWithUtils();
+  const { t, toUIDate } = useTranslationWithUtils();
 
   const recurringExpensesQuery = api.expense.getRecurringExpenses.useQuery();
   const deleteRecurrenceMutation = api.expense.deleteRecurrence.useMutation();
   const apiUtils = api.useUtils();
-
-  const { cronParser, i18nReady } = useIntlCronParser();
-
-  const { toUIString } = getCurrencyHelpersCached(
-    recurringExpensesQuery.data?.[0]?.expense.currency ?? 'USD',
-  );
 
   const handleDelete = useCallback(
     async (recurrenceId: number) => {
@@ -151,10 +143,7 @@ const RecurringPage: NextPageWithUser = () => {
               item={e}
               onDelete={handleDelete}
               isDeleting={deleteRecurrenceMutation.isPending}
-              toUIString={toUIString}
               toUIDate={toUIDate}
-              cronParser={cronParser}
-              i18nReady={i18nReady}
             />
           ))}
         </div>

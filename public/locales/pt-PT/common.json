@@ -12,20 +12,27 @@
     "debug_info": "Info de Depuração",
     "debug_info_details": {
       "copy_failed": "Falha ao copiar informação de depuração para a área de transferência",
-      "description": "Inclua a informação abaixo ao criar um pedido de suporte:",
+      "description": "Inclui a informação abaixo ao criar um pedido de suporte:",
       "git": "Git",
       "new_version_available": "Nova versão disponível:",
       "send_test_notification": "Enviar notificação de teste",
       "test_notification_failed": "Não foi possível enviar a notificação de teste",
       "test_notification_sent": "Notificação de teste enviada",
       "title": "Informação de Depuração",
-      "user_agent": "UserAgent",
+      "user_agent": "User.Agent",
       "version": "Versão"
     },
     "default_balance_currency": "Moeda de saldo padrão",
+    "deletion": {
+      "action": "Eliminar conta",
+      "confirm": "Conta eliminada permanentemente",
+      "description": "Esta ação é irreversível. A tua identidade e os dados de login serão removidos e serás desligado em todos os dispositivos. As despesas partilhadas, notas, recibos, participações em grupos e saldos pendentes permanecerão em \"Utilizador excluído\". As informações pessoais escritas em conteúdo partilhado serão mantidas. A propriedade do grupo será transferida para outro membro disponível, sempre que possível. As despesas recorrentes que criaste serão interrompidas. Podes descarregar os teus dados SplitPro na página da tua conta antes de continuares.",
+      "error": "Não foi possível eliminar a conta. Tenta de novo.",
+      "title": "Eliminar a tua conta?"
+    },
     "download_app": "Descarregar app",
     "download_app_details": {
-      "download_as_pwa": "Poderás descarregar o SplitPro como PWA.",
+      "download_as_pwa": "Poderás descarregar o SplitPro como PWA para o teu ecrã.",
       "title": "Descarregar app",
       "using_android": "Se estás a usar Android, vê isto",
       "using_ios": "Se estás a usar iOS, vê isto",
@@ -35,11 +42,11 @@
     "edit_name": {
       "apply_avatar": "Aplicar avatar",
       "avatar_label": "Foto de perfil",
-      "avatar_preview": "Prévia do avatar",
+      "avatar_preview": "Pré-visualização do avatar",
       "placeholder": "Inserir nome",
       "remove_avatar": "Remover avatar",
-      "select_avatar": "Selecione a imagem",
-      "title": "Editar pormenores",
+      "select_avatar": "Selecionar imagem",
+      "title": "Editar detalhes",
       "zoom": "Zoom"
     },
     "follow_on_x": "Segue-nos no X",
@@ -49,26 +56,30 @@
       "export_splitwise_data_button": "Exportar dados do Splitwise",
       "follow_to_export_splitwise_data": "Acede a este link para exportar os dados do Splitwise",
       "messages": {
-        "import_success": "Importar com sucesso"
+        "import_success": "Importação bem sucedida"
       },
-      "no_file_chosen": "Ficheiro não selecionado",
-      "note": "Nota: Ainda só temos suporte a importar amigos e grupos. A transações não serão importadas. Estamos a trabalhar nisso."
+      "no_file_chosen": "Nenhum ficheiro selecionado",
+      "note": "Nota: Ainda só suportamos importar amigos e grupos. A transações não serão importadas. Estamos a trabalhar nisso."
     },
     "logout": "Terminar Sessão",
     "messages": {
-      "submit_error": "Não foi possível atualizar os pormenores",
-      "submit_success": "Pormenor atualizado"
+      "submit_error": "Não foi possível atualizar os detalhes",
+      "submit_success": "Detalhes atualizados"
     },
     "notifications": {
       "disable_notification": "Desativar notificações",
       "enable_notification": "Ativar notificações",
       "messages": {
-        "notification_granted": "Irás receber notificações agora"
+        "notification_granted": "Passarás a receber notificações"
       }
     },
-    "star_on_github": "Visita-nos no GitHub",
+    "star_on_github": "Marca-nos com estrela no GitHub",
     "submit_feedback": "Submeter feedback",
     "submit_feedback_details": {
+      "messages": {
+        "submit_error": "Não foi possível enviar reposta",
+        "submit_success": "Resposta enviada"
+      },
       "placeholder": "Insere o teu feedback",
       "title": "Submeter feedback"
     },
@@ -93,22 +104,35 @@
     "leave": "Sair",
     "next": "Próxima",
     "reconnect": "Reconectar",
-    "save": "Salvar",
+    "remind_later": "Lembrar mais tarde",
+    "retry": "Tentar de novo",
+    "save": "Guardar",
     "settle_up": "Acertar contas",
     "submit": "Submeter"
   },
+  "activity": {
+    "user_deleted_expense": "{actor, select, you {Apagaste {expense}} other {{user} apagou {expense}}}",
+    "user_paid_for_expense": "{user} pagou {amount} por {expense}",
+    "user_received_for_expense": "{user} recebeu {amount} por {expense}",
+    "you_paid_amount": "Pagaste {amount}",
+    "you_paid_for_expense": "Pagaste {amount} por {expense}",
+    "you_received_amount": "Recebeste {amount}",
+    "you_received_for_expense": "Recebeste {amount} por {expense}"
+  },
   "actors": {
     "all": "Todos",
+    "deleted_user": "Utilizador eliminado",
     "friends": "Amigos",
     "groups": "Grupos",
     "members": "Membros",
+    "other_users": "Outros utilizadores",
     "owner": "Proprietário",
     "you": "Tu",
     "you_accusativus": "Tu",
     "you_dativus": "Tu"
   },
   "auth": {
-    "continue_with": "Continuar com {{provider}}",
+    "continue_with": "Continuar com {provider}",
     "email_placeholder": "Inserir email",
     "no_providers_configured": "Nenhum fornecedor de autenticação configurado",
     "no_providers_instructions": "Por favor, configura pelo menos um fornecedor de autenticação para iniciar sessão. Consulta as",
@@ -117,6 +141,15 @@
     "sending": "A enviar...",
     "setup_instructions": "instruções de configuração do Docker",
     "trouble_logging_in": "Problemas com a autenticação? Contacta-nos"
+  },
+  "balance_list": {
+    "gets": "{receiverRole, select, you {Recebes {amount} de {payer}} other {{receiver} recebe {amount} de {payerRole, select, you {you} other {{payer}}}}}",
+    "pays": "{payerRole, select, you {Tu pagas {amount} a {receiver}} other {{payer} paga {amount} a {receiverRole, select, you {ti} other {{receiver}}}}}"
+  },
+  "balance_summary": {
+    "friend_owes_you": "{friend} deve-te {amount}",
+    "more": "{count, plural, one {# mais saldo} other {# mais saldos}}",
+    "you_owe_friend": "Deves {amount} a {friend}"
   },
   "balances": {
     "default_split": {
@@ -140,35 +173,58 @@
     "select_bank_provider": "Escolha o fornecedor de dados do seu banco",
     "to_bank": "para o banco"
   },
+  "comments": {
+    "add": "Adicionar um comentário",
+    "delete": "Eliminar",
+    "delete_confirm": "Eliminar este comentário?",
+    "edit": "Editar",
+    "edit_label": "Editar comentário",
+    "error": "Não foi possível guardar o comentário",
+    "initial_label": "Adicionar uma nota (opcional)",
+    "initial_placeholder": "Adicionar detalhes a esta despesa…",
+    "placeholder": "Escreve um comentário…",
+    "post": "Publicar comentário",
+    "title": "Comentários"
+  },
   "currency_conversion": {
+    "amount_aria_label": "Quantia",
     "amount_to_receive": "Valor a receber",
-    "description": "Converta o valor para uma moeda diferente.",
+    "converted_amount_aria_label": "Quantia convertida",
+    "description": "Converte o valor para uma moeda diferente.",
     "exchange_rate": "Taxa de câmbio",
-    "fetching_rate": "Buscando taxa...",
+    "fetching_rate": "A buscar taxa...",
     "rate": "Taxa",
     "success_toast": "Conversão de moeda definida com sucesso",
     "title": "Conversão de moeda"
   },
   "errors": {
+    "add_member_failed": "Não foi possível adicionar membro ao grupo",
     "amount_required": "",
     "currency_conversion_error": "Erro ao definir conversão de moeda",
     "currency_conversion_failed": "Falha ao converter moedas",
     "currency_conversion_malformed": "Dados de taxas de câmbio inválidos",
     "email_invalid": "Endereço de Email inválido, por favor tenta novamente.",
     "email_required": "Email é obrigatório",
+    "expense_deletion_failed": "Ocorreu um erro inesperado ao eliminar a despesa",
+    "expense_submission_failed": "Ocorreu um erro inesperado durante a submissão da despesa",
     "feedback_min_length": "Feedback deve conter pelo menos 10 caracteres",
     "feedback_required": "Feedback é obrigatório",
+    "friend_deletion_failed": "Não foi possível eliminar amigo",
     "group_balances_malformed": "Dados de balanços do grupo inválidos, por favor reporte o problema ou tente recalcular.",
     "group_name_update_failed": "Erro ao atualizar o nome do grupo",
     "image_compression_failed": "A compressão da imagem falhou. Tentar a enviar o ficheiro original",
     "import_failed": "Error ao importar ficheiro",
     "invalid_cron_expression": "Expressão \"cron\" inválida",
-    "invalid_currency_code": "Código {{code}} de moeda inválido",
+    "invalid_currency_code": "Código {code} de moeda inválido",
+    "invalid_split": "Define quem deve esta despesa antes de guardar.",
+    "invite_email_failed": "Falha no envio de email. Verifica a configuração SMTP.",
     "language_change_failed": "Erro ao alterar idioma",
-    "less_than": "O ficheiro deve ter menos que {{size}}MB",
+    "less_than": "O ficheiro deve ter menos que {size}MB",
     "name_required": "O nome é obrigatório",
-    "no_providers": "Ocorreu um erro ao transferir os fornecedores de autenticação. Por favor consulte os logs do backend.",
+    "no_providers": "Ocorreu um erro ao transferir os fornecedores de autenticação. Por favor consulta os logs do backend.",
     "notification_not_supported": "Notificação não suportada",
+    "notification_request_failed": "Erro na obtenção de autorização de notificação",
+    "notification_subscribe_failed": "Não é possível subscrever notificações",
     "otp_invalid": "OTP inválido",
     "otp_required": "OTP é obrigatório",
     "recurrence_delete_failed": "Falha ao apagar recorrência",
@@ -176,7 +232,8 @@
     "request_error": "Erro requisitando notificação",
     "saving_expense": "Erro ao salvar despesa",
     "setting_update_failed": "Falha ao atualizar a configuração",
-    "signin_error": "Ocorreu um erro durante a autenticação: ",
+    "signin_error": "Ocorreu um erro durante a autenticação: {error}",
+    "signin_failed": "Falha no registo. Tenta novamente.",
     "signup_disabled": "Criação de novas contas encontra-se desativo para esta instância",
     "something_went_wrong": "Algo deu errado",
     "subscribe_error": "Não foi possivel subscrever notificações",
@@ -194,14 +251,22 @@
       "description_placeholder": "Insira a descrição",
       "pick_a_date": "Selecionar uma data",
       "select_user_or_group": {
-        "add_to_split_pro": "Adicionar ao Split Pro",
-        "note": "Nota: opção de envio de convite está desativa para já devido ao spam",
+        "add_to_split_pro": "Adicionar despesa",
+        "empty_image_alt": "Não foram encontrados utilizadores.",
+        "note": "Convites por email estão desativados. Ainda poderás adicionar alguém por email sem enviares convite.",
         "only_one_group_time": "Só podes ter um grupo de cada vez",
-        "send_invite": "Enviar convite para o utilizador",
-        "warning": "Atenção: Não envie um convite se o e-mail for inválido. Use a opção de adicionar ao Split Pro em vez disso. O uso indevido dos convites resultará no bloqueio da sua conta"
+        "send_invite": "Adicionar utilizador com convite por email",
+        "warning": "Ambos os botões acrescentam a pessoa a esta despesa provisória. Guarde a despesa quando terminares. A opção de convite envia um link para o Split Pro por e-mail apenas se o e-mail da pessoa não estiver verificado; nesse caso, ela não poderá fazer login."
       },
       "split_type_section": {
+        "direction": {
+          "no_money_flow": "Mais ninguém deve nada",
+          "owes_payer": "{debtor} deve a {payer}",
+          "owes_you": "{debtor} deve-te",
+          "you_owe": "Tu deves a {payer}"
+        },
         "split_equally": "dividir igualmente",
+        "split_equally_with_count": "divide em partes iguais por {count, plural, one {# pessoa} other {# pessoas}}",
         "split_unequally": "dividir desigualmente",
         "types": {
           "adjustment": {
@@ -244,7 +309,10 @@
     "balance_list": {
       "are_settled_up": "estão acertados",
       "is_settled_up": "está acertado",
-      "press_balance_info": "Pressione o saldo individual para iniciar o acerto"
+      "lent": "{actor, select, you {Pagaste} other {{person} pagou}}",
+      "owes": "{actor, select, you {Tu deves} other {{person} deve-te}}",
+      "press_balance_info": "Pressione o saldo individual para iniciar o acerto",
+      "settled": "{actor, select, you {acertaste contas} other {{person} acertou contas}}"
     },
     "bank_transactions": "Transações do banco",
     "clear": "Limpar",
@@ -252,6 +320,7 @@
       "text": "Esta ação não pode ser desfeita. Isto irá eliminar permanentemente a tua despesa.",
       "title": "Tens mesmo a certeza?"
     },
+    "empty_state_image_alt": "Não há despesas",
     "multiple_transactions": {
       "add_all": "Adicionar todas",
       "add_one_by_one": "Adicionar uma a uma",
@@ -260,9 +329,40 @@
     },
     "no_transactions_yet": "Sem transações por enquanto",
     "pending": "Pendente",
+    "receipt": {
+      "image_alt": "Recibo de despesa",
+      "thumbnail_alt": "Imagem do recibo de despesa",
+      "title": "Recibo de despesa"
+    },
     "submit_all": "Submeter todas",
     "title": "Adicionar despesa",
     "title_mobile": "Adicionar"
+  },
+  "expense_list": {
+    "conversion_for_users": "Conversão de moeda para {payerRole, select, you {you} other {{payer}}} e {receiverRole, select, you {you} other {{receiver}}}",
+    "future_expense": "Despesa futura — ainda não contabilizada",
+    "settlement": "{payerRole, select, you {Pagaste {amount} a {receiver}} other {{receiverRole, select, you {{payer} pagou-te {amount}} other {{payer} pagou {amount} a {receiver}}}}}",
+    "upcoming_expenses": "Despesas futuras",
+    "user_paid": "{actor, select, you {Pagaste {amount}} other {{user} pagou {amount}}}",
+    "user_received": "{actor, select, you {Recebeste {amount}} other {{user} recebeu {amount}}}"
+  },
+  "expense_metadata": {
+    "added_by": "{actor, select, you {Adicionado por ti em {date}} other {Adicionado por {user} em {date}}}",
+    "deleted_by": "{actor, select, you {Eliminado por ti em {date}} other {Eliminado por {user} em {date}}}",
+    "edited_by": "{actor, select, you {Editado por ti em {date}} other {Edited por {user} em {date}}}"
+  },
+  "expense_participant": {
+    "gets": "{actor, select, tu {<person/> recebes <amount/>} other {<person/> recebe <amount/>}}",
+    "owes": "{actor, select, tu {<person/> deves <amount/>} other {<person/> deve <amount/>}}",
+    "paid": "<person/> pagou <amount/>",
+    "received": "<person/> recebeu <amount/>"
+  },
+  "friend": {
+    "delete_confirmation": {
+      "description": "Queres mesmo continuar?",
+      "outstanding_balance": "Não podes eliminar um amigo com contas em aberto. Acerta contas primeiro.",
+      "title": "Tens a certeza absoluta?"
+    }
   },
   "group_details": {
     "add_members": "Adicionar membros",
@@ -328,12 +428,12 @@
     "no_members": {
       "add_members": "Adicionar membros",
       "add_members_details": {
-        "add_to_split_pro": "Adicionar ao Split Pro",
-        "note": "Nota: opção de envio de convite está desativa para já devido ao spam",
+        "add_to_split_pro": "Adicionar ao Grupo",
+        "note": "Os convites por email estão desativados. Podes ainda adicionar alguém por e-mail sem enviares um convite.",
         "placeholder": "Insira o nome ou email",
-        "send_invite": "Enviar convite para o utilizador",
+        "send_invite": "Adicionar com convite por email",
         "title": "Adicionar membros",
-        "warning": "Atenção: Não envie um convite para um e-mail inválido. Em vez disso, use adicionar ao Split Pro. O uso indevido de convites resultará no bloqueio da sua conta"
+        "warning": "Ambos os botões adicionam imediatamente a pessoa e quaisquer contactos selecionados a este grupo. A opção Guardar apenas adiciona os contactos selecionados, não o email introduzido. A opção de convite envia um link para o SplitPro por email apenas se o email do utilizador não estiver verificado; não o autentica automaticamente."
       },
       "copied": "Copiado",
       "invite_link": "Partilhar link de convite",
@@ -365,6 +465,18 @@
     "groups": "Grupos",
     "recurring": "Recorrente"
   },
+  "notifications": {
+    "enable_description": "Não percas eventos importantes. Subscreve para receberes notificações quando as despesas forem adicionadas ou atualizadas.",
+    "enable_title": "Ativar notificações",
+    "permission_granted": "Passarás a receber notificações",
+    "subscribe": "Subscreve"
+  },
+  "pagination": {
+    "error": "Não foi possível carregar despesas. Tenta de novo.",
+    "load_more": "Carregar mais",
+    "loading": "A carregar despesas",
+    "retry": "Tentar de novo"
+  },
   "recurrence": {
     "cron_expression": "Expressão \"Cron\"",
     "days_of_month": "Dias do Mês",
@@ -378,10 +490,14 @@
     "edit_description": "Isto vai mudar a programação das despesas futuras. As despesas existentes não serão modificadas.",
     "edit_title": "Editar Recorrência",
     "empty": "Nenhuma despesa recorrente ainda",
-    "expense_for_the_amount_of": "Despesa {{name}} pelo valor de {{amount}} {{currency}}",
+    "execution_time_loading": "A carregar tempo de execução…",
+    "execution_time_unavailable": "Tempo de execução indisponível.",
+    "expense_for_the_amount_of": "Despesa {name} pelo valor de {amount} {currency}",
+    "instance_schedule": "Agenda: {schedule} ({timeZone}).",
     "last_day": "Último dia",
     "months": "Meses",
     "never": "Nenhum pagamento recorrente configurado",
+    "next_local_run": "Próxima execução: {date} ({timeZone} da tua zona horária).",
     "recurring": "Recorrente",
     "schedule_type": {
       "custom": "Personalizado",
@@ -392,9 +508,10 @@
       "year": "Anual"
     },
     "template_delete_warning": "Este é um modelo de despesa recorrente. Apagá-lo interromperá todas as despesas recorrentes futuras.",
-    "template_edit_warning": "Este é um modelo de despesa recorrente. As alterações serão aplicadas a todas as despesas recorrentes futuras.",
+    "template_edit_warning": "Este é um modelo de despesa recorrente. As alterações serão aplicadas a todas as futuras despesas recorrentes.",
     "time_of_day": "Hora do dia",
     "title": "Recorrência",
+    "toggle_options": "Alterna entre opções de despesas recorrentes",
     "view_recurring_page": "Ver Página de Recorrências"
   },
   "ui": {
@@ -409,7 +526,22 @@
       "for": "por",
       "from": "de",
       "paid_by": "Pago por",
+      "payer": {
+        "current_user": "Tu"
+      },
       "received_by": "Recebido por",
+      "recipient": {
+        "current_user": "Tu"
+      },
+      "statements": {
+        "user_pays_user": "{payer} paga a {receiver}",
+        "user_pays_you": "{user} paga-te",
+        "you_lent": "Tu pagaste",
+        "you_lent_amount": "Tu pagaste {amount}",
+        "you_owe": "Tu deves",
+        "you_owe_amount": "Tu deves {amount}",
+        "you_pay_user": "Pagas a {user}"
+      },
       "to": "para",
       "user": {
         "deleted": "apagou",
@@ -431,13 +563,34 @@
       }
     },
     "expense_details": "Detalhes da despesa",
+    "group_people_list_empty": {
+      "all_added": "Todos os teus contactos guardados já estão neste grupo",
+      "no_contacts": "Não há contactos guardados para exibir",
+      "no_matches": "Nenhum contacto disponível corresponde à tua pesquisa"
+    },
     "in_group": "Em grupo",
+    "invitation": {
+      "adding": "A adicionar…",
+      "disabled_help": "Os convites por email estão desativados neste servidor. Podes ainda adicionar alguém por email.",
+      "draft_help": "Adicionar um participante não guarda a despesa. Guarda a despesa também quando a editares.",
+      "email_help": "Para o endereço de email que introduzires, enviaremos um link para o SplitPro, apenas se não for verificado. Isto não significa que o utilizador seja autenticado.",
+      "expense_partial_success": "Adicionado à despesa preliminar, mas o email de convite não pôde ser enviado.",
+      "group_partial_success": "Adicionado ao grupo, mas o email de convite não pôde ser enviado.",
+      "no_email_help": "Nenhum email de convite será enviado. Os utilizadores que ainda não se registaram poderão aceder posteriormente utilizando este endereço de email.",
+      "send_email": "Enviar email de convite"
+    },
     "no_activity": "Ainda sem atividade",
     "not_involved": "Não envolvido",
     "not_set": "Não definido",
     "on": "em",
     "or": "ou",
     "outstanding_balances": "Saldos em aberto",
+    "people_list_empty": {
+      "all_added": "Todos os teus contactos guardados já estão neste grupo",
+      "no_contacts": "Não há contactos ou grupos guardados para exibir",
+      "no_matches": "Nenhum contacto ou grupo disponível corresponde à tua pesquisa"
+    },
+    "people_list_load_error": "Não foi possível carregar os contactos. Tenta novamente.",
     "select_balance": "Selecionar saldo",
     "select_currency": "Selecionar moeda",
     "settle_up_name": "Acertar contas",
@@ -446,6 +599,7 @@
     "share_text": "Testa o SplitPro. É uma alternativa gratuita ao Splitwise",
     "show_all_currencies": "Mostrar todas as moedas",
     "today": "Hoje",
-    "total_balance": "Saldo total"
+    "total_balance": "Saldo total",
+    "transfer": "{senderRole, select, you {Pagas a {receiver}} other {{receiverRole, select, you {{sender} paga-te} other {{sender} paga {receiver}}}}}"
   }
 }

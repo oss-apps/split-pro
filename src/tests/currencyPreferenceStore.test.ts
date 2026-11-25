@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 import { SHOW_ALL_VALUE, useCurrencyPreferenceStore } from '~/store/currencyPreferenceStore';
 
 const resetStore = () =>

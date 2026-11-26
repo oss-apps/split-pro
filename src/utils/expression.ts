@@ -1,0 +1,289 @@
+export interface ExpressionResult {
+  numerator: bigint;
+  denominator: bigint;
+}
+
+export const isExpression = (input: string): boolean =>
+  /[+*/()]/.test(input) || (1 < input.length && input.slice(1).includes('-'));
+
+const isValidGroupedInteger = (integerPart: string, groupSeparator: string): boolean => {
+  if ('' === groupSeparator) {
+    return false;
+  }
+
+  const groups = integerPart.split(groupSeparator).map((group) => group.replace(/[^0-9]/g, ''));
+  return (
+    1 < groups.length &&
+    0 < (groups[0]?.length ?? 0) &&
+    (groups[0]?.length ?? 0) < 4 &&
+    groups.slice(1).every((group) => 3 === group.length)
+  );
+};
+
+export const hasDuplicateDecimalSeparator = (
+  input: string,
+  decimalSeparator = '.',
+  alternativeDecimalSeparator = decimalSeparator === '.' ? ',' : '.',
+  groupSeparator = '',
+): boolean => {
+  const numberTerms = input.split(/[-+*/()]/);
+
+  return numberTerms.some((numberTerm) => {
+    const decimalParts = numberTerm.split(decimalSeparator);
+    if (2 < decimalParts.length) {
+      return true;
+    }
+
+    const [integerPart = '', fractionalPart = ''] = decimalParts;
+    const alternativeCount = numberTerm.split(alternativeDecimalSeparator).length - 1;
+    const validGrouping =
+      alternativeDecimalSeparator === groupSeparator &&
+      isValidGroupedInteger(integerPart, groupSeparator) &&
+      !fractionalPart.includes(groupSeparator);
+    if (validGrouping) {
+      return false;
+    }
+
+    if (fractionalPart.includes(alternativeDecimalSeparator)) {
+      return true;
+    }
+
+    return 1 < alternativeCount;
+  });
+};
+
+export const removeValidGroupingSeparators = (
+  input: string,
+  decimalSeparator: string,
+  groupSeparator: string,
+): string => {
+  if ('' === groupSeparator || decimalSeparator === groupSeparator) {
+    return input;
+  }
+
+  return input
+    .split(/([-+*/()])/)
+    .map((numberTerm) => {
+      if (['+', '-', '*', '/', '(', ')'].includes(numberTerm)) {
+        return numberTerm;
+      }
+
+      const decimalParts = numberTerm.split(decimalSeparator);
+      if (2 < decimalParts.length) {
+        return numberTerm;
+      }
+
+      const [integerPart = '', fractionalPart = ''] = decimalParts;
+      if (
+        !isValidGroupedInteger(integerPart, groupSeparator) ||
+        fractionalPart.includes(groupSeparator)
+      ) {
+        return numberTerm;
+      }
+
+      const normalizedInteger = integerPart.split(groupSeparator).join('');
+      return decimalParts.length > 1
+        ? `${normalizedInteger}${decimalSeparator}${fractionalPart}`
+        : normalizedInteger;
+    })
+    .join('');
+};
+
+export const sanitizeExpressionInput = (
+  input: string,
+  decimalDigits: number,
+  decimalSeparator = '.',
+  alternativeDecimalSeparator = decimalSeparator === '.' ? ',' : '.',
+): string => {
+  let cleaned = '';
+  let hasDecimalSeparator = false;
+  let fractionalDigits = 0;
+  let ignoreFraction = false;
+
+  input.split('').forEach((character) => {
+    if (/[0-9]/.test(character)) {
+      if (ignoreFraction) {
+        return;
+      }
+      if (hasDecimalSeparator) {
+        if (fractionalDigits >= decimalDigits) {
+          return;
+        }
+        fractionalDigits += 1;
+      }
+      cleaned += character;
+      return;
+    }
+
+    if (character === decimalSeparator || character === alternativeDecimalSeparator) {
+      if (0 === decimalDigits) {
+        ignoreFraction = true;
+      } else if (!hasDecimalSeparator) {
+        cleaned += decimalSeparator;
+        hasDecimalSeparator = true;
+      }
+      return;
+    }
+
+    if (['+', '-', '*', '/', '(', ')'].includes(character)) {
+      cleaned += character;
+      hasDecimalSeparator = false;
+      fractionalDigits = 0;
+      ignoreFraction = false;
+    }
+  });
+
+  return cleaned;
+};
+
+const abs = (value: bigint) => (0n > value ? -value : value);
+
+const gcd = (a: bigint, b: bigint): bigint => (0n === b ? a : gcd(b, a % b));
+
+const reduce = ({ numerator, denominator }: ExpressionResult): ExpressionResult => {
+  if (0n > denominator) {
+    numerator = -numerator;
+    denominator = -denominator;
+  }
+
+  if (0n === numerator) {
+    return { numerator: 0n, denominator: 1n };
+  }
+
+  const divisor = gcd(abs(numerator), denominator);
+  return {
+    numerator: numerator / divisor,
+    denominator: denominator / divisor,
+  };
+};
+
+const add = (left: ExpressionResult, right: ExpressionResult): ExpressionResult =>
+  reduce({
+    numerator: left.numerator * right.denominator + right.numerator * left.denominator,
+    denominator: left.denominator * right.denominator,
+  });
+
+const multiply = (left: ExpressionResult, right: ExpressionResult): ExpressionResult =>
+  reduce({
+    numerator: left.numerator * right.numerator,
+    denominator: left.denominator * right.denominator,
+  });
+
+const divide = (left: ExpressionResult, right: ExpressionResult): ExpressionResult | null => {
+  if (0n === right.numerator) {
+    return null;
+  }
+
+  return reduce({
+    numerator: left.numerator * right.denominator,
+    denominator: left.denominator * right.numerator,
+  });
+};
+
+const negate = (value: ExpressionResult): ExpressionResult => ({
+  numerator: -value.numerator,
+  denominator: value.denominator,
+});
+
+/** Evaluates an arithmetic expression exactly, returning null for invalid input or division by zero. */
+export const safeEvaluateExpression = (input: string): ExpressionResult | null => {
+  const normalized = input.replace(/\s/g, '').replaceAll(',', '.');
+  if ('' === normalized) {
+    return null;
+  }
+
+  let pos = 0;
+
+  const peek = (): string => (pos < normalized.length ? normalized[pos]! : '');
+  const consume = (): string => normalized[pos++]!;
+
+  const parseExpression = (): ExpressionResult | null => {
+    let left = parseTerm();
+    if (null === left) {
+      return null;
+    }
+
+    while ('+' === peek() || '-' === peek()) {
+      const op = consume();
+      const right = parseTerm();
+      if (null === right) {
+        return null;
+      }
+      left = '+' === op ? add(left, right) : add(left, negate(right));
+    }
+    return left;
+  };
+
+  const parseTerm = (): ExpressionResult | null => {
+    let left = parseFactor();
+    if (null === left) {
+      return null;
+    }
+
+    while ('*' === peek() || '/' === peek()) {
+      const op = consume();
+      const right = parseFactor();
+      if (null === right) {
+        return null;
+      }
+      if ('*' === op) {
+        left = multiply(left, right);
+      } else {
+        left = divide(left, right);
+        if (null === left) {
+          return null;
+        }
+      }
+    }
+    return left;
+  };
+
+  const parseFactor = (): ExpressionResult | null => {
+    if ('+' === peek()) {
+      consume();
+      return parseFactor();
+    }
+    if ('-' === peek()) {
+      consume();
+      const factor = parseFactor();
+      return null === factor ? null : negate(factor);
+    }
+    return parsePrimary();
+  };
+
+  const parsePrimary = (): ExpressionResult | null => {
+    if ('(' === peek()) {
+      consume();
+      const result = parseExpression();
+      if (null === result || ')' !== peek()) {
+        return null;
+      }
+      consume();
+      return result;
+    }
+    return parseNumber();
+  };
+
+  const parseNumber = (): ExpressionResult | null => {
+    let numStr = '';
+    while (pos < normalized.length && /[0-9.]/.test(peek())) {
+      numStr += consume();
+    }
+    if ('' === numStr || '.' === numStr) {
+      return null;
+    }
+
+    const [integerPart = '', fractionPart = ''] = numStr.split('.');
+    if (2 < numStr.split('.').length) {
+      return null;
+    }
+
+    return reduce({
+      numerator: BigInt(`${integerPart || '0'}${fractionPart}`),
+      denominator: 10n ** BigInt(fractionPart.length),
+    });
+  };
+
+  const result = parseExpression();
+  return null === result || pos !== normalized.length ? null : result;
+};

@@ -1,4 +1,10 @@
 import { CURRENCIES, type CurrencyCode, isCurrencyCode } from '~/lib/currency';
+import {
+  type ExpressionResult,
+  hasDuplicateDecimalSeparator,
+  removeValidGroupingSeparators,
+  sanitizeExpressionInput,
+} from '~/utils/expression';
 
 export const getCurrencyHelpers = ({
   locale = 'en-US',
@@ -36,6 +42,9 @@ export const getCurrencyHelpers = ({
 
     return parseToBigIntBeforeSubmit(stringNumber);
   };
+
+  const expressionResultToBigInt = ({ numerator, denominator }: ExpressionResult): bigint =>
+    BigMath.roundDiv(numerator * decimalMultiplierN, denominator);
 
   /* Parse sanitized string to number before submit */
   const parseToBigIntBeforeSubmit = (stringNumber: string | number | bigint): bigint => {
@@ -234,12 +243,28 @@ export const getCurrencyHelpers = ({
   };
 
   return {
+    decimalDigits,
+    decimalSeparator,
+    alternativeDecimalSeparator,
+    thousandSeparator,
     parseToCleanString,
     toUIString,
     format,
     formatter,
     sanitizeInput,
     toSafeBigInt,
+    expressionResultToBigInt,
+    hasDuplicateDecimalSeparator: (input: string) =>
+      hasDuplicateDecimalSeparator(
+        input,
+        decimalSeparator,
+        alternativeDecimalSeparator,
+        thousandSeparator,
+      ),
+    removeValidGroupingSeparators: (input: string) =>
+      removeValidGroupingSeparators(input, decimalSeparator, thousandSeparator),
+    sanitizeExpressionInput: (input: string) =>
+      sanitizeExpressionInput(input, decimalDigits, decimalSeparator, alternativeDecimalSeparator),
   };
 };
 

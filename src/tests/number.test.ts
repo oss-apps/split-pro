@@ -7,6 +7,35 @@ import {
 } from '../utils/numbers';
 
 describe('getCurrencyHelpers', () => {
+  describe('expression input normalization', () => {
+    const { hasDuplicateDecimalSeparator, removeValidGroupingSeparators, sanitizeExpressionInput } =
+      getCurrencyHelpers({ locale: 'en-US', currency: 'USD' });
+
+    it('uses locale separators when normalizing grouped expression input', () => {
+      const normalized = removeValidGroupingSeparators('1,000,000+1');
+
+      expect(normalized).toBe('1000000+1');
+      expect(sanitizeExpressionInput(normalized)).toBe('1000000+1');
+      expect(sanitizeExpressionInput('1,5+2')).toBe('1.5+2');
+      expect(hasDuplicateDecimalSeparator('1.2.3+4')).toBe(true);
+    });
+  });
+
+  describe('expressionResultToBigInt', () => {
+    it('converts exact expression results to minor currency units', () => {
+      const { expressionResultToBigInt } = getCurrencyHelpers({ currency: 'USD' });
+
+      expect(expressionResultToBigInt({ numerator: 2739n, denominator: 100n })).toBe(2739n);
+      expect(expressionResultToBigInt({ numerator: 1n, denominator: 3n })).toBe(33n);
+    });
+
+    it('rounds results using the currency precision', () => {
+      const { expressionResultToBigInt } = getCurrencyHelpers({ currency: 'JPY' });
+
+      expect(expressionResultToBigInt({ numerator: 7n, denominator: 2n })).toBe(4n);
+    });
+  });
+
   describe('toUIString', () => {
     describe('en-US locale', () => {
       const locale = 'en-US';

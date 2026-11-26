@@ -87,6 +87,7 @@ export const AddOrEditExpensePage: React.FC<{
       updateProfile.mutate({ currency: newCurrency });
 
       if (isExpression(amtStr)) {
+        // The new currency has a different minor-unit scale; update the amount and splits from the expression.
         const evaluated = safeEvaluateExpression(amtStr);
         setAmount(
           null === evaluated

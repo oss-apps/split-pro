@@ -2,6 +2,20 @@
 import { currencyConversion, getCurrencyHelpers } from '../utils/numbers';
 
 describe('getCurrencyHelpers', () => {
+  describe('expression input normalization', () => {
+    const { hasDuplicateDecimalSeparator, removeValidGroupingSeparators, sanitizeExpressionInput } =
+      getCurrencyHelpers({ locale: 'en-US', currency: 'USD' });
+
+    it('uses locale separators when normalizing grouped expression input', () => {
+      const normalized = removeValidGroupingSeparators('1,000,000+1');
+
+      expect(normalized).toBe('1000000+1');
+      expect(sanitizeExpressionInput(normalized)).toBe('1000000+1');
+      expect(sanitizeExpressionInput('1,5+2')).toBe('1.5+2');
+      expect(hasDuplicateDecimalSeparator('1.2.3+4')).toBe(true);
+    });
+  });
+
   describe('expressionResultToBigInt', () => {
     it('converts exact expression results to minor currency units', () => {
       const { expressionResultToBigInt } = getCurrencyHelpers({ currency: 'USD' });

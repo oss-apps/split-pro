@@ -1,5 +1,10 @@
 import { CURRENCIES, type CurrencyCode, isCurrencyCode } from '~/lib/currency';
-import type { ExpressionResult } from '~/utils/expression';
+import {
+  type ExpressionResult,
+  hasDuplicateDecimalSeparator,
+  removeValidGroupingSeparators,
+  sanitizeExpressionInput,
+} from '~/utils/expression';
 
 export const getCurrencyHelpers = ({
   locale = 'en-US',
@@ -246,6 +251,17 @@ export const getCurrencyHelpers = ({
     sanitizeInput,
     toSafeBigInt,
     expressionResultToBigInt,
+    hasDuplicateDecimalSeparator: (input: string) =>
+      hasDuplicateDecimalSeparator(
+        input,
+        decimalSeparator,
+        alternativeDecimalSeparator,
+        thousandSeparator,
+      ),
+    removeValidGroupingSeparators: (input: string) =>
+      removeValidGroupingSeparators(input, decimalSeparator, thousandSeparator),
+    sanitizeExpressionInput: (input: string) =>
+      sanitizeExpressionInput(input, decimalDigits, decimalSeparator, alternativeDecimalSeparator),
   };
 };
 

@@ -2,13 +2,7 @@ import React from 'react';
 
 import { useTranslationWithUtils } from '~/hooks/useTranslationWithUtils';
 import { cn } from '~/lib/utils';
-import {
-  hasDuplicateDecimalSeparator,
-  isExpression,
-  removeValidGroupingSeparators,
-  safeEvaluateExpression,
-  sanitizeExpressionInput,
-} from '~/utils/expression';
+import { isExpression, safeEvaluateExpression } from '~/utils/expression';
 
 import { Input, type InputProps } from './input';
 
@@ -33,22 +27,16 @@ const CurrencyInput: React.FC<
 }) => {
   const { getCurrencyHelpersCached } = useTranslationWithUtils(undefined);
   const {
-    decimalDigits,
-    decimalSeparator,
-    alternativeDecimalSeparator,
-    thousandSeparator,
     format,
     parseToCleanString,
     toSafeBigInt,
     expressionResultToBigInt,
+    hasDuplicateDecimalSeparator,
+    removeValidGroupingSeparators,
+    sanitizeExpressionInput,
     sanitizeInput,
   } = getCurrencyHelpersCached(currency);
-  const hasDuplicateDecimal = hasDuplicateDecimalSeparator(
-    strValue,
-    decimalSeparator,
-    alternativeDecimalSeparator,
-    thousandSeparator,
-  );
+  const hasDuplicateDecimal = hasDuplicateDecimalSeparator(strValue);
 
   return (
     <Input
@@ -71,25 +59,13 @@ const CurrencyInput: React.FC<
       onChange={(e) => {
         const rawValue = e.target.value;
         const normalizedValue = allowExpressions
-          ? removeValidGroupingSeparators(rawValue, decimalSeparator, thousandSeparator)
+          ? removeValidGroupingSeparators(rawValue)
           : rawValue;
-        if (
-          allowExpressions &&
-          hasDuplicateDecimalSeparator(
-            normalizedValue,
-            decimalSeparator,
-            alternativeDecimalSeparator,
-          )
-        ) {
+        if (allowExpressions && hasDuplicateDecimalSeparator(normalizedValue)) {
           return onValueChange({ strValue: normalizedValue, bigIntValue: 0n });
         }
         if (allowExpressions && isExpression(normalizedValue)) {
-          const strValue = sanitizeExpressionInput(
-            normalizedValue,
-            decimalDigits,
-            decimalSeparator,
-            alternativeDecimalSeparator,
-          );
+          const strValue = sanitizeExpressionInput(normalizedValue);
           const evaluated = safeEvaluateExpression(strValue);
           return onValueChange({
             strValue,

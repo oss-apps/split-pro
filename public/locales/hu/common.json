@@ -1,5 +1,27 @@
 {
   "account": {
+    "api_keys": {
+      "copy_now_notice": "Másold ki a kulcsodat most – később már nem jelenítjük meg újra.",
+      "create": "Létrehozás",
+      "description": "Használj API-kulcsokat a SplitPro API eléréséhez. Küldd el a kulcsot a következőképpen",
+      "docs_prefix": "A dokumentáció itt érhető el",
+      "empty": "Még nincsenek API-kulcsok.",
+      "expires_hint": "A helyi időzónád szerinti nap végén jár le.",
+      "expires_label": "Lejárat (opcionális)",
+      "expires_on": "lejár {date}",
+      "last_used": "használva {date}",
+      "messages": {
+        "copied": "Vágólapra másolva",
+        "copy_failed": "Nem sikerült a másolás",
+        "create_failed": "Nem sikerült létrehozni az API-kulcsot",
+        "name_required": "Kérlek, adj meg egy nevet a kulcsnak",
+        "revoke_failed": "Nem sikerült visszavonni az API-kulcsot"
+      },
+      "name_label": "Új kulcs neve",
+      "name_placeholder": "pl. Actual Budget",
+      "never_used": "még nem használt",
+      "title": "API-kulcsok"
+    },
     "change_language": "Nyelv módosítása",
     "change_language_details": {
       "messages": {
@@ -206,6 +228,7 @@
     "email_invalid": "Az email-cím érvénytelen, kérjük, próbáld újra a bejelentkezési folyamatot.",
     "email_required": "Email-cím megadása kötelező",
     "expense_deletion_failed": "Váratlan hiba történt a kiadás törlése során.",
+    "expense_invalid_input": "Ellenőrizd a kiadás adatait, majd próbáld újra.",
     "expense_submission_failed": "Váratlan hiba történt a kiadás beküldése során.",
     "feedback_min_length": "A visszajelzésnek legalább 10 karakterből kell állnia",
     "feedback_required": "Visszajelzés szükséges",
@@ -355,6 +378,7 @@
   "expense_participant": {
     "gets": "{actor, select, you {<person/> kapsz <amount/>} other {<person/> kap <amount/>}}",
     "owes": "{actor, select, you {<person/> tartozol <amount/>} other {<person/> tartozik <amount/>}}",
+    "owes_and_gets": "{actor, select, you {<person/> <share/> összeggel tartozol, és visszakapsz <amount/> összeget} other {<person/> <share/> összeggel tartozik, és visszakap <amount/> összeget}}",
     "paid": "<person/> fizetett <amount/>",
     "received": "<person/> kapott <amount/>"
   },
@@ -414,6 +438,9 @@
     },
     "group_statistics": {
       "first_expense": "Első kiadás",
+      "paid": "Fizetve",
+      "per_person": "Költés személyenként",
+      "share": "Költséghányad",
       "title": "Csoportstatisztikák",
       "total_expenses": "Összes költség"
     },

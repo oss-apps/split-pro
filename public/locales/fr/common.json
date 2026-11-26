@@ -1,5 +1,27 @@
 {
   "account": {
+    "api_keys": {
+      "copy_now_notice": "Copie ta clé maintenant — elle ne sera pas affichée à nouveau.",
+      "create": "Créer",
+      "description": "Utilise les clés d'API pour accéder à l'API SplitPro. Envoie ta clé en",
+      "docs_prefix": "La documentation est à",
+      "empty": "Aucune clé d'API pour le moment.",
+      "expires_hint": "Expire en fin de journée dans ton fuseau horaire local.",
+      "expires_label": "Expire le (optionnel)",
+      "expires_on": "expire le {date}",
+      "last_used": "utilisée le {date}",
+      "messages": {
+        "copied": "Clé copiée",
+        "copy_failed": "Échec de la copie",
+        "create_failed": "Échec lors de la création de la clé d'API",
+        "name_required": "Merci d'entrer un nom pour cette clé",
+        "revoke_failed": "Échec lors de la révocation de la clé d'API"
+      },
+      "name_label": "Nom de la nouvelle clé",
+      "name_placeholder": "ex : Budget actuel",
+      "never_used": "jamais utilisée",
+      "title": "Clés d'API"
+    },
     "change_language": "Changer de langue",
     "change_language_details": {
       "messages": {
@@ -59,7 +81,7 @@
         "import_success": "L'import a bien fonctionné"
       },
       "no_file_chosen": "Aucun fichier choisi",
-      "note": "Note : l'import ne fonctionne actuellement que pour les amis et les groupes, mais pas pour les transactions. On y travaille !"
+      "note": "Note : l'import ne fonctionne actuellement que pour les personnes et les groupes, mais pas pour les transactions. On y travaille !"
     },
     "logout": "Déconnexion",
     "messages": {
@@ -122,7 +144,7 @@
   "actors": {
     "all": "Toustes",
     "deleted_user": "Compte supprimé",
-    "friends": "Amis",
+    "friends": "Potes",
     "groups": "Groupes",
     "members": "Membres",
     "other_users": "Autres personnes",
@@ -143,11 +165,12 @@
     "trouble_logging_in": "Un problème pour te connecter ? Contact"
   },
   "balance_list": {
-    "gets": "{receiverRole, select, you {Tu reçois {amount} de {payer}} other {{receiver} reçoit {amount} de {payerRole, select, you {toi} other {{payer}}}}}",
-    "pays": "{payerRole, select, you {Tu paie {amount} à {receiver}} other {{payer} paie {amount} à {receiverRole, select, you {toi} other {{receiver}}}}}"
+    "gets": "{receiverRole, select, you {Tu reçois {amount} de la part de {payer}} other {{receiver} reçoit {amount} de {payerRole, select, you {ta part} other {la part de {payer}}}}}",
+    "pays": "{payerRole, select, you {Tu paies {amount} à {receiver}} other {{payer} {receiverRole, select, you {te paie {amount}} other {paie {amount} à {receiver}}}}}"
   },
   "balance_summary": {
     "friend_owes_you": "{friend} te doit {amount}",
+    "member_count": "{count, plural, =1 {# membre} other {# membres}}",
     "more": "{count, plural, one {# solde supplémentaire} other {# soldes supplémentaires}}",
     "you_owe_friend": "Tu dois {amount} à {friend}"
   },
@@ -198,13 +221,14 @@
     "title": "Conversion monétaire"
   },
   "errors": {
-    "add_member_failed": "L'ajout d'un membre au groupe a échoué",
+    "add_member_failed": "L'ajout de cette personne au groupe a échoué",
     "currency_conversion_error": "Une erreur est survenue lors de l'enregistrement de la conversion monétaire",
     "currency_conversion_failed": "Échec de la conversion des devises",
     "currency_conversion_malformed": "Les données de conversion de devise sont corrompues",
     "email_invalid": "Cette adresse mail est invalide, merci de recommencer le processus de connexion.",
     "email_required": "L'adresse mail est requise",
     "expense_deletion_failed": "Une erreur inattendue s'est produite lors de la suppression de la dépense.",
+    "expense_invalid_input": "Corrige les détails de la dépense et réessaie.",
     "expense_submission_failed": "Une erreur inattendue s'est produite lors de l'enregistrement de la dépense.",
     "feedback_min_length": "Le texte doit faire au moins 10 caractères",
     "feedback_required": "Fournis des informations",
@@ -297,18 +321,20 @@
         }
       },
       "user_input": {
-        "add_more_friends": "Rechercher des amis, des groupes ou ajouter une adresse mail",
+        "add_more_friends": "Rechercher des personnes, des groupes ou ajouter une adresse mail",
         "cannot_change_group": "Impossible de changer de groupe en cours d'édition",
         "remove_group": "Presse « Retour Arrière » pour supprimer le groupe",
-        "search_friends": "Rechercher des amis, des groupes ou ajouter une adresse mail"
+        "search_friends": "Rechercher des personnes, des groupes ou ajouter une adresse mail"
       }
     },
-    "already_added": "Déjà ajouté",
+    "already_added": "Déjà ajoutée",
     "balance_list": {
       "are_settled_up": "es quitte",
       "is_settled_up": "est quitte",
       "lent": "{actor, select, you {Tu as prêté} other {{person} a prêté}}",
+      "lent_amount": "{actor, select, you {Tu as payé <amount/>} other {<person/> a payé <amount/>}}",
       "owes": "{actor, select, you {Tu dois} other {{person} doit}}",
+      "owes_amount": "{actor, select, you {Tu dois <amount/>} other {<person/> doit <amount/>}}",
       "press_balance_info": "Clique sur un solde pour effectuer un règlement",
       "settled": "{actor, select, you {Tu es quitte} other {{person} est quitte}}"
     },
@@ -345,15 +371,16 @@
     "user_received": "{actor, select, you {Tu as reçu {amount}} other {{user} a reçu {amount}}}"
   },
   "expense_metadata": {
-    "added_by": "{actor, select, you {Ajouté par toi le {date}} other {Ajouté par {user} le {date}}}",
-    "deleted_by": "{actor, select, you {Supprimé par toi le {date}} other {Supprimé par {user} le {date}}}",
-    "edited_by": "{actor, select, you {Édité par toi le {date}} other {Édité par {user} le {date}}}"
+    "added_by": "{actor, select, you {Ajoutée par toi le {date}} other {Ajoutée par {user} le {date}}}",
+    "deleted_by": "{actor, select, you {Supprimée par toi le {date}} other {Supprimée par {user} le {date}}}",
+    "edited_by": "{actor, select, you {Éditée par toi le {date}} other {Éditée par {user} le {date}}}"
   },
   "expense_participant": {
     "gets": "{actor, select, you {<person/> reçois <amount/>} other {<person/> reçoit <amount/>}}",
     "owes": "{actor, select, you {<person/> dois <amount/>} other {<person/> doit <amount/>}}",
-    "paid": "<person/> payé <amount/>",
-    "received": "<person/> reçu <amount/>"
+    "owes_and_gets": "{actor, select, you {<person/> dois <share/> et tu reçois <amount/>} other {<person/> doit <share/> et reçoit <amount/>}}",
+    "paid": "<person/> a payé <amount/>",
+    "received": "<person/> a reçu <amount/>"
   },
   "friend": {
     "delete_confirmation": {
@@ -402,15 +429,18 @@
         "title": "Confirmer le re-calcul des soldes  ?"
       },
       "remove_member_details": {
-        "can_remove": "Tu es sur le point de retirer ce membre du groupe",
-        "cant_remove": "Impossible de supprimer un membre tant que leur solde en cours n'est pas réglé",
-        "title": "Confirmer le retrait de ce membre du groupe ?"
+        "can_remove": "Tu es sur le point de retirer cette personne du groupe",
+        "cant_remove": "Impossible de supprimer une personne tant que son solde en cours n'est pas réglé",
+        "title": "Confirmer le retrait du groupe ?"
       },
       "simplify_debts": "Simplifier les dettes",
       "title": "Informations du groupe"
     },
     "group_statistics": {
       "first_expense": "Première dépense",
+      "paid": "Total payé",
+      "per_person": "Dépenses par personne",
+      "share": "Répartition des dépenses",
       "title": "Statistiques du groupe",
       "total_expenses": "Total des dépenses"
     },
@@ -434,7 +464,7 @@
         "warning": "Les deux boutons ajoutent immédiatement la personne ainsi que les contacts sélectionnés à ce groupe. L'enregistrement ajoute les contacts sélectionnés uniquement, pas l'adresse mail nouvellement entrée. L'option d'invitation envoie un mail à la personne vers SplitPro uniquement si son adresse n'est pas encore vérifiée ; cela ne la connecte pas."
       },
       "invite_link": "Lien d'invitation",
-      "no_members": "Aucun membre dans ce groupe pour l'instant."
+      "no_members": "Pas de membre dans ce groupe pour l'instant."
     },
     "tabs": {
       "balances": "Soldes",
@@ -449,8 +479,8 @@
   },
   "meta": {
     "application_name": "SplitPro",
-    "description": "Partagez gratuitement vos dépenses entre amis",
-    "title": "SplitPro : partagez gratuitement vos dépenses entre amis"
+    "description": "Partagez gratuitement vos dépenses entre potes",
+    "title": "SplitPro : partagez gratuitement vos dépenses entre potes"
   },
   "navigation": {
     "account": "Compte",
@@ -464,7 +494,7 @@
   "notifications": {
     "enable_description": "Ne loupe rien. Active les notifications pour savoir quand des dépenses sont ajoutées ou mises à jour.",
     "enable_title": "Activer les notifications",
-    "permission_granted": "Tu vas recevoir une notification maintenant",
+    "permission_granted": "Tu recevras désormais des notifications",
     "subscribe": "S'abonner"
   },
   "pagination": {
@@ -519,6 +549,7 @@
     "deleted_by": "Supprimée par",
     "edited_by": "Éditée par",
     "expense": {
+      "fetch_rate_date": "Date du taux de change",
       "for": "pour",
       "from": "de",
       "paid_by": "Payé par",

@@ -23,6 +23,13 @@
       "version": "Version"
     },
     "default_balance_currency": "Standardwährung",
+    "deletion": {
+      "action": "Account löschen",
+      "confirm": "Account dauerhaft löschen",
+      "description": "Diese Aktion kann nicht rückgängig gemacht werden. Deine Identität und deine Anmeldedaten werden entfernt, und du wirst auf allen Geräten abgemeldet. Geteilte Ausgaben, Notizen, Belege, Gruppenmitgliedschaften und offene Salden bleiben unter „Gelöschter Nutzer“ erhalten. Persönliche Informationen, die du in geteilten Inhalten geschrieben hast, bleiben bestehen. Die Gruppeninhaberschaft geht nach Möglichkeit an ein anderes verfügbares Mitglied über. Von dir erstellte wiederkehrende Ausgaben werden beendet. Du kannst deine SplitPro-Daten vor dem Fortfahren auf der Kontoseite herunterladen.",
+      "error": "Dein Account konnte nicht gelöscht werden. Bitte versuche es erneut.",
+      "title": "Möchtest du dein Konto löschen?"
+    },
     "download_app": "App herunterladen",
     "download_app_details": {
       "download_as_pwa": "Du kannst SplitPro als App auf deinen Startbildschirm herunterladen.",
@@ -69,6 +76,10 @@
     "star_on_github": "Stern auf GitHub vergeben",
     "submit_feedback": "Feedback senden",
     "submit_feedback_details": {
+      "messages": {
+        "submit_error": "Feedback konnte nicht gesendet werden",
+        "submit_success": "Feedback gesendet"
+      },
       "placeholder": "Dein Feedback eingeben",
       "title": "Feedback senden"
     },
@@ -93,15 +104,28 @@
     "leave": "Verlassen",
     "next": "Weiter",
     "reconnect": "Wieder verbinden",
+    "remind_later": "später Erinnern",
+    "retry": "Erneut versuchen",
     "save": "Speichern",
     "settle_up": "Ausgleichen",
     "submit": "Speichern"
   },
+  "activity": {
+    "user_deleted_expense": "{actor, select, you {Du hast {expense} gelöscht} other {{user} hat {expense} gelöscht}}",
+    "user_paid_for_expense": "{user} hat {amount} für {expense} bezahlt",
+    "user_received_for_expense": "{user} hat {amount} für {expense} erhalten",
+    "you_paid_amount": "Du hast {amount} bezahlt",
+    "you_paid_for_expense": "Du hast {amount} für {expense} bezahlt",
+    "you_received_amount": "Du hast {amount} erhalten",
+    "you_received_for_expense": "Du hast {amount} für {expense} erhalten"
+  },
   "actors": {
     "all": "Alle",
+    "deleted_user": "Gelöschter Nutzer",
     "friends": "Freunde",
     "groups": "Gruppen",
     "members": "Mitglieder",
+    "other_users": "Andere Benutzer",
     "owner": "Besitzer",
     "you": "Du",
     "you_accusativus": "Dich",
@@ -117,6 +141,11 @@
     "sending": "Senden...",
     "setup_instructions": "Docker-Setup-Anleitung",
     "trouble_logging_in": "Probleme beim anmelden? Kontakt"
+  },
+  "balance_summary": {
+    "friend_owes_you": "{friend} schuldet dir {amount}",
+    "more": "{count, plural, one {# weiterer Betrag} other {# weitere Beträge}}",
+    "you_owe_friend": "Du schuldest {friend} {amount}"
   },
   "balances": {
     "default_split": {
@@ -152,6 +181,7 @@
     "title": "Währungsumrechnung"
   },
   "errors": {
+    "add_member_failed": "Mitglied konnte der Gruppe nicht hinzugefügt werden",
     "amount_required": "Betrag eingeben",
     "currency_conversion_error": "Fehler beim Einstellen der Währungsumrechnung",
     "currency_conversion_failed": "Währungsumrechnung fehlgeschlagen",
@@ -159,9 +189,12 @@
     "description_required": "Beschreibung eingeben",
     "email_invalid": "Ungültige Mailadresse. Bitte starte den Anmeldevorgang neu.",
     "email_required": "Email wird benötigt",
+    "expense_deletion_failed": "Beim Löschen der Ausgabe ist ein unerwarteter Fehler aufgetreten.",
+    "expense_invalid_input": "Bitte überprüfe die Ausgabendetails und versuche es erneut.",
     "expense_submission_failed": "Ein unerwarteter Fehler ist aufgetreten, während die Ausgabe gespeichert wurde.",
     "feedback_min_length": "Feedback sollte mindestens 10 Zeichen lang sein",
     "feedback_required": "Feedback ist erforderlich",
+    "friend_deletion_failed": "Freund konnte nicht entfernt werden",
     "group_balances_malformed": "Die Daten der Gruppenbilanz sind fehlerhaft. Bitte melden Sie das Problem oder versuchen Sie eine Neuberechnung.",
     "group_name_update_failed": "Fehler beim Aktualisieren des Gruppennamens",
     "group_required": "Gruppe eingeben",
@@ -170,13 +203,14 @@
     "invalid_cron_expression": "Ungültiger Cron-Ausdruck",
     "invalid_currency_code": "Ungültiger Währungscode {code}",
     "invalid_split": "Passe den Besitzer der Ausgabe vor dem Speichern an.",
+    "invite_email_failed": "Die Einladungs-E-Mail konnte nicht versendet werden. Bitte überprüfe die SMTP-Konfiguration.",
     "language_change_failed": "Fehler beim Ändern der Sprache",
     "less_than": "Datei sollte kleiner als {size}MB sein",
     "name_required": "Name ist erforderlich",
     "no_providers": "Fehler beim Abrufen der Authentifizierungsanbieter. Bitte prüfen Sie die Backend-Logs.",
     "notification_not_supported": "Benachrichtigungen werden nicht unterstützt",
     "notification_request_failed": "Fehler: Fehlende Benachrichtigungsberechtigung",
-    "notification_subscribe_failed": "Benachrichtigungen können nicht abonniert werden.",
+    "notification_subscribe_failed": "Benachrichtigungen können nicht abonniert werden",
     "otp_invalid": "Ungültiges Einmalpassowrt",
     "otp_required": "Einmalpasswort wird benötigt",
     "recurrence_delete_failed": "Löschen der Wiederholung fehlgeschlagen",
@@ -185,6 +219,7 @@
     "saving_expense": "Fehler beim Speichern der Ausgabe",
     "setting_update_failed": "Einstellung konnte nicht aktualisiert werden",
     "signin_error": "Beim Anmelden ist ein Fehler aufgetreten: {error}",
+    "signin_failed": "Anmeldung fehlgeschlagen. Bitte versuche es erneut.",
     "signup_disabled": "Neuanmeldung ist in dieser Instanz deaktiviert",
     "something_went_wrong": "Etwas ist schiefgelaufen",
     "subscribe_error": "Fehler beim Abonnieren der Benachrichtigung",
@@ -201,14 +236,22 @@
       "description_placeholder": "Beschreibung eingeben",
       "pick_a_date": "Datum wählen",
       "select_user_or_group": {
-        "add_to_split_pro": "Nutzer hinzufügen",
-        "note": "Hinweis: Einladung senden ist momentan wegen Spam deaktiviert",
+        "add_to_split_pro": "Zur Ausgabe hinzufügen",
+        "empty_image_alt": "Keine Nutzer gefunden",
+        "note": "E-Mail-Einladungen sind deaktiviert. Du kannst trotzdem jemanden per E-Mail hinzufügen, ohne eine Einladung zu senden.",
         "only_one_group_time": "Du kannst jeweils nur eine Gruppe haben",
-        "send_invite": "Einladung an Nutzer senden",
-        "warning": "Warnung: Versende keine Einladungen an ungültige E-Mail-Adressen. Nutze stattdessen 'Zu Split Pro hinzufügen'. Dein Konto wird bei Missbrauch gesperrt"
+        "send_invite": "Mit E-Mail-Einladung hinzufügen",
+        "warning": "Beide Buttons fügen die Person diesem Ausgabenentwurf hinzu. Speichere die Ausgabe, wenn du fertig bist. Die Einladungsoption sendet nur dann einen Link zu SplitPro per E-Mail, wenn die E-Mail-Adresse nicht verifiziert ist; die Person wird dadurch nicht angemeldet."
       },
       "split_type_section": {
+        "direction": {
+          "no_money_flow": "Niemand schuldet etwas",
+          "owes_payer": "{debtor} schuldet {payer}",
+          "owes_you": "{debtor} schuldet dir",
+          "you_owe": "Du schuldest {payer}"
+        },
         "split_equally": "gleichmäßig verteilt",
+        "split_equally_with_count": "gleichmäßig aufteilen zwischen {count, plural, one {# person} other {# people}}",
         "split_unequally": "nach Anteilen verteilt",
         "types": {
           "adjustment": {
@@ -251,7 +294,10 @@
     "balance_list": {
       "are_settled_up": "bist ausgeglichen",
       "is_settled_up": "ist ausgeglichen",
-      "press_balance_info": "Drücke auf einen einzelnen Saldo, um die Abrechnung zu starten"
+      "lent_amount": "{actor, select, you {Du hast <amount/> verliehen} other {<person/> hat <amount/> verliehen}}",
+      "owes_amount": "{actor, select, you {Du schuldest <amount/>} other {<person/> schuldet <amount/>}}",
+      "press_balance_info": "Drücke auf einen einzelnen Saldo, um die Abrechnung zu starten",
+      "settled": "{actor, select, you {Du hast alles beglichen} other {{person} hat alles beglichen}}"
     },
     "bank_transactions": "Banktransaktionen",
     "clear": "Leeren",
@@ -259,6 +305,7 @@
       "text": "Diese Aktion kann nicht rückgängig gemacht werden. Diese Ausgabe wird dauerhaft gelöscht.",
       "title": "Bist du dir absolut sicher?"
     },
+    "empty_state_image_alt": "Keine Ausgaben",
     "multiple_transactions": {
       "add_all": "Alle hinzufügen",
       "add_one_by_one": "Einzeln hinzufügen",
@@ -267,9 +314,21 @@
     },
     "no_transactions_yet": "Noch keine Transaktionen",
     "pending": "Ausstehend",
+    "receipt": {
+      "image_alt": "Beleg",
+      "thumbnail_alt": "Beleg Vorschau",
+      "title": "Beleg"
+    },
     "submit_all": "Alles absenden",
     "title": "Ausgabe hinzufügen",
     "title_mobile": "Hinzufügen"
+  },
+  "friend": {
+    "delete_confirmation": {
+      "description": "Möchtest du wirklich fortfahren?",
+      "outstanding_balance": "Freunde mit offenem Saldo können nicht entfernt werden. Bitte gleiche zuerst alle Beträge aus.",
+      "title": "Bist du dir absolut sicher?"
+    }
   },
   "group_details": {
     "add_members": "Mitglieder hinzufügen",
@@ -320,6 +379,9 @@
     },
     "group_statistics": {
       "first_expense": "Erste Ausgabe",
+      "paid": "Bezahlt",
+      "per_person": "Ausgaben pro Person",
+      "share": "Kostenaufteilung",
       "title": "Gruppenstatistik",
       "total_expenses": "Gesamtausgaben"
     },
@@ -335,12 +397,12 @@
     "no_members": {
       "add_members": "Mitglied hinzufügen",
       "add_members_details": {
-        "add_to_split_pro": "Benutzer hinzufügen",
-        "note": "Hinweis: Das Versenden von E-Mail-Einladungen ist deaktiviert",
+        "add_to_split_pro": "Zur Gruppe hinzufügen",
+        "note": "E-Mail-Einladungen sind deaktiviert. Du kannst trotzdem jemanden per E-Mail hinzufügen, ohne eine Einladung zu senden.",
         "placeholder": "Name oder E-Mail eingeben",
-        "send_invite": "Einladung senden",
+        "send_invite": "Mit E-Mail-Einladung hinzufügen",
         "title": "Mitglied hinzufügen",
-        "warning": "Warnung: Verwende 'Einladung senden' nicht bei ungültiger E-Mail. Nutze stattdessen 'Benutzer hinzufügen'. Dein Konto wird bei Missbrauch gesperrt"
+        "warning": "Beide Buttons fügen die Person und alle ausgewählten Kontakte sofort dieser Gruppe hinzu. „Speichern“ fügt nur ausgewählte Kontakte hinzu, nicht die eingegebene E-Mail-Adresse. Die Einladungsoption sendet nur dann einen Link zu SplitPro per E-Mail, wenn die E-Mail-Adresse nicht verifiziert ist; die Person wird dadurch nicht angemeldet."
       },
       "invite_link": "Einladungs-Link",
       "no_members": "Diese Gruppe hat noch keine Mitglieder."
@@ -383,10 +445,14 @@
     "edit_description": "Dadurch ändert sich der Zeitplan für zukünftige Ausgaben. Bestehende Ausgaben werden nicht geändert.",
     "edit_title": "Wiederholung bearbeiten",
     "empty": "Noch keine wiederkehrenden Ausgaben",
+    "execution_time_loading": "Ausführungszeit wird geladen …",
+    "execution_time_unavailable": "Ausführungszeit ist nicht verfügbar.",
     "expense_for_the_amount_of": "Ausgabe {name} in Höhe von {amount} {currency}",
+    "instance_schedule": "Zeitplan: {schedule} ({timeZone}).",
     "last_day": "Letzter Tag",
     "months": "Monate",
     "never": "Kein Zeitplan festgelegt",
+    "next_local_run": "Nächste geplante Ausführung: {date} ({timeZone}, deine Zeitzone).",
     "recurring": "Wiederkehrend",
     "schedule_type": {
       "custom": "Benutzerdefiniert",
@@ -400,6 +466,7 @@
     "template_edit_warning": "Dies ist eine Vorlage für wiederkehrende Ausgaben. Änderungen gelten für alle zukünftigen wiederkehrenden Ausgaben.",
     "time_of_day": "Tageszeit",
     "title": "Wiederholung",
+    "toggle_options": "Wiederkehrende Ausgaben anpassen",
     "view_recurring_page": "Wiederkehrende Seite anzeigen"
   },
   "ui": {
@@ -411,10 +478,26 @@
     "deleted_by": "Gelöscht von",
     "edited_by": "Bearbeitet von",
     "expense": {
+      "fetch_rate_date": "Wechselkursdatum",
       "for": "für",
       "from": "von",
       "paid_by": "Bezahlt von",
+      "payer": {
+        "current_user": "Du"
+      },
       "received_by": "Erhalten von",
+      "recipient": {
+        "current_user": "Du"
+      },
+      "statements": {
+        "user_pays_user": "{payer} zahlt an {receiver}",
+        "user_pays_you": "{user} bezahlt an dich",
+        "you_lent": "Du hast verliehen",
+        "you_lent_amount": "Du hast {amount} verliehen",
+        "you_owe": "Du schuldest",
+        "you_owe_amount": "Du schuldest {amount}",
+        "you_pay_user": "Du bezahlst an {user}"
+      },
       "to": "an",
       "user": {
         "deleted": "hat gelöscht",
@@ -436,13 +519,34 @@
       }
     },
     "expense_details": "Ausgaben Details",
+    "group_people_list_empty": {
+      "all_added": "Alle deine gespeicherten Kontakte sind bereits in dieser Gruppe",
+      "no_contacts": "Keine gespeicherten Kontakte vorhanden",
+      "no_matches": "Keine verfügbaren Kontakte entsprechen deiner Suche"
+    },
     "in_group": "Grupiert",
+    "invitation": {
+      "adding": "Wird hinzugefügt …",
+      "disabled_help": "Einladungs-E-Mails sind auf diesem Server deaktiviert. Du kannst trotzdem jemanden per E-Mail hinzufügen.",
+      "draft_help": "Durch das Hinzufügen eines Teilnehmers wird die Ausgabe nicht gespeichert. Speichere die Ausgabe beim Bearbeiten ebenfalls.",
+      "email_help": "Wir senden nur dann einen Link zu SplitPro an die eingegebene E-Mail-Adresse, wenn sie noch nicht verifiziert ist. Dadurch erfolgt keine Anmeldung.",
+      "expense_partial_success": "Zum Ausgaben-Entwurf hinzugefügt, aber die Einladungs-E-Mail konnte nicht gesendet werden.",
+      "group_partial_success": "Zur Gruppe hinzugefügt, aber die Einladungs-E-Mail konnte nicht gesendet werden.",
+      "no_email_help": "Es wird keine Einladungs-E-Mail gesendet. Personen, die sich noch nicht registriert haben, können sich später mit dieser E-Mail-Adresse anmelden.",
+      "send_email": "Eine Einladungs-E-Mail senden"
+    },
     "no_activity": "Noch keine Aktivitäten",
     "not_involved": "Nicht beteiligt",
     "not_set": "Nicht festgelegt",
     "on": "am",
     "or": "oder",
     "outstanding_balances": "Ausstehende Salden",
+    "people_list_empty": {
+      "all_added": "Alle deine gespeicherten Kontakte sind bereits in dieser Gruppe",
+      "no_contacts": "Keine gespeicherten Kontakte oder Gruppen vorhanden",
+      "no_matches": "Keine verfügbaren Kontakte oder Gruppen entsprechen deiner Suche"
+    },
+    "people_list_load_error": "Kontakte konnten nicht geladen werden. Bitte versuche es erneut.",
     "select_balance": "Guthaben auswählen",
     "select_currency": "Währung auswählen",
     "settle_up_name": "Ausgleichen",
@@ -451,6 +555,7 @@
     "share_text": "Schau dir SplitPro an, eine kostenlose Open-Source-Alternative zu Splitwise",
     "show_all_currencies": "Alle Währungen anzeigen",
     "today": "Heute",
-    "total_balance": "Gesamtguthaben"
+    "total_balance": "Gesamtguthaben",
+    "transfer": "{senderRole, select, you {Du bezahlst an {receiver}} other {{receiverRole, select, you {{sender} bezahlt an dich} other {{sender} bezahlt an {receiver}}}}}"
   }
 }
